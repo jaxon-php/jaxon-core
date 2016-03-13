@@ -2,8 +2,6 @@
 
 namespace Xajax\Template;
 
-use Tonic\Tonic;
-
 /*
 	File: Engine.php
 
