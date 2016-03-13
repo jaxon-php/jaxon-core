@@ -20,7 +20,7 @@
     },
     "require": {
         "php": ">=5.3.2",
-        "rgamba/tonic": "3.0"
+        "rgamba/tonic": "dev-master"
     },
     "autoload": {
         "psr-4": {
