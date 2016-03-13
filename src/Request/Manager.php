@@ -306,7 +306,7 @@ class Manager
 		case 'characterEncoding':
 			$this->sCharacterEncoding = $mValue;
 			break;
-		case default: break;
+		default: break;
 		}
 	}
 	

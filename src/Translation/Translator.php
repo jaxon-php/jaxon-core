@@ -45,7 +45,7 @@ class Translator
         $this->configure('language', $this->sDefaultLocale);
 
 		$this->aMessages = array(
-			'errors.debug.ts-message' => "** Xajax Error Log - :timestamp ** :message \n"
+			'errors.debug.ts-message' => "** Xajax Error Log - :timestamp ** :message \n",
 			'errors.debug.write-log' => "Xajax was unable to write to the error log file: :file",
 			'errors.debug.message' => "PHP Error Messages: :message",
 			'errors.response.result.invalid' => "An invalid response was returned while processing this request.",
@@ -122,7 +122,7 @@ class Translator
             $sLanguage = $this->sLanguage;
         }
         return $this->xTranslator->trans($sText, $placeholders, 'messages', $sLanguage); */
-		if(!array_key_exists($sText, $this->aMessages)
+		if(!array_key_exists($sText, $this->aMessages))
 		{
 		   return $sText;
 		}

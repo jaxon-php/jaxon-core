@@ -1,6 +1,6 @@
 <?php
 
-namespace Xajax\Translation;
+namespace Xajax\Template;
 
 /*
 	File: EngineTrait.php

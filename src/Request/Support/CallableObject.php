@@ -187,7 +187,7 @@ class CallableObject
 				continue;
 			}
 			$aRequests[strtolower($sMethodName)] = 
-				new xajaxRequest("{$sXajaxPrefix}{$this->classpath}{$sClass}.{$sMethodName}");
+				new \Xajax\Request\Request("{$sXajaxPrefix}{$this->classpath}{$sClass}.{$sMethodName}");
 		}
 
 		return $aRequests;

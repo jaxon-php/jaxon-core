@@ -3,6 +3,7 @@
 namespace Xajax\Plugin\Request;
 
 use Xajax\Plugin\Request as Request;
+use Xajax\Request\Manager as RequestManager;
 
 /*
 	File: UserFunction.php
@@ -102,6 +103,14 @@ class UserFunction extends Request
 	}
 
 	/*
+		Function: getName
+	*/
+	public function getName()
+	{
+		return 'UserFunction';
+	}
+
+	/*
 		Function: configure
 		
 		Sets/stores configuration options used by this plugin.
@@ -142,8 +151,8 @@ class UserFunction extends Request
 			{
 				$xUserFunction = $aArgs[1];
 
-				if(!($xUserFunction instanceof \Xajax\Support\UserFunction))
-					$xUserFunction = new \Xajax\Support\UserFunction($xUserFunction);
+				if(!($xUserFunction instanceof \Xajax\Request\Support\UserFunction))
+					$xUserFunction = new \Xajax\Request\Support\UserFunction($xUserFunction);
 
 				if(2 < count($aArgs))
 				{

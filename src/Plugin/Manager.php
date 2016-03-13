@@ -81,7 +81,7 @@ class Manager
 		$this->aPlugins = array();
 
 		$this->sJsURI = '';
-		$this->sJsDir = dirname(dirname(__FILE__)) . '/xajax_js';
+		$this->sJsDir = dirname(dirname(__FILE__)) . '/xajax/js';
 		$this->aJsFiles = array();
 		$this->sDefer = '';
 		$this->sDeferDir = 'deferred';
@@ -154,8 +154,9 @@ class Manager
 	private function setPluginPriority($xPlugin, $nPriority)
 	{
 		while (isset($this->aPlugins[$nPriority]))
+		{
 			$nPriority++;
-		
+		}
 		$this->aPlugins[$nPriority] = $xPlugin;
 		// Sort the array by ascending keys
 		ksort($this->aPlugins);
@@ -181,7 +182,7 @@ class Manager
 		if($xPlugin instanceof Request)
 		{
 			// The name of a request plugin is used as key in the plugin table
-			$this->aRequestPlugins[$xPlugin->getName()] = $xPlugin;
+			$this->aRequestPlugins[/*$xPlugin->getName()*/] = $xPlugin;
 		}
 		else if( $xPlugin instanceof Response)
 		{
@@ -267,7 +268,7 @@ class Manager
 			$this->sJsDir = $mValue;
 			break;
 		case "javascript files":
-			$this->aJsFiles = array_merge($this->aJsFiles,$mValue);
+			$this->aJsFiles = array_merge($this->aJsFiles, $mValue);
 			break;
 		case "scriptDefferal":
 			$this->sDefer = ($mValue === true ? "defer" : "");
@@ -426,10 +427,10 @@ class Manager
 			foreach($aJsFiles as $aJsFile)
 			{
 				$sConfigScript .= $this->render('plugins/component.js.tpl', array(
-					'defer' => $this->sDefer,
+					'sDefer' => $this->sDefer,
 					'nScriptLoadTimeout' => $this->nScriptLoadTimeout,
-					'name' => $aJsFile[1],
-					'file' => $sJsURI . '/' . $aJsFile[0],
+					'sFile' => $aJsFile[1],
+					'sUrl' => $sJsURI . '/' . $aJsFile[0],
 				));
 			}
 		}
@@ -439,8 +440,8 @@ class Manager
 		foreach($aJsFiles as $aJsFile)
 		{
 			$sFileScript .= $this->render('plugins/include.js.tpl', array(
-				'defer' => $this->sDefer,
-				'file' => $sJsURI . '/' . $aJsFile[0],
+				'sDefer' => $this->sDefer,
+				'sUrl' => $sJsURI . '/' . $aJsFile[0],
 			));
 		}
 		
@@ -464,16 +465,16 @@ class Manager
 
 			// The returned code loads the deferred javascript file
 			$sPluginScript = $this->render('plugins/include.js.tpl', array(
-				'defer' => $this->sDefer,
-				'file' => $sOutPath . $sOutFile,
+				'sDefer' => $this->sDefer,
+				'sUrl' => $sJsURI . '/' . $this->sDeferDir . '/' . $sOutFile,
 			));
 		}
 		else
 		{
 			// The plugins scripts are wrapped with javascript tags
 			$sPluginScript = $this->render('plugins/plugins.js.tpl', array(
-				'defer' => $this->sDefer,
-				'code' => $sPluginScript,
+				'sDefer' => $this->sDefer,
+				'sScript' => $sPluginScript,
 			));
 		}
 

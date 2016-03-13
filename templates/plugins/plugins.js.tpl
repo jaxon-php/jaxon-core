@@ -1,5 +1,5 @@
-<script type="text/javascript" {$sDefer} charset="UTF-8">
+<script type="text/javascript" {$sDefer|noescape} charset="UTF-8">
 /* <![CDATA[ */
-{$code}
+{$sScript|noescape}
 /* ]]> */
 </script>

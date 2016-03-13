@@ -80,15 +80,6 @@ abstract class Response extends Plugin
  	{
  		return true;
  	}
- 
-	/*
-		Function: getName
-		
-		Called by the <Xajax\Plugin\Manager> when the user script requests a plugin.
-		This name must match the plugin name requested in the called to 
-		<Xajax\Response\Response->plugin>.
-	*/
-	abstract public function getName();
 	
 	/*
 		Function: process

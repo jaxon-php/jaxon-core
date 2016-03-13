@@ -22,5 +22,5 @@ $objPluginManager->loadPlugins();
 */
 function xajax_trans($sText, array $aPlaceHolders = array(), $sLanguage = null)
 {
-	return \Xajax\Xajax::xTranslator->trans($sText, $aPlaceHolders, $sLanguage);
+	return \Xajax\Xajax::$xTranslator->trans($sText, $aPlaceHolders, $sLanguage);
 }

@@ -45,7 +45,7 @@ abstract class Request extends Plugin
 		or callable object is to be registered.  Additional plugins may support other 
 		registration types.
 	*/
-	abstract public function register($sType, $x, array $aOptions);
+	abstract public function register($aArgs);
 
 	abstract public function generateHash();
 

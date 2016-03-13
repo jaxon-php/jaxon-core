@@ -221,7 +221,7 @@ class Xajax
 				'useUncompressedScripts' => false,
 				'statusMessages' => false,
 				'waitCursor' => true,
-				'deferScriptGeneration' => true,
+				'deferScriptGeneration' => false,
 				'exitAllowed' => true,
 				'errorHandler' => false,
 				'cleanBuffer' => false,

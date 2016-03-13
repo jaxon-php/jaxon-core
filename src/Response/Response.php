@@ -84,7 +84,7 @@ class Response
 	private $objPluginManager;
 	
 	// sorry but this config is static atm
-	private $sContentType = 'application/json'; //'text/xml';
+	private $sContentType = 'application/json';
 	
 	/*
 		Constructor: __construct
@@ -99,7 +99,7 @@ class Response
 		
 		$this->sCharacterEncoding = $objResponseManager->getCharacterEncoding();
 		$this->bOutputEntities = $objResponseManager->getOutputEntities();
-		$this->setResponseType($objResponseManager->getConfiguration('responseType'));
+		// $this->setResponseType($objResponseManager->getConfiguration('responseType'));
 		
 		$this->objPluginManager = PluginManager::getInstance();
 

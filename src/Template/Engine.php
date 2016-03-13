@@ -30,20 +30,14 @@ class Engine
 
 	public function __construct($sTemplatesDir)
     {
-        $this->sTemplatesDir = $sTemplatesDir;
-        // Create the template engine instance
-        Tonic::$root = $this->sTemplatesDir;
-        $this->xEngine = new Tonic();
-        if(is_writable($this->sTemplatesDir . '/cache'))
-        {
-            $this->xEngine->enable_content_cache = true;
-            $this->xEngine->cache_dir = $this->sTemplatesDir . '/cache';
-        }
+        $this->sTemplatesDir = trim($sTemplatesDir);
+    	$this->xEngine = new \Latte\Engine;
+    	$this->xEngine->setTempDirectory($this->sTemplatesDir . '/cache');
     }
 
     public function render($sTemplate, array $aVars = array())
     {
-        Tonic::setGlobals($aVars);
-        return $this->xEngine->render($sTemplate);
+    	$sRendered = $this->xEngine->render($this->sTemplatesDir . '/' . $sTemplate, $aVars);
+    	return $sRendered;
     }
 }

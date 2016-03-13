@@ -1,1 +1,1 @@
-<script type="text/javascript" src="{$file}" {$defer} charset="UTF-8"></script>
+<script type="text/javascript" src="{$sUrl|noescape}" {$sDefer|noescape} charset="UTF-8"></script>

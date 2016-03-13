@@ -102,6 +102,14 @@ class CallableObject extends Request
 	}
 
 	/*
+		Function: getName
+	*/
+	public function getName()
+	{
+		return 'CallableObject';
+	}
+
+	/*
 		Function: setRequestedClass
 	*/
 	public function setRequestedClass($sRequestedClass)
@@ -135,7 +143,7 @@ class CallableObject extends Request
 	/*
 		Function: register
 	*/
-	public function register($sType, $x, array $aOptions)
+	public function register($aArgs)
 	{
 		if(1 < count($aArgs))
 		{
@@ -150,8 +158,8 @@ class CallableObject extends Request
 					throw new \Xajax\Exception\Error('errors.objects.instance');
 				}
 
-				if(!($xCallableObject instanceof Xajax\Request\Support\CallableObject))
-					$xCallableObject = new Xajax\Request\Support\CallableObject($xCallableObject);
+				if(!($xCallableObject instanceof \Xajax\Request\Support\CallableObject))
+					$xCallableObject = new \Xajax\Request\Support\CallableObject($xCallableObject);
 
 				if(2 < count($aArgs) && is_array($aArgs[2]))
 				{

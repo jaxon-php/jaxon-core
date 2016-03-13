@@ -70,4 +70,13 @@ abstract class Plugin
 	{
 		return false;
 	}
+ 
+	/*
+		Function: getName
+		
+		Called by the <Xajax\Plugin\Manager> when the user script requests a plugin.
+		This name must match the plugin name requested in the called to 
+		<Xajax\Response\Response->plugin>.
+	*/
+	abstract public function getName();
 }
