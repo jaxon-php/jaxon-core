@@ -306,6 +306,7 @@ class Manager
 		case "useUncompressedScripts":
 			if($mValue === true || $mValue === false)
 				$this->bUseUncompressedScripts = $mValue;
+			break;
 		case 'deferScriptGeneration':
 			if($mValue === true || $mValue === false)
 				$this->bDeferScriptGeneration = $mValue;
@@ -328,6 +329,7 @@ class Manager
 			$this->sResponseType = $mValue;
 			break;
 		default:
+			break;
 		}
 	}
 	
