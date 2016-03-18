@@ -58,6 +58,21 @@ abstract class Response extends Plugin
 	}
 	
 	/*
+		Function: response
+		
+		Returns the <Xajax\Response\Response> object that is currently being used
+		to build the response that will be sent to the client browser.
+		
+		Returns:
+		
+		(object):  A reference to the <Xajax\Response\Response> object
+	*/
+	public function response()
+	{
+		return $this->xResponse;
+	}
+	
+	/*
 		Function: addCommand
 		
 		Used internally to add a command to the response command list.  This
