@@ -696,7 +696,11 @@ class Xajax
 	/*
 		Function: getJavascript
 		
-		See <Xajax\Xajax->printJavascript> for more information.
+		Returns the Xajax Javascript header and wrapper code to be printed into the page.
+		The returned code should be printed between the HEAD and /HEAD tags at the top of the page.
+		
+		The javascript code returned by this function is dependent on the plugins
+		that are included and the functions and classes that are registered.
 	*/
 	public function getJavascript()
 	{
@@ -719,6 +723,56 @@ class Xajax
 		print $this->getJavascript();
 	}
 
+	/*
+		Function: getJsInclude
+	
+		Returns the javascript header includes for response plugins.
+	
+		Parameters:
+	 */
+	public function getJsInclude()
+	{
+		return $this->xPluginManager->getJsInclude();
+	}
+	
+	/*
+		Function: getCssInclude
+	
+		Returns the CSS header includes for response plugins.
+	
+		Parameters:
+	 */
+	public function getCssInclude()
+	{
+		return $this->xPluginManager->getCssInclude();
+	}
+
+	/*
+		Function: plugin
+		
+		Provides access to registered response plugins. Pass the plugin name as the
+		first argument and the plugin object will be returned.  You can then
+		access the methods of the plugin directly.
+		
+		Parameters:
+		
+		sName - (string):  Name of the plugin.
+			
+		Returns:
+		
+		object - The plugin specified by sName.
+	*/
+	public function plugin($sName)
+	{
+		$xPlugin = $this->xPluginManager->getResponsePlugin($sName);
+		if(!$xPlugin)
+		{
+			return false;
+		}
+		$xPlugin->setResponse($this);
+		return $xPlugin;
+	}
+	
 	/*
 		Function: _detectURI
 

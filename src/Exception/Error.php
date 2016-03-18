@@ -2,6 +2,8 @@
 
 namespace Xajax\Exception;
 
+use Exception;
+
 /*
 	File: Error.php
 
@@ -21,11 +23,9 @@ namespace Xajax\Exception;
 	@license http://www.xajaxproject.org/bsd_license.txt BSD License
 */
 
-use Exception;
-
 class Error extends Exception
 {
-    public __construct($sMessageKey, array $aPlaceHolders = array())
+    public function __construct($sMessageKey, array $aPlaceHolders = array())
     {
         $sMessage = xajax_trans($sMessageKey, $aPlaceHolders);
         parent::__construct($sMessage);

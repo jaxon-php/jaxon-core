@@ -90,7 +90,7 @@ class UserFunction extends Request
 		$this->sDefer = '';
 		$this->bDeferScriptGeneration = false;
 
-		$this->sRequestedFunction = NULL;
+		$this->sRequestedFunction = null;
 		
 		if(isset($_GET['xjxfun']))
 		{
@@ -216,7 +216,7 @@ class UserFunction extends Request
 	*/
 	public function canProcessRequest()
 	{
-		return ($this->sRequestedFunction != NULL);
+		return ($this->sRequestedFunction != null);
 	}
 
 	/*

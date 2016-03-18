@@ -35,12 +35,12 @@ namespace Xajax\Plugin;
 abstract class Response extends Plugin
 {
 	/*
-		Object: objResponse
+		Object: xResponse
 		
 		A reference to the current <Xajax\Response\Response> object that is being used
 		to build the response that will be sent to the client browser.
 	*/
-	protected $objResponse;
+	protected $xResponse;
 	
 	/*
 		Function: setResponse
@@ -50,11 +50,11 @@ abstract class Response extends Plugin
 		
 		Parameters:
 		
-		objResponse - (object):  A reference to the <Xajax\Response\Response> object
+		xResponse - (object):  A reference to the <Xajax\Response\Response> object
 	*/
-	public function setResponse($objResponse)
+	public function setResponse($xResponse)
 	{
-		$this->objResponse = $objResponse;
+		$this->xResponse = $xResponse;
 	}
 	
 	/*
@@ -66,28 +66,42 @@ abstract class Response extends Plugin
 	*/
  	public function addCommand($aAttributes, $sData)
  	{
- 		$this->objResponse->addPluginCommand($this, $aAttributes, $sData);
+ 		$this->xResponse->addPluginCommand($this, $aAttributes, $sData);
  	}
 
  	/*
- 	 Function: isResponse
+		Function: isResponse
 
- 	 This returns true if the object is a response plugin. Always return true here.
+		This returns true if the object is a response plugin. Always return true here.
 
- 	 Parameters:
+		Parameters:
  	 */
  	public function isResponse()
  	{
  		return true;
  	}
-	
-	/*
-		Function: process
-		
-		Called by <Xajax\Response\Response> when a user script requests the service of a
-		response plugin.  The parameters provided by the user will be used to
-		determine which response command and parameters will be sent to the
-		client upon completion of the xajax request process.
-	*/
-	// abstract public function process();
+
+ 	/*
+		Function: getJsInclude
+
+		Returns the javascript header includes for this plugin.
+
+		Parameters:
+ 	 */
+ 	public function getJsInclude()
+ 	{
+ 		return '';
+ 	}
+
+ 	/*
+		Function: getCssInclude
+
+		Returns the CSS header includes for this plugin.
+
+		Parameters:
+ 	 */
+ 	public function getCssInclude()
+ 	{
+ 		return '';
+ 	}
 }

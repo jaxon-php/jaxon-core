@@ -69,6 +69,7 @@ class Translator
 			'errors.register.method' => "Failed to locate registration method for the following: :args",
 			'errors.register.invalid' => "Attempt to register invalid plugin: :name; " .
 				"should be derived from Xajax\\Plugin\\Request or Xajax\\Plugin\\Response.",
+			'errors.component.load' => "Error: the :name Javascript component could not be included. Perhaps the URL is incorrect?\\nURL: :url",
 		);
     }
 

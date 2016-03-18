@@ -169,8 +169,7 @@ class Control
 		Function: setAttribute
 		
 		Call to set various control specific attributes to be included in the HTML
-		script that is returned when <Control->printHTML> or <Control->getHTML>
-		is called.
+		script that is returned when <Control->getHTML> is called.
 		
 		Parameters:
 			$sName - (string): The attribute name to set the value.
@@ -195,7 +194,7 @@ class Control
 		Function: setEvent
 		
 		Call this function to assign a <xajaxRequest> object as the handler for
-		the specific DOM event.  The <xajaxRequest->printScript> function will 
+		the specific DOM event.  The <xajaxRequest->getScript> function will 
 		be called to generate the javascript for this request.
 		
 		Parameters:
@@ -320,21 +319,6 @@ class Control
 		}
 
         return $sIndent . $sStartTag . $this->_getAttributes() . $this->_getEvents() . $sEndTag;
-	}
-
-	/*
-		Function: printHTML
-		
-		Generates and prints the HTML representation of this control and 
-		it's children.
-		
-		Returns:
-		
-		string : The HTML representation of this control.
-	*/
-	public function printHTML($sIndent = '')
-	{
-		print $this->getHTML($sIndent);
 	}
 
 	public function getResponse($count, $parent, $flag = XAJAX_DOMRESPONSE_APPENDCHILD)

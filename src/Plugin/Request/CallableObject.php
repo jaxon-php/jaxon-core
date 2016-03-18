@@ -80,8 +80,8 @@ class CallableObject extends Request
 		$this->sDefer = '';
 		$this->bDeferScriptGeneration = false;
 
-		$this->sRequestedClass = NULL;
-		$this->sRequestedMethod = NULL;
+		$this->sRequestedClass = null;
+		$this->sRequestedMethod = null;
 
 		if(!empty($_GET['xjxcls']))
 		{
@@ -145,11 +145,11 @@ class CallableObject extends Request
 	*/
 	public function register($aArgs)
 	{
-		if(1 < count($aArgs))
+		if(count($aArgs) > 1)
 		{
 			$sType = $aArgs[0];
 
-			if(XAJAX_CALLABLE_OBJECT == $sType)
+			if($sType == XAJAX_CALLABLE_OBJECT)
 			{
 				$xCallableObject = $aArgs[1];
 
@@ -161,7 +161,7 @@ class CallableObject extends Request
 				if(!($xCallableObject instanceof \Xajax\Request\Support\CallableObject))
 					$xCallableObject = new \Xajax\Request\Support\CallableObject($xCallableObject);
 
-				if(2 < count($aArgs) && is_array($aArgs[2]))
+				if(count($aArgs) > 2 && is_array($aArgs[2]))
 				{
 					foreach($aArgs[2] as $sKey => $aValue)
 					{
@@ -232,7 +232,7 @@ class CallableObject extends Request
 	*/
 	public function canProcessRequest()
 	{
-		return ($this->sRequestedClass != NULL && $this->sRequestedMethod != NULL);
+		return ($this->sRequestedClass != null && $this->sRequestedMethod != null);
 	}
 
 	/*

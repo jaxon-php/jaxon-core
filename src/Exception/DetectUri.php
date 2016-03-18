@@ -2,6 +2,8 @@
 
 namespace Xajax\Exception;
 
+use Exception;
+
 /*
 	File: DetectUri.php
 
@@ -20,8 +22,6 @@ namespace Xajax\Exception;
 	@copyright Copyright (c) 2008-2010 by Joseph Woolley, Steffen Konerow, Jared White  & J. Max Wilson
 	@license http://www.xajaxproject.org/bsd_license.txt BSD License
 */
-
-use Exception;
 
 class DetectUri extends Exception
 {

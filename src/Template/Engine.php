@@ -35,7 +35,7 @@ class Engine
 
     public function render($sTemplate, array $aVars = array())
     {
-    	$sRendered = $this->xEngine->render($this->sTemplatesDir . '/' . $sTemplate, $aVars);
+    	$sRendered = $this->xEngine->renderToString($this->sTemplatesDir . '/' . $sTemplate, $aVars);
     	return $sRendered;
     }
 }

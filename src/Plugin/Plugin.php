@@ -35,7 +35,8 @@ abstract class Plugin
 		Plugins should store a local copy of the settings they wish to use during 
 		registration, client script generation or request processing.
 	*/
-	abstract public function configure($sName, $mValue);
+	public function configure($sName, $mValue)
+	{}
 
 	/*
 		Function: getClientScript

@@ -238,13 +238,14 @@ class Manager
 	*/
 	public function send()
 	{
-		if(NULL != $this->objResponse)
+		if(($this->objResponse))
 		{
 			foreach($this->aDebugMessages as $sMessage)
 			{
 				$this->objResponse->debug($sMessage);
 			}
 			$this->aDebugMessages = array();
+			$this->objResponse->sendHeaders();
 			$this->objResponse->printOutput();
 		}
 	}

@@ -46,15 +46,7 @@ class Manager
 	*/
 	private $aResponsePlugins;
 	
-	/*
-		Function: Manager
-		
-		Construct and initialize the one and only xajax plugin manager.
-	*/
-
 	private $sJsURI;
-	private $sJsDir;
-	public  $aJsFiles = array();
 	private $sDefer;
 	private $sDeferDir;
 	private $sRequestURI;
@@ -73,6 +65,36 @@ class Manager
 	private $sDebugOutputID;
 	private $sResponseType;
 
+	/*
+		Object: xInstance
+		The only instance of the plugin manager (Singleton)
+	*/
+	private static $xInstance = null;
+
+	/*
+		Function: getInstance
+		
+		Implementation of the singleton pattern: returns the one and only instance of the 
+		xajax plugin manager.
+		
+		Returns:
+		
+		object : a reference to the one and only instance of the plugin manager.
+	*/
+	public static function getInstance()
+	{
+		if(!self::$xInstance)
+		{
+			self::$xInstance = new Manager();    
+		}
+		return self::$xInstance;
+	}
+	
+	/*
+		Function: __construct
+		
+		Construct and initialize the one and only Xajax plugin manager.
+	*/
 	private function __construct()
 	{
 		$this->aRequestPlugins = array();
@@ -81,10 +103,10 @@ class Manager
 		$this->aPlugins = array();
 
 		$this->sJsURI = '';
-		$this->sJsDir = dirname(dirname(__FILE__)) . '/xajax/js';
-		$this->aJsFiles = array();
 		$this->sDefer = '';
-		$this->sDeferDir = 'deferred';
+		$this->bDeferScriptGeneration = false;
+		$this->sDeferDir = dirname(dirname(__FILE__)) . '/xajax/js/deferred';
+		$this->sDeferURI = '';
 		$this->sRequestURI = '';
 		$this->sStatusMessages = 'false';
 		$this->sWaitCursor = 'true';
@@ -95,31 +117,9 @@ class Manager
 		$this->bVerboseDebug = false;
 		$this->nScriptLoadTimeout = 2000;
 		$this->bUseUncompressedScripts = false;
-		$this->bDeferScriptGeneration = false;
-		$this->sLanguage = null;
+		$this->sLanguage = 'en';
 		$this->nResponseQueueSize = null;
 		$this->sDebugOutputID = null;
-	}
-	
-	/*
-		Function: getInstance
-		
-		Implementation of the singleton pattern: returns the one and only instance of the 
-		xajax plugin manager.
-		
-		Returns:
-		
-		object : a reference to the one and only instance of the
-			plugin manager.
-	*/
-	public static function getInstance()
-	{
-		static $obj;
-		if(!$obj)
-		{
-			$obj = new Manager();    
-		}
-		return $obj;
 	}
 	
 	/*
@@ -169,7 +169,7 @@ class Manager
 		
 		Parameters:
 		
-		objPlugin - (object):  A reference to an instance of a plugin.
+		xPlugin - (object):  A reference to an instance of a plugin.
 		
 		Note:
 		Below is a table for priorities and their description:
@@ -182,7 +182,7 @@ class Manager
 		if($xPlugin instanceof Request)
 		{
 			// The name of a request plugin is used as key in the plugin table
-			$this->aRequestPlugins[/*$xPlugin->getName()*/] = $xPlugin;
+			$this->aRequestPlugins[$xPlugin->getName()] = $xPlugin;
 		}
 		else if( $xPlugin instanceof Response)
 		{
@@ -199,6 +199,16 @@ class Manager
 		$this->setPluginPriority($xPlugin, $nPriority);
 	}
 
+	private function generateHash()
+	{
+		$sHash = '';
+		foreach($this->aRequestPlugins as $xPlugin)
+		{
+			$sHash .= $xPlugin->generateHash();
+		}
+		return md5($sHash);
+	}
+
 	/*
 		Function: canProcessRequest
 		
@@ -212,10 +222,9 @@ class Manager
 	{
 		foreach($this->aRequestPlugins as $xPlugin)
 		{
-			$mResult = $xPlugin->canProcessRequest();
-			if($mResult === true || is_string($mResult))
+			if($xPlugin->canProcessRequest())
 			{
-				return $mResult;
+				return true;
 			}
 		}
 		return false;
@@ -232,12 +241,12 @@ class Manager
 	{
 		foreach($this->aRequestPlugins as $xPlugin)
 		{
-			$mResult = $xPlugin->processRequest();
-			if($mResult === true || is_string($mResult))
+			if($xPlugin->canProcessRequest())
 			{
-				return $mResult;
+				return $xPlugin->processRequest();
 			}
 		}
+		// Todo: throw an exception
 		return false;
 	}
 	
@@ -263,15 +272,27 @@ class Manager
 		{
 		case 'javascript URI':
 			$this->sJsURI = $mValue;
-			break;
-		case 'javascript Dir':
-			$this->sJsDir = $mValue;
-			break;
-		case "javascript files":
-			$this->aJsFiles = array_merge($this->aJsFiles, $mValue);
+			if(substr($this->sJsURI, -1) != '/')
+			{
+				$this->sJsURI .= '/';
+			}
 			break;
 		case "scriptDefferal":
 			$this->sDefer = ($mValue === true ? "defer" : "");
+			break;
+		case 'deferScriptGeneration':
+			if($mValue === true || $mValue === false)
+				$this->bDeferScriptGeneration = $mValue;
+			else if($mValue == 'deferred')
+				$this->bDeferScriptGeneration = true;
+			break;
+		case 'deferDirectory':
+			$this->sDeferDir = $mValue;
+			if(substr($this->sDeferDir, -1) != '/')
+			{
+				$this->sDeferDir .= '/';
+			}
+			break;
 		case "requestURI":
 			$this->sRequestURI = $mValue;
 			break;
@@ -306,15 +327,6 @@ class Manager
 		case "useUncompressedScripts":
 			if($mValue === true || $mValue === false)
 				$this->bUseUncompressedScripts = $mValue;
-			break;
-		case 'deferScriptGeneration':
-			if($mValue === true || $mValue === false)
-				$this->bDeferScriptGeneration = $mValue;
-			else if($mValue == 'deferred')
-				$this->bDeferScriptGeneration = true;
-			break;
-		case 'deferDirectory':
-			$this->sDeferDir = $mValue;
 			break;
 		case 'language':
 			$this->sLanguage = $mValue;
@@ -379,6 +391,109 @@ class Manager
 	}
 
 	/*
+	 Function: getJsInclude
+	
+	 Returns the javascript header includes for response plugins.
+	
+	 Parameters:
+	 */
+	public function getJsInclude()
+	{
+		$code = '';
+		foreach($this->aResponsePlugins as $xPlugin)
+		{
+			$code .= rtrim($xPlugin->getJsInclude(), " \n") . "\n";
+		}
+		return $code;
+	}
+	
+	/*
+	 Function: getCssInclude
+	
+	 Returns the CSS header includes for response plugins.
+	
+	 Parameters:
+	 */
+	public function getCssInclude()
+	{
+		$code = '';
+		foreach($this->aResponsePlugins as $xPlugin)
+		{
+			$code .= rtrim($xPlugin->getCssInclude(), " \n") . "\n";
+		}
+		return $code;
+	}
+
+	private function getConfigScript()
+	{
+		$sJsCoreUrl = $this->sJsURI . $this->_getScriptFilename('xajax.core.js');
+		$sJsCoreError = xajax_trans('errors.component.load', array(
+				'name' => 'xajax',
+				'url' => $sJsCoreUrl,
+		));
+	
+		$sJsDebugUrl = $this->sJsURI . $this->_getScriptFilename('xajax.debug.js');
+		$sJsDebugError = xajax_trans('errors.component.load', array(
+				'name' => 'xajax.debug',
+				'url' => $sJsDebugUrl,
+		));
+	
+		$sJsVerboseUrl = $this->sJsURI . $this->_getScriptFilename('xajax.verbose.js');
+		$sJsVerboseError = xajax_trans('errors.component.load', array(
+				'name' => 'xajax.debug.verbose',
+				'url' => $sJsVerboseUrl,
+		));
+	
+		$sJsLanguageUrl = $this->sJsURI . $this->_getScriptFilename('lang/xajax.' . $this->sLanguage . '.js');
+		$sJsLanguageError = xajax_trans('errors.component.load', array(
+				'name' => 'xajax.debug.lang',
+				'url' => $sJsLanguageUrl,
+		));
+	
+		// Add component files to the javascript file array;
+		$this->aJsFiles[] = $sJsCoreUrl;
+		if($this->bDebug)
+		{
+			$this->aJsFiles[] = $sJsDebugUrl;
+			if($this->bVerboseDebug)
+			{
+				$this->aJsFiles[] = $sJsVerboseUrl;
+			}
+			if(($this->sLanguage))
+			{
+				$this->aJsFiles[] = $sJsLanguageUrl;
+			}
+		}
+	
+		// Print Xajax config vars
+		$templateVars = array();
+		$varNames = array('sDefer', 'sRequestURI', 'sStatusMessages', 'sWaitCursor', 'sVersion',
+				'sDefaultMode', 'sDefaultMethod', 'sJsURI', 'sResponseType', 'nResponseQueueSize',
+				'bDebug', 'bVerboseDebug', 'sDebugOutputID', 'nScriptLoadTimeout', 'sLanguage');
+		foreach($varNames as $templateVar)
+		{
+			$templateVars[$templateVar] = $this->$templateVar;
+		}
+		$templateVars['bLanguage'] = ($this->sLanguage) ? true : false;
+		$templateVars['sJsCoreError'] = $sJsCoreError;
+		$templateVars['sJsDebugError'] = $sJsDebugError;
+		$templateVars['sJsVerboseError'] = $sJsVerboseError;
+		$templateVars['sJsLanguageError'] = $sJsLanguageError;
+	
+		return $this->render('plugins/config.js.tpl', $templateVars);
+	}
+	
+	private function getPluginScript()
+	{
+		$code = '';
+		foreach($this->aPlugins as $xPlugin)
+		{
+			$code .= $xPlugin->getClientScript();
+		}
+		return $code;
+	}
+
+	/*
 		Function: getClientScript
 		
 		Call each of the request and response plugins giving them the
@@ -388,119 +503,45 @@ class Manager
 	*/
 	public function getClientScript()
 	{
-
-		$sJsURI = $this->sJsURI;
-
-		$aJsFiles = $this->aJsFiles;
-
-		if(substr($sJsURI, -1) == '/')
-			$sJsURI = substr($sJsURI, 0, -1);
-
-		$aJsFiles[] = array($this->_getScriptFilename('xajax.core.js'), 'xajax');
-
-		if($this->bDebug)
-		{
-			$aJsFiles[] = array($this->_getScriptFilename('xajax.debug.js'), 'xajax.debug');
-		}
-		if($this->bVerboseDebug)
-		{
-			$aJsFiles[] = array($this->_getScriptFilename('xajax.verbose.js'), 'xajax.debug.verbose');
-		}
-		if(($this->sLanguage))
-		{
-			$aJsFiles[] = array($this->_getScriptFilename('lang/xajax.' . $this->sLanguage . '.js'), 'xajax');
-		}
-
-		// Print Xajax config vars
-		$templateVars = array();
-		$varNames = array('sDefer', 'sRequestURI', 'sStatusMessages', 'sWaitCursor', 'sVersion',
-			'sDefaultMode', 'sDefaultMethod', 'sJsURI', 'sResponseType', 'nResponseQueueSize',
-			'bDebug', 'sDebugOutputID', 'nScriptLoadTimeout');
-		foreach($varNames as $templateVar)
-		{
-			$templateVars[$templateVar] = $this->$templateVar;
-		}
-
-		$sConfigScript = $this->render('plugins/config.js.tpl', $templateVars);
-
-		// Get the code to check if the library components are loaded
-		if($this->nScriptLoadTimeout > 0)
-		{
-			foreach($aJsFiles as $aJsFile)
-			{
-				$sConfigScript .= $this->render('plugins/component.js.tpl', array(
-					'sDefer' => $this->sDefer,
-					'nScriptLoadTimeout' => $this->nScriptLoadTimeout,
-					'sFile' => $aJsFile[1],
-					'sUrl' => $sJsURI . '/' . $aJsFile[0],
-				));
-			}
-		}
-
-		// Get the code to load the javascript library files
-		$sFileScript = '';
-		foreach($aJsFiles as $aJsFile)
-		{
-			$sFileScript .= $this->render('plugins/include.js.tpl', array(
-				'sDefer' => $this->sDefer,
-				'sUrl' => $sJsURI . '/' . $aJsFile[0],
-			));
-		}
-		
-		// Get the plugins scripts
-		$sPluginScript = $this->getPluginScripts();
+		// Get the config and plugins scripts
+		$sScript = $this->getConfigScript() . $this->getPluginScript();
 
 		if(($this->bDeferScriptGeneration))
 		{
 			// The plugins scripts are written into the deferred javascript file
 			$sHash = $this->generateHash();
 			$sOutFile = $sHash . '.js';
-			$sOutPath = $this->sJsDir . '/' . $this->sDeferDir . '/';
-			if(!is_file($sOutPath . $sOutFile) )
+			if(!is_file($this->sDeferDir . $sOutFile) )
 			{
 				// The code compression is not yet implemented
 				// require_once(dirname(__FILE__) . '/xajaxCompress.php');
-				// $sPluginScript = xajaxCompressFile( $sPluginScript );
+				// $sScript = xajaxCompressFile($sScript);
 
-				file_put_contents($sOutPath . $sOutFile, $sPluginScript);
+				file_put_contents($this->sDeferDir . $sOutFile, $sScript);
 			}
 
 			// The returned code loads the deferred javascript file
-			$sPluginScript = $this->render('plugins/include.js.tpl', array(
+			$sScript = $this->render('plugins/include.js.tpl', array(
 				'sDefer' => $this->sDefer,
-				'sUrl' => $sJsURI . '/' . $this->sDeferDir . '/' . $sOutFile,
+				'sUrl' => $this->sDeferURI . $sOutFile,
 			));
 		}
 		else
 		{
 			// The plugins scripts are wrapped with javascript tags
-			$sPluginScript = $this->render('plugins/plugins.js.tpl', array(
+			$sScript = $this->render('plugins/wrapper.js.tpl', array(
 				'sDefer' => $this->sDefer,
-				'sScript' => $sPluginScript,
+				'sScript' => $sScript,
 			));
 		}
 
-		return $sConfigScript . $sFileScript . $sPluginScript;
-	}
-
-	private function generateHash()
-	{
-		$sHash = '';
-		foreach($this->aRequestPlugins as $xPlugin)
-		{
-			$sHash .= $xPlugin->generateHash();
-		}
-		return md5($sHash);
-	}
-
-	private function getPluginScripts()
-	{
-		$code = '';
-		foreach($this->aPlugins as $xPlugin)
-		{
-			$code .= $xPlugin->getClientScript();
-		}
-		return $code;
+		// Get the code to load the javascript library files
+		$sScript .= $this->render('plugins/includes.js.tpl', array(
+			'sDefer' => $this->sDefer,
+			'aUrls' => $this->aJsFiles,
+		));
+		
+		return $sScript;
 	}
 
 	/*

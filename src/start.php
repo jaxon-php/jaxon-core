@@ -1,7 +1,6 @@
 <?php
 
-$objPluginManager = \Xajax\Plugin\Manager::getInstance();
-$objPluginManager->loadPlugins();
+\Xajax\Plugin\Manager::getInstance()->loadPlugins();
 
 /*
 	Section: Global functions
@@ -22,5 +21,5 @@ $objPluginManager->loadPlugins();
 */
 function xajax_trans($sText, array $aPlaceHolders = array(), $sLanguage = null)
 {
-	return \Xajax\Xajax::$xTranslator->trans($sText, $aPlaceHolders, $sLanguage);
+	return \Xajax\Xajax::getTranslator()->trans($sText, $aPlaceHolders, $sLanguage);
 }

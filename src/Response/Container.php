@@ -231,21 +231,6 @@ class Container extends Control
 			. $this->_getChildren($sIndent) . $sCloseTag;
 	}
 
-	/*
-		Function: printHTML
-		
-		Generates and prints the HTML representation of this control and 
-		it's children.
-		
-		Returns:
-		
-		string : The HTML representation of this control.
-	*/
-	public function printHTML($sIndent = '')
-	{
-		print $this->getHTML($sIndent);
-	}
-
 	public function getResponse($count, $parent, $flag = XAJAX_DOMRESPONSE_APPENDCHILD)
 	{
 		$variable = "xjxElm[$count]";

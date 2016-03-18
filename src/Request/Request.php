@@ -88,7 +88,7 @@ class Request
 		
 		A string containing either a single or a double quote character
 		that will be used during the generation of the javascript for
-		this function.  This can be set prior to calling <Request->printScript>
+		this function.  This can be set prior to calling <Request->getScript>
 	*/
 	private $sQuoteCharacter;
 	
@@ -96,7 +96,7 @@ class Request
 		Array: aParameters
 	
 		An array of parameters that will be used to populate the argument list
-		for this function when the javascript is output in <Request->printScript>	
+		for this function when the javascript is output in <Request->getScript>	
 	*/
 	private $aParameters;
 	
@@ -262,24 +262,22 @@ class Request
 		
 		Parameters:
 
-		Returns a string representation of the script output (javascript) from 
-		this request object.  See also:  <printScript>
+		Returns a string representation of the script output (javascript) from this request object.
 	*/
 	public function getScript()
 	{
 		return $this->sName . '(' . implode(', ', $this->aParameters) . ')';
 	}
-		
+
 	/*
-		Function: printScript
+		Function: getScript
 		
 		Parameters:
 
-		Generates a block of javascript code that can be used to invoke
-		the specified xajax request.
+		Prints a string representation of the script output (javascript) from this request object.
 	*/
 	public function printScript()
 	{
-		echo $this->getScript();
+		print $this->getScript();
 	}
 }

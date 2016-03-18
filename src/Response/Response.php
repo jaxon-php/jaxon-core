@@ -77,11 +77,11 @@ class Response
 	private $returnValue;
 	
 	/*
-		Object: objPluginManager
+		Object: xPluginManager
 		
 		A reference to the global plugin manager.
 	*/
-	private $objPluginManager;
+	private $xPluginManager;
 	
 	// sorry but this config is static atm
 	private $sContentType = 'application/json';
@@ -95,13 +95,13 @@ class Response
 	{
 		$this->aCommands = array();
 		
-		$objResponseManager = Manager::getInstance();
+		$xResponseManager = Manager::getInstance();
 		
-		$this->sCharacterEncoding = $objResponseManager->getCharacterEncoding();
-		$this->bOutputEntities = $objResponseManager->getOutputEntities();
-		// $this->setResponseType($objResponseManager->getConfiguration('responseType'));
+		$this->sCharacterEncoding = $xResponseManager->getCharacterEncoding();
+		$this->bOutputEntities = $xResponseManager->getOutputEntities();
+		// $this->setResponseType($xResponseManager->getConfiguration('responseType'));
 		
-		$this->objPluginManager = PluginManager::getInstance();
+		$this->xPluginManager = PluginManager::getInstance();
 
 		// Set response type to JSON
 		$this->sResponseType = 'JSON';
@@ -197,13 +197,13 @@ class Response
 	*/
 	public function plugin($sName)
 	{
-		$objPlugin = $this->objPluginManager->getResponsePlugin($sName);
-		if(!$objPlugin)
+		$xPlugin = $this->xPluginManager->getResponsePlugin($sName);
+		if(!$xPlugin)
 		{
 			return false;
 		}
-		$objPlugin->setResponse($this);
-		return $objPlugin;
+		$xPlugin->setResponse($this);
+		return $xPlugin;
 	}
 	
 	/*
@@ -222,8 +222,7 @@ class Response
 	*/
 	public function __get($sPluginName)
 	{
-		$objPlugin = $this->plugin($sPluginName);
-		return $objPlugin;
+		return $this->plugin($sPluginName);
 	}
 	
 	/*
@@ -301,7 +300,7 @@ class Response
 		
 		Parameters:
 		
-		objPlugin - (object):  A reference to a plugin object.
+		xPlugin - (object):  A reference to a plugin object.
 		aAttributes - (array):  Array containing the attributes for this
 			response command.
 		mData - (mixed):  The data to be sent with this command.
@@ -310,9 +309,9 @@ class Response
 		
 		object : The <Response> object.
 	*/
-	public function addPluginCommand($objPlugin, $aAttributes, $mData)
+	public function addPluginCommand($xPlugin, $aAttributes, $mData)
 	{
-		$aAttributes['plg'] = $objPlugin->getName();
+		$aAttributes['plg'] = $xPlugin->getName();
 		return $this->addCommand($aAttributes, $mData);
 	}
 
@@ -1487,10 +1486,10 @@ class Response
 		
 		Used internally to generate the response headers.
 	*/
-	public function _sendHeaders()
+	public function sendHeaders()
 	{
-		$objRequestManager = RequestManager::getInstance();
-		if($objRequestManager->getRequestMethod() == XAJAX_METHOD_GET)
+		$xRequestManager = RequestManager::getInstance();
+		if($xRequestManager->getRequestMethod() == XAJAX_METHOD_GET)
 		{
 			header ("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
 			header ("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
@@ -1509,7 +1508,17 @@ class Response
 		header('content-type: ' . $sContentType . ' ' . $sCharacterSet);
 	}
 
-	private function _getResponse_JSON()
+	/*
+		Function: getOutput
+		
+		Returns the output, generated from the commands added to the response,
+		that will be sent to the browser.
+		
+		Returns:
+		
+		string : The textual representation of the response commands, in JSON format.
+	*/
+	public function getOutput()
 	{
 		$response = array();
 		
@@ -1526,36 +1535,15 @@ class Response
 
 		return json_encode($response);
 	}
-
-	/*
-		Function: getOutput
-	*/
-	public function getOutput()
-	{
-		if($this->getContentType() != 'application/json')
-		{
-			//todo: trigger Error
-		};
-		return $this->_getResponse_JSON();
-	}
 	
 	/*
 		Function: printOutput
 		
 		Prints the output, generated from the commands added to the response,
 		that will be sent to the browser.
-		
-		Returns:
-		
-		string : The textual representation of the response commands.
 	*/
 	public function printOutput()
 	{
-		if($this->getContentType() != 'application/json')
-		{
-			//todo: trigger Error
-		}
-		$this->_sendHeaders();
-		print $this->_getResponse_JSON();
+		print $this->getOutput();
 	}
 }

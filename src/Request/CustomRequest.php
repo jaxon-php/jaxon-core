@@ -47,8 +47,7 @@ class CustomRequest extends Request
 		
 		Parameters:
 		
-		sScript - (string):  The javascript (template) that will be printed
-			upon request.
+		sScript - (string):  The javascript (template) that will be printed upon request.
 		aVariables - (associative array, optional):  An array of variable name, 
 			value pairs that will be passed to <xajaxCustomRequest->setVariable>
 	*/
@@ -92,7 +91,7 @@ class CustomRequest extends Request
 		Parameters:
 
 		Returns a string representation of the script output (javascript) from 
-		this request object.  See also:  <printScript>
+		this request object.
 	*/
 	public function getScript()
 	{
@@ -102,18 +101,5 @@ class CustomRequest extends Request
 			$sScript = str_replace($sName, $sValue, $sScript);
 		}
 		return $sScript;
-	}
-		
-	/*
-		Function: printScript
-		
-		Parameters:
-
-		Generates a block of javascript code that can be used to invoke
-		the specified xajax request.
-	*/
-	public function printScript()
-	{
-		echo $this->getScript();
 	}
 }
