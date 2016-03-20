@@ -13,7 +13,6 @@ xajax.config.waitCursor = {$sWaitCursor|noescape};
 xajax.config.version = "{$sVersion|noescape}";
 xajax.config.defaultMode = "{$sDefaultMode|noescape}";
 xajax.config.defaultMethod = "{$sDefaultMethod|noescape}";
-xajax.config.JavaScriptURI = "{$sJsURI|noescape}";
 xajax.config.responseType = "{$sResponseType|noescape}";
 {if $nResponseQueueSize > 0}
 xajax.config.responseQueueSize = {$nResponseQueueSize|noescape};
