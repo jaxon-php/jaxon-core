@@ -244,7 +244,28 @@ class Xajax
 
 		if(XAJAX_DEFAULT_CHAR_ENCODING != 'utf-8')
             $this->configure("decodeUTF8Input", true);
+	}
 
+	/**
+	 * Set the PHP class autoloader
+	 * 
+	 * @param object		$xAutoLoader		The PHP class autoloader
+	 *
+	 * @return void
+	 */
+	public function setAutoLoader($xAutoLoader)
+	{
+		$this->xPluginManager->setAutoLoader($xAutoLoader);
+	}
+
+	/**
+	 * Disable the PHP class autoloader
+	 *
+	 * @return void
+	 */
+	public function disableAutoLoad()
+	{
+		$this->xPluginManager->disableAutoLoad();
 	}
 
 	/*
@@ -374,15 +395,36 @@ class Xajax
 		return $this->xPluginManager->register($aArgs);
 	}
 
-	/*
-		Function: setJavascriptURI
-		
-		Set the URI of the Xajax javascript library files.
-		
-		Parameters:
-		
-		sJsLibURI - (string):  The URI of the Xajax javascript library files.
-	*/
+	/**
+	 * Add a path to the class directories
+	 *
+	 * @param string		$sPath			The path to the directory
+	 * @param string|null	$sNamespace		The associated namespace
+	 *
+	 * @return boolean
+	 */
+	public function addClassDir($sPath, $sNamespace = null)
+	{
+		return $this->xPluginManager->addClassDir($sPath, $sNamespace);
+	}
+
+	/**
+	 * Register callable objects from all class directories
+	 *
+	 * @return void
+	 */
+	public function registerClasses()
+	{
+		return $this->xPluginManager->registerClasses();
+	}
+
+	/**
+	 * Set the URI of the Xajax javascript library files
+	 * 
+	 * @param string		$sJsLibURI		The URI of the Xajax javascript library files
+	 *
+	 * @return void
+	 */
 	public function setJavascriptURI($sJsLibURI)
 	{
 		$this->xPluginManager->setJavascriptURI($sJsLibURI);

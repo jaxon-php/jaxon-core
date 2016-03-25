@@ -3,6 +3,7 @@
 namespace Xajax\Plugin\Request;
 
 use Xajax\Plugin\Request as Request;
+use Xajax\Plugin\Manager as PluginManager;
 use Xajax\Request\Manager as RequestManager;
 
 /*
@@ -55,8 +56,6 @@ class CallableObject extends Request
 		String: sDefer
 	*/
 	protected $sDefer;
-	
-	protected $bDeferScriptGeneration;
 
 	/*
 		String: sRequestedClass
@@ -78,7 +77,6 @@ class CallableObject extends Request
 
 		$this->sXajaxPrefix = 'xajax_';
 		$this->sDefer = '';
-		$this->bDeferScriptGeneration = false;
 
 		$this->sRequestedClass = null;
 		$this->sRequestedMethod = null;
@@ -110,14 +108,6 @@ class CallableObject extends Request
 	}
 
 	/*
-		Function: setRequestedClass
-	*/
-	public function setRequestedClass($sRequestedClass)
-	{
-		$this->sRequestedClass = $sRequestedClass;
-	}
-
-	/*
 		Function: configure
 	*/
 	public function configure($sName, $mValue)
@@ -129,12 +119,6 @@ class CallableObject extends Request
 			break;
 		case 'scriptDefferal':
 			$this->sDefer = ($mValue === true ? 'defer' : '');
-			break;
-		case 'deferScriptGeneration':
-			if($mValue === true || $mValue === false)
-				$this->bDeferScriptGeneration = $mValue;
-			else if($mValue == 'deferred')
-				$this->bDeferScriptGeneration = true;
 			break;
 		default:
 		}
@@ -181,7 +165,6 @@ class CallableObject extends Request
 
 		return false;
 	}
-
 
 	public function generateHash()
 	{
@@ -244,6 +227,12 @@ class CallableObject extends Request
 			return false;
 
 		$aArgs = RequestManager::getInstance()->process();
+
+		// Try to register an instance of the requested class, if it isn't yet
+		if(!array_key_exists($this->sRequestedClass, $this->aCallableObjects))
+		{
+			PluginManager::getInstance()->registerClass($this->sRequestedClass);
+		}
 
 		if(array_key_exists($this->sRequestedClass, $this->aCallableObjects))
 		{

@@ -60,8 +60,6 @@ class UserFunction extends Request
 		javascript file is loaded after the page has been fully loaded.
 	*/
 	protected $sDefer;
-	
-	protected $bDeferScriptGeneration;
 
 	/*
 		String: sRequestedFunction
@@ -88,7 +86,6 @@ class UserFunction extends Request
 
 		$this->sXajaxPrefix = 'xajax_';
 		$this->sDefer = '';
-		$this->bDeferScriptGeneration = false;
 
 		$this->sRequestedFunction = null;
 		
@@ -124,12 +121,6 @@ class UserFunction extends Request
 			break;
 		case 'scriptDefferal':
 			$this->sDefer = ($mValue === true ? 'defer' : '');
-			break;
-		case 'deferScriptGeneration':
-			if($mValue === true || $mValue === false)
-				$this->bDeferScriptGeneration = $mValue;
-			else if($mValue == 'deferred')
-				$this->bDeferScriptGeneration = true;
 			break;
 		default:
 		}

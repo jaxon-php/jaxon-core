@@ -102,13 +102,18 @@ class CallableObject
 	/*
 		Function: getName
 		
-		Returns the name of this callable object.  This is typically the
-		class name of the object.
+		Returns the name of this callable object. This is the name of the generated javascript class.
 	*/
 	public function getName()
 	{
-		// Get the class name with the namespace.
-		return $this->reflectionClass->getName();
+		// The class name without the namespace.
+		$name = $this->reflectionClass->getShortName();
+		// Append the classpath to the name
+		if(($this->classpath))
+		{
+			$name = $this->classpath . $name;
+		}
+		return $name;
 	}
 
 
@@ -260,9 +265,7 @@ class CallableObject
 	*/
 	public function isClass($sClass)
 	{
-		if($this->getName() === $sClass)
-			return true;
-		return false;
+		return ($this->reflectionClass->getName() === $sClass);
 	}
 	
 	/*

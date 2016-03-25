@@ -2,6 +2,11 @@
 
 namespace Xajax\Plugin;
 
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+use RegexIterator;
+use RecursiveRegexIterator;
+
 /*
 	File: Manager.php
 
@@ -46,6 +51,19 @@ class Manager
 	*/
 	private $aResponsePlugins;
 	
+	/*
+		Array: aClassDirs
+		Directories where Xajax classes to be registered are found
+	*/
+	private $aClassDirs;
+	
+	/*
+		Object: xAutoLoader
+		The PHP class autoloader
+	*/
+	private $bAutoLoadEnabled;
+	private $xAutoLoader;
+	
 	private $sJsLibURI;
 	private $sDefer;
 
@@ -63,8 +81,6 @@ class Manager
 	private $bDebug;
 	private $bVerboseDebug;
 	private $nScriptLoadTimeout;
-	private $bUseUncompressedScripts;
-	private $bDeferScriptGeneration;
 	private $sLanguage;
 	private $nResponseQueueSize;
 	private $sDebugOutputID;
@@ -106,6 +122,11 @@ class Manager
 		$this->aResponsePlugins = array();
 		$this->aPlugins = array();
 
+		$this->aClassDirs = array();
+
+		$this->bAutoLoadEnabled = true;
+		$this->xAutoLoader = null;
+
 		// By default, the js files are loaded from this URI
 		$this->sJsLibURI = '//assets.lagdo-software.net/libs/xajax/js/latest/';
 
@@ -114,7 +135,6 @@ class Manager
 		$this->sJsAppURI = '';
 		$this->sJsAppDir = '';
 
-		$this->bDeferScriptGeneration = false;
 		$this->sDefer = '';
 		$this->sRequestURI = '';
 		$this->sStatusMessages = 'false';
@@ -125,12 +145,45 @@ class Manager
 		$this->bDebug = false;
 		$this->bVerboseDebug = false;
 		$this->nScriptLoadTimeout = 2000;
-		$this->bUseUncompressedScripts = false;
 		$this->sLanguage = 'en';
 		$this->nResponseQueueSize = null;
 		$this->sDebugOutputID = null;
 	}
 	
+	/**
+	 * Set the PHP class autoloader
+	 * 
+	 * @param object		$xAutoLoader		The PHP class autoloader
+	 *
+	 * @return void
+	 */
+	public function setAutoLoader($xAutoLoader)
+	{
+		$this->bAutoLoadEnabled = true;
+		$this->xAutoLoader = $xAutoLoader;
+	}
+	
+	/**
+	 * Disable the PHP class autoloader
+	 *
+	 * @return void
+	 */
+	public function disableAutoLoad()
+	{
+		$this->bAutoLoadEnabled = false;
+		$this->xAutoLoader = null;
+	}
+
+	/**
+	 * Return true if the PHP class autoloader is enabled
+	 *
+	 * @return bool
+	 */
+	public function autoLoadDisabled()
+	{
+		return (!$this->bAutoLoadEnabled);
+	}
+
 	/*
 		Function: loadPlugins
 		
@@ -207,7 +260,6 @@ class Manager
 
 		$this->setPluginPriority($xPlugin, $nPriority);
 	}
-
 
 	private function generateHash()
 	{
@@ -333,32 +385,9 @@ class Manager
 
 		switch($sName)
 		{
-		// The config option javascript URI is obsolete
-		/*case 'javascript URI':
-			$this->sJsLibURI = $mValue;
-			if(substr($this->sJsLibURI, -1) != '/')
-			{
-				$this->sJsLibURI .= '/';
-			}
-			break;*/
 		case "scriptDefferal":
 			$this->sDefer = ($mValue === true ? "defer" : "");
 			break;
-		// The config option deferScriptGeneration is obsolete
-		/*case 'deferScriptGeneration':
-			if($mValue === true || $mValue === false)
-				$this->bDeferScriptGeneration = $mValue;
-			else if($mValue == 'deferred')
-				$this->bDeferScriptGeneration = true;
-			break;*/
-		// The config option deferDirectory is obsolete
-		/*case 'deferDirectory':
-			$this->sDeferDir = $mValue;
-			if(substr($this->sDeferDir, -1) != '/')
-			{
-				$this->sDeferDir .= '/';
-			}
-			break;*/
 		case "requestURI":
 			$this->sRequestURI = $mValue;
 			break;
@@ -390,11 +419,6 @@ class Manager
 		case "scriptLoadTimeout":
 			$this->nScriptLoadTimeout = $mValue;
 			break;
-		// The config option useUncompressedScripts is obsolete
-		/*case "useUncompressedScripts":
-			if($mValue === true || $mValue === false)
-				$this->bUseUncompressedScripts = $mValue;
-			break;*/
 		case 'language':
 			$this->sLanguage = $mValue;
 			break;
@@ -434,6 +458,187 @@ class Manager
 //SkipDebug
 		throw new \Xajax\Exception\Error('errors.register.method', array('args' => print_r($aArgs, true)));
 //EndSkipDebug
+	}
+
+	/**
+	 * Add a path to the class directories
+	 *
+	 * @param string		$sDir			The path to the directory
+	 * @param string|null	$sNamespace		The associated namespace
+	 *
+	 * @return boolean
+	 */
+	public function addClassDir($sDir, $sNamespace = null)
+	{
+		if(!is_dir(($sDir = trim($sDir))))
+		{
+			return false;
+		}
+		if(!($sNamespace = trim($sNamespace)))
+		{
+			$sNamespace = null;
+		}
+		if(($sNamespace))
+		{
+			$sNamespace = trim($sNamespace, '\\');
+			// If there is an autoloader, register the dir with PSR4 autoloading
+			if(($this->xAutoLoader))
+			{
+				$this->xAutoLoader->setPsr4($sNamespace . '\\', $sDir);
+			}
+		}
+		else if(($this->xAutoLoader))
+		{
+			// If there is an autoloader, register the dir with classmap autoloading
+			$itDir = new RecursiveDirectoryIterator($sDir);
+			$itFile = new RecursiveIteratorIterator($itDir);
+			// Iterate on dir content
+			foreach($itFile as $xFile)
+			{
+				// skip everything except PHP files
+				if(!$xFile->isFile() || $xFile->getExtension() != 'php')
+				{
+					continue;
+				}
+				$this->xAutoLoader->addClassMap(array($xFile->getBasename('.php') => $xFile->getPathname()));
+			}
+		}
+		$this->aClassDirs[] = array('path' => $sDir, 'namespace' => $sNamespace);
+		return true;
+	}
+
+	/**
+	 * Register an instance of a given class
+	 *
+	 * @param string|null	$sClassName		The name of the class to register
+	 *
+	 * @return bool
+	 */
+	public function registerClass($sClassName)
+	{
+		if(!($sClassName = trim($sClassName)))
+		{
+			return false;
+		}
+		// Replace / and \ with dots, and trim the string
+		$sClassName = trim(str_replace(array('\\'), array('.'), $sClassName), '.');
+		$sClassPath = '';
+		if(($nLastDotPosition = strrpos($sClassName, '.')) !== false)
+		{
+			$sClassPath = substr($sClassName, 0, $nLastDotPosition);
+			$sClassName = substr($sClassName, $nLastDotPosition + 1);
+		}
+		$sClassFile = str_replace(array('.'), array('/'), $sClassPath) . '/' . $sClassName . '.php';
+		$sNamespace = '';
+		$bFileExists = false;
+		foreach($this->aClassDirs as $aClassDir)
+		{
+			$sDirNamespace = $aClassDir['namespace'];
+			$nLen = strlen($sDirNamespace);
+			// Check if the class belongs to the namespace
+			if(($sDirNamespace) && substr($sClassPath, 0, $nLen) == str_replace(array('\\'), array('.'), $sDirNamespace))
+			{
+				$sClassFile = $aClassDir['path'] . '/' . substr($sClassFile, $nLen);
+				if(is_file($sClassFile))
+				{
+					$sNamespace = $sDirNamespace;
+					$bFileExists = true;
+					break;
+				}
+			}
+			else if(!($sDirNamespace) && is_file($aClassDir['path'] . '/' . $sClassFile))
+			{
+				$sClassFile = $aClassDir['path'] . '/' . $sClassFile;
+				if(is_file($sClassFile))
+				{
+					$bFileExists = true;
+					break;
+				}
+			}
+		}
+		// Return false if the file does not exist
+		if(!$bFileExists)
+		{
+			return false;
+		}
+		// Require the file only if there is no autoloader
+		if(!$this->autoLoadDisabled())
+		{
+			require_once($sClassFile);
+		}
+		// Add the namespace to the classname
+		if(($sNamespace))
+		{
+			$sClassName = '\\' . str_replace(array('.'), array('\\'), $sClassPath) . '\\' . $sClassName;
+		}
+		// Create and register an instance of the class
+		$xCallableObject = new $sClassName;
+		$aOptions = array('*' => array());
+		if(($sClassPath))
+		{
+			$aOptions['*']['classpath'] = $sClassPath;
+		}
+		return $this->register(array(XAJAX_CALLABLE_OBJECT, $xCallableObject, $aOptions));
+	}
+
+	/**
+	 * Register callable objects a single class directory
+	 *
+	 * @param string		$sDir			The path to the directory
+	 * @param string|null	$sNamespace		The associated namespace
+	 *
+	 * @return void
+	 */
+	protected function registerClassesFromDir($sDir, $sNamespace)
+	{
+		$itDir = new RecursiveDirectoryIterator($sDir);
+		$itFile = new RecursiveIteratorIterator($itDir);
+		// Iterate on dir content
+		foreach($itFile as $xFile)
+		{
+			// skip everything except PHP files
+			if(!$xFile->isFile() || $xFile->getExtension() != 'php')
+			{
+				continue;
+			}
+			// Get the corresponding class path and name
+			$sClassPath = trim(substr($xFile->getPath(), strlen($sDir)), '/');
+			$sClassPath = str_replace(array('/'), array('.'), $sClassPath);
+			$sClassName = $xFile->getBasename('.php');
+			if(($sNamespace))
+			{
+				$sNamespace = trim($sNamespace, '\\');
+				$sClassPath = str_replace(array('\\'), array('.'), $sNamespace) . '.' . $sClassPath;
+				$sClassPath = rtrim($sClassPath, '.');
+				$sClassName = '\\' . str_replace(array('.'), array('\\'), $sClassPath) . '\\' . $sClassName;
+			}
+			// Require the file only if there is no autoloader
+			if(!$this->autoLoadDisabled())
+			{
+				require_once($xFile->getPathname());
+			}
+			// Create and register an instance of the class
+			$xCallableObject = new $sClassName;
+			$aOptions = array('*' => array());
+			if(($sClassPath))
+			{
+				$aOptions['*']['classpath'] = $sClassPath;
+			}
+			$this->register(array(XAJAX_CALLABLE_OBJECT, $xCallableObject, $aOptions));
+		}
+	}
+
+	/**
+	 * Register callable objects from all class directories
+	 *
+	 * @return void
+	 */
+	public function registerClasses()
+	{
+		foreach($this->aClassDirs as $sClassDir)
+		{
+			$this->registerClassesFromDir($sClassDir['path'], $sClassDir['namespace']);
+		}
 	}
 
 	/*
