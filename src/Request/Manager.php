@@ -2,6 +2,8 @@
 
 namespace Xajax\Request;
 
+use Xajax\Template\EngineTrait as TemplateTrait;
+
 /*
 
 	File: Manager.php
@@ -36,6 +38,8 @@ if(!defined('XAJAX_METHOD_POST')) define('XAJAX_METHOD_POST', 2);
 */
 class Manager
 {
+	use TemplateTrait;
+
 	/*
 		Array: aArgs
 		

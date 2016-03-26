@@ -45,6 +45,7 @@ class Translator
         $this->configure('language', $this->sDefaultLocale);
 
 		$this->aMessages = array(
+			'debug.function.include' => "From include file: :file => :output",
 			'errors.debug.ts-message' => "** Xajax Error Log - :timestamp ** :message \n",
 			'errors.debug.write-log' => "Xajax was unable to write to the error log file: :file",
 			'errors.debug.message' => "PHP Error Messages: :message",

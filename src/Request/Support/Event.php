@@ -2,7 +2,9 @@
 
 namespace Xajax\Request\Support;
 
+use Xajax\Request\Manager as RequestManager;
 use Xajax\Response\Manager as ResponseManager;
+use Xajax\Template\EngineTrait as TemplateTrait;
 
 /*
 	File: Event.php
@@ -31,6 +33,8 @@ use Xajax\Response\Manager as ResponseManager;
 */
 class Event
 {
+	use TemplateTrait;
+
 	/*
 		String: sName
 		
@@ -64,6 +68,9 @@ class Event
 		$this->sName = $sName;
 		$this->aConfiguration = array();
 		$this->aHandlers = array();
+
+		// Set the template manager
+		$this->setTemplate(RequestManager::getInstance()->getTemplate());
 	}
 	
 	/*
@@ -132,27 +139,21 @@ class Event
 	{
 		$sMode = '';
 		$sMethod = '';
-		
 		if(isset($this->aConfiguration['mode']))
 		{
 			$sMode = $this->aConfiguration['mode'];
-		}	
+		}
 		if(isset($this->aConfiguration['method']))
 		{
 			$sMethod = $this->aConfiguration['method'];
-		}	
-		if(($sMode))
-		{
-			$sMode = ", mode: '{$sMode}'";
-		}
-		if(($sMethod))
-		{
-			$sMethod = ", method: '{$sMethod}'";
 		}
 
-		$sEvent = $this->sName;
-		return "{$sXajaxPrefix}{$sEventPrefix}{$sEvent} = function() { return xajax.request" .
-			"( { xjxevt: '{$sEvent}' }, { parameters: arguments{$sMode}{$sMethod} } ); };\n";
+		return $this->render('support/event.js.tpl', array(
+			'sPrefix' => $sXajaxPrefix . $sEventPrefix,
+			'sEvent' => $this->sName,
+			'sMode' => $sMode,
+			'sMethod' => $sMethod,
+		));
 	}
 	
 	/*

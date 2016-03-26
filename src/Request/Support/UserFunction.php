@@ -2,7 +2,10 @@
 
 namespace Xajax\Request\Support;
 
+use Xajax\Request\Request;
+use Xajax\Request\Manager as RequestManager;
 use Xajax\Response\Manager as ResponseManager;
+use Xajax\Template\EngineTrait as TemplateTrait;
 
 /*
 	File: UserFunction.php
@@ -35,6 +38,8 @@ use Xajax\Response\Manager as ResponseManager;
 */
 class UserFunction
 {
+	use TemplateTrait;
+
 	/*
 		String: sAlias
 		
@@ -45,11 +50,11 @@ class UserFunction
 	private $sAlias;
 	
 	/*
-		Object: uf
+		Object: sUserFunction
 		
 		A string or array which defines the function to be registered.
 	*/
-	private $uf;
+	private $sUserFunction;
 	
 	/*
 		String: sInclude
@@ -71,7 +76,7 @@ class UserFunction
 		
 		Constructs and initializes the <UserFunction> object.
 		
-		$uf - (mixed): A function specification in one of the following formats:
+		$sUserFunction - (mixed): A function specification in one of the following formats:
 		
 			- a three element array:
 				(string) Alternate function name: when a method of a class has the same
@@ -111,23 +116,26 @@ class UserFunction
 				
 			$xajax->register(XAJAX_FUNCTION, $myUserFunction);				
 	*/
-	public function __construct($uf)
+	public function __construct($sUserFunction)
 	{
 //SkipDebug
-		if(is_array($this->uf) && count($this->uf) != 2)
+		if(is_array($this->sUserFunction) && count($this->sUserFunction) != 2)
         {
 			throw new \Xajax\Exception\Error('errors.functions.invalid-declaration');
         }
 //EndSkipDebug
 		$this->sAlias = '';
-		$this->uf = $uf;
+		$this->sUserFunction = $sUserFunction;
 		$this->aConfiguration = array();
 
-		if(is_array($this->uf) && count($this->uf) > 0)
+		if(is_array($this->sUserFunction) && count($this->sUserFunction) > 0)
 		{
-			$this->sAlias = $this->uf[0];
-			$this->uf = array_slice($this->uf, 1);
+			$this->sAlias = $this->sUserFunction[0];
+			$this->sUserFunction = array_slice($this->sUserFunction, 1);
 		}
+
+		// Set the template manager
+		$this->setTemplate(RequestManager::getInstance()->getTemplate());
 	}
 	
 	/*
@@ -142,11 +150,11 @@ class UserFunction
 	public function getName()
 	{
 		// Do not use sAlias here!
-		if(is_array($this->uf))
+		if(is_array($this->sUserFunction))
         {
-			return $this->uf[1];
+			return $this->sUserFunction[1];
         }
-		return $this->uf;
+		return $this->sUserFunction;
 	}
 	
 	/*
@@ -180,7 +188,7 @@ class UserFunction
 	public function generateRequest($sXajaxPrefix)
 	{
 		$sAlias = (($this->sAlias) ? $this->sAlias : $this->getName());
-		return new \Xajax\Request\Request("{$sXajaxPrefix}{$sAlias}");
+		return new Request("{$sXajaxPrefix}{$sAlias}");
 	}
 	
 	/*
@@ -196,14 +204,12 @@ class UserFunction
 		$sFunction = $this->getName();
 		$sAlias = (($this->sAlias) ? $this->sAlias : $sFunction);
 
-		$code = "{$sXajaxPrefix}{$sAlias} = function() {return xajax.request( { xjxfun: '{$sFunction}' }, { parameters: arguments";
-		$sSeparator = ", ";
-		foreach($this->aConfiguration as $sKey => $sValue)
-		{
-			$code .= "{$sSeparator}{$sKey}: {$sValue}";
-		}
-		$code .= " } ); };\n";
-		return $code;
+		return $this->render('support/function.js.tpl', array(
+			'sPrefix' => $sXajaxPrefix,
+			'sAlias' => $sAlias,
+			'sFunction' => $sFunction,
+			'aConfig' => $this->aConfiguration,
+		));
 	}
 
 	/*
@@ -216,8 +222,6 @@ class UserFunction
 	*/
 	public function call($aArgs = array())
 	{
-		$objResponseManager = ResponseManager::getInstance();
-		
 		if(($this->sInclude))
 		{
 			ob_start();
@@ -227,13 +231,16 @@ class UserFunction
 //SkipDebug
 			if(($sOutput))
 			{
-				$sOutput = 'From include file: ' . $this->sInclude . ' => ' . $sOutput;
-				$objResponseManager->debug($sOutput);
+				$sOutput = xajax_trans('debug.function.include', array(
+					'file' => $this->sInclude,
+					'output' => $sOutput
+				));
+				ResponseManager::getInstance()->debug($sOutput);
 			}
 //EndSkipDebug
 		}
 		
-		$mFunction = $this->uf;
-		$objResponseManager->append(call_user_func_array($mFunction, $aArgs));
+		$mFunction = $this->sUserFunction;
+		ResponseManager::getInstance()->append(call_user_func_array($mFunction, $aArgs));
 	}
 }

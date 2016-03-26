@@ -2,7 +2,10 @@
 
 namespace Xajax\Request\Support;
 
+use Xajax\Request\Request;
+use Xajax\Request\Manager as RequestManager;
 use Xajax\Response\Manager as ResponseManager;
+use Xajax\Template\EngineTrait as TemplateTrait;
 
 /*
 	File: CallableObject.php
@@ -34,6 +37,8 @@ use Xajax\Response\Manager as ResponseManager;
 
 class CallableObject
 {
+	use TemplateTrait;
+
 	/*
 		Object: obj
 		
@@ -86,6 +91,9 @@ class CallableObject
 		$this->reflectionClass = new \ReflectionClass(get_class($this->callableObject));
 		$this->aConfiguration = array();
 		$this->aExcludedMethods = array();
+
+		// Set the template manager
+		$this->setTemplate(RequestManager::getInstance()->getTemplate());
 	}
 
 	/*
@@ -116,13 +124,23 @@ class CallableObject
 		return $name;
 	}
 
-
 	public function getMethods()
 	{
 		$aReturn = array();
 		foreach($this->reflectionClass->getMethods(\ReflectionMethod::IS_PUBLIC) as $xMethod)
 		{
-			$aReturn[] = $xMethod->getShortName();
+			$sMethodName = $xMethod->getShortName();
+			// Don't take magic __call, __construct, __destruct methods
+			if(strlen($sMethodName) > 2 && substr($sMethodName, 0, 2) == '__')
+			{
+				continue;
+			}
+			// Don't take excluded methods
+			if(in_array($sMethodName, $this->aExcludedMethods))
+			{
+				continue;
+			}
+			$aReturn[] = $sMethodName;
 		}
 		return $aReturn;
 	}
@@ -152,7 +170,6 @@ class CallableObject
 				$this->aExcludedMethods = $sValue;
 			return;
 		}
-		$sMethod = strtolower($sMethod);
 		
 		if(!isset($this->aConfiguration[$sMethod]))
 		{
@@ -181,18 +198,17 @@ class CallableObject
 		foreach($this->reflectionClass->getMethods(\ReflectionMethod::IS_PUBLIC) as $xMethod)
 		{
 			$sMethodName = $xMethod->getShortName();
-			// Exclude magic __call, __construct, __destruct methods
+			// Don't generate magic __call, __construct, __destruct methods
 			if(strlen($sMethodName) > 2 && substr($sMethodName, 0, 2) == '__')
 			{
 				continue;
 			}
-			// Exclude constructor and excluded methods
-			if($sMethodName == $sClass || in_array($sMethodName, $this->aExcludedMethods))
+			// Don't generate excluded methods
+			if(in_array($sMethodName, $this->aExcludedMethods))
 			{
 				continue;
 			}
-			$aRequests[strtolower($sMethodName)] = 
-				new \Xajax\Request\Request("{$sXajaxPrefix}{$this->classpath}{$sClass}.{$sMethodName}");
+			$aRequests[$sMethodName] = new Request("{$sXajaxPrefix}{$this->classpath}{$sClass}.{$sMethodName}");
 		}
 
 		return $aRequests;
@@ -209,45 +225,40 @@ class CallableObject
 	*/	
 	public function getClientScript($sXajaxPrefix)
 	{
-		$sClass = $this->getClassName();
-
-		// Add the classpath to the prefix
-		$sXajaxPrefix .= $this->classpath;
+		$sClass = $this->classpath . $this->getClassName();
 		
-		$code = "{$sXajaxPrefix}{$sClass} = {};\n";
-		
+		$aMethods = array();
+		$aConfig = array();
+		if(isset($this->aConfiguration['*']))
+		{
+			$aConfig = $this->aConfiguration['*'];
+		}
 		foreach($this->reflectionClass->getMethods(\ReflectionMethod::IS_PUBLIC) as $xMethod)
 		{
 			$sMethodName = $xMethod->getShortName();
-			// Exclude magic __call, __construct, __destruct methods
+			// Don't export magic __call, __construct, __destruct methods
 			if(strlen($sMethodName) > 0 && substr($sMethodName, 0, 2) == '__')
 			{
 				continue;
 			}
-			// Exclude constructor and excluded methods
-			if($sMethodName == $sClass || in_array($sMethodName, $this->aExcludedMethods))
+			// Don't export excluded methods
+			if(in_array($sMethodName, $this->aExcludedMethods))
 			{
 				continue;
 			}
-			// Print Js code for this method
-			$code .= "{$sXajaxPrefix}{$sClass}.{$sMethodName} = function() { return xajax.request( " .
-				"{ xjxcls: '{$this->classpath}{$sClass}', xjxmthd: '{$sMethodName}' }, { parameters: arguments";
-			
-			$sSeparator = ", ";
-			if(isset($this->aConfiguration['*']))
+			$aMethod = array('name' => $sMethodName, 'config' => $aConfig);
+			if(isset($this->aConfiguration[$sMethodName]))
 			{
-				foreach($this->aConfiguration['*'] as $sKey => $sValue)
-					$code .= "{$sSeparator}{$sKey}: {$sValue}";
+				$aMethod['config'] = array_merge($aMethod['config'], $this->aConfiguration[$sMethodName]);
 			}
-			if(isset($this->aConfiguration[strtolower($sMethodName)]))
-			{
-				foreach($this->aConfiguration[strtolower($sMethodName)] as $sKey => $sValue)
-					$code .= "{$sSeparator}{$sKey}: {$sValue}";
-			}
-
-			$code .= " } ); };\n";
+			$aMethods[] = $aMethod;
 		}
-		return $code;
+
+		return $this->render('support/object.js.tpl', array(
+			'sPrefix' => $sXajaxPrefix,
+			'sClass' => $sClass,
+			'aMethods' => $aMethods,
+		));
 	}
 	
 	/*
@@ -299,8 +310,7 @@ class CallableObject
 	{
 		if(!$this->hasMethod($sMethod))
 			return;
-		$objResponseManager = ResponseManager::getInstance();
 		$reflectionMethod = $this->reflectionClass->getMethod($sMethod);
-		$objResponseManager->append($reflectionMethod->invokeArgs($this->callableObject, $aArgs));
+		ResponseManager::getInstance()->append($reflectionMethod->invokeArgs($this->callableObject, $aArgs));
 	}
 }

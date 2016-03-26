@@ -210,6 +210,8 @@ class Xajax
 		$this->xPluginManager->setTemplate($this->getTemplate());
 		// Set the template engine in the response manager
 		$this->xResponseManager->setTemplate($this->getTemplate());
+		// Set the template engine in the request manager
+		$this->xRequestManager->setTemplate($this->getTemplate());
 		// Set the translator in the response manager
 		$this->xResponseManager->setTranslator($this->getTranslator());
 
