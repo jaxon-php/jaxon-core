@@ -1,8 +1,8 @@
 <?php
 
-namespace Xajax\Plugin\Request;
+namespace Xajax\Request\Plugin;
 
-use Xajax\Plugin\Request as Request;
+use Xajax\Plugin\Request as RequestPlugin;
 use Xajax\Plugin\Manager as PluginManager;
 use Xajax\Request\Manager as RequestManager;
 
@@ -35,7 +35,7 @@ if(!defined ('XAJAX_CALLABLE_OBJECT')) define ('XAJAX_CALLABLE_OBJECT', 'callabl
 /*
 	Class: CallableObject
 */
-class CallableObject extends Request
+class CallableObject extends RequestPlugin
 {
 	/*
 		Array: aCallableObjects

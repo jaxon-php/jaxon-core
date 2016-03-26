@@ -1,8 +1,8 @@
 <?php
 
-namespace Xajax\Plugin\Request;
+namespace Xajax\Request\Plugin;
 
-use Xajax\Plugin\Request as Request;
+use Xajax\Plugin\Request as RequestPlugin;
 use Xajax\Request\Manager as RequestManager;
 
 /*
@@ -35,7 +35,7 @@ if(!defined ('XAJAX_FUNCTION')) define ('XAJAX_FUNCTION', 'function');
 /*
 	Class: UserFunction
 */
-class UserFunction extends Request
+class UserFunction extends RequestPlugin
 {
 	/*
 		Array: aFunctions
