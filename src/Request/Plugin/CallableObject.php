@@ -243,8 +243,8 @@ class CallableObject extends RequestPlugin
 				return true;
 			}
 		}
-
-		return xajax_trans('errors.objects.invalid',
+		// Unable to find the requested object or method
+		throw new \Xajax\Exception\Error('errors.objects.invalid',
 			array('class' => $this->sRequestedClass, 'method' => $this->sRequestedMethod));
 	}
 }

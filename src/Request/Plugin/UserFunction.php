@@ -4,7 +4,7 @@ namespace Xajax\Request\Plugin;
 
 use Xajax\Plugin\Request as RequestPlugin;
 use Xajax\Request\Manager as RequestManager;
-
+use Xajax\Request\Support\UserFunction;
 /*
 	File: UserFunction.php
 
@@ -134,18 +134,18 @@ class UserFunction extends RequestPlugin
 	*/
 	public function register($aArgs)
 	{
-		if(1 < count($aArgs))
+		if(count($aArgs) > 1)
 		{
 			$sType = $aArgs[0];
 
-			if(XAJAX_FUNCTION == $sType)
+			if($sType == XAJAX_FUNCTION)
 			{
 				$xUserFunction = $aArgs[1];
 
-				if(!($xUserFunction instanceof \Xajax\Request\Support\UserFunction))
-					$xUserFunction = new \Xajax\Request\Support\UserFunction($xUserFunction);
+				if(!($xUserFunction instanceof UserFunction))
+					$xUserFunction = new UserFunction($xUserFunction);
 
-				if(2 < count($aArgs))
+				if(count($aArgs) > 2)
 				{
 					if(is_array($aArgs[2]))
 					{
@@ -153,7 +153,9 @@ class UserFunction extends RequestPlugin
 						{
 							$xUserFunction->configure($sName, $sValue);
 						}
-					} else {
+					}
+					else
+					{
 						$xUserFunction->configure('include', $aArgs[2]);
 					}
 				}
@@ -233,7 +235,7 @@ class UserFunction extends RequestPlugin
 			$this->aFunctions[$this->sRequestedFunction]->call($aArgs);
 			return true;
 		}
-
-		return xajax_trans('errors.functions.invalid', array('name' => $this->sRequestedFunction));
+		// Unable to find the requested function
+		throw new \Xajax\Exception\Error('errors.functions.invalid', array('name' => $this->sRequestedFunction));
 	}
 }
