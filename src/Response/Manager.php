@@ -28,20 +28,19 @@ use Xajax\Translation\TranslatorTrait;
 
 	This class stores and tracks the response that will be returned after
 	processing a request.  The response manager represents a single point
-	of contact for working with <Response> objects as well as 
-	<CustomResponse> objects.
+	of contact for working with <Response> objects.
 */
 class Manager
 {
 	use TranslatorTrait;
 
 	/*
-		Object: objResponse
+		Object: xResponse
 	
 		The current response object that will be sent back to the browser
 		once the request processing phase is complete.
 	*/
-	private $objResponse;
+	private $xResponse;
 	
 	/*
 		String: sCharacterEncoding
@@ -65,7 +64,7 @@ class Manager
 	*/
 	private function __construct()
 	{
-		$this->objResponse = NULL;
+		$this->xResponse = NULL;
 		$this->aDebugMessages = array();
 	}
 	
@@ -102,13 +101,13 @@ class Manager
 		{
 			$this->sCharacterEncoding = $mValue;
 			
-			if(isset($this->objResponse))
-				$this->objResponse->setCharacterEncoding($this->sCharacterEncoding);
+			if(isset($this->xResponse))
+				$this->xResponse->setCharacterEncoding($this->sCharacterEncoding);
 		}
 		else if('contentType' == $sName)
 		{
-			if(isset($this->objResponse))
-				$this->objResponse->setContentType($mValue);
+			if(isset($this->xResponse))
+				$this->xResponse->setContentType($mValue);
 		}
 		else if('outputEntities' == $sName)
 		{
@@ -116,8 +115,8 @@ class Manager
 			{
 				$this->bOutputEntities = $mValue;
 				
-				if(isset($this->objResponse))
-					$this->objResponse->setOutputEntities($this->bOutputEntities);
+				if(isset($this->xResponse))
+					$this->xResponse->setOutputEntities($this->bOutputEntities);
 			}
 		}
 		$this->aSettings[$sName] = $mValue;
@@ -156,62 +155,36 @@ class Manager
 	*/
 	public function clear()
 	{
-		$this->objResponse = NULL;
+		$this->xResponse = NULL;
 	}
 
 	/*
 		Function: append
 		
-		Used, primarily internally, to append one response object onto the end of another.  You can
-		append one Response to the end of another, or append a CustomResponse onto the end of 
-		another CustomResponse.  However, you cannot append a standard response object onto the end
-		of a custom response and likewise, you cannot append a custom response onto the end of a standard
-		response.
+		Used, primarily internally, to append one response object onto the end of another.
+		You cannot append a given response onto the end of a response of different type.
 		
 		Parameters:
 		
-		$mResponse - (object):  The new response object to be added to the current response object.
+		$xResponse - (object):  The new response object to be added to the current response object.
 		
 		If no prior response has been appended, this response becomes the main response object to which other
 		response objects will be appended.
 	*/
-	public function append($mResponse)
+	public function append(Response $xResponse)
 	{
-		if( $mResponse instanceof Response )
+		if(!$this->xResponse)
 		{
-			if(NULL == $this->objResponse)
-			{
-				$this->objResponse = $mResponse;
-			}
-			else if( $this->objResponse instanceof Response )
-			{
-				if($this->objResponse != $mResponse)
-					$this->objResponse->appendResponse($mResponse);
-			}
-			else
-			{
-				$this->debug(xajax_trans('errors.mismatch.types', array('class' => get_class($this->objResponse))));
-			}
+			$this->xResponse = $xResponse;
 		}
-		else if( $mResponse instanceof CustomResponse )
+		else if(get_class($this->xResponse) == get_class($xResponse))
 		{
-			if(NULL == $this->objResponse)
-			{
-				$this->objResponse = $mResponse;
-			}
-			else if( $this->objResponse instanceof CustomResponse )
-			{
-				if($this->objResponse != $mResponse)
-					$this->objResponse->appendResponse($mResponse);
-			}
-			else
-			{
-				$this->debug(xajax_trans('errors.mismatch.types', array('class' => get_class($this->objResponse))));
-			}
+			if($this->xResponse != $xResponse)
+				$this->xResponse->appendResponse($xResponse);
 		}
 		else
 		{
-			$this->debug(xajax_trans('errors.response.result.invalid'));
+			$this->debug(xajax_trans('errors.mismatch.types', array('class' => get_class($xResponse))));
 		}
 	}
 	
@@ -238,15 +211,15 @@ class Manager
 	*/
 	public function send()
 	{
-		if(($this->objResponse))
+		if(($this->xResponse))
 		{
 			foreach($this->aDebugMessages as $sMessage)
 			{
-				$this->objResponse->debug($sMessage);
+				$this->xResponse->debug($sMessage);
 			}
 			$this->aDebugMessages = array();
-			$this->objResponse->sendHeaders();
-			$this->objResponse->printOutput();
+			$this->xResponse->sendHeaders();
+			$this->xResponse->printOutput();
 		}
 	}
 	
