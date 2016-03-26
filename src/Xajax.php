@@ -197,14 +197,21 @@ class Xajax
 		$this->bCleanBuffer = true;
 		$this->sLogFile = '';
 
+        // Setup the translation manager
+        $this->setTranslator(self::getGlobalTranslator());
+		// Setup the template renderer
+        $this->setTemplate(self::getGlobalTemplate());
+
 		$this->xRequestManager = RequestManager::getInstance();
 		$this->xResponseManager = ResponseManager::getInstance();
 		$this->xPluginManager = PluginManager::getInstance();
-		// Set the template engine in the plugin manager
-		$this->xPluginManager->setTemplate(self::getTemplate());
 
-        // Setup the translation manager
-        $this->setTranslator(self::getTranslator());
+		// Set the template engine in the plugin manager
+		$this->xPluginManager->setTemplate($this->getTemplate());
+		// Set the template engine in the response manager
+		$this->xResponseManager->setTemplate($this->getTemplate());
+		// Set the translator in the response manager
+		$this->xResponseManager->setTranslator($this->getTranslator());
 
 		// The default configuration settings.
 		$this->configureMany(
@@ -290,7 +297,7 @@ class Xajax
 	}
 
 	/*
-		Function: getTranslator
+		Function: getGlobalTranslator
 
 		Returns the global <Xajax\Translation\Translator> object.
 
@@ -299,7 +306,7 @@ class Xajax
 		<Xajax\Translation\Translator> : A <Xajax\Translation\Translator>
 			object which can be used to translate strings.
 	*/
-	public static function getTranslator()
+	public static function getGlobalTranslator()
 	{
 		if(!self::$gxTranslator)
         {
@@ -310,7 +317,7 @@ class Xajax
 	}
 
 	/*
-		Function: getTemplate
+		Function: getGlobalTemplate
 
 		Returns the global <Xajax\Template\Engine> object.
 
@@ -319,7 +326,7 @@ class Xajax
 		<Xajax\Template\Engine> : A <Xajax\Template\Engine>
 			object which can be used to render templates.
 	*/
-	public static function getTemplate()
+	public static function getGlobalTemplate()
 	{
 		if(!self::$gxTemplate)
         {
@@ -486,7 +493,7 @@ class Xajax
         default: break;
         }
 
-		self::getTranslator()->configure($sName, $mValue);
+		$this->getTranslator()->configure($sName, $mValue);
 		$this->xRequestManager->configure($sName, $mValue);
 		$this->xPluginManager->configure($sName, $mValue);
 		$this->xResponseManager->configure($sName, $mValue);

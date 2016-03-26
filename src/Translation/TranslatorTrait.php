@@ -29,7 +29,6 @@ trait TranslatorTrait
 		Parameters
 
 		xTranslator - (Translator):  The translator instance.
-
 	*/
     public function setTranslator($xTranslator)
     {
@@ -37,6 +36,18 @@ trait TranslatorTrait
     }
 	
 	/*
+		Function: getTranslator
+
+		Returns:
+
+		object:  The translator instance.
+	*/
+    public function getTranslator()
+    {
+        return $this->xTranslator;
+    }
+	
+    /*
 		Function: trans
 
 		Parameters

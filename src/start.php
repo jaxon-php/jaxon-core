@@ -21,5 +21,5 @@
 */
 function xajax_trans($sText, array $aPlaceHolders = array(), $sLanguage = null)
 {
-	return \Xajax\Xajax::getTranslator()->trans($sText, $aPlaceHolders, $sLanguage);
+	return \Xajax\Xajax::getGlobalTranslator()->trans($sText, $aPlaceHolders, $sLanguage);
 }

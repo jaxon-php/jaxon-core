@@ -3,6 +3,7 @@
 namespace Xajax\Response;
 
 use Xajax\Translation\TranslatorTrait;
+use Xajax\Template\EngineTrait as TemplateTrait;
 
 /*
 	File: Manager.php
@@ -33,6 +34,7 @@ use Xajax\Translation\TranslatorTrait;
 class Manager
 {
 	use TranslatorTrait;
+	use TemplateTrait;
 
 	/*
 		Object: xResponse

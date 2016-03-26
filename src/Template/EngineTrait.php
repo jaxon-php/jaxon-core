@@ -29,7 +29,6 @@ trait EngineTrait
 		Parameters
 
 		xTemplate - (Xajax\Template\Engine):  The template engine.
-
 	*/
     public function setTemplate($xTemplate)
     {
@@ -37,6 +36,18 @@ trait EngineTrait
     }
 
 	/*
+		Function: getTemplate
+
+		Returns:
+
+		object : The template renderer.
+	*/
+    public function getTemplate()
+    {
+        return $this->xTemplate;
+    }
+
+    /*
 		Function: render
 
 		Parameters
