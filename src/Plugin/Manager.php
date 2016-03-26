@@ -193,9 +193,9 @@ class Manager
 	*/
 	public function loadPlugins()
 	{
-		$this->registerPlugin(new Request\CallableObject(), 101);
-		$this->registerPlugin(new Request\UserFunction(), 102);
-		$this->registerPlugin(new Request\Event(), 103);
+		$this->registerPlugin(new \Xajax\Request\Plugin\CallableObject(), 101);
+		$this->registerPlugin(new \Xajax\Request\Plugin\UserFunction(), 102);
+		$this->registerPlugin(new \Xajax\Request\Plugin\Event(), 103);
 	}
 	
 	/*
