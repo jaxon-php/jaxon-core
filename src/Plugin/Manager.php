@@ -510,66 +510,29 @@ class Manager
 	/**
 	 * Register an instance of a given class
 	 *
-	 * @param string|null	$sClassName		The name of the class to register
+	 * @param object		$xFile			The PHP file containing the class
+	 * @param string		$sDir			The path to the directory
+	 * @param string|null	$sNamespace		The associated namespace
 	 *
-	 * @return bool
+	 * @return void
 	 */
-	public function registerClass($sClassName)
+	protected function registerClassFromFile($xFile, $sDir, $sNamespace = null)
 	{
-		if(!($sClassName = trim($sClassName)))
+		// Get the corresponding class path and name
+		$sClassPath = trim(substr($xFile->getPath(), strlen($sDir)), '/');
+		$sClassPath = str_replace(array('/'), array('.'), $sClassPath);
+		$sClassName = $xFile->getBasename('.php');
+		if(($sNamespace))
 		{
-			return false;
-		}
-		// Replace / and \ with dots, and trim the string
-		$sClassName = trim(str_replace(array('\\'), array('.'), $sClassName), '.');
-		$sClassPath = '';
-		if(($nLastDotPosition = strrpos($sClassName, '.')) !== false)
-		{
-			$sClassPath = substr($sClassName, 0, $nLastDotPosition);
-			$sClassName = substr($sClassName, $nLastDotPosition + 1);
-		}
-		$sClassFile = str_replace(array('.'), array('/'), $sClassPath) . '/' . $sClassName . '.php';
-		$sNamespace = '';
-		$bFileExists = false;
-		foreach($this->aClassDirs as $aClassDir)
-		{
-			$sDirNamespace = $aClassDir['namespace'];
-			$nLen = strlen($sDirNamespace);
-			// Check if the class belongs to the namespace
-			if(($sDirNamespace) && substr($sClassPath, 0, $nLen) == str_replace(array('\\'), array('.'), $sDirNamespace))
-			{
-				$sClassFile = $aClassDir['path'] . '/' . substr($sClassFile, $nLen);
-				if(is_file($sClassFile))
-				{
-					$sNamespace = $sDirNamespace;
-					$bFileExists = true;
-					break;
-				}
-			}
-			else if(!($sDirNamespace) && is_file($aClassDir['path'] . '/' . $sClassFile))
-			{
-				$sClassFile = $aClassDir['path'] . '/' . $sClassFile;
-				if(is_file($sClassFile))
-				{
-					$bFileExists = true;
-					break;
-				}
-			}
-		}
-		// Return false if the file does not exist
-		if(!$bFileExists)
-		{
-			return false;
+			$sNamespace = trim($sNamespace, '\\');
+			$sClassPath = str_replace(array('\\'), array('.'), $sNamespace) . '.' . $sClassPath;
+			$sClassPath = rtrim($sClassPath, '.');
+			$sClassName = '\\' . str_replace(array('.'), array('\\'), $sClassPath) . '\\' . $sClassName;
 		}
 		// Require the file only if there is no autoloader
 		if(!$this->autoLoadDisabled())
 		{
-			require_once($sClassFile);
-		}
-		// Add the namespace to the classname
-		if(($sNamespace))
-		{
-			$sClassName = '\\' . str_replace(array('.'), array('\\'), $sClassPath) . '\\' . $sClassName;
+			require_once($xFile->getPathname());
 		}
 		// Create and register an instance of the class
 		$xCallableObject = new $sClassName;
@@ -578,54 +541,7 @@ class Manager
 		{
 			$aOptions['*']['classpath'] = $sClassPath;
 		}
-		return $this->register(array(XAJAX_CALLABLE_OBJECT, $xCallableObject, $aOptions));
-	}
-
-	/**
-	 * Register callable objects a single class directory
-	 *
-	 * @param string		$sDir			The path to the directory
-	 * @param string|null	$sNamespace		The associated namespace
-	 *
-	 * @return void
-	 */
-	protected function registerClassesFromDir($sDir, $sNamespace)
-	{
-		$itDir = new RecursiveDirectoryIterator($sDir);
-		$itFile = new RecursiveIteratorIterator($itDir);
-		// Iterate on dir content
-		foreach($itFile as $xFile)
-		{
-			// skip everything except PHP files
-			if(!$xFile->isFile() || $xFile->getExtension() != 'php')
-			{
-				continue;
-			}
-			// Get the corresponding class path and name
-			$sClassPath = trim(substr($xFile->getPath(), strlen($sDir)), '/');
-			$sClassPath = str_replace(array('/'), array('.'), $sClassPath);
-			$sClassName = $xFile->getBasename('.php');
-			if(($sNamespace))
-			{
-				$sNamespace = trim($sNamespace, '\\');
-				$sClassPath = str_replace(array('\\'), array('.'), $sNamespace) . '.' . $sClassPath;
-				$sClassPath = rtrim($sClassPath, '.');
-				$sClassName = '\\' . str_replace(array('.'), array('\\'), $sClassPath) . '\\' . $sClassName;
-			}
-			// Require the file only if there is no autoloader
-			if(!$this->autoLoadDisabled())
-			{
-				require_once($xFile->getPathname());
-			}
-			// Create and register an instance of the class
-			$xCallableObject = new $sClassName;
-			$aOptions = array('*' => array());
-			if(($sClassPath))
-			{
-				$aOptions['*']['classpath'] = $sClassPath;
-			}
-			$this->register(array(XAJAX_CALLABLE_OBJECT, $xCallableObject, $aOptions));
-		}
+		$this->register(array(XAJAX_CALLABLE_OBJECT, $xCallableObject, $aOptions));
 	}
 
 	/**
@@ -637,8 +553,68 @@ class Manager
 	{
 		foreach($this->aClassDirs as $sClassDir)
 		{
-			$this->registerClassesFromDir($sClassDir['path'], $sClassDir['namespace']);
+			$itDir = new RecursiveDirectoryIterator($sClassDir['path']);
+			$itFile = new RecursiveIteratorIterator($itDir);
+			// Iterate on dir content
+			foreach($itFile as $xFile)
+			{
+				// skip everything except PHP files
+				if(!$xFile->isFile() || $xFile->getExtension() != 'php')
+				{
+					continue;
+				}
+				$this->registerClassFromFile($xFile, $sClassDir['path'], $sClassDir['namespace']);
+			}
 		}
+	}
+
+	/**
+	 * Register an instance of a given class
+	 *
+	 * @param string|null	$sClassName		The name of the class to register
+	 *
+	 * @return bool
+	 */
+	public function registerClass($sClassName)
+	{
+		if(!($sClassName = trim($sClassName)))
+		{
+			return false;
+		}
+		// Replace / and \ with dots, and trim the string
+		$sClassName = trim(str_replace(array('\\', '/'), array('.', '.'), $sClassName), '.');
+		$sClassPath = '';
+		if(($nLastDotPosition = strrpos($sClassName, '.')) !== false)
+		{
+			$sClassPath = substr($sClassName, 0, $nLastDotPosition);
+			$sClassName = substr($sClassName, $nLastDotPosition + 1);
+		}
+		$sClassFile = str_replace(array('.'), array('/'), $sClassPath) . '/' . $sClassName . '.php';
+		foreach($this->aClassDirs as $aClassDir)
+		{
+			$sNamespace = $aClassDir['namespace'];
+			$nLen = strlen($sNamespace);
+			// Check if the class belongs to the namespace
+			if(($sNamespace) && substr($sClassPath, 0, $nLen) == str_replace(array('\\'), array('.'), $sNamespace))
+			{
+				$sClassFile = $aClassDir['path'] . '/' . substr($sClassFile, $nLen);
+				if(is_file($sClassFile))
+				{
+					$this->registerClassFromFile(new \SplFileInfo($sClassFile), $aClassDir['path'], $sNamespace);
+					return true;
+				}
+			}
+			else if(!($sNamespace) && is_file($aClassDir['path'] . '/' . $sClassFile))
+			{
+				$sClassFile = $aClassDir['path'] . '/' . $sClassFile;
+				if(is_file($sClassFile))
+				{
+					$this->registerClassFromFile(new \SplFileInfo($sClassFile), $aClassDir['path']);
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	/*
