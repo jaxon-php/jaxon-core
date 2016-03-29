@@ -116,9 +116,9 @@ class Translator
 
 		string : The translated text.
 	*/
-    public function trans(string $sText, array $placeholders = array(), $sLanguage = null)
+    public function trans($sText, array $placeholders = array(), $sLanguage = null)
     {
-		$sText = trim($sText);
+		$sText = trim((string)$sText);
         /* if(!$sLanguage)
         {
             $sLanguage = $this->sLanguage;
