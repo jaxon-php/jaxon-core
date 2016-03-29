@@ -773,7 +773,12 @@ class Manager
 			$sHash = $this->generateHash();
 			$sOutFile = (($this->bMinifyJs) ? $sHash . '.min.js' : $sHash . '.js');
 
-			if(!is_file($this->sJsAppDir . $sOutFile) )
+			if(!is_dir($this->sJsAppDir))
+			{
+				@mkdir($this->sJsAppDir);
+			}
+
+			if(!is_file($this->sJsAppDir . $sOutFile))
 			{
 				file_put_contents($this->sJsAppDir . $sOutFile, $sScript);
 			}
