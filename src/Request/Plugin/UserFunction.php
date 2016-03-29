@@ -4,7 +4,7 @@ namespace Xajax\Request\Plugin;
 
 use Xajax\Plugin\Request as RequestPlugin;
 use Xajax\Request\Manager as RequestManager;
-use Xajax\Request\Support\UserFunction;
+
 /*
 	File: UserFunction.php
 
@@ -142,8 +142,8 @@ class UserFunction extends RequestPlugin
 			{
 				$xUserFunction = $aArgs[1];
 
-				if(!($xUserFunction instanceof UserFunction))
-					$xUserFunction = new UserFunction($xUserFunction);
+				if(!($xUserFunction instanceof \Xajax\Request\Support\UserFunction))
+					$xUserFunction = new \Xajax\Request\Support\UserFunction($xUserFunction);
 
 				if(count($aArgs) > 2)
 				{
