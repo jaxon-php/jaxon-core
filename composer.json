@@ -20,7 +20,8 @@
     },
     "require": {
         "php": ">=5.3.2",
-        "latte/latte": "2.3.*"
+        "latte/latte": "2.3.*",
+        "websharks/js-minifier": "dev-master"
     },
     "autoload": {
         "psr-4": {

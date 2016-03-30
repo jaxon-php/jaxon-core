@@ -1,13 +1,13 @@
 <?php
 
-namespace Xajax\Template;
+namespace Xajax\Utils;
 
 /*
-	File: EngineTrait.php
+	File: TemplateTrait.php
 
-	Contains the Engine trait.
+	Contains the Template trait.
 
-	Title: Engine trait
+	Title: Template trait
 
 	Please see <copyright.php> for a detailed description, copyright
 	and license information.
@@ -15,20 +15,20 @@ namespace Xajax\Template;
 
 /*
 	@package Xajax
-	@version $Id: EngineTrait.php 362 2007-05-29 15:32:24Z calltoconstruct $
+	@version $Id: TemplateTrait.php 362 2007-05-29 15:32:24Z calltoconstruct $
 	@copyright Copyright (c) 2005-2007 by Jared White & J. Max Wilson
 	@copyright Copyright (c) 2008-2010 by Joseph Woolley, Steffen Konerow, Jared White  & J. Max Wilson
 	@license http://www.xajaxproject.org/bsd_license.txt BSD License
 */
 
-trait EngineTrait
+trait TemplateTrait
 {
 	/*
 		Function: setTemplate
 
 		Parameters
 
-		xTemplate - (Xajax\Template\Engine):  The template engine.
+		xTemplate - (Xajax\Utils\Template):  The template engine.
 	*/
     public function setTemplate($xTemplate)
     {

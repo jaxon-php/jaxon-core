@@ -2,7 +2,7 @@
 
 namespace Xajax\Request;
 
-use Xajax\Template\EngineTrait as TemplateTrait;
+use Xajax\Utils\TemplateTrait as TemplateTrait;
 
 /*
 

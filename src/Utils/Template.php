@@ -1,13 +1,13 @@
 <?php
 
-namespace Xajax\Template;
+namespace Xajax\Utils;
 
 /*
-	File: Engine.php
+	File: Template.php
 
-	Contains the Engine class.
+	Contains the Template class.
 
-	Title: Engine class
+	Title: Template class
 
 	Please see <copyright.php> for a detailed description, copyright
 	and license information.
@@ -15,13 +15,13 @@ namespace Xajax\Template;
 
 /*
 	@package Xajax
-	@version $Id: Engine.php 362 2007-05-29 15:32:24Z calltoconstruct $
+	@version $Id: Template.php 362 2007-05-29 15:32:24Z calltoconstruct $
 	@copyright Copyright (c) 2005-2007 by Jared White & J. Max Wilson
 	@copyright Copyright (c) 2008-2010 by Joseph Woolley, Steffen Konerow, Jared White  & J. Max Wilson
 	@license http://www.xajaxproject.org/bsd_license.txt BSD License
 */
 
-class Engine
+class Template
 {
     protected $sTemplatesDir;
     protected $xEngine;

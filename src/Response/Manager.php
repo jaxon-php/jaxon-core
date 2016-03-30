@@ -2,8 +2,8 @@
 
 namespace Xajax\Response;
 
-use Xajax\Translation\TranslatorTrait;
-use Xajax\Template\EngineTrait as TemplateTrait;
+use Xajax\Utils\TranslatorTrait;
+use Xajax\Utils\TemplateTrait as TemplateTrait;
 
 /*
 	File: Manager.php

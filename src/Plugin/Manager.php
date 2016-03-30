@@ -31,7 +31,7 @@ use RecursiveRegexIterator;
 */
 class Manager
 {
-	use \Xajax\Template\EngineTrait;
+	use \Xajax\Utils\TemplateTrait, \Xajax\Utils\MinifierTrait;
 
 	/*
 		Array: aPlugins
@@ -760,18 +760,19 @@ class Manager
 	{
 		// Get the config and plugins scripts
 		$sScript = $this->getConfigScript() . $this->getPluginScript();
-		if(($this->bMinifyJs))
-		{
-			// The code compression is not yet implemented
-			// require_once(dirname(__FILE__) . '/xajaxCompress.php');
-			// $sScript = xajaxCompressFile($sScript);
-		}
-
 		if(($this->bMergeJs))
 		{
 			// The plugins scripts are written into the javascript app dir
 			$sHash = $this->generateHash();
-			$sOutFile = (($this->bMinifyJs) ? $sHash . '.min.js' : $sHash . '.js');
+			if(($this->bMinifyJs))
+			{
+				$sOutFile = $sHash . '.min.js';
+				$sScript = $this->minify($sScript);
+			}
+			else
+			{
+				$sOutFile = $sHash . '.js';
+			}
 
 			if(!is_dir($this->sJsAppDir))
 			{

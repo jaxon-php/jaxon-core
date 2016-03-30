@@ -64,7 +64,7 @@ if(!defined ('XAJAX_PROCESSING_EVENT_INVALID')) define ('XAJAX_PROCESSING_EVENT_
 */
 class Xajax
 {
-    use Translation\TranslatorTrait, Template\EngineTrait;
+    use Utils\TranslatorTrait, Utils\TemplateTrait, Utils\MinifierTrait;
 
 	/*
 		Array: aSettings
@@ -167,16 +167,23 @@ class Xajax
 	/*
 		Object: gxTranslator
 		
-		Stores a reference to the global <Xajax\Translation\Translator>
+		Stores a reference to the global <Xajax\Utils\Translator>
 	*/
 	protected static $gxTranslator = null;
 	
 	/*
 		Object: gxTemplate
 		
-		Stores a reference to the global <Xajax\Template\Engine>
+		Stores a reference to the global <Xajax\Utils\Template>
 	*/
 	protected static $gxTemplate = null;
+
+	/*
+		Object: gxMinifier
+		
+		Stores a reference to the global <Xajax\Utils\Minifier>
+	*/
+	protected static $gxMinifier = null;
 
 	/*
 		Constructor: xajax
@@ -201,6 +208,8 @@ class Xajax
         $this->setTranslator(self::getGlobalTranslator());
 		// Setup the template renderer
         $this->setTemplate(self::getGlobalTemplate());
+        // Setup the minifier
+        $this->setMinifier(self::getGlobalMinifier());
 
 		$this->xRequestManager = RequestManager::getInstance();
 		$this->xResponseManager = ResponseManager::getInstance();
@@ -214,6 +223,8 @@ class Xajax
 		$this->xRequestManager->setTemplate($this->getTemplate());
 		// Set the translator in the response manager
 		$this->xResponseManager->setTranslator($this->getTranslator());
+		// Set the minifier in the plugin manager
+		$this->xPluginManager->setMinifier($this->getMinifier());
 
 		// The default configuration settings.
 		$this->configureMany(
@@ -301,19 +312,18 @@ class Xajax
 	/*
 		Function: getGlobalTranslator
 
-		Returns the global <Xajax\Translation\Translator> object.
+		Returns the global <Xajax\Utils\Translator> object.
 
 		Returns:
 
-		<Xajax\Translation\Translator> : A <Xajax\Translation\Translator>
-			object which can be used to translate strings.
+		object : A <Xajax\Utils\Translator> object which can be used to translate strings.
 	*/
 	public static function getGlobalTranslator()
 	{
 		if(!self::$gxTranslator)
         {
             $sTranslationsDir = __DIR__ . '/../translations';
-            self::$gxTranslator = new Translation\Translator($sTranslationsDir);
+            self::$gxTranslator = new Utils\Translator($sTranslationsDir);
 		}
 		return self::$gxTranslator;
 	}
@@ -321,21 +331,38 @@ class Xajax
 	/*
 		Function: getGlobalTemplate
 
-		Returns the global <Xajax\Template\Engine> object.
+		Returns the global <Xajax\Utils\Template> object.
 
 		Returns:
 
-		<Xajax\Template\Engine> : A <Xajax\Template\Engine>
-			object which can be used to render templates.
+		object : A <Xajax\Utils\Template> object which can be used to render templates.
 	*/
 	public static function getGlobalTemplate()
 	{
 		if(!self::$gxTemplate)
         {
             $sTemplatesDir = __DIR__ . '/../templates';
-            self::$gxTemplate = new Template\Engine($sTemplatesDir);
+            self::$gxTemplate = new Utils\Template($sTemplatesDir);
 		}
 		return self::$gxTemplate;
+	}
+
+	/*
+		Function: getGlobalMinifier
+
+		Returns the global <Xajax\Utils\Minifier> object.
+
+		Returns:
+
+		object : A <Xajax\Utils\Minifier> object which can be used to minify javascript code.
+	*/
+	public static function getGlobalMinifier()
+	{
+		if(!self::$gxMinifier)
+        {
+            self::$gxMinifier = new Utils\Minifier();
+		}
+		return self::$gxMinifier;
 	}
 
 	/*

@@ -1,6 +1,6 @@
 <?php
 
-namespace Xajax\Translation;
+namespace Xajax\Utils;
 
 // use Symfony\Component\Translation\Translator;
 // use Symfony\Component\Translation\MessageSelector;
@@ -78,7 +78,7 @@ class Translator
 		Function: configure
 		
 		Called by the main xajax object as configuration options are set.  See also:
-		<Xajax::configure>.  The <Xajax\Translation\Translator> tracks the following configuration
+		<Xajax::configure>.  The <Xajax\Utils\Translator> tracks the following configuration
 		options.
 		Parameters:
 		

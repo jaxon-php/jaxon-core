@@ -4,7 +4,7 @@ namespace Xajax\Request\Support;
 
 use Xajax\Request\Manager as RequestManager;
 use Xajax\Response\Manager as ResponseManager;
-use Xajax\Template\EngineTrait as TemplateTrait;
+use Xajax\Utils\TemplateTrait as TemplateTrait;
 
 /*
 	File: Event.php
