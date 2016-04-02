@@ -357,9 +357,9 @@ class Manager
 			$this->sJsAppURI .= '/';
 		}
 		$this->sJsAppDir = $sJsAppDir;
-		if(substr($this->sJsAppDir, -1) != '/')
+		if(substr($this->sJsAppDir, -1) != DIRECTORY_SEPARATOR)
 		{
-			$this->sJsAppDir .= '/';
+			$this->sJsAppDir .= DIRECTORY_SEPARATOR;
 		}
 		$this->bMergeJs = true;
 		$this->bMinifyJs = ($bMinifyJs);
@@ -519,8 +519,8 @@ class Manager
 	protected function registerClassFromFile($xFile, $sDir, $sNamespace = null)
 	{
 		// Get the corresponding class path and name
-		$sClassPath = trim(substr($xFile->getPath(), strlen($sDir)), '/');
-		$sClassPath = str_replace(array('/'), array('.'), $sClassPath);
+		$sClassPath = trim(substr($xFile->getPath(), strlen($sDir)), DIRECTORY_SEPARATOR);
+		$sClassPath = str_replace(array(DIRECTORY_SEPARATOR), array('.'), $sClassPath);
 		$sClassName = $xFile->getBasename('.php');
 		if(($sNamespace))
 		{
@@ -589,7 +589,7 @@ class Manager
 			$sClassPath = substr($sClassName, 0, $nLastDotPosition);
 			$sClassName = substr($sClassName, $nLastDotPosition + 1);
 		}
-		$sClassFile = str_replace(array('.'), array('/'), $sClassPath) . '/' . $sClassName . '.php';
+		$sClassFile = str_replace(array('.'), array(DIRECTORY_SEPARATOR), $sClassPath) . DIRECTORY_SEPARATOR . $sClassName . '.php';
 		foreach($this->aClassDirs as $aClassDir)
 		{
 			$sNamespace = $aClassDir['namespace'];
@@ -597,16 +597,16 @@ class Manager
 			// Check if the class belongs to the namespace
 			if(($sNamespace) && substr($sClassPath, 0, $nLen) == str_replace(array('\\'), array('.'), $sNamespace))
 			{
-				$sClassFile = $aClassDir['path'] . '/' . substr($sClassFile, $nLen);
+				$sClassFile = $aClassDir['path'] . DIRECTORY_SEPARATOR . substr($sClassFile, $nLen);
 				if(is_file($sClassFile))
 				{
 					$this->registerClassFromFile(new \SplFileInfo($sClassFile), $aClassDir['path'], $sNamespace);
 					return true;
 				}
 			}
-			else if(!($sNamespace) && is_file($aClassDir['path'] . '/' . $sClassFile))
+			else if(!($sNamespace) && is_file($aClassDir['path'] . DIRECTORY_SEPARATOR . $sClassFile))
 			{
-				$sClassFile = $aClassDir['path'] . '/' . $sClassFile;
+				$sClassFile = $aClassDir['path'] . DIRECTORY_SEPARATOR . $sClassFile;
 				if(is_file($sClassFile))
 				{
 					$this->registerClassFromFile(new \SplFileInfo($sClassFile), $aClassDir['path']);
@@ -776,7 +776,7 @@ class Manager
 
 			if(!is_dir($this->sJsAppDir))
 			{
-				@mkdir($this->sJsAppDir);
+				@mkdir($this->sJsAppDir, 0755, true);
 			}
 
 			if(!is_file($this->sJsAppDir . $sOutFile))
