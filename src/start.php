@@ -1,13 +1,11 @@
 <?php
 
-\Xajax\Plugin\Manager::getInstance()->loadPlugins();
-
 /*
 	Section: Global functions
 */
 
 /*
-	Function: trans
+	Function: xajax_trans
 
 	Parameters
 
@@ -23,3 +21,8 @@ function xajax_trans($sText, array $aPlaceHolders = array(), $sLanguage = null)
 {
 	return \Xajax\Xajax::getGlobalTranslator()->trans($sText, $aPlaceHolders, $sLanguage);
 }
+
+/*
+ * Load request plugins
+ */
+\Xajax\Plugin\Manager::getInstance()->loadPlugins();
