@@ -475,13 +475,13 @@ class Xajax
 		
 		Parameters:
 		
-		sJsAppURI - (string):  The URI where the generated file will be located.
 		sJsAppDir - (string):  The dir where the generated file will be located.
+		sJsAppURI - (string):  The URI where the generated file will be located.
 		bMinifyJs - (boolean):  Shall the generated file also be minified.
 	*/
-	public function mergeJavascript($sJsAppURI, $sJsAppDir, $bMinifyJs = true)
+	public function mergeJavascript($sJsAppDir, $sJsAppURI, $bMinifyJs = true)
 	{
-		$this->xPluginManager->mergeJavascript($sJsAppURI, $sJsAppDir, $bMinifyJs);
+		$this->xPluginManager->mergeJavascript($sJsAppDir, $sJsAppURI, $bMinifyJs);
 	}
 	
 	/*

@@ -338,11 +338,11 @@ class Manager
 		
 		Parameters:
 		
-		sJsAppURI - (string):  The URI where the generated file will be located.
 		sJsAppDir - (string):  The dir where the generated file will be located.
+		sJsAppURI - (string):  The URI where the generated file will be located.
 		bMinifyJs - (boolean):  Shall the generated file also be minified.
 	*/
-	public function mergeJavascript($sJsAppURI, $sJsAppDir, $bMinifyJs = false)
+	public function mergeJavascript($sJsAppDir, $sJsAppURI, $bMinifyJs = true)
 	{
 		// Check dir access
 		if(!is_dir($sJsAppDir) || !is_writable($sJsAppDir))
@@ -364,7 +364,7 @@ class Manager
 		$this->bMergeJs = true;
 		$this->bMinifyJs = ($bMinifyJs);
 	}
-	
+
 	/*
 		Function: configure
 		
@@ -435,7 +435,7 @@ class Manager
 			break;
 		}
 	}
-	
+
 	/*
 		Function: register
 		
