@@ -9,7 +9,7 @@
         {"name": "Steffen Konerow"},
         {"name": "Thierry Feuzeu"}
     ],
-    "homepage": "http://xajaxproject.org",
+    "homepage": "http://xajax-project.org",
     "license": "BSD-2-Clause",
     "keywords": ["Xajax", "Ajax", "PHP", "Asynchronous"],
     "support": {
@@ -19,7 +19,7 @@
         "source": "https://github.com/lagdo/xajax-core"
     },
     "require": {
-        "php": ">=5.3.2",
+        "php": ">=5.4.0",
         "latte/latte": "2.3.*",
         "websharks/js-minifier": "dev-master"
     },
