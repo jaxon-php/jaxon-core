@@ -23,30 +23,6 @@ namespace Xajax\Utils;
 
 trait TemplateTrait
 {
-	/*
-		Function: setTemplate
-
-		Parameters
-
-		xTemplate - (Xajax\Utils\Template):  The template engine.
-	*/
-    public function setTemplate($xTemplate)
-    {
-        $this->xTemplate = $xTemplate;
-    }
-
-	/*
-		Function: getTemplate
-
-		Returns:
-
-		object : The template renderer.
-	*/
-    public function getTemplate()
-    {
-        return $this->xTemplate;
-    }
-
     /*
 		Function: render
 
@@ -61,6 +37,6 @@ trait TemplateTrait
 	*/
 	public function render($sTemplate, array $aVars = array())
 	{
-		return $this->xTemplate->render($sTemplate, $aVars);
+		return Template::getInstance()->render($sTemplate, $aVars);
 	}
 }

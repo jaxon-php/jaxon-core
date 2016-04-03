@@ -19,7 +19,7 @@ class Config
 	/*
 		Function: getInstance
 		
-		Implementation of the singleton pattern: returns the one and only instance of the Config object
+		Implementation of the singleton pattern: returns the one and only instance of the Config
 		
 		Returns:
 		

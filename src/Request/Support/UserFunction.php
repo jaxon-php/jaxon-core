@@ -133,9 +133,6 @@ class UserFunction
 			$this->sAlias = $this->sUserFunction[0];
 			$this->sUserFunction = array_slice($this->sUserFunction, 1);
 		}
-
-		// Set the template manager
-		$this->setTemplate(RequestManager::getInstance()->getTemplate());
 	}
 	
 	/*

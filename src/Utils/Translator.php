@@ -35,10 +35,32 @@ class Translator
 	// Translations array
 	protected $aMessages;
 
-    public function __construct($sResourceDir)
+	/*
+		Object: xInstance
+		The only instance of the Translator (Singleton)
+	*/
+	private static $xInstance = null;
+
+	/*
+		Function: getInstance
+		
+		Implementation of the singleton pattern: returns the one and only instance of the Translator
+		
+		Returns:
+		
+		object : a reference to the Translator object.
+	*/
+	public static function getInstance()
+	{
+		if(!self::$xInstance)
+		{
+			self::$xInstance = new Translator();    
+		}
+		return self::$xInstance;
+	}
+
+	private function __construct()
     {
-        // Set the translations resource directory
-        $this->sResourceDir = $sResourceDir;
         /*$this->xTranslator = new Translator($this->defaultLocale, new MessageSelector());
         $this->xTranslator->setFallbackLocales(array($this->defaultLocale));
         $this->xTranslator->addLoader('php', new PhpFileLoader());*/
@@ -73,7 +95,13 @@ class Translator
 		);
     }
 
-	/*
+	public function setResourceDir($sResourceDir)
+    {
+        // Set the translations resource directory
+    	$this->sResourceDir = trim($sResourceDir);
+    }
+
+    /*
 		Function: trans
 
 		Parameters

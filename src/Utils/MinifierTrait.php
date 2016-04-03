@@ -23,30 +23,6 @@ namespace Xajax\Utils;
 
 trait MinifierTrait
 {
-	/*
-		Function: setMinifier
-
-		Parameters
-
-		xMinifier - (Minifier):  The translator instance.
-	*/
-    public function setMinifier($xMinifier)
-    {
-        $this->xMinifier = $xMinifier;
-    }
-	
-	/*
-		Function: getMinifier
-
-		Returns:
-
-		object:  The translator instance.
-	*/
-    public function getMinifier()
-    {
-        return $this->xMinifier;
-    }
-	
     /*
 		Function: minify
 
@@ -60,6 +36,6 @@ trait MinifierTrait
 	*/
 	public function minify($sCode)
 	{
-		return $this->xMinifier->minify($sCode);
+		return Minifier::getInstance()->minify($sCode);
 	}
 }

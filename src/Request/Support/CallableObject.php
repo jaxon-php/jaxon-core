@@ -91,9 +91,6 @@ class CallableObject
 		$this->reflectionClass = new \ReflectionClass(get_class($this->callableObject));
 		$this->aConfiguration = array();
 		$this->aExcludedMethods = array();
-
-		// Set the template manager
-		$this->setTemplate(RequestManager::getInstance()->getTemplate());
 	}
 
 	/*

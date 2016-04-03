@@ -23,19 +23,47 @@ namespace Xajax\Utils;
 
 class Template
 {
-    protected $sTemplatesDir;
+    protected $sTemplateDir;
     protected $xEngine;
 
-	public function __construct($sTemplatesDir)
+	/*
+		Object: xInstance
+		The only instance of the Template (Singleton)
+	*/
+	private static $xInstance = null;
+
+	/*
+		Function: getInstance
+		
+		Implementation of the singleton pattern: returns the one and only instance of the Template
+		
+		Returns:
+		
+		object : a reference to the Template object.
+	*/
+	public static function getInstance()
+	{
+		if(!self::$xInstance)
+		{
+			self::$xInstance = new Template();    
+		}
+		return self::$xInstance;
+	}
+
+	private function __construct()
     {
-        $this->sTemplatesDir = trim($sTemplatesDir);
     	$this->xEngine = new \Latte\Engine;
-    	$this->xEngine->setTempDirectory($this->sTemplatesDir . '/cache');
+    }
+
+	public function setTemplateDir($sTemplateDir)
+    {
+        $this->sTemplateDir = trim($sTemplateDir);
+    	$this->xEngine->setTempDirectory($this->sTemplateDir . '/cache');
     }
 
     public function render($sTemplate, array $aVars = array())
     {
-    	$sRendered = $this->xEngine->renderToString($this->sTemplatesDir . '/' . $sTemplate, $aVars);
+    	$sRendered = $this->xEngine->renderToString($this->sTemplateDir . '/' . $sTemplate, $aVars);
     	return $sRendered;
     }
 }

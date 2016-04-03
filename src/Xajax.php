@@ -66,7 +66,7 @@ if(!defined ('XAJAX_PROCESSING_EVENT_INVALID')) define ('XAJAX_PROCESSING_EVENT_
 */
 class Xajax
 {
-    use Utils\TranslatorTrait, Utils\TemplateTrait, Utils\MinifierTrait, Utils\ConfigTrait;
+	use Utils\TranslatorTrait, Utils\TemplateTrait, Utils\MinifierTrait, Utils\ConfigTrait;
 
 	/*
 		Array: aProcessingEvents
@@ -105,27 +105,6 @@ class Xajax
 		Stores a reference to the global <Xajax\Response\Response>
 	*/
 	protected static $gxResponse = null;
-	
-	/*
-		Object: gxTranslator
-		
-		Stores a reference to the global <Xajax\Utils\Translator>
-	*/
-	protected static $gxTranslator = null;
-	
-	/*
-		Object: gxTemplate
-		
-		Stores a reference to the global <Xajax\Utils\Template>
-	*/
-	protected static $gxTemplate = null;
-
-	/*
-		Object: gxMinifier
-		
-		Stores a reference to the global <Xajax\Utils\Minifier>
-	*/
-	protected static $gxMinifier = null;
 
 	/*
 		Constructor: xajax
@@ -142,27 +121,14 @@ class Xajax
 	{
 		$this->aProcessingEvents = array();
 
-        // Setup the translation manager
-        $this->setTranslator(self::getGlobalTranslator());
-		// Setup the template renderer
-        $this->setTemplate(self::getGlobalTemplate());
-        // Setup the minifier
-        $this->setMinifier(self::getGlobalMinifier());
+		$sTranslationDir = __DIR__ . '/../translations';
+		Utils\Translator::getInstance()->setResourceDir($sTranslationDir);
+		$sTemplateDir = __DIR__ . '/../templates';
+		Utils\Template::getInstance()->setTemplateDir($sTemplateDir);
 
 		$this->xRequestManager = RequestManager::getInstance();
 		$this->xResponseManager = ResponseManager::getInstance();
 		$this->xPluginManager = PluginManager::getInstance();
-
-		// Set the template engine in the plugin manager
-		$this->xPluginManager->setTemplate($this->getTemplate());
-		// Set the template engine in the response manager
-		$this->xResponseManager->setTemplate($this->getTemplate());
-		// Set the template engine in the request manager
-		$this->xRequestManager->setTemplate($this->getTemplate());
-		// Set the translator in the response manager
-		$this->xResponseManager->setTranslator($this->getTranslator());
-		// Set the minifier in the plugin manager
-		$this->xPluginManager->setMinifier($this->getMinifier());
 
 		$this->setDefaultOptions();
 		if(($sRequestURI))
@@ -172,7 +138,7 @@ class Xajax
 		if(($sLanguage))
 			$this->setOption('language', $sLanguage);
 		if(XAJAX_DEFAULT_CHAR_ENCODING != 'utf-8')
-            $this->setOption("decodeUTF8Input", true);
+			$this->setOption("decodeUTF8Input", true);
 	}
 
 	/**
@@ -274,66 +240,10 @@ class Xajax
 	public static function getGlobalResponse()
 	{
 		if(!self::$gxResponse)
-        {
+		{
 			self::$gxResponse = new Response\Response();
 		}
 		return self::$gxResponse;
-	}
-
-	/*
-		Function: getGlobalTranslator
-
-		Returns the global <Xajax\Utils\Translator> object.
-
-		Returns:
-
-		object : A <Xajax\Utils\Translator> object which can be used to translate strings.
-	*/
-	public static function getGlobalTranslator()
-	{
-		if(!self::$gxTranslator)
-        {
-            $sTranslationsDir = __DIR__ . '/../translations';
-            self::$gxTranslator = new Utils\Translator($sTranslationsDir);
-		}
-		return self::$gxTranslator;
-	}
-
-	/*
-		Function: getGlobalTemplate
-
-		Returns the global <Xajax\Utils\Template> object.
-
-		Returns:
-
-		object : A <Xajax\Utils\Template> object which can be used to render templates.
-	*/
-	public static function getGlobalTemplate()
-	{
-		if(!self::$gxTemplate)
-        {
-            $sTemplatesDir = __DIR__ . '/../templates';
-            self::$gxTemplate = new Utils\Template($sTemplatesDir);
-		}
-		return self::$gxTemplate;
-	}
-
-	/*
-		Function: getGlobalMinifier
-
-		Returns the global <Xajax\Utils\Minifier> object.
-
-		Returns:
-
-		object : A <Xajax\Utils\Minifier> object which can be used to minify javascript code.
-	*/
-	public static function getGlobalMinifier()
-	{
-		if(!self::$gxMinifier)
-        {
-            self::$gxMinifier = new Utils\Minifier();
-		}
-		return self::$gxMinifier;
 	}
 
 	/*
@@ -393,10 +303,10 @@ class Xajax
 				$this->aProcessingEvents[$sEvent] = $xUserFunction;
 				return true;
 			}
-            else
-            {
-                // Todo: return error
-            }
+			else
+			{
+				// Todo: return error
+			}
 		}
 		
 		return $this->xPluginManager->register($aArgs);
@@ -635,7 +545,7 @@ class Xajax
 //SkipDebug
 		// Check to see if headers have already been sent out, in which case we can't do our job
 		if(headers_sent($filename, $linenumber))
-        {
+		{
 			echo "Output has already been sent to the browser at {$filename}:{$linenumber}.\n";
 			echo 'Please make sure the command $xajax->processRequest() is placed before this.';
 			exit();

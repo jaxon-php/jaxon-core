@@ -68,9 +68,6 @@ class Event
 		$this->sName = $sName;
 		$this->aConfiguration = array();
 		$this->aHandlers = array();
-
-		// Set the template manager
-		$this->setTemplate(RequestManager::getInstance()->getTemplate());
 	}
 	
 	/*

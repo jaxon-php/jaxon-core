@@ -23,30 +23,6 @@ namespace Xajax\Utils;
 
 trait TranslatorTrait
 {
-	/*
-		Function: setTranslator
-
-		Parameters
-
-		xTranslator - (Translator):  The translator instance.
-	*/
-    public function setTranslator($xTranslator)
-    {
-        $this->xTranslator = $xTranslator;
-    }
-	
-	/*
-		Function: getTranslator
-
-		Returns:
-
-		object:  The translator instance.
-	*/
-    public function getTranslator()
-    {
-        return $this->xTranslator;
-    }
-	
     /*
 		Function: trans
 
@@ -62,6 +38,6 @@ trait TranslatorTrait
 	*/
 	public function trans($sText, array $aPlaceHolders = array(), $sLanguage = null)
 	{
-		return $this->xTranslator->trans($sText, $aPlaceHolders, $sLanguage);
+		return Translator::getInstance()->trans($sText, $aPlaceHolders, $sLanguage);
 	}
 }

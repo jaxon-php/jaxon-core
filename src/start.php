@@ -19,7 +19,7 @@
 */
 function xajax_trans($sText, array $aPlaceHolders = array(), $sLanguage = null)
 {
-	return \Xajax\Xajax::getGlobalTranslator()->trans($sText, $aPlaceHolders, $sLanguage);
+	return \Xajax\Utils\Translator::getInstance()->trans($sText, $aPlaceHolders, $sLanguage);
 }
 
 /*
