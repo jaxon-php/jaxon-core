@@ -45,28 +45,14 @@ use Xajax\Request\Manager as RequestManager;
 */
 class Response
 {
+	use \Xajax\Utils\ConfigTrait;
+
 	/*
 		Array: aCommands
 		
 		Stores the commands that will be sent to the browser in the response.
 	*/
 	public  $aCommands;
-	
-	/*
-		String: sCharacterEncoding
-		
-		The name of the encoding method you wish to use when dealing with 
-		special characters.  See <xajax->setEncoding> for more information.
-	*/
-	private $sCharacterEncoding;
-	
-	/*
-		Boolean: bOutputEntities
-		
-		Convert special characters to the HTML equivellent.  See also
-		<xajax->bOutputEntities> and <xajax->configure>.
-	*/
-	private $bOutputEntities;
 	
 	/*
 		Mixed: returnValue
@@ -83,9 +69,6 @@ class Response
 	*/
 	private $xPluginManager;
 	
-	// sorry but this config is static atm
-	private $sContentType = 'application/json';
-	
 	/*
 		Constructor: __construct
 		
@@ -94,90 +77,9 @@ class Response
 	public function __construct()
 	{
 		$this->aCommands = array();
-		
-		$xResponseManager = Manager::getInstance();
-		
-		$this->sCharacterEncoding = $xResponseManager->getCharacterEncoding();
-		$this->bOutputEntities = $xResponseManager->getOutputEntities();
-		// $this->setResponseType($xResponseManager->getConfiguration('responseType'));
-		
-		$this->xPluginManager = PluginManager::getInstance();
 
 		// Set response type to JSON
-		$this->sResponseType = 'JSON';
-		$this->setContentType('application/json');
-	}
-	
-	public function getResponseType()
-	{
-		return $this->sResponseType;
-	}
-	
-	/*
-		Function: setCharacterEncoding
-		
-		Overrides the default character encoding (or the one specified in the
-		constructor) to the specified character encoding.
-		
-		Parameters:
-		
-		sCharacterEncoding - (string):  The encoding method to use for this response.
-		
-		See also, <Response->Response>()
-		
-		Returns:
-		
-		object - The Response object.
-	*/
-	public function setCharacterEncoding($sCharacterEncoding)
-	{
-		$this->sCharacterEncoding = $sCharacterEncoding;
-		return $this;
-	}
-
-	public function getCharacterEncoding()
-	{
-		return $this->sCharacterEncoding;
-	}
-	
-	/*
-		Function: getContentType
-		
-		Returns the current content type that will be used for the
-		response packet.  (typically: "text/xml")
-		
-		Returns:
-		
-		string : The content type.
-	*/
-	public function getContentType()
-	{
-		return $this->sContentType;
-	}
-
-	public function setContentType($sContentType)
-	{
-		$this->sContentType = $sContentType ;
-	}
-
-	/*
-		Function: setOutputEntities
-		
-		Convert special characters to their HTML equivellent automatically
-		(only works if the mb_string extension is available).
-		
-		Parameters:
-		
-		bOption - (boolean):  Convert special characters
-		
-		Returns:
-		
-		object - The Response object.
-	*/
-	public function setOutputEntities($bOutputEntities)
-	{
-		$this->bOutputEntities = (boolean)$bOutputEntities;
-		return $this;
+		$this->sContentType = 'application/json';
 	}
 	
 	/*
@@ -197,7 +99,7 @@ class Response
 	*/
 	public function plugin($sName)
 	{
-		$xPlugin = $this->xPluginManager->getResponsePlugin($sName);
+		$xPlugin = PluginManager::getInstance()->getResponsePlugin($sName);
 		if(!$xPlugin)
 		{
 			return false;
@@ -1498,14 +1400,13 @@ class Response
 		}
 		
 		$sCharacterSet = '';
-		if(($this->sCharacterEncoding) && 0 < strlen(trim($this->sCharacterEncoding)))
+		$sCharacterEncoding = trim($this->getOption('characterEncoding'));
+		if(($sCharacterEncoding) && strlen($sCharacterEncoding) > 0)
 		{
-			$sCharacterSet = '; charset="' . trim($this->sCharacterEncoding) . '"';
+			$sCharacterSet = '; charset="' . trim($sCharacterEncoding) . '"';
 		}
-		
-		$sContentType = $this->getContentType();
-		
-		header('content-type: ' . $sContentType . ' ' . $sCharacterSet);
+
+		header('content-type: ' . $this->sContentType . ' ' . $sCharacterSet);
 	}
 
 	/*

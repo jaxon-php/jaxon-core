@@ -37,6 +37,8 @@ if(!defined ('XAJAX_FUNCTION')) define ('XAJAX_FUNCTION', 'function');
 */
 class UserFunction extends RequestPlugin
 {
+	use \Xajax\Utils\ConfigTrait;
+
 	/*
 		Array: aFunctions
 		
@@ -44,22 +46,6 @@ class UserFunction extends RequestPlugin
 		available via a <xajax.request> call.
 	*/
 	protected $aFunctions;
-
-	/*
-		String: sXajaxPrefix
-		
-		A configuration setting that is stored locally and used during
-		the client script generation phase.
-	*/
-	protected $sXajaxPrefix;
-	
-	/*
-		String: sDefer
-		
-		Configuration option that can be used to request that the
-		javascript file is loaded after the page has been fully loaded.
-	*/
-	protected $sDefer;
 
 	/*
 		String: sRequestedFunction
@@ -84,9 +70,6 @@ class UserFunction extends RequestPlugin
 	{
 		$this->aFunctions = array();
 
-		$this->sXajaxPrefix = 'xajax_';
-		$this->sDefer = '';
-
 		$this->sRequestedFunction = null;
 		
 		if(isset($_GET['xjxfun']))
@@ -105,25 +88,6 @@ class UserFunction extends RequestPlugin
 	public function getName()
 	{
 		return 'UserFunction';
-	}
-
-	/*
-		Function: configure
-		
-		Sets/stores configuration options used by this plugin.
-	*/
-	public function configure($sName, $mValue)
-	{
-		switch($sName)
-		{
-		case 'wrapperPrefix':
-			$this->sXajaxPrefix = $mValue;
-			break;
-		case 'scriptDefferal':
-			$this->sDefer = ($mValue === true ? 'defer' : '');
-			break;
-		default:
-		}
 	}
 
 	/*
@@ -161,7 +125,7 @@ class UserFunction extends RequestPlugin
 				}
 				$this->aFunctions[$xUserFunction->getName()] = $xUserFunction;
 
-				return $xUserFunction->generateRequest($this->sXajaxPrefix);
+				return $xUserFunction->generateRequest($this->getOption('wrapperPrefix'));
 			}
 		}
 
@@ -191,7 +155,7 @@ class UserFunction extends RequestPlugin
 		$code = '';
 		foreach($this->aFunctions as $xFunction)
 		{
-			$code .= $xFunction->getClientScript($this->sXajaxPrefix);
+			$code .= $xFunction->getClientScript($this->getOption('wrapperPrefix'));
 		}
 		return $code;
 	}

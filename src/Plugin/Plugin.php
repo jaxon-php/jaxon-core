@@ -29,16 +29,6 @@ namespace Xajax\Plugin;
 abstract class Plugin
 {
 	/*
-		Function: configure
-		
-		Called by the <Xajax\Plugin\Manager> when a configuration setting is changing.
-		Plugins should store a local copy of the settings they wish to use during 
-		registration, client script generation or request processing.
-	*/
-	public function configure($sName, $mValue)
-	{}
-
-	/*
 		Function: getClientScript
 		
 		Called by <Xajax\Plugin\Manager> when the page's HTML is being sent to the browser.

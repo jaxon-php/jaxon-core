@@ -31,7 +31,10 @@ use RecursiveRegexIterator;
 */
 class Manager
 {
-	use \Xajax\Utils\TemplateTrait, \Xajax\Utils\MinifierTrait;
+	use \Xajax\Utils\TemplateTrait;
+	use \Xajax\Utils\MinifierTrait;
+	use \Xajax\Utils\TranslatorTrait;
+	use \Xajax\Utils\ConfigTrait;
 
 	/*
 		Array: aPlugins
@@ -65,26 +68,10 @@ class Manager
 	private $xAutoLoader;
 	
 	private $sJsLibURI;
-	private $sDefer;
-
 	private $bMergeJs;
 	private $bMinifyJs;
 	private $sJsAppURI;
 	private $sJsAppDir;
-
-	private $sRequestURI;
-	private $sStatusMessages;
-	private $sWaitCursor;
-	private $sVersion;
-	private $sDefaultMode;
-	private $sDefaultMethod;
-	private $bDebug;
-	private $bVerboseDebug;
-	private $nScriptLoadTimeout;
-	private $sLanguage;
-	private $nResponseQueueSize;
-	private $sDebugOutputID;
-	private $sResponseType;
 
 	/*
 		Object: xInstance
@@ -110,7 +97,7 @@ class Manager
 		}
 		return self::$xInstance;
 	}
-	
+
 	/*
 		Function: __construct
 		
@@ -121,7 +108,6 @@ class Manager
 		$this->aRequestPlugins = array();
 		$this->aResponsePlugins = array();
 		$this->aPlugins = array();
-
 		$this->aClassDirs = array();
 
 		$this->bAutoLoadEnabled = true;
@@ -135,21 +121,10 @@ class Manager
 		$this->sJsAppURI = '';
 		$this->sJsAppDir = '';
 
-		$this->sDefer = '';
-		$this->sRequestURI = '';
-		$this->sStatusMessages = 'false';
-		$this->sWaitCursor = 'true';
-		$this->sVersion = 'unknown';
-		$this->sDefaultMode = 'asynchronous';
-		$this->sDefaultMethod = 'POST';	// W3C: Method is case sensitive
-		$this->bDebug = false;
-		$this->bVerboseDebug = false;
-		$this->nScriptLoadTimeout = 2000;
-		$this->sLanguage = 'en';
-		$this->nResponseQueueSize = null;
-		$this->sDebugOutputID = null;
+		// Set response type to JSON
+		$this->sResponseType = 'JSON';
 	}
-	
+
 	/**
 	 * Set the PHP class autoloader
 	 * 
@@ -366,77 +341,6 @@ class Manager
 	}
 
 	/*
-		Function: configure
-		
-		Call each of the request plugins passing along the configuration
-		setting specified.
-		
-		Parameters:
-		
-		sName - (string):  The name of the configuration setting to set.
-		mValue - (mixed):  The value to be set.
-	*/
-	public function configure($sName, $mValue)
-	{
-		foreach($this->aPlugins as $xPlugin)
-		{
-			$xPlugin->configure($sName, $mValue);
-		}
-
-		switch($sName)
-		{
-		case "scriptDefferal":
-			$this->sDefer = ($mValue === true ? "defer" : "");
-			break;
-		case "requestURI":
-			$this->sRequestURI = $mValue;
-			break;
-		case "statusMessages":
-			$this->sStatusMessages = ($mValue === true ? "true" : "false");
-			break;
-		case "waitCursor":
-			$this->sWaitCursor = ($mValue === true ? "true" : "false");
-			break;
-		case "version":
-			$this->sVersion = $mValue;
-			break;
-		case "defaultMode":
-			if($mValue == "asynchronous" || $mValue == "synchronous")
-				$this->sDefaultMode = $mValue;
-			break;
-		case "defaultMethod":
-			if($mValue == "POST" || $mValue == "GET")	// W3C: Method is case sensitive
-				$this->sDefaultMethod = $mValue;
-			break;
-		case "debug":
-			if($mValue === true || $mValue === false)
-				$this->bDebug = $mValue;
-			break;
-		case "verboseDebug":
-			if($mValue === true || $mValue === false)
-				$this->bVerboseDebug = $mValue;
-			break;
-		case "scriptLoadTimeout":
-			$this->nScriptLoadTimeout = $mValue;
-			break;
-		case 'language':
-			$this->sLanguage = $mValue;
-			break;
-		case 'responseQueueSize':
-			$this->nResponseQueueSize = intval($mValue);
-			break;
-		case 'debugOutputID':
-			$this->sDebugOutputID = $mValue;
-			break;
-		case 'responseType':
-			$this->sResponseType = $mValue;
-			break;
-		default:
-			break;
-		}
-	}
-
-	/*
 		Function: register
 		
 		Call each of the request plugins and give them the opportunity to 
@@ -650,25 +554,22 @@ class Manager
 		$sJsCoreUrl = $this->sJsLibURI . $this->_getScriptFilename('xajax.core.js');
 		$sJsDebugUrl = $this->sJsLibURI . $this->_getScriptFilename('xajax.debug.js');
 		$sJsVerboseUrl = $this->sJsLibURI . $this->_getScriptFilename('xajax.verbose.js');
-		$sJsLanguageUrl = $this->sJsLibURI . $this->_getScriptFilename('lang/xajax.' . $this->sLanguage . '.js');
+		$sJsLanguageUrl = $this->sJsLibURI . $this->_getScriptFilename('lang/xajax.' . $this->getOption('language') . '.js');
 
 		// Add component files to the javascript file array;
 		$aJsFiles = array($sJsCoreUrl);
-		if($this->bDebug)
+		if($this->getOption('debug'))
 		{
 			$this->aJsFiles[] = $sJsDebugUrl;
-			if($this->bVerboseDebug)
+			$this->aJsFiles[] = $sJsLanguageUrl;
+			if($this->getOption('verboseDebug'))
 			{
 				$this->aJsFiles[] = $sJsVerboseUrl;
-			}
-			if(($this->sLanguage))
-			{
-				$this->aJsFiles[] = $sJsLanguageUrl;
 			}
 		}
 
 		$code = $this->render('plugins/includes.js.tpl', array(
-			'sDefer' => $this->sDefer,
+			'sDefer' => $this->getOption('scriptDefferal'),
 			'aUrls' => $aJsFiles,
 		));
 		foreach($this->aResponsePlugins as $xPlugin)
@@ -698,20 +599,28 @@ class Manager
 	private function getConfigScript()
 	{
 		// Print Xajax config vars
-		$templateVars = array();
-		$varNames = array('sDefer', 'sRequestURI', 'sStatusMessages', 'sWaitCursor', 'sVersion',
-			'sDefaultMode', 'sDefaultMethod', 'sJsLibURI', 'sResponseType', 'nResponseQueueSize',
-			'bDebug', 'bVerboseDebug', 'sDebugOutputID', 'nScriptLoadTimeout', 'sLanguage');
-		foreach($varNames as $templateVar)
-		{
-			$templateVars[$templateVar] = $this->$templateVar;
-		}
-		$templateVars['bLanguage'] = ($this->sLanguage) ? true : false;
+		$templateVars = array(
+			'sResponseType' => $this->sResponseType,
+			'sDefer' => $this->getOption('scriptDefferal'),
+			'sRequestURI' => $this->getOption('requestURI'),
+			'sStatusMessages' => $this->getOption('statusMessages'),
+			'sWaitCursor' => $this->getOption('waitCursor'),
+			'sVersion' => $this->getOption('version'),
+			'sDefaultMode' => $this->getOption('defaultMode'),
+			'sDefaultMethod' => $this->getOption('defaultMethod'),
+			'nResponseQueueSize' => $this->getOption('responseQueueSize'),
+			'bDebug' => $this->getOption('debug'),
+			'bVerboseDebug' => $this->getOption('verboseDebug'),
+			'sDebugOutputID' => $this->getOption('debugOutputID'),
+			'nScriptLoadTimeout' => $this->getOption('scriptLoadTimeout'),
+			'sLanguage' => $this->getOption('language'),
+			'bLanguage' => ($this->getOption('language')) ? true : false,
+		);
 
 		$sJsCoreUrl = $this->sJsLibURI . $this->_getScriptFilename('xajax.core.js');
 		$sJsDebugUrl = $this->sJsLibURI . $this->_getScriptFilename('xajax.debug.js');
 		$sJsVerboseUrl = $this->sJsLibURI . $this->_getScriptFilename('xajax.verbose.js');
-		$sJsLanguageUrl = $this->sJsLibURI . $this->_getScriptFilename('lang/xajax.' . $this->sLanguage . '.js');
+		$sJsLanguageUrl = $this->sJsLibURI . $this->_getScriptFilename('lang/xajax.' . $this->getOption('language') . '.js');
 
 		$sJsCoreError = xajax_trans('errors.component.load', array(
 			'name' => 'xajax',
@@ -786,7 +695,7 @@ class Manager
 
 			// The returned code loads the generated javascript file
 			$sScript = $this->render('plugins/include.js.tpl', array(
-				'sDefer' => $this->sDefer,
+				'sDefer' => $this->getOption('scriptDefferal'),
 				'sUrl' => $this->sJsAppURI . $sOutFile,
 			));
 		}
@@ -794,14 +703,14 @@ class Manager
 		{
 			// The plugins scripts are wrapped with javascript tags
 			$sScript = $this->render('plugins/wrapper.js.tpl', array(
-				'sDefer' => $this->sDefer,
+				'sDefer' => $this->getOption('scriptDefferal'),
 				'sScript' => $sScript,
 			));
 		}
 
 		// Get the code to load the javascript library files
 		/*$sScript .= $this->render('plugins/includes.js.tpl', array(
-			'sDefer' => $this->sDefer,
+			'sDefer' => $this->getOption('scriptDefferal'),
 			'aUrls' => $this->aJsFiles,
 		));*/
 		

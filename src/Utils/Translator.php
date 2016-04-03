@@ -27,8 +27,9 @@ namespace Xajax\Utils;
 
 class Translator
 {
+	use ConfigTrait;
+
 	protected $xTranslator;
-	protected $sLanguage;
     protected $sDefaultLocale = 'en';
     protected $sResourceDir;
 	// Translations array
@@ -41,8 +42,6 @@ class Translator
         /*$this->xTranslator = new Translator($this->defaultLocale, new MessageSelector());
         $this->xTranslator->setFallbackLocales(array($this->defaultLocale));
         $this->xTranslator->addLoader('php', new PhpFileLoader());*/
-        // Set the default language
-        $this->configure('language', $this->sDefaultLocale);
 
 		$this->aMessages = array(
 			'debug.function.include' => "From include file: :file => :output",
@@ -75,35 +74,6 @@ class Translator
     }
 
 	/*
-		Function: configure
-		
-		Called by the main xajax object as configuration options are set.  See also:
-		<Xajax::configure>.  The <Xajax\Utils\Translator> tracks the following configuration
-		options.
-		Parameters:
-		
-		- language (string, default 'en'): The currently selected language.
-	*/
-	public function configure($sName, $mValue)
-	{
-		if($sName == 'language')
-        {
-			$this->sLanguage = $mValue;
-            // Register the language translation files
-            /*$aFiles = array('errors.php');
-            $sLanguage = substr($this->sLanguage, 0, 2);
-            foreach($aFiles as $sFile)
-            {
-                $sFilePath = $this->sResourceDir . "/$sLanguage/$sFile";
-                if(file_exists($sFilePath))
-                {
-                    $this->xTranslator->addResource('php', $sFilePath, $sLanguage);
-                }
-            }*/
-		}
-	}
-
-	/*
 		Function: trans
 
 		Parameters
@@ -121,7 +91,11 @@ class Translator
 		$sText = trim((string)$sText);
         /* if(!$sLanguage)
         {
-            $sLanguage = $this->sLanguage;
+            $sLanguage = $this->getOption('language');
+        }
+        if(!$sLanguage)
+        {
+            $sLanguage = $this->sDefaultLocale;
         }
         return $this->xTranslator->trans($sText, $placeholders, 'messages', $sLanguage); */
 		if(!array_key_exists($sText, $this->aMessages))

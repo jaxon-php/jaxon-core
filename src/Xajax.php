@@ -66,30 +66,7 @@ if(!defined ('XAJAX_PROCESSING_EVENT_INVALID')) define ('XAJAX_PROCESSING_EVENT_
 */
 class Xajax
 {
-    use Utils\TranslatorTrait, Utils\TemplateTrait, Utils\MinifierTrait;
-
-	/*
-		Array: aSettings
-		
-		This array is used to store all the configuration settings that are set during
-		the run of the script.  This provides a single data store for the settings
-		in case we need to return the value of a configuration option for some reason.
-		
-		It is advised that individual plugins store a local copy of the settings they
-		wish to track, however, settings are available via a reference to the <Xajax\Xajax> 
-		object using <Xajax\Xajax->getConfiguration>.
-	*/
-	private $aSettings = array();
-
-	/*
-		Boolean: bErrorHandler
-		
-		This is a configuration setting that the main xajax object tracks.  It is used
-		to enable an error handler function which will trap php errors and return them
-		to the client as part of the response.  The client can then display the errors
-		to the user if so desired.
-	*/
-	private $bErrorHandler;
+    use Utils\TranslatorTrait, Utils\TemplateTrait, Utils\MinifierTrait, Utils\ConfigTrait;
 
 	/*
 		Array: aProcessingEvents
@@ -98,43 +75,6 @@ class Xajax
 		of the script.
 	*/
 	private $aProcessingEvents;
-
-	/*
-		Boolean: bExitAllowed
-		
-		A configuration option that is tracked by the main <Xajax\Xajax>object.  Setting this
-		to true allows <Xajax\Xajax> to exit immediatly after processing a xajax request.  If
-		this is set to false, xajax will allow the remaining code and HTML to be sent
-		as part of the response.  Typically this would result in an error, however, 
-		a response processor on the client side could be designed to handle this condition.
-	*/
-	private $bExitAllowed;
-
-	/*
-		Boolean: bCleanBuffer
-		
-		A configuration option that is tracked by the main <Xajax\Xajax> object.  Setting this
-		to true allows <Xajax\Xajax> to clear out any pending output buffers so that the 
-		<Xajax\Response\Response> is (virtually) the only output when handling a request.
-	*/
-	private $bCleanBuffer;
-
-	/*
-		String: sLogFile
-	
-		A configuration setting tracked by the main <Xajax\Xajax> object.  Set the name of the
-		file on the server that you wish to have php error messages written to during
-		the processing of <Xajax\Xajax> requests.	
-	*/
-	private $sLogFile;
-
-	/*
-		String: sCoreIncludeOutput
-		
-		This is populated with any errors or warnings produced while including the xajax
-		core components.  This is useful for debugging core updates.
-	*/
-	private $sCoreIncludeOutput;
 
 	/*
 		Object: xPluginManager
@@ -200,11 +140,7 @@ class Xajax
 	*/
 	public function __construct($sRequestURI = null, $sLanguage = null)
 	{
-		$this->bErrorHandler = false;
 		$this->aProcessingEvents = array();
-		$this->bExitAllowed = true;
-		$this->bCleanBuffer = true;
-		$this->sLogFile = '';
 
         // Setup the translation manager
         $this->setTranslator(self::getGlobalTranslator());
@@ -228,44 +164,77 @@ class Xajax
 		// Set the minifier in the plugin manager
 		$this->xPluginManager->setMinifier($this->getMinifier());
 
-		// The default configuration settings.
-		$this->configureMany(
-			array(
-				'characterEncoding' => XAJAX_DEFAULT_CHAR_ENCODING,
-				'decodeUTF8Input' => false,
-				'outputEntities' => false,
-				'responseType' => 'JSON',
-				'defaultMode' => 'asynchronous',
-				'defaultMethod' => 'POST',	// W3C: Method is case sensitive
-				'wrapperPrefix' => 'xajax_',
-				'debug' => false,
-				'verbose' => false,
-				'useUncompressedScripts' => false,
-				'statusMessages' => false,
-				'waitCursor' => true,
-				'deferScriptGeneration' => false,
-				'exitAllowed' => true,
-				'errorHandler' => false,
-				'cleanBuffer' => false,
-				'allowBlankResponse' => false,
-				'allowAllResponseTypes' => false,
-				'generateStubs' => true,
-				'logFile' => '',
-				'timeout' => 6000,
-				'version' => $this->getVersion()
-				)
-			);
-
+		$this->setDefaultOptions();
 		if(($sRequestURI))
-			$this->configure('requestURI', $sRequestURI);
+			$this->setOption('requestURI', $sRequestURI);
 		else
-			$this->configure('requestURI', URI::detect());
-		
+			$this->setOption('requestURI', URI::detect());
 		if(($sLanguage))
-			$this->configure('language', $sLanguage);
-
+			$this->setOption('language', $sLanguage);
 		if(XAJAX_DEFAULT_CHAR_ENCODING != 'utf-8')
-            $this->configure("decodeUTF8Input", true);
+            $this->setOption("decodeUTF8Input", true);
+	}
+
+	/**
+	 * Set the default options of all components of the library
+	 *
+	 * @return void
+	 */
+	private function setDefaultOptions()
+	{
+		// The default configuration settings.
+		$this->setOptions(array(
+			'characterEncoding' => XAJAX_DEFAULT_CHAR_ENCODING,
+			'decodeUTF8Input' => false,
+			'outputEntities' => false,
+			'responseType' => 'JSON',
+			'defaultMode' => 'asynchronous',
+			'defaultMethod' => 'POST',	// W3C: Method is case sensitive
+			'wrapperPrefix' => 'xajax_',
+			'debug' => false,
+			'verbose' => false,
+			'statusMessages' => false,
+			'waitCursor' => true,
+			'exitAllowed' => true,
+			'errorHandler' => false,
+			'cleanBuffer' => false,
+			'allowBlankResponse' => false,
+			'allowAllResponseTypes' => false,
+			'generateStubs' => true,
+			'logFile' => '',
+			'timeout' => 6000,
+			'version' => $this->getVersion()
+		));
+
+		// Main Xajax object options
+		$this->setOptions(array(
+			'requestURI' => '',
+			'errorHandler' => false,
+			'exitAllowed' => true,
+			'cleanBuffer' => true,
+			'logFile' => '',
+		));
+
+		// Plugins options
+		$this->setOptions(array(
+			'wrapperPrefix' => 'xajax_',
+			'eventPrefix' => 'event_',
+			'scriptDefferal' => '',
+			'outputEntities' => false,
+			'decodeUTF8Input' => false,
+			'characterEncoding' => 'UTF-8',
+			'statusMessages' => 'false',
+			'waitCursor' => 'true',
+			'version' => 'unknown',
+			'defaultMode' => 'asynchronous',
+			'defaultMethod' => 'POST',	// W3C: Method is case sensitive
+			'debug' => false,
+			'verboseDebug' => false,
+			'scriptLoadTimeout' => 2000,
+			'language' => 'en',
+			'responseQueueSize' => null,
+			'debugOutputID' => null,
+		));
 	}
 
 	/**
@@ -483,6 +452,20 @@ class Xajax
 	{
 		$this->xPluginManager->mergeJavascript($sJsAppDir, $sJsAppURI, $bMinifyJs);
 	}
+
+	/*
+		Function: configureMany
+		
+		Set an array of configuration options.
+
+		Parameters:
+		
+		$aOptions - (array): Associative array of configuration settings
+	*/
+	public function configureMany(array $aOptions)
+	{
+		$this->setOptions($aOptions);
+	}
 	
 	/*
 		Function: configure
@@ -502,49 +485,9 @@ class Xajax
 			exitAllowed - (boolean): true to allow xajax to exit after processing
 				a request.  See <Xajax\Xajax->bExitAllowed> for more information.
 	*/
-	public function configure($sName, $mValue)
+	public function configure($sName, $xValue)
 	{
-        switch($sName)
-        {
-        case 'errorHandler':
-			if($mValue === true || $mValue === false)
-				$this->bErrorHandler = $mValue;
-            break;
-		case 'exitAllowed':
-			if($mValue === true || $mValue === false)
-				$this->bExitAllowed = $mValue;
-            break;
-		case 'cleanBuffer':
-			if($mValue === true || $mValue === false)
-				$this->bCleanBuffer = $mValue;
-            break;
-		case 'logFile':
-			$this->sLogFile = $mValue;
-            break;
-        default: break;
-        }
-
-		$this->getTranslator()->configure($sName, $mValue);
-		$this->xRequestManager->configure($sName, $mValue);
-		$this->xPluginManager->configure($sName, $mValue);
-		$this->xResponseManager->configure($sName, $mValue);
-
-		$this->aSettings[$sName] = $mValue;
-	}
-
-	/*
-		Function: configureMany
-		
-		Set an array of configuration options.
-
-		Parameters:
-		
-		$aOptions - (array): Associative array of configuration settings
-	*/
-	public function configureMany($aOptions)
-	{
-		foreach($aOptions as $sName => $mValue)
-			$this->configure($sName, $mValue);
+		$this->setOption($sName, $xValue);
 	}
 
 	/*
@@ -563,9 +506,7 @@ class Xajax
 	*/
 	public function getConfiguration($sName)
 	{
-		if(isset($this->aSettings[$sName]))
-			return $this->aSettings[$sName];
-		return NULL;
+		return $this->getOption($sName);
 	}
 
 	/*
@@ -704,7 +645,8 @@ class Xajax
 		if($this->canProcessRequest())
 		{
 			// Use xajax error handler if necessary
-			if($this->bErrorHandler) {
+			if(($this->getOption('errorHandler')))
+			{
 				$GLOBALS['xajaxErrorHandlerText'] = "";
 				set_error_handler("xajaxErrorHandler");
 			}
@@ -724,7 +666,8 @@ class Xajax
 
 			if(true === $mResult)
 			{
-				if($this->bCleanBuffer) {
+				if(($this->getOption('cleanBuffer')))
+				{
 					$er = error_reporting(0);
 					while (ob_get_level() > 0) ob_end_clean();
 					error_reporting($er);
@@ -748,9 +691,13 @@ class Xajax
 			}
 			else if(is_string($mResult))
 			{
-				if($this->bCleanBuffer) {
+				if(($this->getOption('cleanBuffer')))
+				{
 					$er = error_reporting(0);
-					while (ob_get_level() > 0) ob_end_clean();
+					while (ob_get_level() > 0)
+					{
+						ob_end_clean();
+					}
 					error_reporting($er);
 				}
 
@@ -770,15 +717,15 @@ class Xajax
 					$this->xResponseManager->debug($mResult);
 			}
 
-			if($this->bErrorHandler)
+			if(($this->getOption('errorHandler')))
 			{
 				$sErrorMessage = $GLOBALS['xajaxErrorHandlerText'];
 				if(!empty($sErrorMessage))
 				{
-					if(0 < strlen($this->sLogFile))
+					if(strlen($this->getOption('logFile')) > 0)
 					{
-						$fH = @fopen($this->sLogFile, "a");
-						if(NULL != $fH)
+						$fH = @fopen($this->getOption('logFile'), "a");
+						if(null != $fH)
 						{
 							fwrite($fH, $this->trans('errors.debug.ts-message', array(
 								'timestamp' => strftime("%b %e %Y %I:%M:%S %p"),
@@ -787,7 +734,8 @@ class Xajax
 						}
 						else
 						{
-							$this->xResponseManager->debug($this->trans('errors.debug.write-log', array('file' => $this->sLogFile)));
+							$this->xResponseManager->debug($this->trans('errors.debug.write-log',
+								array('file' => $this->getOption('logFile'),)));
 						}
 					}
 					$this->xResponseManager->debug($this->trans('errors.debug.message', array('message' => $sErrorMessage)));
@@ -796,10 +744,14 @@ class Xajax
 
 			$this->xResponseManager->send();
 
-			if($this->bErrorHandler)
+			if(($this->getOption('errorHandler')))
+			{
 				restore_error_handler();
-			if($this->bExitAllowed)
+			}
+			if(($this->getOption('exitAllowed')))
+			{
 				exit();
+			}
 		}
 	}
 

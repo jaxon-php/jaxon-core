@@ -2,7 +2,8 @@
 
 namespace Xajax\Request;
 
-use Xajax\Utils\TemplateTrait as TemplateTrait;
+use Xajax\Utils\TemplateTrait;
+use Xajax\Utils\ConfigTrait;
 
 /*
 
@@ -39,6 +40,7 @@ if(!defined('XAJAX_METHOD_POST')) define('XAJAX_METHOD_POST', 2);
 class Manager
 {
 	use TemplateTrait;
+	use ConfigTrait;
 
 	/*
 		Array: aArgs
@@ -47,21 +49,6 @@ class Manager
 		xjxargs.
 	*/
 	private $aArgs;
-	
-	/*
-		Boolean: bDecodeUTF8Input
-		
-		A configuration option used to indicate whether input data should be
-		UTF8 decoded automatically.
-	*/
-	private $bDecodeUTF8Input;
-	
-	/*
-		String: sCharacterEncoding
-		
-		The character encoding in which the input data will be received.
-	*/
-	private $sCharacterEncoding;
 	
 	/*
 		Integer: nMethod
@@ -183,7 +170,7 @@ class Manager
 		}
 		else if(is_string($mArg))
 		{
-			$mArg = iconv("UTF-8", $this->sCharacterEncoding.'//TRANSLIT', $mArg);
+			$mArg = iconv("UTF-8", $this->getOption('characterEncoding') . '//TRANSLIT', $mArg);
 		}
 	}
 	
@@ -208,7 +195,7 @@ class Manager
 		}
 		else if(is_string($mArg))
 		{
-			$mArg = mb_convert_encoding($mArg, $this->sCharacterEncoding, "UTF-8");
+			$mArg = mb_convert_encoding($mArg, $this->getOption('characterEncoding'), "UTF-8");
 		}
 	}
 	
@@ -247,8 +234,6 @@ class Manager
 	{
 
 		$this->aArgs = array();
-		$this->bDecodeUTF8Input = false;
-		$this->sCharacterEncoding = 'UTF-8';
 		$this->nMethod = XAJAX_METHOD_UNKNOWN;
 		
 		if(isset($_POST['xjxargs']))
@@ -287,34 +272,6 @@ class Manager
 	}
 	
 	/*
-		Function: configure
-		
-		Accepts configuration settings from the main <xajax> object.
-		
-		Parameters:
-		
-		
-		The <Manager> tracks the following configuration settings:
-		
-			<decodeUTF8Input> - (boolean): See <Manager->bDecodeUTF8Input>
-			<characterEncoding> - (string): See <Manager->sCharacterEncoding>
-	*/
-	public function configure($sName, $mValue)
-	{
-		switch($sName)
-		{
-		case 'decodeUTF8Input':
-			if($mValue === true || $mValue === false)
-				$this->bDecodeUTF8Input = $mValue;
-			break;
-		case 'characterEncoding':
-			$this->sCharacterEncoding = $mValue;
-			break;
-		default: break;
-		}
-	}
-	
-	/*
 		Function: getRequestMethod
 		
 		Returns the method that was used to send the arguments from the client.
@@ -332,7 +289,7 @@ class Manager
 	*/
  	public function process()
 	{
-		if($this->bDecodeUTF8Input)
+		if(($this->getOption('decodeUTF8Input')))
 		{
 			$sFunction = '';
 			
@@ -344,7 +301,7 @@ class Manager
 			{
 				$sFunction = "mb_convert_encoding";
 			}
-			else if($this->sCharacterEncoding == "ISO-8859-1")
+			else if($this->getOption('characterEncoding') == "ISO-8859-1")
 			{
 				$sFunction = "utf8_decode";
 			}
@@ -355,7 +312,7 @@ class Manager
 
 			$mFunction = array(&$this, '__argumentDecodeUTF8_' . $sFunction);
 			array_walk($this->aArgs, $mFunction);
-			$this->bDecodeUTF8Input = false;
+			$this->setOption('decodeUTF8Input', false);
 		}
 		
 		return $this->aArgs;

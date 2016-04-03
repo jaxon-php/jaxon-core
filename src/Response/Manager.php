@@ -3,7 +3,8 @@
 namespace Xajax\Response;
 
 use Xajax\Utils\TranslatorTrait;
-use Xajax\Utils\TemplateTrait as TemplateTrait;
+use Xajax\Utils\TemplateTrait;
+use Xajax\Utils\ConfigTrait;
 
 /*
 	File: Manager.php
@@ -35,6 +36,7 @@ class Manager
 {
 	use TranslatorTrait;
 	use TemplateTrait;
+	// use ConfigTrait;
 
 	/*
 		Object: xResponse
@@ -43,16 +45,6 @@ class Manager
 		once the request processing phase is complete.
 	*/
 	private $xResponse;
-	
-	/*
-		String: sCharacterEncoding
-	*/
-	private $sCharacterEncoding;
-	
-	/*
-		Boolean: bOutputEntities
-	*/
-	private $bOutputEntities;
 	
 	/*
 		Array: aDebugMessages
@@ -66,7 +58,7 @@ class Manager
 	*/
 	private function __construct()
 	{
-		$this->xResponse = NULL;
+		$this->xResponse = null;
 		$this->aDebugMessages = array();
 	}
 	
@@ -78,75 +70,12 @@ class Manager
 	*/
 	public static function getInstance()
 	{
-		static $obj;
-		if(!$obj)
+		static $xInstance = null;
+		if(!$xInstance)
 		{
-			$obj = new Manager();
+			$xInstance = new Manager();
 		}
-		return $obj;
-	}
-	
-	/*
-		Function: configure
-		
-		Called by the xajax object when configuration options are set in the main script.  Option
-		values are passed to each of the main xajax components and stored locally as needed.  The
-		<Manager> will track the characterEncoding and outputEntities settings.
-		
-		Parameters:
-		$sName - (string): Setting name
-		$mValue - (mixed): Value
-	*/
-	public function configure($sName, $mValue)
-	{
-		if('characterEncoding' == $sName)
-		{
-			$this->sCharacterEncoding = $mValue;
-			
-			if(isset($this->xResponse))
-				$this->xResponse->setCharacterEncoding($this->sCharacterEncoding);
-		}
-		else if('contentType' == $sName)
-		{
-			if(isset($this->xResponse))
-				$this->xResponse->setContentType($mValue);
-		}
-		else if('outputEntities' == $sName)
-		{
-			if(true === $mValue || false === $mValue)
-			{
-				$this->bOutputEntities = $mValue;
-				
-				if(isset($this->xResponse))
-					$this->xResponse->setOutputEntities($this->bOutputEntities);
-			}
-		}
-		$this->aSettings[$sName] = $mValue;
-	
-	}
-
-
-
-	/*
-		Function: getConfiguration
-		
-		Get the current value of a configuration setting that was previously set
-		via <xajax->configure> or <xajax->configureMany>
-
-		Parameters:
-		
-		$sName - (string): The name of the configuration setting
-				
-		Returns:
-		
-		$mValue : (mixed):  The value of the setting if set, null otherwise.
-	*/
-	
-	public function getConfiguration($sName)
-	{
-		if(isset($this->aSettings[$sName]))
-			return $this->aSettings[$sName];
-		return NULL;
+		return $xInstance;
 	}
 	
 	/*
@@ -157,7 +86,7 @@ class Manager
 	*/
 	public function clear()
 	{
-		$this->xResponse = NULL;
+		$this->xResponse = null;
 	}
 
 	/*
@@ -223,31 +152,5 @@ class Manager
 			$this->xResponse->sendHeaders();
 			$this->xResponse->printOutput();
 		}
-	}
-	
-	/*
-		Function: getCharacterEncoding
-		
-		Called automatically by new response objects as they are constructed to obtain the
-		current character encoding setting.  As the character encoding is changed, the <Manager>
-		will automatically notify the current response object since it would have been constructed
-		prior to the setting change, see <Manager::configure>.
-	*/
-	public function getCharacterEncoding()
-	{
-		return $this->sCharacterEncoding;
-	}
-	
-	/*
-		Function: getOutputEntities
-		
-		Called automatically by new response objects as they are constructed to obtain the
-		current output entities setting.  As the output entities setting is changed, the
-		<Manager> will automatically notify the current response object since it would
-		have been constructed prior to the setting change, see <Manager::configure>.
-	*/
-	public function getOutputEntities()
-	{
-		return $this->bOutputEntities;
 	}
 }

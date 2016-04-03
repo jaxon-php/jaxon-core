@@ -37,6 +37,8 @@ if(!defined ('XAJAX_CALLABLE_OBJECT')) define ('XAJAX_CALLABLE_OBJECT', 'callabl
 */
 class CallableObject extends RequestPlugin
 {
+	use \Xajax\Utils\ConfigTrait;
+
 	/*
 		Array: aCallableObjects
 	*/
@@ -46,16 +48,6 @@ class CallableObject extends RequestPlugin
 		Array: aClassPaths
 	*/
 	protected $aClassPaths;
-
-	/*
-		String: sXajaxPrefix
-	*/
-	protected $sXajaxPrefix;
-	
-	/*
-		String: sDefer
-	*/
-	protected $sDefer;
 
 	/*
 		String: sRequestedClass
@@ -74,9 +66,6 @@ class CallableObject extends RequestPlugin
 	{
 		$this->aCallableObjects = array();
 		$this->aClassPaths = array();
-
-		$this->sXajaxPrefix = 'xajax_';
-		$this->sDefer = '';
 
 		$this->sRequestedClass = null;
 		$this->sRequestedMethod = null;
@@ -105,23 +94,6 @@ class CallableObject extends RequestPlugin
 	public function getName()
 	{
 		return 'CallableObject';
-	}
-
-	/*
-		Function: configure
-	*/
-	public function configure($sName, $mValue)
-	{
-		switch($sName)
-		{
-		case 'wrapperPrefix':
-			$this->sXajaxPrefix = $mValue;
-			break;
-		case 'scriptDefferal':
-			$this->sDefer = ($mValue === true ? 'defer' : '');
-			break;
-		default:
-		}
 	}
 
 	/*
@@ -159,7 +131,7 @@ class CallableObject extends RequestPlugin
 				}
 				$this->aCallableObjects[$xCallableObject->getName()] = $xCallableObject;
 
-				return $xCallableObject->generateRequests($this->sXajaxPrefix);
+				return $xCallableObject->generateRequests($this->getOption('wrapperPrefix'));
 			}
 		}
 
@@ -182,6 +154,7 @@ class CallableObject extends RequestPlugin
 	*/
 	public function getClientScript()
 	{
+		$sXajaxPrefix = $this->getOption('wrapperPrefix');
 		// Generate code for javascript classes declaration
 		$code = '';
 		$classes = array();
@@ -195,7 +168,7 @@ class CallableObject extends RequestPlugin
 				// Generate code for this class
 				if(!array_key_exists($class, $classes))
 				{
-					$code .= "{$this->sXajaxPrefix}$class = {};\n";
+					$code .= "$sXajaxPrefix$class = {};\n";
 					$classes[$class] = $class;
 				}
 				$offset = $dotPosition + 1;
@@ -205,7 +178,7 @@ class CallableObject extends RequestPlugin
 
 		foreach($this->aCallableObjects as $xCallableObject)
 		{
-			$code .= $xCallableObject->getClientScript($this->sXajaxPrefix);
+			$code .= $xCallableObject->getClientScript($sXajaxPrefix);
 		}
 		return $code;
 	}
