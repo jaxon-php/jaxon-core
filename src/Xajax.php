@@ -203,14 +203,13 @@ class Xajax
 	}
 
 	/**
-	 * Set the PHP class autoloader
-	 * 
-	 * @param object		$xAutoLoader		The PHP class autoloader
+	 * Set Xajax to use the Composer autoloader
 	 *
 	 * @return void
 	 */
-	public function setAutoLoader($xAutoLoader)
+	public function useComposerAutoLoader()
 	{
+		$xAutoLoader = require (__DIR__ . '/../../../autoload.php');
 		$this->xPluginManager->setAutoLoader($xAutoLoader);
 	}
 
