@@ -173,6 +173,11 @@ class UserFunction extends RequestPlugin
 	*/
 	public function canProcessRequest()
 	{
+		// Check the validity of the function name
+		if(($this->sRequestedFunction) && !$this->validateFunction($this->sRequestedFunction))
+		{
+			$this->sRequestedFunction = null;
+		}
 		return ($this->sRequestedFunction != null);
 	}
 

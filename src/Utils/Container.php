@@ -61,6 +61,10 @@ class Container
     	$this->di['template'] = function($c){
 			return new Template($c['template_dir']);
 		};
+    	// Validator
+    	$this->di['validator'] = function($c){
+			return new \Xajax\Utils\Validator();
+		};
     }
 
 	/**
@@ -101,5 +105,15 @@ class Container
 	public function getTemplate()
     {
     	return $this->di['template'];
+	}
+
+	/**
+	 * Get the validator
+	 *
+	 * @return object		The validator
+	 */
+	public function getValidator()
+    {
+    	return $this->di['validator'];
 	}
 }

@@ -188,6 +188,18 @@ class CallableObject extends RequestPlugin
 	*/
 	public function canProcessRequest()
 	{
+		// Check the validity of the class name
+		if(($this->sRequestedClass) && !$this->validateClass($this->sRequestedClass))
+		{
+			$this->sRequestedClass = null;
+			$this->sRequestedMethod = null;
+		}
+		// Check the validity of the method name
+		if(($this->sRequestedMethod) && !$this->validateMethod($this->sRequestedMethod))
+		{
+			$this->sRequestedClass = null;
+			$this->sRequestedMethod = null;
+		}
 		return ($this->sRequestedClass != null && $this->sRequestedMethod != null);
 	}
 
