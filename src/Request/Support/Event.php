@@ -4,7 +4,6 @@ namespace Xajax\Request\Support;
 
 use Xajax\Request\Manager as RequestManager;
 use Xajax\Response\Manager as ResponseManager;
-use Xajax\Utils\TemplateTrait;
 
 /*
 	File: Event.php
@@ -33,7 +32,7 @@ use Xajax\Utils\TemplateTrait;
 */
 class Event
 {
-	use TemplateTrait;
+	use \Xajax\Utils\ContainerTrait;
 
 	/*
 		String: sName

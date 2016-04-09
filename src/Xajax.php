@@ -66,7 +66,7 @@ if(!defined ('XAJAX_PROCESSING_EVENT_INVALID')) define ('XAJAX_PROCESSING_EVENT_
 */
 class Xajax
 {
-	use Utils\TranslatorTrait, Utils\TemplateTrait, Utils\MinifierTrait, Utils\ConfigTrait;
+	use \Xajax\Utils\ContainerTrait;
 
 	/*
 		Array: aProcessingEvents
@@ -122,9 +122,8 @@ class Xajax
 		$this->aProcessingEvents = array();
 
 		$sTranslationDir = __DIR__ . '/../translations';
-		Utils\Translator::getInstance()->setResourceDir($sTranslationDir);
 		$sTemplateDir = __DIR__ . '/../templates';
-		Utils\Template::getInstance()->setTemplateDir($sTemplateDir);
+		Utils\Container::getInstance()->init($sTranslationDir, $sTemplateDir);
 
 		$this->xRequestManager = RequestManager::getInstance();
 		$this->xResponseManager = ResponseManager::getInstance();
@@ -546,8 +545,9 @@ class Xajax
 		// Check to see if headers have already been sent out, in which case we can't do our job
 		if(headers_sent($filename, $linenumber))
 		{
-			echo "Output has already been sent to the browser at {$filename}:{$linenumber}.\n";
-			echo 'Please make sure the command $xajax->processRequest() is placed before this.';
+			echo $this->trans('errors.output.already-sent', array(
+				'location' => $filename . ':' . $linenumber
+			)), "\n", $this->trans('errors.output.advice');
 			exit();
 		}
 //EndSkipDebug
@@ -588,11 +588,9 @@ class Xajax
 				{
 					$bEndRequest = false;
 
-					$this->aProcessingEvents[XAJAX_PROCESSING_EVENT_AFTER]->call(
-						array($bEndRequest)
-						);
+					$this->aProcessingEvents[XAJAX_PROCESSING_EVENT_AFTER]->call(array($bEndRequest));
 
-					if(true === $bEndRequest)
+					if($bEndRequest === true)
 					{
 						$this->xResponseManager->clear();
 						$this->xResponseManager->append($aResult[1]);
@@ -639,7 +637,8 @@ class Xajax
 						{
 							fwrite($fH, $this->trans('errors.debug.ts-message', array(
 								'timestamp' => strftime("%b %e %Y %I:%M:%S %p"),
-								'message' => $sErrorMessage)));
+								'message' => $sErrorMessage
+							)));
 							fclose($fH);
 						}
 						else

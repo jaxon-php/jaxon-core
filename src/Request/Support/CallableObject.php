@@ -5,7 +5,6 @@ namespace Xajax\Request\Support;
 use Xajax\Request\Request;
 use Xajax\Request\Manager as RequestManager;
 use Xajax\Response\Manager as ResponseManager;
-use Xajax\Utils\TemplateTrait;
 
 /*
 	File: CallableObject.php
@@ -37,7 +36,7 @@ use Xajax\Utils\TemplateTrait;
 
 class CallableObject
 {
-	use TemplateTrait;
+	use \Xajax\Utils\ContainerTrait;
 
 	/*
 		Object: obj

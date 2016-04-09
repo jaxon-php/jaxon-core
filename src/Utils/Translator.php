@@ -6,64 +6,26 @@ namespace Xajax\Utils;
 // use Symfony\Component\Translation\MessageSelector;
 // use Symfony\Component\Translation\Loader\PhpFileLoader;
 
-/*
-	File: Translator.php
-
-	Contains the Translator class.
-
-	Title: Translator class
-
-	Please see <copyright.php> for a detailed description, copyright
-	and license information.
-*/
-
-/*
-	@package Xajax
-	@version $Id: Translator.php 362 2007-05-29 15:32:24Z calltoconstruct $
-	@copyright Copyright (c) 2005-2007 by Jared White & J. Max Wilson
-	@copyright Copyright (c) 2008-2010 by Joseph Woolley, Steffen Konerow, Jared White  & J. Max Wilson
-	@license http://www.xajaxproject.org/bsd_license.txt BSD License
-*/
-
 class Translator
 {
-	use ConfigTrait;
-
 	protected $xTranslator;
-    protected $sDefaultLocale = 'en';
-    protected $sResourceDir;
+	protected $xConfig;
+	protected $sDefaultLocale = 'en';
+	protected $sResourceDir;
 	// Translations array
 	protected $aMessages;
 
-	/*
-		Object: xInstance
-		The only instance of the Translator (Singleton)
-	*/
-	private static $xInstance = null;
-
-	/*
-		Function: getInstance
-		
-		Implementation of the singleton pattern: returns the one and only instance of the Translator
-		
-		Returns:
-		
-		object : a reference to the Translator object.
-	*/
-	public static function getInstance()
+	public function __construct($sResourceDir, $xConfig)
 	{
-		if(!self::$xInstance)
-		{
-			self::$xInstance = new Translator();    
-		}
-		return self::$xInstance;
-	}
+		// Set the translation resource directory
+		$this->sResourceDir = trim($sResourceDir);
 
-	private function __construct()
-    {
-        /*$this->xTranslator = new Translator($this->defaultLocale, new MessageSelector());
-        $this->xTranslator->setFallbackLocales(array($this->defaultLocale));
-        $this->xTranslator->addLoader('php', new PhpFileLoader());*/
+		// Set the config manager
+		$this->xConfig = $xConfig;
+
+		/*$this->xTranslator = new Translator($this->defaultLocale, new MessageSelector());
+		$this->xTranslator->setFallbackLocales(array($this->defaultLocale));
+		$this->xTranslator->addLoader('php', new PhpFileLoader());*/
 
 		$this->aMessages = array(
 			'debug.function.include' => "From include file: :file => :output",
@@ -92,40 +54,32 @@ class Translator
 			'errors.register.invalid' => "Attempt to register invalid plugin: :name; " .
 				"should be derived from Xajax\\Plugin\\Request or Xajax\\Plugin\\Response.",
 			'errors.component.load' => "Error: the :name Javascript component could not be included. Perhaps the URL is incorrect?\\nURL: :url",
+			'errors.output.already-sent' => "Output has already been sent to the browser at :location.",
+			'errors.output.advice' => "Please make sure the command \$xajax->processRequest() is placed before this.",
 		);
-    }
+	}
 
-	public function setResourceDir($sResourceDir)
-    {
-        // Set the translations resource directory
-    	$this->sResourceDir = trim($sResourceDir);
-    }
-
-    /*
-		Function: trans
-
-		Parameters
-
-		$sText - (string):  The text to translate.
-		$aPlaceHolders - (array): The placeholders in the text.
-		$sLanguage - (string): The language to translate to.
-
-		Returns:
-
-		string : The translated text.
-	*/
-    public function trans($sText, array $placeholders = array(), $sLanguage = null)
-    {
+	/**
+	 * Get a translated string
+	 *
+	 * @param string		$sText				The key of the translated string
+	 * @param string		$aPlaceHolders		The placeholders of the translated string
+	 * @param string		$sLanguage			The language of the translated string
+	 *
+	 * @return string		The translated string
+	 */
+	public function trans($sText, array $placeholders = array(), $sLanguage = null)
+	{
 		$sText = trim((string)$sText);
-        /* if(!$sLanguage)
-        {
-            $sLanguage = $this->getOption('language');
-        }
-        if(!$sLanguage)
-        {
-            $sLanguage = $this->sDefaultLocale;
-        }
-        return $this->xTranslator->trans($sText, $placeholders, 'messages', $sLanguage); */
+		/* if(!$sLanguage)
+		{
+			$sLanguage = $this->xConfig->getOption('language');
+		}
+		if(!$sLanguage)
+		{
+			$sLanguage = $this->sDefaultLocale;
+		}
+		return $this->xTranslator->trans($sText, $placeholders, 'messages', $sLanguage); */
 		if(!array_key_exists($sText, $this->aMessages))
 		{
 		   return $sText;
@@ -136,5 +90,5 @@ class Translator
 			$message = str_replace(":$name", $value, $message);
 		}
 		return $message;
-    }
+	}
 }

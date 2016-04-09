@@ -4,15 +4,11 @@ namespace Xajax\Utils;
 
 class URI
 {
-	/*
-		Function: detect
-
-		Returns the current requests URL based upon the SERVER vars.
-
-		Returns:
-
-		string : The URL of the current request.
-	*/
+	/**
+	 * Detect the URI of the current request
+	 *
+	 * @return string		The URI
+	 */
 	public static function detect()
     {
     	$aURL = array();

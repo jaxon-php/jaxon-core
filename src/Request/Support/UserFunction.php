@@ -5,7 +5,6 @@ namespace Xajax\Request\Support;
 use Xajax\Request\Request;
 use Xajax\Request\Manager as RequestManager;
 use Xajax\Response\Manager as ResponseManager;
-use Xajax\Utils\TemplateTrait;
 
 /*
 	File: UserFunction.php
@@ -38,7 +37,7 @@ use Xajax\Utils\TemplateTrait;
 */
 class UserFunction
 {
-	use TemplateTrait;
+	use \Xajax\Utils\ContainerTrait;
 
 	/*
 		String: sAlias

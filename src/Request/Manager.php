@@ -2,9 +2,6 @@
 
 namespace Xajax\Request;
 
-use Xajax\Utils\TemplateTrait;
-use Xajax\Utils\ConfigTrait;
-
 /*
 
 	File: Manager.php
@@ -39,8 +36,7 @@ if(!defined('XAJAX_METHOD_POST')) define('XAJAX_METHOD_POST', 2);
 */
 class Manager
 {
-	use TemplateTrait;
-	use ConfigTrait;
+	use \Xajax\Utils\ContainerTrait;
 
 	/*
 		Array: aArgs

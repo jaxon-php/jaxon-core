@@ -37,7 +37,7 @@ if(!defined ('XAJAX_CALLABLE_OBJECT')) define ('XAJAX_CALLABLE_OBJECT', 'callabl
 */
 class CallableObject extends RequestPlugin
 {
-	use \Xajax\Utils\ConfigTrait;
+	use \Xajax\Utils\ContainerTrait;
 
 	/*
 		Array: aCallableObjects

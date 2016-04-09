@@ -31,10 +31,7 @@ use RecursiveRegexIterator;
 */
 class Manager
 {
-	use \Xajax\Utils\TemplateTrait;
-	use \Xajax\Utils\MinifierTrait;
-	use \Xajax\Utils\TranslatorTrait;
-	use \Xajax\Utils\ConfigTrait;
+	use \Xajax\Utils\ContainerTrait;
 
 	/*
 		Array: aPlugins
@@ -643,7 +640,7 @@ class Manager
 		$templateVars['sJsDebugError'] = $sJsDebugError;
 		$templateVars['sJsVerboseError'] = $sJsVerboseError;
 		$templateVars['sJsLanguageError'] = $sJsLanguageError;
-	
+
 		return $this->render('plugins/config.js.tpl', $templateVars);
 	}
 	

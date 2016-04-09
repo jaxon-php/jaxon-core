@@ -4,42 +4,9 @@ namespace Xajax\Utils;
 
 class Config
 {
-	/*
-		Array: aOptions
-		Config options
-	*/
 	private $aOptions;
-	
-	/*
-		Object: xInstance
-		The only instance of the Config (Singleton)
-	*/
-	private static $xInstance = null;
 
-	/*
-		Function: getInstance
-		
-		Implementation of the singleton pattern: returns the one and only instance of the Config
-		
-		Returns:
-		
-		object : a reference to the Config object.
-	*/
-	public static function getInstance()
-	{
-		if(!self::$xInstance)
-		{
-			self::$xInstance = new Config();    
-		}
-		return self::$xInstance;
-	}
-
-	/*
-		Function: __construct
-		
-		Construct and initialize the one and only Xajax plugin manager.
-	*/
-	private function __construct()
+	public function __construct()
 	{
 		$this->aOptions = array();
     }

@@ -37,7 +37,7 @@ if(!defined ('XAJAX_FUNCTION')) define ('XAJAX_FUNCTION', 'function');
 */
 class UserFunction extends RequestPlugin
 {
-	use \Xajax\Utils\ConfigTrait;
+	use \Xajax\Utils\ContainerTrait;
 
 	/*
 		Array: aFunctions

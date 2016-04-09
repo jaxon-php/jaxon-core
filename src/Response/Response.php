@@ -45,7 +45,7 @@ use Xajax\Request\Manager as RequestManager;
 */
 class Response
 {
-	use \Xajax\Utils\ConfigTrait;
+	use \Xajax\Utils\ContainerTrait;
 
 	/*
 		Array: aCommands

@@ -2,10 +2,6 @@
 
 namespace Xajax\Response;
 
-use Xajax\Utils\TranslatorTrait;
-use Xajax\Utils\TemplateTrait;
-use Xajax\Utils\ConfigTrait;
-
 /*
 	File: Manager.php
 
@@ -34,9 +30,7 @@ use Xajax\Utils\ConfigTrait;
 */
 class Manager
 {
-	use TranslatorTrait;
-	use TemplateTrait;
-	// use ConfigTrait;
+	use \Xajax\Utils\ContainerTrait;
 
 	/*
 		Object: xResponse
