@@ -227,7 +227,7 @@ class UserFunction
 //SkipDebug
 			if(($sOutput))
 			{
-				$sOutput = xajax_trans('debug.function.include', array(
+				$sOutput = $this->trans('debug.function.include', array(
 					'file' => $this->sInclude,
 					'output' => $sOutput
 				));

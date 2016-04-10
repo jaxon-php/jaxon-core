@@ -109,7 +109,7 @@ class Manager
 		}
 		else
 		{
-			$this->debug(xajax_trans('errors.mismatch.types', array('class' => get_class($xResponse))));
+			$this->debug($this->trans('errors.mismatch.types', array('class' => get_class($xResponse))));
 		}
 	}
 	

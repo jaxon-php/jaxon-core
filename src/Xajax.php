@@ -123,7 +123,7 @@ class Xajax
 
 		$sTranslationDir = __DIR__ . '/../translations';
 		$sTemplateDir = __DIR__ . '/../templates';
-		Utils\Container::getInstance()->init($sTranslationDir, $sTemplateDir);
+		Utils\Container::getInstance()->init(realpath($sTranslationDir), realpath($sTemplateDir));
 
 		$this->xRequestManager = RequestManager::getInstance();
 		$this->xResponseManager = ResponseManager::getInstance();

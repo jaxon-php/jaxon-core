@@ -619,19 +619,19 @@ class Manager
 		$sJsVerboseUrl = $this->sJsLibURI . $this->_getScriptFilename('xajax.verbose.js');
 		$sJsLanguageUrl = $this->sJsLibURI . $this->_getScriptFilename('lang/xajax.' . $this->getOption('language') . '.js');
 
-		$sJsCoreError = xajax_trans('errors.component.load', array(
+		$sJsCoreError = $this->trans('errors.component.load', array(
 			'name' => 'xajax',
 			'url' => $sJsCoreUrl,
 		));
-		$sJsDebugError = xajax_trans('errors.component.load', array(
+		$sJsDebugError = $this->trans('errors.component.load', array(
 			'name' => 'xajax.debug',
 			'url' => $sJsDebugUrl,
 		));
-		$sJsVerboseError = xajax_trans('errors.component.load', array(
+		$sJsVerboseError = $this->trans('errors.component.load', array(
 			'name' => 'xajax.debug.verbose',
 			'url' => $sJsVerboseUrl,
 		));
-		$sJsLanguageError = xajax_trans('errors.component.load', array(
+		$sJsLanguageError = $this->trans('errors.component.load', array(
 			'name' => 'xajax.debug.lang',
 			'url' => $sJsLanguageUrl,
 		));
