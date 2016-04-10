@@ -181,10 +181,10 @@ class UserFunction
 		of generating the javascript call to invoke this xajax enabled
 		function.
 	*/
-	public function generateRequest($sXajaxPrefix)
+	public function generateRequest()
 	{
 		$sAlias = (($this->sAlias) ? $this->sAlias : $this->getName());
-		return new Request("{$sXajaxPrefix}{$sAlias}");
+		return new Request($sAlias);
 	}
 	
 	/*
@@ -195,8 +195,9 @@ class UserFunction
 		will generate the javascript function stub that is sent to the
 		browser on initial page load.
 	*/
-	public function getClientScript($sXajaxPrefix)
+	public function getClientScript()
 	{
+		$sXajaxPrefix = $this->getOption('wrapperPrefix');
 		$sFunction = $this->getName();
 		$sAlias = (($this->sAlias) ? $this->sAlias : $sFunction);
 

@@ -76,12 +76,21 @@ if(!defined ('XAJAX_PAGE_NUMBER')) define ('XAJAX_PAGE_NUMBER', 'page number');
 */
 class Request
 {
+	use \Xajax\Utils\ContainerTrait;
+
 	/*
 		String: sName
 		
 		The name of the function.
 	*/
 	private $sName;
+	
+	/*
+		String: sType
+		
+		The type of the request. Can be one of callable or event.
+	*/
+	private $sType;
 	
 	/*
 		String: sQuoteCharacter
@@ -114,12 +123,13 @@ class Request
 		
 		sName - (string):  The name of this request.
 	*/
-	public function __construct($sName)
+	public function __construct($sName, $sType = 'callable')
 	{
 		$this->aParameters = array();
 		$this->nPageNumberIndex = -1;
 		$this->sQuoteCharacter = '"';
 		$this->sName = $sName;
+		$this->sType = $sType;
 	}
 	
 	/*
@@ -266,7 +276,9 @@ class Request
 	*/
 	public function getScript()
 	{
-		return $this->sName . '(' . implode(', ', $this->aParameters) . ')';
+		$sXajaxPrefix = $this->getOption('wrapperPrefix');
+		$sEventPrefix = ($this->sType == 'event' ? $this->getOption('eventPrefix') : '');
+		return $sXajaxPrefix . $sEventPrefix . $this->sName . '(' . implode(', ', $this->aParameters) . ')';
 	}
 
 	/*
@@ -279,5 +291,17 @@ class Request
 	public function printScript()
 	{
 		print $this->getScript();
+	}
+
+	/*
+		Function: __toString
+		
+		Parameters:
+
+		Convert this request object to string.
+	*/
+	public function __toString()
+	{
+		return $this->getScript();
 	}
 }

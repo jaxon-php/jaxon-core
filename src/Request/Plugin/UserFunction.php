@@ -125,7 +125,7 @@ class UserFunction extends RequestPlugin
 				}
 				$this->aFunctions[$xUserFunction->getName()] = $xUserFunction;
 
-				return $xUserFunction->generateRequest($this->getOption('wrapperPrefix'));
+				return $xUserFunction->generateRequest();
 			}
 		}
 
@@ -155,7 +155,7 @@ class UserFunction extends RequestPlugin
 		$code = '';
 		foreach($this->aFunctions as $xFunction)
 		{
-			$code .= $xFunction->getClientScript($this->getOption('wrapperPrefix'));
+			$code .= $xFunction->getClientScript();
 		}
 		return $code;
 	}

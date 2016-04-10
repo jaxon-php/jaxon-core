@@ -131,7 +131,7 @@ class CallableObject extends RequestPlugin
 				}
 				$this->aCallableObjects[$xCallableObject->getName()] = $xCallableObject;
 
-				return $xCallableObject->generateRequests($this->getOption('wrapperPrefix'));
+				return $xCallableObject->generateRequests();
 			}
 		}
 
@@ -178,7 +178,7 @@ class CallableObject extends RequestPlugin
 
 		foreach($this->aCallableObjects as $xCallableObject)
 		{
-			$code .= $xCallableObject->getClientScript($sXajaxPrefix);
+			$code .= $xCallableObject->getClientScript();
 		}
 		return $code;
 	}

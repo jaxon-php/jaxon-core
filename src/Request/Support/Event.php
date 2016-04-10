@@ -2,6 +2,7 @@
 
 namespace Xajax\Request\Support;
 
+use Xajax\Request\Request;
 use Xajax\Request\Manager as RequestManager;
 use Xajax\Response\Manager as ResponseManager;
 
@@ -110,17 +111,11 @@ class Event
 		
 		Generates a <xajaxRequest> object that corresponds to the
 		event so that the client script can easily invoke this event.
-		
-		sXajaxPrefix - (string):  The prefix that will be prepended to
-			the client script stub function associated with this event.
-			
-		sEventPrefix - (string):  The prefix prepended to the client script
-			function stub and <xajaxRequest> script.
 	*/
-	public function generateRequest($sXajaxPrefix, $sEventPrefix)
+	public function generateRequest()
 	{
 		$sEvent = $this->sName;
-		return new xajaxRequest("{$sXajaxPrefix}{$sEventPrefix}{$sEvent}");
+		return new Request($sEvent, 'event');
 	}
 
 
@@ -131,8 +126,10 @@ class Event
  		Generates a block of javascript code that declares a stub function
  		that can be used to easily trigger the event from the browser.
  	*/
- 	public function getClientScript($sXajaxPrefix, $sEventPrefix)
+ 	public function getClientScript()
 	{
+		$sXajaxPrefix = $this->getOption('wrapperPrefix');
+		$sEventPrefix = $this->getOption('eventPrefix');
 		$sMode = '';
 		$sMethod = '';
 		if(isset($this->aConfiguration['mode']))
