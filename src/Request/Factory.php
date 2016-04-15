@@ -7,8 +7,8 @@ class Factory
 	/**
 	 * Return the javascript call to an Xajax function or object method
 	 *
-	 * @param string 		$sName			The function method (with class) name
-	 * @param ...			$xParams		The parameters of the method
+	 * @param string 		$sName			The function or method (with class) name
+	 * @param ...			$xParams		The parameters of the function or method
 	 *
 	 * @return object
 	 */

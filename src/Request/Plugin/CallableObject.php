@@ -113,10 +113,16 @@ class CallableObject extends RequestPlugin
 				{
 					throw new \Xajax\Exception\Error('errors.objects.instance');
 				}
-
 				if(!($xCallableObject instanceof \Xajax\Request\Support\CallableObject))
+				{
+					$xUserCallable = $xCallableObject;
 					$xCallableObject = new \Xajax\Request\Support\CallableObject($xCallableObject);
-
+					// Save the Xajax callable object into the user callable object
+					if(method_exists($xUserCallable, 'setXajaxCallable'))
+					{
+						$xUserCallable->setXajaxCallable($xCallableObject);
+					}
+				}
 				if(count($aArgs) > 2 && is_array($aArgs[2]))
 				{
 					foreach($aArgs[2] as $sKey => $aValue)

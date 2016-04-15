@@ -63,7 +63,7 @@ class Container
 		};
     	// Validator
     	$this->di['validator'] = function($c){
-			return new \Xajax\Utils\Validator();
+			return new Validator();
 		};
     }
 
