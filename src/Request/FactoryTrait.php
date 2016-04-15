@@ -1,5 +1,7 @@
 <?php
 
+namespace Xajax\Request;
+
 trait FactoryTrait
 {
 	private $xXajaxCallable = null;

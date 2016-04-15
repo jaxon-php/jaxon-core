@@ -122,6 +122,11 @@ class CallableObject extends RequestPlugin
 					{
 						$xUserCallable->setXajaxCallable($xCallableObject);
 					}
+					// Save the global Xajax response into the user callable object
+					if(method_exists($xUserCallable, 'setGlobalResponse'))
+					{
+						$xUserCallable->setGlobalResponse();
+					}
 				}
 				if(count($aArgs) > 2 && is_array($aArgs[2]))
 				{
