@@ -89,7 +89,9 @@ class CallableObject
 		$this->callableObject = $obj;
 		$this->reflectionClass = new \ReflectionClass(get_class($this->callableObject));
 		$this->aConfiguration = array();
-		$this->aExcludedMethods = array();
+		// By default, the methods of the RequestTrait and ResponseTrait traits are excluded
+		$this->aExcludedMethods = array('setGlobalResponse', 'newResponse',
+				'setXajaxCallable', 'getXajaxClassName', 'request');
 	}
 
 	/*
@@ -163,7 +165,9 @@ class CallableObject
 		if($sName == 'excluded')
 		{
 			if(is_array($sValue))
-				$this->aExcludedMethods = $sValue;
+				$this->aExcludedMethods = array_merge($this->aExcludedMethods, $sValue);
+			else if(is_string($sValue))
+				$this->aExcludedMethods[] = $sValue;
 			return;
 		}
 		
