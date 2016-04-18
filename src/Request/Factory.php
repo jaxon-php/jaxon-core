@@ -82,7 +82,7 @@ class Factory
 	 */
 	public static function select($sInputId)
 	{
-		return self::checked($sInputId);
+		return self::input($sInputId);
 	}
 
 	/**
