@@ -110,34 +110,35 @@ class Xajax
 		Constructor: xajax
 
 		Constructs a xajax instance and initializes the plugin system.
-		
-		Parameters:
-
-		sRequestURI - (optional):  The <Xajax\Xajax->sRequestURI> to be used
-			for calls back to the server.  If empty, xajax fills in the current
-			URI that initiated this request.
 	*/
-	public function __construct($sRequestURI = null, $sLanguage = null)
+	private function __construct()
 	{
 		$this->aProcessingEvents = array();
 
-		$sTranslationDir = __DIR__ . '/../translations';
-		$sTemplateDir = __DIR__ . '/../templates';
-		Utils\Container::getInstance()->init(realpath($sTranslationDir), realpath($sTemplateDir));
+		$sTranslationDir = realpath(__DIR__ . '/../translations');
+		$sTemplateDir = realpath(__DIR__ . '/../templates');
+		Utils\Container::getInstance()->init($sTranslationDir, $sTemplateDir);
 
 		$this->xRequestManager = RequestManager::getInstance();
 		$this->xResponseManager = ResponseManager::getInstance();
 		$this->xPluginManager = PluginManager::getInstance();
 
 		$this->setDefaultOptions();
-		if(($sRequestURI))
-			$this->setOption('requestURI', $sRequestURI);
-		else
-			$this->setOption('requestURI', URI::detect());
-		if(($sLanguage))
-			$this->setOption('language', $sLanguage);
-		if(XAJAX_DEFAULT_CHAR_ENCODING != 'utf-8')
-			$this->setOption("decodeUTF8Input", true);
+	}
+
+	/**
+	 * Get the unique instance of the Xajax class
+	 *
+	 * @return object
+	 */
+	public static function getInstance()
+	{
+		static $xInstance = null;
+		if(!$xInstance)
+		{
+			$xInstance = new Xajax();
+		}
+		return $xInstance;
 	}
 
 	/**
@@ -179,6 +180,10 @@ class Xajax
 			'cleanBuffer' => true,
 			'logFile' => '',
 		));
+		if(XAJAX_DEFAULT_CHAR_ENCODING != 'utf-8')
+		{
+			$this->setOption("decodeUTF8Input", true);
+		}
 
 		// Plugins options
 		$this->setOptions(array(
@@ -674,6 +679,10 @@ class Xajax
 	*/
 	public function getJavascript()
 	{
+		if(!$this->getOption('requestURI'))
+		{
+			$this->setOption('requestURI', URI::detect());
+		}
 		return $this->xPluginManager->getClientScript();
 	}
 

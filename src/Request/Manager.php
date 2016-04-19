@@ -62,6 +62,53 @@ class Manager
 	private $aSequence;
 	
 	/*
+		Constructor: __construct
+		
+		Initializes configuration settings to their default values and reads
+		the argument data from the GET or POST data.
+	*/
+	private function __construct()
+	{
+
+		$this->aArgs = array();
+		$this->nMethod = XAJAX_METHOD_UNKNOWN;
+		
+		if(isset($_POST['xjxargs']))
+		{
+			$this->nMethod = XAJAX_METHOD_POST;
+			$this->aArgs = $_POST['xjxargs'];
+		}
+		else if(isset($_GET['xjxargs']))
+		{
+			$this->nMethod = XAJAX_METHOD_GET;
+			$this->aArgs = $_GET['xjxargs'];
+		}
+		if(get_magic_quotes_gpc() == 1)
+		{
+			array_walk($this->aArgs, array(&$this, '__argumentStripSlashes'));
+		}
+		array_walk($this->aArgs, array(&$this, '__argumentDecode'));
+	}
+	
+	/*
+		Function: getInstance
+		
+		Returns:
+		
+		object - A reference to an instance of this class.  This function is
+			used to implement the singleton pattern.
+	*/
+	public static function getInstance()
+	{
+		static $xInstance = null;
+		if(!$xInstance)
+		{
+			$xInstance = new Manager();    
+		}
+		return $xInstance;
+	}
+	
+	/*
 		Function: __convertStringToBool
 		
 		Converts a string to a bool var.
@@ -218,53 +265,6 @@ class Manager
 		{
 			$mArg = utf8_decode($mArg);
 		}
-	}
-	
-	/*
-		Constructor: __construct
-		
-		Initializes configuration settings to their default values and reads
-		the argument data from the GET or POST data.
-	*/
-	private function __construct()
-	{
-
-		$this->aArgs = array();
-		$this->nMethod = XAJAX_METHOD_UNKNOWN;
-		
-		if(isset($_POST['xjxargs']))
-		{
-			$this->nMethod = XAJAX_METHOD_POST;
-			$this->aArgs = $_POST['xjxargs'];
-		}
-		else if(isset($_GET['xjxargs']))
-		{
-			$this->nMethod = XAJAX_METHOD_GET;
-			$this->aArgs = $_GET['xjxargs'];
-		}
-		if(get_magic_quotes_gpc() == 1)
-		{
-			array_walk($this->aArgs, array(&$this, '__argumentStripSlashes'));
-		}
-		array_walk($this->aArgs, array(&$this, '__argumentDecode'));
-	}
-	
-	/*
-		Function: getInstance
-		
-		Returns:
-		
-		object - A reference to an instance of this class.  This function is
-			used to implement the singleton pattern.
-	*/
-	public static function getInstance()
-	{
-		static $obj;
-		if(!$obj)
-		{
-			$obj = new Manager();
-		}
-		return $obj;
 	}
 	
 	/*

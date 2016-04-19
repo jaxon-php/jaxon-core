@@ -47,4 +47,16 @@ class Config
     {
     	return (array_key_exists($sName, $this->aOptions) ? $this->aOptions[$sName] : null);
 	}
+
+	/**
+	 * Check the presence of a config option
+	 *
+	 * @param string		$sName			The option name
+	 *
+	 * @return bool		True if the option exists, and false if not
+	 */
+	public function hasOption($sName)
+    {
+    	return array_key_exists($sName, $this->aOptions);
+	}
 }

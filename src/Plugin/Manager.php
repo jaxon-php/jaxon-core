@@ -71,31 +71,6 @@ class Manager
 	private $sJsAppDir;
 
 	/*
-		Object: xInstance
-		The only instance of the plugin manager (Singleton)
-	*/
-	private static $xInstance = null;
-
-	/*
-		Function: getInstance
-		
-		Implementation of the singleton pattern: returns the one and only instance of the 
-		xajax plugin manager.
-		
-		Returns:
-		
-		object : a reference to the one and only instance of the plugin manager.
-	*/
-	public static function getInstance()
-	{
-		if(!self::$xInstance)
-		{
-			self::$xInstance = new Manager();    
-		}
-		return self::$xInstance;
-	}
-
-	/*
 		Function: __construct
 		
 		Construct and initialize the one and only Xajax plugin manager.
@@ -120,6 +95,26 @@ class Manager
 
 		// Set response type to JSON
 		$this->sResponseType = 'JSON';
+	}
+
+	/*
+		Function: getInstance
+		
+		Implementation of the singleton pattern: returns the one and only instance of the 
+		xajax plugin manager.
+		
+		Returns:
+		
+		object : a reference to the one and only instance of the plugin manager.
+	*/
+	public static function getInstance()
+	{
+		static $xInstance = null;
+		if(!$xInstance)
+		{
+			$xInstance = new Manager();    
+		}
+		return $xInstance;
 	}
 
 	/**
