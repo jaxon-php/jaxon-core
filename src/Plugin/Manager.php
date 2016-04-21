@@ -544,12 +544,13 @@ class Manager
 	public function getJsInclude()
 	{
 		$sJsCoreUrl = $this->sJsLibURI . $this->_getScriptFilename('xajax.core.js');
+		$sJsReadyUrl = $this->sJsLibURI . $this->_getScriptFilename('xajax.ready.js');
 		$sJsDebugUrl = $this->sJsLibURI . $this->_getScriptFilename('xajax.debug.js');
 		$sJsVerboseUrl = $this->sJsLibURI . $this->_getScriptFilename('xajax.verbose.js');
 		$sJsLanguageUrl = $this->sJsLibURI . $this->_getScriptFilename('lang/xajax.' . $this->getOption('language') . '.js');
 
 		// Add component files to the javascript file array;
-		$aJsFiles = array($sJsCoreUrl);
+		$aJsFiles = array($sJsCoreUrl, $sJsReadyUrl);
 		if($this->getOption('debug'))
 		{
 			$this->aJsFiles[] = $sJsDebugUrl;
@@ -641,12 +642,12 @@ class Manager
 	
 	private function getPluginScript()
 	{
-		$code = '';
+		$sScript = '';
 		foreach($this->aPlugins as $xPlugin)
 		{
-			$code .= $xPlugin->getClientScript();
+			$sScript .= trim($xPlugin->getClientScript(), " \n") . "\n\n";
 		}
-		return $code;
+		return (($sScript) ? $this->render('plugins/ready.js.tpl', array('sScript' => $sScript)) : '');
 	}
 
 	/*
