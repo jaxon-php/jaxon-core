@@ -207,7 +207,7 @@ class CallableObject
 			{
 				continue;
 			}
-			$aRequests[$sMethodName] = new Request("{$this->classpath}{$sClass}.{$sMethodName}");
+			$aRequests[$sMethodName] = new Request("{$this->classpath}{$sClass}.{$sMethodName}", 'object');
 		}
 
 		return $aRequests;
@@ -224,7 +224,7 @@ class CallableObject
 	*/	
 	public function getClientScript()
 	{
-		$sXajaxPrefix = $this->getOption('wrapperPrefix');
+		$sXajaxPrefix = $this->getOption('core.prefix.class');
 		$sClass = $this->classpath . $this->getClassName();
 		$aMethods = array();
 		$aConfig = array();

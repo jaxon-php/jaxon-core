@@ -1400,7 +1400,7 @@ class Response
 		}
 		
 		$sCharacterSet = '';
-		$sCharacterEncoding = trim($this->getOption('characterEncoding'));
+		$sCharacterEncoding = trim($this->getOption('core.process.encoding'));
 		if(($sCharacterEncoding) && strlen($sCharacterEncoding) > 0)
 		{
 			$sCharacterSet = '; charset="' . trim($sCharacterEncoding) . '"';

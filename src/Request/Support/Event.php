@@ -128,8 +128,7 @@ class Event
  	*/
  	public function getClientScript()
 	{
-		$sXajaxPrefix = $this->getOption('wrapperPrefix');
-		$sEventPrefix = $this->getOption('eventPrefix');
+		$sEventPrefix = $this->getOption('core.prefix.event');
 		$sMode = '';
 		$sMethod = '';
 		if(isset($this->aConfiguration['mode']))
@@ -142,7 +141,7 @@ class Event
 		}
 
 		return $this->render('support/event.js.tpl', array(
-			'sPrefix' => $sXajaxPrefix . $sEventPrefix,
+			'sPrefix' => $sEventPrefix,
 			'sEvent' => $this->sName,
 			'sMode' => $sMode,
 			'sMethod' => $sMethod,

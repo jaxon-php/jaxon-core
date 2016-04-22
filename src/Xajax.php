@@ -69,6 +69,13 @@ class Xajax
 	use \Xajax\Utils\ContainerTrait;
 
 	/*
+		Array: aOptionMappings
+		
+		Maps the previous config options to the current ones, so the library can still accept them.
+	*/
+	private $aOptionMappings;
+
+	/*
 		Array: aProcessingEvents
 		
 		Stores the processing event handlers that have been assigned during this run
@@ -124,6 +131,34 @@ class Xajax
 		$this->xPluginManager = PluginManager::getInstance();
 
 		$this->setDefaultOptions();
+		$this->aOptionMappings = array(
+			'language'					=> 'core.language',
+			'version'					=> 'core.version',
+			'wrapperPrefix'				=> array('core.prefix.function', 'core.prefix.class'),
+			'eventPrefix'				=> 'core.prefix.event',
+			'responseQueueSize'			=> 'core.response.queue_size',
+			'timeout'					=> 'core.response.timeout',
+			'requestURI'				=> 'core.request.uri',
+			'defaultMode'				=> 'core.request.mode',
+			'defaultMethod'				=> 'core.request.method',
+			'characterEncoding'			=> 'core.process.encoding',
+			'decodeUTF8Input'			=> 'core.process.decode_utf8',
+			'cleanBuffer'				=> 'core.process.clean_buffer',
+			'exitAllowed'				=> 'core.process.exit_after',
+			'scriptLoadTimeout'			=> 'core.process.load_timeout',
+			'waitCursor'				=> 'core.process.show_cursor',
+			'statusMessages'			=> 'core.process.show_status',
+			'errorHandler'				=> 'core.error.handle',
+			'logFile'					=> 'core.error.log_file',
+			'debug'						=> 'core.debug.on',
+			'verboseDebug'				=> 'core.debug.verbose',
+			'debugOutputID'				=> 'core.debug.output_id',
+			'javascript URI'			=> array('core.jslib.uri', 'core.jsapp.uri'),
+			'javascript Dir'			=> 'core.jsapp.dir',
+			'deferScriptGeneration'		=> array('core.jsapp.merge', 'core.jsapp.minify'),
+			'deferDirectory'			=> 'core.jsapp.dir',
+			'scriptDefferal'			=> 'core.jsapp.options',
+		);
 	}
 
 	/**
@@ -150,61 +185,34 @@ class Xajax
 	{
 		// The default configuration settings.
 		$this->setOptions(array(
-			'characterEncoding' => XAJAX_DEFAULT_CHAR_ENCODING,
-			'decodeUTF8Input' => false,
-			'outputEntities' => false,
-			'responseType' => 'JSON',
-			'defaultMode' => 'asynchronous',
-			'defaultMethod' => 'POST',	// W3C: Method is case sensitive
-			'wrapperPrefix' => 'xajax_',
-			'debug' => false,
-			'verbose' => false,
-			'statusMessages' => false,
-			'waitCursor' => true,
-			'exitAllowed' => true,
-			'errorHandler' => false,
-			'cleanBuffer' => false,
-			'allowBlankResponse' => false,
-			'allowAllResponseTypes' => false,
-			'generateStubs' => true,
-			'logFile' => '',
-			'timeout' => 6000,
-			'version' => $this->getVersion()
-		));
-
-		// Main Xajax object options
-		$this->setOptions(array(
-			'requestURI' => '',
-			'errorHandler' => false,
-			'exitAllowed' => true,
-			'cleanBuffer' => true,
-			'logFile' => '',
+			'core.version' => $this->getVersion(),
+			'core.language' => 'en',
+			'core.prefix.function' => 'xajax_',
+			'core.prefix.class' => 'Xajax',
+			'core.prefix.event' => 'xajax_event_',
+			'core.request.uri' => '',
+			'core.request.mode' => 'asynchronous',
+			'core.request.method' => 'POST',	// W3C: Method is case sensitive
+			'core.debug.on' => false,
+			'core.debug.verbose' => false,
+			'core.debug.output_id' => 0,
+			'core.process.encoding' => XAJAX_DEFAULT_CHAR_ENCODING,
+			'core.process.load_timeout' => 2000,
+			'core.process.decode_utf8' => false,
+			'core.process.show_status' => false,
+			'core.process.wait_cursor' => true,
+			'core.process.exit_after' => true,
+			'core.error.handle' => false,
+			'core.error.log_file' => '',
+			'core.process.clean_buffer' => false,
+			'core.response.queue_size' => 0,
+			'core.response.timeout' => 6000,
+			'core.jsapp.options' => '',
 		));
 		if(XAJAX_DEFAULT_CHAR_ENCODING != 'utf-8')
 		{
-			$this->setOption("decodeUTF8Input", true);
+			$this->setOption('core.process.decode_utf8', true);
 		}
-
-		// Plugins options
-		$this->setOptions(array(
-			'wrapperPrefix' => 'xajax_',
-			'eventPrefix' => 'event_',
-			'scriptDefferal' => '',
-			'outputEntities' => false,
-			'decodeUTF8Input' => false,
-			'characterEncoding' => 'UTF-8',
-			'statusMessages' => 'false',
-			'waitCursor' => 'true',
-			'version' => 'unknown',
-			'defaultMode' => 'asynchronous',
-			'defaultMethod' => 'POST',	// W3C: Method is case sensitive
-			'debug' => false,
-			'verboseDebug' => false,
-			'scriptLoadTimeout' => 2000,
-			'language' => 'en',
-			'responseQueueSize' => null,
-			'debugOutputID' => null,
-		));
 	}
 
 	/**
@@ -559,7 +567,7 @@ class Xajax
 		if($this->canProcessRequest())
 		{
 			// Use xajax error handler if necessary
-			if(($this->getOption('errorHandler')))
+			if(($this->getOption('core.error.handle')))
 			{
 				$GLOBALS['xajaxErrorHandlerText'] = "";
 				set_error_handler("xajaxErrorHandler");
@@ -580,7 +588,7 @@ class Xajax
 
 			if(true === $mResult)
 			{
-				if(($this->getOption('cleanBuffer')))
+				if(($this->getOption('core.process.clean_buffer')))
 				{
 					$er = error_reporting(0);
 					while (ob_get_level() > 0) ob_end_clean();
@@ -603,7 +611,7 @@ class Xajax
 			}
 			else if(is_string($mResult))
 			{
-				if(($this->getOption('cleanBuffer')))
+				if(($this->getOption('core.process.clean_buffer')))
 				{
 					$er = error_reporting(0);
 					while (ob_get_level() > 0)
@@ -629,14 +637,15 @@ class Xajax
 					$this->xResponseManager->debug($mResult);
 			}
 
-			if(($this->getOption('errorHandler')))
+			if(($this->getOption('core.error.handle')) && $this->hasOption('core.error.log_file'))
 			{
 				$sErrorMessage = $GLOBALS['xajaxErrorHandlerText'];
+				$logFile = $this->getOption('core.error.log_file');
 				if(!empty($sErrorMessage))
 				{
-					if(strlen($this->getOption('logFile')) > 0)
+					if(strlen($logFile) > 0)
 					{
-						$fH = @fopen($this->getOption('logFile'), "a");
+						$fH = @fopen($logFile, "a");
 						if(null != $fH)
 						{
 							fwrite($fH, $this->trans('errors.debug.ts-message', array(
@@ -648,7 +657,7 @@ class Xajax
 						else
 						{
 							$this->xResponseManager->debug($this->trans('errors.debug.write-log',
-								array('file' => $this->getOption('logFile'),)));
+								array('file' => $logFile,)));
 						}
 					}
 					$this->xResponseManager->debug($this->trans('errors.debug.message', array('message' => $sErrorMessage)));
@@ -657,11 +666,11 @@ class Xajax
 
 			$this->xResponseManager->send();
 
-			if(($this->getOption('errorHandler')))
+			if(($this->getOption('core.error.handle')))
 			{
 				restore_error_handler();
 			}
-			if(($this->getOption('exitAllowed')))
+			if(($this->getOption('core.process.exit_after')))
 			{
 				exit();
 			}
@@ -679,9 +688,9 @@ class Xajax
 	*/
 	public function getJavascript()
 	{
-		if(!$this->getOption('requestURI'))
+		if(!$this->hasOption('core.request.uri'))
 		{
-			$this->setOption('requestURI', URI::detect());
+			$this->setOption('core.request.uri', URI::detect());
 		}
 		return $this->xPluginManager->getClientScript();
 	}

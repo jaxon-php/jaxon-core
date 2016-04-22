@@ -165,7 +165,7 @@ class CallableObject extends RequestPlugin
 	*/
 	public function getClientScript()
 	{
-		$sXajaxPrefix = $this->getOption('wrapperPrefix');
+		$sXajaxPrefix = $this->getOption('core.prefix.class');
 		// Generate code for javascript classes declaration
 		$code = '';
 		$classes = array();

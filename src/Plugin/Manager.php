@@ -547,22 +547,22 @@ class Manager
 		$sJsReadyUrl = $this->sJsLibURI . $this->_getScriptFilename('xajax.ready.js');
 		$sJsDebugUrl = $this->sJsLibURI . $this->_getScriptFilename('xajax.debug.js');
 		$sJsVerboseUrl = $this->sJsLibURI . $this->_getScriptFilename('xajax.verbose.js');
-		$sJsLanguageUrl = $this->sJsLibURI . $this->_getScriptFilename('lang/xajax.' . $this->getOption('language') . '.js');
+		$sJsLanguageUrl = $this->sJsLibURI . $this->_getScriptFilename('lang/xajax.' . $this->getOption('core.language') . '.js');
 
 		// Add component files to the javascript file array;
 		$aJsFiles = array($sJsCoreUrl, $sJsReadyUrl);
-		if($this->getOption('debug'))
+		if($this->getOption('core.debug.on'))
 		{
 			$this->aJsFiles[] = $sJsDebugUrl;
 			$this->aJsFiles[] = $sJsLanguageUrl;
-			if($this->getOption('verboseDebug'))
+			if($this->getOption('core.debug.verbose'))
 			{
 				$this->aJsFiles[] = $sJsVerboseUrl;
 			}
 		}
 
 		$code = $this->render('plugins/includes.js.tpl', array(
-			'sDefer' => $this->getOption('scriptDefferal'),
+			'sDefer' => $this->getOption('core.jsapp.options'),
 			'aUrls' => $aJsFiles,
 		));
 		foreach($this->aResponsePlugins as $xPlugin)
@@ -593,27 +593,27 @@ class Manager
 	{
 		// Print Xajax config vars
 		$templateVars = array(
-			'sResponseType' => $this->sResponseType,
-			'sDefer' => $this->getOption('scriptDefferal'),
-			'sRequestURI' => $this->getOption('requestURI'),
-			'sStatusMessages' => $this->getOption('statusMessages'),
-			'sWaitCursor' => $this->getOption('waitCursor'),
-			'sVersion' => $this->getOption('version'),
-			'sDefaultMode' => $this->getOption('defaultMode'),
-			'sDefaultMethod' => $this->getOption('defaultMethod'),
-			'nResponseQueueSize' => $this->getOption('responseQueueSize'),
-			'bDebug' => $this->getOption('debug'),
-			'bVerboseDebug' => $this->getOption('verboseDebug'),
-			'sDebugOutputID' => $this->getOption('debugOutputID'),
-			'nScriptLoadTimeout' => $this->getOption('scriptLoadTimeout'),
-			'sLanguage' => $this->getOption('language'),
-			'bLanguage' => ($this->getOption('language')) ? true : false,
+			'sResponseType' 			=> $this->sResponseType,
+			'sVersion' 					=> $this->getOption('core.version'),
+			'sLanguage' 				=> $this->getOption('core.language'),
+			'bLanguage' 				=> $this->hasOption('core.language') ? true : false,
+			'sRequestURI' 				=> $this->getOption('core.request.uri'),
+			'sDefaultMode' 				=> $this->getOption('core.request.mode'),
+			'sDefaultMethod' 			=> $this->getOption('core.request.method'),
+			'nResponseQueueSize' 		=> $this->getOption('core.response.queue_size'),
+			'sStatusMessages' 			=> $this->getOption('core.process.show_status') ? 'true' : 'false',
+			'sWaitCursor' 				=> $this->getOption('core.process.show_cursor') ? 'true' : 'false',
+			'nScriptLoadTimeout' 		=> $this->getOption('core.process.load_timeout'),
+			'bDebug' 					=> $this->getOption('core.debug.on'),
+			'bVerboseDebug' 			=> $this->getOption('core.debug.verbose'),
+			'sDebugOutputID' 			=> $this->getOption('core.debug.output_id'),
+			'sDefer' 					=> $this->getOption('core.jsapp.options'),
 		);
 
 		$sJsCoreUrl = $this->sJsLibURI . $this->_getScriptFilename('xajax.core.js');
 		$sJsDebugUrl = $this->sJsLibURI . $this->_getScriptFilename('xajax.debug.js');
 		$sJsVerboseUrl = $this->sJsLibURI . $this->_getScriptFilename('xajax.verbose.js');
-		$sJsLanguageUrl = $this->sJsLibURI . $this->_getScriptFilename('lang/xajax.' . $this->getOption('language') . '.js');
+		$sJsLanguageUrl = $this->sJsLibURI . $this->_getScriptFilename('lang/xajax.' . $this->getOption('core.language') . '.js');
 
 		$sJsCoreError = $this->trans('errors.component.load', array(
 			'name' => 'xajax',
@@ -688,7 +688,7 @@ class Manager
 
 			// The returned code loads the generated javascript file
 			$sScript = $this->render('plugins/include.js.tpl', array(
-				'sDefer' => $this->getOption('scriptDefferal'),
+				'sDefer' => $this->getOption('core.jsapp.options'),
 				'sUrl' => $this->sJsAppURI . $sOutFile,
 			));
 		}
@@ -696,14 +696,14 @@ class Manager
 		{
 			// The plugins scripts are wrapped with javascript tags
 			$sScript = $this->render('plugins/wrapper.js.tpl', array(
-				'sDefer' => $this->getOption('scriptDefferal'),
+				'sDefer' => $this->getOption('core.jsapp.options'),
 				'sScript' => $sScript,
 			));
 		}
 
 		// Get the code to load the javascript library files
 		/*$sScript .= $this->render('plugins/includes.js.tpl', array(
-			'sDefer' => $this->getOption('scriptDefferal'),
+			'sDefer' => $this->getOption('core.jsapp.options'),
 			'aUrls' => $this->aJsFiles,
 		));*/
 		

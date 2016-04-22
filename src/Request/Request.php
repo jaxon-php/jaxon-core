@@ -123,7 +123,7 @@ class Request
 		
 		sName - (string):  The name of this request.
 	*/
-	public function __construct($sName, $sType = 'callable')
+	public function __construct($sName, $sType)
 	{
 		$this->aParameters = array();
 		$this->nPageNumberIndex = -1;
@@ -276,9 +276,8 @@ class Request
 	*/
 	public function getScript()
 	{
-		$sXajaxPrefix = $this->getOption('wrapperPrefix');
-		$sEventPrefix = ($this->sType == 'event' ? $this->getOption('eventPrefix') : '');
-		return $sXajaxPrefix . $sEventPrefix . $this->sName . '(' . implode(', ', $this->aParameters) . ')';
+		$sXajaxPrefix = $this->getOption('core.prefix.' . $this->sType, '');
+		return $sXajaxPrefix . $this->sName . '(' . implode(', ', $this->aParameters) . ')';
 	}
 
 	/*

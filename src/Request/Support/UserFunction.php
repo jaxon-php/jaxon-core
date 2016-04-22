@@ -184,7 +184,7 @@ class UserFunction
 	public function generateRequest()
 	{
 		$sAlias = (($this->sAlias) ? $this->sAlias : $this->getName());
-		return new Request($sAlias);
+		return new Request($sAlias, 'function');
 	}
 	
 	/*
@@ -197,7 +197,7 @@ class UserFunction
 	*/
 	public function getClientScript()
 	{
-		$sXajaxPrefix = $this->getOption('wrapperPrefix');
+		$sXajaxPrefix = $this->getOption('core.prefix.function');
 		$sFunction = $this->getName();
 		$sAlias = (($this->sAlias) ? $this->sAlias : $sFunction);
 
