@@ -59,4 +59,26 @@ class Config
     {
     	return array_key_exists($sName, $this->aOptions);
 	}
+
+	/**
+	 * Get the names of the options matching a given prefix
+	 *
+	 * @param string		$sPrefix		The prefix to match
+	 *
+	 * @return array		The options matching the prefix
+	 */
+	public function getOptionNames($sPrefix)
+    {
+    	$sPrefix = (string)$sPrefix;
+    	$sPrefixLen = strlen($sPrefix);
+    	$aOptions = array();
+    	foreach($this->aOptions as $sName => $xValue)
+    	{
+    		if(substr($sName, 0, $sPrefixLen) == $sPrefix)
+    		{
+    			$aOptions[substr($sName, $sPrefixLen)] = $sName;
+    		}
+    	}
+    	return $aOptions;
+	}
 }

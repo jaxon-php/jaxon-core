@@ -54,6 +54,18 @@ trait ContainerTrait
 	}
 
 	/**
+	 * Get the names of the options matching a given prefix
+	 *
+	 * @param string		$sPrefix		The prefix to match
+	 *
+	 * @return array		The options matching the prefix
+	 */
+	public function getOptionNames($sPrefix)
+    {
+    	return Container::getInstance()->getConfig()->getOptionNames($sPrefix);
+    }
+
+	/**
 	 * Render a template
 	 *
 	 * @param string		$sTemplate			The name of template to be rendered
