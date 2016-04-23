@@ -1,5 +1,3 @@
 docReady(function() {
-
 {$sScript|noescape}
-
 });

@@ -114,6 +114,13 @@ class Xajax
 	protected static $gxResponse = null;
 
 	/*
+		String: sErrorMessage
+		
+		Stores the error message when the Xajax error handling system is enabled
+	*/
+	private $sErrorMessage = '';
+
+	/*
 		Constructor: xajax
 
 		Constructs a xajax instance and initializes the plugin system.
@@ -534,6 +541,39 @@ class Xajax
 	}
 
 	/*
+		Function errorHandler
+	
+		This function is registered with PHP's set_error_handler if the xajax
+		error handling system is enabled.
+	
+		See <xajax->bUserErrorHandler>
+	*/
+	public function errorHandler($errno, $errstr, $errfile, $errline)
+	{
+		$errorReporting = error_reporting();
+		if (($errno & $errorReporting) == 0 || (defined('E_STRICT') && $errno == E_STRICT))
+		{
+			return;
+		}
+
+		$aErrTypes = array(
+			E_NOTICE => 'NOTICE',
+			E_WARNING => 'WARNING',
+			E_USER_NOTICE => 'USER NOTICE',
+			E_USER_WARNING => 'USER	WARNING',
+			E_USER_ERROR => 'USER FATAL ERROR',
+		);
+		$sErrorType = (array_key_exists($errno, $aErrTypes) ? $aErrTypes[$errno] : 'UNKNOWN: ' . $errno);
+		$this->sErrorMessage = $this->render('plugins/errors.txt.tpl', array(
+			'sPrevMessage' => $this->sErrorMessage,
+			'sErrorType' => $sErrorType,
+			'sErrorMessage' => $errstr,
+			'sErrorFile' => $errfile,
+			'sErrorLine' => $errline,
+		));
+	}
+
+	/*
 		Function: processRequest
 
 		If this is a xajax request (see <Xajax\Xajax->canProcessRequest>), call the
@@ -569,8 +609,8 @@ class Xajax
 			// Use xajax error handler if necessary
 			if(($this->getOption('core.error.handle')))
 			{
-				$GLOBALS['xajaxErrorHandlerText'] = "";
-				set_error_handler("xajaxErrorHandler");
+				$this->setErrorMessage('');
+				set_error_handler(array($this, "errorHandler"));
 			}
 			
 			$mResult = true;
@@ -637,31 +677,26 @@ class Xajax
 					$this->xResponseManager->debug($mResult);
 			}
 
-			if(($this->getOption('core.error.handle')) && $this->hasOption('core.error.log_file'))
+			if(($this->sErrorMessage) && ($this->getOption('core.error.handle')) &&
+				$this->hasOption('core.error.log_file'))
 			{
-				$sErrorMessage = $GLOBALS['xajaxErrorHandlerText'];
-				$logFile = $this->getOption('core.error.log_file');
-				if(!empty($sErrorMessage))
+				if(($fH = @fopen($this->getOption('core.error.log_file'), "a")) != null)
 				{
-					if(strlen($logFile) > 0)
-					{
-						$fH = @fopen($logFile, "a");
-						if(null != $fH)
-						{
-							fwrite($fH, $this->trans('errors.debug.ts-message', array(
-								'timestamp' => strftime("%b %e %Y %I:%M:%S %p"),
-								'message' => $sErrorMessage
-							)));
-							fclose($fH);
-						}
-						else
-						{
-							$this->xResponseManager->debug($this->trans('errors.debug.write-log',
-								array('file' => $logFile,)));
-						}
-					}
-					$this->xResponseManager->debug($this->trans('errors.debug.message', array('message' => $sErrorMessage)));
+					fwrite($fH, $this->trans('errors.debug.ts-message', array(
+						'timestamp' => strftime("%b %e %Y %I:%M:%S %p"),
+						'message' => $this->sErrorMessage
+					)));
+					fclose($fH);
 				}
+				else
+				{
+					$this->xResponseManager->debug($this->trans('errors.debug.write-log', array(
+						'file' => $this->getOption('core.error.log_file')
+					)));
+				}
+				$this->xResponseManager->debug($this->trans('errors.debug.message', array(
+					'message' => $this->sErrorMessage
+				)));
 			}
 
 			$this->xResponseManager->send();
