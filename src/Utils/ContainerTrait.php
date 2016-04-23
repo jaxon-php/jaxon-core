@@ -42,6 +42,18 @@ trait ContainerTrait
 	}
 
 	/**
+	 * Check the presence of a config option
+	 *
+	 * @param string		$sName			The option name
+	 *
+	 * @return bool		True if the option exists, and false if not
+	 */
+	public function hasOption($sName)
+    {
+    	return Container::getInstance()->getConfig()->hasOption($sName);
+	}
+
+	/**
 	 * Render a template
 	 *
 	 * @param string		$sTemplate			The name of template to be rendered
