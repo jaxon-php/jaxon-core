@@ -276,7 +276,7 @@ class Request
 	*/
 	public function getScript()
 	{
-		$sXajaxPrefix = $this->getOption('core.prefix.' . $this->sType, '');
+		$sXajaxPrefix = $this->getOption('core.prefix.' . $this->sType);
 		return $sXajaxPrefix . $this->sName . '(' . implode(', ', $this->aParameters) . ')';
 	}
 

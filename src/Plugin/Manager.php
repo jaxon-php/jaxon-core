@@ -562,7 +562,7 @@ class Manager
 		}
 
 		$code = $this->render('plugins/includes.js.tpl', array(
-			'sDefer' => $this->getOption('core.jsapp.options'),
+			'sDefer' => $this->getOption('core.js.options'),
 			'aUrls' => $aJsFiles,
 		));
 		foreach($this->aResponsePlugins as $xPlugin)
@@ -607,7 +607,7 @@ class Manager
 			'bDebug' 					=> $this->getOption('core.debug.on'),
 			'bVerboseDebug' 			=> $this->getOption('core.debug.verbose'),
 			'sDebugOutputID' 			=> $this->getOption('core.debug.output_id'),
-			'sDefer' 					=> $this->getOption('core.jsapp.options'),
+			'sDefer' 					=> $this->getOption('core.js.options'),
 		);
 
 		$sJsCoreUrl = $this->sJsLibURI . $this->_getScriptFilename('xajax.core.js');
@@ -688,7 +688,7 @@ class Manager
 
 			// The returned code loads the generated javascript file
 			$sScript = $this->render('plugins/include.js.tpl', array(
-				'sDefer' => $this->getOption('core.jsapp.options'),
+				'sDefer' => $this->getOption('core.js.options'),
 				'sUrl' => $this->sJsAppURI . $sOutFile,
 			));
 		}
@@ -696,14 +696,14 @@ class Manager
 		{
 			// The plugins scripts are wrapped with javascript tags
 			$sScript = $this->render('plugins/wrapper.js.tpl', array(
-				'sDefer' => $this->getOption('core.jsapp.options'),
+				'sDefer' => $this->getOption('core.js.options'),
 				'sScript' => $sScript,
 			));
 		}
 
 		// Get the code to load the javascript library files
 		/*$sScript .= $this->render('plugins/includes.js.tpl', array(
-			'sDefer' => $this->getOption('core.jsapp.options'),
+			'sDefer' => $this->getOption('core.js.options'),
 			'aUrls' => $this->aJsFiles,
 		));*/
 		

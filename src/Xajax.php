@@ -160,11 +160,11 @@ class Xajax
 			'debug'						=> 'core.debug.on',
 			'verboseDebug'				=> 'core.debug.verbose',
 			'debugOutputID'				=> 'core.debug.output_id',
-			'javascript URI'			=> array('core.jslib.uri', 'core.jsapp.uri'),
-			'javascript Dir'			=> 'core.jsapp.dir',
-			'deferScriptGeneration'		=> array('core.jsapp.merge', 'core.jsapp.minify'),
-			'deferDirectory'			=> 'core.jsapp.dir',
-			'scriptDefferal'			=> 'core.jsapp.options',
+			'javascript URI'			=> array('core.js.uri', 'core.js.lib_uri'),
+			'javascript Dir'			=> 'core.js.dir',
+			'deferScriptGeneration'		=> array('core.js.merge', 'core.js.minify'),
+			'deferDirectory'			=> 'core.js.dir',
+			'scriptDefferal'			=> 'core.js.options',
 		);
 	}
 
@@ -214,7 +214,8 @@ class Xajax
 			'core.process.clean_buffer' => false,
 			'core.response.queue_size' => 0,
 			'core.response.timeout' => 6000,
-			'core.jsapp.options' => '',
+			'core.js.dir' => '',
+			'core.js.options' => '',
 		));
 		if(XAJAX_DEFAULT_CHAR_ENCODING != 'utf-8')
 		{
@@ -392,7 +393,10 @@ class Xajax
 	*/
 	public function configureMany(array $aOptions)
 	{
-		$this->setOptions($aOptions);
+		foreach($aOptions as $sName => $xValue)
+		{
+			$this->configure($sName, $xValue);
+		}
 	}
 	
 	/*
@@ -415,7 +419,20 @@ class Xajax
 	*/
 	public function configure($sName, $xValue)
 	{
-		$this->setOption($sName, $xValue);
+		// The config name must be mapped to the new option name
+		if(!array_key_exists($sName, $this->aOptionMappings))
+		{
+			return;
+		}
+		$sName = $this->aOptionMappings[$sName];
+		if(!is_array($sName))
+		{
+			$sName = array($sName);
+		}
+		foreach($sName as $name)
+		{
+			$this->setOption($name, $xValue);
+		}
 	}
 
 	/*
@@ -434,7 +451,13 @@ class Xajax
 	*/
 	public function getConfiguration($sName)
 	{
-		return $this->getOption($sName);
+		// The config name must be mapped to the new option name
+		if(!array_key_exists($sName, $this->aOptionMappings))
+		{
+			return null;
+		}
+		$sName = $this->aOptionMappings[$sName];
+		return $this->getOption((is_array($sName) ? $sName[0] : $sName));
 	}
 
 	/*
