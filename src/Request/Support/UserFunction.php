@@ -2,6 +2,7 @@
 
 namespace Xajax\Request\Support;
 
+use Xajax\Xajax;
 use Xajax\Request\Request;
 use Xajax\Request\Manager as RequestManager;
 use Xajax\Response\Manager as ResponseManager;
@@ -113,7 +114,7 @@ class UserFunction
 				'mode' => 'synchronous'
 				));
 				
-			$xajax->register(XAJAX_FUNCTION, $myUserFunction);				
+			$xajax->register(Xajax::USER_FUNCTION, $myUserFunction);				
 	*/
 	public function __construct($sUserFunction)
 	{

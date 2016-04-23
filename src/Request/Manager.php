@@ -2,6 +2,8 @@
 
 namespace Xajax\Request;
 
+use Xajax\Xajax;
+
 /*
 
 	File: Manager.php
@@ -21,10 +23,6 @@ namespace Xajax\Request;
 	@copyright Copyright (c) 2008-2010 by Joseph Woolley, Steffen Konerow, Jared White  & J. Max Wilson
 	@license http://www.xajaxproject.org/bsd_license.txt BSD License
 */
-
-if(!defined('XAJAX_METHOD_UNKNOWN')) define('XAJAX_METHOD_UNKNOWN', 0);
-if(!defined('XAJAX_METHOD_GET')) define('XAJAX_METHOD_GET', 1);
-if(!defined('XAJAX_METHOD_POST')) define('XAJAX_METHOD_POST', 2);
 
 /*
 	Class: Manager
@@ -50,7 +48,7 @@ class Manager
 		Integer: nMethod
 		
 		Stores the method that was used to send the arguments from the client.  Will
-		be one of: XAJAX_METHOD_UNKNOWN, XAJAX_METHOD_GET, XAJAX_METHOD_POST
+		be one of: Xajax::METHOD_UNKNOWN, Xajax::METHOD_GET, Xajax::METHOD_POST
 	*/
 	private $nMethod;
 	
@@ -71,16 +69,16 @@ class Manager
 	{
 
 		$this->aArgs = array();
-		$this->nMethod = XAJAX_METHOD_UNKNOWN;
+		$this->nMethod = Xajax::METHOD_UNKNOWN;
 		
 		if(isset($_POST['xjxargs']))
 		{
-			$this->nMethod = XAJAX_METHOD_POST;
+			$this->nMethod = Xajax::METHOD_POST;
 			$this->aArgs = $_POST['xjxargs'];
 		}
 		else if(isset($_GET['xjxargs']))
 		{
-			$this->nMethod = XAJAX_METHOD_GET;
+			$this->nMethod = Xajax::METHOD_GET;
 			$this->aArgs = $_GET['xjxargs'];
 		}
 		if(get_magic_quotes_gpc() == 1)

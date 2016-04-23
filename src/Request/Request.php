@@ -2,6 +2,8 @@
 
 namespace Xajax\Request;
 
+use Xajax\Xajax;
+
 /*
 	File: Request.php
 
@@ -20,48 +22,6 @@ namespace Xajax\Request;
 	@copyright Copyright (c) 2008-2010 by Joseph Woolley, Steffen Konerow, Jared White  & J. Max Wilson
 	@license http://www.xajaxproject.org/bsd_license.txt BSD License
 */
-
-/*
-	Constant: XAJAX_FORM_VALUES
-		Specifies that the parameter will consist of an array of form values.
-*/
-if(!defined ('XAJAX_FORM_VALUES')) define ('XAJAX_FORM_VALUES', 'get form values');
-/*		
-	Constant: XAJAX_INPUT_VALUE
-		Specifies that the parameter will contain the value of an input control.
-*/
-if(!defined ('XAJAX_INPUT_VALUE')) define ('XAJAX_INPUT_VALUE', 'get input value');
-/*		
-	Constant: XAJAX_CHECKED_VALUE
-		Specifies that the parameter will consist of a boolean value of a checkbox.
-*/
-if(!defined ('XAJAX_CHECKED_VALUE')) define ('XAJAX_CHECKED_VALUE', 'get checked value');
-/*		
-	Constant: XAJAX_ELEMENT_INNERHTML
-		Specifies that the parameter value will be the innerHTML value of the element.
-*/
-if(!defined ('XAJAX_ELEMENT_INNERHTML')) define ('XAJAX_ELEMENT_INNERHTML', 'get element innerHTML');
-/*		
-	Constant: XAJAX_QUOTED_VALUE
-		Specifies that the parameter will be a quoted value (string).
-*/
-if(!defined ('XAJAX_QUOTED_VALUE')) define ('XAJAX_QUOTED_VALUE', 'quoted value');
-/*		
-	Constant: XAJAX_NUMERIC_VALUE
-		Specifies that the parameter will be a numeric, non-quoted value.
-*/
-if(!defined ('XAJAX_NUMERIC_VALUE')) define ('XAJAX_NUMERIC_VALUE', 'numeric value');
-/*		
-	Constant: XAJAX_JS_VALUE
-		Specifies that the parameter will be a non-quoted value (evaluated by the 
-		browsers javascript engine at run time.
-*/
-if(!defined ('XAJAX_JS_VALUE')) define ('XAJAX_JS_VALUE', 'unquoted value');
-/*
- Constant: XAJAX_PAGE_NUMBER
- Specifies that the parameter will be an integer used to generate pagination links.
- */
-if(!defined ('XAJAX_PAGE_NUMBER')) define ('XAJAX_PAGE_NUMBER', 'page number');
 
 /*
 	Class: Request
@@ -112,7 +72,7 @@ class Request
 	/*
 		Integer: nPageNumberIndex
 	
-		The index of the XAJAX_PAGE_NUMBER parameter in the array.
+		The index of the Xajax::PAGE_NUMBER parameter in the array.
 	*/
 	private $nPageNumberIndex;
 	
@@ -167,7 +127,7 @@ class Request
 	/*
 		Function: hasPageNumber
 		
-		Returns true if the request has a parameter of type XAJAX_PAGE_NUMBER.
+		Returns true if the request has a parameter of type Xajax::PAGE_NUMBER.
 	*/
 	public function hasPageNumber()
 	{
@@ -177,11 +137,11 @@ class Request
 	/*
 		Function: setPageNumber
 		
-		Set the current value of the XAJAX_PAGE_NUMBER parameter.
+		Set the current value of the Xajax::PAGE_NUMBER parameter.
 	*/
 	public function setPageNumber($nPageNumber)
 	{
-		// Set the value of the XAJAX_PAGE_NUMBER parameter
+		// Set the value of the Xajax::PAGE_NUMBER parameter
 		$nPageNumber = intval($nPageNumber);
 		if($this->nPageNumberIndex >= 0 && $nPageNumber > 0)
 		{
@@ -219,12 +179,12 @@ class Request
 		
 		Note:
 		
-		Types should be one of the following <XAJAX_FORM_VALUES>, <XAJAX_QUOTED_VALUE>, <XAJAX_NUMERIC_VALUE>,
-		<XAJAX_JS_VALUE>, <XAJAX_INPUT_VALUE>, <XAJAX_CHECKED_VALUE>, <XAJAX_PAGE_NUMBER>.  
+		Types should be one of the following <Xajax::FORM_VALUES>, <Xajax::QUOTED_VALUE>, <Xajax::NUMERIC_VALUE>,
+		<Xajax::JS_VALUE>, <Xajax::INPUT_VALUE>, <Xajax::CHECKED_VALUE>, <Xajax::PAGE_NUMBER>.  
 		The value should be as follows:
-			<XAJAX_FORM_VALUES> - Use the ID of the form you want to process.
-			<XAJAX_QUOTED_VALUE> - The string data to be passed.
-			<XAJAX_JS_VALUE> - A string containing valid javascript (either a javascript
+			<Xajax::FORM_VALUES> - Use the ID of the form you want to process.
+			<Xajax::QUOTED_VALUE> - The string data to be passed.
+			<Xajax::JS_VALUE> - A string containing valid javascript (either a javascript
 				variable name that will be in scope at the time of the call or a 
 				javascript function call whose return value will become the parameter.
 				
@@ -233,35 +193,35 @@ class Request
 	{
 		switch($sType)
 		{
-		case XAJAX_FORM_VALUES:
+		case Xajax::FORM_VALUES:
 			$sFormID = $sValue;
 			$this->aParameters[$nParameter] = "xajax.getFormValues(" . $this->sQuoteCharacter 
 				. $sFormID . $this->sQuoteCharacter . ")";
 			break;
-		case XAJAX_INPUT_VALUE:
+		case Xajax::INPUT_VALUE:
 			$sInputID = $sValue;
 			$this->aParameters[$nParameter] =  "xajax.$("  . $this->sQuoteCharacter 
 				. $sInputID . $this->sQuoteCharacter  . ").value";
 			break;
-		case XAJAX_CHECKED_VALUE:
+		case Xajax::CHECKED_VALUE:
 			$sCheckedID = $sValue;
 			$this->aParameters[$nParameter] =  "xajax.$("  . $this->sQuoteCharacter 
 				. $sCheckedID  . $this->sQuoteCharacter . ").checked";
 			break;
-		case XAJAX_ELEMENT_INNERHTML:
+		case Xajax::ELEMENT_INNERHTML:
 			$sElementID = $sValue;
 			$this->aParameters[$nParameter] = "xajax.$(" . $this->sQuoteCharacter 
 				. $sElementID . $this->sQuoteCharacter . ").innerHTML";
 			break;
-		case XAJAX_QUOTED_VALUE:
+		case Xajax::QUOTED_VALUE:
 			$this->aParameters[$nParameter] = $this->sQuoteCharacter . addslashes($sValue) . $this->sQuoteCharacter;
 			break;
-		case XAJAX_PAGE_NUMBER:
+		case Xajax::PAGE_NUMBER:
 			$this->nPageNumberIndex = $nParameter;
 			$this->aParameters[$nParameter] = $sValue;
 			break;
-		case XAJAX_NUMERIC_VALUE:
-		case XAJAX_JS_VALUE:
+		case Xajax::NUMERIC_VALUE:
+		case Xajax::JS_VALUE:
 			$this->aParameters[$nParameter] = $sValue;
 			break;
 		}

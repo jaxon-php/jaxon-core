@@ -2,6 +2,7 @@
 
 namespace Xajax\Response;
 
+use Xajax\Xajax;
 use Xajax\Plugin\Manager as PluginManager;
 use Xajax\Request\Manager as RequestManager;
 
@@ -1391,7 +1392,7 @@ class Response
 	public function sendHeaders()
 	{
 		$xRequestManager = RequestManager::getInstance();
-		if($xRequestManager->getRequestMethod() == XAJAX_METHOD_GET)
+		if($xRequestManager->getRequestMethod() == Xajax::METHOD_GET)
 		{
 			header ("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
 			header ("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");

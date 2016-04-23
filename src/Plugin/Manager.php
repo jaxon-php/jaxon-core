@@ -2,6 +2,7 @@
 
 namespace Xajax\Plugin;
 
+use Xajax\Xajax;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use RegexIterator;
@@ -437,7 +438,7 @@ class Manager
 		{
 			$aOptions['*']['classpath'] = $sClassPath;
 		}
-		$this->register(array(XAJAX_CALLABLE_OBJECT, $xCallableObject, $aOptions));
+		$this->register(array(Xajax::CALLABLE_OBJECT, $xCallableObject, $aOptions));
 	}
 
 	/**

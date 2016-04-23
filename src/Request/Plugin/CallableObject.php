@@ -2,6 +2,7 @@
 
 namespace Xajax\Request\Plugin;
 
+use Xajax\Xajax;
 use Xajax\Plugin\Request as RequestPlugin;
 use Xajax\Plugin\Manager as PluginManager;
 use Xajax\Request\Manager as RequestManager;
@@ -24,13 +25,6 @@ use Xajax\Request\Manager as RequestManager;
 	@copyright Copyright (c) 2008-2010 by Joseph Woolley, Steffen Konerow, Jared White  & J. Max Wilson
 	@license http://www.xajaxproject.org/bsd_license.txt BSD License
 */
-
-/*
-	Constant: XAJAX_CALLABLE_OBJECT
-		Specifies that the item being registered via the <xajax->register> function is a
-		object who's methods will be callable from the browser.
-*/
-if(!defined ('XAJAX_CALLABLE_OBJECT')) define ('XAJAX_CALLABLE_OBJECT', 'callable object');
 
 /*
 	Class: CallableObject
@@ -105,7 +99,7 @@ class CallableObject extends RequestPlugin
 		{
 			$sType = $aArgs[0];
 
-			if($sType == XAJAX_CALLABLE_OBJECT)
+			if($sType == Xajax::CALLABLE_OBJECT)
 			{
 				$xCallableObject = $aArgs[1];
 

@@ -28,33 +28,6 @@ use Xajax\Utils\URI;
 */
 
 /*
-	Section: Standard Definitions
-*/
-
-/*
-	String: XAJAX_DEFAULT_CHAR_ENCODING
-
-	Default character encoding used by both the <Xajax\Xajax> and
-	<Xajax\Response\Response> classes.
-*/
-if(!defined ('XAJAX_DEFAULT_CHAR_ENCODING')) define ('XAJAX_DEFAULT_CHAR_ENCODING', 'utf-8');
-
-/*
-	String: XAJAX_PROCESSING_EVENT
-	String: XAJAX_PROCESSING_EVENT_BEFORE
-	String: XAJAX_PROCESSING_EVENT_AFTER
-	String: XAJAX_PROCESSING_EVENT_INVALID
-
-	Identifiers used to register processing events.  Processing events are essentially
-	hooks into the xajax core that can be used to add functionality into the request
-	processing sequence.
-*/
-if(!defined ('XAJAX_PROCESSING_EVENT')) define ('XAJAX_PROCESSING_EVENT', 'xajax processing event');
-if(!defined ('XAJAX_PROCESSING_EVENT_BEFORE')) define ('XAJAX_PROCESSING_EVENT_BEFORE', 'beforeProcessing');
-if(!defined ('XAJAX_PROCESSING_EVENT_AFTER')) define ('XAJAX_PROCESSING_EVENT_AFTER', 'afterProcessing');
-if(!defined ('XAJAX_PROCESSING_EVENT_INVALID')) define ('XAJAX_PROCESSING_EVENT_INVALID', 'invalidRequest');
-
-/*
 	Class: xajax
 
 	The xajax class uses a modular plug-in system to facilitate the processing
@@ -64,7 +37,7 @@ if(!defined ('XAJAX_PROCESSING_EVENT_INVALID')) define ('XAJAX_PROCESSING_EVENT_
 	adjusted to effect the behavior of the xajax class as well as the client-side
 	javascript.
 */
-class Xajax
+class Xajax extends Base
 {
 	use \Xajax\Utils\ContainerTrait;
 
@@ -203,7 +176,7 @@ class Xajax
 			'core.debug.on' => false,
 			'core.debug.verbose' => false,
 			'core.debug.output_id' => 0,
-			'core.process.encoding' => XAJAX_DEFAULT_CHAR_ENCODING,
+			'core.process.encoding' => 'utf-8',
 			'core.process.load_timeout' => 2000,
 			'core.process.decode_utf8' => false,
 			'core.process.show_status' => false,
@@ -217,10 +190,11 @@ class Xajax
 			'core.js.dir' => '',
 			'core.js.options' => '',
 		));
-		if(XAJAX_DEFAULT_CHAR_ENCODING != 'utf-8')
+		// Todo : check if this code should not be moved somewhere else
+		/*if(XAJAX_DEFAULT_CHAR_ENCODING != 'utf-8')
 		{
 			$this->setOption('core.process.decode_utf8', true);
-		}
+		}*/
 	}
 
 	/**
@@ -289,11 +263,11 @@ class Xajax
 		
 		$sType - (string): Type of request handler being registered; standard 
 			options include:
-				XAJAX_FUNCTION: a function declared at global scope.
-				XAJAX_CALLABLE_OBJECT: an object who's methods are to be registered.
-				XAJAX_EVENT: an event which will cause zero or more event handlers
+				Xajax::USER_FUNCTION: a function declared at global scope.
+				Xajax::CALLABLE_OBJECT: an object who's methods are to be registered.
+				Xajax::BROWSER_EVENT: an event which will cause zero or more event handlers
 					to be called.
-				XAJAX_EVENT_HANDLER: register an event handler function.
+				Xajax::EVENT_HANDLER: register an event handler function.
 				
 		$sFunction || $objObject || $sEvent - (mixed):
 			when registering a function, this is the name of the function
@@ -311,7 +285,7 @@ class Xajax
 		$aArgs = func_get_args();
 		$nArgs = func_num_args();
 
-		if(XAJAX_PROCESSING_EVENT == $aArgs[0])
+		if(self::PROCESSING_EVENT == $aArgs[0])
 		{
 			if($nArgs > 2)
 			{
@@ -639,10 +613,10 @@ class Xajax
 			$mResult = true;
 
 			// handle beforeProcessing event
-			if(isset($this->aProcessingEvents[XAJAX_PROCESSING_EVENT_BEFORE]))
+			if(isset($this->aProcessingEvents[self::PROCESSING_EVENT_BEFORE]))
 			{
 				$bEndRequest = false;
-				$this->aProcessingEvents[XAJAX_PROCESSING_EVENT_BEFORE]->call(array(&$bEndRequest));
+				$this->aProcessingEvents[self::PROCESSING_EVENT_BEFORE]->call(array(&$bEndRequest));
 				$mResult = (false === $bEndRequest);
 			}
 
@@ -659,11 +633,11 @@ class Xajax
 				}
 
 				// handle afterProcessing event
-				if(isset($this->aProcessingEvents[XAJAX_PROCESSING_EVENT_AFTER]))
+				if(isset($this->aProcessingEvents[self::PROCESSING_EVENT_AFTER]))
 				{
 					$bEndRequest = false;
 
-					$this->aProcessingEvents[XAJAX_PROCESSING_EVENT_AFTER]->call(array($bEndRequest));
+					$this->aProcessingEvents[self::PROCESSING_EVENT_AFTER]->call(array($bEndRequest));
 
 					if($bEndRequest === true)
 					{
@@ -694,8 +668,8 @@ class Xajax
 				$this->xResponseManager->append(new Response\Response());
 
 				// handle invalidRequest event
-				if(isset($this->aProcessingEvents[XAJAX_PROCESSING_EVENT_INVALID]))
-					$this->aProcessingEvents[XAJAX_PROCESSING_EVENT_INVALID]->call();
+				if(isset($this->aProcessingEvents[self::PROCESSING_EVENT_INVALID]))
+					$this->aProcessingEvents[self::PROCESSING_EVENT_INVALID]->call();
 				else
 					$this->xResponseManager->debug($mResult);
 			}

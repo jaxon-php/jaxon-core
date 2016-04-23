@@ -2,6 +2,7 @@
 
 namespace Xajax\Request\Plugin;
 
+use Xajax\Xajax;
 use Xajax\Plugin\Request as RequestPlugin;
 use Xajax\Request\Manager as RequestManager;
 
@@ -23,14 +24,6 @@ use Xajax\Request\Manager as RequestManager;
 	@copyright Copyright (c) 2008-2010 by Joseph Woolley, Steffen Konerow, Jared White  & J. Max Wilson
 	@license http://www.xajaxproject.org/bsd_license.txt BSD License
 */
-
-/*
-	Constant: XAJAX_FUNCTION
-		Specifies that the item being registered via the <xajax->register> function
-		is a php function available at global scope, or a specific function from
-		an instance of an object.
-*/
-if(!defined ('XAJAX_FUNCTION')) define ('XAJAX_FUNCTION', 'function');
 
 /*
 	Class: UserFunction
@@ -102,7 +95,7 @@ class UserFunction extends RequestPlugin
 		{
 			$sType = $aArgs[0];
 
-			if($sType == XAJAX_FUNCTION)
+			if($sType == Xajax::USER_FUNCTION)
 			{
 				$xUserFunction = $aArgs[1];
 
