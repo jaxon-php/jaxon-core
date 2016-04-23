@@ -68,8 +68,8 @@ if(!defined ('XAJAX_FUNCTION')) define ('XAJAX_FUNCTION', 'user function');
  Specifies that the item being registered via the <xajax->register> function
  is an event handler.
 */
-if(!defined ('XAJAX_EVENT')) define ('XAJAX_EVENT', 'xajax event');
-if(!defined ('XAJAX_EVENT_HANDLER')) define ('XAJAX_EVENT_HANDLER', 'xajax event handler');
+if(!defined ('XAJAX_EVENT')) define ('XAJAX_EVENT', 'browser event');
+if(!defined ('XAJAX_EVENT_HANDLER')) define ('XAJAX_EVENT_HANDLER', 'event handler');
 
 /**
  * Request/Request.php
