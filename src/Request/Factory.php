@@ -19,8 +19,10 @@ class Factory
 		{
 			return null;
 		}
+		// If there is a dot in the name, then it is a call to a class, else it is a call to a function
+		$sType = (strpos($sName, '.') === false ? 'function' : 'class');
 		// Make the request
-		$xRequest = new Request($sName);
+		$xRequest = new Request($sName, $sType);
 		$xRequest->useSingleQuote();
 		for($nArg = 1; $nArg < $nArgs; $nArg++)
 		{
