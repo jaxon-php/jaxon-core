@@ -7,11 +7,11 @@ use Xajax\Request\Manager as RequestManager;
 use Xajax\Response\Manager as ResponseManager;
 
 /*
-	File: Event.php
+	File: BrowserEvent.php
 
 	Definition of the xajax Event object.
 
-	Title: Event
+	Title: BrowserEvent
 
 	Please see <copyright.php> for a detailed description, copyright
 	and license information.
@@ -19,19 +19,19 @@ use Xajax\Response\Manager as ResponseManager;
 
 /*
 	@package Xajax
-	@version $Id: Event.php 362 2007-05-29 15:32:24Z calltoconstruct $
+	@version $Id: BrowserEvent.php 362 2007-05-29 15:32:24Z calltoconstruct $
 	@copyright Copyright (c) 2005-2007 by Jared White & J. Max Wilson
 	@copyright Copyright (c) 2008-2010 by Joseph Woolley, Steffen Konerow, Jared White  & J. Max Wilson
 	@license http://www.xajaxproject.org/bsd_license.txt BSD License
 */
 
 /*
-	Class: Event
+	Class: BrowserEvent
 	
 	A container class which holds a reference to handler functions and configuration
 	options associated with a registered event.
 */
-class Event
+class BrowserEvent
 {
 	use \Xajax\Utils\ContainerTrait;
 
@@ -61,7 +61,7 @@ class Event
 	/*
 		Function: __construct
 		
-		Construct and initialize this <Event> object.
+		Construct and initialize this <BrowserEvent> object.
 	*/
 	public function __construct($sName)
 	{
@@ -151,7 +151,7 @@ class Event
 	/*
 		Function: fire
 		
-		Called by the <Plugin\Event> when the event has been triggered.
+		Called by the <Plugin\BrowserEvent> when the event has been triggered.
 	*/
 	public function fire($aArgs)
 	{

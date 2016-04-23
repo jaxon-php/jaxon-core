@@ -163,7 +163,7 @@ class Manager
 	{
 		$this->registerPlugin(new \Xajax\Request\Plugin\CallableObject(), 101);
 		$this->registerPlugin(new \Xajax\Request\Plugin\UserFunction(), 102);
-		$this->registerPlugin(new \Xajax\Request\Plugin\Event(), 103);
+		$this->registerPlugin(new \Xajax\Request\Plugin\BrowserEvent(), 103);
 	}
 	
 	/*

@@ -57,7 +57,7 @@ if(!defined ('XAJAX_CALLABLE_OBJECT')) define ('XAJAX_CALLABLE_OBJECT', 'callabl
 if(!defined ('XAJAX_FUNCTION')) define ('XAJAX_FUNCTION', 'user function');
 
 /**
- * Request/Plugin/Event.php
+ * Request/Plugin/BrowserEvent.php
 */
 /*
  Constant: XAJAX_EVENT
