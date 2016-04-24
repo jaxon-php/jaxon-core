@@ -2,120 +2,6 @@
 
 namespace Xajax;
 
-/**
- * Xajax.php
- */
-/*
- String: XAJAX_DEFAULT_CHAR_ENCODING
-
- Default character encoding used by both the <Xajax\Xajax> and
- <Xajax\Response\Response> classes.
- */
-// if(!defined ('XAJAX_DEFAULT_CHAR_ENCODING')) define ('XAJAX_DEFAULT_CHAR_ENCODING', 'utf-8');
-
-/*
- String: XAJAX_PROCESSING_EVENT
- String: XAJAX_PROCESSING_EVENT_BEFORE
- String: XAJAX_PROCESSING_EVENT_AFTER
- String: XAJAX_PROCESSING_EVENT_INVALID
-
- Identifiers used to register processing events.  Processing events are essentially
- hooks into the xajax core that can be used to add functionality into the request
- processing sequence.
-*/
-if(!defined ('XAJAX_PROCESSING_EVENT')) define ('XAJAX_PROCESSING_EVENT', 'xajax processing event');
-if(!defined ('XAJAX_PROCESSING_EVENT_BEFORE')) define ('XAJAX_PROCESSING_EVENT_BEFORE', 'beforeProcessing');
-if(!defined ('XAJAX_PROCESSING_EVENT_AFTER')) define ('XAJAX_PROCESSING_EVENT_AFTER', 'afterProcessing');
-if(!defined ('XAJAX_PROCESSING_EVENT_INVALID')) define ('XAJAX_PROCESSING_EVENT_INVALID', 'invalidRequest');
-
-/**
- * Plugin/Manager.php
- */
-if(!defined('XAJAX_METHOD_UNKNOWN')) define('XAJAX_METHOD_UNKNOWN', 0);
-if(!defined('XAJAX_METHOD_GET')) define('XAJAX_METHOD_GET', 1);
-if(!defined('XAJAX_METHOD_POST')) define('XAJAX_METHOD_POST', 2);
-
-/**
- * Request/Plugin/CallableObject.php
- */
-/*
- Constant: XAJAX_CALLABLE_OBJECT
- Specifies that the item being registered via the <xajax->register> function is a
- object who's methods will be callable from the browser.
- */
-if(!defined ('XAJAX_CALLABLE_OBJECT')) define ('XAJAX_CALLABLE_OBJECT', 'callable object');
-
-/**
- * Request/Plugin/UserFunction.php
-*/
-/*
- Constant: XAJAX_FUNCTION
- Specifies that the item being registered via the <xajax->register> function
- is a php function available at global scope, or a specific function from
- an instance of an object.
-*/
-if(!defined ('XAJAX_FUNCTION')) define ('XAJAX_FUNCTION', 'user function');
-
-/**
- * Request/Plugin/BrowserEvent.php
-*/
-/*
- Constant: XAJAX_EVENT
- Specifies that the item being registered via the <xajax->register> function
- is an event.
-
- Constant: XAJAX_EVENT_HANDLER
- Specifies that the item being registered via the <xajax->register> function
- is an event handler.
-*/
-if(!defined ('XAJAX_EVENT')) define ('XAJAX_EVENT', 'browser event');
-if(!defined ('XAJAX_EVENT_HANDLER')) define ('XAJAX_EVENT_HANDLER', 'event handler');
-
-/**
- * Request/Request.php
- */
-/*
- Constant: XAJAX_FORM_VALUES
- Specifies that the parameter will consist of an array of form values.
- */
-if(!defined ('XAJAX_FORM_VALUES')) define ('XAJAX_FORM_VALUES', 'get form values');
-/*
- Constant: XAJAX_INPUT_VALUE
- Specifies that the parameter will contain the value of an input control.
-*/
-if(!defined ('XAJAX_INPUT_VALUE')) define ('XAJAX_INPUT_VALUE', 'get input value');
-/*
- Constant: XAJAX_CHECKED_VALUE
- Specifies that the parameter will consist of a boolean value of a checkbox.
-*/
-if(!defined ('XAJAX_CHECKED_VALUE')) define ('XAJAX_CHECKED_VALUE', 'get checked value');
-/*
- Constant: XAJAX_ELEMENT_INNERHTML
- Specifies that the parameter value will be the innerHTML value of the element.
-*/
-if(!defined ('XAJAX_ELEMENT_INNERHTML')) define ('XAJAX_ELEMENT_INNERHTML', 'get element innerHTML');
-/*
- Constant: XAJAX_QUOTED_VALUE
- Specifies that the parameter will be a quoted value (string).
-*/
-if(!defined ('XAJAX_QUOTED_VALUE')) define ('XAJAX_QUOTED_VALUE', 'quoted value');
-/*
- Constant: XAJAX_NUMERIC_VALUE
- Specifies that the parameter will be a numeric, non-quoted value.
-*/
-if(!defined ('XAJAX_NUMERIC_VALUE')) define ('XAJAX_NUMERIC_VALUE', 'numeric value');
-/*
- Constant: XAJAX_JS_VALUE
- Specifies that the parameter will be a non-quoted value (evaluated by the
- browsers javascript engine at run time.
-*/
-if(!defined ('XAJAX_JS_VALUE')) define ('XAJAX_JS_VALUE', 'unquoted value');
-/*
- Constant: XAJAX_PAGE_NUMBER
- Specifies that the parameter will be an integer used to generate pagination links.
-*/
-if(!defined ('XAJAX_PAGE_NUMBER')) define ('XAJAX_PAGE_NUMBER', 'page number');
-
 
 abstract class Base
 {
@@ -167,3 +53,118 @@ abstract class Base
 	// Specifies that the parameter will be an integer used to generate pagination links.
 	const PAGE_NUMBER = 'page number';
 }
+
+
+/**
+ * Xajax.php
+ */
+/*
+ String: XAJAX_DEFAULT_CHAR_ENCODING
+
+ Default character encoding used by both the <Xajax\Xajax> and
+ <Xajax\Response\Response> classes.
+ */
+// if(!defined ('XAJAX_DEFAULT_CHAR_ENCODING')) define ('XAJAX_DEFAULT_CHAR_ENCODING', 'utf-8');
+
+/*
+ String: XAJAX_PROCESSING_EVENT
+ String: XAJAX_PROCESSING_EVENT_BEFORE
+ String: XAJAX_PROCESSING_EVENT_AFTER
+ String: XAJAX_PROCESSING_EVENT_INVALID
+
+ Identifiers used to register processing events.  Processing events are essentially
+ hooks into the xajax core that can be used to add functionality into the request
+ processing sequence.
+ */
+if(!defined ('XAJAX_PROCESSING_EVENT')) define ('XAJAX_PROCESSING_EVENT', Base::PROCESSING_EVENT);
+if(!defined ('XAJAX_PROCESSING_EVENT_BEFORE')) define ('XAJAX_PROCESSING_EVENT_BEFORE', Base::PROCESSING_EVENT_BEFORE);
+if(!defined ('XAJAX_PROCESSING_EVENT_AFTER')) define ('XAJAX_PROCESSING_EVENT_AFTER', Base::PROCESSING_EVENT_AFTER);
+if(!defined ('XAJAX_PROCESSING_EVENT_INVALID')) define ('XAJAX_PROCESSING_EVENT_INVALID', Base::PROCESSING_EVENT_INVALID);
+
+/**
+ * Plugin/Manager.php
+*/
+if(!defined('XAJAX_METHOD_UNKNOWN')) define('XAJAX_METHOD_UNKNOWN', Base::METHOD_UNKNOWN);
+if(!defined('XAJAX_METHOD_GET')) define('XAJAX_METHOD_GET', Base::METHOD_GET);
+if(!defined('XAJAX_METHOD_POST')) define('XAJAX_METHOD_POST', Base::METHOD_POST);
+
+/**
+ * Request/Plugin/CallableObject.php
+*/
+/*
+ Constant: XAJAX_CALLABLE_OBJECT
+ Specifies that the item being registered via the <xajax->register> function is a
+ object who's methods will be callable from the browser.
+*/
+if(!defined ('XAJAX_CALLABLE_OBJECT')) define ('XAJAX_CALLABLE_OBJECT', Base::CALLABLE_OBJECT);
+
+/**
+ * Request/Plugin/UserFunction.php
+*/
+/*
+ Constant: XAJAX_FUNCTION
+ Specifies that the item being registered via the <xajax->register> function
+ is a php function available at global scope, or a specific function from
+ an instance of an object.
+*/
+if(!defined ('XAJAX_FUNCTION')) define ('XAJAX_FUNCTION', Base::USER_FUNCTION);
+
+/**
+ * Request/Plugin/BrowserEvent.php
+*/
+/*
+ Constant: XAJAX_EVENT
+ Specifies that the item being registered via the <xajax->register> function
+ is an event.
+
+ Constant: XAJAX_EVENT_HANDLER
+ Specifies that the item being registered via the <xajax->register> function
+ is an event handler.
+*/
+if(!defined ('XAJAX_EVENT')) define ('XAJAX_EVENT', Base::BROWSER_EVENT);
+if(!defined ('XAJAX_EVENT_HANDLER')) define ('XAJAX_EVENT_HANDLER', Base::EVENT_HANDLER);
+
+/**
+ * Request/Request.php
+*/
+/*
+ Constant: XAJAX_FORM_VALUES
+ Specifies that the parameter will consist of an array of form values.
+*/
+if(!defined ('XAJAX_FORM_VALUES')) define ('XAJAX_FORM_VALUES', Base::FORM_VALUES);
+/*
+ Constant: XAJAX_INPUT_VALUE
+ Specifies that the parameter will contain the value of an input control.
+*/
+if(!defined ('XAJAX_INPUT_VALUE')) define ('XAJAX_INPUT_VALUE', Base::INPUT_VALUE);
+/*
+ Constant: XAJAX_CHECKED_VALUE
+ Specifies that the parameter will consist of a boolean value of a checkbox.
+*/
+if(!defined ('XAJAX_CHECKED_VALUE')) define ('XAJAX_CHECKED_VALUE', Base::CHECKED_VALUE);
+/*
+ Constant: XAJAX_ELEMENT_INNERHTML
+ Specifies that the parameter value will be the innerHTML value of the element.
+*/
+if(!defined ('XAJAX_ELEMENT_INNERHTML')) define ('XAJAX_ELEMENT_INNERHTML', Base::ELEMENT_INNERHTML);
+/*
+ Constant: XAJAX_QUOTED_VALUE
+ Specifies that the parameter will be a quoted value (string).
+*/
+if(!defined ('XAJAX_QUOTED_VALUE')) define ('XAJAX_QUOTED_VALUE', Base::QUOTED_VALUE);
+/*
+ Constant: XAJAX_NUMERIC_VALUE
+ Specifies that the parameter will be a numeric, non-quoted value.
+*/
+if(!defined ('XAJAX_NUMERIC_VALUE')) define ('XAJAX_NUMERIC_VALUE', Base::NUMERIC_VALUE);
+/*
+ Constant: XAJAX_JS_VALUE
+ Specifies that the parameter will be a non-quoted value (evaluated by the
+ browsers javascript engine at run time.
+*/
+if(!defined ('XAJAX_JS_VALUE')) define ('XAJAX_JS_VALUE', Base::JS_VALUE);
+/*
+ Constant: XAJAX_PAGE_NUMBER
+ Specifies that the parameter will be an integer used to generate pagination links.
+*/
+if(!defined ('XAJAX_PAGE_NUMBER')) define ('XAJAX_PAGE_NUMBER', Base::PAGE_NUMBER);
