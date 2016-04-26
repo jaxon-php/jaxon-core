@@ -1,4 +1,4 @@
-<script type="text/javascript" {$sDefer|noescape} charset="UTF-8">
+<script type="text/javascript" {$sJsOptions|noescape} charset="UTF-8">
 /* <![CDATA[ */
 {$sScript|noescape}
 /* ]]> */

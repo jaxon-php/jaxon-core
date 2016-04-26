@@ -547,7 +547,7 @@ class Manager
 		}
 
 		$code = $this->render('plugins/includes.js.tpl', array(
-			'sDefer' => $this->getOption('core.js.options'),
+			'sJsOptions' => $this->getOption('core.js.options'),
 			'aUrls' => $aJsFiles,
 		));
 		foreach($this->aResponsePlugins as $xPlugin)
@@ -670,7 +670,7 @@ class Manager
 			}
 			// The returned code loads the generated javascript file
 			$sScript = $this->render('plugins/include.js.tpl', array(
-				'sDefer' => $this->getOption('core.js.options'),
+				'sJsOptions' => $this->getOption('core.js.options'),
 				'sUrl' => $sJsAppURI . $sOutFile,
 			));
 		}
@@ -678,7 +678,7 @@ class Manager
 		{
 			// The plugins scripts are wrapped with javascript tags
 			$sScript = $this->render('plugins/wrapper.js.tpl', array(
-				'sDefer' => $this->getOption('core.js.options'),
+				'sJsOptions' => $this->getOption('core.js.options'),
 				'sScript' => $sScript,
 			));
 		}
