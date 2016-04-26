@@ -188,6 +188,7 @@ class Xajax extends Base
 			'core.response.queue_size' => 0,
 			'core.response.timeout' => 6000,
 			'core.js.dir' => '',
+			'core.js.minify' => true,
 			'core.js.options' => '',
 		));
 		// Todo : check if this code should not be moved somewhere else
@@ -337,7 +338,7 @@ class Xajax extends Base
 	 */
 	public function setJavascriptURI($sJsLibURI)
 	{
-		$this->xPluginManager->setJavascriptURI($sJsLibURI);
+		$this->setOption('core.js.lib_uri', $sJsLibURI);
 	}
 	
 	/*
@@ -353,7 +354,10 @@ class Xajax extends Base
 	*/
 	public function mergeJavascript($sJsAppDir, $sJsAppURI, $bMinifyJs = true)
 	{
-		$this->xPluginManager->mergeJavascript($sJsAppDir, $sJsAppURI, $bMinifyJs);
+		$this->setOption('core.js.merge', true);
+		$this->setOption('core.js.dir', $sJsAppDir);
+		$this->setOption('core.js.uri', $sJsAppURI);
+		$this->setOption('core.js.minify', ($bMinifyJs));
 	}
 
 	/*
