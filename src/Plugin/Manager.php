@@ -538,8 +538,8 @@ class Manager
 		$aJsFiles = array($sJsCoreUrl, $sJsReadyUrl);
 		if($this->getOption('core.debug.on'))
 		{
-			$this->aJsFiles[] = $sJsDebugUrl;
-			$this->aJsFiles[] = $sJsLanguageUrl;
+			$aJsFiles[] = $sJsDebugUrl;
+			$aJsFiles[] = $sJsLanguageUrl;
 			if($this->getOption('core.debug.verbose'))
 			{
 				$this->aJsFiles[] = $sJsVerboseUrl;
@@ -574,10 +574,9 @@ class Manager
 		return $code;
 	}
 
-	private function getOptionScript()
+	private function getOptionVars()
 	{
-		// Print Xajax config vars
-		$templateVars = array(
+		return array(
 			'sResponseType' 			=> $this->sResponseType,
 			'sVersion' 					=> $this->getOption('core.version'),
 			'sLanguage' 				=> $this->getOption('core.language'),
@@ -594,7 +593,11 @@ class Manager
 			'sDebugOutputID' 			=> $this->getOption('core.debug.output_id'),
 			'sDefer' 					=> $this->getOption('core.js.options'),
 		);
+	}
 
+	private function getOptionScript()
+	{
+		// Print Xajax config vars
 		$sJsLibURI = $this->getJsLibURI();
 		$sJsCoreUrl = $sJsLibURI . $this->_getScriptFilename('xajax.core.js');
 		$sJsDebugUrl = $sJsLibURI . $this->_getScriptFilename('xajax.debug.js');
@@ -623,17 +626,20 @@ class Manager
 		$templateVars['sJsVerboseError'] = $sJsVerboseError;
 		$templateVars['sJsLanguageError'] = $sJsLanguageError;
 
-		return $this->render('plugins/config.js.tpl', $templateVars);
+		return $this->render('plugins/config.js.tpl', $this->getOptionVars());
 	}
-	
-	private function getPluginScript()
+
+	private function getReadyScript()
 	{
-		$sScript = '';
+		$sPluginScript = '';
 		foreach($this->aPlugins as $xPlugin)
 		{
-			$sScript .= trim($xPlugin->getClientScript(), " \n") . "\n\n";
+			$sPluginScript .= trim($xPlugin->getClientScript(), " \n") . "\n";
 		}
-		return (($sScript) ? $this->render('plugins/ready.js.tpl', array('sScript' => $sScript)) : '');
+
+		$aVars = $this->getOptionVars();
+		$aVars['sPluginScript'] = $sPluginScript;
+		return $this->render('plugins/ready.js.tpl', $aVars);
 	}
 
 	/*
@@ -647,7 +653,7 @@ class Manager
 	public function getClientScript()
 	{
 		// Get the config and plugins scripts
-		$sScript = $this->getOptionScript() . $this->getPluginScript();
+		$sScript = $this->getOptionScript() . "\n\n" . $this->getReadyScript();
 		if($this->canMergeJavascript())
 		{
 			// The plugins scripts are written into the javascript app dir
