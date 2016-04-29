@@ -518,6 +518,14 @@ class Manager
 		return $sFilename;
 	}
 
+	private function setTemplateCacheDir()
+	{
+		if($this->hasOption('core.template.cache_dir'))
+		{
+			$this->setCacheDir($this->getOption('core.template.cache_dir'));
+		}
+	}
+
 	/*
 	 Function: getJsInclude
 	
@@ -542,21 +550,23 @@ class Manager
 			$aJsFiles[] = $sJsLanguageUrl;
 			if($this->getOption('core.debug.verbose'))
 			{
-				$this->aJsFiles[] = $sJsVerboseUrl;
+				$aJsFiles[] = $sJsVerboseUrl;
 			}
 		}
 
-		$code = $this->render('plugins/includes.js.tpl', array(
+		// Set the template engine cache dir
+		$this->setTemplateCacheDir();
+		$sCode = $this->render('plugins/includes.js.tpl', array(
 			'sJsOptions' => $this->getOption('core.js.options'),
 			'aUrls' => $aJsFiles,
 		));
 		foreach($this->aResponsePlugins as $xPlugin)
 		{
-			$code .= rtrim($xPlugin->getJsInclude(), " \n") . "\n";
+			$sCode .= rtrim($xPlugin->getJsInclude(), " \n") . "\n";
 		}
-		return $code;
+		return $sCode;
 	}
-	
+
 	/*
 	 Function: getCssInclude
 	
@@ -566,12 +576,15 @@ class Manager
 	 */
 	public function getCssInclude()
 	{
-		$code = '';
+		// Set the template engine cache dir
+		$this->setTemplateCacheDir();
+
+		$sCode = '';
 		foreach($this->aResponsePlugins as $xPlugin)
 		{
-			$code .= rtrim($xPlugin->getCssInclude(), " \n") . "\n";
+			$sCode .= rtrim($xPlugin->getCssInclude(), " \n") . "\n";
 		}
-		return $code;
+		return $sCode;
 	}
 
 	private function getOptionVars()
@@ -597,6 +610,11 @@ class Manager
 
 	private function getOptionScript()
 	{
+		return $this->render('plugins/config.js.tpl', $this->getOptionVars());
+	}
+
+	private function getReadyScript()
+	{
 		// Print Xajax config vars
 		$sJsLibURI = $this->getJsLibURI();
 		$sJsCoreUrl = $sJsLibURI . $this->_getScriptFilename('xajax.core.js');
@@ -621,16 +639,6 @@ class Manager
 			'url' => $sJsLanguageUrl,
 		));
 
-		$templateVars['sJsCoreError'] = $sJsCoreError;
-		$templateVars['sJsDebugError'] = $sJsDebugError;
-		$templateVars['sJsVerboseError'] = $sJsVerboseError;
-		$templateVars['sJsLanguageError'] = $sJsLanguageError;
-
-		return $this->render('plugins/config.js.tpl', $this->getOptionVars());
-	}
-
-	private function getReadyScript()
-	{
 		$sPluginScript = '';
 		foreach($this->aPlugins as $xPlugin)
 		{
@@ -639,6 +647,11 @@ class Manager
 
 		$aVars = $this->getOptionVars();
 		$aVars['sPluginScript'] = $sPluginScript;
+		$aVars['sJsCoreError'] = $sJsCoreError;
+		$aVars['sJsDebugError'] = $sJsDebugError;
+		$aVars['sJsVerboseError'] = $sJsVerboseError;
+		$aVars['sJsLanguageError'] = $sJsLanguageError;
+
 		return $this->render('plugins/ready.js.tpl', $aVars);
 	}
 
@@ -652,6 +665,9 @@ class Manager
 	*/
 	public function getClientScript()
 	{
+		// Set the template engine cache dir
+		$this->setTemplateCacheDir();
+
 		// Get the config and plugins scripts
 		$sScript = $this->getOptionScript() . "\n\n" . $this->getReadyScript();
 		if($this->canMergeJavascript())

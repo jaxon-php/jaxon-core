@@ -66,6 +66,18 @@ trait ContainerTrait
     }
 
 	/**
+	 * Set a cache directory for the template engine
+	 *
+	 * @param string		$sCacheDir			The cache directory
+	 *
+	 * @return void
+	 */
+    public function setCacheDir($sCacheDir)
+    {
+    	Container::getInstance()->getTemplate()->setCacheDir($sCacheDir);
+    }
+
+    /**
 	 * Render a template
 	 *
 	 * @param string		$sTemplate			The name of template to be rendered
