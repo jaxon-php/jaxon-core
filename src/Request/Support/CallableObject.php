@@ -313,4 +313,14 @@ class CallableObject
 		$reflectionMethod = $this->reflectionClass->getMethod($sMethod);
 		ResponseManager::getInstance()->append($reflectionMethod->invokeArgs($this->callableObject, $aArgs));
 	}
+
+	/*
+		Function: getRegisteredObject
+		
+		Returns the registered callable object.
+	*/
+	public function getRegisteredObject()
+	{
+		return $this->callableObject;
+	}
 }

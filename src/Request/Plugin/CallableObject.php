@@ -237,4 +237,18 @@ class CallableObject extends RequestPlugin
 		throw new \Xajax\Exception\Error('errors.objects.invalid',
 			array('class' => $this->sRequestedClass, 'method' => $this->sRequestedMethod));
 	}
+
+	/*
+		Function: getRegisteredObject
+		
+		Returns the registered callable object.
+	*/
+	public function getRegisteredObject()
+	{
+		if(!array_key_exists($this->sRequestedClass, $this->aCallableObjects))
+		{
+			return null;
+		}
+		return $this->aCallableObjects[$this->sRequestedClass]->getRegisteredObject();
+	}
 }
