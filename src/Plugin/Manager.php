@@ -64,11 +64,6 @@ class Manager
 	*/
 	private $bAutoLoadEnabled;
 	private $xAutoLoader;
-	
-	private $bMergeJs;
-	private $bMinifyJs;
-	private $sJsAppURI;
-	private $sJsAppDir;
 
 	/*
 		Function: __construct
@@ -84,9 +79,6 @@ class Manager
 
 		$this->bAutoLoadEnabled = true;
 		$this->xAutoLoader = null;
-
-		$this->bMergeJs = false;
-		$this->bMinifyJs = false;
 
 		// Set response type to JSON
 		$this->sResponseType = 'JSON';
@@ -517,7 +509,7 @@ class Manager
 	*/
 	private function _getScriptFilename($sFilename)
 	{
-		if($this->bMinifyJs)
+		if(($this->getOption('core.js.minify')))
 		{
 			return str_replace('.js', '.min.js', $sFilename);
 		}
