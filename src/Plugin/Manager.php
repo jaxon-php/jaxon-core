@@ -306,7 +306,7 @@ class Manager
 	 *
 	 * @return boolean
 	 */
-	public function addClassDir($sDir, $sNamespace = null)
+	public function addClassDir($sDir, $sNamespace = null, array $aExcluded = array())
 	{
 		if(!is_dir(($sDir = trim($sDir))))
 		{
@@ -341,7 +341,7 @@ class Manager
 				$this->xAutoLoader->addClassMap(array($xFile->getBasename('.php') => $xFile->getPathname()));
 			}
 		}
-		$this->aClassDirs[] = array('path' => $sDir, 'namespace' => $sNamespace);
+		$this->aClassDirs[] = array('path' => $sDir, 'namespace' => $sNamespace, 'excluded' => $aExcluded);
 		return true;
 	}
 
@@ -354,7 +354,7 @@ class Manager
 	 *
 	 * @return void
 	 */
-	protected function registerClassFromFile($xFile, $sDir, $sNamespace = null)
+	protected function registerClassFromFile($xFile, $sDir, $sNamespace = null, array $aExcluded = array())
 	{
 		// Get the corresponding class path and name
 		$sClassPath = trim(substr($xFile->getPath(), strlen($sDir)), DIRECTORY_SEPARATOR);
@@ -379,6 +379,12 @@ class Manager
 		{
 			$aOptions['*']['classpath'] = $sClassPath;
 		}
+		// Filter excluded methods
+		$aExcluded = array_filter($aExcluded, function($sName){return is_string($sName);});
+		if(count($aExcluded) > 0)
+		{
+			$aOptions['*']['excluded'] = $aExcluded;
+		}
 		$this->register(array(Xajax::CALLABLE_OBJECT, $xCallableObject, $aOptions));
 	}
 
@@ -401,7 +407,7 @@ class Manager
 				{
 					continue;
 				}
-				$this->registerClassFromFile($xFile, $sClassDir['path'], $sClassDir['namespace']);
+				$this->registerClassFromFile($xFile, $sClassDir['path'], $sClassDir['namespace'], $sClassDir['excluded']);
 			}
 		}
 	}
@@ -413,7 +419,7 @@ class Manager
 	 *
 	 * @return bool
 	 */
-	public function registerClass($sClassName)
+	public function registerClass($sClassName, array $aExcluded = array())
 	{
 		if(!($sClassName = trim($sClassName)))
 		{
@@ -438,7 +444,7 @@ class Manager
 				$sClassFile = $aClassDir['path'] . DIRECTORY_SEPARATOR . substr($sClassFile, $nLen);
 				if(is_file($sClassFile))
 				{
-					$this->registerClassFromFile(new \SplFileInfo($sClassFile), $aClassDir['path'], $sNamespace);
+					$this->registerClassFromFile(new \SplFileInfo($sClassFile), $aClassDir['path'], $sNamespace, $aExcluded);
 					return true;
 				}
 			}
@@ -447,7 +453,7 @@ class Manager
 				$sClassFile = $aClassDir['path'] . DIRECTORY_SEPARATOR . $sClassFile;
 				if(is_file($sClassFile))
 				{
-					$this->registerClassFromFile(new \SplFileInfo($sClassFile), $aClassDir['path']);
+					$this->registerClassFromFile(new \SplFileInfo($sClassFile), $aClassDir['path'], $aExcluded);
 					return true;
 				}
 			}

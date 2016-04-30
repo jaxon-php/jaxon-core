@@ -314,9 +314,9 @@ class Xajax extends Base
 	 *
 	 * @return boolean
 	 */
-	public function addClassDir($sPath, $sNamespace = null)
+	public function addClassDir($sPath, $sNamespace = null, array $aExcluded = array())
 	{
-		return $this->xPluginManager->addClassDir($sPath, $sNamespace);
+		return $this->xPluginManager->addClassDir($sPath, $sNamespace, $aExcluded);
 	}
 
 	/**
