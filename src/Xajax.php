@@ -734,7 +734,7 @@ class Xajax extends Base
 			$sCode .= $this->xPluginManager->getCssInclude() . "\n" . $this->xPluginManager->getJsInclude() . "\n";
 		}
 		$sCode .= $this->xPluginManager->getClientScript();
-		return $this->xPluginManager->getClientScript();
+		return $sCode;
 	}
 
 	/*
