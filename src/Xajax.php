@@ -722,12 +722,18 @@ class Xajax extends Base
 		The javascript code returned by this function is dependent on the plugins
 		that are included and the functions and classes that are registered.
 	*/
-	public function getJavascript()
+	public function getJavascript($bIncludeAssets = true)
 	{
 		if(!$this->hasOption('core.request.uri'))
 		{
 			$this->setOption('core.request.uri', URI::detect());
 		}
+		$sCode = '';
+		if(($bIncludeAssets))
+		{
+			$sCode .= $this->xPluginManager->getCssInclude() . "\n" . $this->xPluginManager->getJsInclude() . "\n";
+		}
+		$sCode .= $this->xPluginManager->getClientScript();
 		return $this->xPluginManager->getClientScript();
 	}
 
