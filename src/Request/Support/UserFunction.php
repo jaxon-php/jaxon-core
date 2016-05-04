@@ -118,21 +118,32 @@ class UserFunction
 	*/
 	public function __construct($sUserFunction)
 	{
-//SkipDebug
-		if(is_array($this->sUserFunction) && count($this->sUserFunction) != 2)
-        {
-			throw new \Xajax\Exception\Error('errors.functions.invalid-declaration');
-        }
-//EndSkipDebug
-		$this->sAlias = '';
-		$this->sUserFunction = $sUserFunction;
 		$this->aConfiguration = array();
-
-		if(is_array($this->sUserFunction) && count($this->sUserFunction) > 0)
-		{
-			$this->sAlias = $this->sUserFunction[0];
-			$this->sUserFunction = array_slice($this->sUserFunction, 1);
-		}
+		$this->sAlias = '';
+		if(is_array($sUserFunction))
+        {
+        	if(count($sUserFunction) != 2 && count($sUserFunction) != 3)
+        	{
+				throw new \Xajax\Exception\Error('errors.functions.invalid-declaration');
+        	}
+        	if(count($sUserFunction) == 3)
+			{
+				$this->sAlias = $sUserFunction[0];
+				$this->sUserFunction = array_slice($sUserFunction, 1);
+			}
+			else
+			{
+				$this->sUserFunction = $sUserFunction;
+			}
+        }
+        else if(is_string($sUserFunction))
+        {
+			$this->sUserFunction = $sUserFunction;
+        }
+        else
+        {
+        	throw new \Xajax\Exception\Error('errors.functions.invalid-declaration');
+        }
 	}
 	
 	/*
