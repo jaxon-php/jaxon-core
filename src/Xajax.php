@@ -170,7 +170,6 @@ class Xajax extends Base
 			'core.prefix.function' => 'xajax_',
 			'core.prefix.class' => 'Xajax',
 			'core.prefix.event' => 'xajax_event_',
-			'core.request.uri' => '',
 			'core.request.mode' => 'asynchronous',
 			'core.request.method' => 'POST',	// W3C: Method is case sensitive
 			'core.debug.on' => false,
