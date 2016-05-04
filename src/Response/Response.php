@@ -82,7 +82,17 @@ class Response
 		// Set response type to JSON
 		$this->sContentType = 'application/json';
 	}
-	
+
+	public function getContentType()
+	{
+		return $this->getOption('core.encoding');
+	}
+
+	public function getCharacterEncoding()
+	{
+		return $this->sCharacterEncoding;
+	}
+
 	/*
 		Function: plugin
 		
