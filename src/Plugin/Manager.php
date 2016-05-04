@@ -606,9 +606,10 @@ class Manager
 		);
 	}
 
-	private function getOptionScript()
+	private function getConfigScript()
 	{
-		return $this->render('plugins/config.js.tpl', $this->getOptionVars());
+		$aVars = $this->getOptionVars();
+		return $this->render('plugins/config.js.tpl', $aVars);
 	}
 
 	private function getReadyScript()
@@ -638,9 +639,9 @@ class Manager
 		));
 
 		$sPluginScript = '';
-		foreach($this->aPlugins as $xPlugin)
+		foreach($this->aResponsePlugins as $xPlugin)
 		{
-			$sPluginScript .= trim($xPlugin->getClientScript(), " \n") . "\n";
+			$sPluginScript .= "\n" . trim($xPlugin->getClientScript(), " \n");
 		}
 
 		$aVars = $this->getOptionVars();
@@ -667,7 +668,11 @@ class Manager
 		$this->setTemplateCacheDir();
 
 		// Get the config and plugins scripts
-		$sScript = $this->getOptionScript() . "\n\n" . $this->getReadyScript();
+		$sScript = $this->getConfigScript() . "\n" . $this->getReadyScript() . "\n";
+		foreach($this->aRequestPlugins as $xPlugin)
+		{
+			$sScript .= "\n" . trim($xPlugin->getClientScript(), " \n");
+		}
 		if($this->canMergeJavascript())
 		{
 			// The plugins scripts are written into the javascript app dir
