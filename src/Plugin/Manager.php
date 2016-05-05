@@ -675,24 +675,25 @@ class Manager
 		}
 		if($this->canMergeJavascript())
 		{
-			// The plugins scripts are written into the javascript app dir
-			$sHash = $this->generateHash();
-			if(($this->getOption('js.app.minify')))
-			{
-				$sOutFile = $sHash . '.min.js';
-				$sScript = $this->minify($sScript);
-			}
-			else
-			{
-				$sOutFile = $sHash . '.js';
-			}
-
 			$sJsAppURI = rtrim($this->getOption('js.app.uri'), '/') . '/';
 			$sJsAppDir = rtrim($this->getOption('js.app.dir'), '/') . '/';
+
+			// The plugins scripts are written into the javascript app dir
+			$sHash = $this->generateHash();
+			$sOutFile = $sHash . '.js';
+			$sMinFile = $sHash . '.min.js';
 			if(!is_file($sJsAppDir . $sOutFile))
 			{
 				file_put_contents($sJsAppDir . $sOutFile, $sScript);
 			}
+			if(($this->getOption('js.app.minify')))
+			{
+				if(($this->minify($sJsAppDir . $sOutFile, $sJsAppDir . $sMinFile)))
+				{
+					$sOutFile = $sMinFile;
+				}
+			}
+
 			// The returned code loads the generated javascript file
 			$sScript = $this->render('plugins/include.js.tpl', array(
 				'sJsOptions' => $this->getOption('js.app.options'),

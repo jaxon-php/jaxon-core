@@ -2,17 +2,23 @@
 
 namespace Xajax\Utils;
 
+use MatthiasMullie\Minify\JS as JsMinifier;
+
 class Minifier
 {
 	/**
 	 * Minify javascript code
 	 *
-	 * @param string		$sCode				The javascript code to be minified
+	 * @param string		$sJsFile			The javascript file to be minified
+	 * @param string		$sMinFile			The minified javascript file
 	 *
-	 * @return string		The minified code
+	 * @return boolean		True if the file was minified
 	 */
-    public function minify($sCode)
+    public function minify($sJsFile, $sMinFile)
     {
-    	return \WebSharks\JsMinifier\Core::compress($sCode);
+    	$xJsMinifier = new JsMinifier();
+    	$xJsMinifier->add($sJsFile);
+    	$xJsMinifier->minify($sMinFile);
+    	return is_file($sMinFile);
     }
 }

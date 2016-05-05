@@ -107,13 +107,14 @@ trait ContainerTrait
 	/**
 	 * Minify javascript code
 	 *
-	 * @param string		$sCode				The javascript code to be minified
+	 * @param string		$sJsFile			The javascript file to be minified
+	 * @param string		$sMinFile			The minified javascript file
 	 *
-	 * @return string		The minified code
+	 * @return boolean		True if the file was minified
 	 */
-	public function minify($sCode)
+	public function minify($sJsFile, $sMinFile)
 	{
-		return Container::getInstance()->getMinifier()->minify($sCode);
+		return Container::getInstance()->getMinifier()->minify($sJsFile, $sMinFile);
 	}
 
 	/**
