@@ -461,12 +461,12 @@ class Manager
 	*/
 	public function getJsLibURI()
 	{
-		if(!$this->hasOption('core.js.lib_uri'))
+		if(!$this->hasOption('js.lib.uri'))
 		{
 			return '//assets.lagdo-software.net/libs/xajax/js/latest/';
 		}
 		// Todo: check the validity of the URI
-		return rtrim($this->getOption('core.js.lib_uri'), '/') . '/';
+		return rtrim($this->getOption('js.lib.uri'), '/') . '/';
 	}
 	
 	/*
@@ -477,17 +477,17 @@ class Manager
 	public function canMergeJavascript()
 	{
 		// Check config options
-		// - The core.js.merge option must be set to true
-		// - The core.js.uri and core.js.dir options must be present
-		if(!$this->getOption('core.js.merge') ||
-			!$this->hasOption('core.js.uri') ||
-			!$this->hasOption('core.js.dir'))
+		// - The js.app.merge option must be set to true
+		// - The js.app.uri and js.app.dir options must be present
+		if(!$this->getOption('js.app.merge') ||
+			!$this->hasOption('js.app.uri') ||
+			!$this->hasOption('js.app.dir'))
 		{
 			return false;
 		}
 		// Check dir access
-		// - The core.js.dir must be writable
-		$sJsAppDir = $this->getOption('core.js.dir');
+		// - The js.app.dir must be writable
+		$sJsAppDir = $this->getOption('js.app.dir');
 		if(!is_dir($sJsAppDir) || !is_writable($sJsAppDir))
 		{
 			return false;
@@ -509,7 +509,7 @@ class Manager
 	*/
 	private function _getScriptFilename($sFilename)
 	{
-		if(($this->getOption('core.js.minify')))
+		if(($this->getOption('js.app.minify')))
 		{
 			return str_replace('.js', '.min.js', $sFilename);
 		}
@@ -555,7 +555,7 @@ class Manager
 		// Set the template engine cache dir
 		$this->setTemplateCacheDir();
 		$sCode = $this->render('plugins/includes.js.tpl', array(
-			'sJsOptions' => $this->getOption('core.js.options'),
+			'sJsOptions' => $this->getOption('js.app.options'),
 			'aUrls' => $aJsFiles,
 		));
 		foreach($this->aResponsePlugins as $xPlugin)
@@ -602,7 +602,7 @@ class Manager
 			'bDebug' 					=> $this->getOption('core.debug.on'),
 			'bVerboseDebug' 			=> $this->getOption('core.debug.verbose'),
 			'sDebugOutputID' 			=> $this->getOption('core.debug.output_id'),
-			'sDefer' 					=> $this->getOption('core.js.options'),
+			'sDefer' 					=> $this->getOption('js.app.options'),
 		);
 	}
 
@@ -677,7 +677,7 @@ class Manager
 		{
 			// The plugins scripts are written into the javascript app dir
 			$sHash = $this->generateHash();
-			if(($this->getOption('core.js.minify')))
+			if(($this->getOption('js.app.minify')))
 			{
 				$sOutFile = $sHash . '.min.js';
 				$sScript = $this->minify($sScript);
@@ -687,15 +687,15 @@ class Manager
 				$sOutFile = $sHash . '.js';
 			}
 
-			$sJsAppURI = rtrim($this->getOption('core.js.uri'), '/') . '/';
-			$sJsAppDir = rtrim($this->getOption('core.js.dir'), '/') . '/';
+			$sJsAppURI = rtrim($this->getOption('js.app.uri'), '/') . '/';
+			$sJsAppDir = rtrim($this->getOption('js.app.dir'), '/') . '/';
 			if(!is_file($sJsAppDir . $sOutFile))
 			{
 				file_put_contents($sJsAppDir . $sOutFile, $sScript);
 			}
 			// The returned code loads the generated javascript file
 			$sScript = $this->render('plugins/include.js.tpl', array(
-				'sJsOptions' => $this->getOption('core.js.options'),
+				'sJsOptions' => $this->getOption('js.app.options'),
 				'sUrl' => $sJsAppURI . $sOutFile,
 			));
 		}
@@ -703,7 +703,7 @@ class Manager
 		{
 			// The plugins scripts are wrapped with javascript tags
 			$sScript = $this->render('plugins/wrapper.js.tpl', array(
-				'sJsOptions' => $this->getOption('core.js.options'),
+				'sJsOptions' => $this->getOption('js.app.options'),
 				'sScript' => $sScript,
 			));
 		}

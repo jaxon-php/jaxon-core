@@ -133,11 +133,11 @@ class Xajax extends Base
 			'debug'						=> 'core.debug.on',
 			'verboseDebug'				=> 'core.debug.verbose',
 			'debugOutputID'				=> 'core.debug.output_id',
-			'javascript URI'			=> array('core.js.uri', 'core.js.lib_uri'),
-			'javascript Dir'			=> 'core.js.dir',
-			'deferScriptGeneration'		=> array('core.js.merge', 'core.js.minify'),
-			'deferDirectory'			=> 'core.js.dir',
-			'scriptDefferal'			=> 'core.js.options',
+			'javascript URI'			=> array('js.app.uri', 'js.lib.uri'),
+			'javascript Dir'			=> 'js.app.dir',
+			'deferScriptGeneration'		=> array('js.app.merge', 'js.app.minify'),
+			'deferDirectory'			=> 'js.app.dir',
+			'scriptDefferal'			=> 'js.app.options',
 		);
 	}
 
@@ -186,9 +186,9 @@ class Xajax extends Base
 			'core.process.clean_buffer' => false,
 			'core.response.queue_size' => 0,
 			'core.response.timeout' => 6000,
-			'core.js.dir' => '',
-			'core.js.minify' => true,
-			'core.js.options' => '',
+			'js.app.dir' => '',
+			'js.app.minify' => true,
+			'js.app.options' => '',
 		));
 		// Todo : check if this code should not be moved somewhere else
 		/*if(XAJAX_DEFAULT_CHAR_ENCODING != 'utf-8')
@@ -337,7 +337,7 @@ class Xajax extends Base
 	 */
 	public function setJavascriptURI($sJsLibURI)
 	{
-		$this->setOption('core.js.lib_uri', $sJsLibURI);
+		$this->setOption('js.lib.uri', $sJsLibURI);
 	}
 	
 	/*
@@ -353,10 +353,10 @@ class Xajax extends Base
 	*/
 	public function mergeJavascript($sJsAppDir, $sJsAppURI, $bMinifyJs = true)
 	{
-		$this->setOption('core.js.merge', true);
-		$this->setOption('core.js.dir', $sJsAppDir);
-		$this->setOption('core.js.uri', $sJsAppURI);
-		$this->setOption('core.js.minify', ($bMinifyJs));
+		$this->setOption('js.app.merge', true);
+		$this->setOption('js.app.dir', $sJsAppDir);
+		$this->setOption('js.app.uri', $sJsAppURI);
+		$this->setOption('js.app.minify', ($bMinifyJs));
 	}
 
 	/*
