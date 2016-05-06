@@ -27,15 +27,45 @@ trait FactoryTrait
 	 */
 	public function getXajaxClassName()
 	{
-		if(($this->xXajaxCallable))
+		if(!$this->xXajaxCallable)
 		{
-			return $this->xXajaxCallable->getName();
+			// Make the Xajax class name for a class without an associated callable
+			// !! Warning !! This can happen only if this object is not registered with the Xajax libary
+			$xReflectionClass = new \ReflectionClass(get_class($this));
+			// Return the class name without the namespace.
+			return $xReflectionClass->getShortName();
 		}
-		// Make the Xajax class name for a class without an associated callable
-		// !! Warning !! This can happen only if this object is not registered with the Xajax libary
-		$xReflectionClass = new \ReflectionClass(get_class($this));
-		// Return the class name without the namespace.
-		return $xReflectionClass->getShortName();
+		return $this->xXajaxCallable->getName();
+	}
+
+	/**
+	 * Get the Xajax class namespace
+	 *
+	 * @return string		The Xajax class namespace
+	 */
+	public function getXajaxNamespace()
+	{
+		if(!$this->xXajaxCallable)
+		{
+			// Return an empty string.
+			return '';
+		}
+		return $this->xXajaxCallable->getNamespace();
+	}
+
+	/**
+	 * Get the Xajax class path
+	 *
+	 * @return string		The Xajax class path
+	 */
+	public function getXajaxClassPath()
+	{
+		if(!$this->xXajaxCallable)
+		{
+			// Return an empty string.
+			return '';
+		}
+		return $this->xXajaxCallable->getPath();
 	}
 
 	/**

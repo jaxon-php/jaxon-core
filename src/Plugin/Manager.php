@@ -367,6 +367,10 @@ class Manager
 		// Create and register an instance of the class
 		$xCallableObject = new $sClassName;
 		$aOptions = array('*' => array());
+		if(($sNamespace))
+		{
+			$aOptions['*']['namespace'] = $sNamespace;
+		}
 		if(($sClassPath))
 		{
 			$aOptions['*']['classpath'] = $sClassPath;

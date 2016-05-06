@@ -68,6 +68,13 @@ class CallableObject
 	private $classpath = '';
 	
 	/*
+		String: namespace
+		
+		The namespace where the callable object class is defined.
+	*/
+	private $namespace = '';
+	
+	/*
 		Array: aConfiguration
 		
 		An associative array that will contain configuration options for zero
@@ -122,6 +129,28 @@ class CallableObject
 		return $name;
 	}
 
+	/*
+		Function: getNamespace
+		
+		Returns the namespace of this callable object.
+	*/
+	public function getNamespace()
+	{
+		// The namespace the class was registered with.
+		return $this->namespace;
+	}
+
+	/*
+		Function: getPath
+		
+		Returns the class path of this callable object.
+	*/
+	public function getPath()
+	{
+		// The class path without the trailing dot.
+		return rtrim($this->classpath, '.');
+	}
+
 	public function getMethods()
 	{
 		$aReturn = array();
@@ -154,6 +183,13 @@ class CallableObject
 	*/
 	public function configure($sMethod, $sName, $sValue)
 	{
+		// Set the namespace
+		if($sName == 'namespace')
+		{
+			if($sValue != '')
+				$this->namespace = $sValue;
+			return;
+		}
 		// Set the classpath
 		if($sName == 'classpath')
 		{
