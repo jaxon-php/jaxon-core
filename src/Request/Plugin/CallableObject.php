@@ -243,12 +243,17 @@ class CallableObject extends RequestPlugin
 		
 		Returns the registered callable object.
 	*/
-	public function getRegisteredObject()
+	public function getRegisteredObject($sClassName = null)
 	{
-		if(!array_key_exists($this->sRequestedClass, $this->aCallableObjects))
+		$sClassName = (string)$sClassName;
+		if(!$sClassName)
+		{
+			$sClassName = $this->sRequestedClass;
+		}
+		if(!array_key_exists($sClassName, $this->aCallableObjects))
 		{
 			return null;
 		}
-		return $this->aCallableObjects[$this->sRequestedClass]->getRegisteredObject();
+		return $this->aCallableObjects[$sClassName]->getRegisteredObject();
 	}
 }
