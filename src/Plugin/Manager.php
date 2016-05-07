@@ -1,5 +1,24 @@
 <?php
 
+/**
+ * Manager.php - Xajax plugin manager
+ *
+ * Register Xajax plugins, generate corresponding code, handle request
+ * and redirect them to the right plugin.
+ *
+ * @package xajax-core
+ * @author Jared White
+ * @author J. Max Wilson
+ * @author Joseph Woolley
+ * @author Steffen Konerow
+ * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
+ * @copyright Copyright (c) 2005-2007 by Jared White & J. Max Wilson
+ * @copyright Copyright (c) 2008-2010 by Joseph Woolley, Steffen Konerow, Jared White  & J. Max Wilson
+ * @copyright 2016 Thierry Feuzeu <thierry.feuzeu@gmail.com>
+ * @license https://opensource.org/licenses/BSD-2-Clause BSD 2-Clause License
+ * @link https://github.com/lagdo/xajax-core
+ */
+
 namespace Xajax\Plugin;
 
 use Xajax\Xajax;
@@ -8,68 +27,57 @@ use RecursiveIteratorIterator;
 use RegexIterator;
 use RecursiveRegexIterator;
 
-/*
-	File: Manager.php
-
-	Contains the xajax plugin manager.
-	
-	Title: xajax plugin manager
-	
-	Please see <copyright.php> for a detailed description, copyright
-	and license information.
-*/
-
-/*
-	@package Xajax
-	@version $Id: Manager.php 362 2007-05-29 15:32:24Z calltoconstruct $
-	@copyright Copyright (c) 2005-2007 by Jared White & J. Max Wilson
-	@copyright Copyright (c) 2008-2010 by Joseph Woolley, Steffen Konerow, Jared White  & J. Max Wilson
-	@license http://www.xajaxproject.org/bsd_license.txt BSD License
-*/
-
-/*
-	Class: Manager
-*/
 class Manager
 {
 	use \Xajax\Utils\ContainerTrait;
 
-	/*
-		Array: aPlugins
-		All plugins, indexed by priorities
-	*/
+	/**
+	 * All plugins, indexed by priority
+	 *
+	 * @var array
+	 */
 	private $aPlugins;
 	
-	/*
-		Array: aRequestPlugins
-		Request plugins, indexed by names
-	*/
+	/**
+	 * Request plugins, indexed by name
+	 *
+	 * @var array
+	 */
 	private $aRequestPlugins;
 	
-	/*
-		Array: aResponsePlugins
-		Response plugins, indexed by names
-	*/
+	/**
+	 * Response plugins, indexed by name
+	 *
+	 * @var array
+	 */
 	private $aResponsePlugins;
 	
-	/*
-		Array: aClassDirs
-		Directories where Xajax classes to be registered are found
-	*/
+	/**
+	 * Directories where Xajax classes to be registered are found
+	 *
+	 * @var array
+	 */
 	private $aClassDirs;
 	
-	/*
-		Object: xAutoLoader
-		The PHP class autoloader
-	*/
+	/**
+	 * True if the Composer autoload is enabled
+	 *
+	 * @var boolean
+	 */
 	private $bAutoLoadEnabled;
+
+	/**
+	 * The Composer autoloader
+	 *
+	 * @var Autoloader
+	 */
 	private $xAutoLoader;
 
-	/*
-		Function: __construct
-		
-		Construct and initialize the one and only Xajax plugin manager.
-	*/
+	/**
+	 * Initialize the Xajax Plugin Manager
+	 *
+	 * @return void
+	 */
 	private function __construct()
 	{
 		$this->aRequestPlugins = array();
@@ -84,16 +92,11 @@ class Manager
 		$this->sResponseType = 'JSON';
 	}
 
-	/*
-		Function: getInstance
-		
-		Implementation of the singleton pattern: returns the one and only instance of the 
-		xajax plugin manager.
-		
-		Returns:
-		
-		object : a reference to the one and only instance of the plugin manager.
-	*/
+	/**
+	 * Return the one and only instance of the xajax plugin manager
+	 *
+	 * @return Manager
+	 */
 	public static function getInstance()
 	{
 		static $xInstance = null;
@@ -105,9 +108,9 @@ class Manager
 	}
 
 	/**
-	 * Set the PHP class autoloader
+	 * Set the Composer autoloader
 	 * 
-	 * @param object		$xAutoLoader		The PHP class autoloader
+	 * @param object		$xAutoLoader		The Composer autoloader
 	 *
 	 * @return void
 	 */
@@ -118,7 +121,9 @@ class Manager
 	}
 	
 	/**
-	 * Disable the PHP class autoloader
+	 * Disable the autoloader in the library
+	 *
+	 * The user shall provide an alternative autoload system.
 	 *
 	 * @return void
 	 */
@@ -129,7 +134,7 @@ class Manager
 	}
 
 	/**
-	 * Return true if the PHP class autoloader is enabled
+	 * Return true if the Composer autoloader is enabled
 	 *
 	 * @return bool
 	 */
@@ -138,13 +143,11 @@ class Manager
 		return (!$this->bAutoLoadEnabled);
 	}
 
-	/*
-		Function: loadPlugins
-		
-		Loads the locally defined plugins.
-		
-		Parameters:
-	*/
+	/**
+	 * Load the locally defined plugins
+	 *
+	 * @return void
+	 */
 	public function loadPlugins()
 	{
 		$this->registerPlugin(new \Xajax\Request\Plugin\CallableObject(), 101);
@@ -152,22 +155,19 @@ class Manager
 		$this->registerPlugin(new \Xajax\Request\Plugin\BrowserEvent(), 103);
 	}
 	
-	/*
-		Function: setPluginPriority
-		
-		Inserts an entry into an array given the specified priority number. 
-		If a plugin already exists with the given priority, the priority is
-		automatically incremented until a free spot is found.  The plugin
-		is then inserted into the empty spot in the array.
-		
-		Parameters:
-		
-		$aPlugins - (array): Plugins array
-		$xPlugin - (object): A reference to an instance of a plugin.
-		$nPriority - (number): The desired priority, used to order the plugins.
-		
-	*/
-	private function setPluginPriority($xPlugin, $nPriority)
+	/**
+	 * Inserts an entry into an array given the specified priority number
+	 *
+	 * If a plugin already exists with the given priority, the priority is automatically
+	 * incremented until a free spot is found.
+	 * The plugin is then inserted into the empty spot in the array.
+	 *
+	 * @param Plugin 		$xPlugin			An instance of a plugin
+	 * @param integer		$nPriority			The desired priority, used to order the plugins
+	 *
+	 * @return void
+	 */
+	private function setPluginPriority(Plugin $xPlugin, $nPriority)
 	{
 		while (isset($this->aPlugins[$nPriority]))
 		{
@@ -178,21 +178,19 @@ class Manager
 		ksort($this->aPlugins);
 	}
 	
-	/*
-		Function: registerPlugin
-		
-		Registers a plugin.
-		
-		Parameters:
-		
-		xPlugin - (object):  A reference to an instance of a plugin.
-		
-		Note:
-		Below is a table for priorities and their description:
-		0 thru 999: Plugins that are part of or extensions to the xajax core
-		1000 thru 8999: User created plugins, typically, these plugins don't care about order
-		9000 thru 9999: Plugins that generally need to be last or near the end of the plugin list
-	*/
+	/**
+	 * Registers a plugin
+	 *
+	 * Below is a table for priorities and their description:
+	 * - 0 thru 999: Plugins that are part of or extensions to the xajax core
+	 * - 1000 thru 8999: User created plugins, typically, these plugins don't care about order
+	 * - 9000 thru 9999: Plugins that generally need to be last or near the end of the plugin list
+	 *
+	 * @param Plugin 		$xPlugin			An instance of a plugin
+	 * @param integer		$nPriority			The plugin priority, used to order the plugins
+	 *
+	 * @return void
+	 */
 	public function registerPlugin(Plugin $xPlugin, $nPriority = 1000)
 	{
 		if($xPlugin instanceof Request)
@@ -207,14 +205,17 @@ class Manager
 		}
 		else
 		{
-//SkipDebug
 			throw new \Xajax\Exception\Error('errors.register.invalid', array('name' => get_class($xPlugin)));
-//EndSkipDebug
 		}
 
 		$this->setPluginPriority($xPlugin, $nPriority);
 	}
 
+	/**
+	 * Generate a hash for all the javascript code generated by the library
+	 *
+	 * @return string
+	 */
 	private function generateHash()
 	{
 		$sHash = '';
@@ -225,15 +226,16 @@ class Manager
 		return md5($sHash);
 	}
 
-	/*
-		Function: canProcessRequest
-		
-		Calls each of the request plugins and determines if the
-		current request can be processed by one of them.  If no processor identifies
-		the current request, then the request must be for the initial page load.
-		
-		See <xajax->canProcessRequest> for more information.
-	*/
+	/**
+	 * Check if the current request can be processed
+	 *
+	 * Calls each of the request plugins and determines if the current request can be
+	 * processed by one of them.
+	 * If no processor identifies the current request, then the request must be for
+	 * the initial page load.
+	 *
+	 * @return boolean
+	 */
 	public function canProcessRequest()
 	{
 		foreach($this->aRequestPlugins as $xPlugin)
@@ -246,13 +248,14 @@ class Manager
 		return false;
 	}
 
-	/*
-		Function: processRequest
-
-		Calls each of the request plugins to request that they process the
-		current request.  If the plugin processes the request, it will
-		return true.
-	*/
+	/**
+	 * Process the current request
+	 *
+	 * Calls each of the request plugins to request that they process the current request.
+	 * If any plugin processes the request, it will return true.
+	 *
+	 * @return boolean
+	 */
 	public function processRequest()
 	{
 		foreach($this->aRequestPlugins as $xPlugin)
@@ -266,15 +269,16 @@ class Manager
 		return false;
 	}
 	
-	/*
-		Function: register
-		
-		Call each of the request plugins and give them the opportunity to 
-		handle the registration of the specified function, event or callable object.
-		
-		Parameters:
-		 $aArgs - (array) :
-	*/
+	/**
+	 * Register a function, event or callable object
+	 *
+	 * Call each of the request plugins and give them the opportunity to handle the
+	 * registration of the specified function, event or callable object.
+	 *
+	 * @param array 		$aArgs				The registration data
+	 *
+	 * @return mixed
+	 */
 	public function register($aArgs)
 	{
 		foreach($this->aRequestPlugins as $xPlugin)
@@ -285,16 +289,15 @@ class Manager
 				return $mResult;
 			}
 		}
-//SkipDebug
 		throw new \Xajax\Exception\Error('errors.register.method', array('args' => print_r($aArgs, true)));
-//EndSkipDebug
 	}
 
 	/**
 	 * Add a path to the class directories
 	 *
-	 * @param string		$sDir			The path to the directory
-	 * @param string|null	$sNamespace		The associated namespace
+	 * @param string		$sDir				The path to the directory
+	 * @param string|null	$sNamespace			The associated namespace
+	 * @param array 		$aExcluded			The functions that are not to be exported
 	 *
 	 * @return boolean
 	 */
@@ -338,11 +341,12 @@ class Manager
 	}
 
 	/**
-	 * Register an instance of a given class
+	 * Register an instance of a given class from a file
 	 *
-	 * @param object		$xFile			The PHP file containing the class
-	 * @param string		$sDir			The path to the directory
-	 * @param string|null	$sNamespace		The associated namespace
+	 * @param object		$xFile				The PHP file containing the class
+	 * @param string		$sDir				The path to the directory
+	 * @param string|null	$sNamespace			The associated namespace
+	 * @param array 		$aExcluded			The functions that are not to be exported
 	 *
 	 * @return void
 	 */
@@ -411,7 +415,7 @@ class Manager
 	/**
 	 * Register an instance of a given class
 	 *
-	 * @param string|null	$sClassName		The name of the class to register
+	 * @param string		$sClassName				The name of the class to be registered
 	 *
 	 * @return bool
 	 */
@@ -457,12 +461,11 @@ class Manager
 		return false;
 	}
 
-	/*
-		Function: getJsLibURI
-		
-		Return the URI of the Xajax javascript library files.
-		
-	*/
+	/**
+	 * Get the base URI of the Xajax library javascript files
+	 *
+	 * @return string
+	 */
 	public function getJsLibURI()
 	{
 		if(!$this->hasOption('js.lib.uri'))
@@ -473,11 +476,11 @@ class Manager
 		return rtrim($this->getOption('js.lib.uri'), '/') . '/';
 	}
 	
-	/*
-		Function: canMergeJavascript
-		
-		Check if the javascript code generated by Xajax can be merged.
-	*/
+	/**
+	 * Check if the javascript code generated by Xajax can be exported to an external file
+	 *
+	 * @return boolean
+	 */
 	public function canMergeJavascript()
 	{
 		// Check config options
@@ -499,18 +502,15 @@ class Manager
 		return true;
 	}
 
-	/*
-		Function: _getScriptFilename
-
-		Returns the name of the script file, based on the current settings.
-
-		sFilename - (string):  The base filename.
-
-		Returns:
-
-		string - The filename as it should be specified in the script tags
-		on the browser.
-	*/
+	/**
+	 * Get the name of a javascript file, based on the current settings
+	 *
+	 * The returned name is the one to be specified in the <script> tags in HTML code
+	 *
+	 * @param string 		$sFilename			The filename
+	 *
+	 * @return string
+	 */
 	private function _getScriptFilename($sFilename)
 	{
 		if(($this->getOption('js.app.minify')))
@@ -520,6 +520,11 @@ class Manager
 		return $sFilename;
 	}
 
+	/**
+	 * Set the cache directory for the template engine
+	 *
+	 * @return void
+	 */
 	private function setTemplateCacheDir()
 	{
 		if($this->hasOption('core.template.cache_dir'))
@@ -528,12 +533,10 @@ class Manager
 		}
 	}
 
-	/*
-	 Function: getJsInclude
-	
-	 Returns the javascript header includes for response plugins.
-	
-	 Parameters:
+	/**
+	 * Get the HTML tags to include Xajax javascript files into the page
+	 *
+	 * @return string
 	 */
 	public function getJsInclude()
 	{
@@ -569,12 +572,10 @@ class Manager
 		return $sCode;
 	}
 
-	/*
-	 Function: getCssInclude
-	
-	 Returns the CSS header includes for response plugins.
-	
-	 Parameters:
+	/**
+	 * Get the HTML tags to include Xajax CSS code and files into the page
+	 *
+	 * @return string
 	 */
 	public function getCssInclude()
 	{
@@ -589,6 +590,14 @@ class Manager
 		return $sCode;
 	}
 
+	/**
+	 * Get the correspondances between previous and current config options
+	 *
+	 * They are used to keep the deprecated config options working.
+	 * They will be removed when the deprecated options will lot be supported anymore.
+	 *
+	 * @return array
+	 */
 	private function getOptionVars()
 	{
 		return array(
@@ -610,12 +619,25 @@ class Manager
 		);
 	}
 
+	/**
+	 * Get the javascript code for Xajax client side configuration
+	 *
+	 * @return string
+	 */
 	private function getConfigScript()
 	{
 		$aVars = $this->getOptionVars();
 		return $this->render('plugins/config.js.tpl', $aVars);
 	}
 
+	/**
+	 * Get the javascript code to be run after page load
+	 *
+	 * Also call each of the response plugins giving them the opportunity
+	 * to output some javascript to the page being generated.
+	 *
+	 * @return string
+	 */
 	private function getReadyScript()
 	{
 		// Print Xajax config vars
@@ -658,14 +680,16 @@ class Manager
 		return $this->render('plugins/ready.js.tpl', $aVars);
 	}
 
-	/*
-		Function: getClientScript
-		
-		Call each of the request and response plugins giving them the
-		opportunity to output some javascript to the page being generated.  This
-		is called only when the page is being loaded initially.  This is not 
-		called when processing a request.
-	*/
+	/**
+	 * Get the javascript code to be sent to the browser
+	 *
+	 * Also call each of the request plugins giving them the opportunity
+	 * to output some javascript to the page being generated.
+	 * This is called only when the page is being loaded initially.
+	 * This is not called when processing a request.
+	 *
+	 * @return string
+	 */
 	public function getClientScript()
 	{
 		// Set the template engine cache dir
@@ -716,18 +740,13 @@ class Manager
 		return $sScript;
 	}
 
-	/*
-		Function: getResponsePlugin
-		
-		Locate the specified response plugin by name and return
-		a reference to it if one exists.
-		
-		Parameters:
-			$sName - (string): Name of the plugin.
-			
-		Returns:
-			mixed : Returns plugin or null if not found.
-	*/
+	/**
+	 * Find the specified response plugin by name and return a reference to it if one exists
+	 *
+	 * @param string		$sName				The name of the plugin
+	 *
+	 * @return null | \Xajax\Plugin\Response
+	 */
 	public function getResponsePlugin($sName)
 	{
 		if(array_key_exists($sName, $this->aResponsePlugins))
@@ -737,18 +756,13 @@ class Manager
 		return null;
 	}
 
-	/*
-		Function: getRequestPlugin
-		
-		Locate the specified response plugin by name and return
-		a reference to it if one exists.
-		
-		Parameters:
-			$sName - (string): Name of the plugin.
-			
-		Returns:
-			mixed : Returns plugin or null if not found.
-	*/
+	/**
+	 * Find the specified request plugin by name and return a reference to it if one exists
+	 *
+	 * @param string		$sName				The name of the plugin
+	 *
+	 * @return null | \Xajax\Plugin\Request
+	 */
 	public function getRequestPlugin($sName)
 	{
 		if(array_key_exists($sName, $this->aRequestPlugins))

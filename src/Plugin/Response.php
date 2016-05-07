@@ -1,120 +1,107 @@
 <?php
 
+/**
+ * Response.php - Xajax Response interface
+ *
+ * Interface for Xajax Response plugins.
+ *
+ * A response plugin provides additional services not already provided by the 
+ * <Xajax\Response\Response> class with regard to sending response commands to the client.
+ * In addition, a response command may send javascript to the browser at page load
+ * to aid in the processing of it's response commands.
+ *
+ * @package xajax-core
+ * @author Jared White
+ * @author J. Max Wilson
+ * @author Joseph Woolley
+ * @author Steffen Konerow
+ * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
+ * @copyright Copyright (c) 2005-2007 by Jared White & J. Max Wilson
+ * @copyright Copyright (c) 2008-2010 by Joseph Woolley, Steffen Konerow, Jared White  & J. Max Wilson
+ * @copyright 2016 Thierry Feuzeu <thierry.feuzeu@gmail.com>
+ * @license https://opensource.org/licenses/BSD-2-Clause BSD 2-Clause License
+ * @link https://github.com/lagdo/xajax-core
+ */
+
 namespace Xajax\Plugin;
-
-/*
-	File: Response.php
-
-	Contains the Response class
-
-	Title: Response class
-
-	Please see <copyright.php> for a detailed description, copyright
-	and license information.
-*/
-
-/*
-	@package Xajax
-	@version $Id: Response.php 362 2007-05-29 15:32:24Z calltoconstruct $
-	@copyright Copyright (c) 2005-2007 by Jared White & J. Max Wilson
-	@copyright Copyright (c) 2008-2010 by Joseph Woolley, Steffen Konerow, Jared White  & J. Max Wilson
-	@license http://www.xajaxproject.org/bsd_license.txt BSD License
-*/
-
-/*
-	Class: Response
-	
-	Base class for all xajax response plugins.
-	
-	A response plugin provides additional services not already provided by the 
-	<Xajax\Response\Response> class with regard to sending response commands to the
-	client.  In addition, a response command may send javascript to the browser
-	at page load to aid in the processing of it's response commands.
-*/
 
 abstract class Response extends Plugin
 {
-	/*
-		Object: xResponse
-		
-		A reference to the current <Xajax\Response\Response> object that is being used
-		to build the response that will be sent to the client browser.
-	*/
+	/**
+	 * The object used to build the response that will be sent to the client browser
+	 *
+	 * @var \Xajax\Response\Response
+	 */
 	protected $xResponse;
 	
-	/*
-		Function: setResponse
-		
-		Called by the <Xajax\Response\Response> object that is currently being used
-		to build the response that will be sent to the client browser.
-		
-		Parameters:
-		
-		xResponse - (object):  A reference to the <Xajax\Response\Response> object
-	*/
+	/**
+	 * Set the <Xajax\Response\Response> object
+	 *
+	 * @param array 		$xResponse			The response
+	 *
+	 * @return void
+	 */
 	public function setResponse($xResponse)
 	{
 		$this->xResponse = $xResponse;
 	}
 	
-	/*
-		Function: response
-		
-		Returns the <Xajax\Response\Response> object that is currently being used
-		to build the response that will be sent to the client browser.
-		
-		Returns:
-		
-		(object):  A reference to the <Xajax\Response\Response> object
-	*/
+	/**
+	 * Get the <Xajax\Response\Response> object
+	 *
+	 * @return object
+	 */
 	public function response()
 	{
 		return $this->xResponse;
 	}
 	
-	/*
-		Function: addCommand
-		
-		Used internally to add a command to the response command list.  This
-		will call <Xajax\Response\Response->addPluginCommand> using the reference provided
-		in <Xajax\Response\Response->setResponse>.
-	*/
- 	public function addCommand($aAttributes, $sData)
+	/**
+	 * Add a client side plugin command to the response object
+	 *
+	 * Used internally to add a command to the response command list.
+	 * This will call <Xajax\Response\Response->addPluginCommand> using the
+	 * reference provided in <Xajax\Response\Response->setResponse>.
+	 *
+	 * @param array 		$aAttributes		The attributes of the command
+	 * @param string		$sData				The data to be added to the command
+	 *
+	 * @return void
+	 */
+	public function addCommand($aAttributes, $sData)
  	{
  		$this->xResponse->addPluginCommand($this, $aAttributes, $sData);
  	}
 
- 	/*
-		Function: isResponse
-
-		This returns true if the object is a response plugin. Always return true here.
-
-		Parameters:
- 	 */
+	/**
+	 * Return true if the object is a response plugin. Always return true here.
+	 *
+	 * @return boolean
+	 */
  	public function isResponse()
  	{
  		return true;
  	}
 
- 	/*
-		Function: getJsInclude
-
-		Returns the javascript header includes for this plugin.
-
-		Parameters:
- 	 */
+	/**
+	 * Get the HTML tags to include Xajax javascript files into the page
+	 *
+	 * The code must be enclosed in the appropriate HTML tags.
+	 *
+	 * @return string
+	 */
  	public function getJsInclude()
  	{
  		return '';
  	}
 
- 	/*
-		Function: getCssInclude
-
-		Returns the CSS header includes for this plugin.
-
-		Parameters:
- 	 */
+	/**
+	 * Get the HTML tags to include Xajax CSS code and files into the page
+	 *
+	 * The code must be enclosed in the appropriate HTML tags.
+	 *
+	 * @return string
+	 */
  	public function getCssInclude()
  	{
  		return '';
