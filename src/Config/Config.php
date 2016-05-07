@@ -1,5 +1,17 @@
 <?php
 
+/**
+ * Config.php - Xajax config reader
+ *
+ * Read the Xajax config from a data array and save it locally.
+ *
+ * @package xajax-core
+ * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
+ * @copyright 2016 Thierry Feuzeu <thierry.feuzeu@gmail.com>
+ * @license https://opensource.org/licenses/BSD-2-Clause BSD 2-Clause License
+ * @link https://github.com/lagdo/xajax-core
+ */
+
 namespace Xajax\Config;
 
 use Xajax\Xajax;
@@ -8,6 +20,15 @@ class Config
 {
     private static $aOptions;
 
+	/**
+	 * Recursively read Xajax options from a data array
+	 *
+	 * @param array 		$aOptions			The options array
+	 * @param string		$sPrefix			The prefix for option names
+	 * @param integer		$nDepth				The depth from the first call
+	 *
+	 * @return void
+	 */
     private static function readOptions(array $aOptions, $sPrefix = '', $nDepth = 0)
     {
         $sPrefix = (string)$sPrefix;
@@ -36,6 +57,14 @@ class Config
         }
     }
 
+	/**
+	 * Read and set Xajax options from a data array
+	 *
+	 * @param array 		$aOptions			The options array
+	 * @param string		$sKeys				The keys of the options in the array
+	 *
+	 * @return void
+	 */
     public static function setOptions(array $aOptions, $sKeys)
     {
         // Find the config array in the input data
