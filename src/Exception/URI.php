@@ -1,7 +1,7 @@
 <?php
 
 /**
- * DetectUri.php - URI detection error
+ * URI.php - URI detection error
  *
  * This exception is thrown when the URI cannot be autmatically detected.
  *
@@ -16,6 +16,6 @@ namespace Xajax\Exception;
 
 use Exception;
 
-class DetectUri extends Exception
+class URI extends Exception
 {
 }

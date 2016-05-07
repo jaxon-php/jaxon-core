@@ -1,5 +1,17 @@
 <?php
 
+/**
+ * URI.php - Xajax request URI detector
+ *
+ * Detect and parse the URI of the Xajax request being processed.
+ *
+ * @package xajax-core
+ * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
+ * @copyright 2016 Thierry Feuzeu <thierry.feuzeu@gmail.com>
+ * @license https://opensource.org/licenses/BSD-2-Clause BSD 2-Clause License
+ * @link https://github.com/lagdo/xajax-core
+ */
+
 namespace Xajax\Utils;
 
 class URI
@@ -62,7 +74,7 @@ class URI
     		}
     		else
     		{
-    			throw new \Xajax\Exception\DetectUri();
+    			throw new \Xajax\Exception\URI();
     		}
     	}
     	

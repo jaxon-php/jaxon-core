@@ -1,5 +1,17 @@
 <?php
 
+/**
+ * Validator.php - Xajax input data validator
+ *
+ * Validate requests data before the are passed into the library.
+ *
+ * @package xajax-core
+ * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
+ * @copyright 2016 Thierry Feuzeu <thierry.feuzeu@gmail.com>
+ * @license https://opensource.org/licenses/BSD-2-Clause BSD 2-Clause License
+ * @link https://github.com/lagdo/xajax-core
+ */
+
 namespace Xajax\Utils;
 
 /*
