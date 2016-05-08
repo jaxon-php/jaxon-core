@@ -75,8 +75,6 @@ class Manager
 
 	/**
 	 * Initialize the Xajax Plugin Manager
-	 *
-	 * @return void
 	 */
 	private function __construct()
 	{
@@ -93,7 +91,7 @@ class Manager
 	}
 
 	/**
-	 * Return the one and only instance of the xajax plugin manager
+	 * Return the one and only instance of the Xajax plugin manager
 	 *
 	 * @return Manager
 	 */

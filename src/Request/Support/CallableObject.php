@@ -1,96 +1,82 @@
 <?php
 
+/**
+ * CallableObject.php - Xajax callable object
+ *
+ * This class stores a reference to an object whose methods can be called from
+ * the client via an Xajax request
+ *
+ * The Xajax plugin manager will call <CallableObject->getClientScript> so that
+ * stub functions can be generated and sent to the browser.
+ *
+ * @package xajax-core
+ * @author Jared White
+ * @author J. Max Wilson
+ * @author Joseph Woolley
+ * @author Steffen Konerow
+ * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
+ * @copyright Copyright (c) 2005-2007 by Jared White & J. Max Wilson
+ * @copyright Copyright (c) 2008-2010 by Joseph Woolley, Steffen Konerow, Jared White  & J. Max Wilson
+ * @copyright 2016 Thierry Feuzeu <thierry.feuzeu@gmail.com>
+ * @license https://opensource.org/licenses/BSD-2-Clause BSD 2-Clause License
+ * @link https://github.com/lagdo/xajax-core
+ */
+
 namespace Xajax\Request\Support;
 
 use Xajax\Request\Request;
 use Xajax\Request\Manager as RequestManager;
 use Xajax\Response\Manager as ResponseManager;
 
-/*
-	File: CallableObject.php
-
-	Contains the CallableObject class
-
-	Title: CallableObject class
-
-	Please see <copyright.php> for a detailed description, copyright
-	and license information.
-*/
-
-/*
-	@package Xajax
-	@version $Id: CallableObject.php 362 2007-05-29 15:32:24Z calltoconstruct $
-	@copyright Copyright (c) 2005-2007 by Jared White & J. Max Wilson
-	@copyright Copyright (c) 2008-2010 by Joseph Woolley, Steffen Konerow, Jared White  & J. Max Wilson
-	@license http://www.xajaxproject.org/bsd_license.txt BSD License
-*/
-
-/*
-	Class: CallableObject
-	
-	A class that stores a reference to an object whose methods can be called from
-	the client via a xajax request.  <xajax> will call 
-	<CallableObject->getClientScript> so that stub functions can be 
-	generated and sent to the browser.
-*/
-
 class CallableObject
 {
 	use \Xajax\Utils\ContainerTrait;
 
-	/*
-		Object: obj
-		
-		A reference to the callable object.
-	*/
+	/**
+	 * A reference to the callable object the user has registered
+	 *
+	 * @var object
+	 */
 	private $callableObject;
 
-	/*
-		Object: reflectionClass
-		
-		The reflection class of the callable object.
-	*/
+	/**
+	 * The reflection class of the user registered callable object
+	 *
+	 * @var ReflectionClass
+	 */
 	private $reflectionClass;
 	
-	/*
-		Array: aExcludedMethods
-		
-		An associative array that will contain methods the library must not
-		export to javascript code.
-	*/
+	/**
+	 * A list of methods of the user registered callable object the library must not export to javascript
+	 *
+	 * @var array
+	 */
 	private $aExcludedMethods;
 	
-	/*
-		String: classpath
-		
-		The path to the file where the callable object class is defined.
-	*/
-	private $classpath = '';
-	
-	/*
-		String: namespace
-		
-		The namespace where the callable object class is defined.
-	*/
+	/**
+	 * The namespace where the callable object class is defined
+	 *
+	 * @var string
+	 */
 	private $namespace = '';
 	
-	/*
-		Array: aConfiguration
-		
-		An associative array that will contain configuration options for zero
-		or more of the objects methods.  These configuration options will 
-		define the call options for each request.  The call options will be
-		passed to the client browser when the function stubs are generated.
-	*/
+	/**
+	 * The path to the directory where the callable object class is defined, starting from the namespace root
+	 *
+	 * @var string
+	 */
+	private $classpath = '';
+	
+	/**
+	 * An associative array that will contain configuration options for zero or more of the objects methods
+	 *
+	 * These configuration options will define the call options for each request.
+	 * The call options will be passed to the client browser when the function stubs are generated.
+	 *
+	 * @var array
+	 */
 	private $aConfiguration;
 	
-	/*
-		Function: __construct
-		
-		Constructs and initializes the <CallableObject>
-		
-		obj - (object):  The object to reference.
-	*/
 	public function __construct($obj)
 	{
 		$this->callableObject = $obj;
@@ -101,22 +87,24 @@ class CallableObject
 				'setXajaxCallable', 'getXajaxClassName', 'request');
 	}
 
-	/*
-		Function: getClassName
-		
-		Returns the class name of this callable object, without the namespace if any.
-	*/
+	/**
+	 * Return the class name of this callable object, without the namespace if any
+	 *
+	 * @return string
+	 */
 	private function getClassName()
 	{
 		// Get the class name without the namespace.
 		return $this->reflectionClass->getShortName();
 	}
 
-	/*
-		Function: getName
-		
-		Returns the name of this callable object. This is the name of the generated javascript class.
-	*/
+	/**
+	 * Return the name of this callable object
+	 *
+	 * This is the name of the generated javascript class.
+	 *
+	 * @return string
+	 */
 	public function getName()
 	{
 		// The class name without the namespace.
@@ -129,28 +117,33 @@ class CallableObject
 		return $name;
 	}
 
-	/*
-		Function: getNamespace
-		
-		Returns the namespace of this callable object.
-	*/
+	/**
+	 * Return the namespace of this callable object
+	 *
+	 * @return string
+	 */
 	public function getNamespace()
 	{
 		// The namespace the class was registered with.
 		return $this->namespace;
 	}
 
-	/*
-		Function: getPath
-		
-		Returns the class path of this callable object.
-	*/
+	/**
+	 * Return the class path of this callable object
+	 *
+	 * @return string
+	 */
 	public function getPath()
 	{
 		// The class path without the trailing dot.
 		return rtrim($this->classpath, '.');
 	}
 
+	/**
+	 * Return a list of methods of the callable object to export to javascript
+	 *
+	 * @return array
+	 */
 	public function getMethods()
 	{
 		$aReturn = array();
@@ -172,15 +165,15 @@ class CallableObject
 		return $aReturn;
 	}
 
-	/*
-		Function: configure
-		
-		Used to set configuration options / call options for each method.
-		
-		sMethod - (string):  The name of the method.
-		sName - (string):  The name of the configuration option.
-		sValue - (string):  The value to be set.
-	*/
+	/**
+	 * Set configuration options / call options for each method
+	 *
+	 * @param string		$sMethod			The name of the method
+	 * @param string		$sName				The name of the configuration option
+	 * @param string		$sValue				The value of the configuration option
+	 *
+	 * @return void
+	 */
 	public function configure($sMethod, $sName, $sValue)
 	{
 		// Set the namespace
@@ -214,17 +207,11 @@ class CallableObject
 		$this->aConfiguration[$sMethod][$sName] = $sValue;
 	}
 
-	/*
-		Function: generateRequests
-		
-		Produces an array of <xajaxRequest> objects, one for each method
-		exposed by this callable object.
-		
-		sXajaxPrefix - (string):  The prefix to be prepended to the
-			javascript function names; this will correspond to the name
-			used for the function stubs that are generated by the
-			<CallableObject->getClientScript> call.
-	*/
+	/**
+	 * Produce an array of <Xajax\Request\Request>, one for each method exposed by this callable object
+	 *
+	 * @return array
+	 */
 	public function generateRequests()
 	{
 		$aRequests = array();
@@ -249,15 +236,11 @@ class CallableObject
 		return $aRequests;
 	}
 	
-	/*
-		Function: getClientScript
-		
-		Called by <CallableObject->getClientScript> while <xajax> is 
-		generating the javascript to be sent to the browser.
-
-		sXajaxPrefix - (string):  The prefix to be prepended to the
-			javascript function names.
-	*/	
+	/**
+	 * Generate client side javascript code for calls to all methods exposed by this callable object
+	 *
+	 * @return string
+	 */
 	public function getClientScript()
 	{
 		$sXajaxPrefix = $this->getOption('core.prefix.class');
@@ -297,51 +280,36 @@ class CallableObject
 		));
 	}
 	
-	/*
-		Function: isClass
-		
-		Determins if the specified class name matches the class name of the
-		object referenced by <CallableObject->obj>.
-		
-		sClass - (string):  The name of the class to check.
-		
-		Returns:
-		
-		boolean - True of the specified class name matches the class of
-			the object being referenced; false otherwise.
-	*/
+	/**
+	 * Check if the specified class name matches the class name of the registered callable object
+	 *
+	 * @return boolean
+	 */
 	public function isClass($sClass)
 	{
 		return ($this->reflectionClass->getName() === $sClass);
 	}
 	
-	/*
-		Function: hasMethod
-		
-		Determines if the specified method name is one of the methods of the
-		object referenced by <CallableObject->obj>.
-		
-		sMethod - (object):  The name of the method to check.
-		
-		Returns:
-		
-		boolean - True of the referenced object contains the specified method,
-			false otherwise.
-	*/
+	/**
+	 * Check if the specified method name is one of the methods of the registered callable object
+	 *
+	 * @param string		$sMethod			The name of the method to check
+	 *
+	 * @return boolean
+	 */
 	public function hasMethod($sMethod)
 	{
 		return $this->reflectionClass->hasMethod($sMethod) || $this->reflectionClass->hasMethod('__call');
 	}
 	
-	/*
-		Function: call
-		
-		Call the specified method of the object being referenced using the specified
-		array of arguments.
-		
-		sMethod - (string): The name of the method to call.
-		aArgs - (array):  The arguments to pass to the method.
-	*/
+	/**
+	 * Call the specified method of the registered callable object using the specified array of arguments
+	 *
+	 * @param string		$sMethod			The name of the method to call
+	 * @param array 		$aArgs				The arguments to pass to the method
+	 *
+	 * @return void
+	 */
 	public function call($sMethod, $aArgs)
 	{
 		if(!$this->hasMethod($sMethod))
@@ -350,11 +318,11 @@ class CallableObject
 		ResponseManager::getInstance()->append($reflectionMethod->invokeArgs($this->callableObject, $aArgs));
 	}
 
-	/*
-		Function: getRegisteredObject
-		
-		Returns the registered callable object.
-	*/
+	/**
+	 * Return the registered callable object
+	 *
+	 * @return object
+	 */
 	public function getRegisteredObject()
 	{
 		return $this->callableObject;

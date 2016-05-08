@@ -1,64 +1,48 @@
 <?php
 
+/**
+ * UserFunction.php - Xajax user function plugin
+ *
+ * This class registers user defined functions, generates client side javascript code,
+ * and calls them on user request
+ *
+ * @package xajax-core
+ * @author Jared White
+ * @author J. Max Wilson
+ * @author Joseph Woolley
+ * @author Steffen Konerow
+ * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
+ * @copyright Copyright (c) 2005-2007 by Jared White & J. Max Wilson
+ * @copyright Copyright (c) 2008-2010 by Joseph Woolley, Steffen Konerow, Jared White  & J. Max Wilson
+ * @copyright 2016 Thierry Feuzeu <thierry.feuzeu@gmail.com>
+ * @license https://opensource.org/licenses/BSD-2-Clause BSD 2-Clause License
+ * @link https://github.com/lagdo/xajax-core
+ */
+
 namespace Xajax\Request\Plugin;
 
 use Xajax\Xajax;
 use Xajax\Plugin\Request as RequestPlugin;
 use Xajax\Request\Manager as RequestManager;
 
-/*
-	File: UserFunction.php
-
-	Contains the UserFunction class
-
-	Title: UserFunction class
-
-	Please see <copyright.php> for a detailed description, copyright
-	and license information.
-*/
-
-/*
-	@package Xajax
-	@version $Id: UserFunction.php 362 2007-05-29 15:32:24Z calltoconstruct $
-	@copyright Copyright (c) 2005-2007 by Jared White & J. Max Wilson
-	@copyright Copyright (c) 2008-2010 by Joseph Woolley, Steffen Konerow, Jared White  & J. Max Wilson
-	@license http://www.xajaxproject.org/bsd_license.txt BSD License
-*/
-
-/*
-	Class: UserFunction
-*/
 class UserFunction extends RequestPlugin
 {
 	use \Xajax\Utils\ContainerTrait;
 
-	/*
-		Array: aFunctions
-		
-		An array of <xajaxUserFunction> object that are registered and
-		available via a <xajax.request> call.
-	*/
+	/**
+	 * The registered user functions
+	 *
+	 * @var array
+	 */
 	protected $aFunctions;
 
-	/*
-		String: sRequestedFunction
-
-		This string is used to temporarily hold the name of the function
-		that is being requested (during the request processing phase).
-
-		Since canProcessRequest loads this value from the get or post
-		data, it is unnecessary to load it again.
-	*/
+	/**
+	 * The name of the function that is being requested (during the request processing phase)
+	 *
+	 * @var string
+	 */
 	protected $sRequestedFunction;
 
-	/*
-		Function: __construct
-		
-		Constructs and initializes the <UserFunction>.  The GET and POST
-		data is searched for xajax function call parameters.  This will later
-		be used to determine if the request is for a registered function in
-		<UserFunction->canProcessRequest>
-	*/
 	public function __construct()
 	{
 		$this->aFunctions = array();
@@ -75,20 +59,23 @@ class UserFunction extends RequestPlugin
 		}
 	}
 
-	/*
-		Function: getName
-	*/
+	/**
+	 * Return the name of this plugin
+	 *
+	 * @return string
+	 */
 	public function getName()
 	{
 		return 'UserFunction';
 	}
 
-	/*
-		Function: register
-		
-		Provides a mechanism for functions to be registered and made available to
-		the page via the javascript <xajax.request> call.
-	*/
+	/**
+	 * Register a user defined function
+	 *
+	 * @param array 		$aArgs				An array containing the function specification
+	 *
+	 * @return \Xajax\Request\Request
+	 */
 	public function register($aArgs)
 	{
 		if(count($aArgs) > 1)
@@ -125,6 +112,11 @@ class UserFunction extends RequestPlugin
 		return false;
 	}
 
+	/**
+	 * Generate a hash for the registered user functions
+	 *
+	 * @return string
+	 */
 	public function generateHash()
 	{
 		$sHash = '';
@@ -135,14 +127,11 @@ class UserFunction extends RequestPlugin
 		return md5($sHash);
 	}
 
-	/*
-		Function: getClientScript
-		
-		Called by the <xajaxPluginManager> during the client script generation
-		phase.  This is used to generate a block of javascript code that will
-		contain function declarations that can be used on the browser through
-		javascript to initiate xajax requests.
-	*/
+	/**
+	 * Generate client side javascript code for the registered user functions
+	 *
+	 * @return string
+	 */
 	public function getClientScript()
 	{
 		$code = '';
@@ -153,17 +142,11 @@ class UserFunction extends RequestPlugin
 		return $code;
 	}
 
-	/*
-		Function: canProcessRequest
-		
-		Determines whether or not the current request can be processed
-		by this plugin.
-		
-		Returns:
-		
-		boolean - True if the current request can be handled by this plugin;
-			false otherwise.
-	*/
+	/**
+	 * Check if this plugin can process the incoming Xajax request
+	 *
+	 * @return boolean
+	 */
 	public function canProcessRequest()
 	{
 		// Check the validity of the function name
@@ -174,17 +157,11 @@ class UserFunction extends RequestPlugin
 		return ($this->sRequestedFunction != null);
 	}
 
-	/*
-		Function: processRequest
-		
-		Called by the <xajaxPluginManager> when a request needs to be
-		processed.
-		
-		Returns:
-		
-		mixed - True when the request has been processed successfully.
-			An error message when an error has occurred.
-	*/
+	/**
+	 * Process the incoming Xajax request
+	 *
+	 * @return boolean
+	 */
 	public function processRequest()
 	{
 		if(!$this->canProcessRequest())

@@ -1,70 +1,53 @@
 <?php
 
+/**
+ * Manager.php - Xajax Request Manager
+ *
+ * This class processes the input arguments from the GET or POST data of the request.
+ * If this is a request for the initial page load, no arguments will be processed.
+ * During a xajax request, any arguments found in the GET or POST will be converted to a PHP array.
+ *
+ * @package xajax-core
+ * @author Jared White
+ * @author J. Max Wilson
+ * @author Joseph Woolley
+ * @author Steffen Konerow
+ * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
+ * @copyright Copyright (c) 2005-2007 by Jared White & J. Max Wilson
+ * @copyright Copyright (c) 2008-2010 by Joseph Woolley, Steffen Konerow, Jared White  & J. Max Wilson
+ * @copyright 2016 Thierry Feuzeu <thierry.feuzeu@gmail.com>
+ * @license https://opensource.org/licenses/BSD-2-Clause BSD 2-Clause License
+ * @link https://github.com/lagdo/xajax-core
+ */
+
 namespace Xajax\Request;
 
 use Xajax\Xajax;
 
-/*
-
-	File: Manager.php
-
-	Contains the Manager class
-
-	Title: Manager class
-
-	Please see <copyright.php> for a detailed description, copyright
-	and license information.
-*/
-
-/*
-	@package Xajax
-	@version $Id: Manager.php 362 2007-05-29 15:32:24Z calltoconstruct $
-	@copyright Copyright (c) 2005-2007 by Jared White & J. Max Wilson
-	@copyright Copyright (c) 2008-2010 by Joseph Woolley, Steffen Konerow, Jared White  & J. Max Wilson
-	@license http://www.xajaxproject.org/bsd_license.txt BSD License
-*/
-
-/*
-	Class: Manager
-	
-	This class processes the input arguments from the GET or POST data of 
-	the request.  If this is a request for the initial page load, no arguments
-	will be processed.  During a xajax request, any arguments found in the
-	GET or POST will be converted to a PHP array.
-*/
 class Manager
 {
 	use \Xajax\Utils\ContainerTrait;
 
-	/*
-		Array: aArgs
-		
-		An array of arguments received via the GET or POST parameter
-		xjxargs.
-	*/
+	/**
+	 * An array of arguments received via the GET or POST parameter xjxargs.
+	 *
+	 * @var array
+	 */
 	private $aArgs;
 	
-	/*
-		Integer: nMethod
-		
-		Stores the method that was used to send the arguments from the client.  Will
-		be one of: Xajax::METHOD_UNKNOWN, Xajax::METHOD_GET, Xajax::METHOD_POST
-	*/
+	/**
+	 * Stores the method that was used to send the arguments from the client.
+	 * Will be one of: Xajax::METHOD_UNKNOWN, Xajax::METHOD_GET, Xajax::METHOD_POST.
+	 *
+	 * @var integer
+	 */
 	private $nMethod;
 	
-	/*
-		Array: aSequence
-		
-		Stores the decoding sequence table.
-	*/
-	private $aSequence;
-	
-	/*
-		Constructor: __construct
-		
-		Initializes configuration settings to their default values and reads
-		the argument data from the GET or POST data.
-	*/
+	/**
+	 * The constructor
+	 *
+	 * Get and decode the arguments of the HTTP request
+	 */
 	private function __construct()
 	{
 
@@ -88,14 +71,11 @@ class Manager
 		array_walk($this->aArgs, array(&$this, '__argumentDecode'));
 	}
 	
-	/*
-		Function: getInstance
-		
-		Returns:
-		
-		object - A reference to an instance of this class.  This function is
-			used to implement the singleton pattern.
-	*/
+	/**
+	 * Return the one and only instance of the Xajax request manager
+	 *
+	 * @return Manager
+	 */
 	public static function getInstance()
 	{
 		static $xInstance = null;
@@ -106,19 +86,13 @@ class Manager
 		return $xInstance;
 	}
 	
-	/*
-		Function: __convertStringToBool
-		
-		Converts a string to a bool var.
-		
-		Parameters:
-			$sValue - (string): 
-				
-		Returns:
-			(bool) : true / false
-	
-	*/
-	
+	/**
+	 * Converts a string to a boolean var
+	 *
+	 * @param string		$sValue				The string to be converted
+	 *
+	 * @return boolean
+	 */
 	private function __convertStringToBool($sValue)
 	{
 		if(strcasecmp($sValue, 'true') == 0)
@@ -140,19 +114,35 @@ class Manager
 		return false;
 	}
 	
+	/**
+	 * Strip the slashes from a string
+	 *
+	 * @param string		$sArg				The string to be stripped
+	 *
+	 * @return string
+	 */
 	private function __argumentStripSlashes(&$sArg)
 	{
 		if(!is_string($sArg))
 		{
-			return;
+			return '';
 		}
 		$sArg = stripslashes($sArg);
 	}
 	
-	private function __convertValue($value)
+	/**
+	 * Convert an Xajax request argument to its value
+	 *
+	 * Depending of its first char, the Xajax request argument is converted to a given type.
+	 *
+	 * @param string		$sValue				The keys of the options in the file
+	 *
+	 * @return mixed
+	 */
+	private function __convertValue($sValue)
 	{
-		$cType = substr($value, 0, 1);
-		$sValue = substr($value, 1);
+		$cType = substr($sValue, 0, 1);
+		$sValue = substr($sValue, 1);
 		switch ($cType)
 		{
 			case 'S':
@@ -171,14 +161,21 @@ class Manager
 		return $value;
 	}
 
-	private function __argumentDecode( &$sArg )
+	/**
+	 * Decode and convert an Xajax request argument from JSON
+	 *
+	 * @param string		$sArg				The Xajax request argument
+	 *
+	 * @return mixed
+	 */
+	private function __argumentDecode(&$sArg)
 	{
 		if($sArg == '')
 		{
-			return;
+			return '';
 		}
 
-		$data = json_decode( $sArg , true );
+		$data = json_decode($sArg, true);
 
 		if($data !== null && $sArg != $data)
 		{
@@ -186,26 +183,31 @@ class Manager
 		}
 		else
 		{
-			$sArg = $this->__convertValue( $sArg );
+			$sArg = $this->__convertValue($sArg);
 		}
 	}
 
-	private function __argumentDecodeUTF8_iconv( &$mArg )
+	/**
+	 * Decode an Xajax request argument and convert to UTF8 with iconv
+	 *
+	 * @param string|array		$mArg				The Xajax request argument
+	 *
+	 * @return void
+	 */
+	private function __argumentDecodeUTF8_iconv(&$mArg)
 	{
-		if( is_array( $mArg ) )
+		if(is_array($mArg))
 		{
 			foreach($mArg as $sKey => $xArg)
 			{
 				$sNewKey = $sKey;
 				$this->__argumentDecodeUTF8_iconv($sNewKey);
-				
 				if($sNewKey != $sKey)
 				{
 					$mArg[$sNewKey] = $xArg;
 					unset($mArg[$sKey]);
 					$sKey = $sNewKey;
 				}
-				
 				$this->__argumentDecodeUTF8_iconv($xArg);
 			}
 		}
@@ -215,6 +217,13 @@ class Manager
 		}
 	}
 	
+	/**
+	 * Decode an Xajax request argument and convert to UTF8 with mb_convert_encoding
+	 *
+	 * @param string|array		$mArg				The Xajax request argument
+	 *
+	 * @return void
+	 */
 	private function __argumentDecodeUTF8_mb_convert_encoding(&$mArg)
 	{
 		if(is_array($mArg))
@@ -223,14 +232,12 @@ class Manager
 			{
 				$sNewKey = $sKey;
 				$this->__argumentDecodeUTF8_mb_convert_encoding($sNewKey);
-				
 				if($sNewKey != $sKey)
 				{
 					$mArg[$sNewKey] = $xArg;
 					unset($mArg[$sKey]);
 					$sKey = $sNewKey;
 				}
-				
 				$this->__argumentDecodeUTF8_mb_convert_encoding($xArg);
 			}
 		}
@@ -240,6 +247,13 @@ class Manager
 		}
 	}
 	
+	/**
+	 * Decode an Xajax request argument from UTF8
+	 *
+	 * @param string|array		$mArg				The Xajax request argument
+	 *
+	 * @return void
+	 */
 	private function __argumentDecodeUTF8_utf8_decode(&$mArg)
 	{
 		if(is_array($mArg))
@@ -265,23 +279,24 @@ class Manager
 		}
 	}
 	
-	/*
-		Function: getRequestMethod
-		
-		Returns the method that was used to send the arguments from the client.
-	*/
+	/**
+	 * Return the method that was used to send the arguments from the client
+	 *
+	 * The method is one of: Xajax::METHOD_UNKNOWN, Xajax::METHOD_GET, Xajax::METHOD_POST.
+	 *
+	 * @return integer
+	 */
 	public function getRequestMethod()
 	{
 		return $this->nMethod;
 	}
 	
-	/*
-		Function: process
-		
-		Returns the array of arguments that were extracted and parsed from 
-		the GET or POST data.
-	*/
- 	public function process()
+	/**
+	 * Return the array of arguments that were extracted and parsed from the GET or POST data
+	 *
+	 * @return array
+	 */
+	public function process()
 	{
 		if(($this->getOption('core.process.decode_utf8')))
 		{

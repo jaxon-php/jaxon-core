@@ -1,15 +1,32 @@
 <?php
 
+/**
+ * FactoryTrait.php - Trait for Xajax Request Factory
+ *
+ * Make functions of the Xajax Request Factory class available to Xajax classes.
+ *
+ * @package xajax-core
+ * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
+ * @copyright 2016 Thierry Feuzeu <thierry.feuzeu@gmail.com>
+ * @license https://opensource.org/licenses/BSD-2-Clause BSD 2-Clause License
+ * @link https://github.com/lagdo/xajax-core
+ */
+
 namespace Xajax\Request;
 
 trait FactoryTrait
 {
+	/**
+	 * The \Xajax\Request\Support\CallableObject instance associated to the Xajax object using this trait
+	 *
+	 * @var \Xajax\Request\Support\CallableObject
+	 */
 	private $xXajaxCallable = null;
 
 	/**
-	 * Set the associated Xajax callable object
+	 * Set the associated \Xajax\Request\Support\CallableObject instance
 	 *
-	 * @param object		$xXajaxCallable			The associated Xajax callable object
+	 * @param object		$xXajaxCallable			The \Xajax\Request\Support\CallableO object instance
 	 *
 	 * @return void
 	 */
@@ -76,16 +93,12 @@ trait FactoryTrait
 	 *
 	 * @return object
 	 */
-	public function request()
+	public function request($sMethodName)
 	{
-		// There should be at least on argument to this method, the name of the class method
-		if(($nArgs = func_num_args()) < 1 || !is_string(($sName = func_get_arg(0))))
-		{
-			return null;
-		}
+		$sMethodName = (string)$sMethodName;
 		$aArgs = func_get_args();
 		// Prepend the class name to the method name
-		$aArgs[0] = $this->getXajaxClassName() . '.' . $aArgs[0];
+		$aArgs[0] = $this->getXajaxClassName() . '.' . $sMethodName;
 		// Make the request
 		return call_user_func_array('\Xajax\Request\Factory::make', $aArgs);
 	}

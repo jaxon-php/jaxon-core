@@ -1,5 +1,24 @@
 <?php
 
+/**
+ * CallableObject.php - Xajax callable object plugin
+ *
+ * This class registers user defined callable objects, generates client side javascript code,
+ * and calls their methods on user request
+ *
+ * @package xajax-core
+ * @author Jared White
+ * @author J. Max Wilson
+ * @author Joseph Woolley
+ * @author Steffen Konerow
+ * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
+ * @copyright Copyright (c) 2005-2007 by Jared White & J. Max Wilson
+ * @copyright Copyright (c) 2008-2010 by Joseph Woolley, Steffen Konerow, Jared White  & J. Max Wilson
+ * @copyright 2016 Thierry Feuzeu <thierry.feuzeu@gmail.com>
+ * @license https://opensource.org/licenses/BSD-2-Clause BSD 2-Clause License
+ * @link https://github.com/lagdo/xajax-core
+ */
+
 namespace Xajax\Request\Plugin;
 
 use Xajax\Xajax;
@@ -7,55 +26,38 @@ use Xajax\Plugin\Request as RequestPlugin;
 use Xajax\Plugin\Manager as PluginManager;
 use Xajax\Request\Manager as RequestManager;
 
-/*
-	File: CallableObject.php
-
-	Contains the CallableObject class
-
-	Title: CallableObject class
-
-	Please see <copyright.php> for a detailed description, copyright
-	and license information.
-*/
-
-/*
-	@package Xajax
-	@version $Id: CallableObject.php 362 2007-05-29 15:32:24Z calltoconstruct $
-	@copyright Copyright (c) 2005-2007 by Jared White & J. Max Wilson
-	@copyright Copyright (c) 2008-2010 by Joseph Woolley, Steffen Konerow, Jared White  & J. Max Wilson
-	@license http://www.xajaxproject.org/bsd_license.txt BSD License
-*/
-
-/*
-	Class: CallableObject
-*/
 class CallableObject extends RequestPlugin
 {
 	use \Xajax\Utils\ContainerTrait;
 
-	/*
-		Array: aCallableObjects
-	*/
+	/**
+	 * The registered callable objects
+	 *
+	 * @var array
+	 */
 	protected $aCallableObjects;
 
-	/*
-		Array: aClassPaths
-	*/
+	/**
+	 * The classpaths of the registered callable objects
+	 *
+	 * @var array
+	 */
 	protected $aClassPaths;
 
-	/*
-		String: sRequestedClass
-	*/
+	/**
+	 * The value of the class parameter of the incoming Xajax request
+	 *
+	 * @var string
+	 */
 	protected $sRequestedClass;
 	
-	/*
-		String: sRequestedMethod
-	*/
+	/**
+	 * The value of the method parameter of the incoming Xajax request
+	 *
+	 * @var string
+	 */
 	protected $sRequestedMethod;
 
-	/*
-		Function: __construct
-	*/
 	public function __construct()
 	{
 		$this->aCallableObjects = array();
@@ -82,17 +84,23 @@ class CallableObject extends RequestPlugin
 		}
 	}
 
-	/*
-		Function: getName
-	*/
+	/**
+	 * Return the name of this plugin
+	 *
+	 * @return string
+	 */
 	public function getName()
 	{
 		return 'CallableObject';
 	}
 
-	/*
-		Function: register
-	*/
+	/**
+	 * Register a user defined callable object
+	 *
+	 * @param array 		$aArgs				An array containing the callable object specification
+	 *
+	 * @return array
+	 */
 	public function register($aArgs)
 	{
 		if(count($aArgs) > 1)
@@ -143,6 +151,11 @@ class CallableObject extends RequestPlugin
 		return false;
 	}
 
+	/**
+	 * Generate a hash for the registered callable objects
+	 *
+	 * @return string
+	 */
 	public function generateHash()
 	{
 		$sHash = '';
@@ -154,9 +167,11 @@ class CallableObject extends RequestPlugin
 		return md5($sHash);
 	}
 
-	/*
-		Function: getClientScript
-	*/
+	/**
+	 * Generate client side javascript code for the registered callable objects
+	 *
+	 * @return string
+	 */
 	public function getClientScript()
 	{
 		$sXajaxPrefix = $this->getOption('core.prefix.class');
@@ -188,9 +203,11 @@ class CallableObject extends RequestPlugin
 		return $code;
 	}
 
-	/*
-		Function: canProcessRequest
-	*/
+	/**
+	 * Check if this plugin can process the incoming Xajax request
+	 *
+	 * @return boolean
+	 */
 	public function canProcessRequest()
 	{
 		// Check the validity of the class name
@@ -208,9 +225,11 @@ class CallableObject extends RequestPlugin
 		return ($this->sRequestedClass != null && $this->sRequestedMethod != null);
 	}
 
-	/*
-		Function: processRequest
-	*/
+	/**
+	 * Process the incoming Xajax request
+	 *
+	 * @return boolean
+	 */
 	public function processRequest()
 	{
 		if(!$this->canProcessRequest())
@@ -238,11 +257,13 @@ class CallableObject extends RequestPlugin
 			array('class' => $this->sRequestedClass, 'method' => $this->sRequestedMethod));
 	}
 
-	/*
-		Function: getRegisteredObject
-		
-		Returns the registered callable object.
-	*/
+	/**
+	 * Find a user registered callable object by class name
+	 *
+	 * @param string		$sClassName			The class name of the callable object
+	 *
+	 * @return object
+	 */
 	public function getRegisteredObject($sClassName = null)
 	{
 		$sClassName = (string)$sClassName;

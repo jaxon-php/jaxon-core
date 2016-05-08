@@ -1,5 +1,18 @@
 <?php
 
+/**
+ * Factory.php - Xajax Request Factory
+ *
+ * Create Xajax client side requests, which will generate the client script necessary
+ * to invoke a xajax request from the browser to registered objects.
+ *
+ * @package xajax-core
+ * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
+ * @copyright 2016 Thierry Feuzeu <thierry.feuzeu@gmail.com>
+ * @license https://opensource.org/licenses/BSD-2-Clause BSD 2-Clause License
+ * @link https://github.com/lagdo/xajax-core
+ */
+
 namespace Xajax\Request;
 
 use Xajax\Xajax;
@@ -14,7 +27,7 @@ class Factory
 	 *
 	 * @return object
 	 */
-	public static function make()
+	public static function make($sName)
 	{
 		// There should be at least on argument to this method, the name of the Xajax function or method
 		if(($nArgs = func_num_args()) < 1 || !is_string(($sName = func_get_arg(0))))
