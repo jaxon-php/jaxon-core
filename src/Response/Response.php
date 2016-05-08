@@ -1,80 +1,68 @@
 <?php
 
+/**
+ * Response.php - The Xajax Response
+ *
+ * This class collects commands to be sent back to the browser in response to a xajax request.
+ * Commands are encoded and packaged in a format that is acceptable to the response handler
+ * from the javascript library running on the client side.
+ * 
+ * Common commands include:
+ * - <Response->assign>: Assign a value to an element's attribute.
+ * - <Response->append>: Append a value on to an element's attribute.
+ * - <Response->script>: Execute a portion of javascript code.
+ * - <Response->call>: Execute an existing javascript function.
+ * - <Response->alert>: Display an alert dialog to the user.
+ * 
+ * Elements are identified by the value of the HTML id attribute.
+ * If you do not see your updates occuring on the browser side, ensure that you are using
+ * the correct id in your response.
+ *
+ * @package xajax-core
+ * @author Jared White
+ * @author J. Max Wilson
+ * @author Joseph Woolley
+ * @author Steffen Konerow
+ * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
+ * @copyright Copyright (c) 2005-2007 by Jared White & J. Max Wilson
+ * @copyright Copyright (c) 2008-2010 by Joseph Woolley, Steffen Konerow, Jared White  & J. Max Wilson
+ * @copyright 2016 Thierry Feuzeu <thierry.feuzeu@gmail.com>
+ * @license https://opensource.org/licenses/BSD-2-Clause BSD 2-Clause License
+ * @link https://github.com/lagdo/xajax-core
+ */
+
 namespace Xajax\Response;
 
 use Xajax\Xajax;
 use Xajax\Plugin\Manager as PluginManager;
 use Xajax\Request\Manager as RequestManager;
 
-/*
-	File: Response.php
-
-	Contains the response class.
-	
-	Title: xajax response class
-	
-	Please see <copyright.php> for a detailed description, copyright
-	and license information.
-*/
-
-/*
-	@package Xajax
-	@version $Id: Response.php 361 2007-05-24 12:48:14Z calltoconstruct $
-	@copyright Copyright (c) 2005-2007 by Jared White & J. Max Wilson
-	@copyright Copyright (c) 2008-2010 by Joseph Woolley, Steffen Konerow, Jared White  & J. Max Wilson
-	@license http://www.xajaxproject.org/bsd_license.txt BSD License
-*/
-
-/*
-	Class: Response
-	
-	Collect commands to be sent back to the browser in response to a xajax
-	request.  Commands are encoded and packaged in a format that is acceptable
-	to the response handler from the javascript library running on the client
-	side.
-	
-	Common commands include:
-		- <Response->assign>: Assign a value to an elements property.
-		- <Response->append>: Append a value on to an elements property.
-		- <Response->script>: Execute a portion of javascript code.
-		- <Response->call>: Execute an existing javascript function.
-		- <Response->alert>: Display an alert dialog to the user.
-		
-	Elements are identified by the value of the HTML id attribute.  If you do 
-	not see your updates occuring on the browser side, ensure that you are 
-	using the correct id in your response.
-*/
 class Response
 {
 	use \Xajax\Utils\ContainerTrait;
 
-	/*
-		Array: aCommands
-		
-		Stores the commands that will be sent to the browser in the response.
-	*/
+	/**
+	 * The commands that will be sent to the browser in the response
+	 *
+	 * @var array
+	 */
 	public  $aCommands;
 	
-	/*
-		Mixed: returnValue
-		
-		A string, array or integer value to be returned to the caller when
-		using 'synchronous' mode requests.  See <xajax->setMode> for details.
-	*/
+	/**
+	 * A string, array or integer value to be returned to the caller when using 'synchronous' mode requests.
+	 * See <xajax->setMode> for details.
+	 *
+	 * @var mixed
+	 */
 	private $returnValue;
 	
-	/*
-		Object: xPluginManager
-		
-		A reference to the global plugin manager.
-	*/
+	/**
+	 * A reference to the global plugin manager
+	 *
+	 * @var \Xajax\Plugin\Manager
+	 */
 	private $xPluginManager;
 	
-	/*
-		Constructor: __construct
-		
-		Create and initialize a Response object.
-	*/
 	public function __construct()
 	{
 		$this->aCommands = array();
@@ -83,31 +71,36 @@ class Response
 		$this->sContentType = 'application/json';
 	}
 
+	/**
+	 * Get the content type, which is always set to 'application/json'
+	 *
+	 * @return string
+	 */
 	public function getContentType()
+	{
+		return $this->sContentType;
+	}
+
+	/**
+	 * Get the configured character encoding
+	 *
+	 * @return string
+	 */
+	public function getCharacterEncoding()
 	{
 		return $this->getOption('core.encoding');
 	}
 
-	public function getCharacterEncoding()
-	{
-		return $this->sCharacterEncoding;
-	}
-
-	/*
-		Function: plugin
-		
-		Provides access to registered response plugins. Pass the plugin name as the
-		first argument and the plugin object will be returned.  You can then
-		access the methods of the plugin directly.
-		
-		Parameters:
-		
-		sName - (string):  Name of the plugin.
-			
-		Returns:
-		
-		object - The plugin specified by sName.
-	*/
+	/**
+	 * Provides access to registered response plugins
+	 *
+	 * Pass the plugin name as the first argument and the plugin object will be returned.
+	 * You can then access the methods of the plugin directly.
+	 *
+	 * @param string		$sName				The name of the plugin
+	 *
+	 * @return \Xajax\Plugin\Response
+	 */
 	public function plugin($sName)
 	{
 		$xPlugin = PluginManager::getInstance()->getResponsePlugin($sName);
@@ -119,41 +112,28 @@ class Response
 		return $xPlugin;
 	}
 	
-	/*
-		Function: __get
-		
-		Magic function for PHP 5.  Used to permit plugins to be called as if they
-		where native members of the Response instance.
-		
-		Parameters:
-		
-		sPluginName - (string):  The name of the plugin.
-		
-		Returns:
-		
-		object - The plugin specified by sPluginName.
-	*/
+	/**
+	 * Magic PHP function
+	 *
+	 * Used to permit plugins to be called as if they where native members of the Response instance.
+	 *
+	 * @param string		$sPluginName		The name of the plugin
+	 *
+	 * @return \Xajax\Plugin\Response
+	 */
 	public function __get($sPluginName)
 	{
 		return $this->plugin($sPluginName);
 	}
 	
-	/*
-		Function: addCommand
-		
-		Add a response command to the array of commands that will
-		be sent to the browser.
-		
-		Parameters:
-		
-		aAttributes - (array):  Associative array of attributes that
-			will describe the command.
-		mData - (mixed):  The data to be associated with this command.
-		
-		Returns:
-		
-		object : The <Response> object.
-	*/
+	/**
+	 * Add a response command to the array of commands that will be sent to the browser
+	 *
+	 * @param array 		$aAttributes		Associative array of attributes that will describe the command
+	 * @param mixed			$mData				The data to be associated with this command
+	 *
+	 * @return \Xajax\Plugin\Response
+	 */
 	public function addCommand($aAttributes, $mData)
 	{
 		/* merge commands if possible */
@@ -190,15 +170,11 @@ class Response
 		return $this;
 	}
 
-	/*
-		Function: clearCommands
-		
-		Clear all the commands already added to the response.
-		
-		Returns:
-		
-		object : The <Response> object.
-	*/
+	/**
+	 * Clear all the commands already added to the response
+	 *
+	 * @return \Xajax\Plugin\Response
+	 */
 	public function clearCommands()
 	{
 		$this->aCommands[] = array();
@@ -206,41 +182,30 @@ class Response
 		return $this;
 	}
 
-	/*
-		Function: addPluginCommand
-		
-		Adds a response command that is generated by a plugin.
-		
-		Parameters:
-		
-		xPlugin - (object):  A reference to a plugin object.
-		aAttributes - (array):  Array containing the attributes for this
-			response command.
-		mData - (mixed):  The data to be sent with this command.
-		
-		Returns:
-		
-		object : The <Response> object.
-	*/
+	/**
+	 * Add a response command that is generated by a plugin
+	 *
+	 * @param Plugin		$xPlugin			The plugin object
+	 * @param array 		$aAttributes		The attributes for this response command
+	 * @param mixed			$mData				The data to be sent with this command
+	 *
+	 * @return \Xajax\Plugin\Response
+	 */
 	public function addPluginCommand($xPlugin, $aAttributes, $mData)
 	{
 		$aAttributes['plg'] = $xPlugin->getName();
 		return $this->addCommand($aAttributes, $mData);
 	}
 
-	/*
-		Function: appendResponse
-		
-		Merges the response commands from the specified <Response>
-		object with the response commands in this <Response> object.
-		
-		Parameters:
-		
-		mCommands - (object):  <Response> object.
-		bBefore - (boolean):  Add the new commands to the beginning 
-			of the list.
-			
-	*/
+	/**
+	 * Merge the response commands from the specified <Response> object with
+	 * the response commands in this <Response> object
+	 *
+	 * @param Response		$mCommands			The <Response> object
+	 * @param boolean		$bBefore			Add the new commands to the beginning of the list
+	 *
+	 * @return void
+	 */
 	public function appendResponse($mCommands, $bBefore = false)
 	{
 		if( $mCommands instanceof Response )
@@ -269,32 +234,24 @@ class Response
 		}
 		else
 		{
-			//SkipDebug
 			if(!empty($mCommands))
 			{
 				throw new \Xajax\Exception\Error('errors.response.data.invalid');
 			}
-			//EndSkipDebug
 		}
 	}
 
-	/*
-		Function: confirmCommands
-		
-		Response command that prompts user with [ok] [cancel] style
-		message box.  If the user clicks cancel, the specified 
-		number of response commands following this one, will be
-		skipped.
-		
-		Parameters:
-		
-		iCmdNumber - (integer):  The number of commands to skip upon cancel.
-		sMessage - (string):  The message to display to the user.
-		
-		Returns:
-		
-		object : The Response object.
-	*/
+	/**
+	 * Response command that prompts user with [ok] [cancel] style message box
+	 *
+	 * If the user clicks cancel, the specified number of response commands
+	 * following this one, will be skipped.
+	 *
+	 * @param integer		$iCmdNumber			The number of commands to skip upon cancel
+	 * @param string		$sMessage			The message to display to the user
+	 *
+	 * @return \Xajax\Plugin\Response
+	 */
 	public function confirmCommands($iCmdNumber, $sMessage)
 	{
 		return $this->addCommand(array(
@@ -305,23 +262,15 @@ class Response
 		);
 	}
 	
-	/*
-		Function: assign
-		
-		Response command indicating that the specified value should be 
-		assigned to the given element's attribute.
-		
-		Parameters:
-		
-		sTarget - (string):  The id of the html element on the browser.
-		sAttribute - (string):  The property to be assigned.
-		sData - (string):  The value to be assigned to the property.
-		
-		Returns:
-		
-		object : The <Response> object.
-		
-	*/
+	/**
+	 * Add a command to assign the specified value to the given element's attribute
+	 *
+	 * @param string		$sTarget			The id of the html element on the browser
+	 * @param string		$sAttribute			The attribute to be assigned
+	 * @param string		$sData				The value to be assigned to the attribute
+	 *
+	 * @return \Xajax\Plugin\Response
+	 */
 	public function assign($sTarget, $sAttribute, $sData)
 	{
 		return $this->addCommand(array(
@@ -333,22 +282,15 @@ class Response
 		);
 	}
 	
-	/*
-		Function: append
-		
-		Response command that indicates the specified data should be appended
-		to the given element's property.
-		
-		Parameters:
-		
-		sTarget - (string):  The id of the element to be updated.
-		sAttribute - (string):  The name of the property to be appended to.
-		sData - (string):  The data to be appended to the property.
-		
-		Returns:
-		
-		object : The <Response> object.
-	*/
+	/**
+	 * Add a command to append the specified data to the given element's attribute
+	 *
+	 * @param string		$sTarget			The id of the element to be updated
+	 * @param string		$sAttribute			The name of the attribute to be appended to
+	 * @param string		$sData				The data to be appended to the attribute
+	 *
+	 * @return \Xajax\Plugin\Response
+	 */
 	public function append($sTarget, $sAttribute, $sData)
 	{	
 		return $this->addCommand(array(
@@ -360,22 +302,15 @@ class Response
 		);
 	}
 	
-	/*
-		Function: prepend
-		
-		Response command to prepend the specified value onto the given
-		element's property.
-		
-		Parameters:
-		
-		sTarget - (string):  The id of the element to be updated.
-		sAttribute - (string):  The property to be updated.
-		sData - (string):  The value to be prepended.
-		
-		Returns:
-		
-		object : The <Response> object.
-	*/
+	/**
+	 * Add a command to prepend the specified data to the given element's attribute
+	 *
+	 * @param string		$sTarget			The id of the element to be updated
+	 * @param string		$sAttribute			The name of the attribute to be prepended to
+	 * @param string		$sData				The value to be prepended to the attribute
+	 *
+	 * @return \Xajax\Plugin\Response
+	 */
 	public function prepend($sTarget, $sAttribute, $sData)
 	{
 		return $this->addCommand(array(
@@ -387,19 +322,16 @@ class Response
 		);
 	}
 	
-	/*
-		Function: replace
-		
-		Replace a specified value with another value within the given
-		element's property.
-		
-		Parameters:
-		
-		sTarget - (string):  The id of the element to update.
-		sAttribute - (string):  The property to be updated.
-		sSearch - (string):  The needle to search for.
-		sData - (string):  The data to use in place of the needle.
-	*/
+	/**
+	 * Add a command to replace a specified value with another value within the given element's attribute
+	 *
+	 * @param string		$sTarget			The id of the element to update
+	 * @param string		$sAttribute			The attribute to be updated
+	 * @param string		$sSearch			The needle to search for
+	 * @param string		$sData				The data to use in place of the needle
+	 *
+	 * @return \Xajax\Plugin\Response
+	 */
 	public function replace($sTarget, $sAttribute, $sSearch, $sData)
 	{
 		return $this->addCommand(array(
@@ -414,43 +346,30 @@ class Response
 		);
 	}
 	
-	/*
-		Function: clear
-		
-		Response command used to clear the specified property of the 
-		given element.
-		
-		Parameters:
-		
-		sTarget - (string):  The id of the element to be updated.
-		sAttribute - (string):  The property to be clared.
-		
-		Returns:
-		
-		object - The <Response> object.
-	*/
+	/**
+	 * Add a command to clear the specified attribute of the given element
+	 *
+	 * @param string		$sTarget			The id of the element to be updated.
+	 * @param string		$sAttribute			The attribute to be cleared
+	 *
+	 * @return \Xajax\Plugin\Response
+	 */
 	public function clear($sTarget, $sAttribute)
 	{
 		return $this->assign((string)$sTarget, (string)$sAttribute, '');
 	}
 	
-	/*
-		Function: contextAssign
-		
-		Response command used to assign a value to a member of a
-		javascript object (or element) that is specified by the context
-		member of the request.  The object is referenced using the 'this' keyword
-		in the sAttribute parameter.
-		
-		Parameters:
-		
-		sAttribute - (string):  The property to be updated.
-		sData - (string):  The value to assign.
-		
-		Returns:
-		
-		object : The <Response> object.
-	*/
+	/**
+	 * Add a command to assign a value to a member of a javascript object (or element)
+	 * that is specified by the context member of the request
+	 *
+	 * The object is referenced using the 'this' keyword in the sAttribute parameter.
+	 *
+	 * @param string		$sAttribute			The attribute to be updated
+	 * @param string		$sData				The value to assign
+	 *
+	 * @return \Xajax\Plugin\Response
+	 */
 	public function contextAssign($sAttribute, $sData)
 	{
 		return $this->addCommand(array(
@@ -461,23 +380,17 @@ class Response
 		);
 	}
 	
-	/*
-		Function: contextAppend
-		
-		Response command used to append a value onto the specified member
-		of the javascript context object (or element) specified by the context
-		member of the request.  The object is referenced using the 'this' keyword
-		in the sAttribute parameter.
-		
-		Parameters:
-		
-		sAttribute - (string):  The member to be appended to.
-		sData - (string):  The value to append.
-		
-		Returns:
-		
-		object : The <Response> object.
-	*/
+	/**
+	 * Add a command to append a value onto the specified member of the javascript
+	 * context object (or element) specified by the context member of the request
+	 *
+	 * The object is referenced using the 'this' keyword in the sAttribute parameter.
+	 *
+	 * @param string		$sAttribute			The attribute to be appended to
+	 * @param string		$sData				The value to append
+	 *
+	 * @return \Xajax\Plugin\Response
+	 */
 	public function contextAppend($sAttribute, $sData)
 	{
 		return $this->addCommand(array(
@@ -488,23 +401,17 @@ class Response
 		);
 	}	
 	
-	/*
-		Function: contextPrepend
-		
-		Response command used to prepend the speicified data to the given
-		member of the current javascript object specified by context in the
-		current request.  The object is access via the 'this' keyword in the
-		sAttribute parameter.
-		
-		Parameters:
-		
-		sAttribute - (string):  The member to be updated.
-		sData - (string):  The value to be prepended.
-		
-		Returns:
-		
-		object : The <Response> object.
-	*/
+	/**
+	 * Add a command to prepend the speicified data to the given member of the current
+	 * javascript object specified by context in the current request
+	 *
+	 * The object is access via the 'this' keyword in the sAttribute parameter.
+	 *
+	 * @param string		$sAttribute			The attribute to be updated
+	 * @param string		$sData				The value to be prepended
+	 *
+	 * @return \Xajax\Plugin\Response
+	 */
 	public function contextPrepend($sAttribute, $sData)
 	{
 		return $this->addCommand(array(
@@ -515,49 +422,44 @@ class Response
         );
 	}
 	
-	/*
-		Function: contextClear
-		
-		Response command used to clear the value of the property specified
-		in the sAttribute parameter.  The member is access via the 'this'
-		keyword and can be used to update a javascript object specified
-		by context in the request parameters.
-		
-		Parameters:
-		
-		sAttribute - (string):  The member to be cleared.
-		
-		Returns:
-		
-		object : The <Response> object.
-	*/
+	/**
+	 * Add a command to to clear the value of the attribute specified in the sAttribute parameter
+	 *
+	 * The member is access via the 'this' keyword and can be used to update a javascript
+	 * object specified by context in the request parameters.
+	 *
+	 * @param string		$sAttribute			The attribute to be cleared
+	 *
+	 * @return \Xajax\Plugin\Response
+	 */
 	public function contextClear($sAttribute)
 	{
 		return $this->contextAssign((string)$sAttribute, '');
 	}
 	
-	/*
-		Function: alert
-		
-		Response command that is used to display an alert message to the user.
-		
-		Parameters:
-		
-		sMsg - (string):  The message to be displayed.
-		
-		Returns:
-		
-		object : The <Response> object.
-	*/
-	public function alert($sMsg)
+	/**
+	 * Add a command to display an alert message to the user
+	 *
+	 * @param string		$sMessage			The message to be displayed
+	 *
+	 * @return \Xajax\Plugin\Response
+	 */
+	public function alert($sMessage)
 	{
 		return $this->addCommand(array(
 				'cmd' => 'al'
 			),
-			(string)$sMsg
+			(string)$sMessage
 		);
 	}
 	
+	/**
+	 * Add a command to display a debug message to the user
+	 *
+	 * @param string		$sMessage			The message to be displayed
+	 *
+	 * @return \Xajax\Plugin\Response
+	 */
 	public function debug($sMessage)
 	{
 		return $this->addCommand(array(
@@ -567,22 +469,14 @@ class Response
 		);
 	}
 	
-	/*
-		Function: redirect
-		
-		Response command that causes the browser to navigate to the specified
-		URL.
-		
-		Parameters:
-		
-		sURL - (string):  The relative or fully qualified URL.
-		iDelay - (integer, optional):  Number of seconds to delay before
-			the redirect occurs.
-			
-		Returns:
-		
-		object : The <Response> object.
-	*/
+	/**
+	 * Add a command to ask the browser to navigate to the specified URL
+	 *
+	 * @param string		$sURL				The relative or fully qualified URL
+	 * @param integer		$iDelay				Number of seconds to delay before the redirect occurs
+	 *
+	 * @return \Xajax\Plugin\Response
+	 */
 	public function redirect($sURL, $iDelay=0)
 	{
 		// we need to parse the query part so that the values are rawurlencode()'ed
@@ -624,23 +518,18 @@ class Response
 		return $this;
 	}
 	
-	/*
-		Function: script
-		
-		Response command that is used to execute a portion of javascript on
-		the browser.  The script runs in it's own context, so variables declared
-		locally, using the 'var' keyword, will no longer be available after the
-		call.  To construct a variable that will be accessable globally, even
-		after the script has executed, leave off the 'var' keyword.
-		
-		Parameters:
-		
-		sJS - (string):  The script to execute.
-		
-		Returns:
-		
-		object : The <Response> object.
-	*/
+	/**
+	 * Add a command to execute a portion of javascript on the browser
+	 *
+	 * The script runs in it's own context, so variables declared locally, using the 'var' keyword,
+	 * will no longer be available after the call.
+	 * To construct a variable that will be accessable globally, even after the script has executed,
+	 * leave off the 'var' keyword.
+	 *
+	 * @param string		$sJS				The script to execute
+	 *
+	 * @return \Xajax\Plugin\Response
+	 */
 	public function script($sJS)
 	{
 		return $this->addCommand(array(
@@ -650,22 +539,15 @@ class Response
 		);
 	}
 	
-	/*
-		Function: call
-		
-		Response command that indicates that the specified javascript
-		function should be called with the given (optional) parameters.
-		
-		Parameters:
-		
-		arg1 - (string):  The name of the function to call.
-		arg2 .. argn : arguments to be passed to the function.
-		
-		Returns:
-		
-		object : The <Response> object.
-	*/
-	public function call() {
+	/**
+	 * Add a command to call the specified javascript function with the given (optional) parameters
+	 *
+	 * @param string		$sFunc				The name of the function to call
+	 *
+	 * @return \Xajax\Plugin\Response
+	 */
+	public function call($sFunc)
+	{
 		$aArgs = func_get_args();
 		$sFunc = array_shift($aArgs);
 		return $this->addCommand(array(
@@ -676,19 +558,13 @@ class Response
 		);
 	}
 	
-	/*
-		Function: remove
-		
-		Response command used to remove an element from the document.
-		
-		Parameters:
-		
-		sTarget - (string):  The id of the element to be removed.
-		
-		Returns:
-		
-		object : The <Response> object.
-	*/
+	/**
+	 * Add a command to remove an element from the document
+	 *
+	 * @param string		$sTarget			The id of the element to be removed
+	 *
+	 * @return \Xajax\Plugin\Response
+	 */
 	public function remove($sTarget)
 	{
 		return $this->addCommand(array(
@@ -699,27 +575,17 @@ class Response
 		);
 	}
 	
-	/*
-		Function: create
-		
-		Response command used to create a new element on the browser.
-		
-		Parameters:
-		
-		sParent - (string):  The id of the parent element.
-		sTag - (string):  The tag name to be used for the new element.
-		sId - (string):  The id to assign to the new element.
- 
-			
-		Returns:
-		
-		object : The <Response> object.
-	*/
-	
+	/**
+	 * Add a command to create a new element on the browser
+	 *
+	 * @param string		$sParent			The id of the parent element
+	 * @param string		$sTag				The tag name to be used for the new element
+	 * @param string		$sId				The id to assign to the new element
+	 *
+	 * @return \Xajax\Plugin\Response
+	 */
 	public function create($sParent, $sTag, $sId)
 	{
- 
-		
 		return $this->addCommand(array(
 				'cmd' => 'ce',
 				'id' => (string)$sParent,
@@ -729,23 +595,15 @@ class Response
 		);
 	}
 	
-	/*
-		Function: insert
-		
-		Response command used to insert a new element just prior to the specified
-		element.
-		
-		Parameters:
-		
-		sBefore - (string):  The element used as a reference point for the 
-			insertion.
-		sTag - (string):  The tag to be used for the new element.
-		sId - (string):  The id to be used for the new element.
-		
-		Returns:
-		
-		object : The <Response> object.
-	*/
+	/**
+	 * Add a command to insert a new element just prior to the specified element
+	 *
+	 * @param string		$sBefore			The id of the element used as a reference point for the insertion
+	 * @param string		$sTag				The tag name to be used for the new element
+	 * @param string		$sId				The id to assign to the new element
+	 *
+	 * @return \Xajax\Plugin\Response
+	 */
 	public function insert($sBefore, $sTag, $sId)
 	{
 		return $this->addCommand(array(
@@ -757,23 +615,15 @@ class Response
 		);
 	}
 	
-	/*
-		Function: insertAfter
-		
-		Response command used to insert a new element after the specified
-		one.
-		
-		Parameters:
-		
-		sAfter - (string):  The id of the element that will be used as a reference
-			for the insertion.
-		sTag - (string):  The tag name to be used for the new element.
-		sId - (string):  The id to be used for the new element.
-		
-		Returns:
-		
-		object : The <Response> object.
-	*/
+	/**
+	 * Add a command to insert a new element after the specified
+	 *
+	 * @param string		$sBefore			The id of the element used as a reference point for the insertion
+	 * @param string		$sTag				The tag name to be used for the new element
+	 * @param string		$sId				The id to assign to the new element
+	 *
+	 * @return \Xajax\Plugin\Response
+	 */
 	public function insertAfter($sAfter, $sTag, $sId)
 	{
 		return $this->addCommand(array(
@@ -785,22 +635,16 @@ class Response
 		);
 	}
 	
-	/*
-		Function: createInput
-		
-		Response command used to create an input element on the browser.
-		
-		Parameters:
-		
-		sParent - (string):  The id of the parent element.
-		sType - (string):  The type of the new input element.
-		sName - (string):  The name of the new input element.
-		sId - (string):  The id of the new element.
-		
-		Returns:
-		
-		object : The <Response> object.
-	*/
+	/**
+	 * Add a command to create an input element on the browser
+	 *
+	 * @param string		$sParent			The id of the parent element
+	 * @param string		$sType				The type of the new input element
+	 * @param string		$sName				The name of the new input element
+	 * @param string		$sId				The id of the new element
+	 *
+	 * @return \Xajax\Plugin\Response
+	 */
 	public function createInput($sParent, $sType, $sName, $sId)
 	{
 		return $this->addCommand(array(
@@ -813,24 +657,16 @@ class Response
 		);
 	}
 	
-	/*
-		Function: insertInput
-		
-		Response command used to insert a new input element preceeding the
-		specified element.
-		
-		Parameters:
-		
-		sBefore - (string):  The id of the element to be used as the reference
-			point for the insertion.
-		sType - (string):  The type of the new input element.
-		sName - (string):  The name of the new input element.
-		sId - (string):  The id of the new input element.
-		
-		Returns:
-		
-		object : The <Response> object.
-	*/
+	/**
+	 * Add a command to insert a new input element preceding the specified element
+	 *
+	 * @param string		$sBefore			The id of the element to be used as the reference point for the insertion
+	 * @param string		$sType				The type of the new input element
+	 * @param string		$sName				The name of the new input element
+	 * @param string		$sId				The id of the new element
+	 *
+	 * @return \Xajax\Plugin\Response
+	 */
 	public function insertInput($sBefore, $sType, $sName, $sId)
 	{
 		return $this->addCommand(array(
@@ -843,24 +679,16 @@ class Response
 		);
 	}
 	
-	/*
-		Function: insertInputAfter
-		
-		Response command used to insert a new input element after the 
-		specified element.
-		
-		Parameters:
-		
-		sAfter - (string):  The id of the element that is to be used
-			as the insertion point for the new element.
-		sType - (string):  The type of the new input element.
-		sName - (string):  The name of the new input element.
-		sId - (string):  The id of the new input element.
-		
-		Returns:
-		
-		object : The <Response> object.
-	*/
+	/**
+	 * Add a command to insert a new input element after the specified element
+	 *
+	 * @param string		$sAfter				The id of the element to be used as the reference point for the insertion
+	 * @param string		$sType				The type of the new input element
+	 * @param string		$sName				The name of the new input element
+	 * @param string		$sId				The id of the new element
+	 *
+	 * @return \Xajax\Plugin\Response
+	 */
 	public function insertInputAfter($sAfter, $sType, $sName, $sId)
 	{
 		return $this->addCommand(array(
@@ -873,21 +701,15 @@ class Response
 		);
 	}
 	
-	/*
-		Function: setEvent
-		
-		Response command used to set an event handler on the browser.
-		
-		Parameters:
-		
-		sTarget - (string):  The id of the element that contains the event.
-		sEvent - (string):  The name of the event.
-		sScript - (string):  The javascript to execute when the event is fired.
-		
-		Returns:
-		
-		object : The <Response> object.
-	*/
+	/**
+	 * Add a command to set an event handler on the browser
+	 *
+	 * @param string		$sTarget			The id of the element that contains the event
+	 * @param string		$sEvent				The name of the event
+	 * @param string		$sScript			The javascript to execute when the event is fired
+	 *
+	 * @return \Xajax\Plugin\Response
+	 */
 	public function setEvent($sTarget, $sEvent, $sScript)
 	{
 		return $this->addCommand(array(
@@ -899,49 +721,17 @@ class Response
 		);
 	}
 	
-
-	/*
-		Function: addEvent
-		
-		Response command used to set an event handler on the browser.
-		
-		Parameters:
-		
-		sTarget - (string):  The id of the element that contains the event.
-		sEvent - (string):  The name of the event.
-		sScript - (string):  The javascript to execute when the event is fired.
-		
-		Returns:
-		
-		object : The <Response> object.
-		
-		Note:
-		
-		This function is depreciated and will be removed in a future version. 
-		Use <setEvent> instead.
-	*/	
-	public function addEvent($sTarget, $sEvent, $sScript)
-	{
-		return $this->setEvent((string)$sTarget, (string)$sEvent, (string)$sScript);
-	}
-	
-	/*
-		Function: addHandler
-		
-		Response command used to install an event handler on the specified element.
-		
-		Parameters:
-		
-		sTarget - (string):  The id of the element.
-		sEvent - (string):  The name of the event to add the handler to.
-		sHandler - (string):  The javascript function to call when the event is fired.
-		
-		You can add more than one event handler to an element's event using this method.
-		
-		Returns:
-		
-		object - The <Response> object.
-	*/
+	/**
+	 * Add a command to install an event handler on the specified element
+	 *
+	 * You can add more than one event handler to an element's event using this method.
+	 *
+	 * @param string		$sTarget			The id of the element
+	 * @param string		$sEvent				The name of the event
+	 * @param string		$sHandler			The javascript function to call when the event is fired
+	 *
+	 * @return \Xajax\Plugin\Response
+	 */
 	public function addHandler($sTarget, $sEvent, $sHandler)
 	{
 		return $this->addCommand(array(
@@ -953,22 +743,15 @@ class Response
 		);
 	}
 	
-	/*
-		Function: removeHandler
-		
-		Response command used to remove an event handler from an element.
-		
-		Parameters:
-		
-		sTarget - (string):  The id of the element.
-		sEvent - (string):  The name of the event.
-		sHandler - (string):  The javascript function that is called when the 
-			event is fired.
-			
-		Returns:
-		
-		object : The <Response> object.
-	*/
+	/**
+	 * Add a command to remove an event handler from an element
+	 *
+	 * @param string		$sTarget			The id of the element
+	 * @param string		$sEvent				The name of the event
+	 * @param string		$sHandler			The javascript function called when the event is fired
+	 *
+	 * @return \Xajax\Plugin\Response
+	 */
 	public function removeHandler($sTarget, $sEvent, $sHandler)
 	{
 		return $this->addCommand(array(
@@ -980,22 +763,15 @@ class Response
 		);
 	}
 	
-	/*
-		Function: setFunction
-		
-		Response command used to construct a javascript function on the browser.
-		
-		Parameters:
-		
-		sFunction - (string):  The name of the function to construct.
-		sArgs - (string):  Comma separated list of parameter names.
-		sScript - (string):  The javascript code that will become the body of the
-			function.
-			
-		Returns:
-		
-		object : The <Response> object.
-	*/
+	/**
+	 * Add a command to construct a javascript function on the browser
+	 *
+	 * @param string		$sFunction			The name of the function to construct
+	 * @param string		$sArgs				Comma separated list of parameter names
+	 * @param string		$sScript			The javascript code that will become the body of the function
+	 *
+	 * @return \Xajax\Plugin\Response
+	 */
 	public function setFunction($sFunction, $sArgs, $sScript)
 	{
 		return $this->addCommand(array(
@@ -1007,56 +783,41 @@ class Response
 		);
 	}
 	
-	/*
-		Function: wrapFunction
-		
-		Response command used to construct a wrapper function around
-		and existing javascript function on the browser.
-		
-		Parameters:
-		
-		sFunction - (string):  The name of the existing function to wrap.
-		sArgs - (string):  The comma separated list of parameters for the function.
-		aScripts - (array):  An array of javascript code snippets that will
-			be used to build the body of the function.  The first piece of code
-			specified in the array will occur before the call to the original
-			function, the second will occur after the original function is called.
-		sReturnValueVariable - (string):  The name of the variable that will
-			retain the return value from the call to the original function.
-			
-		Returns:
-		
-		object : The <Response> object.
-	*/
-	public function wrapFunction($sFunction, $sArgs, $aScripts, $sReturnValueVariable)
+	/**
+	 * Add a command to construct a wrapper function around an existing javascript function on the browser
+	 *
+	 * @param string		$sFunction			The name of the existing function to wrap
+	 * @param string		$sArgs				The comma separated list of parameters for the function
+	 * @param array			$aScripts			An array of javascript code snippets that will be used to build
+	 * 											the body of the function
+	 * 											The first piece of code specified in the array will occur before
+	 * 											the call to the original function, the second will occur after
+	 * 											the original function is called.
+	 * @param string		$sReturnValueVar	The name of the variable that will retain the return value
+	 * 											from the call to the original function
+	 *
+	 * @return \Xajax\Plugin\Response
+	 */
+	public function wrapFunction($sFunction, $sArgs, $aScripts, $sReturnValueVar)
 	{
 		return $this->addCommand(array(
 				'cmd' => 'wpf',
 				'func' => (string)$sFunction,
 				'prop' => (string)$sArgs,
-				'type' => (string)$sReturnValueVariable
+				'type' => (string)$sReturnValueVar
 			),
 			$aScripts
 		);
 	}
 	
-	/*
-		Function: includeScript
-		
-		Response command used to load a javascript file on the browser.
-		
-		Parameters:
-		
-		sFileName - (string):  The relative or fully qualified URI of the 
-			javascript file.
-	
-		sType - (string): Determines the script type . Defaults to 'text/javascript'. 
-
-			
-		Returns:
-		
-		object : The <Response> object.
-	*/
+	/**
+	 * Add a command to load a javascript file on the browser
+	 *
+	 * @param string		$sFileName			The relative or fully qualified URI of the javascript file
+	 * @param string		$sType				Determines the script type. Defaults to 'text/javascript'
+	 *
+	 * @return \Xajax\Plugin\Response
+	 */
 	public function includeScript($sFileName, $sType = null, $sId = null)
 	{
 		$command = array('cmd'  =>  'in');
@@ -1070,23 +831,14 @@ class Response
 		return $this->addCommand($command, (string)$sFileName);
 	}
 	
-	/*
-		Function: includeScriptOnce
-		
-		Response command used to include a javascript file on the browser
-		if it has not already been loaded.
-		
-		Parameters:
-		
-		sFileName - (string):  The relative for fully qualified URI of the
-			javascript file.
-
-		sType - (string): Determines the script type . Defaults to 'text/javascript'. 
-			
-		Returns:
-		
-		object : The <Response> object.
-	*/
+	/**
+	 * Add a command to include a javascript file on the browser if it has not already been loaded
+	 *
+	 * @param string		$sFileName			The relative or fully qualified URI of the javascript file
+	 * @param string		$sType				Determines the script type. Defaults to 'text/javascript'
+	 *
+	 * @return \Xajax\Plugin\Response
+	 */
 	public function includeScriptOnce($sFileName, $sType = null, $sId = null)
 	{
 		$command = array('cmd' => 'ino');
@@ -1100,24 +852,16 @@ class Response
 		return $this->addCommand($command, (string)$sFileName);
 	}
 	
-	/*
-		Function: removeScript
-		
-		Response command used to remove a SCRIPT reference to a javascript
-		file on the browser.  Optionally, you can call a javascript function
-		just prior to the file being unloaded (for cleanup).
-		
-		Parameters:
-		
-		sFileName - (string):  The relative or fully qualified URI of the
-			javascript file.
-		sUnload - (string):  Name of a javascript function to call prior
-			to unlaoding the file.
-			
-		Returns:
-		
-		object : The <Response> object.
-	*/
+	/**
+	 * Add a command to remove a SCRIPT reference to a javascript file on the browser
+	 *
+	 * Optionally, you can call a javascript function just prior to the file being unloaded (for cleanup).
+	 *
+	 * @param string		$sFileName			The relative or fully qualified URI of the javascript file
+	 * @param string		$sUnload			Name of a javascript function to call prior to unlaoding the file
+	 *
+	 * @return \Xajax\Plugin\Response
+	 */
 	public function removeScript($sFileName, $sUnload = '')
 	{
 		return $this->addCommand(array(
@@ -1128,24 +872,16 @@ class Response
 		);
 	}
 	
-	/*
-		Function: includeCSS
-		
-		Response command used to include a LINK reference to 
-		the specified CSS file on the browser.  This will cause the
-		browser to load and apply the style sheet.
-		
-		Parameters:
-		
-		sFileName - (string):  The relative or fully qualified URI of
-			the css file.
-	
-		sMedia - (string): Determines the media type of the CSS file. Defaults to 'screen'. 
-		
-		Returns:
-		
-		object : The <Response> object.
-	*/
+	/**
+	 * Add a command to include a LINK reference to the specified CSS file on the browser.
+	 *
+	 * This will cause the browser to load and apply the style sheet.
+	 *
+	 * @param string		$sFileName			The relative or fully qualified URI of the css file
+	 * @param string		$sMedia				The media type of the CSS file. Defaults to 'screen'
+	 *
+	 * @return \Xajax\Plugin\Response
+	 */
 	public function includeCSS($sFileName, $sMedia = null)
 	{
 		$command = array('cmd' => 'css');
@@ -1156,23 +892,15 @@ class Response
 		return $this->addCommand($command, (string)$sFileName);
 	}
 	
-	/*
-		Function: removeCSS
-		
-		Response command used to remove a LINK reference to 
-		a CSS file on the browser.  This causes the browser to
-		unload the style sheet, effectively removing the style
-		changes it caused.
-		
-		Parameters:
-		
-		sFileName - (string):  The relative or fully qualified URI
-			of the css file.
-		
-		Returns:
-		
-		object : The <Response> object.
-	*/
+	/**
+	 * Add a command to remove a LINK reference to a CSS file on the browser
+	 *
+	 * This causes the browser to unload the style sheet, effectively removing the style changes it caused.
+	 *
+	 * @param string		$sFileName			The relative or fully qualified URI of the css file
+	 *
+	 * @return \Xajax\Plugin\Response
+	 */
 	public function removeCSS($sFileName, $sMedia = null)
 	{
 		$command = array('cmd' => 'rcss');
@@ -1183,29 +911,21 @@ class Response
 		return $this->addCommand($command, (string)$sFileName);
 	}
 	
-	/*
-		Function: waitForCSS
-		
-		Response command instructing xajax to pause while the CSS
-		files are loaded.  The browser is not typically a multi-threading
-		application, with regards to javascript code.  Therefore, the
-		CSS files included or removed with <Response->includeCSS> and 
-		<Response->removeCSS> respectively, will not be loaded or 
-		removed until the browser regains control from the script.  This
-		command returns control back to the browser and pauses the execution
-		of the response until the CSS files, included previously, are
-		loaded.
-		
-		Parameters:
-		
-		iTimeout - (integer):  The number of 1/10ths of a second to pause
-			before timing out and continuing with the execution of the
-			response commands.
-			
-		Returns:
-		
-		object : The <Response> object.
-	*/
+	/**
+	 * Add a command to make Xajax pause while the CSS files are loaded
+	 *
+	 * The browser is not typically a multi-threading application, with regards to javascript code.
+	 * Therefore, the CSS files included or removed with <Response->includeCSS> and
+	 * <Response->removeCSS> respectively, will not be loaded or removed until the browser regains
+	 * control from the script.
+	 * This command returns control back to the browser and pauses the execution of the response
+	 * until the CSS files, included previously, are loaded.
+	 *
+	 * @param integer		$iTimeout			The number of 1/10ths of a second to pause before timing out
+	 * 											and continuing with the execution of the response commands
+	 *
+	 * @return \Xajax\Plugin\Response
+	 */
 	public function waitForCSS($iTimeout = 600)
 	{
 		$sData = "";
@@ -1217,27 +937,19 @@ class Response
 		);
 	}
 	
-	/*
-		Function: waitFor
-		
-		Response command instructing xajax to delay execution of the response
-		commands until a specified condition is met.  Note, this returns control
-		to the browser, so that other script operations can execute.  xajax
-		will continue to monitor the specified condition and, when it evaulates
-		to true, will continue processing response commands.
-		
-		Parameters:
-		
-		script - (string):  A piece of javascript code that evaulates to true 
-			or false.
-		tenths - (integer):  The number of 1/10ths of a second to wait before
-			timing out and continuing with the execution of the response
-			commands.
-		
-		Returns:
-		
-		object : The <Response> object.
-	*/
+	/**
+	 * Add a command to make Xajax to delay execution of the response commands until a specified condition is met
+	 *
+	 * Note, this returns control to the browser, so that other script operations can execute.
+	 * Xajax will continue to monitor the specified condition and, when it evaulates to true,
+	 * will continue processing response commands.
+	 *
+	 * @param string		$script				A piece of javascript code that evaulates to true or false
+	 * @param integer		$tenths				The number of 1/10ths of a second to wait before timing out
+	 * 											and continuing with the execution of the response commands.
+	 *
+	 * @return \Xajax\Plugin\Response
+	 */
 	public function waitFor($script, $tenths)
 	{
 		return $this->addCommand(array(
@@ -1248,24 +960,16 @@ class Response
 		);
 	}
 	
-	/*
-		Function: sleep
-		
-		Response command which instructs xajax to pause execution
-		of the response commands, returning control to the browser
-		so it can perform other commands asynchronously.  After
-		the specified delay, xajax will continue execution of the 
-		response commands.
-		
-		Parameters:
-		
-		tenths - (integer):  The number of 1/10ths of a second to
-			sleep.
-		
-		Returns:
-		
-		object : The <Response> object.
-	*/
+	/**
+	 * Add a command to make Xajax to pause execution of the response commands,
+	 * returning control to the browser so it can perform other commands asynchronously.
+	 *
+	 * After the specified delay, Xajax will continue execution of the response commands.
+	 *
+	 * @param integer		$tenths				The number of 1/10ths of a second to sleep
+	 *
+	 * @return \Xajax\Plugin\Response
+	 */
 	public function sleep($tenths)
 	{
 		return $this->addCommand(array(
@@ -1276,11 +980,24 @@ class Response
 		);
 	}
 	
+	/**
+	 * Add a command to start a DOM response
+	 *
+	 * @return \Xajax\Plugin\Response
+	 */
 	public function domStartResponse()
 	{
 		$this->script('xjxElm = []');
 	}
 	
+	/**
+	 * Add a command to create a DOM element
+	 *
+	 * @param string		$variable			The DOM element name (id or class)
+	 * @param string		$tag				The HTML tag of the new DOM element
+	 *
+	 * @return \Xajax\Plugin\Response
+	 */
 	public function domCreateElement($variable, $tag)
 	{
 		return $this->addCommand(array(
@@ -1291,6 +1008,15 @@ class Response
 		);
 	}
 	
+	/**
+	 * Add a command to set an attribute on a DOM element
+	 *
+	 * @param string		$variable			The DOM element name (id or class)
+	 * @param string		$key				The name of the attribute
+	 * @param string		$value				The value of the attribute
+	 *
+	 * @return \Xajax\Plugin\Response
+	 */
 	public function domSetAttribute($variable, $key, $value)
 	{
 		return $this->addCommand(array(
@@ -1302,6 +1028,15 @@ class Response
 		);
 	}
 
+	/**
+	 * Add a command to remove children from a DOM element
+	 *
+	 * @param string		$parent				The DOM parent element
+	 * @param string		$skip				The ??
+	 * @param string		$remove				The ??
+	 *
+	 * @return \Xajax\Plugin\Response
+	 */
 	public function domRemoveChildren($parent, $skip = null, $remove = null)
 	{
 		$command = array('cmd' => 'DRC');
@@ -1315,6 +1050,14 @@ class Response
 		return $this->addCommand($command, $parent);
 	}
 	
+	/**
+	 * Add a command to append a child to a DOM element
+	 *
+	 * @param string		$parent				The DOM parent element
+	 * @param string		$variable			The DOM element name (id or class)
+	 *
+	 * @return \Xajax\Plugin\Response
+	 */
 	public function domAppendChild($parent, $variable)
 	{
 		return $this->addCommand(array(
@@ -1325,6 +1068,14 @@ class Response
 		);
 	}
 
+	/**
+	 * Add a command to insert a DOM element before another
+	 *
+	 * @param string		$target				The DOM target element
+	 * @param string		$variable			The DOM element name (id or class)
+	 *
+	 * @return \Xajax\Plugin\Response
+	 */
 	public function domInsertBefore($target, $variable)
 	{
 		return $this->addCommand(array(
@@ -1335,6 +1086,14 @@ class Response
 		);
 	}
 
+	/**
+	 * Add a command to insert a DOM element after another
+	 *
+	 * @param string		$target				The DOM target element
+	 * @param string		$variable			The DOM element name (id or class)
+	 *
+	 * @return \Xajax\Plugin\Response
+	 */
 	public function domInsertAfter($target, $variable)
 	{
 		return $this->addCommand(array(
@@ -1345,6 +1104,14 @@ class Response
 		);
 	}
 	
+	/**
+	 * Add a command to append a text to a DOM element
+	 *
+	 * @param string		$parent				The DOM parent element
+	 * @param string		$text				The HTML text to append
+	 *
+	 * @return \Xajax\Plugin\Response
+	 */
 	public function domAppendText($parent, $text)
 	{
 		return $this->addCommand(array(
@@ -1354,51 +1121,50 @@ class Response
 			$text
 		);
 	}
-	
+	/*
+	 * 
+	 */
+	/**
+	 * Add a command to end a DOM response
+	 *
+	 * @return \Xajax\Plugin\Response
+	 */
 	public function domEndResponse()
 	{
 		$this->script('xjxElm = []');
 	}
 
-	/*
-		Function: getCommandCount
-		
-		Returns:
-		
-		integer : The number of commands in the response.
-	*/
+	/**
+	 * Get the number of commands in the response
+	 *
+	 * @return integer
+	 */
 	public function getCommandCount()
 	{
 		return count($this->aCommands);
 	}
 
-	/*
-		Function: setReturnValue
-		
-		Stores a value that will be passed back as part of the response.
-		When making synchronous requests, the calling javascript can
-		obtain this value immediately as the return value of the
-		<xajax.call> function.
-		
-		Parameters:
-		
-		value - (mixed):  Any value.
-		
-		Returns:
-		
-		object : The <Response> object.
-	*/
+	/**
+	 * Stores a value that will be passed back as part of the response
+	 *
+	 * When making synchronous requests, the calling javascript can obtain this value
+	 * immediately as the return value of the <xajax.call> javascript function
+	 *
+	 * @param mixed		$value				Any value
+	 *
+	 * @return \Xajax\Plugin\Response
+	 */
 	public function setReturnValue($value)
 	{
 		$this->returnValue = $value;
 		return $this;
 	}
 
-	/*
-		Function: _sendHeaders
-		
-		Used internally to generate the response headers.
-	*/
+	/**
+	 * Used internally to generate the response headers
+	 *
+	 * @return void
+	 */
 	public function sendHeaders()
 	{
 		$xRequestManager = RequestManager::getInstance();
@@ -1420,16 +1186,11 @@ class Response
 		header('content-type: ' . $this->sContentType . ' ' . $sCharacterSet);
 	}
 
-	/*
-		Function: getOutput
-		
-		Returns the output, generated from the commands added to the response,
-		that will be sent to the browser.
-		
-		Returns:
-		
-		string : The textual representation of the response commands, in JSON format.
-	*/
+	/**
+	 * Return the output, generated from the commands added to the response, that will be sent to the browser
+	 *
+	 * @return string
+	 */
 	public function getOutput()
 	{
 		$response = array();
@@ -1448,12 +1209,11 @@ class Response
 		return json_encode($response);
 	}
 	
-	/*
-		Function: printOutput
-		
-		Prints the output, generated from the commands added to the response,
-		that will be sent to the browser.
-	*/
+	/**
+	 * Print the output, generated from the commands added to the response, that will be sent to the browser
+	 *
+	 * @return void
+	 */
 	public function printOutput()
 	{
 		print $this->getOutput();
