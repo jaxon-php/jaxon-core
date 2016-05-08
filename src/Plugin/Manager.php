@@ -479,12 +479,12 @@ class Manager
 	 *
 	 * @return boolean
 	 */
-	public function canMergeJavascript()
+	public function canExportJavascript()
 	{
 		// Check config options
-		// - The js.app.merge option must be set to true
+		// - The js.app.export option must be set to true
 		// - The js.app.uri and js.app.dir options must be present
-		if(!$this->getOption('js.app.merge') ||
+		if(!$this->getOption('js.app.export') ||
 			!$this->hasOption('js.app.uri') ||
 			!$this->hasOption('js.app.dir'))
 		{
@@ -699,7 +699,7 @@ class Manager
 		{
 			$sScript .= "\n" . trim($xPlugin->getClientScript(), " \n");
 		}
-		if($this->canMergeJavascript())
+		if($this->canExportJavascript())
 		{
 			$sJsAppURI = rtrim($this->getOption('js.app.uri'), '/') . '/';
 			$sJsAppDir = rtrim($this->getOption('js.app.dir'), '/') . '/';
