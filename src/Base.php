@@ -1,5 +1,23 @@
 <?php
 
+/**
+ * Base.php - Xajax Base class
+ *
+ * This class defines base functionalities for the Xajax class, as welle as the library constants
+ *
+ * @package xajax-core
+ * @author Jared White
+ * @author J. Max Wilson
+ * @author Joseph Woolley
+ * @author Steffen Konerow
+ * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
+ * @copyright Copyright (c) 2005-2007 by Jared White & J. Max Wilson
+ * @copyright Copyright (c) 2008-2010 by Joseph Woolley, Steffen Konerow, Jared White  & J. Max Wilson
+ * @copyright 2016 Thierry Feuzeu <thierry.feuzeu@gmail.com>
+ * @license https://opensource.org/licenses/BSD-2-Clause BSD 2-Clause License
+ * @link https://github.com/lagdo/xajax-core
+ */
+
 namespace Xajax;
 
 
@@ -58,13 +76,6 @@ abstract class Base
 /**
  * Xajax.php
  */
-/*
- String: XAJAX_DEFAULT_CHAR_ENCODING
-
- Default character encoding used by both the <Xajax\Xajax> and
- <Xajax\Response\Response> classes.
- */
-// if(!defined ('XAJAX_DEFAULT_CHAR_ENCODING')) define ('XAJAX_DEFAULT_CHAR_ENCODING', 'utf-8');
 
 /*
  String: XAJAX_PROCESSING_EVENT

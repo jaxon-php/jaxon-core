@@ -1,5 +1,28 @@
 <?php
 
+/**
+ * Xajax.php - Xajax class
+ *
+ * The Xajax class uses a modular plug-in system to facilitate the processing
+ * of special Ajax requests made by a PHP page.
+ * It generates Javascript that the page must include in order to make requests.
+ * It handles the output of response commands (see <Xajax\Response\Response>).
+ * Many flags and settings can be adjusted to effect the behavior of the Xajax class
+ * as well as the client-side javascript.
+ *
+ * @package xajax-core
+ * @author Jared White
+ * @author J. Max Wilson
+ * @author Joseph Woolley
+ * @author Steffen Konerow
+ * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
+ * @copyright Copyright (c) 2005-2007 by Jared White & J. Max Wilson
+ * @copyright Copyright (c) 2008-2010 by Joseph Woolley, Steffen Konerow, Jared White  & J. Max Wilson
+ * @copyright 2016 Thierry Feuzeu <thierry.feuzeu@gmail.com>
+ * @license https://opensource.org/licenses/BSD-2-Clause BSD 2-Clause License
+ * @link https://github.com/lagdo/xajax-core
+ */
+
 namespace Xajax;
 
 use Xajax\Plugin\Manager as PluginManager;
@@ -8,96 +31,66 @@ use Xajax\Response\Manager as ResponseManager;
 
 use Xajax\Utils\URI;
 
-/*
-	File: Xajax.php
-
-	Main Xajax class and setup file.
-
-	Title: Xajax class
-
-	Please see <copyright.php> for a detailed description, copyright
-	and license information.
-*/
-
-/*
-	@package Xajax
-	@version $Id: Xajax.php 362 2007-05-29 15:32:24Z calltoconstruct $
-	@copyright Copyright (c) 2005-2007 by Jared White & J. Max Wilson
-	@copyright Copyright (c) 2008-2010 by Joseph Woolley, Steffen Konerow, Jared White  & J. Max Wilson
-	@license http://www.xajaxproject.org/bsd_license.txt BSD License
-*/
-
-/*
-	Class: xajax
-
-	The xajax class uses a modular plug-in system to facilitate the processing
-	of special Ajax requests made by a PHP page.  It generates Javascript that
-	the page must include in order to make requests.  It handles the output
-	of response commands (see <Xajax\Response\Response>).  Many flags and settings can be
-	adjusted to effect the behavior of the xajax class as well as the client-side
-	javascript.
-*/
 class Xajax extends Base
 {
 	use \Xajax\Utils\ContainerTrait;
 
-	/*
-		Array: aOptionMappings
-		
-		Maps the previous config options to the current ones, so the library can still accept them.
-	*/
+	/**
+	 * Mappings the previous config options to the current ones, so the library can still accept them
+	 *
+	 * @var array
+	 */
 	private $aOptionMappings;
 
-	/*
-		Array: aProcessingEvents
-		
-		Stores the processing event handlers that have been assigned during this run
-		of the script.
-	*/
+	/**
+	 * Processing event handlers that have been assigned during this run of the script
+	 *
+	 * @var array
+	 */
 	private $aProcessingEvents;
 
-	/*
-		Object: xPluginManager
-		
-		This stores a reference to the global <Xajax\\Plugin\Manager>
-	*/
+	/**
+	 * A reference to the global <\Xajax\Plugin\Manager>
+	 *
+	 * @var \Xajax\Plugin\Manager
+	 */
 	private $xPluginManager;
 	
-	/*
-		Object: xRequestManager
-		
-		Stores a reference to the global <Xajax\Request\Manager>
-	*/
+	/**
+	 * A reference to the global <\Xajax\Request\Manager>
+	 *
+	 * @var \Xajax\Request\Manager
+	 */
 	private $xRequestManager;
 	
-	/*
-		Object: xResponseManager
-		
-		Stores a reference to the global <Xajax\Response\Manager>
-	*/
+	/**
+	 * A reference to the global <\Xajax\Response\Manager>
+	 *
+	 * @var \Xajax\Response\Manager
+	 */
 	private $xResponseManager;
 
+	/**
+	 * The challenge response sent by the client in the HTTP request
+	 *
+	 * @var string
+	 */
 	private $challengeResponse;
 	
-	/*
-		Object: gxResponse
-		
-		Stores a reference to the global <Xajax\Response\Response>
-	*/
+	/**
+	 * A reference to the global <\Xajax\Response\Response>
+	 *
+	 * @var \Xajax\Response\Response
+	 */
 	protected static $gxResponse = null;
 
-	/*
-		String: sErrorMessage
-		
-		Stores the error message when the Xajax error handling system is enabled
-	*/
+	/**
+	 * The error message generated when the Xajax error handling system is enabled
+	 *
+	 * @var unknown
+	 */
 	private $sErrorMessage = '';
 
-	/*
-		Constructor: xajax
-
-		Constructs a xajax instance and initializes the plugin system.
-	*/
 	private function __construct()
 	{
 		$this->aProcessingEvents = array();
@@ -190,11 +183,6 @@ class Xajax extends Base
 			'js.app.minify' => true,
 			'js.app.options' => '',
 		));
-		// Todo : check if this code should not be moved somewhere else
-		/*if(XAJAX_DEFAULT_CHAR_ENCODING != 'utf-8')
-		{
-			$this->setOption('core.process.decode_utf8', true);
-		}*/
 	}
 
 	/**
@@ -218,18 +206,16 @@ class Xajax extends Base
 		$this->xPluginManager->disableAutoLoad();
 	}
 
-	/*
-		Function: getGlobalResponse
-
-		Returns the <Xajax\Response\Response> object preconfigured with the encoding
-		and entity settings from this instance of <Xajax\Xajax>.  This is used
-		for singleton-pattern response development.
-
-		Returns:
-
-		<Xajax\Response\Response> : A <Xajax\Response\Response> object which can be used
-			to return response commands.  See also the <Xajax\Response\Manager> class.
-	*/
+	/**
+	 * Return the <Xajax\Response\Response> object preconfigured with the encoding and entity
+	 * settings from this instance of <Xajax\Xajax>
+	 *
+	 * This is used for singleton-pattern response development.
+	 *
+	 * @return Xajax\Response\Response
+	 *
+	 * @see The <Xajax\Response\Manager> class
+	 */
 	public static function getGlobalResponse()
 	{
 		if(!self::$gxResponse)
@@ -239,47 +225,40 @@ class Xajax extends Base
 		return self::$gxResponse;
 	}
 
-	/*
-		Function: getVersion
-
-		Returns:
-
-		string : The current xajax version.
-	*/
+	/**
+	 * The current Xajax version
+	 *
+	 * @return string
+	 */
 	public static function getVersion()
 	{
 		return 'Xajax 0.7 alpha 1';
 	}
 
-	/*
-		Function: register
-		
-		Call this function to register request handlers, including functions, 
-		callable objects and events.  New plugins can be added that support
-		additional registration methods and request processors.
-
-
-		Parameters:
-		
-		$sType - (string): Type of request handler being registered; standard 
-			options include:
-				Xajax::USER_FUNCTION: a function declared at global scope.
-				Xajax::CALLABLE_OBJECT: an object who's methods are to be registered.
-				Xajax::BROWSER_EVENT: an event which will cause zero or more event handlers
-					to be called.
-				Xajax::EVENT_HANDLER: register an event handler function.
-				
-		$sFunction || $objObject || $sEvent - (mixed):
-			when registering a function, this is the name of the function
-			when registering a callable object, this is the object being registered
-			when registering an event or event handler, this is the name of the event
-			
-		$sIncludeFile || $aCallOptions || $sEventHandler
-			when registering a function, this is the (optional) include file.
-			when registering a callable object, this is an (optional) array
-				of call options for the functions being registered.
-			when registering an event handler, this is the name of the function.
-	*/
+	/**
+	 * Register request handlers, including functions, callable objects and events.
+	 *
+	 * New plugins can be added that support additional registration methods and request processors.
+	 * 
+	 *
+	 * @param string	$sType			The type of request handler being registered
+	 *        Options include:
+	 *        - Xajax::USER_FUNCTION: a function declared at global scope
+	 *        - Xajax::CALLABLE_OBJECT: an object who's methods are to be registered
+	 *        - Xajax::BROWSER_EVENT: an event which will cause zero or more event handlers to be called
+	 *        - Xajax::EVENT_HANDLER: register an event handler function.
+	 * @param mixed		$sFunction | $objObject | $sEvent
+	 *        When registering a function, this is the name of the function
+	 *        When registering a callable object, this is the object being registered
+	 *        When registering an event or event handler, this is the name of the event
+	 * @param midex		$sIncludeFile | $aCallOptions | $sEventHandler
+	 *        When registering a function, this is the (optional) include file
+	 *        When registering a callable object, this is an (optional) array
+	 *             of call options for the functions being registered
+	 *        When registering an event handler, this is the name of the function
+	 *
+	 * @return mixed
+	 */
 	public function register($sType, $mArg)
 	{
 		$aArgs = func_get_args();
@@ -340,17 +319,15 @@ class Xajax extends Base
 		$this->setOption('js.lib.uri', $sJsLibURI);
 	}
 	
-	/*
-		Function: mergeJavascript
-		
-		Merge and minify the javascript code generated by Xajax.
-		
-		Parameters:
-		
-		sJsAppDir - (string):  The dir where the generated file will be located.
-		sJsAppURI - (string):  The URI where the generated file will be located.
-		bMinifyJs - (boolean):  Shall the generated file also be minified.
-	*/
+	/**
+	 * Merge and minify the javascript code generated by Xajax
+	 *
+	 * @param string		$sJsAppDir			The dir where the generated file will be located
+	 * @param string		$sJsAppURI			The URI where the generated file will be located
+	 * @param boolean		$bMinifyJs			Shall the generated file also be minified
+	 *
+	 * @return void
+	 */
 	public function mergeJavascript($sJsAppDir, $sJsAppURI, $bMinifyJs = true)
 	{
 		$this->setOption('js.app.merge', true);
@@ -359,15 +336,15 @@ class Xajax extends Base
 		$this->setOption('js.app.minify', ($bMinifyJs));
 	}
 
-	/*
-		Function: configureMany
-		
-		Set an array of configuration options.
-
-		Parameters:
-		
-		$aOptions - (array): Associative array of configuration settings
-	*/
+	/**
+	 * Set an array of configuration options
+	 *
+	 * This function is deprecated, and will be removed in a future version. Use <setOptions> instead.
+	 *
+	 * @param array 		$aOptions			Associative array of configuration settings
+	 *
+	 * @return void
+	 */
 	public function configureMany(array $aOptions)
 	{
 		foreach($aOptions as $sName => $xValue)
@@ -376,24 +353,16 @@ class Xajax extends Base
 		}
 	}
 	
-	/*
-		Function: configure
-		
-		Call this function to set options that will effect the processing of 
-		xajax requests.  Configuration settings can be specific to the xajax
-		core, request processor plugins and response plugins.
-
-
-		Parameters:
-		
-		Options include:
-			javascript URI - (string): The path to the folder that contains the 
-				xajax javascript files.
-			errorHandler - (boolean): true to enable the xajax error handler, see
-				<Xajax\Xajax->bErrorHandler>
-			exitAllowed - (boolean): true to allow xajax to exit after processing
-				a request.  See <Xajax\Xajax->bExitAllowed> for more information.
-	*/
+	/**
+	 * Set a configuration option
+	 *
+	 * This function is deprecated, and will be removed in a future version. Use <setOption> instead.
+	 *
+	 * @param string 		$sName				The name of the configuration setting
+	 * @param mixed			$xValue				The value of the setting
+	 *
+	 * @return void
+	 */
 	public function configure($sName, $xValue)
 	{
 		// The config name must be mapped to the new option name
@@ -412,20 +381,15 @@ class Xajax extends Base
 		}
 	}
 
-	/*
-		Function: getConfiguration
-		
-		Get the current value of a configuration setting that was previously set
-		via <Xajax\Xajax->configure> or <Xajax\Xajax->configureMany>
-
-		Parameters:
-		
-		$sName - (string): The name of the configuration setting
-				
-		Returns:
-		
-		$mValue : (mixed):  The value of the setting if set, null otherwise.
-	*/
+	/**
+	 * Get the current value of a configuration setting
+	 *
+	 * This function is deprecated, and will be removed in a future version. Use <getOption> instead.
+	 *
+	 * @param array 		$sName				The name of the configuration setting
+	 *
+	 * @return mixed
+	 */
 	public function getConfiguration($sName)
 	{
 		// The config name must be mapped to the new option name
@@ -437,26 +401,23 @@ class Xajax extends Base
 		return $this->getOption((is_array($sName) ? $sName[0] : $sName));
 	}
 
-	/*
-		Function: canProcessRequest
-		
-		Determines if a call is a xajax request or a page load request.
-		
-		Return:
-		
-		boolean - True if this is a xajax request, false otherwise.
-	*/
+	/**
+	 * Determine if a call is a xajax request or a page load request
+	 *
+	 * @return boolean
+	 */
 	public function canProcessRequest()
 	{
 		return $this->xPluginManager->canProcessRequest();
 	}
 
-	/*
-		Function: VerifySession
-
-		Ensure that an active session is available (primarily used
-		for storing challenge / response codes).
-	*/
+	/**
+	 * Ensure that an active session is available
+	 *
+	 * Primarily used for storing challenge / response codes.
+	 *
+	 * @return boolean
+	 */
 	private function verifySession()
 	{
 		$sessionID = session_id();
@@ -468,6 +429,13 @@ class Xajax extends Base
 		return true;
 	}
 
+	/**
+	 * Read the challenge data from the session
+	 *
+	 * @param string		$sessionKey			The session key
+	 *
+	 * @return mixed
+	 */
 	private function loadChallenges($sessionKey)
 	{
 		$challenges = array();
@@ -478,6 +446,14 @@ class Xajax extends Base
 		return $challenges;
 	}
 
+	/**
+	 * Save the challenge data in the session
+	 *
+	 * @param string		$sessionKey			The session key
+	 * @param mixed			$challenges			The challenge data
+	 *
+	 * @return void
+	 */
 	private function saveChallenges($sessionKey, $challenges)
 	{
 		if(count($challenges) > 10)
@@ -486,6 +462,14 @@ class Xajax extends Base
 		$_SESSION[$sessionKey] = $challenges;
 	}
 
+	/**
+	 * Make the challenge data
+	 *
+	 * @param string		$algo				The algorithm to use
+	 * @param integer		$value				The value to hash
+	 *
+	 * @return string
+	 */
 	private function makeChallenge($algo, $value)
 	{
 		// TODO: Move to configuration option
@@ -498,15 +482,16 @@ class Xajax extends Base
 		return hash($algo, $value);
 	}
 
-	/*
-		Function: challenge
-
-		Call this from the top of a xajax enabled request handler
-		to introduce a challenge and response cycle into the request
-		response process.
-
-		NOTE:  Sessions must be enabled to use this feature.
-	*/
+	/**
+	 * Introduce a challenge and response cycle into the request response process
+	 *
+	 * Sessions must be enabled to use this feature.
+	 *
+	 * @param string		$algo				The algorithm to use
+	 * @param integer		$value				The value to hash
+	 *
+	 * @return void
+	 */
 	public function challenge($algo=null, $value=null)
 	{
 		if(!$this->verifySession())
@@ -540,14 +525,11 @@ class Xajax extends Base
 		return false;
 	}
 
-	/*
-		Function errorHandler
-	
-		This function is registered with PHP's set_error_handler if the xajax
-		error handling system is enabled.
-	
-		See <xajax->bUserErrorHandler>
-	*/
+	/**
+	 * This function is registered with PHP's set_error_handler if the xajax error handling system is enabled
+	 *
+	 * @return void
+	 */
 	public function errorHandler($errno, $errstr, $errfile, $errline)
 	{
 		$errorReporting = error_reporting();
@@ -573,27 +555,25 @@ class Xajax extends Base
 		));
 	}
 
-	/*
-		Function: processRequest
-
-		If this is a xajax request (see <Xajax\Xajax->canProcessRequest>), call the
-		requested PHP function, build the response and send it back to the
-		browser.
-
-		This is the main server side engine for xajax.  It handles all the
-		incoming requests, including the firing of events and handling of the
-		response.  If your RequestURI is the same as your web page, then this
-		function should be called before ANY headers or HTML is output from
-		your script.
-
-		This function may exit, if a request is processed.  See <Xajax\Xajax->bAllowExit>
-	*/
+	/**
+	 * If this is a xajax request, call the requested PHP function, build the response and send it back to the browser
+	 *
+	 * This is the main server side engine for xajax.
+	 * It handles all the incoming requests, including the firing of events and handling of the response.
+	 * If your RequestURI is the same as your web page, then this function should be called before ANY
+	 * headers or HTML is output from your script.
+	 * 
+	 * This function may exit after the request is processed, if the 'core.exit_after' option is set to true.
+	 *
+	 * @return void
+	 * 
+	 * @see <Xajax\Xajax->canProcessRequest>
+	 */
 	public function processRequest()
 	{
 		if(isset($_SERVER['HTTP_CHALLENGE_RESPONSE']))
 			$this->challengeResponse = $_SERVER['HTTP_CHALLENGE_RESPONSE'];
 
-//SkipDebug
 		// Check to see if headers have already been sent out, in which case we can't do our job
 		if(headers_sent($filename, $linenumber))
 		{
@@ -602,7 +582,6 @@ class Xajax extends Base
 			)), "\n", $this->trans('errors.output.advice');
 			exit();
 		}
-//EndSkipDebug
 
 		if($this->canProcessRequest())
 		{
@@ -712,18 +691,19 @@ class Xajax extends Base
 		}
 	}
 
-	/*
-		Function: getJavascript
-		
-		Returns the Xajax Javascript header and wrapper code to be printed into the page.
-		The returned code should be printed between the HEAD and /HEAD tags at the top of the page.
-		
-		The javascript code returned by this function is dependent on the plugins
-		that are included and the functions and classes that are registered.
-	*/
+	/**
+	 * Returns the Xajax Javascript header and wrapper code to be printed into the page
+	 *
+	 * The javascript code returned by this function is dependent on the plugins
+	 * that are included and the functions and classes that are registered.
+	 *
+	 * @param boolean		$bIncludeAssets		Also get the JS and CSS files
+	 *
+	 * @return string
+	 */
 	public function getJavascript($bIncludeAssets = true)
 	{
-		if(!$this->hasOption('core.request.uri'))
+		if(!$this->getOption('core.request.uri'))
 		{
 			$this->setOption('core.request.uri', URI::detect());
 		}
@@ -736,67 +716,55 @@ class Xajax extends Base
 		return $sCode;
 	}
 
-	/*
-		Function: printJavascript
-		
-		Prints the xajax Javascript header and wrapper code into your page.
-		This should be used to print the javascript code between the HEAD
-		and /HEAD tags at the top of the page.
-		
-		The javascript code output by this function is dependent on the plugins
-		that are included and the functions that are registered.
-		
-	*/
+	/**
+	 * Print the xajax Javascript header and wrapper code into your page
+	 *
+	 * The javascript code returned by this function is dependent on the plugins
+	 * that are included and the functions and classes that are registered.
+	 *
+	 * @return void
+	 */
 	public function printJavascript()
 	{
 		print $this->getJavascript();
 	}
 
-	/*
-		Function: getJsInclude
-	
-		Returns the javascript header includes for response plugins.
-	
-		Parameters:
+	/**
+	 * Return the javascript header code and file includes
+	 *
+	 * @return string
 	 */
 	public function getJsInclude()
 	{
 		return $this->xPluginManager->getJsInclude();
 	}
 
-	/*
-		Function: getCssInclude
-	
-		Returns the CSS header includes for response plugins.
-	
-		Parameters:
+	/**
+	 * Return the CSS header code and file includes
+	 *
+	 * @return string
 	 */
 	public function getCssInclude()
 	{
 		return $this->xPluginManager->getCssInclude();
 	}
 
-	/*
-		Function: plugin
-		
-		Provides access to registered response plugins. Pass the plugin name as the
-		first argument and the plugin object will be returned.  You can then
-		access the methods of the plugin directly.
-		
-		Parameters:
-		
-		sName - (string):  Name of the plugin.
-			
-		Returns:
-		
-		object - The plugin specified by sName.
-	*/
+	/**
+	 * Return a registered response plugin
+	 *
+	 * Pass the plugin name as the first argument and the plugin object will be returned.
+	 * You can then access the methods of the plugin directly.
+	 *
+	 * @param string		$sName				The plugin name
+	 *
+	 * @return \Xajax\Plugin\Response
+	 */
 	public function plugin($sName)
 	{
 		$xPlugin = $this->xPluginManager->getResponsePlugin($sName);
 		if(!$xPlugin)
 		{
-			return false;
+			return null;
 		}
 		$xPlugin->setResponse($this);
 		return $xPlugin;
