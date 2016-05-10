@@ -743,7 +743,7 @@ class Manager
 	 *
 	 * @param string		$sName				The name of the plugin
 	 *
-	 * @return null | \Xajax\Plugin\Response
+	 * @return \Xajax\Plugin\Response
 	 */
 	public function getResponsePlugin($sName)
 	{
@@ -759,7 +759,7 @@ class Manager
 	 *
 	 * @param string		$sName				The name of the plugin
 	 *
-	 * @return null | \Xajax\Plugin\Request
+	 * @return \Xajax\Plugin\Request
 	 */
 	public function getRequestPlugin($sName)
 	{
@@ -768,5 +768,15 @@ class Manager
 			return $this->aRequestPlugins[$sName];
 		}
 		return null;
+	}
+
+	/**
+	 * Find the specified request plugin by name and return a reference to it if one exists
+	 *
+	 * @return \Xajax\Request\Plugin\CallableObject
+	 */
+	public function getCallableObjectPlugin()
+	{
+		return $this->getRequestPlugin('CallableObject');
 	}
 }
