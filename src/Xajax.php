@@ -308,6 +308,23 @@ class Xajax extends Base
 	}
 
 	/**
+	 * Register a callable object from one of the class directories
+	 *
+	 * The class name can be dot, slash or anti-slash separated.
+	 * If the $bGetObject parameter is set to true, the registered instance of the class is returned.
+	 * 
+	 * @param string		$sClassName		The name of the class to register
+	 * @param boolean		$bGetObject		Return the registered instance of the class
+	 *
+	 * @return void
+	 */
+	public function registerClass($sClassName, $bGetObject = false)
+	{
+		$this->xPluginManager->registerClass($sClassName);
+		return (($bGetObject) ? $this->xPluginManager->getRegisteredObject($sClassName) : null);
+	}
+
+	/**
 	 * Set the URI of the Xajax javascript library files
 	 * 
 	 * @param string		$sJsLibURI		The URI of the Xajax javascript library files

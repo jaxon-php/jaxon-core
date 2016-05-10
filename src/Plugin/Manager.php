@@ -460,6 +460,24 @@ class Manager
 	}
 
 	/**
+	 * Find a user registered callable object by class name
+	 *
+	 * @param string		$sClassName			The class name of the callable object
+	 *
+	 * @return object
+	 */
+	public function getRegisteredObject($sClassName)
+	{
+		$xObject = null; // The user registered object
+		$xPlugin = $this->getRequestPlugin('CallableObject'); // The CallableObject plugin
+		if(($xPlugin))
+		{
+			$xObject = $xPlugin->getRegisteredObject($sClassName);
+		}
+		return $xObject;
+	}
+
+	/**
 	 * Get the base URI of the Xajax library javascript files
 	 *
 	 * @return string
@@ -768,15 +786,5 @@ class Manager
 			return $this->aRequestPlugins[$sName];
 		}
 		return null;
-	}
-
-	/**
-	 * Find the specified request plugin by name and return a reference to it if one exists
-	 *
-	 * @return \Xajax\Request\Plugin\CallableObject
-	 */
-	public function getCallableObjectPlugin()
-	{
-		return $this->getRequestPlugin('CallableObject');
 	}
 }
