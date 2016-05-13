@@ -77,6 +77,10 @@ class Container
     	$this->di['validator'] = function($c){
 			return new Validator();
 		};
+    	// Paginator
+    	$this->di['paginator'] = function($c){
+			return new Paginator(0, 1, 1, null);
+		};
     }
 
 	/**
@@ -127,5 +131,15 @@ class Container
 	public function getValidator()
     {
     	return $this->di['validator'];
+	}
+
+	/**
+	 * Get the paginator
+	 *
+	 * @return object		The paginator
+	 */
+	public function getPaginator()
+    {
+    	return $this->di['paginator'];
 	}
 }
