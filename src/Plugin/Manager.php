@@ -501,10 +501,10 @@ class Manager
 	{
 		// Check config options
 		// - The js.app.export option must be set to true
-		// - The js.app.uri and js.app.dir options must be present
+		// - The js.app.uri and js.app.dir options must be set to non null values
 		if(!$this->getOption('js.app.export') ||
-			!$this->hasOption('js.app.uri') ||
-			!$this->hasOption('js.app.dir'))
+			!$this->getOption('js.app.uri') ||
+			!$this->getOption('js.app.dir'))
 		{
 			return false;
 		}
