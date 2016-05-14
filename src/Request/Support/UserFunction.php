@@ -171,7 +171,7 @@ class UserFunction
 	 *
 	 * @return string
 	 */
-	public function getClientScript()
+	public function getScript()
 	{
 		$sXajaxPrefix = $this->getOption('core.prefix.function');
 		$sFunction = $this->getName();

@@ -132,12 +132,12 @@ class UserFunction extends RequestPlugin
 	 *
 	 * @return string
 	 */
-	public function getClientScript()
+	public function getScript()
 	{
 		$code = '';
 		foreach($this->aFunctions as $xFunction)
 		{
-			$code .= $xFunction->getClientScript();
+			$code .= $xFunction->getScript();
 		}
 		return $code;
 	}

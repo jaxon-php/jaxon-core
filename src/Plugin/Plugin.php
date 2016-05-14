@@ -31,7 +31,7 @@ abstract class Plugin
 	 *
 	 * @return string
 	 */
-	abstract public function getClientScript();
+	abstract public function getScript();
 
 	/**
 	 * Return true if the object is a request plugin. Always return false here.

@@ -113,7 +113,7 @@ class BrowserEvent
 	 *
 	 * @return string
 	 */
-	public function getClientScript()
+	public function getScript()
 	{
 		$sEventPrefix = $this->getOption('core.prefix.event');
 		$sMode = '';

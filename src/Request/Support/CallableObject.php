@@ -241,7 +241,7 @@ class CallableObject
 	 *
 	 * @return string
 	 */
-	public function getClientScript()
+	public function getScript()
 	{
 		$sXajaxPrefix = $this->getOption('core.prefix.class');
 		$sClass = $this->classpath . $this->getClassName();

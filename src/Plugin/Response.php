@@ -90,7 +90,7 @@ abstract class Response extends Plugin
 	 *
 	 * @return string
 	 */
- 	public function getJsInclude()
+ 	public function getJs()
  	{
  		return '';
  	}
@@ -102,7 +102,7 @@ abstract class Response extends Plugin
 	 *
 	 * @return string
 	 */
- 	public function getCssInclude()
+ 	public function getCss()
  	{
  		return '';
  	}

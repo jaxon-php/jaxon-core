@@ -714,22 +714,27 @@ class Xajax extends Base
 	 * The javascript code returned by this function is dependent on the plugins
 	 * that are included and the functions and classes that are registered.
 	 *
-	 * @param boolean		$bIncludeAssets		Also get the JS and CSS files
+	 * @param boolean		$bIncludeJs			Also get the JS files
+	 * @param boolean		$bIncludeCss		Also get the CSS files
 	 *
 	 * @return string
 	 */
-	public function getJavascript($bIncludeAssets = true)
+	public function getScript($bIncludeJs = false, $bIncludeCss = false)
 	{
 		if(!$this->getOption('core.request.uri'))
 		{
 			$this->setOption('core.request.uri', URI::detect());
 		}
 		$sCode = '';
-		if(($bIncludeAssets))
+		if(($bIncludeCss))
 		{
-			$sCode .= $this->xPluginManager->getCssInclude() . "\n" . $this->xPluginManager->getJsInclude() . "\n";
+			$sCode .= $this->xPluginManager->getCss() . "\n";
 		}
-		$sCode .= $this->xPluginManager->getClientScript();
+		if(($bIncludeJs))
+		{
+			$sCode .= $this->xPluginManager->getJs() . "\n";
+		}
+		$sCode .= $this->xPluginManager->getScript();
 		return $sCode;
 	}
 
@@ -739,11 +744,14 @@ class Xajax extends Base
 	 * The javascript code returned by this function is dependent on the plugins
 	 * that are included and the functions and classes that are registered.
 	 *
+	 * @param boolean		$bIncludeJs			Also print the JS files
+	 * @param boolean		$bIncludeCss		Also print the CSS files
+	 *
 	 * @return void
 	 */
-	public function printJavascript()
+	public function printScript($bIncludeJs = false, $bIncludeCss = false)
 	{
-		print $this->getJavascript();
+		print $this->getJavascript($bIncludeJs, $bIncludeCss);
 	}
 
 	/**
@@ -751,9 +759,9 @@ class Xajax extends Base
 	 *
 	 * @return string
 	 */
-	public function getJsInclude()
+	public function getJs()
 	{
-		return $this->xPluginManager->getJsInclude();
+		return $this->xPluginManager->getJs();
 	}
 
 	/**
@@ -761,9 +769,9 @@ class Xajax extends Base
 	 *
 	 * @return string
 	 */
-	public function getCssInclude()
+	public function getCss()
 	{
-		return $this->xPluginManager->getCssInclude();
+		return $this->xPluginManager->getCss();
 	}
 
 	/**

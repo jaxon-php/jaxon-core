@@ -554,7 +554,7 @@ class Manager
 	 *
 	 * @return string
 	 */
-	public function getJsInclude()
+	public function getJs()
 	{
 		$sJsLibURI = $this->getJsLibURI();
 		$sJsCoreUrl = $sJsLibURI . $this->_getScriptFilename('xajax.core.js');
@@ -583,7 +583,7 @@ class Manager
 		));
 		foreach($this->aResponsePlugins as $xPlugin)
 		{
-			$sCode .= rtrim($xPlugin->getJsInclude(), " \n") . "\n";
+			$sCode .= rtrim($xPlugin->getJs(), " \n") . "\n";
 		}
 		return $sCode;
 	}
@@ -593,7 +593,7 @@ class Manager
 	 *
 	 * @return string
 	 */
-	public function getCssInclude()
+	public function getCss()
 	{
 		// Set the template engine cache dir
 		$this->setTemplateCacheDir();
@@ -601,7 +601,7 @@ class Manager
 		$sCode = '';
 		foreach($this->aResponsePlugins as $xPlugin)
 		{
-			$sCode .= rtrim($xPlugin->getCssInclude(), " \n") . "\n";
+			$sCode .= rtrim($xPlugin->getCss(), " \n") . "\n";
 		}
 		return $sCode;
 	}
@@ -683,7 +683,7 @@ class Manager
 		$sPluginScript = '';
 		foreach($this->aResponsePlugins as $xPlugin)
 		{
-			$sPluginScript .= "\n" . trim($xPlugin->getClientScript(), " \n");
+			$sPluginScript .= "\n" . trim($xPlugin->getScript(), " \n");
 		}
 
 		$aVars = $this->getOptionVars();
@@ -706,7 +706,7 @@ class Manager
 	 *
 	 * @return string
 	 */
-	public function getClientScript()
+	public function getScript()
 	{
 		// Set the template engine cache dir
 		$this->setTemplateCacheDir();
@@ -715,7 +715,7 @@ class Manager
 		$sScript = $this->getConfigScript() . "\n" . $this->getReadyScript() . "\n";
 		foreach($this->aRequestPlugins as $xPlugin)
 		{
-			$sScript .= "\n" . trim($xPlugin->getClientScript(), " \n");
+			$sScript .= "\n" . trim($xPlugin->getScript(), " \n");
 		}
 		if($this->canExportJavascript())
 		{
