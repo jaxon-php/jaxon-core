@@ -65,7 +65,7 @@ class Config
 	 *
 	 * @return void
 	 */
-    public static function setOptions(array $aOptions, $sKeys)
+    public static function setOptions(array $aOptions, $sKeys = '')
     {
         // Find the config array in the input data
         $aKeys = explode('.', (string)$sKeys);
