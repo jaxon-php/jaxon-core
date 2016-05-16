@@ -52,7 +52,7 @@ abstract class Plugin
 	{
 		return false;
 	}
- 
+
 	/**
 	 * Get the plugin name
 	 *
@@ -62,4 +62,23 @@ abstract class Plugin
 	 * @return string
 	 */
 	abstract public function getName();
+
+	/**
+	 * Check if the assets of this plugin shall be included in Xajax generated code
+	 *
+	 * @return boolean
+	 */
+	protected function includeAssets()
+	{
+		$sPluginOptionName = 'assets.include.' . $this->getName();
+		if($this->hasOption($sPluginOptionName) && !$this->getOption($sPluginOptionName))
+		{
+			return false;
+		}
+		if($this->hasOption('assets.include.all') && !$this->getOption('assets.include.all'))
+		{
+			return false;
+		}
+		return true;
+	}
 }
