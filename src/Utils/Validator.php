@@ -23,59 +23,59 @@ namespace Xajax\Utils;
  */
 class Validator
 {
-	protected $xValidator;
+    protected $xValidator;
 
-	public function __construct()
-	{
-		$this->xValidator = false;
-	}
+    public function __construct()
+    {
+        $this->xValidator = false;
+    }
 
-	/**
-	 * Validate a function name
-	 *
-	 * @param string		$sName			The function name
-	 *
-	 * @return bool			True if the function name is valid, and false if not
-	 */
-	public function validateFunction($sName)
-	{
-		return preg_match('/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/', $sName);
-	}
+    /**
+     * Validate a function name
+     *
+     * @param string        $sName            The function name
+     *
+     * @return bool            True if the function name is valid, and false if not
+     */
+    public function validateFunction($sName)
+    {
+        return preg_match('/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/', $sName);
+    }
 
-	/**
-	 * Validate an event name
-	 *
-	 * @param string		$sName			The event name
-	 *
-	 * @return bool			True if the event name is valid, and false if not
-	 */
-	public function validateEvent($sName)
-	{
-		return preg_match('/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/', $sName);
-	}
+    /**
+     * Validate an event name
+     *
+     * @param string        $sName            The event name
+     *
+     * @return bool            True if the event name is valid, and false if not
+     */
+    public function validateEvent($sName)
+    {
+        return preg_match('/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/', $sName);
+    }
 
-	/**
-	 * Validate a class name
-	 *
-	 * @param string		$sName			The class name
-	 *
-	 * @return bool			True if the class name is valid, and false if not
-	 */
-	public function validateClass($sName)
-	{
-		return preg_match('/^([a-zA-Z][a-zA-Z0-9_]*)(\.[a-zA-Z][a-zA-Z0-9_]*)*$/', $sName);
-	}
+    /**
+     * Validate a class name
+     *
+     * @param string        $sName            The class name
+     *
+     * @return bool            True if the class name is valid, and false if not
+     */
+    public function validateClass($sName)
+    {
+        return preg_match('/^([a-zA-Z][a-zA-Z0-9_]*)(\.[a-zA-Z][a-zA-Z0-9_]*)*$/', $sName);
+    }
 
-	/**
-	 * Validate a method name
-	 *
-	 * @param string		$sName			The function name
-	 *
-	 * @return bool			True if the method name is valid, and false if not
-	 */
-	public function validateMethod($sName)
-	{
-		// return preg_match('/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/', $sName);
-		return preg_match('/^[a-zA-Z][a-zA-Z0-9_]*$/', $sName);
-	}
+    /**
+     * Validate a method name
+     *
+     * @param string        $sName            The function name
+     *
+     * @return bool            True if the method name is valid, and false if not
+     */
+    public function validateMethod($sName)
+    {
+        // return preg_match('/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/', $sName);
+        return preg_match('/^[a-zA-Z][a-zA-Z0-9_]*$/', $sName);
+    }
 }

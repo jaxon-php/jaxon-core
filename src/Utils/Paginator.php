@@ -176,10 +176,10 @@ class Paginator
      */
     public function setup($totalItems, $itemsPerPage, $currentPage, $request)
     {
-    	$this->setTotalItems($totalItems);
-    	$this->setItemsPerPage($itemsPerPage);
-    	$this->setCurrentPage($currentPage);
-    	$this->setRequest($request);
+        $this->setTotalItems($totalItems);
+        $this->setItemsPerPage($itemsPerPage);
+        $this->setCurrentPage($currentPage);
+        $this->setRequest($request);
     }
 
     /**

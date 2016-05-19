@@ -18,30 +18,30 @@ use \Xajax\Xajax;
 
 trait FactoryTrait
 {
-	/**
-	 * The global response instance
-	 *
-	 * @var \Xajax\Response\Response
-	 */
-	protected $response = null;
+    /**
+     * The global response instance
+     *
+     * @var \Xajax\Response\Response
+     */
+    protected $response = null;
 
-	/**
-	 * Set the global Xajax response object
-	 *
-	 * @return void
-	 */
-	public function setGlobalResponse()
-	{
-		$this->response = Xajax::getGlobalResponse();
-	}
+    /**
+     * Set the global Xajax response object
+     *
+     * @return void
+     */
+    public function setGlobalResponse()
+    {
+        $this->response = Xajax::getGlobalResponse();
+    }
 
-	/**
-	 * Create a new Xajax response object
-	 *
-	 * @return \Xajax\Response\Response		The new Xajax response object
-	 */
-	public function newResponse()
-	{
-		return new Response();
-	}
+    /**
+     * Create a new Xajax response object
+     *
+     * @return \Xajax\Response\Response        The new Xajax response object
+     */
+    public function newResponse()
+    {
+        return new Response();
+    }
 }

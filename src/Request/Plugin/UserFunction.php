@@ -27,154 +27,154 @@ use Xajax\Request\Manager as RequestManager;
 
 class UserFunction extends RequestPlugin
 {
-	use \Xajax\Utils\ContainerTrait;
+    use \Xajax\Utils\ContainerTrait;
 
-	/**
-	 * The registered user functions
-	 *
-	 * @var array
-	 */
-	protected $aFunctions;
+    /**
+     * The registered user functions
+     *
+     * @var array
+     */
+    protected $aFunctions;
 
-	/**
-	 * The name of the function that is being requested (during the request processing phase)
-	 *
-	 * @var string
-	 */
-	protected $sRequestedFunction;
+    /**
+     * The name of the function that is being requested (during the request processing phase)
+     *
+     * @var string
+     */
+    protected $sRequestedFunction;
 
-	public function __construct()
-	{
-		$this->aFunctions = array();
+    public function __construct()
+    {
+        $this->aFunctions = array();
 
-		$this->sRequestedFunction = null;
-		
-		if(isset($_GET['xjxfun']))
-		{
-			$this->sRequestedFunction = $_GET['xjxfun'];
-		}
-		if(isset($_POST['xjxfun']))
-		{
-			$this->sRequestedFunction = $_POST['xjxfun'];
-		}
-	}
+        $this->sRequestedFunction = null;
+        
+        if(isset($_GET['xjxfun']))
+        {
+            $this->sRequestedFunction = $_GET['xjxfun'];
+        }
+        if(isset($_POST['xjxfun']))
+        {
+            $this->sRequestedFunction = $_POST['xjxfun'];
+        }
+    }
 
-	/**
-	 * Return the name of this plugin
-	 *
-	 * @return string
-	 */
-	public function getName()
-	{
-		return 'UserFunction';
-	}
+    /**
+     * Return the name of this plugin
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return 'UserFunction';
+    }
 
-	/**
-	 * Register a user defined function
-	 *
-	 * @param array 		$aArgs				An array containing the function specification
-	 *
-	 * @return \Xajax\Request\Request
-	 */
-	public function register($aArgs)
-	{
-		if(count($aArgs) > 1)
-		{
-			$sType = $aArgs[0];
+    /**
+     * Register a user defined function
+     *
+     * @param array         $aArgs                An array containing the function specification
+     *
+     * @return \Xajax\Request\Request
+     */
+    public function register($aArgs)
+    {
+        if(count($aArgs) > 1)
+        {
+            $sType = $aArgs[0];
 
-			if($sType == Xajax::USER_FUNCTION)
-			{
-				$xUserFunction = $aArgs[1];
+            if($sType == Xajax::USER_FUNCTION)
+            {
+                $xUserFunction = $aArgs[1];
 
-				if(!($xUserFunction instanceof \Xajax\Request\Support\UserFunction))
-					$xUserFunction = new \Xajax\Request\Support\UserFunction($xUserFunction);
+                if(!($xUserFunction instanceof \Xajax\Request\Support\UserFunction))
+                    $xUserFunction = new \Xajax\Request\Support\UserFunction($xUserFunction);
 
-				if(count($aArgs) > 2)
-				{
-					if(is_array($aArgs[2]))
-					{
-						foreach($aArgs[2] as $sName => $sValue)
-						{
-							$xUserFunction->configure($sName, $sValue);
-						}
-					}
-					else
-					{
-						$xUserFunction->configure('include', $aArgs[2]);
-					}
-				}
-				$this->aFunctions[$xUserFunction->getName()] = $xUserFunction;
+                if(count($aArgs) > 2)
+                {
+                    if(is_array($aArgs[2]))
+                    {
+                        foreach($aArgs[2] as $sName => $sValue)
+                        {
+                            $xUserFunction->configure($sName, $sValue);
+                        }
+                    }
+                    else
+                    {
+                        $xUserFunction->configure('include', $aArgs[2]);
+                    }
+                }
+                $this->aFunctions[$xUserFunction->getName()] = $xUserFunction;
 
-				return $xUserFunction->generateRequest();
-			}
-		}
+                return $xUserFunction->generateRequest();
+            }
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	/**
-	 * Generate a hash for the registered user functions
-	 *
-	 * @return string
-	 */
-	public function generateHash()
-	{
-		$sHash = '';
-		foreach($this->aFunctions as $xFunction)
-		{
-			$sHash .= $xFunction->getName();
-		}
-		return md5($sHash);
-	}
+    /**
+     * Generate a hash for the registered user functions
+     *
+     * @return string
+     */
+    public function generateHash()
+    {
+        $sHash = '';
+        foreach($this->aFunctions as $xFunction)
+        {
+            $sHash .= $xFunction->getName();
+        }
+        return md5($sHash);
+    }
 
-	/**
-	 * Generate client side javascript code for the registered user functions
-	 *
-	 * @return string
-	 */
-	public function getScript()
-	{
-		$code = '';
-		foreach($this->aFunctions as $xFunction)
-		{
-			$code .= $xFunction->getScript();
-		}
-		return $code;
-	}
+    /**
+     * Generate client side javascript code for the registered user functions
+     *
+     * @return string
+     */
+    public function getScript()
+    {
+        $code = '';
+        foreach($this->aFunctions as $xFunction)
+        {
+            $code .= $xFunction->getScript();
+        }
+        return $code;
+    }
 
-	/**
-	 * Check if this plugin can process the incoming Xajax request
-	 *
-	 * @return boolean
-	 */
-	public function canProcessRequest()
-	{
-		// Check the validity of the function name
-		if(($this->sRequestedFunction) && !$this->validateFunction($this->sRequestedFunction))
-		{
-			$this->sRequestedFunction = null;
-		}
-		return ($this->sRequestedFunction != null);
-	}
+    /**
+     * Check if this plugin can process the incoming Xajax request
+     *
+     * @return boolean
+     */
+    public function canProcessRequest()
+    {
+        // Check the validity of the function name
+        if(($this->sRequestedFunction) && !$this->validateFunction($this->sRequestedFunction))
+        {
+            $this->sRequestedFunction = null;
+        }
+        return ($this->sRequestedFunction != null);
+    }
 
-	/**
-	 * Process the incoming Xajax request
-	 *
-	 * @return boolean
-	 */
-	public function processRequest()
-	{
-		if(!$this->canProcessRequest())
-			return false;
+    /**
+     * Process the incoming Xajax request
+     *
+     * @return boolean
+     */
+    public function processRequest()
+    {
+        if(!$this->canProcessRequest())
+            return false;
 
-		$aArgs = RequestManager::getInstance()->process();
+        $aArgs = RequestManager::getInstance()->process();
 
-		if(array_key_exists($this->sRequestedFunction, $this->aFunctions))
-		{
-			$this->aFunctions[$this->sRequestedFunction]->call($aArgs);
-			return true;
-		}
-		// Unable to find the requested function
-		throw new \Xajax\Exception\Error('errors.functions.invalid', array('name' => $this->sRequestedFunction));
-	}
+        if(array_key_exists($this->sRequestedFunction, $this->aFunctions))
+        {
+            $this->aFunctions[$this->sRequestedFunction]->call($aArgs);
+            return true;
+        }
+        // Unable to find the requested function
+        throw new \Xajax\Exception\Error('errors.functions.invalid', array('name' => $this->sRequestedFunction));
+    }
 }

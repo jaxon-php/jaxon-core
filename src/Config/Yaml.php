@@ -17,18 +17,18 @@ namespace Xajax\Config;
 
 class Yaml
 {
-	/**
-	 * Read and set Xajax options from a YAML formatted config file
-	 *
-	 * @param array 		$sConfigFile		The full path to the config file
-	 * @param string		$sKeys				The keys of the options in the file
-	 *
-	 * @return void
-	 */
-	public static function read($sConfigFile, $sKey = '')
+    /**
+     * Read and set Xajax options from a YAML formatted config file
+     *
+     * @param array         $sConfigFile        The full path to the config file
+     * @param string        $sKeys                The keys of the options in the file
+     *
+     * @return void
+     */
+    public static function read($sConfigFile, $sKey = '')
     {
-    	$sConfigFile = realpath($sConfigFile);
-    	if(!extension_loaded('yaml'))
+        $sConfigFile = realpath($sConfigFile);
+        if(!extension_loaded('yaml'))
         {
             throw new \Xajax\Exception\Config\Yaml('install');
         }

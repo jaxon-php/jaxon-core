@@ -17,15 +17,15 @@
 /**
  * Translate a text to the selected language
  *
- * @param string		$sText				The text to translate
- * @param array			$aPlaceHolders		The placeholders in the text
- * @param string		$sLanguage			The language to translate to
+ * @param string        $sText                The text to translate
+ * @param array            $aPlaceHolders        The placeholders in the text
+ * @param string        $sLanguage            The language to translate to
  *
  * @return string
  */
 function xajax_trans($sText, array $aPlaceHolders = array(), $sLanguage = null)
 {
-	return \Xajax\Utils\Container::getInstance()->getTranslator()->trans($sText, $aPlaceHolders, $sLanguage);
+    return \Xajax\Utils\Container::getInstance()->getTranslator()->trans($sText, $aPlaceHolders, $sLanguage);
 }
 
 /*

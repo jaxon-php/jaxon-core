@@ -33,52 +33,52 @@ namespace Xajax\Plugin;
 
 abstract class Request extends Plugin
 {
-	/**
-	 * Register a function, an event or an object.
-	 *
-	 * Called by the <Xajax\Plugin\Manager> when a user script when a function, event
-	 * or callable object is to be registered.
-	 * Additional plugins may support other registration types.
-	 *
-	 * @return mixed
-	 */
-	abstract public function register($aArgs);
+    /**
+     * Register a function, an event or an object.
+     *
+     * Called by the <Xajax\Plugin\Manager> when a user script when a function, event
+     * or callable object is to be registered.
+     * Additional plugins may support other registration types.
+     *
+     * @return mixed
+     */
+    abstract public function register($aArgs);
 
-	/**
-	 * Generate a unique hash for this plugin
-	 *
-	 * @return string
-	 */
-	abstract public function generateHash();
+    /**
+     * Generate a unique hash for this plugin
+     *
+     * @return string
+     */
+    abstract public function generateHash();
 
-	/**
-	 * Return true if the object is a request plugin. Always return true here.
-	 *
-	 * @return boolean
-	 */
-	public function isRequest()
-	{
-		return true;
-	}
+    /**
+     * Return true if the object is a request plugin. Always return true here.
+     *
+     * @return boolean
+     */
+    public function isRequest()
+    {
+        return true;
+    }
 
-	/**
-	 * Check if this plugin can process the current request
-	 *
-	 * Called by the <Xajax\Plugin\Manager> when a request has been received to determine
-	 * if the request is destinated to this request plugin.
-	 *
-	 * @return boolean
-	 */
-	abstract public function canProcessRequest();
-	
-	/**
-	 * Process the current request
-	 *
-	 * Called by the <Xajax\Plugin\Manager> when a request is being processed.
-	 * This will only occur when <Xajax> has determined that the current request
-	 * is a valid (registered) xajax enabled function via <xajax->canProcessRequest>.
-	 *
-	 * @return boolean
-	 */
-	abstract public function processRequest();
+    /**
+     * Check if this plugin can process the current request
+     *
+     * Called by the <Xajax\Plugin\Manager> when a request has been received to determine
+     * if the request is destinated to this request plugin.
+     *
+     * @return boolean
+     */
+    abstract public function canProcessRequest();
+    
+    /**
+     * Process the current request
+     *
+     * Called by the <Xajax\Plugin\Manager> when a request is being processed.
+     * This will only occur when <Xajax> has determined that the current request
+     * is a valid (registered) xajax enabled function via <xajax->canProcessRequest>.
+     *
+     * @return boolean
+     */
+    abstract public function processRequest();
 }

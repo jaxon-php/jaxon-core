@@ -1,10 +1,10 @@
 try {
-	if(typeof xajax.config == undefined)
-		xajax.config = {};
+    if(typeof xajax.config == undefined)
+        xajax.config = {};
 }
 catch(e) {
-	xajax = {};
-	xajax.config = {};
+    xajax = {};
+    xajax.config = {};
 };
 
 xajax.config.requestURI = "{$sRequestURI|noescape}";

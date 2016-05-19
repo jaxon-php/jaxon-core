@@ -23,53 +23,53 @@ namespace Xajax;
 
 abstract class Base
 {
-	/*
-	 * Processing events
-	 */
-	const PROCESSING_EVENT = 'xajax processing event';
-	const PROCESSING_EVENT_BEFORE = 'beforeProcessing';
-	const PROCESSING_EVENT_AFTER = 'afterProcessing';
-	const PROCESSING_EVENT_INVALID = 'invalidRequest';
+    /*
+     * Processing events
+     */
+    const PROCESSING_EVENT = 'xajax processing event';
+    const PROCESSING_EVENT_BEFORE = 'beforeProcessing';
+    const PROCESSING_EVENT_AFTER = 'afterProcessing';
+    const PROCESSING_EVENT_INVALID = 'invalidRequest';
 
-	/*
-	 * Request methods
-	 */
-	const METHOD_UNKNOWN = 0;
-	const METHOD_GET = 1;
-	const METHOD_POST = 2;
+    /*
+     * Request methods
+     */
+    const METHOD_UNKNOWN = 0;
+    const METHOD_GET = 1;
+    const METHOD_POST = 2;
 
-	/*
-	 * Request plugins
-	 */
-	// An object who's methods will be callable from the browser.
-	const CALLABLE_OBJECT = 'callable object';
-	// A php function available at global scope, or a specific function from an instance of an object.
-	const USER_FUNCTION = 'user function';
-	// A browser event.
-	const BROWSER_EVENT = 'browser event';
-	// An event handler.
-	const EVENT_HANDLER = 'event handler';
+    /*
+     * Request plugins
+     */
+    // An object who's methods will be callable from the browser.
+    const CALLABLE_OBJECT = 'callable object';
+    // A php function available at global scope, or a specific function from an instance of an object.
+    const USER_FUNCTION = 'user function';
+    // A browser event.
+    const BROWSER_EVENT = 'browser event';
+    // An event handler.
+    const EVENT_HANDLER = 'event handler';
 
-	/*
-	 * Request parameters
-	 */
-	// Specifies that the parameter will consist of an array of form values.
-	const FORM_VALUES = 'get form values';
-	// Specifies that the parameter will contain the value of an input control.
-	const INPUT_VALUE = 'get input value';
-	// Specifies that the parameter will consist of a boolean value of a checkbox.
-	const CHECKED_VALUE = 'get checked value';
-	// Specifies that the parameter value will be the innerHTML value of the element.
-	const ELEMENT_INNERHTML = 'get element innerHTML';
-	// Specifies that the parameter will be a quoted value (string).
-	const QUOTED_VALUE = 'quoted value';
-	// Specifies that the parameter will be a numeric, non-quoted value.
-	const NUMERIC_VALUE = 'numeric value';
-	// Specifies that the parameter will be a non-quoted value
-	// (evaluated by the browsers javascript engine at run time).
-	const JS_VALUE = 'unquoted value';
-	// Specifies that the parameter will be an integer used to generate pagination links.
-	const PAGE_NUMBER = 'page number';
+    /*
+     * Request parameters
+     */
+    // Specifies that the parameter will consist of an array of form values.
+    const FORM_VALUES = 'get form values';
+    // Specifies that the parameter will contain the value of an input control.
+    const INPUT_VALUE = 'get input value';
+    // Specifies that the parameter will consist of a boolean value of a checkbox.
+    const CHECKED_VALUE = 'get checked value';
+    // Specifies that the parameter value will be the innerHTML value of the element.
+    const ELEMENT_INNERHTML = 'get element innerHTML';
+    // Specifies that the parameter will be a quoted value (string).
+    const QUOTED_VALUE = 'quoted value';
+    // Specifies that the parameter will be a numeric, non-quoted value.
+    const NUMERIC_VALUE = 'numeric value';
+    // Specifies that the parameter will be a non-quoted value
+    // (evaluated by the browsers javascript engine at run time).
+    const JS_VALUE = 'unquoted value';
+    // Specifies that the parameter will be an integer used to generate pagination links.
+    const PAGE_NUMBER = 'page number';
 }
 
 

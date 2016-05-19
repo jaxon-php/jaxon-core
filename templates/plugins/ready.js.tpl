@@ -5,41 +5,41 @@ docReady(function() {
 
 {if $this->nScriptLoadTimeout > 0}
 window.setTimeout(
-	function() {
-		var printCoreError = true, printDebugError = true, printVerboseError = true, printLanguageError = true;
-		try {
-			if (xajax.isLoaded)
-				printCoreError = false;
+    function() {
+        var printCoreError = true, printDebugError = true, printVerboseError = true, printLanguageError = true;
+        try {
+            if (xajax.isLoaded)
+                printCoreError = false;
 {if $bDebug}
-			else if(xajax.debug.isLoaded)
-				printDebugError = false;
+            else if(xajax.debug.isLoaded)
+                printDebugError = false;
 {if $bVerboseDebug}
-			else if(xajax.debug.verbose.isLoaded)
-				printVerboseError = false;
+            else if(xajax.debug.verbose.isLoaded)
+                printVerboseError = false;
 {/if}
 {if $bLanguage}
-			else if(xajax.debug.lang.isLoaded)
-				printLanguageError = false;
+            else if(xajax.debug.lang.isLoaded)
+                printLanguageError = false;
 {/if}
 {/if}
-		}
-		catch (e) {}
-		if (printCoreError)
-			alert("{$sJsCoreError|noescape}");
+        }
+        catch (e) {}
+        if (printCoreError)
+            alert("{$sJsCoreError|noescape}");
 {if $bDebug}
-		else if(printDebugError)
-			alert("{$sJsDebugError|noescape}");
+        else if(printDebugError)
+            alert("{$sJsDebugError|noescape}");
 {if $bVerboseDebug}
-		else if(printVerboseError)
-			alert("{$sJsVerboseError|noescape}");
+        else if(printVerboseError)
+            alert("{$sJsVerboseError|noescape}");
 {/if}
 {if $bLanguage}
-		else if(printLanguageError)
-			alert("{$sJsLanguageError|noescape}");
+        else if(printLanguageError)
+            alert("{$sJsLanguageError|noescape}");
 {/if}
 {/if}
-	},
-	{$nScriptLoadTimeout|noescape}
+    },
+    {$nScriptLoadTimeout|noescape}
 );
 {/if}
 });

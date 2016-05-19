@@ -22,63 +22,63 @@ namespace Xajax\Plugin;
 
 abstract class Plugin
 {
-	/**
-	 * Generate the javascript code for this plugin
-	 *
-	 * Called by <Xajax\Plugin\Manager> when the page's HTML is being sent to the browser.
-	 * This code is either inserted right into the HTML code, or exported in an external file
-	 * which is then included in the page.
-	 *
-	 * @return string
-	 */
-	abstract public function getScript();
+    /**
+     * Generate the javascript code for this plugin
+     *
+     * Called by <Xajax\Plugin\Manager> when the page's HTML is being sent to the browser.
+     * This code is either inserted right into the HTML code, or exported in an external file
+     * which is then included in the page.
+     *
+     * @return string
+     */
+    abstract public function getScript();
 
-	/**
-	 * Return true if the object is a request plugin. Always return false here.
-	 *
-	 * @return boolean
-	 */
-	public function isRequest()
-	{
-		return false;
-	}
+    /**
+     * Return true if the object is a request plugin. Always return false here.
+     *
+     * @return boolean
+     */
+    public function isRequest()
+    {
+        return false;
+    }
 
-	/**
-	 * Return true if the object is a response plugin. Always return false here.
-	 *
-	 * @return boolean
-	 */
-	public function isResponse()
-	{
-		return false;
-	}
+    /**
+     * Return true if the object is a response plugin. Always return false here.
+     *
+     * @return boolean
+     */
+    public function isResponse()
+    {
+        return false;
+    }
 
-	/**
-	 * Get the plugin name
-	 *
-	 * Called by the <Xajax\Plugin\Manager> when the user script requests a plugin.
-	 * This name must match the plugin name requested in the called to <Xajax\Response\Response->plugin>.
-	 *
-	 * @return string
-	 */
-	abstract public function getName();
+    /**
+     * Get the plugin name
+     *
+     * Called by the <Xajax\Plugin\Manager> when the user script requests a plugin.
+     * This name must match the plugin name requested in the called to <Xajax\Response\Response->plugin>.
+     *
+     * @return string
+     */
+    abstract public function getName();
 
-	/**
-	 * Check if the assets of this plugin shall be included in Xajax generated code
-	 *
-	 * @return boolean
-	 */
-	protected function includeAssets()
-	{
-		$sPluginOptionName = 'assets.include.' . $this->getName();
-		if($this->hasOption($sPluginOptionName) && !$this->getOption($sPluginOptionName))
-		{
-			return false;
-		}
-		if($this->hasOption('assets.include.all') && !$this->getOption('assets.include.all'))
-		{
-			return false;
-		}
-		return true;
-	}
+    /**
+     * Check if the assets of this plugin shall be included in Xajax generated code
+     *
+     * @return boolean
+     */
+    protected function includeAssets()
+    {
+        $sPluginOptionName = 'assets.include.' . $this->getName();
+        if($this->hasOption($sPluginOptionName) && !$this->getOption($sPluginOptionName))
+        {
+            return false;
+        }
+        if($this->hasOption('assets.include.all') && !$this->getOption('assets.include.all'))
+        {
+            return false;
+        }
+        return true;
+    }
 }

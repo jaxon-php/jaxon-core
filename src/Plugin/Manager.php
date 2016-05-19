@@ -29,762 +29,762 @@ use RecursiveRegexIterator;
 
 class Manager
 {
-	use \Xajax\Utils\ContainerTrait;
+    use \Xajax\Utils\ContainerTrait;
 
-	/**
-	 * All plugins, indexed by priority
-	 *
-	 * @var array
-	 */
-	private $aPlugins;
-	
-	/**
-	 * Request plugins, indexed by name
-	 *
-	 * @var array
-	 */
-	private $aRequestPlugins;
-	
-	/**
-	 * Response plugins, indexed by name
-	 *
-	 * @var array
-	 */
-	private $aResponsePlugins;
-	
-	/**
-	 * Directories where Xajax classes to be registered are found
-	 *
-	 * @var array
-	 */
-	private $aClassDirs;
-	
-	/**
-	 * True if the Composer autoload is enabled
-	 *
-	 * @var boolean
-	 */
-	private $bAutoLoadEnabled;
+    /**
+     * All plugins, indexed by priority
+     *
+     * @var array
+     */
+    private $aPlugins;
+    
+    /**
+     * Request plugins, indexed by name
+     *
+     * @var array
+     */
+    private $aRequestPlugins;
+    
+    /**
+     * Response plugins, indexed by name
+     *
+     * @var array
+     */
+    private $aResponsePlugins;
+    
+    /**
+     * Directories where Xajax classes to be registered are found
+     *
+     * @var array
+     */
+    private $aClassDirs;
+    
+    /**
+     * True if the Composer autoload is enabled
+     *
+     * @var boolean
+     */
+    private $bAutoLoadEnabled;
 
-	/**
-	 * The Composer autoloader
-	 *
-	 * @var Autoloader
-	 */
-	private $xAutoLoader;
+    /**
+     * The Composer autoloader
+     *
+     * @var Autoloader
+     */
+    private $xAutoLoader;
 
-	/**
-	 * Initialize the Xajax Plugin Manager
-	 */
-	private function __construct()
-	{
-		$this->aRequestPlugins = array();
-		$this->aResponsePlugins = array();
-		$this->aPlugins = array();
-		$this->aClassDirs = array();
+    /**
+     * Initialize the Xajax Plugin Manager
+     */
+    private function __construct()
+    {
+        $this->aRequestPlugins = array();
+        $this->aResponsePlugins = array();
+        $this->aPlugins = array();
+        $this->aClassDirs = array();
 
-		$this->bAutoLoadEnabled = true;
-		$this->xAutoLoader = null;
+        $this->bAutoLoadEnabled = true;
+        $this->xAutoLoader = null;
 
-		// Set response type to JSON
-		$this->sResponseType = 'JSON';
-	}
+        // Set response type to JSON
+        $this->sResponseType = 'JSON';
+    }
 
-	/**
-	 * Return the one and only instance of the Xajax plugin manager
-	 *
-	 * @return Manager
-	 */
-	public static function getInstance()
-	{
-		static $xInstance = null;
-		if(!$xInstance)
-		{
-			$xInstance = new Manager();    
-		}
-		return $xInstance;
-	}
+    /**
+     * Return the one and only instance of the Xajax plugin manager
+     *
+     * @return Manager
+     */
+    public static function getInstance()
+    {
+        static $xInstance = null;
+        if(!$xInstance)
+        {
+            $xInstance = new Manager();    
+        }
+        return $xInstance;
+    }
 
-	/**
-	 * Set the Composer autoloader
-	 * 
-	 * @param object		$xAutoLoader		The Composer autoloader
-	 *
-	 * @return void
-	 */
-	public function setAutoLoader($xAutoLoader)
-	{
-		$this->bAutoLoadEnabled = true;
-		$this->xAutoLoader = $xAutoLoader;
-	}
-	
-	/**
-	 * Disable the autoloader in the library
-	 *
-	 * The user shall provide an alternative autoload system.
-	 *
-	 * @return void
-	 */
-	public function disableAutoLoad()
-	{
-		$this->bAutoLoadEnabled = false;
-		$this->xAutoLoader = null;
-	}
+    /**
+     * Set the Composer autoloader
+     * 
+     * @param object        $xAutoLoader        The Composer autoloader
+     *
+     * @return void
+     */
+    public function setAutoLoader($xAutoLoader)
+    {
+        $this->bAutoLoadEnabled = true;
+        $this->xAutoLoader = $xAutoLoader;
+    }
+    
+    /**
+     * Disable the autoloader in the library
+     *
+     * The user shall provide an alternative autoload system.
+     *
+     * @return void
+     */
+    public function disableAutoLoad()
+    {
+        $this->bAutoLoadEnabled = false;
+        $this->xAutoLoader = null;
+    }
 
-	/**
-	 * Return true if the Composer autoloader is enabled
-	 *
-	 * @return bool
-	 */
-	public function autoLoadDisabled()
-	{
-		return (!$this->bAutoLoadEnabled);
-	}
+    /**
+     * Return true if the Composer autoloader is enabled
+     *
+     * @return bool
+     */
+    public function autoLoadDisabled()
+    {
+        return (!$this->bAutoLoadEnabled);
+    }
 
-	/**
-	 * Load the locally defined plugins
-	 *
-	 * @return void
-	 */
-	public function loadPlugins()
-	{
-		$this->registerPlugin(new \Xajax\Request\Plugin\CallableObject(), 101);
-		$this->registerPlugin(new \Xajax\Request\Plugin\UserFunction(), 102);
-		$this->registerPlugin(new \Xajax\Request\Plugin\BrowserEvent(), 103);
-	}
-	
-	/**
-	 * Inserts an entry into an array given the specified priority number
-	 *
-	 * If a plugin already exists with the given priority, the priority is automatically
-	 * incremented until a free spot is found.
-	 * The plugin is then inserted into the empty spot in the array.
-	 *
-	 * @param Plugin 		$xPlugin			An instance of a plugin
-	 * @param integer		$nPriority			The desired priority, used to order the plugins
-	 *
-	 * @return void
-	 */
-	private function setPluginPriority(Plugin $xPlugin, $nPriority)
-	{
-		while (isset($this->aPlugins[$nPriority]))
-		{
-			$nPriority++;
-		}
-		$this->aPlugins[$nPriority] = $xPlugin;
-		// Sort the array by ascending keys
-		ksort($this->aPlugins);
-	}
-	
-	/**
-	 * Registers a plugin
-	 *
-	 * Below is a table for priorities and their description:
-	 * - 0 thru 999: Plugins that are part of or extensions to the xajax core
-	 * - 1000 thru 8999: User created plugins, typically, these plugins don't care about order
-	 * - 9000 thru 9999: Plugins that generally need to be last or near the end of the plugin list
-	 *
-	 * @param Plugin 		$xPlugin			An instance of a plugin
-	 * @param integer		$nPriority			The plugin priority, used to order the plugins
-	 *
-	 * @return void
-	 */
-	public function registerPlugin(Plugin $xPlugin, $nPriority = 1000)
-	{
-		if($xPlugin instanceof Request)
-		{
-			// The name of a request plugin is used as key in the plugin table
-			$this->aRequestPlugins[$xPlugin->getName()] = $xPlugin;
-		}
-		else if( $xPlugin instanceof Response)
-		{
-			// The name of a response plugin is used as key in the plugin table
-			$this->aResponsePlugins[$xPlugin->getName()] = $xPlugin;
-		}
-		else
-		{
-			throw new \Xajax\Exception\Error('errors.register.invalid', array('name' => get_class($xPlugin)));
-		}
+    /**
+     * Load the locally defined plugins
+     *
+     * @return void
+     */
+    public function loadPlugins()
+    {
+        $this->registerPlugin(new \Xajax\Request\Plugin\CallableObject(), 101);
+        $this->registerPlugin(new \Xajax\Request\Plugin\UserFunction(), 102);
+        $this->registerPlugin(new \Xajax\Request\Plugin\BrowserEvent(), 103);
+    }
+    
+    /**
+     * Inserts an entry into an array given the specified priority number
+     *
+     * If a plugin already exists with the given priority, the priority is automatically
+     * incremented until a free spot is found.
+     * The plugin is then inserted into the empty spot in the array.
+     *
+     * @param Plugin         $xPlugin            An instance of a plugin
+     * @param integer        $nPriority            The desired priority, used to order the plugins
+     *
+     * @return void
+     */
+    private function setPluginPriority(Plugin $xPlugin, $nPriority)
+    {
+        while (isset($this->aPlugins[$nPriority]))
+        {
+            $nPriority++;
+        }
+        $this->aPlugins[$nPriority] = $xPlugin;
+        // Sort the array by ascending keys
+        ksort($this->aPlugins);
+    }
+    
+    /**
+     * Registers a plugin
+     *
+     * Below is a table for priorities and their description:
+     * - 0 thru 999: Plugins that are part of or extensions to the xajax core
+     * - 1000 thru 8999: User created plugins, typically, these plugins don't care about order
+     * - 9000 thru 9999: Plugins that generally need to be last or near the end of the plugin list
+     *
+     * @param Plugin         $xPlugin            An instance of a plugin
+     * @param integer        $nPriority            The plugin priority, used to order the plugins
+     *
+     * @return void
+     */
+    public function registerPlugin(Plugin $xPlugin, $nPriority = 1000)
+    {
+        if($xPlugin instanceof Request)
+        {
+            // The name of a request plugin is used as key in the plugin table
+            $this->aRequestPlugins[$xPlugin->getName()] = $xPlugin;
+        }
+        else if( $xPlugin instanceof Response)
+        {
+            // The name of a response plugin is used as key in the plugin table
+            $this->aResponsePlugins[$xPlugin->getName()] = $xPlugin;
+        }
+        else
+        {
+            throw new \Xajax\Exception\Error('errors.register.invalid', array('name' => get_class($xPlugin)));
+        }
 
-		$this->setPluginPriority($xPlugin, $nPriority);
-	}
+        $this->setPluginPriority($xPlugin, $nPriority);
+    }
 
-	/**
-	 * Generate a hash for all the javascript code generated by the library
-	 *
-	 * @return string
-	 */
-	private function generateHash()
-	{
-		$sHash = '';
-		foreach($this->aRequestPlugins as $xPlugin)
-		{
-			$sHash .= $xPlugin->generateHash();
-		}
-		return md5($sHash);
-	}
+    /**
+     * Generate a hash for all the javascript code generated by the library
+     *
+     * @return string
+     */
+    private function generateHash()
+    {
+        $sHash = '';
+        foreach($this->aRequestPlugins as $xPlugin)
+        {
+            $sHash .= $xPlugin->generateHash();
+        }
+        return md5($sHash);
+    }
 
-	/**
-	 * Check if the current request can be processed
-	 *
-	 * Calls each of the request plugins and determines if the current request can be
-	 * processed by one of them.
-	 * If no processor identifies the current request, then the request must be for
-	 * the initial page load.
-	 *
-	 * @return boolean
-	 */
-	public function canProcessRequest()
-	{
-		foreach($this->aRequestPlugins as $xPlugin)
-		{
-			if($xPlugin->canProcessRequest())
-			{
-				return true;
-			}
-		}
-		return false;
-	}
+    /**
+     * Check if the current request can be processed
+     *
+     * Calls each of the request plugins and determines if the current request can be
+     * processed by one of them.
+     * If no processor identifies the current request, then the request must be for
+     * the initial page load.
+     *
+     * @return boolean
+     */
+    public function canProcessRequest()
+    {
+        foreach($this->aRequestPlugins as $xPlugin)
+        {
+            if($xPlugin->canProcessRequest())
+            {
+                return true;
+            }
+        }
+        return false;
+    }
 
-	/**
-	 * Process the current request
-	 *
-	 * Calls each of the request plugins to request that they process the current request.
-	 * If any plugin processes the request, it will return true.
-	 *
-	 * @return boolean
-	 */
-	public function processRequest()
-	{
-		foreach($this->aRequestPlugins as $xPlugin)
-		{
-			if($xPlugin->canProcessRequest())
-			{
-				return $xPlugin->processRequest();
-			}
-		}
-		// Todo: throw an exception
-		return false;
-	}
-	
-	/**
-	 * Register a function, event or callable object
-	 *
-	 * Call each of the request plugins and give them the opportunity to handle the
-	 * registration of the specified function, event or callable object.
-	 *
-	 * @param array 		$aArgs				The registration data
-	 *
-	 * @return mixed
-	 */
-	public function register($aArgs)
-	{
-		foreach($this->aRequestPlugins as $xPlugin)
-		{
-			$mResult = $xPlugin->register($aArgs);
-			if($mResult instanceof \Xajax\Request\Request || is_array($mResult) || $mResult === true)
-			{
-				return $mResult;
-			}
-		}
-		throw new \Xajax\Exception\Error('errors.register.method', array('args' => print_r($aArgs, true)));
-	}
+    /**
+     * Process the current request
+     *
+     * Calls each of the request plugins to request that they process the current request.
+     * If any plugin processes the request, it will return true.
+     *
+     * @return boolean
+     */
+    public function processRequest()
+    {
+        foreach($this->aRequestPlugins as $xPlugin)
+        {
+            if($xPlugin->canProcessRequest())
+            {
+                return $xPlugin->processRequest();
+            }
+        }
+        // Todo: throw an exception
+        return false;
+    }
+    
+    /**
+     * Register a function, event or callable object
+     *
+     * Call each of the request plugins and give them the opportunity to handle the
+     * registration of the specified function, event or callable object.
+     *
+     * @param array         $aArgs                The registration data
+     *
+     * @return mixed
+     */
+    public function register($aArgs)
+    {
+        foreach($this->aRequestPlugins as $xPlugin)
+        {
+            $mResult = $xPlugin->register($aArgs);
+            if($mResult instanceof \Xajax\Request\Request || is_array($mResult) || $mResult === true)
+            {
+                return $mResult;
+            }
+        }
+        throw new \Xajax\Exception\Error('errors.register.method', array('args' => print_r($aArgs, true)));
+    }
 
-	/**
-	 * Add a path to the class directories
-	 *
-	 * @param string		$sDir				The path to the directory
-	 * @param string|null	$sNamespace			The associated namespace
-	 * @param array 		$aExcluded			The functions that are not to be exported
-	 *
-	 * @return boolean
-	 */
-	public function addClassDir($sDir, $sNamespace = null, array $aExcluded = array())
-	{
-		if(!is_dir(($sDir = trim($sDir))))
-		{
-			return false;
-		}
-		if(!($sNamespace = trim($sNamespace)))
-		{
-			$sNamespace = null;
-		}
-		if(($sNamespace))
-		{
-			$sNamespace = trim($sNamespace, '\\');
-			// If there is an autoloader, register the dir with PSR4 autoloading
-			if(($this->xAutoLoader))
-			{
-				$this->xAutoLoader->setPsr4($sNamespace . '\\', $sDir);
-			}
-		}
-		else if(($this->xAutoLoader))
-		{
-			// If there is an autoloader, register the dir with classmap autoloading
-			$itDir = new RecursiveDirectoryIterator($sDir);
-			$itFile = new RecursiveIteratorIterator($itDir);
-			// Iterate on dir content
-			foreach($itFile as $xFile)
-			{
-				// skip everything except PHP files
-				if(!$xFile->isFile() || $xFile->getExtension() != 'php')
-				{
-					continue;
-				}
-				$this->xAutoLoader->addClassMap(array($xFile->getBasename('.php') => $xFile->getPathname()));
-			}
-		}
-		$this->aClassDirs[] = array('path' => $sDir, 'namespace' => $sNamespace, 'excluded' => $aExcluded);
-		return true;
-	}
+    /**
+     * Add a path to the class directories
+     *
+     * @param string        $sDir                The path to the directory
+     * @param string|null    $sNamespace            The associated namespace
+     * @param array         $aExcluded            The functions that are not to be exported
+     *
+     * @return boolean
+     */
+    public function addClassDir($sDir, $sNamespace = null, array $aExcluded = array())
+    {
+        if(!is_dir(($sDir = trim($sDir))))
+        {
+            return false;
+        }
+        if(!($sNamespace = trim($sNamespace)))
+        {
+            $sNamespace = null;
+        }
+        if(($sNamespace))
+        {
+            $sNamespace = trim($sNamespace, '\\');
+            // If there is an autoloader, register the dir with PSR4 autoloading
+            if(($this->xAutoLoader))
+            {
+                $this->xAutoLoader->setPsr4($sNamespace . '\\', $sDir);
+            }
+        }
+        else if(($this->xAutoLoader))
+        {
+            // If there is an autoloader, register the dir with classmap autoloading
+            $itDir = new RecursiveDirectoryIterator($sDir);
+            $itFile = new RecursiveIteratorIterator($itDir);
+            // Iterate on dir content
+            foreach($itFile as $xFile)
+            {
+                // skip everything except PHP files
+                if(!$xFile->isFile() || $xFile->getExtension() != 'php')
+                {
+                    continue;
+                }
+                $this->xAutoLoader->addClassMap(array($xFile->getBasename('.php') => $xFile->getPathname()));
+            }
+        }
+        $this->aClassDirs[] = array('path' => $sDir, 'namespace' => $sNamespace, 'excluded' => $aExcluded);
+        return true;
+    }
 
-	/**
-	 * Register an instance of a given class from a file
-	 *
-	 * @param object		$xFile				The PHP file containing the class
-	 * @param string		$sDir				The path to the directory
-	 * @param string|null	$sNamespace			The associated namespace
-	 * @param array 		$aExcluded			The functions that are not to be exported
-	 *
-	 * @return void
-	 */
-	protected function registerClassFromFile($xFile, $sDir, $sNamespace = null, array $aExcluded = array())
-	{
-		// Get the corresponding class path and name
-		$sClassPath = trim(substr($xFile->getPath(), strlen($sDir)), DIRECTORY_SEPARATOR);
-		$sClassPath = str_replace(array(DIRECTORY_SEPARATOR), array('.'), $sClassPath);
-		$sClassName = $xFile->getBasename('.php');
-		if(($sNamespace))
-		{
-			$sNamespace = trim($sNamespace, '\\');
-			$sClassPath = str_replace(array('\\'), array('.'), $sNamespace) . '.' . $sClassPath;
-			$sClassPath = rtrim($sClassPath, '.');
-			$sClassName = '\\' . str_replace(array('.'), array('\\'), $sClassPath) . '\\' . $sClassName;
-		}
-		// Require the file only if there is no autoloader
-		if(!$this->autoLoadDisabled())
-		{
-			require_once($xFile->getPathname());
-		}
-		// Create and register an instance of the class
-		$xCallableObject = new $sClassName;
-		$aOptions = array('*' => array());
-		if(($sNamespace))
-		{
-			$aOptions['*']['namespace'] = $sNamespace;
-		}
-		if(($sClassPath))
-		{
-			$aOptions['*']['classpath'] = $sClassPath;
-		}
-		// Filter excluded methods
-		$aExcluded = array_filter($aExcluded, function($sName){return is_string($sName);});
-		if(count($aExcluded) > 0)
-		{
-			$aOptions['*']['excluded'] = $aExcluded;
-		}
-		$this->register(array(Xajax::CALLABLE_OBJECT, $xCallableObject, $aOptions));
-	}
+    /**
+     * Register an instance of a given class from a file
+     *
+     * @param object        $xFile                The PHP file containing the class
+     * @param string        $sDir                The path to the directory
+     * @param string|null    $sNamespace            The associated namespace
+     * @param array         $aExcluded            The functions that are not to be exported
+     *
+     * @return void
+     */
+    protected function registerClassFromFile($xFile, $sDir, $sNamespace = null, array $aExcluded = array())
+    {
+        // Get the corresponding class path and name
+        $sClassPath = trim(substr($xFile->getPath(), strlen($sDir)), DIRECTORY_SEPARATOR);
+        $sClassPath = str_replace(array(DIRECTORY_SEPARATOR), array('.'), $sClassPath);
+        $sClassName = $xFile->getBasename('.php');
+        if(($sNamespace))
+        {
+            $sNamespace = trim($sNamespace, '\\');
+            $sClassPath = str_replace(array('\\'), array('.'), $sNamespace) . '.' . $sClassPath;
+            $sClassPath = rtrim($sClassPath, '.');
+            $sClassName = '\\' . str_replace(array('.'), array('\\'), $sClassPath) . '\\' . $sClassName;
+        }
+        // Require the file only if there is no autoloader
+        if(!$this->autoLoadDisabled())
+        {
+            require_once($xFile->getPathname());
+        }
+        // Create and register an instance of the class
+        $xCallableObject = new $sClassName;
+        $aOptions = array('*' => array());
+        if(($sNamespace))
+        {
+            $aOptions['*']['namespace'] = $sNamespace;
+        }
+        if(($sClassPath))
+        {
+            $aOptions['*']['classpath'] = $sClassPath;
+        }
+        // Filter excluded methods
+        $aExcluded = array_filter($aExcluded, function($sName){return is_string($sName);});
+        if(count($aExcluded) > 0)
+        {
+            $aOptions['*']['excluded'] = $aExcluded;
+        }
+        $this->register(array(Xajax::CALLABLE_OBJECT, $xCallableObject, $aOptions));
+    }
 
-	/**
-	 * Register callable objects from all class directories
-	 *
-	 * @return void
-	 */
-	public function registerClasses()
-	{
-		foreach($this->aClassDirs as $sClassDir)
-		{
-			$itDir = new RecursiveDirectoryIterator($sClassDir['path']);
-			$itFile = new RecursiveIteratorIterator($itDir);
-			// Iterate on dir content
-			foreach($itFile as $xFile)
-			{
-				// skip everything except PHP files
-				if(!$xFile->isFile() || $xFile->getExtension() != 'php')
-				{
-					continue;
-				}
-				$this->registerClassFromFile($xFile, $sClassDir['path'], $sClassDir['namespace'], $sClassDir['excluded']);
-			}
-		}
-	}
+    /**
+     * Register callable objects from all class directories
+     *
+     * @return void
+     */
+    public function registerClasses()
+    {
+        foreach($this->aClassDirs as $sClassDir)
+        {
+            $itDir = new RecursiveDirectoryIterator($sClassDir['path']);
+            $itFile = new RecursiveIteratorIterator($itDir);
+            // Iterate on dir content
+            foreach($itFile as $xFile)
+            {
+                // skip everything except PHP files
+                if(!$xFile->isFile() || $xFile->getExtension() != 'php')
+                {
+                    continue;
+                }
+                $this->registerClassFromFile($xFile, $sClassDir['path'], $sClassDir['namespace'], $sClassDir['excluded']);
+            }
+        }
+    }
 
-	/**
-	 * Register an instance of a given class
-	 *
-	 * @param string		$sClassName				The name of the class to be registered
-	 *
-	 * @return bool
-	 */
-	public function registerClass($sClassName, array $aExcluded = array())
-	{
-		if(!($sClassName = trim($sClassName)))
-		{
-			return false;
-		}
-		// Replace / and \ with dots, and trim the string
-		$sClassName = trim(str_replace(array('\\', '/'), array('.', '.'), $sClassName), '.');
-		$sClassPath = '';
-		if(($nLastDotPosition = strrpos($sClassName, '.')) !== false)
-		{
-			$sClassPath = substr($sClassName, 0, $nLastDotPosition);
-			$sClassName = substr($sClassName, $nLastDotPosition + 1);
-		}
-		$sClassFile = str_replace(array('.'), array(DIRECTORY_SEPARATOR), $sClassPath) . DIRECTORY_SEPARATOR . $sClassName . '.php';
-		foreach($this->aClassDirs as $aClassDir)
-		{
-			$sNamespace = $aClassDir['namespace'];
-			$nLen = strlen($sNamespace);
-			// Check if the class belongs to the namespace
-			if(($sNamespace) && substr($sClassPath, 0, $nLen) == str_replace(array('\\'), array('.'), $sNamespace))
-			{
-				$sClassFile = $aClassDir['path'] . DIRECTORY_SEPARATOR . substr($sClassFile, $nLen);
-				if(is_file($sClassFile))
-				{
-					$this->registerClassFromFile(new \SplFileInfo($sClassFile), $aClassDir['path'], $sNamespace, $aExcluded);
-					return true;
-				}
-			}
-			else if(!($sNamespace) && is_file($aClassDir['path'] . DIRECTORY_SEPARATOR . $sClassFile))
-			{
-				$sClassFile = $aClassDir['path'] . DIRECTORY_SEPARATOR . $sClassFile;
-				if(is_file($sClassFile))
-				{
-					$this->registerClassFromFile(new \SplFileInfo($sClassFile), $aClassDir['path'], $aExcluded);
-					return true;
-				}
-			}
-		}
-		return false;
-	}
+    /**
+     * Register an instance of a given class
+     *
+     * @param string        $sClassName                The name of the class to be registered
+     *
+     * @return bool
+     */
+    public function registerClass($sClassName, array $aExcluded = array())
+    {
+        if(!($sClassName = trim($sClassName)))
+        {
+            return false;
+        }
+        // Replace / and \ with dots, and trim the string
+        $sClassName = trim(str_replace(array('\\', '/'), array('.', '.'), $sClassName), '.');
+        $sClassPath = '';
+        if(($nLastDotPosition = strrpos($sClassName, '.')) !== false)
+        {
+            $sClassPath = substr($sClassName, 0, $nLastDotPosition);
+            $sClassName = substr($sClassName, $nLastDotPosition + 1);
+        }
+        $sClassFile = str_replace(array('.'), array(DIRECTORY_SEPARATOR), $sClassPath) . DIRECTORY_SEPARATOR . $sClassName . '.php';
+        foreach($this->aClassDirs as $aClassDir)
+        {
+            $sNamespace = $aClassDir['namespace'];
+            $nLen = strlen($sNamespace);
+            // Check if the class belongs to the namespace
+            if(($sNamespace) && substr($sClassPath, 0, $nLen) == str_replace(array('\\'), array('.'), $sNamespace))
+            {
+                $sClassFile = $aClassDir['path'] . DIRECTORY_SEPARATOR . substr($sClassFile, $nLen);
+                if(is_file($sClassFile))
+                {
+                    $this->registerClassFromFile(new \SplFileInfo($sClassFile), $aClassDir['path'], $sNamespace, $aExcluded);
+                    return true;
+                }
+            }
+            else if(!($sNamespace) && is_file($aClassDir['path'] . DIRECTORY_SEPARATOR . $sClassFile))
+            {
+                $sClassFile = $aClassDir['path'] . DIRECTORY_SEPARATOR . $sClassFile;
+                if(is_file($sClassFile))
+                {
+                    $this->registerClassFromFile(new \SplFileInfo($sClassFile), $aClassDir['path'], $aExcluded);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
-	/**
-	 * Find a user registered callable object by class name
-	 *
-	 * @param string		$sClassName			The class name of the callable object
-	 *
-	 * @return object
-	 */
-	public function getRegisteredObject($sClassName)
-	{
-		$xObject = null; // The user registered object
-		$xPlugin = $this->getRequestPlugin('CallableObject'); // The CallableObject plugin
-		if(($xPlugin))
-		{
-			$xObject = $xPlugin->getRegisteredObject($sClassName);
-		}
-		return $xObject;
-	}
+    /**
+     * Find a user registered callable object by class name
+     *
+     * @param string        $sClassName            The class name of the callable object
+     *
+     * @return object
+     */
+    public function getRegisteredObject($sClassName)
+    {
+        $xObject = null; // The user registered object
+        $xPlugin = $this->getRequestPlugin('CallableObject'); // The CallableObject plugin
+        if(($xPlugin))
+        {
+            $xObject = $xPlugin->getRegisteredObject($sClassName);
+        }
+        return $xObject;
+    }
 
-	/**
-	 * Get the base URI of the Xajax library javascript files
-	 *
-	 * @return string
-	 */
-	public function getJsLibURI()
-	{
-		if(!$this->hasOption('js.lib.uri'))
-		{
-			return '//assets.lagdo-software.net/libs/xajax/js/latest/';
-		}
-		// Todo: check the validity of the URI
-		return rtrim($this->getOption('js.lib.uri'), '/') . '/';
-	}
-	
-	/**
-	 * Check if the javascript code generated by Xajax can be exported to an external file
-	 *
-	 * @return boolean
-	 */
-	public function canExportJavascript()
-	{
-		// Check config options
-		// - The js.app.export option must be set to true
-		// - The js.app.uri and js.app.dir options must be set to non null values
-		if(!$this->getOption('js.app.export') ||
-			!$this->getOption('js.app.uri') ||
-			!$this->getOption('js.app.dir'))
-		{
-			return false;
-		}
-		// Check dir access
-		// - The js.app.dir must be writable
-		$sJsAppDir = $this->getOption('js.app.dir');
-		if(!is_dir($sJsAppDir) || !is_writable($sJsAppDir))
-		{
-			return false;
-		}
-		return true;
-	}
+    /**
+     * Get the base URI of the Xajax library javascript files
+     *
+     * @return string
+     */
+    public function getJsLibURI()
+    {
+        if(!$this->hasOption('js.lib.uri'))
+        {
+            return '//assets.lagdo-software.net/libs/xajax/js/latest/';
+        }
+        // Todo: check the validity of the URI
+        return rtrim($this->getOption('js.lib.uri'), '/') . '/';
+    }
+    
+    /**
+     * Check if the javascript code generated by Xajax can be exported to an external file
+     *
+     * @return boolean
+     */
+    public function canExportJavascript()
+    {
+        // Check config options
+        // - The js.app.export option must be set to true
+        // - The js.app.uri and js.app.dir options must be set to non null values
+        if(!$this->getOption('js.app.export') ||
+            !$this->getOption('js.app.uri') ||
+            !$this->getOption('js.app.dir'))
+        {
+            return false;
+        }
+        // Check dir access
+        // - The js.app.dir must be writable
+        $sJsAppDir = $this->getOption('js.app.dir');
+        if(!is_dir($sJsAppDir) || !is_writable($sJsAppDir))
+        {
+            return false;
+        }
+        return true;
+    }
 
-	/**
-	 * Get the name of a javascript file, based on the current settings
-	 *
-	 * The returned name is the one to be specified in the <script> tags in HTML code
-	 *
-	 * @param string 		$sFilename			The filename
-	 *
-	 * @return string
-	 */
-	private function _getScriptFilename($sFilename)
-	{
-		if(($this->getOption('js.app.minify')))
-		{
-			return str_replace('.js', '.min.js', $sFilename);
-		}
-		return $sFilename;
-	}
+    /**
+     * Get the name of a javascript file, based on the current settings
+     *
+     * The returned name is the one to be specified in the <script> tags in HTML code
+     *
+     * @param string         $sFilename            The filename
+     *
+     * @return string
+     */
+    private function _getScriptFilename($sFilename)
+    {
+        if(($this->getOption('js.app.minify')))
+        {
+            return str_replace('.js', '.min.js', $sFilename);
+        }
+        return $sFilename;
+    }
 
-	/**
-	 * Set the cache directory for the template engine
-	 *
-	 * @return void
-	 */
-	private function setTemplateCacheDir()
-	{
-		if($this->hasOption('core.template.cache_dir'))
-		{
-			$this->setCacheDir($this->getOption('core.template.cache_dir'));
-		}
-	}
+    /**
+     * Set the cache directory for the template engine
+     *
+     * @return void
+     */
+    private function setTemplateCacheDir()
+    {
+        if($this->hasOption('core.template.cache_dir'))
+        {
+            $this->setCacheDir($this->getOption('core.template.cache_dir'));
+        }
+    }
 
-	/**
-	 * Get the HTML tags to include Xajax javascript files into the page
-	 *
-	 * @return string
-	 */
-	public function getJs()
-	{
-		$sJsLibURI = $this->getJsLibURI();
-		$sJsCoreUrl = $sJsLibURI . $this->_getScriptFilename('xajax.core.js');
-		$sJsReadyUrl = $sJsLibURI . $this->_getScriptFilename('xajax.ready.js');
-		$sJsDebugUrl = $sJsLibURI . $this->_getScriptFilename('xajax.debug.js');
-		$sJsVerboseUrl = $sJsLibURI . $this->_getScriptFilename('xajax.verbose.js');
-		$sJsLanguageUrl = $sJsLibURI . $this->_getScriptFilename('lang/xajax.' . $this->getOption('core.language') . '.js');
+    /**
+     * Get the HTML tags to include Xajax javascript files into the page
+     *
+     * @return string
+     */
+    public function getJs()
+    {
+        $sJsLibURI = $this->getJsLibURI();
+        $sJsCoreUrl = $sJsLibURI . $this->_getScriptFilename('xajax.core.js');
+        $sJsReadyUrl = $sJsLibURI . $this->_getScriptFilename('xajax.ready.js');
+        $sJsDebugUrl = $sJsLibURI . $this->_getScriptFilename('xajax.debug.js');
+        $sJsVerboseUrl = $sJsLibURI . $this->_getScriptFilename('xajax.verbose.js');
+        $sJsLanguageUrl = $sJsLibURI . $this->_getScriptFilename('lang/xajax.' . $this->getOption('core.language') . '.js');
 
-		// Add component files to the javascript file array;
-		$aJsFiles = array($sJsCoreUrl, $sJsReadyUrl);
-		if($this->getOption('core.debug.on'))
-		{
-			$aJsFiles[] = $sJsDebugUrl;
-			$aJsFiles[] = $sJsLanguageUrl;
-			if($this->getOption('core.debug.verbose'))
-			{
-				$aJsFiles[] = $sJsVerboseUrl;
-			}
-		}
+        // Add component files to the javascript file array;
+        $aJsFiles = array($sJsCoreUrl, $sJsReadyUrl);
+        if($this->getOption('core.debug.on'))
+        {
+            $aJsFiles[] = $sJsDebugUrl;
+            $aJsFiles[] = $sJsLanguageUrl;
+            if($this->getOption('core.debug.verbose'))
+            {
+                $aJsFiles[] = $sJsVerboseUrl;
+            }
+        }
 
-		// Set the template engine cache dir
-		$this->setTemplateCacheDir();
-		$sCode = $this->render('plugins/includes.js.tpl', array(
-			'sJsOptions' => $this->getOption('js.app.options'),
-			'aUrls' => $aJsFiles,
-		));
-		foreach($this->aResponsePlugins as $xPlugin)
-		{
-			$sCode .= rtrim($xPlugin->getJs(), " \n") . "\n";
-		}
-		return $sCode;
-	}
+        // Set the template engine cache dir
+        $this->setTemplateCacheDir();
+        $sCode = $this->render('plugins/includes.js.tpl', array(
+            'sJsOptions' => $this->getOption('js.app.options'),
+            'aUrls' => $aJsFiles,
+        ));
+        foreach($this->aResponsePlugins as $xPlugin)
+        {
+            $sCode .= rtrim($xPlugin->getJs(), " \n") . "\n";
+        }
+        return $sCode;
+    }
 
-	/**
-	 * Get the HTML tags to include Xajax CSS code and files into the page
-	 *
-	 * @return string
-	 */
-	public function getCss()
-	{
-		// Set the template engine cache dir
-		$this->setTemplateCacheDir();
+    /**
+     * Get the HTML tags to include Xajax CSS code and files into the page
+     *
+     * @return string
+     */
+    public function getCss()
+    {
+        // Set the template engine cache dir
+        $this->setTemplateCacheDir();
 
-		$sCode = '';
-		foreach($this->aResponsePlugins as $xPlugin)
-		{
-			$sCode .= rtrim($xPlugin->getCss(), " \n") . "\n";
-		}
-		return $sCode;
-	}
+        $sCode = '';
+        foreach($this->aResponsePlugins as $xPlugin)
+        {
+            $sCode .= rtrim($xPlugin->getCss(), " \n") . "\n";
+        }
+        return $sCode;
+    }
 
-	/**
-	 * Get the correspondances between previous and current config options
-	 *
-	 * They are used to keep the deprecated config options working.
-	 * They will be removed when the deprecated options will lot be supported anymore.
-	 *
-	 * @return array
-	 */
-	private function getOptionVars()
-	{
-		return array(
-			'sResponseType' 			=> $this->sResponseType,
-			'sVersion' 					=> $this->getOption('core.version'),
-			'sLanguage' 				=> $this->getOption('core.language'),
-			'bLanguage' 				=> $this->hasOption('core.language') ? true : false,
-			'sRequestURI' 				=> $this->getOption('core.request.uri'),
-			'sDefaultMode' 				=> $this->getOption('core.request.mode'),
-			'sDefaultMethod' 			=> $this->getOption('core.request.method'),
-			'nResponseQueueSize' 		=> $this->getOption('core.response.queue_size'),
-			'sStatusMessages' 			=> $this->getOption('core.process.show_status') ? 'true' : 'false',
-			'sWaitCursor' 				=> $this->getOption('core.process.show_cursor') ? 'true' : 'false',
-			'nScriptLoadTimeout' 		=> $this->getOption('core.process.load_timeout'),
-			'bDebug' 					=> $this->getOption('core.debug.on'),
-			'bVerboseDebug' 			=> $this->getOption('core.debug.verbose'),
-			'sDebugOutputID' 			=> $this->getOption('core.debug.output_id'),
-			'sDefer' 					=> $this->getOption('js.app.options'),
-		);
-	}
+    /**
+     * Get the correspondances between previous and current config options
+     *
+     * They are used to keep the deprecated config options working.
+     * They will be removed when the deprecated options will lot be supported anymore.
+     *
+     * @return array
+     */
+    private function getOptionVars()
+    {
+        return array(
+            'sResponseType'             => $this->sResponseType,
+            'sVersion'                     => $this->getOption('core.version'),
+            'sLanguage'                 => $this->getOption('core.language'),
+            'bLanguage'                 => $this->hasOption('core.language') ? true : false,
+            'sRequestURI'                 => $this->getOption('core.request.uri'),
+            'sDefaultMode'                 => $this->getOption('core.request.mode'),
+            'sDefaultMethod'             => $this->getOption('core.request.method'),
+            'nResponseQueueSize'         => $this->getOption('core.response.queue_size'),
+            'sStatusMessages'             => $this->getOption('core.process.show_status') ? 'true' : 'false',
+            'sWaitCursor'                 => $this->getOption('core.process.show_cursor') ? 'true' : 'false',
+            'nScriptLoadTimeout'         => $this->getOption('core.process.load_timeout'),
+            'bDebug'                     => $this->getOption('core.debug.on'),
+            'bVerboseDebug'             => $this->getOption('core.debug.verbose'),
+            'sDebugOutputID'             => $this->getOption('core.debug.output_id'),
+            'sDefer'                     => $this->getOption('js.app.options'),
+        );
+    }
 
-	/**
-	 * Get the javascript code for Xajax client side configuration
-	 *
-	 * @return string
-	 */
-	private function getConfigScript()
-	{
-		$aVars = $this->getOptionVars();
-		return $this->render('plugins/config.js.tpl', $aVars);
-	}
+    /**
+     * Get the javascript code for Xajax client side configuration
+     *
+     * @return string
+     */
+    private function getConfigScript()
+    {
+        $aVars = $this->getOptionVars();
+        return $this->render('plugins/config.js.tpl', $aVars);
+    }
 
-	/**
-	 * Get the javascript code to be run after page load
-	 *
-	 * Also call each of the response plugins giving them the opportunity
-	 * to output some javascript to the page being generated.
-	 *
-	 * @return string
-	 */
-	private function getReadyScript()
-	{
-		// Print Xajax config vars
-		$sJsLibURI = $this->getJsLibURI();
-		$sJsCoreUrl = $sJsLibURI . $this->_getScriptFilename('xajax.core.js');
-		$sJsDebugUrl = $sJsLibURI . $this->_getScriptFilename('xajax.debug.js');
-		$sJsVerboseUrl = $sJsLibURI . $this->_getScriptFilename('xajax.verbose.js');
-		$sJsLanguageUrl = $sJsLibURI . $this->_getScriptFilename('lang/xajax.' . $this->getOption('core.language') . '.js');
+    /**
+     * Get the javascript code to be run after page load
+     *
+     * Also call each of the response plugins giving them the opportunity
+     * to output some javascript to the page being generated.
+     *
+     * @return string
+     */
+    private function getReadyScript()
+    {
+        // Print Xajax config vars
+        $sJsLibURI = $this->getJsLibURI();
+        $sJsCoreUrl = $sJsLibURI . $this->_getScriptFilename('xajax.core.js');
+        $sJsDebugUrl = $sJsLibURI . $this->_getScriptFilename('xajax.debug.js');
+        $sJsVerboseUrl = $sJsLibURI . $this->_getScriptFilename('xajax.verbose.js');
+        $sJsLanguageUrl = $sJsLibURI . $this->_getScriptFilename('lang/xajax.' . $this->getOption('core.language') . '.js');
 
-		$sJsCoreError = $this->trans('errors.component.load', array(
-			'name' => 'xajax',
-			'url' => $sJsCoreUrl,
-		));
-		$sJsDebugError = $this->trans('errors.component.load', array(
-			'name' => 'xajax.debug',
-			'url' => $sJsDebugUrl,
-		));
-		$sJsVerboseError = $this->trans('errors.component.load', array(
-			'name' => 'xajax.debug.verbose',
-			'url' => $sJsVerboseUrl,
-		));
-		$sJsLanguageError = $this->trans('errors.component.load', array(
-			'name' => 'xajax.debug.lang',
-			'url' => $sJsLanguageUrl,
-		));
+        $sJsCoreError = $this->trans('errors.component.load', array(
+            'name' => 'xajax',
+            'url' => $sJsCoreUrl,
+        ));
+        $sJsDebugError = $this->trans('errors.component.load', array(
+            'name' => 'xajax.debug',
+            'url' => $sJsDebugUrl,
+        ));
+        $sJsVerboseError = $this->trans('errors.component.load', array(
+            'name' => 'xajax.debug.verbose',
+            'url' => $sJsVerboseUrl,
+        ));
+        $sJsLanguageError = $this->trans('errors.component.load', array(
+            'name' => 'xajax.debug.lang',
+            'url' => $sJsLanguageUrl,
+        ));
 
-		$sPluginScript = '';
-		foreach($this->aResponsePlugins as $xPlugin)
-		{
-			$sPluginScript .= "\n" . trim($xPlugin->getScript(), " \n");
-		}
+        $sPluginScript = '';
+        foreach($this->aResponsePlugins as $xPlugin)
+        {
+            $sPluginScript .= "\n" . trim($xPlugin->getScript(), " \n");
+        }
 
-		$aVars = $this->getOptionVars();
-		$aVars['sPluginScript'] = $sPluginScript;
-		$aVars['sJsCoreError'] = $sJsCoreError;
-		$aVars['sJsDebugError'] = $sJsDebugError;
-		$aVars['sJsVerboseError'] = $sJsVerboseError;
-		$aVars['sJsLanguageError'] = $sJsLanguageError;
+        $aVars = $this->getOptionVars();
+        $aVars['sPluginScript'] = $sPluginScript;
+        $aVars['sJsCoreError'] = $sJsCoreError;
+        $aVars['sJsDebugError'] = $sJsDebugError;
+        $aVars['sJsVerboseError'] = $sJsVerboseError;
+        $aVars['sJsLanguageError'] = $sJsLanguageError;
 
-		return $this->render('plugins/ready.js.tpl', $aVars);
-	}
+        return $this->render('plugins/ready.js.tpl', $aVars);
+    }
 
-	/**
-	 * Get the javascript code to be sent to the browser
-	 *
-	 * Also call each of the request plugins giving them the opportunity
-	 * to output some javascript to the page being generated.
-	 * This is called only when the page is being loaded initially.
-	 * This is not called when processing a request.
-	 *
-	 * @return string
-	 */
-	public function getScript()
-	{
-		// Set the template engine cache dir
-		$this->setTemplateCacheDir();
+    /**
+     * Get the javascript code to be sent to the browser
+     *
+     * Also call each of the request plugins giving them the opportunity
+     * to output some javascript to the page being generated.
+     * This is called only when the page is being loaded initially.
+     * This is not called when processing a request.
+     *
+     * @return string
+     */
+    public function getScript()
+    {
+        // Set the template engine cache dir
+        $this->setTemplateCacheDir();
 
-		// Get the config and plugins scripts
-		$sScript = $this->getConfigScript() . "\n" . $this->getReadyScript() . "\n";
-		foreach($this->aRequestPlugins as $xPlugin)
-		{
-			$sScript .= "\n" . trim($xPlugin->getScript(), " \n");
-		}
-		if($this->canExportJavascript())
-		{
-			$sJsAppURI = rtrim($this->getOption('js.app.uri'), '/') . '/';
-			$sJsAppDir = rtrim($this->getOption('js.app.dir'), '/') . '/';
+        // Get the config and plugins scripts
+        $sScript = $this->getConfigScript() . "\n" . $this->getReadyScript() . "\n";
+        foreach($this->aRequestPlugins as $xPlugin)
+        {
+            $sScript .= "\n" . trim($xPlugin->getScript(), " \n");
+        }
+        if($this->canExportJavascript())
+        {
+            $sJsAppURI = rtrim($this->getOption('js.app.uri'), '/') . '/';
+            $sJsAppDir = rtrim($this->getOption('js.app.dir'), '/') . '/';
 
-			// The plugins scripts are written into the javascript app dir
-			$sHash = $this->generateHash();
-			$sOutFile = $sHash . '.js';
-			$sMinFile = $sHash . '.min.js';
-			if(!is_file($sJsAppDir . $sOutFile))
-			{
-				file_put_contents($sJsAppDir . $sOutFile, $sScript);
-			}
-			if(($this->getOption('js.app.minify')))
-			{
-				if(($this->minify($sJsAppDir . $sOutFile, $sJsAppDir . $sMinFile)))
-				{
-					$sOutFile = $sMinFile;
-				}
-			}
+            // The plugins scripts are written into the javascript app dir
+            $sHash = $this->generateHash();
+            $sOutFile = $sHash . '.js';
+            $sMinFile = $sHash . '.min.js';
+            if(!is_file($sJsAppDir . $sOutFile))
+            {
+                file_put_contents($sJsAppDir . $sOutFile, $sScript);
+            }
+            if(($this->getOption('js.app.minify')))
+            {
+                if(($this->minify($sJsAppDir . $sOutFile, $sJsAppDir . $sMinFile)))
+                {
+                    $sOutFile = $sMinFile;
+                }
+            }
 
-			// The returned code loads the generated javascript file
-			$sScript = $this->render('plugins/include.js.tpl', array(
-				'sJsOptions' => $this->getOption('js.app.options'),
-				'sUrl' => $sJsAppURI . $sOutFile,
-			));
-		}
-		else
-		{
-			// The plugins scripts are wrapped with javascript tags
-			$sScript = $this->render('plugins/wrapper.js.tpl', array(
-				'sJsOptions' => $this->getOption('js.app.options'),
-				'sScript' => $sScript,
-			));
-		}
-		
-		return $sScript;
-	}
+            // The returned code loads the generated javascript file
+            $sScript = $this->render('plugins/include.js.tpl', array(
+                'sJsOptions' => $this->getOption('js.app.options'),
+                'sUrl' => $sJsAppURI . $sOutFile,
+            ));
+        }
+        else
+        {
+            // The plugins scripts are wrapped with javascript tags
+            $sScript = $this->render('plugins/wrapper.js.tpl', array(
+                'sJsOptions' => $this->getOption('js.app.options'),
+                'sScript' => $sScript,
+            ));
+        }
+        
+        return $sScript;
+    }
 
-	/**
-	 * Find the specified response plugin by name and return a reference to it if one exists
-	 *
-	 * @param string		$sName				The name of the plugin
-	 *
-	 * @return \Xajax\Plugin\Response
-	 */
-	public function getResponsePlugin($sName)
-	{
-		if(array_key_exists($sName, $this->aResponsePlugins))
-		{
-			return $this->aResponsePlugins[$sName];
-		}
-		return null;
-	}
+    /**
+     * Find the specified response plugin by name and return a reference to it if one exists
+     *
+     * @param string        $sName                The name of the plugin
+     *
+     * @return \Xajax\Plugin\Response
+     */
+    public function getResponsePlugin($sName)
+    {
+        if(array_key_exists($sName, $this->aResponsePlugins))
+        {
+            return $this->aResponsePlugins[$sName];
+        }
+        return null;
+    }
 
-	/**
-	 * Find the specified request plugin by name and return a reference to it if one exists
-	 *
-	 * @param string		$sName				The name of the plugin
-	 *
-	 * @return \Xajax\Plugin\Request
-	 */
-	public function getRequestPlugin($sName)
-	{
-		if(array_key_exists($sName, $this->aRequestPlugins))
-		{
-			return $this->aRequestPlugins[$sName];
-		}
-		return null;
-	}
+    /**
+     * Find the specified request plugin by name and return a reference to it if one exists
+     *
+     * @param string        $sName                The name of the plugin
+     *
+     * @return \Xajax\Plugin\Request
+     */
+    public function getRequestPlugin($sName)
+    {
+        if(array_key_exists($sName, $this->aRequestPlugins))
+        {
+            return $this->aRequestPlugins[$sName];
+        }
+        return null;
+    }
 }

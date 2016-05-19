@@ -27,83 +27,83 @@ namespace Xajax\Plugin;
 
 abstract class Response extends Plugin
 {
-	/**
-	 * The object used to build the response that will be sent to the client browser
-	 *
-	 * @var \Xajax\Response\Response
-	 */
-	protected $xResponse;
-	
-	/**
-	 * Set the <Xajax\Response\Response> object
-	 *
-	 * @param array 		$xResponse			The response
-	 *
-	 * @return void
-	 */
-	public function setResponse($xResponse)
-	{
-		$this->xResponse = $xResponse;
-	}
-	
-	/**
-	 * Get the <Xajax\Response\Response> object
-	 *
-	 * @return object
-	 */
-	public function response()
-	{
-		return $this->xResponse;
-	}
-	
-	/**
-	 * Add a client side plugin command to the response object
-	 *
-	 * Used internally to add a command to the response command list.
-	 * This will call <Xajax\Response\Response->addPluginCommand> using the
-	 * reference provided in <Xajax\Response\Response->setResponse>.
-	 *
-	 * @param array 		$aAttributes		The attributes of the command
-	 * @param string		$sData				The data to be added to the command
-	 *
-	 * @return void
-	 */
-	public function addCommand($aAttributes, $sData)
- 	{
- 		$this->xResponse->addPluginCommand($this, $aAttributes, $sData);
- 	}
+    /**
+     * The object used to build the response that will be sent to the client browser
+     *
+     * @var \Xajax\Response\Response
+     */
+    protected $xResponse;
+    
+    /**
+     * Set the <Xajax\Response\Response> object
+     *
+     * @param array         $xResponse            The response
+     *
+     * @return void
+     */
+    public function setResponse($xResponse)
+    {
+        $this->xResponse = $xResponse;
+    }
+    
+    /**
+     * Get the <Xajax\Response\Response> object
+     *
+     * @return object
+     */
+    public function response()
+    {
+        return $this->xResponse;
+    }
+    
+    /**
+     * Add a client side plugin command to the response object
+     *
+     * Used internally to add a command to the response command list.
+     * This will call <Xajax\Response\Response->addPluginCommand> using the
+     * reference provided in <Xajax\Response\Response->setResponse>.
+     *
+     * @param array         $aAttributes        The attributes of the command
+     * @param string        $sData                The data to be added to the command
+     *
+     * @return void
+     */
+    public function addCommand($aAttributes, $sData)
+     {
+         $this->xResponse->addPluginCommand($this, $aAttributes, $sData);
+     }
 
-	/**
-	 * Return true if the object is a response plugin. Always return true here.
-	 *
-	 * @return boolean
-	 */
- 	public function isResponse()
- 	{
- 		return true;
- 	}
+    /**
+     * Return true if the object is a response plugin. Always return true here.
+     *
+     * @return boolean
+     */
+     public function isResponse()
+     {
+         return true;
+     }
 
-	/**
-	 * Get the HTML tags to include Xajax javascript files into the page
-	 *
-	 * The code must be enclosed in the appropriate HTML tags.
-	 *
-	 * @return string
-	 */
- 	public function getJs()
- 	{
- 		return '';
- 	}
+    /**
+     * Get the HTML tags to include Xajax javascript files into the page
+     *
+     * The code must be enclosed in the appropriate HTML tags.
+     *
+     * @return string
+     */
+     public function getJs()
+     {
+         return '';
+     }
 
-	/**
-	 * Get the HTML tags to include Xajax CSS code and files into the page
-	 *
-	 * The code must be enclosed in the appropriate HTML tags.
-	 *
-	 * @return string
-	 */
- 	public function getCss()
- 	{
- 		return '';
- 	}
+    /**
+     * Get the HTML tags to include Xajax CSS code and files into the page
+     *
+     * The code must be enclosed in the appropriate HTML tags.
+     *
+     * @return string
+     */
+     public function getCss()
+     {
+         return '';
+     }
 }

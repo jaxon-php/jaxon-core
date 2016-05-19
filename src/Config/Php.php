@@ -17,18 +17,18 @@ namespace Xajax\Config;
 
 class Php
 {
-	/**
-	 * Read and set Xajax options from a PHP config file
-	 *
-	 * @param array 		$sConfigFile		The full path to the config file
-	 * @param string		$sKeys				The keys of the options in the file
-	 *
-	 * @return void
-	 */
-	public static function read($sConfigFile, $sKey = '')
+    /**
+     * Read and set Xajax options from a PHP config file
+     *
+     * @param array         $sConfigFile        The full path to the config file
+     * @param string        $sKeys                The keys of the options in the file
+     *
+     * @return void
+     */
+    public static function read($sConfigFile, $sKey = '')
     {
-    	$sConfigFile = realpath($sConfigFile);
-    	if(!is_readable($sConfigFile))
+        $sConfigFile = realpath($sConfigFile);
+        if(!is_readable($sConfigFile))
         {
             throw new \Xajax\Exception\Config\File('access', $sConfigFile);
         }

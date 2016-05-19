@@ -30,301 +30,301 @@ use Xajax\Response\Manager as ResponseManager;
 
 class CallableObject
 {
-	use \Xajax\Utils\ContainerTrait;
+    use \Xajax\Utils\ContainerTrait;
 
-	/**
-	 * A reference to the callable object the user has registered
-	 *
-	 * @var object
-	 */
-	private $callableObject;
+    /**
+     * A reference to the callable object the user has registered
+     *
+     * @var object
+     */
+    private $callableObject;
 
-	/**
-	 * The reflection class of the user registered callable object
-	 *
-	 * @var ReflectionClass
-	 */
-	private $reflectionClass;
-	
-	/**
-	 * A list of methods of the user registered callable object the library must not export to javascript
-	 *
-	 * @var array
-	 */
-	private $aExcludedMethods;
-	
-	/**
-	 * The namespace where the callable object class is defined
-	 *
-	 * @var string
-	 */
-	private $namespace = '';
-	
-	/**
-	 * The path to the directory where the callable object class is defined, starting from the namespace root
-	 *
-	 * @var string
-	 */
-	private $classpath = '';
-	
-	/**
-	 * An associative array that will contain configuration options for zero or more of the objects methods
-	 *
-	 * These configuration options will define the call options for each request.
-	 * The call options will be passed to the client browser when the function stubs are generated.
-	 *
-	 * @var array
-	 */
-	private $aConfiguration;
-	
-	public function __construct($obj)
-	{
-		$this->callableObject = $obj;
-		$this->reflectionClass = new \ReflectionClass(get_class($this->callableObject));
-		$this->aConfiguration = array();
-		// By default, the methods of the RequestTrait and ResponseTrait traits are excluded
-		$this->aExcludedMethods = array('setGlobalResponse', 'newResponse',
-				'setXajaxCallable', 'getXajaxClassName', 'request');
-	}
+    /**
+     * The reflection class of the user registered callable object
+     *
+     * @var ReflectionClass
+     */
+    private $reflectionClass;
+    
+    /**
+     * A list of methods of the user registered callable object the library must not export to javascript
+     *
+     * @var array
+     */
+    private $aExcludedMethods;
+    
+    /**
+     * The namespace where the callable object class is defined
+     *
+     * @var string
+     */
+    private $namespace = '';
+    
+    /**
+     * The path to the directory where the callable object class is defined, starting from the namespace root
+     *
+     * @var string
+     */
+    private $classpath = '';
+    
+    /**
+     * An associative array that will contain configuration options for zero or more of the objects methods
+     *
+     * These configuration options will define the call options for each request.
+     * The call options will be passed to the client browser when the function stubs are generated.
+     *
+     * @var array
+     */
+    private $aConfiguration;
+    
+    public function __construct($obj)
+    {
+        $this->callableObject = $obj;
+        $this->reflectionClass = new \ReflectionClass(get_class($this->callableObject));
+        $this->aConfiguration = array();
+        // By default, the methods of the RequestTrait and ResponseTrait traits are excluded
+        $this->aExcludedMethods = array('setGlobalResponse', 'newResponse',
+                'setXajaxCallable', 'getXajaxClassName', 'request');
+    }
 
-	/**
-	 * Return the class name of this callable object, without the namespace if any
-	 *
-	 * @return string
-	 */
-	private function getClassName()
-	{
-		// Get the class name without the namespace.
-		return $this->reflectionClass->getShortName();
-	}
+    /**
+     * Return the class name of this callable object, without the namespace if any
+     *
+     * @return string
+     */
+    private function getClassName()
+    {
+        // Get the class name without the namespace.
+        return $this->reflectionClass->getShortName();
+    }
 
-	/**
-	 * Return the name of this callable object
-	 *
-	 * This is the name of the generated javascript class.
-	 *
-	 * @return string
-	 */
-	public function getName()
-	{
-		// The class name without the namespace.
-		$name = $this->reflectionClass->getShortName();
-		// Append the classpath to the name
-		if(($this->classpath))
-		{
-			$name = $this->classpath . $name;
-		}
-		return $name;
-	}
+    /**
+     * Return the name of this callable object
+     *
+     * This is the name of the generated javascript class.
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        // The class name without the namespace.
+        $name = $this->reflectionClass->getShortName();
+        // Append the classpath to the name
+        if(($this->classpath))
+        {
+            $name = $this->classpath . $name;
+        }
+        return $name;
+    }
 
-	/**
-	 * Return the namespace of this callable object
-	 *
-	 * @return string
-	 */
-	public function getNamespace()
-	{
-		// The namespace the class was registered with.
-		return $this->namespace;
-	}
+    /**
+     * Return the namespace of this callable object
+     *
+     * @return string
+     */
+    public function getNamespace()
+    {
+        // The namespace the class was registered with.
+        return $this->namespace;
+    }
 
-	/**
-	 * Return the class path of this callable object
-	 *
-	 * @return string
-	 */
-	public function getPath()
-	{
-		// The class path without the trailing dot.
-		return rtrim($this->classpath, '.');
-	}
+    /**
+     * Return the class path of this callable object
+     *
+     * @return string
+     */
+    public function getPath()
+    {
+        // The class path without the trailing dot.
+        return rtrim($this->classpath, '.');
+    }
 
-	/**
-	 * Return a list of methods of the callable object to export to javascript
-	 *
-	 * @return array
-	 */
-	public function getMethods()
-	{
-		$aReturn = array();
-		foreach($this->reflectionClass->getMethods(\ReflectionMethod::IS_PUBLIC) as $xMethod)
-		{
-			$sMethodName = $xMethod->getShortName();
-			// Don't take magic __call, __construct, __destruct methods
-			if(strlen($sMethodName) > 2 && substr($sMethodName, 0, 2) == '__')
-			{
-				continue;
-			}
-			// Don't take excluded methods
-			if(in_array($sMethodName, $this->aExcludedMethods))
-			{
-				continue;
-			}
-			$aReturn[] = $sMethodName;
-		}
-		return $aReturn;
-	}
+    /**
+     * Return a list of methods of the callable object to export to javascript
+     *
+     * @return array
+     */
+    public function getMethods()
+    {
+        $aReturn = array();
+        foreach($this->reflectionClass->getMethods(\ReflectionMethod::IS_PUBLIC) as $xMethod)
+        {
+            $sMethodName = $xMethod->getShortName();
+            // Don't take magic __call, __construct, __destruct methods
+            if(strlen($sMethodName) > 2 && substr($sMethodName, 0, 2) == '__')
+            {
+                continue;
+            }
+            // Don't take excluded methods
+            if(in_array($sMethodName, $this->aExcludedMethods))
+            {
+                continue;
+            }
+            $aReturn[] = $sMethodName;
+        }
+        return $aReturn;
+    }
 
-	/**
-	 * Set configuration options / call options for each method
-	 *
-	 * @param string		$sMethod			The name of the method
-	 * @param string		$sName				The name of the configuration option
-	 * @param string		$sValue				The value of the configuration option
-	 *
-	 * @return void
-	 */
-	public function configure($sMethod, $sName, $sValue)
-	{
-		// Set the namespace
-		if($sName == 'namespace')
-		{
-			if($sValue != '')
-				$this->namespace = $sValue;
-			return;
-		}
-		// Set the classpath
-		if($sName == 'classpath')
-		{
-			if($sValue != '')
-				$this->classpath = $sValue . '.';
-			return;
-		}
-		// Set the excluded methods
-		if($sName == 'excluded')
-		{
-			if(is_array($sValue))
-				$this->aExcludedMethods = array_merge($this->aExcludedMethods, $sValue);
-			else if(is_string($sValue))
-				$this->aExcludedMethods[] = $sValue;
-			return;
-		}
-		
-		if(!isset($this->aConfiguration[$sMethod]))
-		{
-			$this->aConfiguration[$sMethod] = array();
-		}	
-		$this->aConfiguration[$sMethod][$sName] = $sValue;
-	}
+    /**
+     * Set configuration options / call options for each method
+     *
+     * @param string        $sMethod            The name of the method
+     * @param string        $sName                The name of the configuration option
+     * @param string        $sValue                The value of the configuration option
+     *
+     * @return void
+     */
+    public function configure($sMethod, $sName, $sValue)
+    {
+        // Set the namespace
+        if($sName == 'namespace')
+        {
+            if($sValue != '')
+                $this->namespace = $sValue;
+            return;
+        }
+        // Set the classpath
+        if($sName == 'classpath')
+        {
+            if($sValue != '')
+                $this->classpath = $sValue . '.';
+            return;
+        }
+        // Set the excluded methods
+        if($sName == 'excluded')
+        {
+            if(is_array($sValue))
+                $this->aExcludedMethods = array_merge($this->aExcludedMethods, $sValue);
+            else if(is_string($sValue))
+                $this->aExcludedMethods[] = $sValue;
+            return;
+        }
+        
+        if(!isset($this->aConfiguration[$sMethod]))
+        {
+            $this->aConfiguration[$sMethod] = array();
+        }    
+        $this->aConfiguration[$sMethod][$sName] = $sValue;
+    }
 
-	/**
-	 * Produce an array of <Xajax\Request\Request>, one for each method exposed by this callable object
-	 *
-	 * @return array
-	 */
-	public function generateRequests()
-	{
-		$aRequests = array();
-		$sClass = $this->getClassName();
+    /**
+     * Produce an array of <Xajax\Request\Request>, one for each method exposed by this callable object
+     *
+     * @return array
+     */
+    public function generateRequests()
+    {
+        $aRequests = array();
+        $sClass = $this->getClassName();
 
-		foreach($this->reflectionClass->getMethods(\ReflectionMethod::IS_PUBLIC) as $xMethod)
-		{
-			$sMethodName = $xMethod->getShortName();
-			// Don't generate magic __call, __construct, __destruct methods
-			if(strlen($sMethodName) > 2 && substr($sMethodName, 0, 2) == '__')
-			{
-				continue;
-			}
-			// Don't generate excluded methods
-			if(in_array($sMethodName, $this->aExcludedMethods))
-			{
-				continue;
-			}
-			$aRequests[$sMethodName] = new Request("{$this->classpath}{$sClass}.{$sMethodName}", 'object');
-		}
+        foreach($this->reflectionClass->getMethods(\ReflectionMethod::IS_PUBLIC) as $xMethod)
+        {
+            $sMethodName = $xMethod->getShortName();
+            // Don't generate magic __call, __construct, __destruct methods
+            if(strlen($sMethodName) > 2 && substr($sMethodName, 0, 2) == '__')
+            {
+                continue;
+            }
+            // Don't generate excluded methods
+            if(in_array($sMethodName, $this->aExcludedMethods))
+            {
+                continue;
+            }
+            $aRequests[$sMethodName] = new Request("{$this->classpath}{$sClass}.{$sMethodName}", 'object');
+        }
 
-		return $aRequests;
-	}
-	
-	/**
-	 * Generate client side javascript code for calls to all methods exposed by this callable object
-	 *
-	 * @return string
-	 */
-	public function getScript()
-	{
-		$sXajaxPrefix = $this->getOption('core.prefix.class');
-		$sClass = $this->classpath . $this->getClassName();
-		$aMethods = array();
-		$aConfig = array();
+        return $aRequests;
+    }
+    
+    /**
+     * Generate client side javascript code for calls to all methods exposed by this callable object
+     *
+     * @return string
+     */
+    public function getScript()
+    {
+        $sXajaxPrefix = $this->getOption('core.prefix.class');
+        $sClass = $this->classpath . $this->getClassName();
+        $aMethods = array();
+        $aConfig = array();
 
-		if(isset($this->aConfiguration['*']))
-		{
-			$aConfig = $this->aConfiguration['*'];
-		}
-		foreach($this->reflectionClass->getMethods(\ReflectionMethod::IS_PUBLIC) as $xMethod)
-		{
-			$sMethodName = $xMethod->getShortName();
-			// Don't export magic __call, __construct, __destruct methods
-			if(strlen($sMethodName) > 0 && substr($sMethodName, 0, 2) == '__')
-			{
-				continue;
-			}
-			// Don't export excluded methods
-			if(in_array($sMethodName, $this->aExcludedMethods))
-			{
-				continue;
-			}
-			$aMethod = array('name' => $sMethodName, 'config' => $aConfig);
-			if(isset($this->aConfiguration[$sMethodName]))
-			{
-				$aMethod['config'] = array_merge($aMethod['config'], $this->aConfiguration[$sMethodName]);
-			}
-			$aMethods[] = $aMethod;
-		}
+        if(isset($this->aConfiguration['*']))
+        {
+            $aConfig = $this->aConfiguration['*'];
+        }
+        foreach($this->reflectionClass->getMethods(\ReflectionMethod::IS_PUBLIC) as $xMethod)
+        {
+            $sMethodName = $xMethod->getShortName();
+            // Don't export magic __call, __construct, __destruct methods
+            if(strlen($sMethodName) > 0 && substr($sMethodName, 0, 2) == '__')
+            {
+                continue;
+            }
+            // Don't export excluded methods
+            if(in_array($sMethodName, $this->aExcludedMethods))
+            {
+                continue;
+            }
+            $aMethod = array('name' => $sMethodName, 'config' => $aConfig);
+            if(isset($this->aConfiguration[$sMethodName]))
+            {
+                $aMethod['config'] = array_merge($aMethod['config'], $this->aConfiguration[$sMethodName]);
+            }
+            $aMethods[] = $aMethod;
+        }
 
-		return $this->render('support/object.js.tpl', array(
-			'sPrefix' => $sXajaxPrefix,
-			'sClass' => $sClass,
-			'aMethods' => $aMethods,
-		));
-	}
-	
-	/**
-	 * Check if the specified class name matches the class name of the registered callable object
-	 *
-	 * @return boolean
-	 */
-	public function isClass($sClass)
-	{
-		return ($this->reflectionClass->getName() === $sClass);
-	}
-	
-	/**
-	 * Check if the specified method name is one of the methods of the registered callable object
-	 *
-	 * @param string		$sMethod			The name of the method to check
-	 *
-	 * @return boolean
-	 */
-	public function hasMethod($sMethod)
-	{
-		return $this->reflectionClass->hasMethod($sMethod) || $this->reflectionClass->hasMethod('__call');
-	}
-	
-	/**
-	 * Call the specified method of the registered callable object using the specified array of arguments
-	 *
-	 * @param string		$sMethod			The name of the method to call
-	 * @param array 		$aArgs				The arguments to pass to the method
-	 *
-	 * @return void
-	 */
-	public function call($sMethod, $aArgs)
-	{
-		if(!$this->hasMethod($sMethod))
-			return;
-		$reflectionMethod = $this->reflectionClass->getMethod($sMethod);
-		ResponseManager::getInstance()->append($reflectionMethod->invokeArgs($this->callableObject, $aArgs));
-	}
+        return $this->render('support/object.js.tpl', array(
+            'sPrefix' => $sXajaxPrefix,
+            'sClass' => $sClass,
+            'aMethods' => $aMethods,
+        ));
+    }
+    
+    /**
+     * Check if the specified class name matches the class name of the registered callable object
+     *
+     * @return boolean
+     */
+    public function isClass($sClass)
+    {
+        return ($this->reflectionClass->getName() === $sClass);
+    }
+    
+    /**
+     * Check if the specified method name is one of the methods of the registered callable object
+     *
+     * @param string        $sMethod            The name of the method to check
+     *
+     * @return boolean
+     */
+    public function hasMethod($sMethod)
+    {
+        return $this->reflectionClass->hasMethod($sMethod) || $this->reflectionClass->hasMethod('__call');
+    }
+    
+    /**
+     * Call the specified method of the registered callable object using the specified array of arguments
+     *
+     * @param string        $sMethod            The name of the method to call
+     * @param array         $aArgs                The arguments to pass to the method
+     *
+     * @return void
+     */
+    public function call($sMethod, $aArgs)
+    {
+        if(!$this->hasMethod($sMethod))
+            return;
+        $reflectionMethod = $this->reflectionClass->getMethod($sMethod);
+        ResponseManager::getInstance()->append($reflectionMethod->invokeArgs($this->callableObject, $aArgs));
+    }
 
-	/**
-	 * Return the registered callable object
-	 *
-	 * @return object
-	 */
-	public function getRegisteredObject()
-	{
-		return $this->callableObject;
-	}
+    /**
+     * Return the registered callable object
+     *
+     * @return object
+     */
+    public function getRegisteredObject()
+    {
+        return $this->callableObject;
+    }
 }
