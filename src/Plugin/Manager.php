@@ -64,14 +64,14 @@ class Manager
      *
      * @var boolean
      */
-    private $bAutoLoadEnabled;
+    private $bAutoloadEnabled;
 
     /**
      * The Composer autoloader
      *
      * @var Autoloader
      */
-    private $xAutoLoader;
+    private $xAutoloader;
 
     /**
      * Initialize the Xajax Plugin Manager
@@ -83,8 +83,8 @@ class Manager
         $this->aPlugins = array();
         $this->aClassDirs = array();
 
-        $this->bAutoLoadEnabled = true;
-        $this->xAutoLoader = null;
+        $this->bAutoloadEnabled = true;
+        $this->xAutoloader = null;
 
         // Set response type to JSON
         $this->sResponseType = 'JSON';
@@ -106,16 +106,14 @@ class Manager
     }
 
     /**
-     * Set the Composer autoloader
-     * 
-     * @param object        $xAutoLoader        The Composer autoloader
+     * Use the Composer autoloader
      *
      * @return void
      */
-    public function setAutoLoader($xAutoLoader)
+    public function useComposerAutoloader()
     {
-        $this->bAutoLoadEnabled = true;
-        $this->xAutoLoader = $xAutoLoader;
+        $this->bAutoloadEnabled = true;
+        $this->xAutoloader = require (__DIR__ . '/../../../../autoload.php');
     }
     
     /**
@@ -125,20 +123,10 @@ class Manager
      *
      * @return void
      */
-    public function disableAutoLoad()
+    public function disableAutoload()
     {
-        $this->bAutoLoadEnabled = false;
-        $this->xAutoLoader = null;
-    }
-
-    /**
-     * Return true if the Composer autoloader is enabled
-     *
-     * @return bool
-     */
-    public function autoLoadDisabled()
-    {
-        return (!$this->bAutoLoadEnabled);
+        $this->bAutoloadEnabled = false;
+        $this->xAutoloader = null;
     }
 
     /**
@@ -313,12 +301,12 @@ class Manager
         {
             $sNamespace = trim($sNamespace, '\\');
             // If there is an autoloader, register the dir with PSR4 autoloading
-            if(($this->xAutoLoader))
+            if(($this->xAutoloader))
             {
-                $this->xAutoLoader->setPsr4($sNamespace . '\\', $sDir);
+                $this->xAutoloader->setPsr4($sNamespace . '\\', $sDir);
             }
         }
-        else if(($this->xAutoLoader))
+        else if(($this->xAutoloader))
         {
             // If there is an autoloader, register the dir with classmap autoloading
             $itDir = new RecursiveDirectoryIterator($sDir);
@@ -331,7 +319,7 @@ class Manager
                 {
                     continue;
                 }
-                $this->xAutoLoader->addClassMap(array($xFile->getBasename('.php') => $xFile->getPathname()));
+                $this->xAutoloader->addClassMap(array($xFile->getBasename('.php') => $xFile->getPathname()));
             }
         }
         $this->aClassDirs[] = array('path' => $sDir, 'namespace' => $sNamespace, 'excluded' => $aExcluded);
@@ -361,8 +349,8 @@ class Manager
             $sClassPath = rtrim($sClassPath, '.');
             $sClassName = '\\' . str_replace(array('.'), array('\\'), $sClassPath) . '\\' . $sClassName;
         }
-        // Require the file only if there is no autoloader
-        if(!$this->autoLoadDisabled())
+        // Require the file only if autoload is enabled but there is no autoloader
+        if(($this->bAutoloadEnabled) && !($this->xAutoloader))
         {
             require_once($xFile->getPathname());
         }

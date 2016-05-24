@@ -190,20 +190,19 @@ class Xajax extends Base
      *
      * @return void
      */
-    public function useComposerAutoLoader()
+    public function useComposerAutoloader()
     {
-        $xAutoLoader = require (__DIR__ . '/../../../autoload.php');
-        $this->xPluginManager->setAutoLoader($xAutoLoader);
+        $this->xPluginManager->useComposerAutoloader();
     }
 
     /**
-     * Disable the PHP class autoloader
+     * Disable Xajax classes autoloading
      *
      * @return void
      */
-    public function disableAutoLoad()
+    public function disableAutoload()
     {
-        $this->xPluginManager->disableAutoLoad();
+        $this->xPluginManager->disableAutoload();
     }
 
     /**
