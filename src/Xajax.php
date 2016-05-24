@@ -251,7 +251,7 @@ class Xajax extends Base
      *        When registering a function, this is the name of the function
      *        When registering a callable object, this is the object being registered
      *        When registering an event or event handler, this is the name of the event
-     * @param midex        $sIncludeFile | $aCallOptions | $sEventHandler
+     * @param mixed        $sIncludeFile | $aCallOptions | $sEventHandler
      *        When registering a function, this is the (optional) include file
      *        When registering a callable object, this is an (optional) array
      *             of call options for the functions being registered
@@ -287,8 +287,9 @@ class Xajax extends Base
     /**
      * Add a path to the class directories
      *
-     * @param string        $sPath            The path to the directory
+     * @param string         $sPath             The path to the directory
      * @param string|null    $sNamespace        The associated namespace
+     * @param array          $aExcluded         These methods will not be registered
      *
      * @return boolean
      */
@@ -416,16 +417,6 @@ class Xajax extends Base
         }
         $sName = $this->aOptionMappings[$sName];
         return $this->getOption((is_array($sName) ? $sName[0] : $sName));
-    }
-
-    /**
-     * Determine if a call is a xajax request or a page load request
-     *
-     * @return boolean
-     */
-    public function canProcessRequest()
-    {
-        return $this->xPluginManager->canProcessRequest();
     }
 
     /**
@@ -573,6 +564,16 @@ class Xajax extends Base
     }
 
     /**
+     * Determine if a call is a xajax request or a page load request
+     *
+     * @return boolean
+     */
+    public function canProcessRequest()
+    {
+        return $this->xPluginManager->canProcessRequest();
+    }
+
+    /**
      * If this is a xajax request, call the requested PHP function, build the response and send it back to the browser
      *
      * This is the main server side engine for xajax.
@@ -599,112 +600,114 @@ class Xajax extends Base
             )), "\n", $this->trans('errors.output.advice');
             exit();
         }
-
-        if($this->canProcessRequest())
+        // 
+        if(!$this->canProcessRequest())
         {
-            // Use xajax error handler if necessary
-            if(($this->getOption('core.error.handle')))
-            {
-                $this->setErrorMessage('');
-                set_error_handler(array($this, "errorHandler"));
-            }
-            
-            $mResult = true;
+        	return;
+        }
 
-            // handle beforeProcessing event
-            if(isset($this->aProcessingEvents[self::PROCESSING_EVENT_BEFORE]))
+        // Use xajax error handler if necessary
+        if(($this->getOption('core.error.handle')))
+        {
+            $this->setErrorMessage('');
+            set_error_handler(array($this, "errorHandler"));
+        }
+        
+        $mResult = true;
+
+        // handle beforeProcessing event
+        if(isset($this->aProcessingEvents[self::PROCESSING_EVENT_BEFORE]))
+        {
+            $bEndRequest = false;
+            $xResponse = $this->aProcessingEvents[self::PROCESSING_EVENT_BEFORE]->call(array(&$bEndRequest));
+            if($xResponse instanceof Response\Response)
+            {
+            	$this->xResponseManager->append($xResponse);
+            }
+        }
+
+        if(!$bEndRequest)
+        {
+            $mResult = $this->xPluginManager->processRequest();
+        }
+        // Clean the processing buffer
+        if(($this->getOption('core.process.clean_buffer')))
+        {
+            $er = error_reporting(0);
+            while (ob_get_level() > 0)
+            {
+                ob_end_clean();
+            }
+            error_reporting($er);
+        }
+
+        if($mResult === true)
+        {
+            // handle afterProcessing event
+            if(isset($this->aProcessingEvents[self::PROCESSING_EVENT_AFTER]))
             {
                 $bEndRequest = false;
-                $this->aProcessingEvents[self::PROCESSING_EVENT_BEFORE]->call(array(&$bEndRequest));
-                $mResult = (false === $bEndRequest);
-            }
-
-            if(true === $mResult)
-                $mResult = $this->xPluginManager->processRequest();
-
-            if(true === $mResult)
-            {
-                if(($this->getOption('core.process.clean_buffer')))
+                $xResponse = $this->aProcessingEvents[self::PROCESSING_EVENT_AFTER]->call(array($bEndRequest));
+                if($xResponse instanceof Response\Response)
                 {
-                    $er = error_reporting(0);
-                    while (ob_get_level() > 0) ob_end_clean();
-                    error_reporting($er);
-                }
-
-                // handle afterProcessing event
-                if(isset($this->aProcessingEvents[self::PROCESSING_EVENT_AFTER]))
-                {
-                    $bEndRequest = false;
-
-                    $this->aProcessingEvents[self::PROCESSING_EVENT_AFTER]->call(array($bEndRequest));
-
-                    if($bEndRequest === true)
-                    {
-                        $this->xResponseManager->clear();
-                        $this->xResponseManager->append($aResult[1]);
-                    }
+                    $this->xResponseManager->append($xResponse);
                 }
             }
-            else if(is_string($mResult))
+        }
+        else if(is_string($mResult))
+        {
+            // $mResult contains an error message
+            // the request was missing the cooresponding handler function
+            // or an error occurred while attempting to execute the
+            // handler.  replace the response, if one has been started
+            // and send a debug message.
+
+            $this->xResponseManager->clear();
+            $this->xResponseManager->append(new Response\Response());
+
+            // handle invalidRequest event
+            if(isset($this->aProcessingEvents[self::PROCESSING_EVENT_INVALID]))
             {
-                if(($this->getOption('core.process.clean_buffer')))
+                $xResponse = $this->aProcessingEvents[self::PROCESSING_EVENT_INVALID]->call($mResult);
+                if($xResponse instanceof Response\Response)
                 {
-                    $er = error_reporting(0);
-                    while (ob_get_level() > 0)
-                    {
-                        ob_end_clean();
-                    }
-                    error_reporting($er);
+                    $this->xResponseManager->append($xResponse);
                 }
-
-                // $mResult contains an error message
-                // the request was missing the cooresponding handler function
-                // or an error occurred while attempting to execute the
-                // handler.  replace the response, if one has been started
-                // and send a debug message.
-
-                $this->xResponseManager->clear();
-                $this->xResponseManager->append(new Response\Response());
-
-                // handle invalidRequest event
-                if(isset($this->aProcessingEvents[self::PROCESSING_EVENT_INVALID]))
-                    $this->aProcessingEvents[self::PROCESSING_EVENT_INVALID]->call();
-                else
-                    $this->xResponseManager->debug($mResult);
             }
+            $this->xResponseManager->debug($mResult);
+        }
 
-            if(($this->sErrorMessage) && ($this->getOption('core.error.handle')) &&
-                $this->hasOption('core.error.log_file'))
+        if(($this->sErrorMessage) && ($this->getOption('core.error.handle')) &&
+            $this->hasOption('core.error.log_file'))
+        {
+            if(($fH = @fopen($this->getOption('core.error.log_file'), "a")) != null)
             {
-                if(($fH = @fopen($this->getOption('core.error.log_file'), "a")) != null)
-                {
-                    fwrite($fH, $this->trans('errors.debug.ts-message', array(
-                        'timestamp' => strftime("%b %e %Y %I:%M:%S %p"),
-                        'message' => $this->sErrorMessage
-                    )));
-                    fclose($fH);
-                }
-                else
-                {
-                    $this->xResponseManager->debug($this->trans('errors.debug.write-log', array(
-                        'file' => $this->getOption('core.error.log_file')
-                    )));
-                }
-                $this->xResponseManager->debug($this->trans('errors.debug.message', array(
+                fwrite($fH, $this->trans('errors.debug.ts-message', array(
+                    'timestamp' => strftime("%b %e %Y %I:%M:%S %p"),
                     'message' => $this->sErrorMessage
                 )));
+                fclose($fH);
             }
-
-            $this->xResponseManager->send();
-
-            if(($this->getOption('core.error.handle')))
+            else
             {
-                restore_error_handler();
+                $this->xResponseManager->debug($this->trans('errors.debug.write-log', array(
+                    'file' => $this->getOption('core.error.log_file')
+                )));
             }
-            if(($this->getOption('core.process.exit_after')))
-            {
-                exit();
-            }
+            $this->xResponseManager->debug($this->trans('errors.debug.message', array(
+                'message' => $this->sErrorMessage
+            )));
+        }
+
+        $this->xResponseManager->send();
+
+        if(($this->getOption('core.error.handle')))
+        {
+            restore_error_handler();
+        }
+        if(($this->getOption('core.process.exit_after')))
+        {
+            exit();
         }
     }
 
