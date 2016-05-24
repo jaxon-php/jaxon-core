@@ -40,14 +40,15 @@ SOFTWARE.
 
 namespace Xajax\Utils;
 
+use Xajax\Xajax;
 use Xajax\Request\Request;
 
 class Paginator
 {
-    protected $totalItems;
-    protected $numPages;
-    protected $itemsPerPage;
-    protected $currentPage;
+    protected $totalItems = 0;
+    protected $numPages = 0;
+    protected $itemsPerPage = 0;
+    protected $currentPage = 0;
     protected $request;
     protected $maxPagesToShow = 10;
     protected $previousText = '';
@@ -64,7 +65,7 @@ class Paginator
         $this->totalItems = $totalItems;
         $this->itemsPerPage = $itemsPerPage;
         $this->currentPage = $currentPage;
-        $this->request = $request;
+        $this->setRequest($request);
 
         $this->updateNumPages();
     }
@@ -158,6 +159,11 @@ class Paginator
     public function setRequest($request)
     {
         $this->request = $request;
+        // Append the page number to the parameter list, if not yet given.
+        if(($this->request) && !$this->request->hasPageNumber())
+        {
+            $this->request->addParameter(Xajax::PAGE_NUMBER, 0);
+        }
     }
 
     /**

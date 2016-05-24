@@ -16,6 +16,7 @@
 namespace Xajax\Request;
 
 use Xajax\Xajax;
+use Xajax\Utils\Container;
 
 class Factory
 {
@@ -25,9 +26,9 @@ class Factory
      * @param string         $sName            The function or method (with class) name
      * @param ...            $xParams        The parameters of the function or method
      *
-     * @return object
+     * @return \Xajax\Request\Request
      */
-    public static function make($sName)
+    public static function call($sName)
     {
         // There should be at least on argument to this method, the name of the Xajax function or method
         if(($nArgs = func_num_args()) < 1 || !is_string(($sName = func_get_arg(0))))
@@ -56,6 +57,28 @@ class Factory
             }
         }
         return $xRequest;
+    }
+
+    /**
+     * Make the pagination links for a registered Xajax class method
+     *
+     * @param integer $nItemsTotal the total number of items
+     * @param integer $nItemsPerPage the number of items per page page
+     * @param integer $nCurrentPage the current page
+     * @param string  $sMethod the name of function or a method prepended with its class name
+     * @param ... $parameters the parameters of the method
+     *
+     * @return string the pagination links
+     */
+    public static function paginate($nItemsTotal, $nItemsPerPage, $nCurrentPage, $sMethod)
+    {
+        // Get the args list starting from the $sMethod
+        $aArgs = array_slice(func_get_args(), 3);
+        // Make the request
+        $request = call_user_func_array('self::call', $aArgs);
+        $paginator = Container::getInstance()->getPaginator();
+        $paginator->setup($nItemsTotal, $nItemsPerPage, $nCurrentPage, $request);
+        return $paginator->toHtml();
     }
 
     /**

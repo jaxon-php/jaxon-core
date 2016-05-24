@@ -14,8 +14,6 @@
 
 namespace Xajax\Request;
 
-use Xajax\Utils\Container;
-
 trait FactoryTrait
 {
     /**
@@ -90,45 +88,39 @@ trait FactoryTrait
     /**
      * Return the javascript call to an Xajax object method
      *
-     * @param string         $sName            The method (without class) name
-     * @param ...            $xParams        The parameters of the method
+     * @param string         $sMethod           The method (without class) name
+     * @param ...            $xParams           The parameters of the method
      *
      * @return object
      */
-    public function request($sMethodName)
+    public function call($sMethod)
     {
-        $sMethodName = (string)$sMethodName;
+        $sMethod = (string)$sMethod;
         $aArgs = func_get_args();
         // Prepend the class name to the method name
-        $aArgs[0] = $this->getXajaxClassName() . '.' . $sMethodName;
+        $aArgs[0] = $this->getXajaxClassName() . '.' . $sMethod;
         // Make the request
-        return call_user_func_array('\Xajax\Request\Factory::make', $aArgs);
+        return call_user_func_array('\Xajax\Request\Factory::call', $aArgs);
     }
 
     /**
      * Make the pagination links for a registered Xajax class method
      *
-     * @param integer $itemsTotal the total number of items
-     * @param integer $itemsPerPage the number of items per page page
-     * @param integer $currentPage the current page
-     * @param string $method the name of the method
+     * @param integer $nItemsTotal the total number of items
+     * @param integer $nItemsPerPage the number of items per page page
+     * @param integer $nCurrentPage the current page
+     * @param string  $sMethod the name of the method
      * @param ... $parameters the parameters of the method
      *
      * @return string the pagination links
      */
-    public function paginate($itemsTotal, $itemsPerPage, $currentPage, $method)
+    public function paginate($nItemsTotal, $nItemsPerPage, $nCurrentPage, $sMethod)
     {
-        // Get the args list starting from the $method
-        $aArgs = array_slice(func_get_args(), 3);
-        // Make the request
-        $request = call_user_func_array(array($this, 'request'), $aArgs);
-        // Append the page number to the parameter list, if not yet given.
-        if(!$request->hasPageNumber())
-        {
-            $request->addParameter(XAJAX_PAGE_NUMBER, 0);
-        }
-        $paginator = Container::getInstance()->getPaginator();
-        $paginator->setup($itemsTotal, $itemsPerPage, $currentPage, $request);
-        return $paginator->toHtml();
+    	$sMethod = (string)$sMethod;
+    	$aArgs = func_get_args();
+    	// Prepend the class name to the method name
+    	$aArgs[3] = $this->getXajaxClassName() . '.' . $sMethod;
+    	// Make the request
+    	return call_user_func_array('\Xajax\Request\Factory::paginate', $aArgs);
     }
 }
