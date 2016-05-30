@@ -231,7 +231,7 @@ class Xajax extends Base
      */
     public static function getVersion()
     {
-        return 'Xajax 0.7 alpha 1';
+        return 'Xajax 1.0.0 beta 1';
     }
 
     /**
