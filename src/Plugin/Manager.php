@@ -606,20 +606,20 @@ class Manager
     {
         return array(
             'sResponseType'             => $this->sResponseType,
-            'sVersion'                     => $this->getOption('core.version'),
+            'sVersion'                  => $this->getOption('core.version'),
             'sLanguage'                 => $this->getOption('core.language'),
             'bLanguage'                 => $this->hasOption('core.language') ? true : false,
-            'sRequestURI'                 => $this->getOption('core.request.uri'),
-            'sDefaultMode'                 => $this->getOption('core.request.mode'),
-            'sDefaultMethod'             => $this->getOption('core.request.method'),
-            'nResponseQueueSize'         => $this->getOption('core.response.queue_size'),
-            'sStatusMessages'             => $this->getOption('core.process.show_status') ? 'true' : 'false',
-            'sWaitCursor'                 => $this->getOption('core.process.show_cursor') ? 'true' : 'false',
-            'nScriptLoadTimeout'         => $this->getOption('core.process.load_timeout'),
-            'bDebug'                     => $this->getOption('core.debug.on'),
+            'sRequestURI'               => $this->getOption('core.request.uri'),
+            'sDefaultMode'              => $this->getOption('core.request.mode'),
+            'sDefaultMethod'            => $this->getOption('core.request.method'),
+            'bDebug'                    => $this->getOption('core.debug.on'),
             'bVerboseDebug'             => $this->getOption('core.debug.verbose'),
-            'sDebugOutputID'             => $this->getOption('core.debug.output_id'),
-            'sDefer'                     => $this->getOption('js.app.options'),
+            'sDebugOutputID'            => $this->getOption('js.lib.output_id'),
+            'nResponseQueueSize'        => $this->getOption('js.lib.queue_size'),
+            'sStatusMessages'           => $this->getOption('js.lib.show_status') ? 'true' : 'false',
+            'sWaitCursor'               => $this->getOption('js.lib.show_cursor') ? 'true' : 'false',
+            'nScriptLoadTimeout'        => $this->getOption('js.lib.load_timeout'),
+            'sDefer'                    => $this->getOption('js.app.options'),
         );
     }
 

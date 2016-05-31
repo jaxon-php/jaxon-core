@@ -213,7 +213,7 @@ class Manager
         }
         else if(is_string($mArg))
         {
-            $mArg = iconv("UTF-8", $this->getOption('core.process.encoding') . '//TRANSLIT', $mArg);
+            $mArg = iconv("UTF-8", $this->getOption('core.encoding') . '//TRANSLIT', $mArg);
         }
     }
     
@@ -243,7 +243,7 @@ class Manager
         }
         else if(is_string($mArg))
         {
-            $mArg = mb_convert_encoding($mArg, $this->getOption('core.process.encoding'), "UTF-8");
+            $mArg = mb_convert_encoding($mArg, $this->getOption('core.encoding'), "UTF-8");
         }
     }
     
@@ -298,7 +298,7 @@ class Manager
      */
     public function process()
     {
-        if(($this->getOption('core.process.decode_utf8')))
+        if(($this->getOption('core.decode_utf8')))
         {
             $sFunction = '';
             
@@ -310,7 +310,7 @@ class Manager
             {
                 $sFunction = "mb_convert_encoding";
             }
-            else if($this->getOption('core.process.encoding') == "ISO-8859-1")
+            else if($this->getOption('core.encoding') == "ISO-8859-1")
             {
                 $sFunction = "utf8_decode";
             }
