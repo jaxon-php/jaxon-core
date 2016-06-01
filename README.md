@@ -14,7 +14,7 @@ What has changed?
 - The Xajax PHP library is now modular, and consists of a core package and several plugin packages.
 - The javascript library is provided in a separated and javascript-only package.
 - All PHP packages install with `Composer`, are fully namespaced, and implement `PSR-4` autoloading.
-- The Xajax library runs PHP versions 5.4 to 7.0.
+- The Xajax library runs on PHP versions 5.4 to 7.0.
 
 New features
 ------------
