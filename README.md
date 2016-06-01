@@ -29,7 +29,7 @@ Documentation
 
 The project documentation is available in [English](http://xajax.lagdo-software.net/docs/en/) and [French](http://xajax.lagdo-software.net/docs/fr/).
 
-Some sample codes are provided in the [lagdo/xajax-examples](https://github.com/xajax-examples) package, which is installed on a demo server [here](http://xajax.lagdo-software.net/).
+Some sample codes are provided in the [lagdo/xajax-examples](https://github.com/lagdo/xajax-examples) package, which is installed on a demo server [here](http://xajax.lagdo-software.net/).
 
 Contribute
 ----------
