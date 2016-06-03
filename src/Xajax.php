@@ -613,12 +613,12 @@ class Xajax extends Base
             set_error_handler(array($this, "errorHandler"));
         }
         
+        $bEndRequest = false;
         $mResult = true;
 
         // handle beforeProcessing event
         if(isset($this->aProcessingEvents[self::PROCESSING_EVENT_BEFORE]))
         {
-            $bEndRequest = false;
             $xResponse = $this->aProcessingEvents[self::PROCESSING_EVENT_BEFORE]->call(array(&$bEndRequest));
             if($xResponse instanceof Response\Response)
             {
