@@ -1,11 +1,11 @@
 <?php
 
 /**
- * BrowserEvent.php - The Xajax browser event plugin
+ * BrowserEvent.php - The Jaxon browser event plugin
  *
  * This class stores a reference to a user defined event which can be triggered from client side
  *
- * @package xajax-core
+ * @package jaxon-core
  * @author Jared White
  * @author J. Max Wilson
  * @author Joseph Woolley
@@ -15,18 +15,18 @@
  * @copyright Copyright (c) 2008-2010 by Joseph Woolley, Steffen Konerow, Jared White  & J. Max Wilson
  * @copyright 2016 Thierry Feuzeu <thierry.feuzeu@gmail.com>
  * @license https://opensource.org/licenses/BSD-2-Clause BSD 2-Clause License
- * @link https://github.com/lagdo/xajax-core
+ * @link https://github.com/lagdo/jaxon-core
  */
 
-namespace Xajax\Request\Support;
+namespace Jaxon\Request\Support;
 
-use Xajax\Request\Request;
-use Xajax\Request\Manager as RequestManager;
-use Xajax\Response\Manager as ResponseManager;
+use Jaxon\Request\Request;
+use Jaxon\Request\Manager as RequestManager;
+use Jaxon\Response\Manager as ResponseManager;
 
 class BrowserEvent
 {
-    use \Xajax\Utils\ContainerTrait;
+    use \Jaxon\Utils\ContainerTrait;
 
     /**
      * The name of the event
@@ -36,14 +36,14 @@ class BrowserEvent
     private $sName;
     
     /**
-     * Configuration / call options to be used when initiating a xajax request to trigger this event
+     * Configuration / call options to be used when initiating a jaxon request to trigger this event
      *
      * @var array
      */
     private $aConfiguration;
     
     /**
-     * A list of <\Xajax\Request\Support\UserFunction> objects associated with this registered event
+     * A list of <\Jaxon\Request\Support\UserFunction> objects associated with this registered event
      *
      * Each of these functions will be called when the event is triggered.
      *
@@ -83,10 +83,10 @@ class BrowserEvent
     }
     
     /**
-     * Add a <\Xajax\Request\Support\UserFunction> object to the list of handlers
+     * Add a <\Jaxon\Request\Support\UserFunction> object to the list of handlers
      * that will be fired when the event is triggered
      *
-     * @param \Xajax\Request\Support\UserFunction        $xUserFunction        The user function
+     * @param \Jaxon\Request\Support\UserFunction        $xUserFunction        The user function
      *
      * @return void
      */
@@ -96,10 +96,10 @@ class BrowserEvent
     }
     
     /**
-     * Generate a <\Xajax\Request\Request> object that corresponds to the event
+     * Generate a <\Jaxon\Request\Request> object that corresponds to the event
      * so that the client script can easily invoke this event
      *
-     * @return \Xajax\Request\Request
+     * @return \Jaxon\Request\Request
      */
     public function generateRequest()
     {
@@ -136,7 +136,7 @@ class BrowserEvent
     }
     
     /**
-     * Called by the <\Xajax\Request\Plugin\BrowserEvent> plugin when the event has been triggered
+     * Called by the <\Jaxon\Request\Plugin\BrowserEvent> plugin when the event has been triggered
      *
      * @param array         $aArgs                The arguments for the handlers
      *

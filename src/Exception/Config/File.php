@@ -5,19 +5,19 @@
  *
  * This exception is thrown when the config file cannot be read.
  *
- * @package xajax-core
+ * @package jaxon-core
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
  * @copyright 2016 Thierry Feuzeu <thierry.feuzeu@gmail.com>
  * @license https://opensource.org/licenses/BSD-2-Clause BSD 2-Clause License
- * @link https://github.com/lagdo/xajax-core
+ * @link https://github.com/lagdo/jaxon-core
  */
 
-namespace Xajax\Config\Exception;
+namespace Jaxon\Config\Exception;
 
 class File extends \Exception
 {
     public function __contruct($sMessage, $sPath)
     {
-        parent::__construct(xajax_trans('config.errors.file.' . $sMessage, array('path' => $sPath)));
+        parent::__construct(jaxon_trans('config.errors.file.' . $sMessage, array('path' => $sPath)));
     }
 }

@@ -1,12 +1,12 @@
 <?php
 
 /**
- * CallableObject.php - Xajax callable object plugin
+ * CallableObject.php - Jaxon callable object plugin
  *
  * This class registers user defined callable objects, generates client side javascript code,
  * and calls their methods on user request
  *
- * @package xajax-core
+ * @package jaxon-core
  * @author Jared White
  * @author J. Max Wilson
  * @author Joseph Woolley
@@ -16,19 +16,19 @@
  * @copyright Copyright (c) 2008-2010 by Joseph Woolley, Steffen Konerow, Jared White  & J. Max Wilson
  * @copyright 2016 Thierry Feuzeu <thierry.feuzeu@gmail.com>
  * @license https://opensource.org/licenses/BSD-2-Clause BSD 2-Clause License
- * @link https://github.com/lagdo/xajax-core
+ * @link https://github.com/lagdo/jaxon-core
  */
 
-namespace Xajax\Request\Plugin;
+namespace Jaxon\Request\Plugin;
 
-use Xajax\Xajax;
-use Xajax\Plugin\Request as RequestPlugin;
-use Xajax\Plugin\Manager as PluginManager;
-use Xajax\Request\Manager as RequestManager;
+use Jaxon\Jaxon;
+use Jaxon\Plugin\Request as RequestPlugin;
+use Jaxon\Plugin\Manager as PluginManager;
+use Jaxon\Request\Manager as RequestManager;
 
 class CallableObject extends RequestPlugin
 {
-    use \Xajax\Utils\ContainerTrait;
+    use \Jaxon\Utils\ContainerTrait;
 
     /**
      * The registered callable objects
@@ -45,14 +45,14 @@ class CallableObject extends RequestPlugin
     protected $aClassPaths;
 
     /**
-     * The value of the class parameter of the incoming Xajax request
+     * The value of the class parameter of the incoming Jaxon request
      *
      * @var string
      */
     protected $sRequestedClass;
     
     /**
-     * The value of the method parameter of the incoming Xajax request
+     * The value of the method parameter of the incoming Jaxon request
      *
      * @var string
      */
@@ -107,24 +107,24 @@ class CallableObject extends RequestPlugin
         {
             $sType = $aArgs[0];
 
-            if($sType == Xajax::CALLABLE_OBJECT)
+            if($sType == Jaxon::CALLABLE_OBJECT)
             {
                 $xCallableObject = $aArgs[1];
 
                 if(!is_object($xCallableObject))
                 {
-                    throw new \Xajax\Exception\Error('errors.objects.instance');
+                    throw new \Jaxon\Exception\Error('errors.objects.instance');
                 }
-                if(!($xCallableObject instanceof \Xajax\Request\Support\CallableObject))
+                if(!($xCallableObject instanceof \Jaxon\Request\Support\CallableObject))
                 {
                     $xUserCallable = $xCallableObject;
-                    $xCallableObject = new \Xajax\Request\Support\CallableObject($xCallableObject);
-                    // Save the Xajax callable object into the user callable object
-                    if(method_exists($xUserCallable, 'setXajaxCallable'))
+                    $xCallableObject = new \Jaxon\Request\Support\CallableObject($xCallableObject);
+                    // Save the Jaxon callable object into the user callable object
+                    if(method_exists($xUserCallable, 'setJaxonCallable'))
                     {
-                        $xUserCallable->setXajaxCallable($xCallableObject);
+                        $xUserCallable->setJaxonCallable($xCallableObject);
                     }
-                    // Save the global Xajax response into the user callable object
+                    // Save the global Jaxon response into the user callable object
                     if(method_exists($xUserCallable, 'setGlobalResponse'))
                     {
                         $xUserCallable->setGlobalResponse();
@@ -174,7 +174,7 @@ class CallableObject extends RequestPlugin
      */
     public function getScript()
     {
-        $sXajaxPrefix = $this->getOption('core.prefix.class');
+        $sJaxonPrefix = $this->getOption('core.prefix.class');
         // Generate code for javascript classes declaration
         $code = '';
         $classes = array();
@@ -188,7 +188,7 @@ class CallableObject extends RequestPlugin
                 // Generate code for this class
                 if(!array_key_exists($class, $classes))
                 {
-                    $code .= "$sXajaxPrefix$class = {};\n";
+                    $code .= "$sJaxonPrefix$class = {};\n";
                     $classes[$class] = $class;
                 }
                 $offset = $dotPosition + 1;
@@ -204,7 +204,7 @@ class CallableObject extends RequestPlugin
     }
 
     /**
-     * Check if this plugin can process the incoming Xajax request
+     * Check if this plugin can process the incoming Jaxon request
      *
      * @return boolean
      */
@@ -226,7 +226,7 @@ class CallableObject extends RequestPlugin
     }
 
     /**
-     * Process the incoming Xajax request
+     * Process the incoming Jaxon request
      *
      * @return boolean
      */
@@ -253,7 +253,7 @@ class CallableObject extends RequestPlugin
             }
         }
         // Unable to find the requested object or method
-        throw new \Xajax\Exception\Error('errors.objects.invalid',
+        throw new \Jaxon\Exception\Error('errors.objects.invalid',
             array('class' => $this->sRequestedClass, 'method' => $this->sRequestedMethod));
     }
 

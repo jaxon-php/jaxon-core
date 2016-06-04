@@ -1,11 +1,11 @@
 <?php
 
 /**
- * Request.php - The Xajax Request
+ * Request.php - The Jaxon Request
  *
- * This class is used to create client side requests to the Xajax functions and callable objects.
+ * This class is used to create client side requests to the Jaxon functions and callable objects.
  *
- * @package xajax-core
+ * @package jaxon-core
  * @author Jared White
  * @author J. Max Wilson
  * @author Joseph Woolley
@@ -15,19 +15,19 @@
  * @copyright Copyright (c) 2008-2010 by Joseph Woolley, Steffen Konerow, Jared White  & J. Max Wilson
  * @copyright 2016 Thierry Feuzeu <thierry.feuzeu@gmail.com>
  * @license https://opensource.org/licenses/BSD-2-Clause BSD 2-Clause License
- * @link https://github.com/lagdo/xajax-core
+ * @link https://github.com/lagdo/jaxon-core
  */
 
-namespace Xajax\Request;
+namespace Jaxon\Request;
 
-use Xajax\Xajax;
+use Jaxon\Jaxon;
 
 class Request
 {
-    use \Xajax\Utils\ContainerTrait;
+    use \Jaxon\Utils\ContainerTrait;
 
     /**
-     * The name of an Xajax function or a method of a callable object
+     * The name of an Jaxon function or a method of a callable object
      *
      * @var string
      */
@@ -60,7 +60,7 @@ class Request
     private $aParameters;
     
     /**
-     * The position of the Xajax::PAGE_NUMBER parameter in the parameters array
+     * The position of the Jaxon::PAGE_NUMBER parameter in the parameters array
      *
      * @var integer
      */
@@ -106,7 +106,7 @@ class Request
     }
     
     /**
-     * Check if the request has a parameter of type Xajax::PAGE_NUMBER
+     * Check if the request has a parameter of type Jaxon::PAGE_NUMBER
      *
      * @return boolean
      */
@@ -116,7 +116,7 @@ class Request
     }
     
     /**
-     * Set a value to the Xajax::PAGE_NUMBER parameter
+     * Set a value to the Jaxon::PAGE_NUMBER parameter
      *
      * @param integer        $nPageNumber        The current page number
      *
@@ -124,7 +124,7 @@ class Request
      */
     public function setPageNumber($nPageNumber)
     {
-        // Set the value of the Xajax::PAGE_NUMBER parameter
+        // Set the value of the Jaxon::PAGE_NUMBER parameter
         $nPageNumber = intval($nPageNumber);
         if($this->nPageNumberIndex >= 0 && $nPageNumber > 0)
         {
@@ -149,12 +149,12 @@ class Request
     /**
      * Set a specific parameter value
      *
-     * Types should be one of the following <Xajax::FORM_VALUES>, <Xajax::QUOTED_VALUE>, <Xajax::NUMERIC_VALUE>,
-     * <Xajax::JS_VALUE>, <Xajax::INPUT_VALUE>, <Xajax::CHECKED_VALUE>, <Xajax::PAGE_NUMBER>.
+     * Types should be one of the following <Jaxon::FORM_VALUES>, <Jaxon::QUOTED_VALUE>, <Jaxon::NUMERIC_VALUE>,
+     * <Jaxon::JS_VALUE>, <Jaxon::INPUT_VALUE>, <Jaxon::CHECKED_VALUE>, <Jaxon::PAGE_NUMBER>.
      * The value should be as follows:
-     * - <Xajax::FORM_VALUES> - Use the ID of the form you want to process.
-     * - <Xajax::QUOTED_VALUE> - The string data to be passed.
-     * - <Xajax::JS_VALUE> - A string containing valid javascript
+     * - <Jaxon::FORM_VALUES> - Use the ID of the form you want to process.
+     * - <Jaxon::QUOTED_VALUE> - The string data to be passed.
+     * - <Jaxon::JS_VALUE> - A string containing valid javascript
      *   (either a javascript variable name that will be in scope at the time of the call or
      *   a javascript function call whose return value will become the parameter).
      *
@@ -168,35 +168,35 @@ class Request
     {
         switch($sType)
         {
-        case Xajax::FORM_VALUES:
+        case Jaxon::FORM_VALUES:
             $sFormID = $sValue;
             $this->aParameters[$nParameter] = "xajax.getFormValues(" . $this->sQuoteCharacter 
                 . $sFormID . $this->sQuoteCharacter . ")";
             break;
-        case Xajax::INPUT_VALUE:
+        case Jaxon::INPUT_VALUE:
             $sInputID = $sValue;
             $this->aParameters[$nParameter] =  "xajax.$("  . $this->sQuoteCharacter 
                 . $sInputID . $this->sQuoteCharacter  . ").value";
             break;
-        case Xajax::CHECKED_VALUE:
+        case Jaxon::CHECKED_VALUE:
             $sCheckedID = $sValue;
             $this->aParameters[$nParameter] =  "xajax.$("  . $this->sQuoteCharacter 
                 . $sCheckedID  . $this->sQuoteCharacter . ").checked";
             break;
-        case Xajax::ELEMENT_INNERHTML:
+        case Jaxon::ELEMENT_INNERHTML:
             $sElementID = $sValue;
             $this->aParameters[$nParameter] = "xajax.$(" . $this->sQuoteCharacter 
                 . $sElementID . $this->sQuoteCharacter . ").innerHTML";
             break;
-        case Xajax::QUOTED_VALUE:
+        case Jaxon::QUOTED_VALUE:
             $this->aParameters[$nParameter] = $this->sQuoteCharacter . addslashes($sValue) . $this->sQuoteCharacter;
             break;
-        case Xajax::PAGE_NUMBER:
+        case Jaxon::PAGE_NUMBER:
             $this->nPageNumberIndex = $nParameter;
             $this->aParameters[$nParameter] = $sValue;
             break;
-        case Xajax::NUMERIC_VALUE:
-        case Xajax::JS_VALUE:
+        case Jaxon::NUMERIC_VALUE:
+        case Jaxon::JS_VALUE:
             $this->aParameters[$nParameter] = $sValue;
             break;
         }
@@ -209,8 +209,8 @@ class Request
      */
     public function getScript()
     {
-        $sXajaxPrefix = $this->getOption('core.prefix.' . $this->sType);
-        return $sXajaxPrefix . $this->sName . '(' . implode(', ', $this->aParameters) . ')';
+        $sJaxonPrefix = $this->getOption('core.prefix.' . $this->sType);
+        return $sJaxonPrefix . $this->sName . '(' . implode(', ', $this->aParameters) . ')';
     }
 
     /**

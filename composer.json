@@ -1,7 +1,7 @@
 {
-    "name": "lagdo/xajax-core",
+    "name": "lagdo/jaxon-core",
     "type": "library",
-    "description": "Xajax is an open source PHP class library for easily creating powerful PHP-driven, web-based Ajax Applications. Using Xajax, you can asynchronously call PHP functions and update the content of your webpage without reloading the page.",
+    "description": "Jaxon is an open source PHP class library for easily creating powerful PHP-driven, web-based Ajax Applications. Using Jaxon, you can asynchronously call PHP functions and update the content of your webpage without reloading the page.",
     "authors": [
         {"name": "Jared White"},
         {"name": "J. Max Wilson"},
@@ -9,14 +9,14 @@
         {"name": "Steffen Konerow"},
         {"name": "Thierry Feuzeu"}
     ],
-    "homepage": "http://xajax-project.org",
+    "homepage": "http://jaxon-project.org",
     "license": "BSD-2-Clause",
-    "keywords": ["Xajax", "Ajax", "PHP", "Asynchronous"],
+    "keywords": ["Jaxon", "Xajax", "Ajax", "PHP", "Asynchronous"],
     "support": {
-        "forum": "http://community.xajax-project.org",
-        "irc": "irc://irc.freenode.org/xajax",
-        "issues": "https://github.com/lagdo/xajax-core/issues",
-        "source": "https://github.com/lagdo/xajax-core"
+        "forum": "http://community.jaxon-project.org",
+        "irc": "irc://irc.freenode.org/jaxon",
+        "issues": "https://github.com/lagdo/jaxon-core/issues",
+        "source": "https://github.com/lagdo/jaxon-core"
     },
     "require": {
         "php": ">=5.4.0",
@@ -26,7 +26,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Xajax\\": "src/"
+            "Jaxon\\": "src/"
         },
         "files": [
             "src/start.php"

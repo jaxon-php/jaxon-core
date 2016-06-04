@@ -1,27 +1,27 @@
 <?php
 
 /**
- * Config.php - Xajax config reader
+ * Config.php - Jaxon config reader
  *
- * Read the Xajax config from a data array and save it locally.
+ * Read the Jaxon config from a data array and save it locally.
  *
- * @package xajax-core
+ * @package jaxon-core
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
  * @copyright 2016 Thierry Feuzeu <thierry.feuzeu@gmail.com>
  * @license https://opensource.org/licenses/BSD-2-Clause BSD 2-Clause License
- * @link https://github.com/lagdo/xajax-core
+ * @link https://github.com/lagdo/jaxon-core
  */
 
-namespace Xajax\Config;
+namespace Jaxon\Config;
 
-use Xajax\Xajax;
+use Jaxon\Jaxon;
 
 class Config
 {
     private static $aOptions;
 
     /**
-     * Recursively read Xajax options from a data array
+     * Recursively read Jaxon options from a data array
      *
      * @param array         $aOptions            The options array
      * @param string        $sPrefix            The prefix for option names
@@ -36,7 +36,7 @@ class Config
         // Check the max depth
         if($nDepth < 0 || $nDepth > 5)
         {
-            throw new \Xajax\Exception\Config\Data('depth', $sPrefix, $nDepth);
+            throw new \Jaxon\Exception\Config\Data('depth', $sPrefix, $nDepth);
         }
         if($nDepth == 0)
         {
@@ -58,7 +58,7 @@ class Config
     }
 
     /**
-     * Read and set Xajax options from a data array
+     * Read and set Jaxon options from a data array
      *
      * @param array         $aOptions            The options array
      * @param string        $sKeys                The keys of the options in the array
@@ -75,7 +75,7 @@ class Config
             {
                 if(!array_key_exists($sKey, $aOptions) || !is_array($aOptions[$sKey]))
                 {
-                    throw new \Xajax\Exception\Config\Data('missing', $sKeys);
+                    throw new \Jaxon\Exception\Config\Data('missing', $sKeys);
                 }
                 $aOptions = $aOptions[$sKey];
             }
@@ -83,6 +83,6 @@ class Config
         // Read options from the data
         self::readOptions($aOptions);
         // Set the options in the core library
-        Xajax::getInstance()->setOptions(self::$aOptions);
+        Jaxon::getInstance()->setOptions(self::$aOptions);
     }
 }

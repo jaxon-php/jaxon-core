@@ -1,9 +1,9 @@
 <?php
 
 /**
- * UserFunction.php - Xajax user function
+ * UserFunction.php - Jaxon user function
  *
- * This class stores a reference to a user defined function which can be called from the client via an Xajax request
+ * This class stores a reference to a user defined function which can be called from the client via an Jaxon request
  *
  * The function specification passed to the constructor of this class in one of the following formats:
  * - a three element array:
@@ -27,9 +27,9 @@
  *      $myFunction = 'myFunction';
  *
  *      $myUserFunction = new UserFunction($myFunction);
- *      $xajax->register(Xajax::USER_FUNCTION, $myUserFunction);
+ *      $jaxon->register(Jaxon::USER_FUNCTION, $myUserFunction);
  *
- * @package xajax-core
+ * @package jaxon-core
  * @author Jared White
  * @author J. Max Wilson
  * @author Joseph Woolley
@@ -39,24 +39,24 @@
  * @copyright Copyright (c) 2008-2010 by Joseph Woolley, Steffen Konerow, Jared White  & J. Max Wilson
  * @copyright 2016 Thierry Feuzeu <thierry.feuzeu@gmail.com>
  * @license https://opensource.org/licenses/BSD-2-Clause BSD 2-Clause License
- * @link https://github.com/lagdo/xajax-core
+ * @link https://github.com/lagdo/jaxon-core
  */
 
-namespace Xajax\Request\Support;
+namespace Jaxon\Request\Support;
 
-use Xajax\Xajax;
-use Xajax\Request\Request;
-use Xajax\Request\Manager as RequestManager;
-use Xajax\Response\Manager as ResponseManager;
+use Jaxon\Jaxon;
+use Jaxon\Request\Request;
+use Jaxon\Request\Manager as RequestManager;
+use Jaxon\Response\Manager as ResponseManager;
 
 class UserFunction
 {
-    use \Xajax\Utils\ContainerTrait;
+    use \Jaxon\Utils\ContainerTrait;
 
     /**
      * An alias to use for this function
      *
-     * This is useful when you want to call the same xajax enabled function with
+     * This is useful when you want to call the same jaxon enabled function with
      * a different set of call options from what was already registered.
      *
      * @var string
@@ -93,7 +93,7 @@ class UserFunction
         {
             if(count($sUserFunction) != 2 && count($sUserFunction) != 3)
             {
-                throw new \Xajax\Exception\Error('errors.functions.invalid-declaration');
+                throw new \Jaxon\Exception\Error('errors.functions.invalid-declaration');
             }
             if(count($sUserFunction) == 3)
             {
@@ -111,7 +111,7 @@ class UserFunction
         }
         else
         {
-            throw new \Xajax\Exception\Error('errors.functions.invalid-declaration');
+            throw new \Jaxon\Exception\Error('errors.functions.invalid-declaration');
         }
     }
     
@@ -155,10 +155,9 @@ class UserFunction
     }
     
     /**
-     * Constructs and returns a <xajaxRequest> object which is capable of generating
-     * the javascript call to invoke this xajax enabled function
+     * Constructs and returns a <Jaxon\Request\Request> object which is capable of generating the javascript call to invoke this jaxon enabled function
      *
-     * @return Xajax\Request\Request
+     * @return Jaxon\Request\Request
      */
     public function generateRequest()
     {
@@ -173,12 +172,12 @@ class UserFunction
      */
     public function getScript()
     {
-        $sXajaxPrefix = $this->getOption('core.prefix.function');
+        $sJaxonPrefix = $this->getOption('core.prefix.function');
         $sFunction = $this->getName();
         $sAlias = (($this->sAlias) ? $this->sAlias : $sFunction);
 
         return $this->render('support/function.js.tpl', array(
-            'sPrefix' => $sXajaxPrefix,
+            'sPrefix' => $sJaxonPrefix,
             'sAlias' => $sAlias,
             'sFunction' => $sFunction,
             'aConfig' => $this->aConfiguration,

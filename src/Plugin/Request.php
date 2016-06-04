@@ -1,22 +1,17 @@
 <?php
 
 /**
- * Request.php - Xajax Request interface
+ * Request.php - Jaxon Request interface
  *
- * Interface for Xajax Request plugins.
+ * Interface for Jaxon Request plugins.
  *
- * Request plugins handle the registration, client script generation and processing of
- * xajax enabled requests.
- * Each plugin should have a unique signature for both the registration and processing
- * of requests.
- * During registration, the user will specify a type which will allow the plugin
- * to detect and handle it.
- * During client script generation, the plugin will generate a <xajax.request> stub with
- * the prescribed call options and request signature.
- * During request processing, the plugin will detect the signature generated previously
- * and process the request accordingly.
+ * Request plugins handle the registration, client script generation and processing of jaxon enabled requests.
+ * Each plugin should have a unique signature for both the registration and processing of requests.
+ * During registration, the user will specify a type which will allow the plugin to detect and handle it.
+ * During client script generation, the plugin will generate a <xajax.request> stub with the prescribed call options and request signature.
+ * During request processing, the plugin will detect the signature generated previously and process the request accordingly.
  *
- * @package xajax-core
+ * @package jaxon-core
  * @author Jared White
  * @author J. Max Wilson
  * @author Joseph Woolley
@@ -26,17 +21,17 @@
  * @copyright Copyright (c) 2008-2010 by Joseph Woolley, Steffen Konerow, Jared White  & J. Max Wilson
  * @copyright 2016 Thierry Feuzeu <thierry.feuzeu@gmail.com>
  * @license https://opensource.org/licenses/BSD-2-Clause BSD 2-Clause License
- * @link https://github.com/lagdo/xajax-core
+ * @link https://github.com/lagdo/jaxon-core
  */
 
-namespace Xajax\Plugin;
+namespace Jaxon\Plugin;
 
 abstract class Request extends Plugin
 {
     /**
      * Register a function, an event or an object.
      *
-     * Called by the <Xajax\Plugin\Manager> when a user script when a function, event
+     * Called by the <Jaxon\Plugin\Manager> when a user script when a function, event
      * or callable object is to be registered.
      * Additional plugins may support other registration types.
      *
@@ -64,7 +59,7 @@ abstract class Request extends Plugin
     /**
      * Check if this plugin can process the current request
      *
-     * Called by the <Xajax\Plugin\Manager> when a request has been received to determine
+     * Called by the <Jaxon\Plugin\Manager> when a request has been received to determine
      * if the request is destinated to this request plugin.
      *
      * @return boolean
@@ -74,9 +69,9 @@ abstract class Request extends Plugin
     /**
      * Process the current request
      *
-     * Called by the <Xajax\Plugin\Manager> when a request is being processed.
-     * This will only occur when <Xajax> has determined that the current request
-     * is a valid (registered) xajax enabled function via <xajax->canProcessRequest>.
+     * Called by the <Jaxon\Plugin\Manager> when a request is being processed.
+     * This will only occur when <Jaxon> has determined that the current request
+     * is a valid (registered) jaxon enabled function via <jaxon->canProcessRequest>.
      *
      * @return boolean
      */

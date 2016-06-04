@@ -1,12 +1,12 @@
 <?php
 
 /**
- * Manager.php - Xajax Response Manager
+ * Manager.php - Jaxon Response Manager
  *
  * This class stores and tracks the response that will be returned after processing a request.
  * The Response Manager represents a single point of contact for working with <Response> objects.
  *
- * @package xajax-core
+ * @package jaxon-core
  * @author Jared White
  * @author J. Max Wilson
  * @author Joseph Woolley
@@ -16,20 +16,20 @@
  * @copyright Copyright (c) 2008-2010 by Joseph Woolley, Steffen Konerow, Jared White  & J. Max Wilson
  * @copyright 2016 Thierry Feuzeu <thierry.feuzeu@gmail.com>
  * @license https://opensource.org/licenses/BSD-2-Clause BSD 2-Clause License
- * @link https://github.com/lagdo/xajax-core
+ * @link https://github.com/lagdo/jaxon-core
  */
 
-namespace Xajax\Response;
+namespace Jaxon\Response;
 
 class Manager
 {
-    use \Xajax\Utils\ContainerTrait;
+    use \Jaxon\Utils\ContainerTrait;
 
     /**
      * The current response object that will be sent back to the browser
      * once the request processing phase is complete
      *
-     * @var \Xajax\Response\Response
+     * @var \Jaxon\Response\Response
      */
     private $xResponse;
     
@@ -47,7 +47,7 @@ class Manager
     }
     
     /**
-     * Return the one and only instance of the xajax response manager
+     * Return the one and only instance of the jaxon response manager
      *
      * @return Manager
      */

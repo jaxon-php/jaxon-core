@@ -1,12 +1,12 @@
 <?php
 
 /**
- * UserFunction.php - Xajax user function plugin
+ * UserFunction.php - Jaxon user function plugin
  *
  * This class registers user defined functions, generates client side javascript code,
  * and calls them on user request
  *
- * @package xajax-core
+ * @package jaxon-core
  * @author Jared White
  * @author J. Max Wilson
  * @author Joseph Woolley
@@ -16,18 +16,18 @@
  * @copyright Copyright (c) 2008-2010 by Joseph Woolley, Steffen Konerow, Jared White  & J. Max Wilson
  * @copyright 2016 Thierry Feuzeu <thierry.feuzeu@gmail.com>
  * @license https://opensource.org/licenses/BSD-2-Clause BSD 2-Clause License
- * @link https://github.com/lagdo/xajax-core
+ * @link https://github.com/lagdo/jaxon-core
  */
 
-namespace Xajax\Request\Plugin;
+namespace Jaxon\Request\Plugin;
 
-use Xajax\Xajax;
-use Xajax\Plugin\Request as RequestPlugin;
-use Xajax\Request\Manager as RequestManager;
+use Jaxon\Jaxon;
+use Jaxon\Plugin\Request as RequestPlugin;
+use Jaxon\Request\Manager as RequestManager;
 
 class UserFunction extends RequestPlugin
 {
-    use \Xajax\Utils\ContainerTrait;
+    use \Jaxon\Utils\ContainerTrait;
 
     /**
      * The registered user functions
@@ -74,7 +74,7 @@ class UserFunction extends RequestPlugin
      *
      * @param array         $aArgs                An array containing the function specification
      *
-     * @return \Xajax\Request\Request
+     * @return \Jaxon\Request\Request
      */
     public function register($aArgs)
     {
@@ -82,12 +82,12 @@ class UserFunction extends RequestPlugin
         {
             $sType = $aArgs[0];
 
-            if($sType == Xajax::USER_FUNCTION)
+            if($sType == Jaxon::USER_FUNCTION)
             {
                 $xUserFunction = $aArgs[1];
 
-                if(!($xUserFunction instanceof \Xajax\Request\Support\UserFunction))
-                    $xUserFunction = new \Xajax\Request\Support\UserFunction($xUserFunction);
+                if(!($xUserFunction instanceof \Jaxon\Request\Support\UserFunction))
+                    $xUserFunction = new \Jaxon\Request\Support\UserFunction($xUserFunction);
 
                 if(count($aArgs) > 2)
                 {
@@ -143,7 +143,7 @@ class UserFunction extends RequestPlugin
     }
 
     /**
-     * Check if this plugin can process the incoming Xajax request
+     * Check if this plugin can process the incoming Jaxon request
      *
      * @return boolean
      */
@@ -158,7 +158,7 @@ class UserFunction extends RequestPlugin
     }
 
     /**
-     * Process the incoming Xajax request
+     * Process the incoming Jaxon request
      *
      * @return boolean
      */
@@ -175,6 +175,6 @@ class UserFunction extends RequestPlugin
             return true;
         }
         // Unable to find the requested function
-        throw new \Xajax\Exception\Error('errors.functions.invalid', array('name' => $this->sRequestedFunction));
+        throw new \Jaxon\Exception\Error('errors.functions.invalid', array('name' => $this->sRequestedFunction));
     }
 }

@@ -1,92 +1,92 @@
 <?php
 
 /**
- * FactoryTrait.php - Trait for Xajax Request Factory
+ * FactoryTrait.php - Trait for Jaxon Request Factory
  *
- * Make functions of the Xajax Request Factory class available to Xajax classes.
+ * Make functions of the Jaxon Request Factory class available to Jaxon classes.
  *
- * @package xajax-core
+ * @package jaxon-core
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
  * @copyright 2016 Thierry Feuzeu <thierry.feuzeu@gmail.com>
  * @license https://opensource.org/licenses/BSD-2-Clause BSD 2-Clause License
- * @link https://github.com/lagdo/xajax-core
+ * @link https://github.com/lagdo/jaxon-core
  */
 
-namespace Xajax\Request;
+namespace Jaxon\Request;
 
 trait FactoryTrait
 {
     /**
-     * The \Xajax\Request\Support\CallableObject instance associated to the Xajax object using this trait
+     * The \Jaxon\Request\Support\CallableObject instance associated to the Jaxon object using this trait
      *
-     * @var \Xajax\Request\Support\CallableObject
+     * @var \Jaxon\Request\Support\CallableObject
      */
-    private $xXajaxCallable = null;
+    private $xJaxonCallable = null;
 
     /**
-     * Set the associated \Xajax\Request\Support\CallableObject instance
+     * Set the associated \Jaxon\Request\Support\CallableObject instance
      *
-     * @param object        $xXajaxCallable            The \Xajax\Request\Support\CallableO object instance
+     * @param object        $xJaxonCallable            The \Jaxon\Request\Support\CallableO object instance
      *
      * @return void
      */
-    public function setXajaxCallable($xXajaxCallable)
+    public function setJaxonCallable($xJaxonCallable)
     {
-        $this->xXajaxCallable = $xXajaxCallable;
+        $this->xJaxonCallable = $xJaxonCallable;
     }
 
     /**
-     * Get the Xajax class name
+     * Get the Jaxon class name
      * 
-     * This is the name to be used in Xajax javascript calls.
+     * This is the name to be used in Jaxon javascript calls.
      *
-     * @return string        The Xajax class name
+     * @return string        The Jaxon class name
      */
-    public function getXajaxClassName()
+    public function getJaxonClassName()
     {
-        if(!$this->xXajaxCallable)
+        if(!$this->xJaxonCallable)
         {
-            // Make the Xajax class name for a class without an associated callable
-            // !! Warning !! This can happen only if this object is not registered with the Xajax libary
+            // Make the Jaxon class name for a class without an associated callable
+            // !! Warning !! This can happen only if this object is not registered with the Jaxon libary
             $xReflectionClass = new \ReflectionClass(get_class($this));
             // Return the class name without the namespace.
             return $xReflectionClass->getShortName();
         }
-        return $this->xXajaxCallable->getName();
+        return $this->xJaxonCallable->getName();
     }
 
     /**
-     * Get the Xajax class namespace
+     * Get the Jaxon class namespace
      *
-     * @return string        The Xajax class namespace
+     * @return string        The Jaxon class namespace
      */
-    public function getXajaxNamespace()
+    public function getJaxonNamespace()
     {
-        if(!$this->xXajaxCallable)
+        if(!$this->xJaxonCallable)
         {
             // Return an empty string.
             return '';
         }
-        return $this->xXajaxCallable->getNamespace();
+        return $this->xJaxonCallable->getNamespace();
     }
 
     /**
-     * Get the Xajax class path
+     * Get the Jaxon class path
      *
-     * @return string        The Xajax class path
+     * @return string        The Jaxon class path
      */
-    public function getXajaxClassPath()
+    public function getJaxonClassPath()
     {
-        if(!$this->xXajaxCallable)
+        if(!$this->xJaxonCallable)
         {
             // Return an empty string.
             return '';
         }
-        return $this->xXajaxCallable->getPath();
+        return $this->xJaxonCallable->getPath();
     }
 
     /**
-     * Return the javascript call to an Xajax object method
+     * Return the javascript call to an Jaxon object method
      *
      * @param string         $sMethod           The method (without class) name
      * @param ...            $xParams           The parameters of the method
@@ -98,13 +98,13 @@ trait FactoryTrait
         $sMethod = (string)$sMethod;
         $aArgs = func_get_args();
         // Prepend the class name to the method name
-        $aArgs[0] = $this->getXajaxClassName() . '.' . $sMethod;
+        $aArgs[0] = $this->getJaxonClassName() . '.' . $sMethod;
         // Make the request
-        return call_user_func_array('\Xajax\Request\Factory::call', $aArgs);
+        return call_user_func_array('\Jaxon\Request\Factory::call', $aArgs);
     }
 
     /**
-     * Make the pagination links for a registered Xajax class method
+     * Make the pagination links for a registered Jaxon class method
      *
      * @param integer $nItemsTotal the total number of items
      * @param integer $nItemsPerPage the number of items per page page
@@ -119,8 +119,8 @@ trait FactoryTrait
     	$sMethod = (string)$sMethod;
     	$aArgs = func_get_args();
     	// Prepend the class name to the method name
-    	$aArgs[3] = $this->getXajaxClassName() . '.' . $sMethod;
+    	$aArgs[3] = $this->getJaxonClassName() . '.' . $sMethod;
     	// Make the request
-    	return call_user_func_array('\Xajax\Request\Factory::paginate', $aArgs);
+    	return call_user_func_array('\Jaxon\Request\Factory::paginate', $aArgs);
     }
 }

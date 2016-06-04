@@ -1,15 +1,15 @@
 <?php
 
 /**
- * CallableObject.php - Xajax callable object
+ * CallableObject.php - Jaxon callable object
  *
  * This class stores a reference to an object whose methods can be called from
- * the client via an Xajax request
+ * the client via an Jaxon request
  *
- * The Xajax plugin manager will call <CallableObject->getClientScript> so that
+ * The Jaxon plugin manager will call <CallableObject->getClientScript> so that
  * stub functions can be generated and sent to the browser.
  *
- * @package xajax-core
+ * @package jaxon-core
  * @author Jared White
  * @author J. Max Wilson
  * @author Joseph Woolley
@@ -19,18 +19,18 @@
  * @copyright Copyright (c) 2008-2010 by Joseph Woolley, Steffen Konerow, Jared White  & J. Max Wilson
  * @copyright 2016 Thierry Feuzeu <thierry.feuzeu@gmail.com>
  * @license https://opensource.org/licenses/BSD-2-Clause BSD 2-Clause License
- * @link https://github.com/lagdo/xajax-core
+ * @link https://github.com/lagdo/jaxon-core
  */
 
-namespace Xajax\Request\Support;
+namespace Jaxon\Request\Support;
 
-use Xajax\Request\Request;
-use Xajax\Request\Manager as RequestManager;
-use Xajax\Response\Manager as ResponseManager;
+use Jaxon\Request\Request;
+use Jaxon\Request\Manager as RequestManager;
+use Jaxon\Response\Manager as ResponseManager;
 
 class CallableObject
 {
-    use \Xajax\Utils\ContainerTrait;
+    use \Jaxon\Utils\ContainerTrait;
 
     /**
      * A reference to the callable object the user has registered
@@ -84,7 +84,7 @@ class CallableObject
         $this->aConfiguration = array();
         // By default, the methods of the RequestTrait and ResponseTrait traits are excluded
         $this->aExcludedMethods = array('setGlobalResponse', 'newResponse',
-                'setXajaxCallable', 'getXajaxClassName', 'request');
+                'setJaxonCallable', 'getJaxonClassName', 'request');
     }
 
     /**
@@ -208,7 +208,7 @@ class CallableObject
     }
 
     /**
-     * Produce an array of <Xajax\Request\Request>, one for each method exposed by this callable object
+     * Produce an array of <Jaxon\Request\Request>, one for each method exposed by this callable object
      *
      * @return array
      */
@@ -243,7 +243,7 @@ class CallableObject
      */
     public function getScript()
     {
-        $sXajaxPrefix = $this->getOption('core.prefix.class');
+        $sJaxonPrefix = $this->getOption('core.prefix.class');
         $sClass = $this->classpath . $this->getClassName();
         $aMethods = array();
         $aConfig = array();
@@ -274,7 +274,7 @@ class CallableObject
         }
 
         return $this->render('support/object.js.tpl', array(
-            'sPrefix' => $sXajaxPrefix,
+            'sPrefix' => $sJaxonPrefix,
             'sClass' => $sClass,
             'aMethods' => $aMethods,
         ));

@@ -1,11 +1,11 @@
 <?php
 
 /**
- * Base.php - Xajax Base class
+ * Base.php - Jaxon Base class
  *
- * This class defines base functionalities for the Xajax class, as welle as the library constants
+ * This class defines base functionalities for the Jaxon class, as welle as the library constants
  *
- * @package xajax-core
+ * @package jaxon-core
  * @author Jared White
  * @author J. Max Wilson
  * @author Joseph Woolley
@@ -15,10 +15,10 @@
  * @copyright Copyright (c) 2008-2010 by Joseph Woolley, Steffen Konerow, Jared White  & J. Max Wilson
  * @copyright 2016 Thierry Feuzeu <thierry.feuzeu@gmail.com>
  * @license https://opensource.org/licenses/BSD-2-Clause BSD 2-Clause License
- * @link https://github.com/lagdo/xajax-core
+ * @link https://github.com/lagdo/jaxon-core
  */
 
-namespace Xajax;
+namespace Jaxon;
 
 
 abstract class Base
@@ -26,10 +26,10 @@ abstract class Base
     /*
      * Processing events
      */
-    const PROCESSING_EVENT = 'xajax processing event';
-    const PROCESSING_EVENT_BEFORE = 'beforeProcessing';
-    const PROCESSING_EVENT_AFTER = 'afterProcessing';
-    const PROCESSING_EVENT_INVALID = 'invalidRequest';
+    const PROCESSING_EVENT = 'ProcessingEvent';
+    const PROCESSING_EVENT_BEFORE = 'BeforeProcessing';
+    const PROCESSING_EVENT_AFTER = 'AfterProcessing';
+    const PROCESSING_EVENT_INVALID = 'InvalidRequest';
 
     /*
      * Request methods
@@ -42,39 +42,39 @@ abstract class Base
      * Request plugins
      */
     // An object who's methods will be callable from the browser.
-    const CALLABLE_OBJECT = 'callable object';
+    const CALLABLE_OBJECT = 'CallableObject';
     // A php function available at global scope, or a specific function from an instance of an object.
-    const USER_FUNCTION = 'user function';
+    const USER_FUNCTION = 'UserFunction';
     // A browser event.
-    const BROWSER_EVENT = 'browser event';
+    const BROWSER_EVENT = 'BrowserEvent';
     // An event handler.
-    const EVENT_HANDLER = 'event handler';
+    const EVENT_HANDLER = 'EventHandler';
 
     /*
      * Request parameters
      */
     // Specifies that the parameter will consist of an array of form values.
-    const FORM_VALUES = 'get form values';
+    const FORM_VALUES = 'FormValues';
     // Specifies that the parameter will contain the value of an input control.
-    const INPUT_VALUE = 'get input value';
+    const INPUT_VALUE = 'InputValue';
     // Specifies that the parameter will consist of a boolean value of a checkbox.
-    const CHECKED_VALUE = 'get checked value';
+    const CHECKED_VALUE = 'CheckedValue';
     // Specifies that the parameter value will be the innerHTML value of the element.
-    const ELEMENT_INNERHTML = 'get element innerHTML';
+    const ELEMENT_INNERHTML = 'ElementInnerHTML';
     // Specifies that the parameter will be a quoted value (string).
-    const QUOTED_VALUE = 'quoted value';
+    const QUOTED_VALUE = 'QuotedValue';
     // Specifies that the parameter will be a numeric, non-quoted value.
-    const NUMERIC_VALUE = 'numeric value';
+    const NUMERIC_VALUE = 'NumericValue';
     // Specifies that the parameter will be a non-quoted value
     // (evaluated by the browsers javascript engine at run time).
-    const JS_VALUE = 'unquoted value';
+    const JS_VALUE = 'UnquotedValue';
     // Specifies that the parameter will be an integer used to generate pagination links.
-    const PAGE_NUMBER = 'page number';
+    const PAGE_NUMBER = 'PageNumber';
 }
 
 
 /**
- * Xajax.php
+ * Jaxon.php
  */
 
 /*
@@ -84,7 +84,7 @@ abstract class Base
  String: XAJAX_PROCESSING_EVENT_INVALID
 
  Identifiers used to register processing events.  Processing events are essentially
- hooks into the xajax core that can be used to add functionality into the request
+ hooks into the jaxon core that can be used to add functionality into the request
  processing sequence.
  */
 if(!defined ('XAJAX_PROCESSING_EVENT')) define ('XAJAX_PROCESSING_EVENT', Base::PROCESSING_EVENT);
@@ -104,7 +104,7 @@ if(!defined('XAJAX_METHOD_POST')) define('XAJAX_METHOD_POST', Base::METHOD_POST)
 */
 /*
  Constant: XAJAX_CALLABLE_OBJECT
- Specifies that the item being registered via the <xajax->register> function is a
+ Specifies that the item being registered via the <jaxon->register> function is a
  object who's methods will be callable from the browser.
 */
 if(!defined ('XAJAX_CALLABLE_OBJECT')) define ('XAJAX_CALLABLE_OBJECT', Base::CALLABLE_OBJECT);
@@ -114,7 +114,7 @@ if(!defined ('XAJAX_CALLABLE_OBJECT')) define ('XAJAX_CALLABLE_OBJECT', Base::CA
 */
 /*
  Constant: XAJAX_FUNCTION
- Specifies that the item being registered via the <xajax->register> function
+ Specifies that the item being registered via the <jaxon->register> function
  is a php function available at global scope, or a specific function from
  an instance of an object.
 */
@@ -125,11 +125,11 @@ if(!defined ('XAJAX_FUNCTION')) define ('XAJAX_FUNCTION', Base::USER_FUNCTION);
 */
 /*
  Constant: XAJAX_EVENT
- Specifies that the item being registered via the <xajax->register> function
+ Specifies that the item being registered via the <jaxon->register> function
  is an event.
 
  Constant: XAJAX_EVENT_HANDLER
- Specifies that the item being registered via the <xajax->register> function
+ Specifies that the item being registered via the <jaxon->register> function
  is an event handler.
 */
 if(!defined ('XAJAX_EVENT')) define ('XAJAX_EVENT', Base::BROWSER_EVENT);

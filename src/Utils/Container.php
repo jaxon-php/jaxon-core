@@ -1,18 +1,18 @@
 <?php
 
 /**
- * Container.php - Xajax data container
+ * Container.php - Jaxon data container
  *
- * Provide container service for Xajax utils class instances.
+ * Provide container service for Jaxon utils class instances.
  *
- * @package xajax-core
+ * @package jaxon-core
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
  * @copyright 2016 Thierry Feuzeu <thierry.feuzeu@gmail.com>
  * @license https://opensource.org/licenses/BSD-2-Clause BSD 2-Clause License
- * @link https://github.com/lagdo/xajax-core
+ * @link https://github.com/lagdo/jaxon-core
  */
 
-namespace Xajax\Utils;
+namespace Jaxon\Utils;
 
 class Container
 {

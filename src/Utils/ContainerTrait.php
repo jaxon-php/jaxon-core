@@ -3,16 +3,16 @@
 /**
  * ContainerTrait.php - Trait for Utils classes
  *
- * Make functions of the utils classes available to Xajax classes.
+ * Make functions of the utils classes available to Jaxon classes.
  *
- * @package xajax-core
+ * @package jaxon-core
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
  * @copyright 2016 Thierry Feuzeu <thierry.feuzeu@gmail.com>
  * @license https://opensource.org/licenses/BSD-2-Clause BSD 2-Clause License
- * @link https://github.com/lagdo/xajax-core
+ * @link https://github.com/lagdo/jaxon-core
  */
 
-namespace Xajax\Utils;
+namespace Jaxon\Utils;
 
 trait ContainerTrait
 {

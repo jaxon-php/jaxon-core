@@ -3,16 +3,16 @@
 /**
  * Translator.php - Translator
  *
- * Provide translation service for strings in the Xajax library.
+ * Provide translation service for strings in the Jaxon library.
  *
- * @package xajax-core
+ * @package jaxon-core
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
  * @copyright 2016 Thierry Feuzeu <thierry.feuzeu@gmail.com>
  * @license https://opensource.org/licenses/BSD-2-Clause BSD 2-Clause License
- * @link https://github.com/lagdo/xajax-core
+ * @link https://github.com/lagdo/jaxon-core
  */
 
-namespace Xajax\Utils;
+namespace Jaxon\Utils;
 
 class Translator
 {
@@ -30,7 +30,7 @@ class Translator
         $this->sResourceDir = trim($sResourceDir);
         // Set the config manager
         $this->xConfig = $xConfig;
-        // Load the Xajax package translations
+        // Load the Jaxon package translations
         $this->loadMessages($this->sResourceDir . '/en/errors.php', 'en');
         $this->loadMessages($this->sResourceDir . '/fr/errors.php', 'fr');
     }

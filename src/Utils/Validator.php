@@ -1,18 +1,18 @@
 <?php
 
 /**
- * Validator.php - Xajax input data validator
+ * Validator.php - Jaxon input data validator
  *
  * Validate requests data before the are passed into the library.
  *
- * @package xajax-core
+ * @package jaxon-core
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
  * @copyright 2016 Thierry Feuzeu <thierry.feuzeu@gmail.com>
  * @license https://opensource.org/licenses/BSD-2-Clause BSD 2-Clause License
- * @link https://github.com/lagdo/xajax-core
+ * @link https://github.com/lagdo/jaxon-core
  */
 
-namespace Xajax\Utils;
+namespace Jaxon\Utils;
 
 /*
  * See the following links to get explanations about the regexp.

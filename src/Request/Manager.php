@@ -1,13 +1,13 @@
 <?php
 
 /**
- * Manager.php - Xajax Request Manager
+ * Manager.php - Jaxon Request Manager
  *
  * This class processes the input arguments from the GET or POST data of the request.
  * If this is a request for the initial page load, no arguments will be processed.
- * During a xajax request, any arguments found in the GET or POST will be converted to a PHP array.
+ * During a jaxon request, any arguments found in the GET or POST will be converted to a PHP array.
  *
- * @package xajax-core
+ * @package jaxon-core
  * @author Jared White
  * @author J. Max Wilson
  * @author Joseph Woolley
@@ -17,16 +17,16 @@
  * @copyright Copyright (c) 2008-2010 by Joseph Woolley, Steffen Konerow, Jared White  & J. Max Wilson
  * @copyright 2016 Thierry Feuzeu <thierry.feuzeu@gmail.com>
  * @license https://opensource.org/licenses/BSD-2-Clause BSD 2-Clause License
- * @link https://github.com/lagdo/xajax-core
+ * @link https://github.com/lagdo/jaxon-core
  */
 
-namespace Xajax\Request;
+namespace Jaxon\Request;
 
-use Xajax\Xajax;
+use Jaxon\Jaxon;
 
 class Manager
 {
-    use \Xajax\Utils\ContainerTrait;
+    use \Jaxon\Utils\ContainerTrait;
 
     /**
      * An array of arguments received via the GET or POST parameter xjxargs.
@@ -37,7 +37,7 @@ class Manager
     
     /**
      * Stores the method that was used to send the arguments from the client.
-     * Will be one of: Xajax::METHOD_UNKNOWN, Xajax::METHOD_GET, Xajax::METHOD_POST.
+     * Will be one of: Jaxon::METHOD_UNKNOWN, Jaxon::METHOD_GET, Jaxon::METHOD_POST.
      *
      * @var integer
      */
@@ -52,16 +52,16 @@ class Manager
     {
 
         $this->aArgs = array();
-        $this->nMethod = Xajax::METHOD_UNKNOWN;
+        $this->nMethod = Jaxon::METHOD_UNKNOWN;
         
         if(isset($_POST['xjxargs']))
         {
-            $this->nMethod = Xajax::METHOD_POST;
+            $this->nMethod = Jaxon::METHOD_POST;
             $this->aArgs = $_POST['xjxargs'];
         }
         else if(isset($_GET['xjxargs']))
         {
-            $this->nMethod = Xajax::METHOD_GET;
+            $this->nMethod = Jaxon::METHOD_GET;
             $this->aArgs = $_GET['xjxargs'];
         }
         if(get_magic_quotes_gpc() == 1)
@@ -72,7 +72,7 @@ class Manager
     }
     
     /**
-     * Return the one and only instance of the Xajax request manager
+     * Return the one and only instance of the Jaxon request manager
      *
      * @return Manager
      */
@@ -131,9 +131,9 @@ class Manager
     }
     
     /**
-     * Convert an Xajax request argument to its value
+     * Convert an Jaxon request argument to its value
      *
-     * Depending of its first char, the Xajax request argument is converted to a given type.
+     * Depending of its first char, the Jaxon request argument is converted to a given type.
      *
      * @param string        $sValue                The keys of the options in the file
      *
@@ -162,9 +162,9 @@ class Manager
     }
 
     /**
-     * Decode and convert an Xajax request argument from JSON
+     * Decode and convert an Jaxon request argument from JSON
      *
-     * @param string        $sArg                The Xajax request argument
+     * @param string        $sArg                The Jaxon request argument
      *
      * @return mixed
      */
@@ -188,9 +188,9 @@ class Manager
     }
 
     /**
-     * Decode an Xajax request argument and convert to UTF8 with iconv
+     * Decode an Jaxon request argument and convert to UTF8 with iconv
      *
-     * @param string|array        $mArg                The Xajax request argument
+     * @param string|array        $mArg                The Jaxon request argument
      *
      * @return void
      */
@@ -218,9 +218,9 @@ class Manager
     }
     
     /**
-     * Decode an Xajax request argument and convert to UTF8 with mb_convert_encoding
+     * Decode an Jaxon request argument and convert to UTF8 with mb_convert_encoding
      *
-     * @param string|array        $mArg                The Xajax request argument
+     * @param string|array        $mArg                The Jaxon request argument
      *
      * @return void
      */
@@ -248,9 +248,9 @@ class Manager
     }
     
     /**
-     * Decode an Xajax request argument from UTF8
+     * Decode an Jaxon request argument from UTF8
      *
-     * @param string|array        $mArg                The Xajax request argument
+     * @param string|array        $mArg                The Jaxon request argument
      *
      * @return void
      */
@@ -282,7 +282,7 @@ class Manager
     /**
      * Return the method that was used to send the arguments from the client
      *
-     * The method is one of: Xajax::METHOD_UNKNOWN, Xajax::METHOD_GET, Xajax::METHOD_POST.
+     * The method is one of: Jaxon::METHOD_UNKNOWN, Jaxon::METHOD_GET, Jaxon::METHOD_POST.
      *
      * @return integer
      */
@@ -316,7 +316,7 @@ class Manager
             }
             else
             {
-                throw new \Xajax\Exception\Error('errors.request.conversion');
+                throw new \Jaxon\Exception\Error('errors.request.conversion');
             }
 
             $mFunction = array(&$this, '__argumentDecodeUTF8_' . $sFunction);

@@ -5,13 +5,13 @@
  *
  * This file is automatically loaded by the Composer autoloader
  *
- * The Xajax global functions are defined here, and the library is initialised.
+ * The Jaxon global functions are defined here, and the library is initialised.
  *
- * @package xajax-core
+ * @package jaxon-core
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
  * @copyright 2016 Thierry Feuzeu <thierry.feuzeu@gmail.com>
  * @license https://opensource.org/licenses/BSD-2-Clause BSD 2-Clause License
- * @link https://github.com/lagdo/xajax-core
+ * @link https://github.com/lagdo/jaxon-core
  */
 
 /**
@@ -23,12 +23,12 @@
  *
  * @return string
  */
-function xajax_trans($sText, array $aPlaceHolders = array(), $sLanguage = null)
+function jaxon_trans($sText, array $aPlaceHolders = array(), $sLanguage = null)
 {
-    return \Xajax\Utils\Container::getInstance()->getTranslator()->trans($sText, $aPlaceHolders, $sLanguage);
+    return \Jaxon\Utils\Container::getInstance()->getTranslator()->trans($sText, $aPlaceHolders, $sLanguage);
 }
 
 /*
- * Load the Xajax request plugins
+ * Load the Jaxon request plugins
  */
-\Xajax\Plugin\Manager::getInstance()->loadPlugins();
+\Jaxon\Plugin\Manager::getInstance()->loadPlugins();

@@ -25,23 +25,23 @@ SOFTWARE.
 */
 
 /**
- * Paginator.php - Xajax Paginator
+ * Paginator.php - Jaxon Paginator
  *
- * Create pagination links from  an Xajax request and a data array.
+ * Create pagination links from  an Jaxon request and a data array.
  *
- * @package xajax-core
+ * @package jaxon-core
  * @author Jason Grimes
  * @author Thierry Feuzeu
  * @copyright 2014 Jason Grimes
  * @copyright 2016 Thierry Feuzeu
  * @license https://opensource.org/licenses/MIT MIT License
- * @link https://github.com/lagdo/xajax-core
+ * @link https://github.com/lagdo/jaxon-core
  */
 
-namespace Xajax\Utils;
+namespace Jaxon\Utils;
 
-use Xajax\Xajax;
-use Xajax\Request\Request;
+use Jaxon\Jaxon;
+use Jaxon\Request\Request;
 
 class Paginator
 {
@@ -58,7 +58,7 @@ class Paginator
      * @param int $totalItems The total number of items.
      * @param int $itemsPerPage The number of items per page.
      * @param int $currentPage The current page number.
-     * @param \Xajax\Request\Request $request A request to a method of an Xajax class
+     * @param \Jaxon\Request\Request $request A request to a method of an Jaxon class
      */
     public function __construct($totalItems, $itemsPerPage, $currentPage, $request)
     {
@@ -154,7 +154,7 @@ class Paginator
     }
 
     /**
-     * @param \Xajax\Request\Request $request
+     * @param \Jaxon\Request\Request $request
      */
     public function setRequest($request)
     {
@@ -162,7 +162,7 @@ class Paginator
         // Append the page number to the parameter list, if not yet given.
         if(($this->request) && !$this->request->hasPageNumber())
         {
-            $this->request->addParameter(Xajax::PAGE_NUMBER, 0);
+            $this->request->addParameter(Jaxon::PAGE_NUMBER, 0);
         }
     }
 
@@ -178,7 +178,7 @@ class Paginator
      * @param int $totalItems
      * @param int $itemsPerPage
      * @param int $currentPage
-     * @param \Xajax\Request\Request $request
+     * @param \Jaxon\Request\Request $request
      */
     public function setup($totalItems, $itemsPerPage, $currentPage, $request)
     {

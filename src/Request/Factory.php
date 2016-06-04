@@ -1,36 +1,36 @@
 <?php
 
 /**
- * Factory.php - Xajax Request Factory
+ * Factory.php - Jaxon Request Factory
  *
- * Create Xajax client side requests, which will generate the client script necessary
- * to invoke a xajax request from the browser to registered objects.
+ * Create Jaxon client side requests, which will generate the client script necessary
+ * to invoke a jaxon request from the browser to registered objects.
  *
- * @package xajax-core
+ * @package jaxon-core
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
  * @copyright 2016 Thierry Feuzeu <thierry.feuzeu@gmail.com>
  * @license https://opensource.org/licenses/BSD-2-Clause BSD 2-Clause License
- * @link https://github.com/lagdo/xajax-core
+ * @link https://github.com/lagdo/jaxon-core
  */
 
-namespace Xajax\Request;
+namespace Jaxon\Request;
 
-use Xajax\Xajax;
-use Xajax\Utils\Container;
+use Jaxon\Jaxon;
+use Jaxon\Utils\Container;
 
 class Factory
 {
     /**
-     * Return the javascript call to an Xajax function or object method
+     * Return the javascript call to an Jaxon function or object method
      *
      * @param string         $sName            The function or method (with class) name
      * @param ...            $xParams        The parameters of the function or method
      *
-     * @return \Xajax\Request\Request
+     * @return \Jaxon\Request\Request
      */
     public static function call($sName)
     {
-        // There should be at least on argument to this method, the name of the Xajax function or method
+        // There should be at least on argument to this method, the name of the Jaxon function or method
         if(($nArgs = func_num_args()) < 1 || !is_string(($sName = func_get_arg(0))))
         {
             return null;
@@ -45,11 +45,11 @@ class Factory
             $xParam = func_get_arg($nArg);
             if(is_numeric($xParam))
             {
-                $xRequest->addParameter(Xajax::NUMERIC_VALUE, $xParam);
+                $xRequest->addParameter(Jaxon::NUMERIC_VALUE, $xParam);
             }
             else if(is_string($xParam))
             {
-                $xRequest->addParameter(Xajax::QUOTED_VALUE, $xParam);
+                $xRequest->addParameter(Jaxon::QUOTED_VALUE, $xParam);
             }
             else if(is_array($xParam))
             {
@@ -60,7 +60,7 @@ class Factory
     }
 
     /**
-     * Make the pagination links for a registered Xajax class method
+     * Make the pagination links for a registered Jaxon class method
      *
      * @param integer $nItemsTotal the total number of items
      * @param integer $nItemsPerPage the number of items per page page
@@ -82,40 +82,40 @@ class Factory
     }
 
     /**
-     * Make a parameter of type Xajax::FORM_VALUES
+     * Make a parameter of type Jaxon::FORM_VALUES
      * 
      * @param string $sFormId the id of the HTML form
      * @return array
      */
     public static function form($sFormId)
     {
-        return array(Xajax::FORM_VALUES, $sFormId);
+        return array(Jaxon::FORM_VALUES, $sFormId);
     }
 
     /**
-     * Make a parameter of type Xajax::INPUT_VALUE
+     * Make a parameter of type Jaxon::INPUT_VALUE
      * 
      * @param string $sInputId the id of the HTML input element
      * @return array
      */
     public static function input($sInputId)
     {
-        return array(Xajax::INPUT_VALUE, $sInputId);
+        return array(Jaxon::INPUT_VALUE, $sInputId);
     }
 
     /**
-     * Make a parameter of type Xajax::CHECKED_VALUE
+     * Make a parameter of type Jaxon::CHECKED_VALUE
      * 
      * @param string $sInputId the name of the HTML form element
      * @return array
      */
     public static function checked($sInputId)
     {
-        return array(Xajax::CHECKED_VALUE, $sInputId);
+        return array(Jaxon::CHECKED_VALUE, $sInputId);
     }
 
     /**
-     * Make a parameter of type Xajax::CHECKED_VALUE
+     * Make a parameter of type Jaxon::CHECKED_VALUE
      * 
      * @param string $sInputId the name of the HTML form element
      * @return array
@@ -126,40 +126,40 @@ class Factory
     }
 
     /**
-     * Make a parameter of type Xajax::ELEMENT_INNERHTML
+     * Make a parameter of type Jaxon::ELEMENT_INNERHTML
      * 
      * @param string $sElementId the id of the HTML element
      * @return array
      */
     public static function html($sElementId)
     {
-        return array(Xajax::ELEMENT_INNERHTML, $sElementId);
+        return array(Jaxon::ELEMENT_INNERHTML, $sElementId);
     }
 
     /**
-     * Make a parameter of type Xajax::QUOTED_VALUE
+     * Make a parameter of type Jaxon::QUOTED_VALUE
      * 
      * @param string $sValue the value of the parameter
      * @return array
      */
     public static function string($sValue)
     {
-        return array(Xajax::QUOTED_VALUE, $sValue);
+        return array(Jaxon::QUOTED_VALUE, $sValue);
     }
 
     /**
-     * Make a parameter of type Xajax::NUMERIC_VALUE
+     * Make a parameter of type Jaxon::NUMERIC_VALUE
      * 
      * @param numeric $nValue the value of the parameter
      * @return array
      */
     public static function numeric($nValue)
     {
-        return array(Xajax::NUMERIC_VALUE, intval($nValue));
+        return array(Jaxon::NUMERIC_VALUE, intval($nValue));
     }
 
     /**
-     * Make a parameter of type Xajax::NUMERIC_VALUE
+     * Make a parameter of type Jaxon::NUMERIC_VALUE
      * 
      * @param numeric $nValue the value of the parameter
      * @return array
@@ -170,18 +170,18 @@ class Factory
     }
 
     /**
-     * Make a parameter of type Xajax::JS_VALUE
+     * Make a parameter of type Jaxon::JS_VALUE
      * 
      * @param string $sValue the javascript code of the parameter
      * @return array
      */
     public static function javascript($sValue)
     {
-        return array(Xajax::JS_VALUE, $sValue);
+        return array(Jaxon::JS_VALUE, $sValue);
     }
 
     /**
-     * Make a parameter of type Xajax::JS_VALUE
+     * Make a parameter of type Jaxon::JS_VALUE
      * 
      * @param string $sValue the javascript code of the parameter
      * @return array
@@ -192,13 +192,13 @@ class Factory
     }
 
     /**
-     * Make a parameter of type Xajax::PAGE_NUMBER
+     * Make a parameter of type Jaxon::PAGE_NUMBER
      * 
      * @return array
      */
     public static function page()
     {
-        // By default, the value of a parameter of type Xajax::PAGE_NUMBER is 0.
-        return array(Xajax::PAGE_NUMBER, 0);
+        // By default, the value of a parameter of type Jaxon::PAGE_NUMBER is 0.
+        return array(Jaxon::PAGE_NUMBER, 0);
     }
 }

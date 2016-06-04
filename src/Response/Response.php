@@ -1,9 +1,9 @@
 <?php
 
 /**
- * Response.php - The Xajax Response
+ * Response.php - The Jaxon Response
  *
- * This class collects commands to be sent back to the browser in response to a xajax request.
+ * This class collects commands to be sent back to the browser in response to a jaxon request.
  * Commands are encoded and packaged in a format that is acceptable to the response handler
  * from the javascript library running on the client side.
  * 
@@ -18,7 +18,7 @@
  * If you do not see your updates occuring on the browser side, ensure that you are using
  * the correct id in your response.
  *
- * @package xajax-core
+ * @package jaxon-core
  * @author Jared White
  * @author J. Max Wilson
  * @author Joseph Woolley
@@ -28,18 +28,18 @@
  * @copyright Copyright (c) 2008-2010 by Joseph Woolley, Steffen Konerow, Jared White  & J. Max Wilson
  * @copyright 2016 Thierry Feuzeu <thierry.feuzeu@gmail.com>
  * @license https://opensource.org/licenses/BSD-2-Clause BSD 2-Clause License
- * @link https://github.com/lagdo/xajax-core
+ * @link https://github.com/lagdo/jaxon-core
  */
 
-namespace Xajax\Response;
+namespace Jaxon\Response;
 
-use Xajax\Xajax;
-use Xajax\Plugin\Manager as PluginManager;
-use Xajax\Request\Manager as RequestManager;
+use Jaxon\Jaxon;
+use Jaxon\Plugin\Manager as PluginManager;
+use Jaxon\Request\Manager as RequestManager;
 
 class Response
 {
-    use \Xajax\Utils\ContainerTrait;
+    use \Jaxon\Utils\ContainerTrait;
 
     /**
      * The commands that will be sent to the browser in the response
@@ -50,7 +50,7 @@ class Response
     
     /**
      * A string, array or integer value to be returned to the caller when using 'synchronous' mode requests.
-     * See <xajax->setMode> for details.
+     * See <jaxon->setMode> for details.
      *
      * @var mixed
      */
@@ -59,7 +59,7 @@ class Response
     /**
      * A reference to the global plugin manager
      *
-     * @var \Xajax\Plugin\Manager
+     * @var \Jaxon\Plugin\Manager
      */
     private $xPluginManager;
     
@@ -99,7 +99,7 @@ class Response
      *
      * @param string        $sName                The name of the plugin
      *
-     * @return \Xajax\Plugin\Response
+     * @return \Jaxon\Plugin\Response
      */
     public function plugin($sName)
     {
@@ -119,7 +119,7 @@ class Response
      *
      * @param string        $sPluginName        The name of the plugin
      *
-     * @return \Xajax\Plugin\Response
+     * @return \Jaxon\Plugin\Response
      */
     public function __get($sPluginName)
     {
@@ -132,7 +132,7 @@ class Response
      * @param array         $aAttributes        Associative array of attributes that will describe the command
      * @param mixed            $mData                The data to be associated with this command
      *
-     * @return \Xajax\Plugin\Response
+     * @return \Jaxon\Plugin\Response
      */
     public function addCommand($aAttributes, $mData)
     {
@@ -173,7 +173,7 @@ class Response
     /**
      * Clear all the commands already added to the response
      *
-     * @return \Xajax\Plugin\Response
+     * @return \Jaxon\Plugin\Response
      */
     public function clearCommands()
     {
@@ -189,7 +189,7 @@ class Response
      * @param array         $aAttributes        The attributes for this response command
      * @param mixed            $mData                The data to be sent with this command
      *
-     * @return \Xajax\Plugin\Response
+     * @return \Jaxon\Plugin\Response
      */
     public function addPluginCommand($xPlugin, $aAttributes, $mData)
     {
@@ -236,7 +236,7 @@ class Response
         {
             if(!empty($mCommands))
             {
-                throw new \Xajax\Exception\Error('errors.response.data.invalid');
+                throw new \Jaxon\Exception\Error('errors.response.data.invalid');
             }
         }
     }
@@ -250,7 +250,7 @@ class Response
      * @param integer        $iCmdNumber            The number of commands to skip upon cancel
      * @param string        $sMessage            The message to display to the user
      *
-     * @return \Xajax\Plugin\Response
+     * @return \Jaxon\Plugin\Response
      */
     public function confirmCommands($iCmdNumber, $sMessage)
     {
@@ -269,7 +269,7 @@ class Response
      * @param string        $sAttribute            The attribute to be assigned
      * @param string        $sData                The value to be assigned to the attribute
      *
-     * @return \Xajax\Plugin\Response
+     * @return \Jaxon\Plugin\Response
      */
     public function assign($sTarget, $sAttribute, $sData)
     {
@@ -289,7 +289,7 @@ class Response
      * @param string        $sAttribute            The name of the attribute to be appended to
      * @param string        $sData                The data to be appended to the attribute
      *
-     * @return \Xajax\Plugin\Response
+     * @return \Jaxon\Plugin\Response
      */
     public function append($sTarget, $sAttribute, $sData)
     {    
@@ -309,7 +309,7 @@ class Response
      * @param string        $sAttribute            The name of the attribute to be prepended to
      * @param string        $sData                The value to be prepended to the attribute
      *
-     * @return \Xajax\Plugin\Response
+     * @return \Jaxon\Plugin\Response
      */
     public function prepend($sTarget, $sAttribute, $sData)
     {
@@ -330,7 +330,7 @@ class Response
      * @param string        $sSearch            The needle to search for
      * @param string        $sData                The data to use in place of the needle
      *
-     * @return \Xajax\Plugin\Response
+     * @return \Jaxon\Plugin\Response
      */
     public function replace($sTarget, $sAttribute, $sSearch, $sData)
     {
@@ -352,7 +352,7 @@ class Response
      * @param string        $sTarget            The id of the element to be updated.
      * @param string        $sAttribute            The attribute to be cleared
      *
-     * @return \Xajax\Plugin\Response
+     * @return \Jaxon\Plugin\Response
      */
     public function clear($sTarget, $sAttribute)
     {
@@ -368,7 +368,7 @@ class Response
      * @param string        $sAttribute            The attribute to be updated
      * @param string        $sData                The value to assign
      *
-     * @return \Xajax\Plugin\Response
+     * @return \Jaxon\Plugin\Response
      */
     public function contextAssign($sAttribute, $sData)
     {
@@ -389,7 +389,7 @@ class Response
      * @param string        $sAttribute            The attribute to be appended to
      * @param string        $sData                The value to append
      *
-     * @return \Xajax\Plugin\Response
+     * @return \Jaxon\Plugin\Response
      */
     public function contextAppend($sAttribute, $sData)
     {
@@ -410,7 +410,7 @@ class Response
      * @param string        $sAttribute            The attribute to be updated
      * @param string        $sData                The value to be prepended
      *
-     * @return \Xajax\Plugin\Response
+     * @return \Jaxon\Plugin\Response
      */
     public function contextPrepend($sAttribute, $sData)
     {
@@ -430,7 +430,7 @@ class Response
      *
      * @param string        $sAttribute            The attribute to be cleared
      *
-     * @return \Xajax\Plugin\Response
+     * @return \Jaxon\Plugin\Response
      */
     public function contextClear($sAttribute)
     {
@@ -442,7 +442,7 @@ class Response
      *
      * @param string        $sMessage            The message to be displayed
      *
-     * @return \Xajax\Plugin\Response
+     * @return \Jaxon\Plugin\Response
      */
     public function alert($sMessage)
     {
@@ -458,7 +458,7 @@ class Response
      *
      * @param string        $sMessage            The message to be displayed
      *
-     * @return \Xajax\Plugin\Response
+     * @return \Jaxon\Plugin\Response
      */
     public function debug($sMessage)
     {
@@ -475,7 +475,7 @@ class Response
      * @param string        $sURL                The relative or fully qualified URL
      * @param integer        $iDelay                Number of seconds to delay before the redirect occurs
      *
-     * @return \Xajax\Plugin\Response
+     * @return \Jaxon\Plugin\Response
      */
     public function redirect($sURL, $iDelay=0)
     {
@@ -528,7 +528,7 @@ class Response
      *
      * @param string        $sJS                The script to execute
      *
-     * @return \Xajax\Plugin\Response
+     * @return \Jaxon\Plugin\Response
      */
     public function script($sJS)
     {
@@ -544,7 +544,7 @@ class Response
      *
      * @param string        $sFunc                The name of the function to call
      *
-     * @return \Xajax\Plugin\Response
+     * @return \Jaxon\Plugin\Response
      */
     public function call($sFunc)
     {
@@ -563,7 +563,7 @@ class Response
      *
      * @param string        $sTarget            The id of the element to be removed
      *
-     * @return \Xajax\Plugin\Response
+     * @return \Jaxon\Plugin\Response
      */
     public function remove($sTarget)
     {
@@ -582,7 +582,7 @@ class Response
      * @param string        $sTag                The tag name to be used for the new element
      * @param string        $sId                The id to assign to the new element
      *
-     * @return \Xajax\Plugin\Response
+     * @return \Jaxon\Plugin\Response
      */
     public function create($sParent, $sTag, $sId)
     {
@@ -602,7 +602,7 @@ class Response
      * @param string        $sTag                The tag name to be used for the new element
      * @param string        $sId                The id to assign to the new element
      *
-     * @return \Xajax\Plugin\Response
+     * @return \Jaxon\Plugin\Response
      */
     public function insert($sBefore, $sTag, $sId)
     {
@@ -622,7 +622,7 @@ class Response
      * @param string        $sTag                The tag name to be used for the new element
      * @param string        $sId                The id to assign to the new element
      *
-     * @return \Xajax\Plugin\Response
+     * @return \Jaxon\Plugin\Response
      */
     public function insertAfter($sAfter, $sTag, $sId)
     {
@@ -643,7 +643,7 @@ class Response
      * @param string        $sName                The name of the new input element
      * @param string        $sId                The id of the new element
      *
-     * @return \Xajax\Plugin\Response
+     * @return \Jaxon\Plugin\Response
      */
     public function createInput($sParent, $sType, $sName, $sId)
     {
@@ -665,7 +665,7 @@ class Response
      * @param string        $sName                The name of the new input element
      * @param string        $sId                The id of the new element
      *
-     * @return \Xajax\Plugin\Response
+     * @return \Jaxon\Plugin\Response
      */
     public function insertInput($sBefore, $sType, $sName, $sId)
     {
@@ -687,7 +687,7 @@ class Response
      * @param string        $sName                The name of the new input element
      * @param string        $sId                The id of the new element
      *
-     * @return \Xajax\Plugin\Response
+     * @return \Jaxon\Plugin\Response
      */
     public function insertInputAfter($sAfter, $sType, $sName, $sId)
     {
@@ -708,7 +708,7 @@ class Response
      * @param string        $sEvent                The name of the event
      * @param string        $sScript            The javascript to execute when the event is fired
      *
-     * @return \Xajax\Plugin\Response
+     * @return \Jaxon\Plugin\Response
      */
     public function setEvent($sTarget, $sEvent, $sScript)
     {
@@ -730,7 +730,7 @@ class Response
      * @param string        $sEvent                The name of the event
      * @param string        $sHandler            The javascript function to call when the event is fired
      *
-     * @return \Xajax\Plugin\Response
+     * @return \Jaxon\Plugin\Response
      */
     public function addHandler($sTarget, $sEvent, $sHandler)
     {
@@ -750,7 +750,7 @@ class Response
      * @param string        $sEvent                The name of the event
      * @param string        $sHandler            The javascript function called when the event is fired
      *
-     * @return \Xajax\Plugin\Response
+     * @return \Jaxon\Plugin\Response
      */
     public function removeHandler($sTarget, $sEvent, $sHandler)
     {
@@ -770,7 +770,7 @@ class Response
      * @param string        $sArgs                Comma separated list of parameter names
      * @param string        $sScript            The javascript code that will become the body of the function
      *
-     * @return \Xajax\Plugin\Response
+     * @return \Jaxon\Plugin\Response
      */
     public function setFunction($sFunction, $sArgs, $sScript)
     {
@@ -796,7 +796,7 @@ class Response
      * @param string        $sReturnValueVar    The name of the variable that will retain the return value
      *                                             from the call to the original function
      *
-     * @return \Xajax\Plugin\Response
+     * @return \Jaxon\Plugin\Response
      */
     public function wrapFunction($sFunction, $sArgs, $aScripts, $sReturnValueVar)
     {
@@ -816,7 +816,7 @@ class Response
      * @param string        $sFileName            The relative or fully qualified URI of the javascript file
      * @param string        $sType                Determines the script type. Defaults to 'text/javascript'
      *
-     * @return \Xajax\Plugin\Response
+     * @return \Jaxon\Plugin\Response
      */
     public function includeScript($sFileName, $sType = null, $sId = null)
     {
@@ -837,7 +837,7 @@ class Response
      * @param string        $sFileName            The relative or fully qualified URI of the javascript file
      * @param string        $sType                Determines the script type. Defaults to 'text/javascript'
      *
-     * @return \Xajax\Plugin\Response
+     * @return \Jaxon\Plugin\Response
      */
     public function includeScriptOnce($sFileName, $sType = null, $sId = null)
     {
@@ -860,7 +860,7 @@ class Response
      * @param string        $sFileName            The relative or fully qualified URI of the javascript file
      * @param string        $sUnload            Name of a javascript function to call prior to unlaoding the file
      *
-     * @return \Xajax\Plugin\Response
+     * @return \Jaxon\Plugin\Response
      */
     public function removeScript($sFileName, $sUnload = '')
     {
@@ -880,7 +880,7 @@ class Response
      * @param string        $sFileName            The relative or fully qualified URI of the css file
      * @param string        $sMedia                The media type of the CSS file. Defaults to 'screen'
      *
-     * @return \Xajax\Plugin\Response
+     * @return \Jaxon\Plugin\Response
      */
     public function includeCSS($sFileName, $sMedia = null)
     {
@@ -899,7 +899,7 @@ class Response
      *
      * @param string        $sFileName            The relative or fully qualified URI of the css file
      *
-     * @return \Xajax\Plugin\Response
+     * @return \Jaxon\Plugin\Response
      */
     public function removeCSS($sFileName, $sMedia = null)
     {
@@ -912,7 +912,7 @@ class Response
     }
     
     /**
-     * Add a command to make Xajax pause while the CSS files are loaded
+     * Add a command to make Jaxon pause while the CSS files are loaded
      *
      * The browser is not typically a multi-threading application, with regards to javascript code.
      * Therefore, the CSS files included or removed with <Response->includeCSS> and
@@ -924,7 +924,7 @@ class Response
      * @param integer        $iTimeout            The number of 1/10ths of a second to pause before timing out
      *                                             and continuing with the execution of the response commands
      *
-     * @return \Xajax\Plugin\Response
+     * @return \Jaxon\Plugin\Response
      */
     public function waitForCSS($iTimeout = 600)
     {
@@ -938,17 +938,17 @@ class Response
     }
     
     /**
-     * Add a command to make Xajax to delay execution of the response commands until a specified condition is met
+     * Add a command to make Jaxon to delay execution of the response commands until a specified condition is met
      *
      * Note, this returns control to the browser, so that other script operations can execute.
-     * Xajax will continue to monitor the specified condition and, when it evaulates to true,
+     * Jaxon will continue to monitor the specified condition and, when it evaulates to true,
      * will continue processing response commands.
      *
      * @param string        $script                A piece of javascript code that evaulates to true or false
      * @param integer        $tenths                The number of 1/10ths of a second to wait before timing out
      *                                             and continuing with the execution of the response commands.
      *
-     * @return \Xajax\Plugin\Response
+     * @return \Jaxon\Plugin\Response
      */
     public function waitFor($script, $tenths)
     {
@@ -961,14 +961,14 @@ class Response
     }
     
     /**
-     * Add a command to make Xajax to pause execution of the response commands,
+     * Add a command to make Jaxon to pause execution of the response commands,
      * returning control to the browser so it can perform other commands asynchronously.
      *
-     * After the specified delay, Xajax will continue execution of the response commands.
+     * After the specified delay, Jaxon will continue execution of the response commands.
      *
      * @param integer        $tenths                The number of 1/10ths of a second to sleep
      *
-     * @return \Xajax\Plugin\Response
+     * @return \Jaxon\Plugin\Response
      */
     public function sleep($tenths)
     {
@@ -983,7 +983,7 @@ class Response
     /**
      * Add a command to start a DOM response
      *
-     * @return \Xajax\Plugin\Response
+     * @return \Jaxon\Plugin\Response
      */
     public function domStartResponse()
     {
@@ -996,7 +996,7 @@ class Response
      * @param string        $variable            The DOM element name (id or class)
      * @param string        $tag                The HTML tag of the new DOM element
      *
-     * @return \Xajax\Plugin\Response
+     * @return \Jaxon\Plugin\Response
      */
     public function domCreateElement($variable, $tag)
     {
@@ -1015,7 +1015,7 @@ class Response
      * @param string        $key                The name of the attribute
      * @param string        $value                The value of the attribute
      *
-     * @return \Xajax\Plugin\Response
+     * @return \Jaxon\Plugin\Response
      */
     public function domSetAttribute($variable, $key, $value)
     {
@@ -1035,7 +1035,7 @@ class Response
      * @param string        $skip                The ??
      * @param string        $remove                The ??
      *
-     * @return \Xajax\Plugin\Response
+     * @return \Jaxon\Plugin\Response
      */
     public function domRemoveChildren($parent, $skip = null, $remove = null)
     {
@@ -1056,7 +1056,7 @@ class Response
      * @param string        $parent                The DOM parent element
      * @param string        $variable            The DOM element name (id or class)
      *
-     * @return \Xajax\Plugin\Response
+     * @return \Jaxon\Plugin\Response
      */
     public function domAppendChild($parent, $variable)
     {
@@ -1074,7 +1074,7 @@ class Response
      * @param string        $target                The DOM target element
      * @param string        $variable            The DOM element name (id or class)
      *
-     * @return \Xajax\Plugin\Response
+     * @return \Jaxon\Plugin\Response
      */
     public function domInsertBefore($target, $variable)
     {
@@ -1092,7 +1092,7 @@ class Response
      * @param string        $target                The DOM target element
      * @param string        $variable            The DOM element name (id or class)
      *
-     * @return \Xajax\Plugin\Response
+     * @return \Jaxon\Plugin\Response
      */
     public function domInsertAfter($target, $variable)
     {
@@ -1110,7 +1110,7 @@ class Response
      * @param string        $parent                The DOM parent element
      * @param string        $text                The HTML text to append
      *
-     * @return \Xajax\Plugin\Response
+     * @return \Jaxon\Plugin\Response
      */
     public function domAppendText($parent, $text)
     {
@@ -1127,7 +1127,7 @@ class Response
     /**
      * Add a command to end a DOM response
      *
-     * @return \Xajax\Plugin\Response
+     * @return \Jaxon\Plugin\Response
      */
     public function domEndResponse()
     {
@@ -1152,7 +1152,7 @@ class Response
      *
      * @param mixed        $value                Any value
      *
-     * @return \Xajax\Plugin\Response
+     * @return \Jaxon\Plugin\Response
      */
     public function setReturnValue($value)
     {
@@ -1168,7 +1168,7 @@ class Response
     public function sendHeaders()
     {
         $xRequestManager = RequestManager::getInstance();
-        if($xRequestManager->getRequestMethod() == Xajax::METHOD_GET)
+        if($xRequestManager->getRequestMethod() == Jaxon::METHOD_GET)
         {
             header ("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
             header ("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");

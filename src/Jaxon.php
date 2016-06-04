@@ -1,16 +1,16 @@
 <?php
 
 /**
- * Xajax.php - Xajax class
+ * Jaxon.php - Jaxon class
  *
- * The Xajax class uses a modular plug-in system to facilitate the processing
+ * The Jaxon class uses a modular plug-in system to facilitate the processing
  * of special Ajax requests made by a PHP page.
  * It generates Javascript that the page must include in order to make requests.
- * It handles the output of response commands (see <Xajax\Response\Response>).
- * Many flags and settings can be adjusted to effect the behavior of the Xajax class
+ * It handles the output of response commands (see <Jaxon\Response\Response>).
+ * Many flags and settings can be adjusted to effect the behavior of the Jaxon class
  * as well as the client-side javascript.
  *
- * @package xajax-core
+ * @package jaxon-core
  * @author Jared White
  * @author J. Max Wilson
  * @author Joseph Woolley
@@ -20,20 +20,20 @@
  * @copyright Copyright (c) 2008-2010 by Joseph Woolley, Steffen Konerow, Jared White  & J. Max Wilson
  * @copyright 2016 Thierry Feuzeu <thierry.feuzeu@gmail.com>
  * @license https://opensource.org/licenses/BSD-2-Clause BSD 2-Clause License
- * @link https://github.com/lagdo/xajax-core
+ * @link https://github.com/lagdo/jaxon-core
  */
 
-namespace Xajax;
+namespace Jaxon;
 
-use Xajax\Plugin\Manager as PluginManager;
-use Xajax\Request\Manager as RequestManager;
-use Xajax\Response\Manager as ResponseManager;
+use Jaxon\Plugin\Manager as PluginManager;
+use Jaxon\Request\Manager as RequestManager;
+use Jaxon\Response\Manager as ResponseManager;
 
-use Xajax\Utils\URI;
+use Jaxon\Utils\URI;
 
-class Xajax extends Base
+class Jaxon extends Base
 {
-    use \Xajax\Utils\ContainerTrait;
+    use \Jaxon\Utils\ContainerTrait;
 
     /**
      * Mappings the previous config options to the current ones, so the library can still accept them
@@ -50,23 +50,23 @@ class Xajax extends Base
     private $aProcessingEvents;
 
     /**
-     * A reference to the global <\Xajax\Plugin\Manager>
+     * A reference to the global <\Jaxon\Plugin\Manager>
      *
-     * @var \Xajax\Plugin\Manager
+     * @var \Jaxon\Plugin\Manager
      */
     private $xPluginManager;
     
     /**
-     * A reference to the global <\Xajax\Request\Manager>
+     * A reference to the global <\Jaxon\Request\Manager>
      *
-     * @var \Xajax\Request\Manager
+     * @var \Jaxon\Request\Manager
      */
     private $xRequestManager;
     
     /**
-     * A reference to the global <\Xajax\Response\Manager>
+     * A reference to the global <\Jaxon\Response\Manager>
      *
-     * @var \Xajax\Response\Manager
+     * @var \Jaxon\Response\Manager
      */
     private $xResponseManager;
 
@@ -78,14 +78,14 @@ class Xajax extends Base
     private $challengeResponse;
     
     /**
-     * A reference to the global <\Xajax\Response\Response>
+     * A reference to the global <\Jaxon\Response\Response>
      *
-     * @var \Xajax\Response\Response
+     * @var \Jaxon\Response\Response
      */
     protected static $gxResponse = null;
 
     /**
-     * The error message generated when the Xajax error handling system is enabled
+     * The error message generated when the Jaxon error handling system is enabled
      *
      * @var unknown
      */
@@ -135,7 +135,7 @@ class Xajax extends Base
     }
 
     /**
-     * Get the unique instance of the Xajax class
+     * Get the unique instance of the Jaxon class
      *
      * @return object
      */
@@ -144,7 +144,7 @@ class Xajax extends Base
         static $xInstance = null;
         if(!$xInstance)
         {
-            $xInstance = new Xajax();
+            $xInstance = new Jaxon();
         }
         return $xInstance;
     }
@@ -162,9 +162,9 @@ class Xajax extends Base
             'core.language'                     => 'en',
             'core.encoding'                     => 'utf-8',
             'core.decode_utf8'                  => false,
-            'core.prefix.function'              => 'xajax_',
-            'core.prefix.class'                 => 'Xajax',
-            'core.prefix.event'                 => 'xajax_event_',
+            'core.prefix.function'              => 'jaxon_',
+            'core.prefix.class'                 => 'Jaxon',
+            'core.prefix.event'                 => 'jaxon_event_',
             // 'core.request.uri'               => '',
             'core.request.mode'                 => 'asynchronous',
             'core.request.method'               => 'POST',    // W3C: Method is case sensitive
@@ -187,7 +187,7 @@ class Xajax extends Base
     }
 
     /**
-     * Set Xajax to use the Composer autoloader
+     * Set Jaxon to use the Composer autoloader
      *
      * @return void
      */
@@ -197,7 +197,7 @@ class Xajax extends Base
     }
 
     /**
-     * Disable Xajax classes autoloading
+     * Disable Jaxon classes autoloading
      *
      * @return void
      */
@@ -207,14 +207,14 @@ class Xajax extends Base
     }
 
     /**
-     * Return the <Xajax\Response\Response> object preconfigured with the encoding and entity
-     * settings from this instance of <Xajax\Xajax>
+     * Return the <Jaxon\Response\Response> object preconfigured with the encoding and entity
+     * settings from this instance of <Jaxon\Jaxon>
      *
      * This is used for singleton-pattern response development.
      *
-     * @return Xajax\Response\Response
+     * @return Jaxon\Response\Response
      *
-     * @see The <Xajax\Response\Manager> class
+     * @see The <Jaxon\Response\Manager> class
      */
     public static function getGlobalResponse()
     {
@@ -226,13 +226,13 @@ class Xajax extends Base
     }
 
     /**
-     * The current Xajax version
+     * The current Jaxon version
      *
      * @return string
      */
     public static function getVersion()
     {
-        return 'Xajax 1.0.0 beta 1';
+        return 'Jaxon 1.0.0 beta 1';
     }
 
     /**
@@ -243,10 +243,10 @@ class Xajax extends Base
      *
      * @param string    $sType            The type of request handler being registered
      *        Options include:
-     *        - Xajax::USER_FUNCTION: a function declared at global scope
-     *        - Xajax::CALLABLE_OBJECT: an object who's methods are to be registered
-     *        - Xajax::BROWSER_EVENT: an event which will cause zero or more event handlers to be called
-     *        - Xajax::EVENT_HANDLER: register an event handler function.
+     *        - Jaxon::USER_FUNCTION: a function declared at global scope
+     *        - Jaxon::CALLABLE_OBJECT: an object who's methods are to be registered
+     *        - Jaxon::BROWSER_EVENT: an event which will cause zero or more event handlers to be called
+     *        - Jaxon::EVENT_HANDLER: register an event handler function.
      * @param mixed        $sFunction | $objObject | $sEvent
      *        When registering a function, this is the name of the function
      *        When registering a callable object, this is the object being registered
@@ -326,9 +326,9 @@ class Xajax extends Base
     }
 
     /**
-     * Set the URI of the Xajax javascript library files
+     * Set the URI of the Jaxon javascript library files
      * 
-     * @param string        $sJsLibURI        The URI of the Xajax javascript library files
+     * @param string        $sJsLibURI        The URI of the Jaxon javascript library files
      *
      * @return void
      */
@@ -338,7 +338,7 @@ class Xajax extends Base
     }
     
     /**
-     * Export and minify the javascript code generated by Xajax
+     * Export and minify the javascript code generated by Jaxon
      *
      * @param string        $sJsAppDir            The dir where the generated file will be located
      * @param string        $sJsAppURI            The URI where the generated file will be located
@@ -506,7 +506,7 @@ class Xajax extends Base
             return false;
 
         // TODO: Move to configuration option
-        $sessionKey = 'xajax_challenges';
+        $sessionKey = 'jaxon_challenges';
 
         $challenges = $this->loadChallenges($sessionKey);
 
@@ -534,7 +534,7 @@ class Xajax extends Base
     }
 
     /**
-     * This function is registered with PHP's set_error_handler if the xajax error handling system is enabled
+     * This function is registered with PHP's set_error_handler if the jaxon error handling system is enabled
      *
      * @return void
      */
@@ -564,7 +564,7 @@ class Xajax extends Base
     }
 
     /**
-     * Determine if a call is a xajax request or a page load request
+     * Determine if a call is a jaxon request or a page load request
      *
      * @return boolean
      */
@@ -574,9 +574,9 @@ class Xajax extends Base
     }
 
     /**
-     * If this is a xajax request, call the requested PHP function, build the response and send it back to the browser
+     * If this is a jaxon request, call the requested PHP function, build the response and send it back to the browser
      *
-     * This is the main server side engine for xajax.
+     * This is the main server side engine for Jaxon.
      * It handles all the incoming requests, including the firing of events and handling of the response.
      * If your RequestURI is the same as your web page, then this function should be called before ANY
      * headers or HTML is output from your script.
@@ -585,7 +585,7 @@ class Xajax extends Base
      *
      * @return void
      * 
-     * @see <Xajax\Xajax->canProcessRequest>
+     * @see <Jaxon\Jaxon->canProcessRequest>
      */
     public function processRequest()
     {
@@ -606,7 +606,7 @@ class Xajax extends Base
         	return;
         }
 
-        // Use xajax error handler if necessary
+        // Use jaxon error handler if necessary
         if(($this->getOption('core.error.handle')))
         {
             $this->setErrorMessage('');
@@ -712,7 +712,7 @@ class Xajax extends Base
     }
 
     /**
-     * Returns the Xajax Javascript header and wrapper code to be printed into the page
+     * Returns the Jaxon Javascript header and wrapper code to be printed into the page
      *
      * The javascript code returned by this function is dependent on the plugins
      * that are included and the functions and classes that are registered.
@@ -742,7 +742,7 @@ class Xajax extends Base
     }
 
     /**
-     * Print the xajax Javascript header and wrapper code into your page
+     * Print the jaxon Javascript header and wrapper code into your page
      *
      * The javascript code returned by this function is dependent on the plugins
      * that are included and the functions and classes that are registered.
@@ -785,7 +785,7 @@ class Xajax extends Base
      *
      * @param string        $sName                The plugin name
      *
-     * @return \Xajax\Plugin\Response
+     * @return \Jaxon\Plugin\Response
      */
     public function plugin($sName)
     {

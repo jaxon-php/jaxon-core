@@ -1,18 +1,18 @@
 <?php
 
 /**
- * Config.php - Xajax config manager
+ * Config.php - Jaxon config manager
  *
- * Read and set Xajax config options.
+ * Read and set Jaxon config options.
  *
- * @package xajax-core
+ * @package jaxon-core
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
  * @copyright 2016 Thierry Feuzeu <thierry.feuzeu@gmail.com>
  * @license https://opensource.org/licenses/BSD-2-Clause BSD 2-Clause License
- * @link https://github.com/lagdo/xajax-core
+ * @link https://github.com/lagdo/jaxon-core
  */
 
-namespace Xajax\Utils;
+namespace Jaxon\Utils;
 
 class Config
 {

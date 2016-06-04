@@ -1,44 +1,44 @@
 <?php
 
 /**
- * FactoryTrait.php - Trait for Xajax Response Factory
+ * FactoryTrait.php - Trait for Jaxon Response Factory
  *
- * Make functions to create Xajax Response objects available to Xajax classes.
+ * Make functions to create Jaxon Response objects available to Jaxon classes.
  *
- * @package xajax-core
+ * @package jaxon-core
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
  * @copyright 2016 Thierry Feuzeu <thierry.feuzeu@gmail.com>
  * @license https://opensource.org/licenses/BSD-2-Clause BSD 2-Clause License
- * @link https://github.com/lagdo/xajax-core
+ * @link https://github.com/lagdo/jaxon-core
  */
 
-namespace Xajax\Response;
+namespace Jaxon\Response;
 
-use \Xajax\Xajax;
+use \Jaxon\Jaxon;
 
 trait FactoryTrait
 {
     /**
      * The global response instance
      *
-     * @var \Xajax\Response\Response
+     * @var \Jaxon\Response\Response
      */
     protected $response = null;
 
     /**
-     * Set the global Xajax response object
+     * Set the global Jaxon response object
      *
      * @return void
      */
     public function setGlobalResponse()
     {
-        $this->response = Xajax::getGlobalResponse();
+        $this->response = Jaxon::getGlobalResponse();
     }
 
     /**
-     * Create a new Xajax response object
+     * Create a new Jaxon response object
      *
-     * @return \Xajax\Response\Response        The new Xajax response object
+     * @return \Jaxon\Response\Response        The new Jaxon response object
      */
     public function newResponse()
     {
