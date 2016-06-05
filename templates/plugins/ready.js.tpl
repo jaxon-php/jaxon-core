@@ -8,17 +8,17 @@ window.setTimeout(
     function() {
         var printCoreError = true, printDebugError = true, printVerboseError = true, printLanguageError = true;
         try {
-            if (xajax.isLoaded)
+            if (jaxon.isLoaded)
                 printCoreError = false;
 {if $bDebug}
-            else if(xajax.debug.isLoaded)
+            else if(jaxon.debug.isLoaded)
                 printDebugError = false;
 {if $bVerboseDebug}
-            else if(xajax.debug.verbose.isLoaded)
+            else if(jaxon.debug.verbose.isLoaded)
                 printVerboseError = false;
 {/if}
 {if $bLanguage}
-            else if(xajax.debug.lang.isLoaded)
+            else if(jaxon.debug.lang.isLoaded)
                 printLanguageError = false;
 {/if}
 {/if}

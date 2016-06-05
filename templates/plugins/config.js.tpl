@@ -1,23 +1,23 @@
 try {
-    if(typeof xajax.config == undefined)
-        xajax.config = {};
+    if(typeof jaxon.config == undefined)
+        jaxon.config = {};
 }
 catch(e) {
-    xajax = {};
-    xajax.config = {};
+    jaxon = {};
+    jaxon.config = {};
 };
 
-xajax.config.requestURI = "{$sRequestURI|noescape}";
-xajax.config.statusMessages = {$sStatusMessages|noescape};
-xajax.config.waitCursor = {$sWaitCursor|noescape};
-xajax.config.version = "{$sVersion|noescape}";
-xajax.config.defaultMode = "{$sDefaultMode|noescape}";
-xajax.config.defaultMethod = "{$sDefaultMethod|noescape}";
-xajax.config.responseType = "{$sResponseType|noescape}";
+jaxon.config.requestURI = "{$sRequestURI|noescape}";
+jaxon.config.statusMessages = {$sStatusMessages|noescape};
+jaxon.config.waitCursor = {$sWaitCursor|noescape};
+jaxon.config.version = "{$sVersion|noescape}";
+jaxon.config.defaultMode = "{$sDefaultMode|noescape}";
+jaxon.config.defaultMethod = "{$sDefaultMethod|noescape}";
+jaxon.config.responseType = "{$sResponseType|noescape}";
 {if $nResponseQueueSize > 0}
-xajax.config.responseQueueSize = {$nResponseQueueSize|noescape};
+jaxon.config.responseQueueSize = {$nResponseQueueSize|noescape};
 {/if}
 {if ($bDebug) && ($sDebugOutputID)}
-xajax.debug = {};
-xajax.debug.outputID = "{$sDebugOutputID|noescape}";
+jaxon.debug = {};
+jaxon.debug.outputID = "{$sDebugOutputID|noescape}";
 {/if}

@@ -474,7 +474,7 @@ class Manager
     {
         if(!$this->hasOption('js.lib.uri'))
         {
-            return '//assets.lagdo-software.net/libs/xajax/js/latest/';
+            return '//assets.lagdo-software.net/libs/jaxon/js/latest/';
         }
         // Todo: check the validity of the URI
         return rtrim($this->getOption('js.lib.uri'), '/') . '/';
@@ -545,11 +545,11 @@ class Manager
     public function getJs()
     {
         $sJsLibURI = $this->getJsLibURI();
-        $sJsCoreUrl = $sJsLibURI . $this->_getScriptFilename('xajax.core.js');
-        $sJsReadyUrl = $sJsLibURI . $this->_getScriptFilename('xajax.ready.js');
-        $sJsDebugUrl = $sJsLibURI . $this->_getScriptFilename('xajax.debug.js');
-        $sJsVerboseUrl = $sJsLibURI . $this->_getScriptFilename('xajax.verbose.js');
-        $sJsLanguageUrl = $sJsLibURI . $this->_getScriptFilename('lang/xajax.' . $this->getOption('core.language') . '.js');
+        $sJsCoreUrl = $sJsLibURI . $this->_getScriptFilename('jaxon.core.js');
+        $sJsReadyUrl = $sJsLibURI . $this->_getScriptFilename('jaxon.ready.js');
+        $sJsDebugUrl = $sJsLibURI . $this->_getScriptFilename('jaxon.debug.js');
+        $sJsVerboseUrl = $sJsLibURI . $this->_getScriptFilename('jaxon.verbose.js');
+        $sJsLanguageUrl = $sJsLibURI . $this->_getScriptFilename('lang/jaxon.' . $this->getOption('core.language') . '.js');
 
         // Add component files to the javascript file array;
         $aJsFiles = array($sJsCoreUrl, $sJsReadyUrl);
@@ -646,25 +646,25 @@ class Manager
     {
         // Print Jaxon config vars
         $sJsLibURI = $this->getJsLibURI();
-        $sJsCoreUrl = $sJsLibURI . $this->_getScriptFilename('xajax.core.js');
-        $sJsDebugUrl = $sJsLibURI . $this->_getScriptFilename('xajax.debug.js');
-        $sJsVerboseUrl = $sJsLibURI . $this->_getScriptFilename('xajax.verbose.js');
-        $sJsLanguageUrl = $sJsLibURI . $this->_getScriptFilename('lang/xajax.' . $this->getOption('core.language') . '.js');
+        $sJsCoreUrl = $sJsLibURI . $this->_getScriptFilename('jaxon.core.js');
+        $sJsDebugUrl = $sJsLibURI . $this->_getScriptFilename('jaxon.debug.js');
+        $sJsVerboseUrl = $sJsLibURI . $this->_getScriptFilename('jaxon.verbose.js');
+        $sJsLanguageUrl = $sJsLibURI . $this->_getScriptFilename('lang/jaxon.' . $this->getOption('core.language') . '.js');
 
         $sJsCoreError = $this->trans('errors.component.load', array(
-            'name' => 'xajax',
+            'name' => 'jaxon',
             'url' => $sJsCoreUrl,
         ));
         $sJsDebugError = $this->trans('errors.component.load', array(
-            'name' => 'xajax.debug',
+            'name' => 'jaxon.debug',
             'url' => $sJsDebugUrl,
         ));
         $sJsVerboseError = $this->trans('errors.component.load', array(
-            'name' => 'xajax.debug.verbose',
+            'name' => 'jaxon.debug.verbose',
             'url' => $sJsVerboseUrl,
         ));
         $sJsLanguageError = $this->trans('errors.component.load', array(
-            'name' => 'xajax.debug.lang',
+            'name' => 'jaxon.debug.lang',
             'url' => $sJsLanguageUrl,
         ));
 

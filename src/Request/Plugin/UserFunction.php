@@ -49,13 +49,13 @@ class UserFunction extends RequestPlugin
 
         $this->sRequestedFunction = null;
         
-        if(isset($_GET['xjxfun']))
+        if(isset($_GET['jxnfun']))
         {
-            $this->sRequestedFunction = $_GET['xjxfun'];
+            $this->sRequestedFunction = $_GET['jxnfun'];
         }
-        if(isset($_POST['xjxfun']))
+        if(isset($_POST['jxnfun']))
         {
-            $this->sRequestedFunction = $_POST['xjxfun'];
+            $this->sRequestedFunction = $_POST['jxnfun'];
         }
     }
 

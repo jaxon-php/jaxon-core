@@ -153,7 +153,7 @@ class URI
         
             foreach($aQueries as $sKey => $sQuery)
             {
-                if("xjxGenerate" == substr($sQuery, 0, 11))
+                if("jxnGenerate" == substr($sQuery, 0, 11))
                     unset($aQueries[$sKey]);
             }
                 

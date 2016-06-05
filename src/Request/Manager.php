@@ -29,7 +29,7 @@ class Manager
     use \Jaxon\Utils\ContainerTrait;
 
     /**
-     * An array of arguments received via the GET or POST parameter xjxargs.
+     * An array of arguments received via the GET or POST parameter jxnargs.
      *
      * @var array
      */
@@ -54,15 +54,15 @@ class Manager
         $this->aArgs = array();
         $this->nMethod = Jaxon::METHOD_UNKNOWN;
         
-        if(isset($_POST['xjxargs']))
+        if(isset($_POST['jxnargs']))
         {
             $this->nMethod = Jaxon::METHOD_POST;
-            $this->aArgs = $_POST['xjxargs'];
+            $this->aArgs = $_POST['jxnargs'];
         }
-        else if(isset($_GET['xjxargs']))
+        else if(isset($_GET['jxnargs']))
         {
             $this->nMethod = Jaxon::METHOD_GET;
-            $this->aArgs = $_GET['xjxargs'];
+            $this->aArgs = $_GET['jxnargs'];
         }
         if(get_magic_quotes_gpc() == 1)
         {

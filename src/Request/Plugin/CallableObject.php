@@ -66,21 +66,21 @@ class CallableObject extends RequestPlugin
         $this->sRequestedClass = null;
         $this->sRequestedMethod = null;
 
-        if(!empty($_GET['xjxcls']))
+        if(!empty($_GET['jxncls']))
         {
-            $this->sRequestedClass = $_GET['xjxcls'];
+            $this->sRequestedClass = $_GET['jxncls'];
         }
-        if(!empty($_GET['xjxmthd']))
+        if(!empty($_GET['jxnmthd']))
         {
-            $this->sRequestedMethod = $_GET['xjxmthd'];
+            $this->sRequestedMethod = $_GET['jxnmthd'];
         }
-        if(!empty($_POST['xjxcls']))
+        if(!empty($_POST['jxncls']))
         {
-            $this->sRequestedClass = $_POST['xjxcls'];
+            $this->sRequestedClass = $_POST['jxncls'];
         }
-        if(!empty($_POST['xjxmthd']))
+        if(!empty($_POST['jxnmthd']))
         {
-            $this->sRequestedMethod = $_POST['xjxmthd'];
+            $this->sRequestedMethod = $_POST['jxnmthd'];
         }
     }
 

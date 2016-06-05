@@ -987,7 +987,7 @@ class Response
      */
     public function domStartResponse()
     {
-        $this->script('xjxElm = []');
+        $this->script('jxnElm = []');
     }
     
     /**
@@ -1131,7 +1131,7 @@ class Response
      */
     public function domEndResponse()
     {
-        $this->script('xjxElm = []');
+        $this->script('jxnElm = []');
     }
 
     /**
@@ -1148,7 +1148,7 @@ class Response
      * Stores a value that will be passed back as part of the response
      *
      * When making synchronous requests, the calling javascript can obtain this value
-     * immediately as the return value of the <xajax.call> javascript function
+     * immediately as the return value of the <jaxon.call> javascript function
      *
      * @param mixed        $value                Any value
      *
@@ -1197,13 +1197,13 @@ class Response
         
         if(($this->returnValue))
         {
-            $response['xjxrv'] = $this->returnValue;
+            $response['jxnrv'] = $this->returnValue;
         }
-        $response['xjxobj'] = array();
+        $response['jxnobj'] = array();
 
         foreach($this->aCommands as $xCommand)
         {
-            $response['xjxobj'][] = $xCommand;
+            $response['jxnobj'][] = $xCommand;
         }
 
         return json_encode($response);

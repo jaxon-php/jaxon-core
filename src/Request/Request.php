@@ -170,22 +170,22 @@ class Request
         {
         case Jaxon::FORM_VALUES:
             $sFormID = $sValue;
-            $this->aParameters[$nParameter] = "xajax.getFormValues(" . $this->sQuoteCharacter 
+            $this->aParameters[$nParameter] = "jaxon.getFormValues(" . $this->sQuoteCharacter 
                 . $sFormID . $this->sQuoteCharacter . ")";
             break;
         case Jaxon::INPUT_VALUE:
             $sInputID = $sValue;
-            $this->aParameters[$nParameter] =  "xajax.$("  . $this->sQuoteCharacter 
+            $this->aParameters[$nParameter] =  "jaxon.$("  . $this->sQuoteCharacter 
                 . $sInputID . $this->sQuoteCharacter  . ").value";
             break;
         case Jaxon::CHECKED_VALUE:
             $sCheckedID = $sValue;
-            $this->aParameters[$nParameter] =  "xajax.$("  . $this->sQuoteCharacter 
+            $this->aParameters[$nParameter] =  "jaxon.$("  . $this->sQuoteCharacter 
                 . $sCheckedID  . $this->sQuoteCharacter . ").checked";
             break;
         case Jaxon::ELEMENT_INNERHTML:
             $sElementID = $sValue;
-            $this->aParameters[$nParameter] = "xajax.$(" . $this->sQuoteCharacter 
+            $this->aParameters[$nParameter] = "jaxon.$(" . $this->sQuoteCharacter 
                 . $sElementID . $this->sQuoteCharacter . ").innerHTML";
             break;
         case Jaxon::QUOTED_VALUE:
