@@ -1,5 +1,5 @@
 {
-    "name": "lagdo/jaxon-core",
+    "name": "jaxon-php/jaxon-core",
     "type": "library",
     "description": "Jaxon is an open source PHP class library for easily creating powerful PHP-driven, web-based Ajax Applications. Using Jaxon, you can asynchronously call PHP functions and update the content of your webpage without reloading the page.",
     "authors": [
@@ -15,8 +15,8 @@
     "support": {
         "forum": "http://community.jaxon-project.org",
         "irc": "irc://irc.freenode.org/jaxon",
-        "issues": "https://github.com/lagdo/jaxon-core/issues",
-        "source": "https://github.com/lagdo/jaxon-core"
+        "issues": "https://github.com/jaxon-php/jaxon-core/issues",
+        "source": "https://github.com/jaxon-php/jaxon-core"
     },
     "require": {
         "php": ">=5.4.0",

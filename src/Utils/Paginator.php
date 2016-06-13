@@ -35,7 +35,7 @@ SOFTWARE.
  * @copyright 2014 Jason Grimes
  * @copyright 2016 Thierry Feuzeu
  * @license https://opensource.org/licenses/MIT MIT License
- * @link https://github.com/lagdo/jaxon-core
+ * @link https://github.com/jaxon-php/jaxon-core
  */
 
 namespace Jaxon\Utils;

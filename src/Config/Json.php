@@ -10,7 +10,7 @@
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
  * @copyright 2016 Thierry Feuzeu <thierry.feuzeu@gmail.com>
  * @license https://opensource.org/licenses/BSD-2-Clause BSD 2-Clause License
- * @link https://github.com/lagdo/jaxon-core
+ * @link https://github.com/jaxon-php/jaxon-core
  */
 
 namespace Jaxon\Config;

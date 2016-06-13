@@ -29,13 +29,13 @@ Documentation
 
 The project documentation is available in [English](http://jaxon.lagdo-software.net/docs/en/) and [French](http://jaxon.lagdo-software.net/docs/fr/).
 
-Some sample codes are provided in the [lagdo/jaxon-examples](https://github.com/lagdo/jaxon-examples) package, which is installed on a demo server [here](http://jaxon.lagdo-software.net/).
+Some sample codes are provided in the [jaxon-php/jaxon-examples](https://github.com/jaxon-php/jaxon-examples) package, which is installed on a demo server [here](http://jaxon.lagdo-software.net/).
 
 Contribute
 ----------
 
-- Issue Tracker: github.com/lagdo/jaxon-core/issues
-- Source Code: github.com/lagdo/jaxon-core
+- Issue Tracker: github.com/jaxon-php/jaxon-core/issues
+- Source Code: github.com/jaxon-php/jaxon-core
 
 License
 -------
