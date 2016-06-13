@@ -27,9 +27,9 @@ New features
 Documentation
 ------------
 
-The project documentation is available in [English](http://jaxon.lagdo-software.net/docs/en/) and [French](http://jaxon.lagdo-software.net/docs/fr/).
+The project documentation is available in [English](http://www.jaxon-php.org/docs/en/) and [French](http://www.jaxon-php.org/docs/fr/).
 
-Some sample codes are provided in the [jaxon-php/jaxon-examples](https://github.com/jaxon-php/jaxon-examples) package, which is installed on a demo server [here](http://jaxon.lagdo-software.net/).
+Some sample codes are provided in the [jaxon-php/jaxon-examples](https://github.com/jaxon-php/jaxon-examples) package, which is installed on a demo server [here](http://www.jaxon-php.org/).
 
 Contribute
 ----------

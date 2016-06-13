@@ -474,7 +474,7 @@ class Manager
     {
         if(!$this->hasOption('js.lib.uri'))
         {
-            return '//assets.lagdo-software.net/libs/jaxon/js/latest/';
+            return '//packages.jaxon-php.org/libs/jaxon/js/latest/';
         }
         // Todo: check the validity of the URI
         return rtrim($this->getOption('js.lib.uri'), '/') . '/';
