@@ -12,7 +12,7 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Config\Exception;
+namespace Jaxon\Exception\Config;
 
 class Data extends \Exception
 {
