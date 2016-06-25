@@ -603,7 +603,7 @@ class Jaxon extends Base
         // 
         if(!$this->canProcessRequest())
         {
-        	return;
+            return;
         }
 
         // Use jaxon error handler if necessary
@@ -622,7 +622,7 @@ class Jaxon extends Base
             $xResponse = $this->aProcessingEvents[self::PROCESSING_EVENT_BEFORE]->call(array(&$bEndRequest));
             if($xResponse instanceof Response\Response)
             {
-            	$this->xResponseManager->append($xResponse);
+                $this->xResponseManager->append($xResponse);
             }
         }
 

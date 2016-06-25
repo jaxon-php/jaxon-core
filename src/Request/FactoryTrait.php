@@ -116,11 +116,11 @@ trait FactoryTrait
      */
     public function paginate($nItemsTotal, $nItemsPerPage, $nCurrentPage, $sMethod)
     {
-    	$sMethod = (string)$sMethod;
-    	$aArgs = func_get_args();
-    	// Prepend the class name to the method name
-    	$aArgs[3] = $this->getJaxonClassName() . '.' . $sMethod;
-    	// Make the request
-    	return call_user_func_array('\Jaxon\Request\Factory::paginate', $aArgs);
+        $sMethod = (string)$sMethod;
+        $aArgs = func_get_args();
+        // Prepend the class name to the method name
+        $aArgs[3] = $this->getJaxonClassName() . '.' . $sMethod;
+        // Make the request
+        return call_user_func_array('\Jaxon\Request\Factory::paginate', $aArgs);
     }
 }
