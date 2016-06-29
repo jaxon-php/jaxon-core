@@ -23,9 +23,9 @@ class Config
     /**
      * Recursively read Jaxon options from a data array
      *
-     * @param array         $aOptions            The options array
+     * @param array         $aOptions           The options array
      * @param string        $sPrefix            The prefix for option names
-     * @param integer        $nDepth                The depth from the first call
+     * @param integer       $nDepth             The depth from the first call
      *
      * @return void
      */

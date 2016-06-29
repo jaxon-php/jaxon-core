@@ -21,7 +21,7 @@ class Yaml
      * Read and set Jaxon options from a YAML formatted config file
      *
      * @param array         $sConfigFile        The full path to the config file
-     * @param string        $sKeys                The keys of the options in the file
+     * @param string        $sKeys              The keys of the options in the file
      *
      * @return void
      */

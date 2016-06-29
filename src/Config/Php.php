@@ -21,7 +21,7 @@ class Php
      * Read and set Jaxon options from a PHP config file
      *
      * @param array         $sConfigFile        The full path to the config file
-     * @param string        $sKeys                The keys of the options in the file
+     * @param string        $sKeys              The keys of the options in the file
      *
      * @return void
      */

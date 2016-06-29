@@ -797,4 +797,71 @@ class Jaxon extends Base
         $xPlugin->setResponse($this);
         return $xPlugin;
     }
+
+    /**
+     * Read and set Jaxon options from a PHP config file
+     *
+     * @param array         $sConfigFile        The full path to the config file
+     * @param string        $sKeys              The keys of the options in the file
+     *
+     * @return void
+     */
+    public function readPhpConfigFile($sConfigFile, $sKey = '')
+    {
+        \Jaxon\Config\Php::read($sConfigFile, $sKey);
+    }
+    
+    /**
+     * Read and set Jaxon options from a YAML config file
+     *
+     * @param array         $sConfigFile        The full path to the config file
+     * @param string        $sKeys              The keys of the options in the file
+     *
+     * @return void
+     */
+    public function readYamlConfigFile($sConfigFile, $sKey = '')
+    {
+        \Jaxon\Config\Yaml::read($sConfigFile, $sKey);
+    }
+    
+    /**
+     * Read and set Jaxon options from a JSON config file
+     *
+     * @param array         $sConfigFile        The full path to the config file
+     * @param string        $sKeys              The keys of the options in the file
+     *
+     * @return void
+     */
+    public function readJsonConfigFile($sConfigFile, $sKey = '')
+    {
+        \Jaxon\Config\Json::read($sConfigFile, $sKey);
+    }
+    
+    /**
+     * Read and set Jaxon options from a config file
+     *
+     * @param array         $sConfigFile        The full path to the config file
+     * @param string        $sKeys              The keys of the options in the file
+     *
+     * @return void
+     */
+    public function readConfigFile($sConfigFile, $sKey = '')
+    {
+        $sExt = pathinfo($sConfigFile, PATHINFO_EXTENSION);
+        switch($sExt)
+        {
+        case 'php':
+            $this->readPhpConfigFile($sConfigFile, $sKey);
+            break;
+        case 'yaml':
+            $this->readYamlConfigFile($sConfigFile, $sKey);
+            break;
+        case 'json':
+            $this->readJsonConfigFile($sConfigFile, $sKey);
+            break;
+        default:
+            throw new \Jaxon\Exception\Config\File('access', $sConfigFile);
+            break;
+        }
+    }
 }
