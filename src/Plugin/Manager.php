@@ -488,9 +488,9 @@ class Manager
     public function canExportJavascript()
     {
         // Check config options
-        // - The js.app.export option must be set to true
+        // - The js.app.extern option must be set to true
         // - The js.app.uri and js.app.dir options must be set to non null values
-        if(!$this->getOption('js.app.export') ||
+        if(!$this->getOption('js.app.extern') ||
             !$this->getOption('js.app.uri') ||
             !$this->getOption('js.app.dir'))
         {
