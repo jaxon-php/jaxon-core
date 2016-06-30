@@ -823,7 +823,7 @@ class Jaxon extends Base
     {
         \Jaxon\Config\Yaml::read($sConfigFile, $sKey);
     }
-    
+
     /**
      * Read and set Jaxon options from a JSON config file
      *
@@ -836,7 +836,7 @@ class Jaxon extends Base
     {
         \Jaxon\Config\Json::read($sConfigFile, $sKey);
     }
-    
+
     /**
      * Read and set Jaxon options from a config file
      *
@@ -863,5 +863,35 @@ class Jaxon extends Base
             throw new \Jaxon\Exception\Config\File('access', $sConfigFile);
             break;
         }
+    }
+
+    /**
+     * Register a plugin
+     *
+     * Below is a table for priorities and their description:
+     * - 0 thru 999: Plugins that are part of or extensions to the jaxon core
+     * - 1000 thru 8999: User created plugins, typically, these plugins don't care about order
+     * - 9000 thru 9999: Plugins that generally need to be last or near the end of the plugin list
+     *
+     * @param Plugin         $xPlugin               An instance of a plugin
+     * @param integer        $nPriority             The plugin priority, used to order the plugins
+     *
+     * @return void
+     */
+    public function registerPlugin(\Jaxon\Plugin\Plugin $xPlugin, $nPriority = 1000)
+    {
+        $this->xPluginManager->registerPlugin($xPlugin, $nPriority);
+    }
+
+    /**
+     * Register the Jaxon request plugins
+     *
+     * @return void
+     */
+    public function registerRequestPlugins()
+    {
+        $this->registerPlugin(new \Jaxon\Request\Plugin\CallableObject(), 101);
+        $this->registerPlugin(new \Jaxon\Request\Plugin\UserFunction(), 102);
+        $this->registerPlugin(new \Jaxon\Request\Plugin\BrowserEvent(), 103);
     }
 }

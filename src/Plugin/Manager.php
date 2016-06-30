@@ -128,28 +128,15 @@ class Manager
         $this->bAutoloadEnabled = false;
         $this->xAutoloader = null;
     }
-
-    /**
-     * Load the locally defined plugins
-     *
-     * @return void
-     */
-    public function loadPlugins()
-    {
-        $this->registerPlugin(new \Jaxon\Request\Plugin\CallableObject(), 101);
-        $this->registerPlugin(new \Jaxon\Request\Plugin\UserFunction(), 102);
-        $this->registerPlugin(new \Jaxon\Request\Plugin\BrowserEvent(), 103);
-    }
     
     /**
      * Inserts an entry into an array given the specified priority number
      *
-     * If a plugin already exists with the given priority, the priority is automatically
-     * incremented until a free spot is found.
+     * If a plugin already exists with the given priority, the priority is automatically incremented until a free spot is found.
      * The plugin is then inserted into the empty spot in the array.
      *
-     * @param Plugin         $xPlugin            An instance of a plugin
-     * @param integer        $nPriority            The desired priority, used to order the plugins
+     * @param Plugin         $xPlugin               An instance of a plugin
+     * @param integer        $nPriority             The desired priority, used to order the plugins
      *
      * @return void
      */
@@ -165,15 +152,15 @@ class Manager
     }
     
     /**
-     * Registers a plugin
+     * Register a plugin
      *
      * Below is a table for priorities and their description:
      * - 0 thru 999: Plugins that are part of or extensions to the jaxon core
      * - 1000 thru 8999: User created plugins, typically, these plugins don't care about order
      * - 9000 thru 9999: Plugins that generally need to be last or near the end of the plugin list
      *
-     * @param Plugin         $xPlugin            An instance of a plugin
-     * @param integer        $nPriority            The plugin priority, used to order the plugins
+     * @param Plugin         $xPlugin               An instance of a plugin
+     * @param integer        $nPriority             The plugin priority, used to order the plugins
      *
      * @return void
      */
@@ -215,10 +202,8 @@ class Manager
     /**
      * Check if the current request can be processed
      *
-     * Calls each of the request plugins and determines if the current request can be
-     * processed by one of them.
-     * If no processor identifies the current request, then the request must be for
-     * the initial page load.
+     * Calls each of the request plugins and determines if the current request can be processed by one of them.
+     * If no processor identifies the current request, then the request must be for the initial page load.
      *
      * @return boolean
      */
