@@ -46,8 +46,6 @@ namespace Jaxon\Request\Support;
 
 use Jaxon\Jaxon;
 use Jaxon\Request\Request;
-use Jaxon\Request\Manager as RequestManager;
-use Jaxon\Response\Manager as ResponseManager;
 
 class UserFunction
 {
@@ -205,10 +203,10 @@ class UserFunction
                     'file' => $this->sInclude,
                     'output' => $sOutput
                 ));
-                ResponseManager::getInstance()->debug($sOutput);
+                $this->getResponseManager()->debug($sOutput);
             }
         }
         $mFunction = $this->sUserFunction;
-        ResponseManager::getInstance()->append(call_user_func_array($mFunction, $aArgs));
+        $this->getResponseManager()->append(call_user_func_array($mFunction, $aArgs));
     }
 }

@@ -39,28 +39,13 @@ class Manager
      * @var array
      */
     private $aDebugMessages;
-    
-    private function __construct()
+
+    public function __construct()
     {
         $this->xResponse = null;
         $this->aDebugMessages = array();
     }
-    
-    /**
-     * Return the one and only instance of the jaxon response manager
-     *
-     * @return Manager
-     */
-    public static function getInstance()
-    {
-        static $xInstance = null;
-        if(!$xInstance)
-        {
-            $xInstance = new Manager();
-        }
-        return $xInstance;
-    }
-    
+
     /**
      * Clear the current response
      *

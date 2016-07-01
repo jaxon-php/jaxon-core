@@ -167,7 +167,7 @@ class UserFunction extends RequestPlugin
         if(!$this->canProcessRequest())
             return false;
 
-        $aArgs = RequestManager::getInstance()->process();
+        $aArgs = $this->getRequestManager()->process();
 
         if(array_key_exists($this->sRequestedFunction, $this->aFunctions))
         {

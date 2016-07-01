@@ -17,6 +17,36 @@ namespace Jaxon\Utils;
 trait ContainerTrait
 {
     /**
+     * Get the plugin manager
+     *
+     * @return object        The plugin manager
+     */
+    public function getPluginManager()
+    {
+        return Container::getInstance()->getPluginManager();
+    }
+
+    /**
+     * Get the request manager
+     *
+     * @return object        The request manager
+     */
+    public function getRequestManager()
+    {
+        return Container::getInstance()->getRequestManager();
+    }
+
+    /**
+     * Get the response manager
+     *
+     * @return object        The response manager
+     */
+    public function getResponseManager()
+    {
+        return Container::getInstance()->getResponseManager();
+    }
+
+    /**
      * Set the value of a config option
      *
      * @param string        $sName                The option name
@@ -86,7 +116,7 @@ trait ContainerTrait
      */
     public function setCacheDir($sCacheDir)
     {
-        Container::getInstance()->getTemplate()->setCacheDir($sCacheDir);
+        return Container::getInstance()->getTemplate()->setCacheDir($sCacheDir);
     }
 
     /**

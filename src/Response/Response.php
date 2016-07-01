@@ -34,8 +34,6 @@
 namespace Jaxon\Response;
 
 use Jaxon\Jaxon;
-use Jaxon\Plugin\Manager as PluginManager;
-use Jaxon\Request\Manager as RequestManager;
 
 class Response
 {
@@ -103,7 +101,7 @@ class Response
      */
     public function plugin($sName)
     {
-        $xPlugin = PluginManager::getInstance()->getResponsePlugin($sName);
+        $xPlugin = $this->getPluginManager()->getResponsePlugin($sName);
         if(!$xPlugin)
         {
             return false;
@@ -1167,7 +1165,7 @@ class Response
      */
     public function sendHeaders()
     {
-        $xRequestManager = RequestManager::getInstance();
+        $xRequestManager = $this->getRequestManager();
         if($xRequestManager->getRequestMethod() == Jaxon::METHOD_GET)
         {
             header ("Expires: Mon, 26 Jul 1997 05:00:00 GMT");

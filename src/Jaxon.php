@@ -94,14 +94,15 @@ class Jaxon extends Base
     private function __construct()
     {
         $this->aProcessingEvents = array();
+        $container = Utils\Container::getInstance();
 
         $sTranslationDir = realpath(__DIR__ . '/../translations');
         $sTemplateDir = realpath(__DIR__ . '/../templates');
-        Utils\Container::getInstance()->init($sTranslationDir, $sTemplateDir);
+        $container->init($sTranslationDir, $sTemplateDir);
 
-        $this->xRequestManager = RequestManager::getInstance();
-        $this->xResponseManager = ResponseManager::getInstance();
-        $this->xPluginManager = PluginManager::getInstance();
+        $this->xPluginManager = $container->getPluginManager();
+        $this->xRequestManager = $container->getRequestManager();
+        $this->xResponseManager = $container->getResponseManager();
 
         $this->setDefaultOptions();
         $this->aOptionMappings = array(

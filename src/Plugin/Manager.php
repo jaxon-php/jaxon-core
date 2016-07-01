@@ -76,7 +76,7 @@ class Manager
     /**
      * Initialize the Jaxon Plugin Manager
      */
-    private function __construct()
+    public function __construct()
     {
         $this->aRequestPlugins = array();
         $this->aResponsePlugins = array();
@@ -88,21 +88,6 @@ class Manager
 
         // Set response type to JSON
         $this->sResponseType = 'JSON';
-    }
-
-    /**
-     * Return the one and only instance of the Jaxon plugin manager
-     *
-     * @return Manager
-     */
-    public static function getInstance()
-    {
-        static $xInstance = null;
-        if(!$xInstance)
-        {
-            $xInstance = new Manager();    
-        }
-        return $xInstance;
     }
 
     /**

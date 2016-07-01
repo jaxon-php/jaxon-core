@@ -25,8 +25,6 @@
 namespace Jaxon\Request\Support;
 
 use Jaxon\Request\Request;
-use Jaxon\Request\Manager as RequestManager;
-use Jaxon\Response\Manager as ResponseManager;
 
 class CallableObject
 {
@@ -315,7 +313,7 @@ class CallableObject
         if(!$this->hasMethod($sMethod))
             return;
         $reflectionMethod = $this->reflectionClass->getMethod($sMethod);
-        ResponseManager::getInstance()->append($reflectionMethod->invokeArgs($this->callableObject, $aArgs));
+        $this->getResponseManager()->append($reflectionMethod->invokeArgs($this->callableObject, $aArgs));
     }
 
     /**

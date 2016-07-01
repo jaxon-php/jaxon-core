@@ -23,8 +23,6 @@ namespace Jaxon\Request\Plugin;
 
 use Jaxon\Jaxon;
 use Jaxon\Plugin\Request as RequestPlugin;
-use Jaxon\Plugin\Manager as PluginManager;
-use Jaxon\Request\Manager as RequestManager;
 
 class CallableObject extends RequestPlugin
 {
@@ -235,12 +233,12 @@ class CallableObject extends RequestPlugin
         if(!$this->canProcessRequest())
             return false;
 
-        $aArgs = RequestManager::getInstance()->process();
+        $aArgs = $this->getRequestManager()->process();
 
         // Try to register an instance of the requested class, if it isn't yet
         if(!array_key_exists($this->sRequestedClass, $this->aCallableObjects))
         {
-            PluginManager::getInstance()->registerClass($this->sRequestedClass);
+            $this->getPluginManager()->registerClass($this->sRequestedClass);
         }
 
         if(array_key_exists($this->sRequestedClass, $this->aCallableObjects))

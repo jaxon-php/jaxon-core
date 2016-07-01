@@ -55,6 +55,22 @@ class Container
         $this->di['template_dir'] = $sTemplateDir;
 
         /*
+         * Managers
+         */
+        // Plugin Manager
+        $this->di['plugin'] = function($c){
+            return new \Jaxon\Plugin\Manager();
+        };
+        // Request Manager
+        $this->di['request'] = function($c){
+            return new \Jaxon\Request\Manager();
+        };
+        // Response Manager
+        $this->di['response'] = function($c){
+            return new \Jaxon\Response\Manager();
+        };
+
+        /*
          * Services
          */
         // Config manager
@@ -81,6 +97,36 @@ class Container
         $this->di['paginator'] = function($c){
             return new Paginator(0, 1, 1, null);
         };
+    }
+
+    /**
+     * Get the plugin manager
+     *
+     * @return object        The plugin manager
+     */
+    public function getPluginManager()
+    {
+        return $this->di['plugin'];
+    }
+
+    /**
+     * Get the request manager
+     *
+     * @return object        The request manager
+     */
+    public function getRequestManager()
+    {
+        return $this->di['request'];
+    }
+
+    /**
+     * Get the response manager
+     *
+     * @return object        The response manager
+     */
+    public function getResponseManager()
+    {
+        return $this->di['response'];
     }
 
     /**

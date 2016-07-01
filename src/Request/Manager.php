@@ -48,7 +48,7 @@ class Manager
      *
      * Get and decode the arguments of the HTTP request
      */
-    private function __construct()
+    public function __construct()
     {
 
         $this->aArgs = array();
@@ -70,22 +70,7 @@ class Manager
         }
         array_walk($this->aArgs, array(&$this, '__argumentDecode'));
     }
-    
-    /**
-     * Return the one and only instance of the Jaxon request manager
-     *
-     * @return Manager
-     */
-    public static function getInstance()
-    {
-        static $xInstance = null;
-        if(!$xInstance)
-        {
-            $xInstance = new Manager();    
-        }
-        return $xInstance;
-    }
-    
+
     /**
      * Converts a string to a boolean var
      *
