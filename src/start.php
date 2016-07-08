@@ -15,6 +15,16 @@
  */
 
 /**
+ * Return the only instance of the Jaxon/Jaxon class
+ *
+ * @return Jaxon\Jaxon
+ */
+function jaxon()
+{
+    return \Jaxon\Jaxon::getInstance();
+}
+
+/**
  * Translate a text to the selected language
  *
  * @param string        $sText                  The text to translate

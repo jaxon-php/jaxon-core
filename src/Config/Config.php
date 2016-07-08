@@ -60,8 +60,8 @@ class Config
     /**
      * Read and set Jaxon options from a data array
      *
-     * @param array         $aOptions            The options array
-     * @param string        $sKeys                The keys of the options in the array
+     * @param array         $aOptions           The options array
+     * @param string        $sKeys              The keys of the options in the array
      *
      * @return void
      */
@@ -83,6 +83,7 @@ class Config
         // Read options from the data
         self::readOptions($aOptions);
         // Set the options in the core library
-        Jaxon::getInstance()->setOptions(self::$aOptions);
+        $jaxon = jaxon();
+        $jaxon->setOptions(self::$aOptions);
     }
 }
