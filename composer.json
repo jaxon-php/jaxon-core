@@ -1,7 +1,7 @@
 {
     "name": "jaxon-php/jaxon-core",
     "type": "library",
-    "description": "Jaxon is an open source PHP class library for easily creating powerful PHP-driven, web-based Ajax Applications. Using Jaxon, you can asynchronously call PHP functions and update the content of your webpage without reloading the page.",
+    "description": "Jaxon is an open source PHP library for easily creating Ajax web applications",
     "authors": [
         {"name": "Jared White"},
         {"name": "J. Max Wilson"},
