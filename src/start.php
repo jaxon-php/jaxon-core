@@ -17,11 +17,25 @@
 /**
  * Return the only instance of the Jaxon/Jaxon class
  *
+ * @param string        $sRequestURI            The URI to send the requests to
+ * @param string        $sLanguage              The language of the library
+ *
  * @return Jaxon\Jaxon
  */
-function jaxon()
+function jaxon($sRequestURI = null, $sLanguage = null)
 {
-    return \Jaxon\Jaxon::getInstance();
+    $jaxon = \Jaxon\Jaxon::getInstance();
+    // Set the request URI
+    if(($sRequestURI))
+    {
+        $jaxon->setOption('core.request.uri', $sRequestURI);
+    }
+    // Set the language
+    if(($sLanguage))
+    {
+        $jaxon->setOption('core.language', $sLanguage);
+    }
+    return $jaxon;
 }
 
 /**
