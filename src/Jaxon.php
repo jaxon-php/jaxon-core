@@ -233,7 +233,7 @@ class Jaxon extends Base
      */
     public static function getVersion()
     {
-        return 'Jaxon 1.0.0 beta 1';
+        return 'Jaxon 1.0.1';
     }
 
     /**
