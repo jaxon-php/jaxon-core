@@ -63,6 +63,8 @@ abstract class Base
     const ELEMENT_INNERHTML = 'ElementInnerHTML';
     // Specifies that the parameter will be a quoted value (string).
     const QUOTED_VALUE = 'QuotedValue';
+    // Specifies that the parameter will be a boolean value (true or false).
+    const BOOL_VALUE = 'BoolValue';
     // Specifies that the parameter will be a numeric, non-quoted value.
     const NUMERIC_VALUE = 'NumericValue';
     // Specifies that the parameter will be a non-quoted value

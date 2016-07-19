@@ -51,6 +51,10 @@ class Factory
             {
                 $xRequest->addParameter(Jaxon::QUOTED_VALUE, $xParam);
             }
+            else if(is_bool($xParam))
+            {
+                $xRequest->addParameter(Jaxon::BOOL_VALUE, $xParam);
+            }
             else if(is_array($xParam))
             {
                 $xRequest->addParameter($xParam[0], $xParam[1]);

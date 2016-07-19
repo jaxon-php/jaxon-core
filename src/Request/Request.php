@@ -191,6 +191,9 @@ class Request
         case Jaxon::QUOTED_VALUE:
             $this->aParameters[$nParameter] = $this->sQuoteCharacter . addslashes($sValue) . $this->sQuoteCharacter;
             break;
+        case Jaxon::BOOL_VALUE:
+            $this->aParameters[$nParameter] = ($sValue) ? 'true' : 'false';
+            break;
         case Jaxon::PAGE_NUMBER:
             $this->nPageNumberIndex = $nParameter;
             $this->aParameters[$nParameter] = $sValue;
