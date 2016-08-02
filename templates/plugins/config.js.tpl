@@ -21,3 +21,9 @@ jaxon.config.responseQueueSize = {$nResponseQueueSize|noescape};
 jaxon.debug = {};
 jaxon.debug.outputID = "{$sDebugOutputID|noescape}";
 {/if}
+{if ($sCsrfMetaName) }
+if((csrfToken = $('meta[name="{$sCsrfMetaName|noescape}"]').attr('content')))
+{
+    jaxon.config.postHeaders = {'X-CSRF-TOKEN': csrfToken};
+}
+{/if}

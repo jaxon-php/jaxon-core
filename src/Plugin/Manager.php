@@ -582,6 +582,7 @@ class Manager
             'sRequestURI'               => $this->getOption('core.request.uri'),
             'sDefaultMode'              => $this->getOption('core.request.mode'),
             'sDefaultMethod'            => $this->getOption('core.request.method'),
+            'sCsrfMetaName'             => $this->getOption('core.request.csrf_meta'),
             'bDebug'                    => $this->getOption('core.debug.on'),
             'bVerboseDebug'             => $this->getOption('core.debug.verbose'),
             'sDebugOutputID'            => $this->getOption('js.lib.output_id'),
