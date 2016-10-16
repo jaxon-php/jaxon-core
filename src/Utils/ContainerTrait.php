@@ -62,13 +62,14 @@ trait ContainerTrait
     /**
      * Set the values of an array of config options
      *
-     * @param array            $aOptions            The config options
+     * @param array         $aOptions           The config options
+     * @param string        $sKeys              The keys of the options in the array
      *
      * @return void
      */
-    public function setOptions($aOptions)
+    public function setOptions($aOptions, $sKeys = '')
     {
-        return Container::getInstance()->getConfig()->setOptions($aOptions);
+        return Container::getInstance()->getConfig()->setOptions($aOptions, $sKeys);
     }
 
     /**

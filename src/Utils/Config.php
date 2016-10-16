@@ -37,15 +37,62 @@ class Config
     }
 
     /**
-     * Set the values of an array of config options
+     * Recursively set Jaxon options from a data array
      *
-     * @param array            $aOptions        The config options
+     * @param array         $aOptions           The options array
+     * @param string        $sPrefix            The prefix for option names
+     * @param integer       $nDepth             The depth from the first call
      *
      * @return void
      */
-    public function setOptions(array $aOptions)
+    private function _setOptions(array $aOptions, $sPrefix = '', $nDepth = 0)
     {
-        $this->aOptions = array_merge($this->aOptions, $aOptions);
+        $sPrefix = (string)$sPrefix;
+        $nDepth = intval($nDepth);
+        // Check the max depth
+        if($nDepth < 0 || $nDepth > 5)
+        {
+            throw new \Jaxon\Exception\Config\Data('depth', $sPrefix, $nDepth);
+        }
+        foreach ($aOptions as $sName => $xOption)
+        {
+            if(is_array($xOption))
+            {
+                // Recursively read the options in the array
+                $this->_setOptions($xOption, $sPrefix . $sName . '.', $nDepth + 1);
+            }
+            else if(is_string($xOption) || is_numeric($xOption) || is_bool($xOption))
+            {
+                // Save the value of this option
+                $this->aOptions[$sPrefix . $sName] = $xOption;
+            }
+        }
+    }
+
+    /**
+     * Set the values of an array of config options
+     *
+     * @param array         $aOptions           The options array
+     * @param string        $sKeys              The keys of the options in the array
+     *
+     * @return void
+     */
+    public function setOptions(array $aOptions, $sKeys = '')
+    {
+        // Find the config array in the input data
+        $aKeys = explode('.', (string)$sKeys);
+        foreach ($aKeys as $sKey)
+        {
+            if(($sKey))
+            {
+                if(!array_key_exists($sKey, $aOptions) || !is_array($aOptions[$sKey]))
+                {
+                    throw new \Jaxon\Exception\Config\Data('missing', $sKeys);
+                }
+                $aOptions = $aOptions[$sKey];
+            }
+        }
+        $this->_setOptions($aOptions);
     }
 
     /**

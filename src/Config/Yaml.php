@@ -23,9 +23,9 @@ class Yaml
      * @param array         $sConfigFile        The full path to the config file
      * @param string        $sKeys              The keys of the options in the file
      *
-     * @return void
+     * @return array
      */
-    public static function read($sConfigFile, $sKey = '')
+    public static function read($sConfigFile, $sKeys = '')
     {
         $sConfigFile = realpath($sConfigFile);
         if(!extension_loaded('yaml'))
@@ -42,7 +42,9 @@ class Yaml
             throw new \Jaxon\Exception\Config\File('content', $sConfigFile);
         }
 
-        // Content read from config file. Try to parse.
-        Config::setOptions($aConfigOptions, $sKey);
+        // Setup the config options into the library.
+        $jaxon = jaxon();
+        $jaxon->setOptions($aConfigOptions, $sKeys);
+        return $aConfigOptions;
     }
 }

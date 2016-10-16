@@ -805,11 +805,11 @@ class Jaxon extends Base
      * @param array         $sConfigFile        The full path to the config file
      * @param string        $sKeys              The keys of the options in the file
      *
-     * @return void
+     * @return array
      */
     public function readPhpConfigFile($sConfigFile, $sKey = '')
     {
-        \Jaxon\Config\Php::read($sConfigFile, $sKey);
+        return \Jaxon\Config\Php::read($sConfigFile, $sKey);
     }
     
     /**
@@ -818,11 +818,11 @@ class Jaxon extends Base
      * @param array         $sConfigFile        The full path to the config file
      * @param string        $sKeys              The keys of the options in the file
      *
-     * @return void
+     * @return array
      */
     public function readYamlConfigFile($sConfigFile, $sKey = '')
     {
-        \Jaxon\Config\Yaml::read($sConfigFile, $sKey);
+        return \Jaxon\Config\Yaml::read($sConfigFile, $sKey);
     }
 
     /**
@@ -831,11 +831,11 @@ class Jaxon extends Base
      * @param array         $sConfigFile        The full path to the config file
      * @param string        $sKeys              The keys of the options in the file
      *
-     * @return void
+     * @return array
      */
     public function readJsonConfigFile($sConfigFile, $sKey = '')
     {
-        \Jaxon\Config\Json::read($sConfigFile, $sKey);
+        return \Jaxon\Config\Json::read($sConfigFile, $sKey);
     }
 
     /**
@@ -844,7 +844,7 @@ class Jaxon extends Base
      * @param array         $sConfigFile        The full path to the config file
      * @param string        $sKeys              The keys of the options in the file
      *
-     * @return void
+     * @return array
      */
     public function readConfigFile($sConfigFile, $sKey = '')
     {
@@ -852,13 +852,14 @@ class Jaxon extends Base
         switch($sExt)
         {
         case 'php':
-            $this->readPhpConfigFile($sConfigFile, $sKey);
+            return $this->readPhpConfigFile($sConfigFile, $sKey);
             break;
         case 'yaml':
-            $this->readYamlConfigFile($sConfigFile, $sKey);
+        case 'yml':
+            return $this->readYamlConfigFile($sConfigFile, $sKey);
             break;
         case 'json':
-            $this->readJsonConfigFile($sConfigFile, $sKey);
+            return $this->readJsonConfigFile($sConfigFile, $sKey);
             break;
         default:
             throw new \Jaxon\Exception\Config\File('access', $sConfigFile);
