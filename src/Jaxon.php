@@ -779,27 +779,6 @@ class Jaxon extends Base
     }
 
     /**
-     * Return a registered response plugin
-     *
-     * Pass the plugin name as the first argument and the plugin object will be returned.
-     * You can then access the methods of the plugin directly.
-     *
-     * @param string        $sName                The plugin name
-     *
-     * @return \Jaxon\Plugin\Response
-     */
-    public function plugin($sName)
-    {
-        $xPlugin = $this->xPluginManager->getResponsePlugin($sName);
-        if(!$xPlugin)
-        {
-            return null;
-        }
-        $xPlugin->setResponse($this);
-        return $xPlugin;
-    }
-
-    /**
      * Read and set Jaxon options from a PHP config file
      *
      * @param array         $sConfigFile        The full path to the config file

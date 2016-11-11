@@ -107,7 +107,7 @@ trait FactoryTrait
      * Make the pagination links for a registered Jaxon class method
      *
      * @param integer $nItemsTotal the total number of items
-     * @param integer $nItemsPerPage the number of items per page page
+     * @param integer $nItemsPerPage the number of items per page
      * @param integer $nCurrentPage the current page
      * @param string  $sMethod the name of the method
      * @param ... $parameters the parameters of the method
