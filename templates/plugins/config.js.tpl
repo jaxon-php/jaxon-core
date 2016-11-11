@@ -22,8 +22,16 @@ jaxon.debug = {};
 jaxon.debug.outputID = "{$sDebugOutputID|noescape}";
 {/if}
 {if ($sCsrfMetaName) }
-if((csrfToken = $('meta[name="{$sCsrfMetaName|noescape}"]').attr('content')))
+metaTags = document.getElementsByTagName('meta');
+for(i = 0; i < metaTags.length; i++)
 {
-    jaxon.config.postHeaders = {'X-CSRF-TOKEN': csrfToken};
+    if(metaTags[i].getAttribute('name') == '{$sCsrfMetaName|noescape}')
+    {
+        if((csrfToken = metaTags[i].getAttribute('content')))
+        {
+            jaxon.config.postHeaders = {'X-CSRF-TOKEN': csrfToken};
+        }
+        break;
+    }
 }
 {/if}
