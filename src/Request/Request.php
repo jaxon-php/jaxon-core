@@ -184,27 +184,27 @@ class Request
      *
      * @return void
      */
-    public function setParameter($nParameter, $sType, $sValue)
+    public function setParameter($nParameter, $sType, $xValue)
     {
         switch($sType)
         {
         case Jaxon::FORM_VALUES:
-            $sFormID = $sValue;
+            $sFormID = (string)$sValue;
             $this->aParameters[$nParameter] = "jaxon.getFormValues(" . $this->sQuoteCharacter 
                 . $sFormID . $this->sQuoteCharacter . ")";
             break;
         case Jaxon::INPUT_VALUE:
-            $sInputID = $sValue;
+            $sInputID = (string)$sValue;
             $this->aParameters[$nParameter] =  "jaxon.$("  . $this->sQuoteCharacter 
                 . $sInputID . $this->sQuoteCharacter  . ").value";
             break;
         case Jaxon::CHECKED_VALUE:
-            $sCheckedID = $sValue;
+            $sCheckedID = (string)$sValue;
             $this->aParameters[$nParameter] =  "jaxon.$("  . $this->sQuoteCharacter 
                 . $sCheckedID  . $this->sQuoteCharacter . ").checked";
             break;
         case Jaxon::ELEMENT_INNERHTML:
-            $sElementID = $sValue;
+            $sElementID = (string)$sValue;
             $this->aParameters[$nParameter] = "jaxon.$(" . $this->sQuoteCharacter 
                 . $sElementID . $this->sQuoteCharacter . ").innerHTML";
             break;
@@ -216,11 +216,23 @@ class Request
             break;
         case Jaxon::PAGE_NUMBER:
             $this->nPageNumberIndex = $nParameter;
-            $this->aParameters[$nParameter] = $sValue;
+            $this->aParameters[$nParameter] = (string)$sValue;
             break;
         case Jaxon::NUMERIC_VALUE:
+            $this->aParameters[$nParameter] = (string)$sValue;
         case Jaxon::JS_VALUE:
-            $this->aParameters[$nParameter] = $sValue;
+            if(is_array($sValue))
+            {
+                $this->aParameters[$nParameter] = json_encode($sValue, JSON_FORCE_OBJECT);
+            }
+            else if(is_object($sValue))
+            {
+                $this->aParameters[$nParameter] = json_encode($sValue);
+            }
+            else
+            {
+                $this->aParameters[$nParameter] = (string)$sValue;
+            }
             break;
         }
     }
