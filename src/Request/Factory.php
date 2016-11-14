@@ -59,6 +59,14 @@ class Factory
             {
                 $xRequest->addParameter(Jaxon::BOOL_VALUE, $xParam);
             }
+            else if(is_array($xArgument))
+            {
+                $this->addParameter(Jaxon::JS_VALUE, json_encode($xParam, JSON_FORCE_OBJECT));
+            }
+            else if(is_object($xArgument))
+            {
+                $this->addParameter(Jaxon::JS_VALUE, json_encode($xParam));
+            }
         }
         return $xRequest;
     }
