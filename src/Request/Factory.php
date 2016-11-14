@@ -43,7 +43,11 @@ class Factory
         for($nArg = 1; $nArg < $nArgs; $nArg++)
         {
             $xParam = func_get_arg($nArg);
-            if(is_numeric($xParam))
+            if($xParam instanceof Parameter)
+            {
+                $xRequest->addParameter($xParam->sType, $xParam->xValue);
+            }
+            else if(is_numeric($xParam))
             {
                 $xRequest->addParameter(Jaxon::NUMERIC_VALUE, $xParam);
             }
@@ -54,10 +58,6 @@ class Factory
             else if(is_bool($xParam))
             {
                 $xRequest->addParameter(Jaxon::BOOL_VALUE, $xParam);
-            }
-            else if(is_array($xParam) || $xParam instanceof \ArrayAccess)
-            {
-                $xRequest->addParameter($xParam[0], $xParam[1]);
             }
         }
         return $xRequest;
@@ -89,40 +89,44 @@ class Factory
      * Make a parameter of type Jaxon::FORM_VALUES
      * 
      * @param string $sFormId the id of the HTML form
-     * @return array
+     * 
+     * @return Parameter
      */
     public static function form($sFormId)
     {
-        return array(Jaxon::FORM_VALUES, $sFormId);
+        return new Parameter(Jaxon::FORM_VALUES, $sFormId);
     }
 
     /**
      * Make a parameter of type Jaxon::INPUT_VALUE
      * 
      * @param string $sInputId the id of the HTML input element
-     * @return array
+     * 
+     * @return Parameter
      */
     public static function input($sInputId)
     {
-        return array(Jaxon::INPUT_VALUE, $sInputId);
+        return new Parameter(Jaxon::INPUT_VALUE, $sInputId);
     }
 
     /**
      * Make a parameter of type Jaxon::CHECKED_VALUE
      * 
      * @param string $sInputId the name of the HTML form element
-     * @return array
+     * 
+     * @return Parameter
      */
     public static function checked($sInputId)
     {
-        return array(Jaxon::CHECKED_VALUE, $sInputId);
+        return new Parameter(Jaxon::CHECKED_VALUE, $sInputId);
     }
 
     /**
      * Make a parameter of type Jaxon::CHECKED_VALUE
      * 
      * @param string $sInputId the name of the HTML form element
-     * @return array
+     * 
+     * @return Parameter
      */
     public static function select($sInputId)
     {
@@ -133,40 +137,44 @@ class Factory
      * Make a parameter of type Jaxon::ELEMENT_INNERHTML
      * 
      * @param string $sElementId the id of the HTML element
-     * @return array
+     * 
+     * @return Parameter
      */
     public static function html($sElementId)
     {
-        return array(Jaxon::ELEMENT_INNERHTML, $sElementId);
+        return new Parameter(Jaxon::ELEMENT_INNERHTML, $sElementId);
     }
 
     /**
      * Make a parameter of type Jaxon::QUOTED_VALUE
      * 
      * @param string $sValue the value of the parameter
-     * @return array
+     * 
+     * @return Parameter
      */
     public static function string($sValue)
     {
-        return array(Jaxon::QUOTED_VALUE, $sValue);
+        return new Parameter(Jaxon::QUOTED_VALUE, $sValue);
     }
 
     /**
      * Make a parameter of type Jaxon::NUMERIC_VALUE
      * 
      * @param numeric $nValue the value of the parameter
-     * @return array
+     * 
+     * @return Parameter
      */
     public static function numeric($nValue)
     {
-        return array(Jaxon::NUMERIC_VALUE, intval($nValue));
+        return new Parameter(Jaxon::NUMERIC_VALUE, intval($nValue));
     }
 
     /**
      * Make a parameter of type Jaxon::NUMERIC_VALUE
      * 
      * @param numeric $nValue the value of the parameter
-     * @return array
+     * 
+     * @return Parameter
      */
     public static function int($nValue)
     {
@@ -177,18 +185,20 @@ class Factory
      * Make a parameter of type Jaxon::JS_VALUE
      * 
      * @param string $sValue the javascript code of the parameter
-     * @return array
+     * 
+     * @return Parameter
      */
     public static function javascript($sValue)
     {
-        return array(Jaxon::JS_VALUE, $sValue);
+        return new Parameter(Jaxon::JS_VALUE, $sValue);
     }
 
     /**
      * Make a parameter of type Jaxon::JS_VALUE
      * 
      * @param string $sValue the javascript code of the parameter
-     * @return array
+     * 
+     * @return Parameter
      */
     public static function js($sValue)
     {
@@ -198,11 +208,11 @@ class Factory
     /**
      * Make a parameter of type Jaxon::PAGE_NUMBER
      * 
-     * @return array
+     * @return Parameter
      */
     public static function page()
     {
         // By default, the value of a parameter of type Jaxon::PAGE_NUMBER is 0.
-        return array(Jaxon::PAGE_NUMBER, 0);
+        return new Parameter(Jaxon::PAGE_NUMBER, 0);
     }
 }
