@@ -189,49 +189,49 @@ class Request
         switch($sType)
         {
         case Jaxon::FORM_VALUES:
-            $sFormID = (string)$sValue;
+            $sFormID = (string)$xValue;
             $this->aParameters[$nParameter] = "jaxon.getFormValues(" . $this->sQuoteCharacter 
                 . $sFormID . $this->sQuoteCharacter . ")";
             break;
         case Jaxon::INPUT_VALUE:
-            $sInputID = (string)$sValue;
+            $sInputID = (string)$xValue;
             $this->aParameters[$nParameter] =  "jaxon.$("  . $this->sQuoteCharacter 
                 . $sInputID . $this->sQuoteCharacter  . ").value";
             break;
         case Jaxon::CHECKED_VALUE:
-            $sCheckedID = (string)$sValue;
+            $sCheckedID = (string)$xValue;
             $this->aParameters[$nParameter] =  "jaxon.$("  . $this->sQuoteCharacter 
                 . $sCheckedID  . $this->sQuoteCharacter . ").checked";
             break;
         case Jaxon::ELEMENT_INNERHTML:
-            $sElementID = (string)$sValue;
+            $sElementID = (string)$xValue;
             $this->aParameters[$nParameter] = "jaxon.$(" . $this->sQuoteCharacter 
                 . $sElementID . $this->sQuoteCharacter . ").innerHTML";
             break;
         case Jaxon::QUOTED_VALUE:
-            $this->aParameters[$nParameter] = $this->sQuoteCharacter . addslashes($sValue) . $this->sQuoteCharacter;
+            $this->aParameters[$nParameter] = $this->sQuoteCharacter . addslashes($xValue) . $this->sQuoteCharacter;
             break;
         case Jaxon::BOOL_VALUE:
-            $this->aParameters[$nParameter] = ($sValue) ? 'true' : 'false';
+            $this->aParameters[$nParameter] = ($xValue) ? 'true' : 'false';
             break;
         case Jaxon::PAGE_NUMBER:
             $this->nPageNumberIndex = $nParameter;
-            $this->aParameters[$nParameter] = (string)$sValue;
+            $this->aParameters[$nParameter] = (string)$xValue;
             break;
         case Jaxon::NUMERIC_VALUE:
-            $this->aParameters[$nParameter] = (string)$sValue;
+            $this->aParameters[$nParameter] = (string)$xValue;
         case Jaxon::JS_VALUE:
-            if(is_array($sValue))
+            if(is_array($xValue))
             {
-                $this->aParameters[$nParameter] = json_encode($sValue, JSON_FORCE_OBJECT);
+                $this->aParameters[$nParameter] = json_encode($xValue, JSON_FORCE_OBJECT);
             }
-            else if(is_object($sValue))
+            else if(is_object($xValue))
             {
-                $this->aParameters[$nParameter] = json_encode($sValue);
+                $this->aParameters[$nParameter] = json_encode($xValue);
             }
             else
             {
-                $this->aParameters[$nParameter] = (string)$sValue;
+                $this->aParameters[$nParameter] = (string)$xValue;
             }
             break;
         }
