@@ -55,7 +55,7 @@ class Factory
             {
                 $xRequest->addParameter(Jaxon::BOOL_VALUE, $xParam);
             }
-            else if(is_array($xParam))
+            else if(is_array($xParam) || $xParam instanceof \ArrayAccess)
             {
                 $xRequest->addParameter($xParam[0], $xParam[1]);
             }
