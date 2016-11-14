@@ -45,7 +45,7 @@ class Response
      * @var array
      */
     public  $aCommands;
-    
+
     /**
      * A string, array or integer value to be returned to the caller when using 'synchronous' mode requests.
      * See <jaxon->setMode> for details.
@@ -53,14 +53,14 @@ class Response
      * @var mixed
      */
     private $returnValue;
-    
+
     /**
      * A reference to the global plugin manager
      *
      * @var \Jaxon\Plugin\Manager
      */
     private $xPluginManager;
-    
+
     public function __construct()
     {
         $this->aCommands = array();
@@ -109,7 +109,7 @@ class Response
         $xPlugin->setResponse($this);
         return $xPlugin;
     }
-    
+
     /**
      * Magic PHP function
      *
@@ -123,7 +123,7 @@ class Response
     {
         return $this->plugin($sPluginName);
     }
-    
+
     /**
      * Add a response command to the array of commands that will be sent to the browser
      *
@@ -185,7 +185,7 @@ class Response
      *
      * @param Plugin        $xPlugin            The plugin object
      * @param array         $aAttributes        The attributes for this response command
-     * @param mixed            $mData                The data to be sent with this command
+     * @param mixed         $mData              The data to be sent with this command
      *
      * @return \Jaxon\Plugin\Response
      */
@@ -259,7 +259,7 @@ class Response
             (string)$sMessage
         );
     }
-    
+
     /**
      * Add a command to assign the specified value to the given element's attribute
      *
@@ -279,7 +279,7 @@ class Response
             (string)$sData
         );
     }
-    
+
     /**
      * Add a command to append the specified data to the given element's attribute
      *
@@ -299,7 +299,7 @@ class Response
             (string)$sData
         );
     }
-    
+
     /**
      * Add a command to prepend the specified data to the given element's attribute
      *
@@ -319,7 +319,7 @@ class Response
             (string)$sData
         );
     }
-    
+
     /**
      * Add a command to replace a specified value with another value within the given element's attribute
      *
@@ -343,7 +343,7 @@ class Response
             )
         );
     }
-    
+
     /**
      * Add a command to clear the specified attribute of the given element
      *
@@ -356,7 +356,7 @@ class Response
     {
         return $this->assign((string)$sTarget, (string)$sAttribute, '');
     }
-    
+
     /**
      * Add a command to assign a value to a member of a javascript object (or element)
      * that is specified by the context member of the request
@@ -377,7 +377,7 @@ class Response
             (string)$sData
         );
     }
-    
+
     /**
      * Add a command to append a value onto the specified member of the javascript
      * context object (or element) specified by the context member of the request
@@ -398,7 +398,7 @@ class Response
             (string)$sData
         );
     }    
-    
+
     /**
      * Add a command to prepend the speicified data to the given member of the current
      * javascript object specified by context in the current request
@@ -419,7 +419,7 @@ class Response
             (string)$sData
         );
     }
-    
+
     /**
      * Add a command to to clear the value of the attribute specified in the sAttribute parameter
      *
@@ -434,7 +434,7 @@ class Response
     {
         return $this->contextAssign((string)$sAttribute, '');
     }
-    
+
     /**
      * Add a command to display an alert message to the user
      *
@@ -450,7 +450,7 @@ class Response
             (string)$sMessage
         );
     }
-    
+
     /**
      * Add a command to display a debug message to the user
      *
@@ -466,7 +466,7 @@ class Response
             (string)$sMessage
         );
     }
-    
+
     /**
      * Add a command to ask the browser to navigate to the specified URL
      *
@@ -515,7 +515,7 @@ class Response
             $this->script('window.location = "' . $sURL . '";');
         return $this;
     }
-    
+
     /**
      * Add a command to execute a portion of javascript on the browser
      *
@@ -536,7 +536,7 @@ class Response
             (string)$sJS
         );
     }
-    
+
     /**
      * Add a command to call the specified javascript function with the given (optional) parameters
      *
@@ -555,7 +555,7 @@ class Response
             $aArgs
         );
     }
-    
+
     /**
      * Add a command to remove an element from the document
      *
@@ -572,7 +572,7 @@ class Response
             ''
         );
     }
-    
+
     /**
      * Add a command to create a new element on the browser
      *
@@ -592,7 +592,7 @@ class Response
             (string)$sTag
         );
     }
-    
+
     /**
      * Add a command to insert a new element just prior to the specified element
      *
@@ -612,7 +612,7 @@ class Response
             (string)$sTag
         );
     }
-    
+
     /**
      * Add a command to insert a new element after the specified
      *
@@ -632,7 +632,7 @@ class Response
             (string)$sTag
         );
     }
-    
+
     /**
      * Add a command to create an input element on the browser
      *
@@ -654,7 +654,7 @@ class Response
             (string)$sName
         );
     }
-    
+
     /**
      * Add a command to insert a new input element preceding the specified element
      *
@@ -676,7 +676,7 @@ class Response
             (string)$sName
         );
     }
-    
+
     /**
      * Add a command to insert a new input element after the specified element
      *
@@ -698,7 +698,7 @@ class Response
             (string)$sName
         );
     }
-    
+
     /**
      * Add a command to set an event handler on the browser
      *
@@ -718,7 +718,7 @@ class Response
             (string)$sScript
         );
     }
-    
+
     /**
      * Add a command to install an event handler on the specified element
      *
@@ -740,7 +740,7 @@ class Response
             (string)$sHandler
         );
     }
-    
+
     /**
      * Add a command to remove an event handler from an element
      *
@@ -760,7 +760,7 @@ class Response
             (string)$sHandler
         );
     }
-    
+
     /**
      * Add a command to construct a javascript function on the browser
      *
@@ -780,7 +780,7 @@ class Response
             (string)$sScript
         );
     }
-    
+
     /**
      * Add a command to construct a wrapper function around an existing javascript function on the browser
      *
@@ -807,7 +807,7 @@ class Response
             $aScripts
         );
     }
-    
+
     /**
      * Add a command to load a javascript file on the browser
      *
@@ -828,7 +828,7 @@ class Response
 
         return $this->addCommand($command, (string)$sFileName);
     }
-    
+
     /**
      * Add a command to include a javascript file on the browser if it has not already been loaded
      *
@@ -849,7 +849,7 @@ class Response
             
         return $this->addCommand($command, (string)$sFileName);
     }
-    
+
     /**
      * Add a command to remove a SCRIPT reference to a javascript file on the browser
      *
@@ -869,7 +869,7 @@ class Response
             (string)$sFileName
         );
     }
-    
+
     /**
      * Add a command to include a LINK reference to the specified CSS file on the browser.
      *
@@ -889,7 +889,7 @@ class Response
         
         return $this->addCommand($command, (string)$sFileName);
     }
-    
+
     /**
      * Add a command to remove a LINK reference to a CSS file on the browser
      *
@@ -908,7 +908,7 @@ class Response
         
         return $this->addCommand($command, (string)$sFileName);
     }
-    
+
     /**
      * Add a command to make Jaxon pause while the CSS files are loaded
      *
@@ -934,7 +934,7 @@ class Response
             $sData
         );
     }
-    
+
     /**
      * Add a command to make Jaxon to delay execution of the response commands until a specified condition is met
      *
@@ -957,7 +957,7 @@ class Response
             (string)$script
         );
     }
-    
+
     /**
      * Add a command to make Jaxon to pause execution of the response commands,
      * returning control to the browser so it can perform other commands asynchronously.
@@ -977,7 +977,7 @@ class Response
             ''
         );
     }
-    
+
     /**
      * Add a command to start a DOM response
      *
@@ -987,7 +987,7 @@ class Response
     {
         $this->script('jxnElm = []');
     }
-    
+
     /**
      * Add a command to create a DOM element
      *
@@ -1005,7 +1005,7 @@ class Response
             $tag
         );
     }
-    
+
     /**
      * Add a command to set an attribute on a DOM element
      *
@@ -1047,7 +1047,7 @@ class Response
 
         return $this->addCommand($command, $parent);
     }
-    
+
     /**
      * Add a command to append a child to a DOM element
      *
@@ -1101,7 +1101,7 @@ class Response
             $variable
         );
     }
-    
+
     /**
      * Add a command to append a text to a DOM element
      *
@@ -1119,9 +1119,7 @@ class Response
             $text
         );
     }
-    /*
-     * 
-     */
+
     /**
      * Add a command to end a DOM response
      *
@@ -1206,7 +1204,7 @@ class Response
 
         return json_encode($response);
     }
-    
+
     /**
      * Print the output, generated from the commands added to the response, that will be sent to the browser
      *

@@ -49,7 +49,7 @@ class Request
      *
      * @var string
      */
-    private $sQuoteCharacter;
+    protected $sQuoteCharacter;
     
     /**
      * An array of parameters that will be used to populate the argument list for this function
@@ -57,14 +57,14 @@ class Request
      *
      * @var array
      */
-    private $aParameters;
+    protected $aParameters;
     
     /**
      * The position of the Jaxon::PAGE_NUMBER parameter in the parameters array
      *
      * @var integer
      */
-    private $nPageNumberIndex;
+    protected $nPageNumberIndex;
     
     public function __construct($sName, $sType)
     {
@@ -86,11 +86,31 @@ class Request
     }
     
     /**
+     * Instruct the request to use single quotes when generating the javascript
+     *
+     * @return void
+     */
+    public function useSingleQuotes()
+    {
+        $this->sQuoteCharacter = "'";
+    }
+    
+    /**
      * Instruct the request to use double quotes while generating the javascript
      *
      * @return void
      */
     public function useDoubleQuote()
+    {
+        $this->sQuoteCharacter = '"';
+    }
+    
+    /**
+     * Instruct the request to use double quotes while generating the javascript
+     *
+     * @return void
+     */
+    public function useDoubleQuotes()
     {
         $this->sQuoteCharacter = '"';
     }
