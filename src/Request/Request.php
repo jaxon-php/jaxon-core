@@ -221,13 +221,11 @@ class Request
         case Jaxon::NUMERIC_VALUE:
             $this->aParameters[$nParameter] = (string)$xValue;
         case Jaxon::JS_VALUE:
-            if(is_array($xValue))
+            if(is_array($xValue) || is_object($xValue))
             {
-                $this->aParameters[$nParameter] = json_encode($xValue, JSON_FORCE_OBJECT);
-            }
-            else if(is_object($xValue))
-            {
-                $this->aParameters[$nParameter] = json_encode($xValue);
+                // Unable to use double quotes here because they cannot be handled on client side.
+                // So we are using simple quotes even if the Json standard recommends double quotes.
+                $this->aParameters[$nParameter] = str_replace(['"'], ["'"], json_encode($xValue, JSON_HEX_APOS | JSON_HEX_QUOT));
             }
             else
             {

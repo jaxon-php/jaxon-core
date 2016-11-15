@@ -15,21 +15,21 @@ namespace Jaxon\Request;
 
 use Jaxon\Jaxon;
 
-class Parameter
+class Parameter implements Interfaces\Parameter
 {
     /**
      * The parameter type
      *
      * @var string
      */
-    public $sType;
+    protected $sType;
 
     /**
      * The parameter value
      *
      * @var mixed
      */
-    public $xValue;
+    protected $xValue;
 
     /**
      * The constructor.
@@ -41,5 +41,25 @@ class Parameter
     {
         $this->sType = $sType;
         $this->xValue = $xValue;
+    }
+
+    /**
+     * Get the parameter type
+     * 
+     * @return string
+     */
+    public function getType()
+    {
+        return $this->sType;
+    }
+
+    /**
+     * Get the parameter value
+     * 
+     * @return mixed
+     */
+    public function getValue()
+    {
+        return $this->xValue;
     }
 }
