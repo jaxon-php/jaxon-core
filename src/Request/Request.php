@@ -220,6 +220,7 @@ class Request
             break;
         case Jaxon::NUMERIC_VALUE:
             $this->aParameters[$nParameter] = (string)$xValue;
+            break;
         case Jaxon::JS_VALUE:
             if(is_array($xValue) || is_object($xValue))
             {
