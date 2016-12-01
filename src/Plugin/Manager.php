@@ -444,7 +444,7 @@ class Manager
     {
         if(!$this->hasOption('js.lib.uri'))
         {
-            return '//lib.jaxon-php.org/jaxon/latest/';
+            return 'https://cdn.jsdelivr.net/jaxon/1.0.0/';
         }
         // Todo: check the validity of the URI
         return rtrim($this->getOption('js.lib.uri'), '/') . '/';

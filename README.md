@@ -15,7 +15,7 @@ Features
 - The Jaxon library can load its configuration settings from a file. Supported formats are JSON, YAML and PHP.
 - The Jaxon library provides pagination feature out of the box.
 - The Jaxon PHP library is modular, and consists of a core package and several plugin packages.
-- The javascript library is provided in a separated and javascript-only package.
+- The javascript library is provided in a separated and javascript-only package, loaded by default from the [jsDelivr CDN](https://www.jsdelivr.com/projects/jaxon).
 - The generated javascript classes are named according to their namespace or the subdirectory where they are located.
 - All PHP packages install with `Composer`, are fully namespaced, and implement `PSR-4` autoloading.
 - The Jaxon library runs on PHP versions 5.4 to 7.0.
