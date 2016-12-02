@@ -487,11 +487,12 @@ class Manager
      */
     private function _getScriptFilename($sFilename)
     {
-        if(($this->getOption('js.app.minify')))
+        /*if(($this->getOption('js.app.minify')))
         {
             return str_replace('.js', '.min.js', $sFilename);
         }
-        return $sFilename;
+        return $sFilename;*/
+        return str_replace('.js', '.min.js', $sFilename);
     }
 
     /**
