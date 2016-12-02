@@ -256,7 +256,7 @@ class Response
                 'cmd' => 'cc',
                 'id' => $iCmdNumber
             ),
-            (string)$sMessage
+            trim((string)sMessage, " \t\n")
         );
     }
 
@@ -273,10 +273,10 @@ class Response
     {
         return $this->addCommand(array(
                 'cmd' => 'as',
-                'id' => (string)$sTarget,
-                'prop' => (string)$sAttribute
+                'id' => trim((string)sTarget, " \t"),
+                'prop' => trim((string)sAttribute, " \t")
             ),
-            (string)$sData
+            trim((string)sData, " \t\n")
         );
     }
 
@@ -293,10 +293,10 @@ class Response
     {    
         return $this->addCommand(array(
                 'cmd' => 'ap',
-                'id' => (string)$sTarget,
-                'prop' => (string)$sAttribute
+                'id' => trim((string)sTarget, " \t"),
+                'prop' => trim((string)sAttribute, " \t")
             ),
-            (string)$sData
+            trim((string)sData, " \t\n")
         );
     }
 
@@ -313,10 +313,10 @@ class Response
     {
         return $this->addCommand(array(
                 'cmd' => 'pp',
-                'id' => (string)$sTarget,
-                'prop' => (string)$sAttribute
+                'id' => trim((string)sTarget, " \t"),
+                'prop' => trim((string)sAttribute, " \t")
             ),
-            (string)$sData
+            trim((string)sData, " \t\n")
         );
     }
 
@@ -334,12 +334,12 @@ class Response
     {
         return $this->addCommand(array(
                 'cmd' => 'rp',
-                'id' => (string)$sTarget,
-                'prop' => (string)$sAttribute
+                'id' => trim((string)sTarget, " \t"),
+                'prop' => trim((string)sAttribute, " \t")
             ),
             array(
-                's' => (string)$sSearch,
-                'r' => (string)$sData
+                's' => trim((string)sSearch, " \t\n"),
+                'r' => trim((string)sData, " \t\n")
             )
         );
     }
@@ -354,7 +354,7 @@ class Response
      */
     public function clear($sTarget, $sAttribute)
     {
-        return $this->assign((string)$sTarget, (string)$sAttribute, '');
+        return $this->assign(trim((string)sTarget, " \t"), trim((string)sAttribute, " \t"), '');
     }
 
     /**
@@ -372,9 +372,9 @@ class Response
     {
         return $this->addCommand(array(
                 'cmd' => 'c:as', 
-                'prop' => (string)$sAttribute
+                'prop' => trim((string)sAttribute, " \t")
             ),
-            (string)$sData
+            trim((string)sData, " \t\n")
         );
     }
 
@@ -393,9 +393,9 @@ class Response
     {
         return $this->addCommand(array(
                 'cmd' => 'c:ap', 
-                'prop' => (string)$sAttribute
+                'prop' => trim((string)sAttribute, " \t")
             ), 
-            (string)$sData
+            trim((string)sData, " \t\n")
         );
     }    
 
@@ -414,9 +414,9 @@ class Response
     {
         return $this->addCommand(array(
                 'cmd' => 'c:pp', 
-                'prop' => (string)$sAttribute
+                'prop' => trim((string)sAttribute, " \t")
             ), 
-            (string)$sData
+            trim((string)sData, " \t\n")
         );
     }
 
@@ -432,7 +432,7 @@ class Response
      */
     public function contextClear($sAttribute)
     {
-        return $this->contextAssign((string)$sAttribute, '');
+        return $this->contextAssign(trim((string)sAttribute, " \t"), '');
     }
 
     /**
@@ -447,7 +447,7 @@ class Response
         return $this->addCommand(array(
                 'cmd' => 'al'
             ),
-            (string)$sMessage
+            trim((string)sMessage, " \t\n")
         );
     }
 
@@ -463,7 +463,7 @@ class Response
         return $this->addCommand(array(
                 'cmd' => 'dbg'
             ),
-            (string)$sMessage
+            trim((string)sMessage, " \t\n")
         );
     }
 
@@ -533,7 +533,7 @@ class Response
         return $this->addCommand(array(
                 'cmd' => 'js'
             ),
-            (string)$sJS
+            trim((string)sJS, " \t\n")
         );
     }
 
@@ -567,7 +567,7 @@ class Response
     {
         return $this->addCommand(array(
                 'cmd' => 'rm',
-                'id' => (string)$sTarget
+                'id' => trim((string)sTarget, " \t")
             ),
             ''
         );
@@ -586,10 +586,10 @@ class Response
     {
         return $this->addCommand(array(
                 'cmd' => 'ce',
-                'id' => (string)$sParent,
-                'prop' => (string)$sId
+                'id' => trim((string)sParent, " \t"),
+                'prop' => trim((string)sId, " \t")
             ),
-            (string)$sTag
+            trim((string)sTag, " \t\n")
         );
     }
 
@@ -606,10 +606,10 @@ class Response
     {
         return $this->addCommand(array(
                 'cmd' => 'ie',
-                'id' => (string)$sBefore,
-                'prop' => (string)$sId
+                'id' => trim((string)sBefore, " \t"),
+                'prop' => trim((string)sId, " \t")
             ),
-            (string)$sTag
+            trim((string)sTag, " \t\n")
         );
     }
 
@@ -626,10 +626,10 @@ class Response
     {
         return $this->addCommand(array(
                 'cmd' => 'ia',
-                'id' => (string)$sAfter,
-                'prop' => (string)$sId
+                'id' => trim((string)sAfter, " \t"),
+                'prop' => trim((string)sId, " \t")
             ),
-            (string)$sTag
+            trim((string)sTag, " \t\n")
         );
     }
 
@@ -647,11 +647,11 @@ class Response
     {
         return $this->addCommand(array(
                 'cmd' => 'ci',
-                'id' => (string)$sParent,
-                'prop' => (string)$sId,
-                'type' => (string)$sType
+                'id' => trim((string)sParent, " \t"),
+                'prop' => trim((string)sId, " \t"),
+                'type' => trim((string)sType, " \t")
             ),
-            (string)$sName
+            trim((string)sName, " \t\n")
         );
     }
 
@@ -669,11 +669,11 @@ class Response
     {
         return $this->addCommand(array(
                 'cmd' => 'ii',
-                'id' => (string)$sBefore,
-                'prop' => (string)$sId,
-                'type' => (string)$sType
+                'id' => trim((string)sBefore, " \t"),
+                'prop' => trim((string)sId, " \t"),
+                'type' => trim((string)sType, " \t")
             ),
-            (string)$sName
+            trim((string)sName, " \t\n")
         );
     }
 
@@ -691,11 +691,11 @@ class Response
     {
         return $this->addCommand(array(
                 'cmd' => 'iia',
-                'id' => (string)$sAfter,
-                'prop' => (string)$sId,
-                'type' => (string)$sType
+                'id' => trim((string)sAfter, " \t"),
+                'prop' => trim((string)sId, " \t"),
+                'type' => trim((string)sType, " \t")
             ),
-            (string)$sName
+            trim((string)sName, " \t\n")
         );
     }
 
@@ -712,10 +712,10 @@ class Response
     {
         return $this->addCommand(array(
                 'cmd' => 'ev',
-                'id' => (string)$sTarget,
-                'prop' => (string)$sEvent
+                'id' => trim((string)sTarget, " \t"),
+                'prop' => trim((string)sEvent, " \t")
             ),
-            (string)$sScript
+            trim((string)sScript, " \t\n")
         );
     }
 
@@ -734,10 +734,10 @@ class Response
     {
         return $this->addCommand(array(
                 'cmd' => 'ah',
-                'id' => (string)$sTarget,
-                'prop' => (string)$sEvent
+                'id' => trim((string)sTarget, " \t"),
+                'prop' => trim((string)sEvent, " \t")
             ),
-            (string)$sHandler
+            trim((string)sHandler, " \t\n")
         );
     }
 
@@ -754,10 +754,10 @@ class Response
     {
         return $this->addCommand(array(
                 'cmd' => 'rh',
-                'id' => (string)$sTarget,
-                'prop' => (string)$sEvent
+                'id' => trim((string)sTarget, " \t"),
+                'prop' => trim((string)sEvent, " \t")
             ),
-            (string)$sHandler
+            trim((string)sHandler, " \t\n")
         );
     }
 
@@ -774,10 +774,10 @@ class Response
     {
         return $this->addCommand(array(
                 'cmd' => 'sf',
-                'func' => (string)$sFunction,
-                'prop' => (string)$sArgs
+                'func' => trim((string)sFunction, " \t"),
+                'prop' => trim((string)sArgs, " \t")
             ),
-            (string)$sScript
+            trim((string)sScript, " \t\n")
         );
     }
 
@@ -800,9 +800,9 @@ class Response
     {
         return $this->addCommand(array(
                 'cmd' => 'wpf',
-                'func' => (string)$sFunction,
-                'prop' => (string)$sArgs,
-                'type' => (string)$sReturnValueVar
+                'func' => trim((string)sFunction, " \t"),
+                'prop' => trim((string)sArgs, " \t"),
+                'type' => trim((string)sReturnValueVar, " \t")
             ),
             $aScripts
         );
@@ -821,12 +821,12 @@ class Response
         $command = array('cmd'  =>  'in');
         
         if(($sType))
-            $command['type'] = (string)$sType;
+            $command['type'] = trim((string)sType, " \t");
         
         if(($sId))
-            $command['elm_id'] = (string)$sId;
+            $command['elm_id'] = trim((string)sId, " \t");
 
-        return $this->addCommand($command, (string)$sFileName);
+        return $this->addCommand($command, trim((string)sFileName, " \t"));
     }
 
     /**
@@ -842,12 +842,12 @@ class Response
         $command = array('cmd' => 'ino');
         
         if(($sType))
-            $command['type'] = (string)$sType;
+            $command['type'] = trim((string)sType, " \t");
         
         if(($sId))
-            $command['elm_id'] = (string)$sId;
+            $command['elm_id'] = trim((string)sId, " \t");
             
-        return $this->addCommand($command, (string)$sFileName);
+        return $this->addCommand($command, trim((string)sFileName, " \t"));
     }
 
     /**
@@ -864,9 +864,9 @@ class Response
     {
         return $this->addCommand(array(
                 'cmd' => 'rjs',
-                'unld' => (string)$sUnload
+                'unld' => trim((string)sUnload, " \t")
             ),
-            (string)$sFileName
+            trim((string)sFileName, " \t")
         );
     }
 
@@ -885,9 +885,9 @@ class Response
         $command = array('cmd' => 'css');
         
         if(($sMedia))
-            $command['media'] = (string)$sMedia;
+            $command['media'] = trim((string)sMedia, " \t");
         
-        return $this->addCommand($command, (string)$sFileName);
+        return $this->addCommand($command, trim((string)sFileName, " \t"));
     }
 
     /**
@@ -904,9 +904,9 @@ class Response
         $command = array('cmd' => 'rcss');
         
         if(($sMedia))
-            $command['media'] = (string)$sMedia;
+            $command['media'] = trim((string)sMedia, " \t");
         
-        return $this->addCommand($command, (string)$sFileName);
+        return $this->addCommand($command, trim((string)sFileName, " \t"));
     }
 
     /**
@@ -954,7 +954,7 @@ class Response
                 'cmd' => 'wf',
                 'prop' => $tenths
             ), 
-            (string)$script
+            trim((string)script, " \t\n")
         );
     }
 
