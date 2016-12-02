@@ -720,6 +720,19 @@ class Response
     }
 
     /**
+     * Add a command to set a click handler on the browser
+     *
+     * @param string        $sTarget            The id of the element that contains the event
+     * @param string        $sScript            The javascript to execute when the event is fired
+     *
+     * @return \Jaxon\Plugin\Response
+     */
+    public function onClick($sTarget, $sScript)
+    {
+        return $this->setEvent($sTarget, 'onclick', $sScript);
+    }
+
+    /**
      * Add a command to install an event handler on the specified element
      *
      * You can add more than one event handler to an element's event using this method.
