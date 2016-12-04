@@ -37,28 +37,28 @@ class Manager
      * @var array
      */
     private $aPlugins;
-    
+
     /**
      * Request plugins, indexed by name
      *
      * @var array
      */
     private $aRequestPlugins;
-    
+
     /**
      * Response plugins, indexed by name
      *
      * @var array
      */
     private $aResponsePlugins;
-    
+
     /**
      * Directories where Jaxon classes to be registered are found
      *
      * @var array
      */
     private $aClassDirs;
-    
+
     /**
      * True if the Composer autoload is enabled
      *
@@ -72,6 +72,13 @@ class Manager
      * @var Autoloader
      */
     private $xAutoloader;
+
+    /**
+     * Confirmation question for Jaxon requests
+     *
+     * @var Request\Interfaces\Confirm
+     */
+    private $xConfirm;
 
     /**
      * Initialize the Jaxon Plugin Manager
@@ -88,6 +95,9 @@ class Manager
 
         // Set response type to JSON
         $this->sResponseType = 'JSON';
+
+        // Confirmation question for Jaxon requests
+        $this->xConfirm = new \Jaxon\Request\Support\Confirm();
     }
 
     /**
@@ -100,7 +110,7 @@ class Manager
         $this->bAutoloadEnabled = true;
         $this->xAutoloader = require (__DIR__ . '/../../../../autoload.php');
     }
-    
+
     /**
      * Disable the autoloader in the library
      *
@@ -113,7 +123,29 @@ class Manager
         $this->bAutoloadEnabled = false;
         $this->xAutoloader = null;
     }
-    
+
+    /**
+     * Set the Jaxon request Confirmation
+     *
+     * @param \Jaxon\Request\Interfaces\Confirm        $xConfirm     The Jaxon request Confirmation
+     *
+     * @return void
+     */
+    public function setConfirm(\Jaxon\Request\Interfaces\Confirm $xConfirm)
+    {
+        $this->xConfirm = $xConfirm;
+    }
+
+    /**
+     * Get the Jaxon request Confirmation
+     *
+     * @return \Jaxon\Request\Interfaces\Confirm
+     */
+    public function getConfirm()
+    {
+        return $this->xConfirm;
+    }
+
     /**
      * Inserts an entry into an array given the specified priority number
      *
@@ -135,7 +167,7 @@ class Manager
         // Sort the array by ascending keys
         ksort($this->aPlugins);
     }
-    
+
     /**
      * Register a plugin
      *
@@ -151,6 +183,7 @@ class Manager
      */
     public function registerPlugin(Plugin $xPlugin, $nPriority = 1000)
     {
+        $bIsConfirm = ($xPlugin instanceof \Jaxon\Request\Interfaces\Confirm);
         if($xPlugin instanceof Request)
         {
             // The name of a request plugin is used as key in the plugin table
@@ -161,9 +194,14 @@ class Manager
             // The name of a response plugin is used as key in the plugin table
             $this->aResponsePlugins[$xPlugin->getName()] = $xPlugin;
         }
-        else
+        else if(!$bIsConfirm)
         {
             throw new \Jaxon\Exception\Error('errors.register.invalid', array('name' => get_class($xPlugin)));
+        }
+        // This plugin implements the Confirmation interface
+        if($bIsConfirm)
+        {
+            $this->setConfirm($xPlugin);
         }
 
         $this->setPluginPriority($xPlugin, $nPriority);

@@ -13,8 +13,6 @@
 
 namespace Jaxon\Request\Interfaces;
 
-use Jaxon\Jaxon;
-
 interface Parameter
 {
     /**

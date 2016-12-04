@@ -66,6 +66,13 @@ class Request
      */
     protected $nPageNumberIndex;
     
+    /**
+     * A confirmation question which is asked to the user before sending this request
+     *
+     * @var string
+     */
+    protected $sConfirmQuestion = null;
+    
     public function __construct($sName, $sType)
     {
         $this->aParameters = array();
@@ -237,6 +244,19 @@ class Request
     }
 
     /**
+     * Add a confirmation question to the request
+     *
+     * @param string        $sQuestion                The question to ask before calling this function
+     *
+     * @return Request
+     */
+    public function confirm($sQuestion)
+    {
+        $this->sConfirmQuestion = $sQuestion;
+        return $this;
+    }
+
+    /**
      * Returns a string representation of the script output (javascript) from this request object
      *
      * @return string
@@ -244,7 +264,12 @@ class Request
     public function getScript()
     {
         $sJaxonPrefix = $this->getOption('core.prefix.' . $this->sType);
-        return $sJaxonPrefix . $this->sName . '(' . implode(', ', $this->aParameters) . ')';
+        $sScript = $sJaxonPrefix . $this->sName . '(' . implode(', ', $this->aParameters) . ')';
+        if(!$this->sConfirmQuestion)
+        {
+            return $sScript;
+        }
+        return $this->getPluginManager()->getConfirm()->getScriptWithQuestion($this->sConfirmQuestion, $sScript);
     }
 
     /**
