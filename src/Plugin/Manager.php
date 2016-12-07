@@ -215,7 +215,7 @@ class Manager
     private function generateHash()
     {
         $sHash = '';
-        foreach($this->aRequestPlugins as $xPlugin)
+        foreach($this->aPlugins as $xPlugin)
         {
             $sHash .= $xPlugin->generateHash();
         }

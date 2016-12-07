@@ -34,6 +34,13 @@ abstract class Plugin
     abstract public function getScript();
 
     /**
+     * Generate a unique hash for this plugin
+     *
+     * @return string
+     */
+    abstract public function generateHash();
+
+    /**
      * Return true if the object is a request plugin. Always return false here.
      *
      * @return boolean

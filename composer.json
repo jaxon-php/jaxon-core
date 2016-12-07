@@ -20,7 +20,7 @@
     },
     "require": {
         "php": ">=5.4.0",
-        "pimple/pimple": "~3.0",
+        "pimple/pimple": "3.0.*",
         "latte/latte": "2.3.*",
         "matthiasmullie/minify": "1.3.*"
     },
