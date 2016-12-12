@@ -66,6 +66,13 @@ class CallableObject
     private $classpath = '';
     
     /**
+     * The character to use as separator in javascript class names
+     *
+     * @var string
+     */
+    private $separator = '.';
+    
+    /**
      * An associative array that will contain configuration options for zero or more of the objects methods
      *
      * These configuration options will define the call options for each request.
@@ -110,7 +117,7 @@ class CallableObject
         // Append the classpath to the name
         if(($this->classpath))
         {
-            $name = $this->classpath . $name;
+            $name = $this->classpath . $this->separator . $name;
         }
         return $name;
     }
@@ -133,8 +140,8 @@ class CallableObject
      */
     public function getPath()
     {
-        // The class path without the trailing dot.
-        return rtrim($this->classpath, '.');
+        // The class path without the trailing separator.
+        return rtrim($this->classpath, $this->separator);
     }
 
     /**
@@ -185,7 +192,14 @@ class CallableObject
         if($sName == 'classpath')
         {
             if($sValue != '')
-                $this->classpath = $sValue . '.';
+                $this->classpath = $sValue;
+            return;
+        }
+        // Set the separator
+        if($sName == 'separator')
+        {
+            if($sValue == '_' || $sValue == '.')
+                $this->separator = $sValue;
             return;
         }
         // Set the excluded methods
@@ -213,7 +227,7 @@ class CallableObject
     public function generateRequests()
     {
         $aRequests = array();
-        $sClass = $this->getClassName();
+        $sClass = $this->getName();
 
         foreach($this->reflectionClass->getMethods(\ReflectionMethod::IS_PUBLIC) as $xMethod)
         {
@@ -228,7 +242,7 @@ class CallableObject
             {
                 continue;
             }
-            $aRequests[$sMethodName] = new Request("{$this->classpath}{$sClass}.{$sMethodName}", 'object');
+            $aRequests[$sMethodName] = new Request($sClass . '.' . $sMethodName, 'object');
         }
 
         return $aRequests;
@@ -242,7 +256,7 @@ class CallableObject
     public function getScript()
     {
         $sJaxonPrefix = $this->getOption('core.prefix.class');
-        $sClass = $this->classpath . $this->getClassName();
+        $sClass = $this->getName();
         $aMethods = array();
         $aConfig = array();
 
