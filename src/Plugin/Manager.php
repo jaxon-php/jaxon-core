@@ -418,13 +418,14 @@ class Manager
     /**
      * Register an instance of a given class
      *
-     * @param string        $sClassName                The name of the class to be registered
+     * @param string            $sClassName             The name of the class to be registered
+     * @param array             $aExcluded              The functions that are not to be exported
      *
      * @return bool
      */
     public function registerClass($sClassName, array $aExcluded = array())
     {
-        if(!($sClassName = trim($sClassName)))
+        if(!($sInitialClassName = trim($sClassName)))
         {
             return false;
         }
@@ -433,7 +434,7 @@ class Manager
             // Get the separator
             $sSeparator = $aClassDir['separator'];
             // Replace / and \ with dots, and trim the string
-            $sClassName = trim(str_replace(array('\\', '/'), array($sSeparator, $sSeparator), $sClassName), $sSeparator);
+            $sClassName = trim(str_replace(array('\\', '/'), array($sSeparator, $sSeparator), $sInitialClassName), $sSeparator);
             $sClassPath = '';
             if(($nLastDotPosition = strrpos($sClassName, $sSeparator)) !== false)
             {
