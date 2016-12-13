@@ -440,29 +440,27 @@ class Manager
                 $sClassPath = substr($sClassName, 0, $nLastDotPosition);
                 $sClassName = substr($sClassName, $nLastDotPosition + 1);
             }
-            $sClassFile = str_replace(array($sSeparator), array(DIRECTORY_SEPARATOR),
-                $sClassPath) . DIRECTORY_SEPARATOR . $sClassName . '.php';
+            $sClassFile = str_replace(array($sSeparator), array(DIRECTORY_SEPARATOR), $sClassPath) .
+                DIRECTORY_SEPARATOR . $sClassName . '.php';
             // Get the namespace
             $sNamespace = $aClassDir['namespace'];
             $nLen = strlen($sNamespace);
+            $bRegister = false;
             // Check if the class belongs to the namespace
             if(($sNamespace) && substr($sClassPath, 0, $nLen) == str_replace(array('\\'), array($sSeparator), $sNamespace))
             {
                 $sClassFile = $aClassDir['path'] . DIRECTORY_SEPARATOR . substr($sClassFile, $nLen);
-                if(is_file($sClassFile))
-                {
-                    $this->registerClassFromFile(new \SplFileInfo($sClassFile), $aClassDir['path'], $sNamespace, $aExcluded);
-                    return true;
-                }
+                $bRegister = true;
             }
-            else if(!($sNamespace) && is_file($aClassDir['path'] . DIRECTORY_SEPARATOR . $sClassFile))
+            else if(!($sNamespace))
             {
                 $sClassFile = $aClassDir['path'] . DIRECTORY_SEPARATOR . $sClassFile;
-                if(is_file($sClassFile))
-                {
-                    $this->registerClassFromFile(new \SplFileInfo($sClassFile), $aClassDir['path'], $aExcluded);
-                    return true;
-                }
+                $bRegister = true;
+            }
+            if($bRegister && is_file($sClassFile))
+            {
+                $this->registerClassFromFile(new \SplFileInfo($sClassFile), $aClassDir['path'], $sNamespace, $aExcluded, $sSeparator);
+                return true;
             }
         }
         return false;
