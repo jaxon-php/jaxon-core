@@ -31,16 +31,66 @@ use Jaxon\Response\Manager as ResponseManager;
 
 use Jaxon\Utils\URI;
 
-class Jaxon extends Base
+class Jaxon
 {
-    use \Jaxon\Utils\ContainerTrait;
+    use \Jaxon\Utils\Traits\Container;
 
     /**
-     * Mappings the previous config options to the current ones, so the library can still accept them
+     * Package version number
      *
-     * @var array
+     * @var string
      */
-    private $aOptionMappings;
+    private $sVersion = 'Jaxon 1.1.0beta1';
+
+    /*
+     * Processing events
+     */
+    const PROCESSING_EVENT = 'ProcessingEvent';
+    const PROCESSING_EVENT_BEFORE = 'BeforeProcessing';
+    const PROCESSING_EVENT_AFTER = 'AfterProcessing';
+    const PROCESSING_EVENT_INVALID = 'InvalidRequest';
+
+    /*
+     * Request methods
+     */
+    const METHOD_UNKNOWN = 0;
+    const METHOD_GET = 1;
+    const METHOD_POST = 2;
+
+    /*
+     * Request plugins
+     */
+    // An object who's methods will be callable from the browser.
+    const CALLABLE_OBJECT = 'CallableObject';
+    // A php function available at global scope, or a specific function from an instance of an object.
+    const USER_FUNCTION = 'UserFunction';
+    // A browser event.
+    const BROWSER_EVENT = 'BrowserEvent';
+    // An event handler.
+    const EVENT_HANDLER = 'EventHandler';
+
+    /*
+     * Request parameters
+     */
+    // Specifies that the parameter will consist of an array of form values.
+    const FORM_VALUES = 'FormValues';
+    // Specifies that the parameter will contain the value of an input control.
+    const INPUT_VALUE = 'InputValue';
+    // Specifies that the parameter will consist of a boolean value of a checkbox.
+    const CHECKED_VALUE = 'CheckedValue';
+    // Specifies that the parameter value will be the innerHTML value of the element.
+    const ELEMENT_INNERHTML = 'ElementInnerHTML';
+    // Specifies that the parameter will be a quoted value (string).
+    const QUOTED_VALUE = 'QuotedValue';
+    // Specifies that the parameter will be a boolean value (true or false).
+    const BOOL_VALUE = 'BoolValue';
+    // Specifies that the parameter will be a numeric, non-quoted value.
+    const NUMERIC_VALUE = 'NumericValue';
+    // Specifies that the parameter will be a non-quoted value
+    // (evaluated by the browsers javascript engine at run time).
+    const JS_VALUE = 'UnquotedValue';
+    // Specifies that the parameter will be an integer used to generate pagination links.
+    const PAGE_NUMBER = 'PageNumber';
 
     /**
      * Processing event handlers that have been assigned during this run of the script
@@ -105,34 +155,6 @@ class Jaxon extends Base
         $this->xResponseManager = $container->getResponseManager();
 
         $this->setDefaultOptions();
-        $this->aOptionMappings = array(
-            'language'                  => 'core.language',
-            'version'                   => 'core.version',
-            'characterEncoding'         => 'core.encoding',
-            'decodeUTF8Input'           => 'core.decode_utf8',
-            'requestURI'                => 'core.request.uri',
-            'defaultMode'               => 'core.request.mode',
-            'defaultMethod'             => 'core.request.method',
-            'wrapperPrefix'             => array('core.prefix.function', 'core.prefix.class'),
-            'eventPrefix'               => 'core.prefix.event',
-            'timeout'                   => 'core.process.timeout',
-            'cleanBuffer'               => 'core.process.clean_buffer',
-            'exitAllowed'               => 'core.process.exit_after',
-            'errorHandler'              => 'core.error.handle',
-            'logFile'                   => 'core.error.log_file',
-            'debug'                     => 'core.debug.on',
-            'verboseDebug'              => 'core.debug.verbose',
-            'debugOutputID'             => 'js.lib.output_id',
-            'responseQueueSize'         => 'js.lib.queue_size',
-            'scriptLoadTimeout'         => 'js.lib.load_timeout',
-            'waitCursor'                => 'js.lib.show_cursor',
-            'statusMessages'            => 'js.lib.show_status',
-            'javascript URI'            => array('js.app.uri', 'js.lib.uri'),
-            'javascript Dir'            => 'js.app.dir',
-            'deferScriptGeneration'     => array('js.app.extern', 'js.app.minify'),
-            'deferDirectory'            => 'js.app.dir',
-            'scriptDefferal'            => 'js.app.options',
-        );
     }
 
     /**
@@ -231,16 +253,15 @@ class Jaxon extends Base
      *
      * @return string
      */
-    public static function getVersion()
+    public function getVersion()
     {
-        return 'Jaxon 1.0.16';
+        return $this->sVersion;
     }
 
     /**
      * Register request handlers, including functions, callable objects and events.
      *
      * New plugins can be added that support additional registration methods and request processors.
-     * 
      *
      * @param string    $sType            The type of request handler being registered
      *        Options include:
@@ -325,214 +346,6 @@ class Jaxon extends Base
     {
         $this->xPluginManager->registerClass($sClassName);
         return (($bGetObject) ? $this->xPluginManager->getRegisteredObject($sClassName) : null);
-    }
-
-    /**
-     * Set the URI of the Jaxon javascript library files
-     * 
-     * @param string        $sJsLibURI        The URI of the Jaxon javascript library files
-     *
-     * @return void
-     */
-    public function setJavascriptURI($sJsLibURI)
-    {
-        $this->setOption('js.lib.uri', $sJsLibURI);
-    }
-    
-    /**
-     * Write the code generated by Jaxon into a javascript file
-     *
-     * @param string        $sJsAppDir            The dir where the generated file will be located
-     * @param string        $sJsAppURI            The URI where the generated file will be located
-     * @param boolean       $bMinifyJs            Shall the generated file also be minified
-     *
-     * @return void
-     */
-    public function exportJavascript($sJsAppDir, $sJsAppURI, $bMinifyJs = true)
-    {
-        $this->setOption('js.app.extern', true);
-        $this->setOption('js.app.dir', $sJsAppDir);
-        $this->setOption('js.app.uri', $sJsAppURI);
-        $this->setOption('js.app.minify', ($bMinifyJs));
-    }
-
-    /**
-     * Set an array of configuration options
-     *
-     * This function is deprecated, and will be removed in a future version. Use <setOptions> instead.
-     *
-     * @param array         $aOptions            Associative array of configuration settings
-     *
-     * @return void
-     */
-    public function configureMany(array $aOptions)
-    {
-        foreach($aOptions as $sName => $xValue)
-        {
-            $this->configure($sName, $xValue);
-        }
-    }
-    
-    /**
-     * Set a configuration option
-     *
-     * This function is deprecated, and will be removed in a future version. Use <setOption> instead.
-     *
-     * @param string         $sName                The name of the configuration setting
-     * @param mixed            $xValue                The value of the setting
-     *
-     * @return void
-     */
-    public function configure($sName, $xValue)
-    {
-        // The config name must be mapped to the new option name
-        if(!array_key_exists($sName, $this->aOptionMappings))
-        {
-            return;
-        }
-        $sName = $this->aOptionMappings[$sName];
-        if(!is_array($sName))
-        {
-            $sName = array($sName);
-        }
-        foreach($sName as $name)
-        {
-            $this->setOption($name, $xValue);
-        }
-    }
-
-    /**
-     * Get the current value of a configuration setting
-     *
-     * This function is deprecated, and will be removed in a future version. Use <getOption> instead.
-     *
-     * @param array         $sName                The name of the configuration setting
-     *
-     * @return mixed
-     */
-    public function getConfiguration($sName)
-    {
-        // The config name must be mapped to the new option name
-        if(!array_key_exists($sName, $this->aOptionMappings))
-        {
-            return null;
-        }
-        $sName = $this->aOptionMappings[$sName];
-        return $this->getOption((is_array($sName) ? $sName[0] : $sName));
-    }
-
-    /**
-     * Ensure that an active session is available
-     *
-     * Primarily used for storing challenge / response codes.
-     *
-     * @return boolean
-     */
-    private function verifySession()
-    {
-        $sessionID = session_id();
-        if($sessionID === '')
-        {
-            $this->xResponseManager->debug('Must enable sessions to use challenge/response.');
-            return false;
-        }
-        return true;
-    }
-
-    /**
-     * Read the challenge data from the session
-     *
-     * @param string        $sessionKey            The session key
-     *
-     * @return mixed
-     */
-    private function loadChallenges($sessionKey)
-    {
-        $challenges = array();
-
-        if(isset($_SESSION[$sessionKey]))
-            $challenges = $_SESSION[$sessionKey];
-
-        return $challenges;
-    }
-
-    /**
-     * Save the challenge data in the session
-     *
-     * @param string        $sessionKey            The session key
-     * @param mixed            $challenges            The challenge data
-     *
-     * @return void
-     */
-    private function saveChallenges($sessionKey, $challenges)
-    {
-        if(count($challenges) > 10)
-            array_shift($challenges);
-
-        $_SESSION[$sessionKey] = $challenges;
-    }
-
-    /**
-     * Make the challenge data
-     *
-     * @param string        $algo                The algorithm to use
-     * @param integer        $value                The value to hash
-     *
-     * @return string
-     */
-    private function makeChallenge($algo, $value)
-    {
-        // TODO: Move to configuration option
-        if(!$algo)
-            $algo = 'md5';
-        // TODO: Move to configuration option
-        if(!$value)
-            $value = rand(100000, 999999);
-
-        return hash($algo, $value);
-    }
-
-    /**
-     * Introduce a challenge and response cycle into the request response process
-     *
-     * Sessions must be enabled to use this feature.
-     *
-     * @param string        $algo                The algorithm to use
-     * @param integer       $value               The value to hash
-     *
-     * @return void
-     */
-    public function challenge($algo=null, $value=null)
-    {
-        if(!$this->verifySession())
-            return false;
-
-        // TODO: Move to configuration option
-        $sessionKey = 'jaxon_challenges';
-
-        $challenges = $this->loadChallenges($sessionKey);
-
-        if(isset($this->challengeResponse))
-        {
-            $key = array_search($this->challengeResponse, $challenges);
-
-            if($key !== false)
-            {
-                unset($challenges[$key]);
-                $this->saveChallenges($sessionKey, $challenges);
-                return true;
-            }
-        }
-
-        $challenge = $this->makeChallenge($algo, $value);
-
-        $challenges[] = $challenge;
-
-        $this->saveChallenges($sessionKey, $challenges);
-
-        header("challenge: {$challenge}");
-
-        return false;
     }
 
     /**
@@ -791,7 +604,7 @@ class Jaxon extends Base
     {
         return \Jaxon\Config\Php::read($sConfigFile, $sKey);
     }
-    
+
     /**
      * Read and set Jaxon options from a YAML config file
      *
@@ -875,5 +688,16 @@ class Jaxon extends Base
         $this->registerPlugin(new \Jaxon\Request\Plugin\CallableObject(), 101);
         $this->registerPlugin(new \Jaxon\Request\Plugin\UserFunction(), 102);
         $this->registerPlugin(new \Jaxon\Request\Plugin\BrowserEvent(), 103);
+    }
+
+    /**
+     * Register the Jaxon response plugins
+     *
+     * @return void
+     */
+    public function registerResponsePlugins()
+    {
+        // Register an instance of the JQuery plugin
+        $this->registerPlugin(new \Jaxon\JQuery\Plugin(), 700);
     }
 }
