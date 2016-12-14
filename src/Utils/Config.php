@@ -16,7 +16,7 @@ namespace Jaxon\Utils;
 
 class Config
 {
-    private $aOptions;
+    protected $aOptions;
 
     public function __construct()
     {
@@ -50,7 +50,7 @@ class Config
         $sPrefix = (string)$sPrefix;
         $nDepth = intval($nDepth);
         // Check the max depth
-        if($nDepth < 0 || $nDepth > 5)
+        if($nDepth < 0 || $nDepth > 9)
         {
             throw new \Jaxon\Exception\Config\Data('depth', $sPrefix, $nDepth);
         }
@@ -99,12 +99,13 @@ class Config
      * Get the value of a config option
      *
      * @param string        $sName            The option name
+     * @param mixed         $xDefault         The default value, to be returned if the option is not defined
      *
-     * @return mixed        The option value, or null if the option is unknown
+     * @return mixed        The option value, or its default value
      */
-    public function getOption($sName)
+    public function getOption($sName, $xDefault = null)
     {
-        return (array_key_exists($sName, $this->aOptions) ? $this->aOptions[$sName] : null);
+        return (array_key_exists($sName, $this->aOptions) ? $this->aOptions[$sName] : $xDefault);
     }
 
     /**
