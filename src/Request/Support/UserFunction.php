@@ -49,7 +49,7 @@ use Jaxon\Request\Request;
 
 class UserFunction
 {
-    use \Jaxon\Utils\ContainerTrait;
+    use \Jaxon\Utils\Traits\Container;
 
     /**
      * An alias to use for this function

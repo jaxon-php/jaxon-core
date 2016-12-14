@@ -27,7 +27,7 @@ use Jaxon\Request\Manager as RequestManager;
 
 class UserFunction extends RequestPlugin
 {
-    use \Jaxon\Utils\ContainerTrait;
+    use \Jaxon\Utils\Traits\Container;
 
     /**
      * The registered user functions

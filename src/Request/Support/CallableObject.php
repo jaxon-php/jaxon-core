@@ -28,7 +28,7 @@ use Jaxon\Request\Request;
 
 class CallableObject
 {
-    use \Jaxon\Utils\ContainerTrait;
+    use \Jaxon\Utils\Traits\Container;
 
     /**
      * A reference to the callable object the user has registered
@@ -49,7 +49,7 @@ class CallableObject
      *
      * @var array
      */
-    private $aExcludedMethods;
+    private $aProtectedMethods;
     
     /**
      * The namespace where the callable object class is defined
@@ -88,7 +88,7 @@ class CallableObject
         $this->reflectionClass = new \ReflectionClass(get_class($this->callableObject));
         $this->aConfiguration = array();
         // By default, the methods of the RequestTrait and ResponseTrait traits are excluded
-        $this->aExcludedMethods = array('setGlobalResponse', 'newResponse',
+        $this->aProtectedMethods = array('setGlobalResponse', 'newResponse',
                 'setJaxonCallable', 'getJaxonClassName', 'request');
     }
 
@@ -161,7 +161,7 @@ class CallableObject
                 continue;
             }
             // Don't take excluded methods
-            if(in_array($sMethodName, $this->aExcludedMethods))
+            if(in_array($sMethodName, $this->aProtectedMethods))
             {
                 continue;
             }
@@ -203,12 +203,12 @@ class CallableObject
             return;
         }
         // Set the excluded methods
-        if($sName == 'excluded')
+        if($sName == 'protected')
         {
             if(is_array($sValue))
-                $this->aExcludedMethods = array_merge($this->aExcludedMethods, $sValue);
+                $this->aProtectedMethods = array_merge($this->aProtectedMethods, $sValue);
             else if(is_string($sValue))
-                $this->aExcludedMethods[] = $sValue;
+                $this->aProtectedMethods[] = $sValue;
             return;
         }
         
@@ -238,7 +238,7 @@ class CallableObject
                 continue;
             }
             // Don't generate excluded methods
-            if(in_array($sMethodName, $this->aExcludedMethods))
+            if(in_array($sMethodName, $this->aProtectedMethods))
             {
                 continue;
             }
@@ -273,7 +273,7 @@ class CallableObject
                 continue;
             }
             // Don't export excluded methods
-            if(in_array($sMethodName, $this->aExcludedMethods))
+            if(in_array($sMethodName, $this->aProtectedMethods))
             {
                 continue;
             }

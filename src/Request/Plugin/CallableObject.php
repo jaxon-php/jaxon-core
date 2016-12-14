@@ -26,7 +26,7 @@ use Jaxon\Plugin\Request as RequestPlugin;
 
 class CallableObject extends RequestPlugin
 {
-    use \Jaxon\Utils\ContainerTrait;
+    use \Jaxon\Utils\Traits\Container;
 
     /**
      * The registered callable objects

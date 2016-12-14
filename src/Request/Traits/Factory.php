@@ -1,7 +1,7 @@
 <?php
 
 /**
- * FactoryTrait.php - Trait for Jaxon Request Factory
+ * Factory.php - Trait for Jaxon Request Factory
  *
  * Make functions of the Jaxon Request Factory class available to Jaxon classes.
  *
@@ -12,9 +12,9 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Request;
+namespace Jaxon\Request\Traits;
 
-trait FactoryTrait
+trait Factory
 {
     /**
      * The \Jaxon\Request\Support\CallableObject instance associated to the Jaxon object using this trait

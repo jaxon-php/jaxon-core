@@ -22,6 +22,6 @@ class Confirm
      */
     public function getScriptWithQuestion($question, $script)
     {
-        return "if(confirm('" . addslashes($question) . "')){" . $script . ";}";
+        return 'if(confirm("' . addslashes($question) . '")){' . $script . ';}';
     }
 }

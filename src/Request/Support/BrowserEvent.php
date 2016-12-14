@@ -26,7 +26,7 @@ use Jaxon\Response\Manager as ResponseManager;
 
 class BrowserEvent
 {
-    use \Jaxon\Utils\ContainerTrait;
+    use \Jaxon\Utils\Traits\Container;
 
     /**
      * The name of the event

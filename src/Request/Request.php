@@ -24,7 +24,7 @@ use Jaxon\Jaxon;
 
 class Request
 {
-    use \Jaxon\Utils\ContainerTrait;
+    use \Jaxon\Utils\Traits\Container;
 
     /**
      * The name of an Jaxon function or a method of a callable object
