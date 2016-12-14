@@ -1,7 +1,7 @@
 <?php
 
 /**
- * ContainerTrait.php - Trait for Utils classes
+ * Container.php - Trait for Utils classes
  *
  * Make functions of the utils classes available to Jaxon classes.
  *
@@ -12,9 +12,11 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Utils;
+namespace Jaxon\Utils\Traits;
 
-trait ContainerTrait
+use Jaxon\Utils\Container as JaxonContainer;
+
+trait Container
 {
     /**
      * Get the plugin manager
@@ -23,7 +25,7 @@ trait ContainerTrait
      */
     public function getPluginManager()
     {
-        return Container::getInstance()->getPluginManager();
+        return JaxonContainer::getInstance()->getPluginManager();
     }
 
     /**
@@ -33,7 +35,7 @@ trait ContainerTrait
      */
     public function getRequestManager()
     {
-        return Container::getInstance()->getRequestManager();
+        return JaxonContainer::getInstance()->getRequestManager();
     }
 
     /**
@@ -43,7 +45,7 @@ trait ContainerTrait
      */
     public function getResponseManager()
     {
-        return Container::getInstance()->getResponseManager();
+        return JaxonContainer::getInstance()->getResponseManager();
     }
 
     /**
@@ -56,7 +58,7 @@ trait ContainerTrait
      */
     public function setOption($sName, $sValue)
     {
-        return Container::getInstance()->getConfig()->setOption($sName, $sValue);
+        return JaxonContainer::getInstance()->getConfig()->setOption($sName, $sValue);
     }
     
     /**
@@ -69,7 +71,7 @@ trait ContainerTrait
      */
     public function setOptions($aOptions, $sKeys = '')
     {
-        return Container::getInstance()->getConfig()->setOptions($aOptions, $sKeys);
+        return JaxonContainer::getInstance()->getConfig()->setOptions($aOptions, $sKeys);
     }
 
     /**
@@ -81,7 +83,7 @@ trait ContainerTrait
      */
     public function getOption($sName)
     {
-        return Container::getInstance()->getConfig()->getOption($sName);
+        return JaxonContainer::getInstance()->getConfig()->getOption($sName);
     }
 
     /**
@@ -93,7 +95,7 @@ trait ContainerTrait
      */
     public function hasOption($sName)
     {
-        return Container::getInstance()->getConfig()->hasOption($sName);
+        return JaxonContainer::getInstance()->getConfig()->hasOption($sName);
     }
 
     /**
@@ -105,7 +107,7 @@ trait ContainerTrait
      */
     public function getOptionNames($sPrefix)
     {
-        return Container::getInstance()->getConfig()->getOptionNames($sPrefix);
+        return JaxonContainer::getInstance()->getConfig()->getOptionNames($sPrefix);
     }
 
     /**
@@ -117,7 +119,7 @@ trait ContainerTrait
      */
     public function setCacheDir($sCacheDir)
     {
-        return Container::getInstance()->getTemplate()->setCacheDir($sCacheDir);
+        return JaxonContainer::getInstance()->getTemplate()->setCacheDir($sCacheDir);
     }
 
     /**
@@ -130,7 +132,7 @@ trait ContainerTrait
      */
     public function render($sTemplate, array $aVars = array())
     {
-        return Container::getInstance()->getTemplate()->render($sTemplate, $aVars);
+        return JaxonContainer::getInstance()->getTemplate()->render($sTemplate, $aVars);
     }
 
     /**
@@ -144,7 +146,7 @@ trait ContainerTrait
      */
     public function trans($sText, array $aPlaceHolders = array(), $sLanguage = null)
     {
-        return Container::getInstance()->getTranslator()->trans($sText, $aPlaceHolders, $sLanguage);
+        return JaxonContainer::getInstance()->getTranslator()->trans($sText, $aPlaceHolders, $sLanguage);
     }
 
     /**
@@ -157,7 +159,7 @@ trait ContainerTrait
      */
     public function minify($sJsFile, $sMinFile)
     {
-        return Container::getInstance()->getMinifier()->minify($sJsFile, $sMinFile);
+        return JaxonContainer::getInstance()->getMinifier()->minify($sJsFile, $sMinFile);
     }
 
     /**
@@ -169,7 +171,7 @@ trait ContainerTrait
      */
     public function validateFunction($sName)
     {
-        return Container::getInstance()->getValidator()->validateFunction($sName);
+        return JaxonContainer::getInstance()->getValidator()->validateFunction($sName);
     }
 
     /**
@@ -181,7 +183,7 @@ trait ContainerTrait
      */
     public function validateEvent($sName)
     {
-        return Container::getInstance()->getValidator()->validateEvent($sName);
+        return JaxonContainer::getInstance()->getValidator()->validateEvent($sName);
     }
 
     /**
@@ -193,7 +195,7 @@ trait ContainerTrait
      */
     public function validateClass($sName)
     {
-        return Container::getInstance()->getValidator()->validateClass($sName);
+        return JaxonContainer::getInstance()->getValidator()->validateClass($sName);
     }
 
     /**
@@ -205,6 +207,6 @@ trait ContainerTrait
      */
     public function validateMethod($sName)
     {
-        return Container::getInstance()->getValidator()->validateMethod($sName);
+        return JaxonContainer::getInstance()->getValidator()->validateMethod($sName);
     }
 }
