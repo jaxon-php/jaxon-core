@@ -1,7 +1,7 @@
 <?php
 
 /**
- * FactoryTrait.php - Trait for Jaxon Response Factory
+ * Factory.php - Trait for Jaxon Response Factory
  *
  * Make functions to create Jaxon Response objects available to Jaxon classes.
  *
@@ -12,11 +12,11 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Response;
+namespace Jaxon\Response\Traits;
 
 use \Jaxon\Jaxon;
 
-trait FactoryTrait
+trait Factory
 {
     /**
      * The global response instance

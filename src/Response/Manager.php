@@ -23,7 +23,7 @@ namespace Jaxon\Response;
 
 class Manager
 {
-    use \Jaxon\Utils\ContainerTrait;
+    use \Jaxon\Utils\Traits\Container;
 
     /**
      * The current response object that will be sent back to the browser

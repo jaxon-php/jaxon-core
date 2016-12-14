@@ -37,7 +37,7 @@ use Jaxon\Jaxon;
 
 class Response
 {
-    use \Jaxon\Utils\ContainerTrait;
+    use \Jaxon\Utils\Traits\Container;
 
     /**
      * The commands that will be sent to the browser in the response
