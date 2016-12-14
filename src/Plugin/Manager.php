@@ -289,17 +289,23 @@ class Manager
     /**
      * Add a path to the class directories
      *
-     * @param string        $sDir                The path to the directory
-     * @param string|null    $sNamespace            The associated namespace
-     * @param array         $aExcluded            The functions that are not to be exported
+     * @param string            $sDirectory             The path to the directory
+     * @param string|null       $sNamespace             The associated namespace
+     * @param array             $aExcluded              The functions that are not to be exported
+     * @param string            $sSeparator             The character to use as separator in javascript class names
      *
      * @return boolean
      */
-    public function addClassDir($sDir, $sNamespace = null, array $aExcluded = array())
+    public function addClassDir($sDirectory, $sNamespace = null, array $aExcluded = array(), $sSeparator = '.')
     {
-        if(!is_dir(($sDir = trim($sDir))))
+        if(!is_dir(($sDirectory = trim($sDirectory))))
         {
             return false;
+        }
+        // Only '.' and '_' are allowed to be used as separator. Any other value is ignored and '.' is used instead.
+        if(($sSeparator = trim($sSeparator)) != '_')
+        {
+            $sSeparator = '.';
         }
         if(!($sNamespace = trim($sNamespace)))
         {
@@ -311,13 +317,13 @@ class Manager
             // If there is an autoloader, register the dir with PSR4 autoloading
             if(($this->xAutoloader))
             {
-                $this->xAutoloader->setPsr4($sNamespace . '\\', $sDir);
+                $this->xAutoloader->setPsr4($sNamespace . '\\', $sDirectory);
             }
         }
         else if(($this->xAutoloader))
         {
             // If there is an autoloader, register the dir with classmap autoloading
-            $itDir = new RecursiveDirectoryIterator($sDir);
+            $itDir = new RecursiveDirectoryIterator($sDirectory);
             $itFile = new RecursiveIteratorIterator($itDir);
             // Iterate on dir content
             foreach($itFile as $xFile)
@@ -330,32 +336,34 @@ class Manager
                 $this->xAutoloader->addClassMap(array($xFile->getBasename('.php') => $xFile->getPathname()));
             }
         }
-        $this->aClassDirs[] = array('path' => $sDir, 'namespace' => $sNamespace, 'excluded' => $aExcluded);
+        $this->aClassDirs[] = array('path' => $sDirectory, 'namespace' => $sNamespace,
+            'excluded' => $aExcluded, 'separator' => $sSeparator);
         return true;
     }
 
     /**
      * Register an instance of a given class from a file
      *
-     * @param object        $xFile                The PHP file containing the class
-     * @param string        $sDir                The path to the directory
-     * @param string|null    $sNamespace            The associated namespace
-     * @param array         $aExcluded            The functions that are not to be exported
+     * @param object            $xFile                  The PHP file containing the class
+     * @param string            $sDir                   The path to the directory
+     * @param string|null       $sNamespace             The associated namespace
+     * @param array             $aExcluded              The functions that are not to be exported
+     * @param string            $sSeparator             The character to use as separator in javascript class names
      *
      * @return void
      */
-    protected function registerClassFromFile($xFile, $sDir, $sNamespace = null, array $aExcluded = array())
+    protected function registerClassFromFile($xFile, $sDir, $sNamespace = null, array $aExcluded = array(), $sSeparator = '.')
     {
         // Get the corresponding class path and name
         $sClassPath = trim(substr($xFile->getPath(), strlen($sDir)), DIRECTORY_SEPARATOR);
-        $sClassPath = str_replace(array(DIRECTORY_SEPARATOR), array('.'), $sClassPath);
+        $sClassPath = str_replace(array(DIRECTORY_SEPARATOR), array($sSeparator), $sClassPath);
         $sClassName = $xFile->getBasename('.php');
         if(($sNamespace))
         {
             $sNamespace = trim($sNamespace, '\\');
-            $sClassPath = str_replace(array('\\'), array('.'), $sNamespace) . '.' . $sClassPath;
-            $sClassPath = rtrim($sClassPath, '.');
-            $sClassName = '\\' . str_replace(array('.'), array('\\'), $sClassPath) . '\\' . $sClassName;
+            $sClassPath = str_replace(array('\\'), array($sSeparator), $sNamespace) . $sSeparator . $sClassPath;
+            $sClassPath = rtrim($sClassPath, $sSeparator);
+            $sClassName = '\\' . str_replace(array($sSeparator), array('\\'), $sClassPath) . '\\' . $sClassName;
         }
         // Require the file only if autoload is enabled but there is no autoloader
         if(($this->bAutoloadEnabled) && !($this->xAutoloader))
@@ -364,7 +372,7 @@ class Manager
         }
         // Create and register an instance of the class
         $xCallableObject = new $sClassName;
-        $aOptions = array('*' => array());
+        $aOptions = array('*' => array('separator' => $sSeparator));
         if(($sNamespace))
         {
             $aOptions['*']['namespace'] = $sNamespace;
@@ -401,7 +409,8 @@ class Manager
                 {
                     continue;
                 }
-                $this->registerClassFromFile($xFile, $sClassDir['path'], $sClassDir['namespace'], $sClassDir['excluded']);
+                $this->registerClassFromFile($xFile, $sClassDir['path'],
+                    $sClassDir['namespace'], $sClassDir['excluded'], $sClassDir['separator']);
             }
         }
     }
@@ -409,47 +418,50 @@ class Manager
     /**
      * Register an instance of a given class
      *
-     * @param string        $sClassName                The name of the class to be registered
+     * @param string            $sClassName             The name of the class to be registered
+     * @param array             $aExcluded              The functions that are not to be exported
      *
      * @return bool
      */
     public function registerClass($sClassName, array $aExcluded = array())
     {
-        if(!($sClassName = trim($sClassName)))
+        if(!($sInitialClassName = trim($sClassName)))
         {
             return false;
         }
-        // Replace / and \ with dots, and trim the string
-        $sClassName = trim(str_replace(array('\\', '/'), array('.', '.'), $sClassName), '.');
-        $sClassPath = '';
-        if(($nLastDotPosition = strrpos($sClassName, '.')) !== false)
-        {
-            $sClassPath = substr($sClassName, 0, $nLastDotPosition);
-            $sClassName = substr($sClassName, $nLastDotPosition + 1);
-        }
-        $sClassFile = str_replace(array('.'), array(DIRECTORY_SEPARATOR), $sClassPath) . DIRECTORY_SEPARATOR . $sClassName . '.php';
         foreach($this->aClassDirs as $aClassDir)
         {
+            // Get the separator
+            $sSeparator = $aClassDir['separator'];
+            // Replace / and \ with dots, and trim the string
+            $sClassName = trim(str_replace(array('\\', '/'), array($sSeparator, $sSeparator), $sInitialClassName), $sSeparator);
+            $sClassPath = '';
+            if(($nLastDotPosition = strrpos($sClassName, $sSeparator)) !== false)
+            {
+                $sClassPath = substr($sClassName, 0, $nLastDotPosition);
+                $sClassName = substr($sClassName, $nLastDotPosition + 1);
+            }
+            $sClassFile = str_replace(array($sSeparator), array(DIRECTORY_SEPARATOR), $sClassPath) .
+                DIRECTORY_SEPARATOR . $sClassName . '.php';
+            // Get the namespace
             $sNamespace = $aClassDir['namespace'];
             $nLen = strlen($sNamespace);
+            $bRegister = false;
             // Check if the class belongs to the namespace
-            if(($sNamespace) && substr($sClassPath, 0, $nLen) == str_replace(array('\\'), array('.'), $sNamespace))
+            if(($sNamespace) && substr($sClassPath, 0, $nLen) == str_replace(array('\\'), array($sSeparator), $sNamespace))
             {
                 $sClassFile = $aClassDir['path'] . DIRECTORY_SEPARATOR . substr($sClassFile, $nLen);
-                if(is_file($sClassFile))
-                {
-                    $this->registerClassFromFile(new \SplFileInfo($sClassFile), $aClassDir['path'], $sNamespace, $aExcluded);
-                    return true;
-                }
+                $bRegister = true;
             }
-            else if(!($sNamespace) && is_file($aClassDir['path'] . DIRECTORY_SEPARATOR . $sClassFile))
+            else if(!($sNamespace))
             {
                 $sClassFile = $aClassDir['path'] . DIRECTORY_SEPARATOR . $sClassFile;
-                if(is_file($sClassFile))
-                {
-                    $this->registerClassFromFile(new \SplFileInfo($sClassFile), $aClassDir['path'], $aExcluded);
-                    return true;
-                }
+                $bRegister = true;
+            }
+            if($bRegister && is_file($sClassFile))
+            {
+                $this->registerClassFromFile(new \SplFileInfo($sClassFile), $aClassDir['path'], $sNamespace, $aExcluded, $sSeparator);
+                return true;
             }
         }
         return false;

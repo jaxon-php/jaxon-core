@@ -233,7 +233,7 @@ class Jaxon extends Base
      */
     public static function getVersion()
     {
-        return 'Jaxon 1.0.1';
+        return 'Jaxon 1.0.16';
     }
 
     /**
@@ -288,15 +288,16 @@ class Jaxon extends Base
     /**
      * Add a path to the class directories
      *
-     * @param string         $sPath             The path to the directory
-     * @param string|null    $sNamespace        The associated namespace
-     * @param array          $aExcluded         These methods will not be registered
+     * @param string            $sDirectory             The path to the directory
+     * @param string|null       $sNamespace             The associated namespace
+     * @param array             $aExcluded              The functions that are not to be exported
+     * @param string            $sSeparator             The character to use as separator in javascript class names
      *
      * @return boolean
      */
-    public function addClassDir($sPath, $sNamespace = null, array $aExcluded = array())
+    public function addClassDir($sDirectory, $sNamespace = null, array $aExcluded = array(), $sSeparator = '.')
     {
-        return $this->xPluginManager->addClassDir($sPath, $sNamespace, $aExcluded);
+        return $this->xPluginManager->addClassDir($sDirectory, $sNamespace, $aExcluded, $sSeparator);
     }
 
     /**
