@@ -15,17 +15,20 @@
 
 namespace Jaxon\Config;
 
+use Jaxon\Utils\Config;
+
 class Php
 {
     /**
      * Read and set Jaxon options from a PHP config file
      *
      * @param array         $sConfigFile        The full path to the config file
-     * @param string        $sKeys              The keys of the options in the file
+     * @param string        $sLibKeys           The keys of the library options in the file
+     * @param string        $sAppKeys           The keys of the application options in the file
      *
-     * @return array
+     * @return Jaxon\Utils\Config
      */
-    public static function read($sConfigFile, $sKeys = '')
+    public static function read($sConfigFile, $sLibKeys = '', $sAppKeys = null)
     {
         $sConfigFile = realpath($sConfigFile);
         if(!is_readable($sConfigFile))
@@ -40,7 +43,13 @@ class Php
 
         // Setup the config options into the library.
         $jaxon = jaxon();
-        $jaxon->setOptions($aConfigOptions, $sKeys);
-        return $aConfigOptions;
+        $jaxon->setOptions($aConfigOptions, $sLibKeys);
+        if(!is_string($sAppKeys))
+        {
+            return null;
+        }
+        $config = new Config();
+        $config->setOptions($aConfigOptions, $sAppKeys);
+        return $config;
     }
 }
