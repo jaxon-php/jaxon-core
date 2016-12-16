@@ -311,14 +311,14 @@ class Jaxon
      *
      * @param string            $sDirectory             The path to the directory
      * @param string|null       $sNamespace             The associated namespace
-     * @param array             $aExcluded              The functions that are not to be exported
      * @param string            $sSeparator             The character to use as separator in javascript class names
+     * @param array             $aExcluded              The functions that are not to be exported
      *
      * @return boolean
      */
-    public function addClassDir($sDirectory, $sNamespace = null, array $aExcluded = array(), $sSeparator = '.')
+    public function addClassDir($sDirectory, $sNamespace = null, $sSeparator = '.', array $aExcluded = array())
     {
-        return $this->xPluginManager->addClassDir($sDirectory, $sNamespace, $aExcluded, $sSeparator);
+        return $this->xPluginManager->addClassDir($sDirectory, $sNamespace, $sSeparator, $aExcluded);
     }
 
     /**
