@@ -269,8 +269,8 @@ class CallableObject
             {
                 continue;
             }
-            // Don't export "protected" methods
-            if(in_array($sMethodName, $this->aProtectedMethods))
+            // Don't export "excluded" methods
+            if(in_array($sMethodName, $this->aExcludedMethods))
             {
                 continue;
             }
