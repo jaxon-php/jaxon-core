@@ -258,12 +258,9 @@ class CallableObject
         $sJaxonPrefix = $this->getOption('core.prefix.class');
         $sClass = $this->getName();
         $aMethods = array();
-        $aConfig = array();
 
-        if(isset($this->aConfiguration['*']))
-        {
-            $aConfig = $this->aConfiguration['*'];
-        }
+        // Common options to be set on all methods
+        $aCommonConfig = array_key_exists('*', $this->aConfiguration) ? $this->aConfiguration['*'] : array();
         foreach($this->reflectionClass->getMethods(\ReflectionMethod::IS_PUBLIC) as $xMethod)
         {
             $sMethodName = $xMethod->getShortName();
@@ -272,16 +269,15 @@ class CallableObject
             {
                 continue;
             }
-            // Don't export excluded methods
+            // Don't export "protected" methods
             if(in_array($sMethodName, $this->aProtectedMethods))
             {
                 continue;
             }
-            $aMethod = array('name' => $sMethodName, 'config' => $aConfig);
-            if(isset($this->aConfiguration[$sMethodName]))
-            {
-                $aMethod['config'] = array_merge($aMethod['config'], $this->aConfiguration[$sMethodName]);
-            }
+            // Specific options for this method
+            $aMethodConfig = array_key_exists($sMethodName, $this->aConfiguration) ?
+                array_merge($aCommonConfig, $this->aConfiguration[$sMethodName]) : $aCommonConfig;
+            $aMethod = array('name' => $sMethodName, 'config' => $aMethodConfig);
             $aMethods[] = $aMethod;
         }
 
