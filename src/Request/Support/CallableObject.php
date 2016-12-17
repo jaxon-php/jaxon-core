@@ -82,14 +82,64 @@ class CallableObject
      */
     private $aConfiguration;
     
-    public function __construct($obj)
+    /**
+     * The class contructor
+     *
+     * @param object|string            $xCallable               The callable object instance or class name
+     * 
+     */
+    public function __construct($xCallable)
     {
-        $this->callableObject = $obj;
-        $this->reflectionClass = new \ReflectionClass(get_class($this->callableObject));
+        if(is_string($xCallable)) // Received a class name
+        {
+            $this->reflectionClass = new \ReflectionClass($xCallable);
+            $this->callableObject = null;
+        }
+        else // if(is_object($xCallable)) // Received a class instance
+        {
+            $this->reflectionClass = new \ReflectionClass(get_class($xCallable));
+            $this->initCallable($xCallable);
+        }
         $this->aConfiguration = array();
-        // By default, the methods of the RequestTrait and ResponseTrait traits are excluded
-        $this->aProtectedMethods = array('setGlobalResponse', 'newResponse',
-                'setJaxonCallable', 'getJaxonClassName', 'request');
+        // By default, no method is "protected"
+        $this->aProtectedMethods = array();
+    }
+
+    /**
+     * Initialize a registered callable.
+     * 
+     * If the input parameter is null, an instance of the callable is first created.
+     *
+     * @param object|null           $xCallable          The callable object instance or null
+     *
+     * @return void
+     */
+    private function initCallable($xCallable = null)
+    {
+        if($xCallable == null)
+        {
+            $xCallable = $this->reflectionClass->newInstance();
+        }
+        // Save the Jaxon callable object into the user callable object
+        if($xCallable instanceof \Jaxon\Request\Traits\Factory)
+        {
+            $xCallable->setJaxonCallable($this);
+        }
+        $this->callableObject = $xCallable;
+    }
+
+    /**
+     * Return the registered callable object
+     *
+     * @return object
+     */
+    public function getRegisteredObject()
+    {
+        if($this->callableObject == null)
+        {
+            $this->initCallable();
+        }
+        return $this->callableObject;
     }
 
     /**
@@ -97,7 +147,7 @@ class CallableObject
      *
      * @return string
      */
-    private function getClassName()
+    public function getClassName()
     {
         // Get the class name without the namespace.
         return $this->reflectionClass->getShortName();
@@ -218,35 +268,6 @@ class CallableObject
         }    
         $this->aConfiguration[$sMethod][$sName] = $sValue;
     }
-
-    /**
-     * Produce an array of <Jaxon\Request\Request>, one for each method exposed by this callable object
-     *
-     * @return array
-     */
-    public function generateRequests()
-    {
-        $aRequests = array();
-        $sClass = $this->getName();
-
-        foreach($this->reflectionClass->getMethods(\ReflectionMethod::IS_PUBLIC) as $xMethod)
-        {
-            $sMethodName = $xMethod->getShortName();
-            // Don't generate magic __call, __construct, __destruct methods
-            if(strlen($sMethodName) > 2 && substr($sMethodName, 0, 2) == '__')
-            {
-                continue;
-            }
-            // Don't generate excluded methods
-            if(in_array($sMethodName, $this->aProtectedMethods))
-            {
-                continue;
-            }
-            $aRequests[$sMethodName] = new Request($sClass . '.' . $sMethodName, 'object');
-        }
-
-        return $aRequests;
-    }
     
     /**
      * Generate client side javascript code for calls to all methods exposed by this callable object
@@ -314,7 +335,7 @@ class CallableObject
      * Call the specified method of the registered callable object using the specified array of arguments
      *
      * @param string        $sMethod            The name of the method to call
-     * @param array         $aArgs                The arguments to pass to the method
+     * @param array         $aArgs              The arguments to pass to the method
      *
      * @return void
      */
@@ -323,16 +344,7 @@ class CallableObject
         if(!$this->hasMethod($sMethod))
             return;
         $reflectionMethod = $this->reflectionClass->getMethod($sMethod);
-        $this->getResponseManager()->append($reflectionMethod->invokeArgs($this->callableObject, $aArgs));
-    }
-
-    /**
-     * Return the registered callable object
-     *
-     * @return object
-     */
-    public function getRegisteredObject()
-    {
-        return $this->callableObject;
+        $callableObject = $this->getRegisteredObject();
+        $this->getResponseManager()->append($reflectionMethod->invokeArgs($callableObject, $aArgs));
     }
 }

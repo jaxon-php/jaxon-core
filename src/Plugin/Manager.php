@@ -337,7 +337,7 @@ class Manager
             }
         }
         $this->aClassDirs[] = array('directory' => $sDirectory, 'namespace' => $sNamespace,
-            'protected' => $aProtected, 'separator' => $sSeparator);
+            'separator' => $sSeparator, 'protected' => $aProtected);
         return true;
     }
 
@@ -352,7 +352,7 @@ class Manager
      *
      * @return void
      */
-    protected function registerClassFromFile($xFile, $sDirectory, $sNamespace = null, array $aProtected = array(), $sSeparator = '.')
+    protected function registerClassFromFile($xFile, $sDirectory, $sNamespace = null, $sSeparator = '.', array $aProtected = array())
     {
         // Get the corresponding class path and name
         $sClassPath = trim(substr($xFile->getPath(), strlen($sDirectory)), DIRECTORY_SEPARATOR);
@@ -371,7 +371,6 @@ class Manager
             require_once($xFile->getPathname());
         }
         // Create and register an instance of the class
-        $xCallableObject = new $sClassName;
         $aOptions = array('*' => array('separator' => $sSeparator));
         if(($sNamespace))
         {
@@ -387,7 +386,7 @@ class Manager
         {
             $aOptions['*']['protected'] = $aProtected;
         }
-        $this->register(array(Jaxon::CALLABLE_OBJECT, $xCallableObject, $aOptions));
+        $this->register(array(Jaxon::CALLABLE_OBJECT, $sClassName, $aOptions));
     }
 
     /**
@@ -410,7 +409,7 @@ class Manager
                     continue;
                 }
                 $this->registerClassFromFile($xFile, $sClassDir['directory'],
-                    $sClassDir['namespace'], $sClassDir['protected'], $sClassDir['separator']);
+                    $sClassDir['namespace'], $sClassDir['separator'], $sClassDir['protected']);
             }
         }
     }
@@ -460,7 +459,10 @@ class Manager
             }
             if($bRegister && is_file($sClassFile))
             {
-                $this->registerClassFromFile(new \SplFileInfo($sClassFile), $aClassDir['directory'], $sNamespace, $aProtected, $sSeparator);
+                // Found the file in this directory
+                $xFileInfo = new \SplFileInfo($sClassFile);
+                $sDirectory = $aClassDir['directory'];
+                $this->registerClassFromFile($xFileInfo, $sDirectory, $sNamespace, $sSeparator, $aProtected);
                 return true;
             }
         }

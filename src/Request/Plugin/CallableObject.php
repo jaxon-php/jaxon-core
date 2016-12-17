@@ -109,24 +109,17 @@ class CallableObject extends RequestPlugin
             {
                 $xCallableObject = $aArgs[1];
 
-                if(!is_object($xCallableObject))
+                if(!is_object($xCallableObject) && !is_string($xCallableObject))
+                {
+                    throw new \Jaxon\Exception\Error('errors.objects.instance');
+                }
+                if(is_string($xCallableObject) && !class_exists($xCallableObject))
                 {
                     throw new \Jaxon\Exception\Error('errors.objects.instance');
                 }
                 if(!($xCallableObject instanceof \Jaxon\Request\Support\CallableObject))
                 {
-                    $xUserCallable = $xCallableObject;
                     $xCallableObject = new \Jaxon\Request\Support\CallableObject($xCallableObject);
-                    // Save the Jaxon callable object into the user callable object
-                    if(method_exists($xUserCallable, 'setJaxonCallable'))
-                    {
-                        $xUserCallable->setJaxonCallable($xCallableObject);
-                    }
-                    // Save the global Jaxon response into the user callable object
-                    if(method_exists($xUserCallable, 'setGlobalResponse'))
-                    {
-                        $xUserCallable->setGlobalResponse();
-                    }
                 }
                 if(count($aArgs) > 2 && is_array($aArgs[2]))
                 {
@@ -142,7 +135,7 @@ class CallableObject extends RequestPlugin
                 }
                 $this->aCallableObjects[$xCallableObject->getName()] = $xCallableObject;
 
-                return $xCallableObject->generateRequests();
+                return true;
             }
         }
 
