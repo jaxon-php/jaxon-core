@@ -76,9 +76,16 @@ class Manager
     /**
      * Confirmation question for Jaxon requests
      *
-     * @var Request\Interfaces\Confirm
+     * @var Jaxon\Request\Interfaces\Confirm
      */
     private $xConfirm;
+
+    /**
+     * Default confirmation question for Jaxon requests
+     *
+     * @var Jaxon\Request\Support\Confirm
+     */
+    private $xDefaultConfirm;
 
     /**
      * Initialize the Jaxon Plugin Manager
@@ -97,7 +104,8 @@ class Manager
         $this->sResponseType = 'JSON';
 
         // Confirmation question for Jaxon requests
-        $this->xConfirm = new \Jaxon\Request\Support\Confirm();
+        $this->xConfirm = null;
+        $this->xDefaultConfirm = new \Jaxon\Request\Support\Confirm();
     }
 
     /**
@@ -125,7 +133,7 @@ class Manager
     }
 
     /**
-     * Set the Jaxon request Confirmation
+     * Set the Jaxon request Confirmation object
      *
      * @param \Jaxon\Request\Interfaces\Confirm        $xConfirm     The Jaxon request Confirmation
      *
@@ -137,13 +145,23 @@ class Manager
     }
 
     /**
-     * Get the Jaxon request Confirmation
+     * Get the Jaxon request Confirmation object
      *
      * @return \Jaxon\Request\Interfaces\Confirm
      */
     public function getConfirm()
     {
-        return $this->xConfirm;
+        return (($this->xConfirm) ? $this->xConfirm : $this->xDefaultConfirm);
+    }
+
+    /**
+     * Get the Jaxon request default Confirmation object
+     *
+     * @return \Jaxon\Request\Support\Confirm
+     */
+    public function getDefaultConfirm()
+    {
+        return $this->xDefaultConfirm;
     }
 
     /**

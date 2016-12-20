@@ -69,19 +69,19 @@ abstract class Response extends Plugin
      * @return void
      */
     public function addCommand($aAttributes, $sData)
-     {
-         $this->xResponse->addPluginCommand($this, $aAttributes, $sData);
-     }
+    {
+        $this->xResponse->addPluginCommand($this, $aAttributes, $sData);
+    }
 
     /**
      * Return true if the object is a response plugin. Always return true here.
      *
      * @return boolean
      */
-     public function isResponse()
-     {
-         return true;
-     }
+    public function isResponse()
+    {
+        return true;
+    }
 
     /**
      * Get the HTML tags to include Jaxon javascript files into the page
@@ -90,10 +90,10 @@ abstract class Response extends Plugin
      *
      * @return string
      */
-     public function getJs()
-     {
-         return '';
-     }
+    public function getJs()
+    {
+        return '';
+    }
 
     /**
      * Get the HTML tags to include Jaxon CSS code and files into the page
@@ -102,8 +102,8 @@ abstract class Response extends Plugin
      *
      * @return string
      */
-     public function getCss()
-     {
-         return '';
-     }
+    public function getCss()
+    {
+        return '';
+    }
 }
