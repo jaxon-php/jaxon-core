@@ -8,7 +8,7 @@ class Module
 {
     use Traits\Module;
 
-    protected $view = null;
+    protected $configFile = '';
 
     /**
      * Initialise the Jaxon module.
@@ -25,7 +25,7 @@ class Module
      */
     public function setConfigFile($configFile)
     {
-        $this->setConfigOptions($configFile, 'lib', 'app');
+        $this->configFile = $configFile;
     }
 
     /**
@@ -35,8 +35,9 @@ class Module
      */
     protected function setup()
     {
-        // Todo: check if the config file exists
-
+        // Read config file
+        $this->appConfig = $jaxon->readConfigFile($this->configFile, 'lib', 'app');
+        // Todo: check the mandatory options
     }
 
     /**
@@ -49,7 +50,6 @@ class Module
     protected function check()
     {
         // Todo: check the mandatory options
-
     }
 
     /**
@@ -59,11 +59,11 @@ class Module
      */
     protected function view()
     {
-        if($this->view == null)
+        if($this->viewRenderer == null)
         {
-            $this->view = new View();
+            $this->viewRenderer = new View();
         }
-        return $this->view;
+        return $this->viewRenderer;
     }
 
     /**

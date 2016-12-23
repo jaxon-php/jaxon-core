@@ -16,12 +16,8 @@ trait Module
     private $reqObject = null;
     private $reqMethod = null;
 
-    protected $configFile = '';
-    protected $configLibKey = '';
-    protected $configAppKey = '';
-
-    protected $appConfig = array();
-    protected $libConfig = array();
+    protected $viewRenderer = null;
+    protected $controllerClass = '\\Jaxon\\Module\\Controller';
 
     /**
      * Set the module specific options for the Jaxon library.
@@ -54,53 +50,13 @@ trait Module
     abstract public function httpResponse($code = '200');
 
     /**
-     * Set the config file path.
+     * Set the Jaxon class name and "protected" methods.
      *
      * @return void
      */
-    protected function setConfigOptions($configFile, $configLibKey, $configAppKey)
+    protected function setControllerClass($controllerClass)
     {
-        $this->configFile = $configFile;
-        $this->configLibKey = $configLibKey;
-        $this->configAppKey = $configAppKey;
-    }
-
-    /**
-     * Set the directory and namespace of the Jaxon classes.
-     *
-     * @return void
-     */
-    protected function setClassOptions($directory, $namespace, $controllerClass, array $excludedMethods = [])
-    {
-        $this->classDirectory = $directory;
-        $this->classNamespace = $namespace;
         $this->controllerClass = $controllerClass;
-        $this->excludedMethods = $excludedMethods;
-        $this->appConfig['controllerClass'] = $controllerClass;
-        $this->appConfig['excludedMethods'] = $excludedMethods;
-    }
-
-    /**
-     * Set the directory and namespace of the Jaxon classes.
-     *
-     * @return void
-     */
-    protected function setExportOptions($extern, $minify, $jsUri, $jsDir)
-    {
-        $this->libConfig['js.app.extern'] = $extern;
-        $this->libConfig['js.app.minify'] = $minify;
-        $this->libConfig['js.app.uri'] = $jsUri;
-        $this->libConfig['js.app.dir'] = $jsDir;
-    }
-
-    /**
-     * Set the default Jaxon request URI.
-     *
-     * @return void
-     */
-    protected function setRequestOptions($requestUri)
-    {
-        $this->libConfig['core.request.uri'] = $requestUri;
     }
 
     /**
@@ -117,67 +73,28 @@ trait Module
 
         // Set the module/package/bundle specific specific options
         $this->setup();
-        // Set the missing application config options
-        if(!array_key_exists('controllerClass', $this->appConfig))
-        {
-            $this->appConfig['controllerClass'] = '\\Jaxon\\Module\\Controller';
-        }
-        if(!array_key_exists('excludedMethods', $this->appConfig))
-        {
-            $this->appConfig['excludedMethods'] = array();
-        }
 
         $jaxon = jaxon();
         // Use the Composer autoloader
         $jaxon->useComposerAutoloader();
-        // Read config
-        $appConfig = $jaxon->readConfigFile($this->configFile, $this->configLibKey, $this->configAppKey);
-
-        // Set the default values for mandatory application config options
-        $appOptions = array('directory', 'namespace');
-        $missingOptions = array();
-        foreach($appOptions as $appOption)
-        {
-            if(!$appConfig->hasOption($appOption) && array_key_exists($appOption, $this->appConfig))
-            {
-                $appConfig->setOption($appOption, $this->appConfig[$appOption]);
-            }
-            // Check if the mandatory options are defined
-            if(!$appConfig->hasOption($appOption))
-            {
-                $missingOptions[] = $appOption;
-            }
-        }
-        if(count($missingOptions) > 0)
-        {
-            // Todo: throw an exception
-        }
 
         // Jaxon application config
-        $excluded = array_merge($appConfig->getOption('excluded', array()), $this->appConfig['excludedMethods']);
+        $protected = $this->appConfig->getOption('protected', array());
         // The public methods of the Controller base class must not be exported to javascript
-        $controllerClass = new \ReflectionClass($this->appConfig['controllerClass']);
+        $controllerClass = new \ReflectionClass($this->controllerClass);
         foreach ($controllerClass->getMethods(\ReflectionMethod::IS_PUBLIC) as $xMethod)
         {
-            $excluded[] = $xMethod->getShortName();
+            $protected[] = $xMethod->getShortName();
         }
 
         // Register the default Jaxon class directory
-        $jaxon->addClassDir($appConfig->getOption('directory'), $appConfig->getOption('namespace'), $excluded);
-        $libOptions = array('core.request.uri', 'js.app.extern', 'js.app.minify', 'js.app.uri', 'js.app.dir');
-        foreach($libOptions as $libOption)
-        {
-            if(!$jaxon->hasOption($libOption) && array_key_exists($libOption, $this->libConfig))
-            {
-                $jaxon->setOption($libOption, $this->libConfig[$libOption]);
-            }
-        }
+        $jaxon->addClassDir($this->appConfig->getOption('directory'), $this->appConfig->getOption('namespace'), $protected);
+        // Set the request URI
         if(!$jaxon->hasOption('core.request.uri'))
         {
             $jaxon->setOption('core.request.uri', 'jaxon');
         }
 
-        $this->appConfig = $appConfig;
         $this->check();
         $this->setupCalled = true;
     }
