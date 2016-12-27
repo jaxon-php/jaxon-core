@@ -34,21 +34,21 @@ trait Module
      *
      * @return void
      */
-    abstract protected function setup();
+    abstract protected function jaxonSetup();
 
     /**
      * Set the module specific options for the Jaxon library.
      *
      * @return void
      */
-    abstract protected function check();
+    abstract protected function jaxonCheck();
 
     /**
      * Return the view renderer.
      *
      * @return void
      */
-    abstract protected function view();
+    abstract protected function jaxonView();
 
     /**
      * Send the Jaxon response back to the browser.
@@ -106,7 +106,7 @@ trait Module
      *
      * @return void
      */
-    private function _setup()
+    private function _jaxonSetup()
     {
         if(($this->jaxonSetupCalled))
         {
@@ -114,7 +114,7 @@ trait Module
         }
 
         // Set the module/package/bundle specific specific options
-        $this->setup();
+        $this->jaxonSetup();
 
         $jaxon = jaxon();
         // Use the Composer autoloader
@@ -159,7 +159,7 @@ trait Module
             $jaxon->setOption('core.request.uri', 'jaxon');
         }
 
-        $this->check();
+        $this->jaxonCheck();
         $this->jaxonSetupCalled = true;
     }
 
@@ -170,7 +170,7 @@ trait Module
      */
     public function register()
     {
-        $this->_setup();
+        $this->_jaxonSetup();
         $jaxon = jaxon();
         $jaxon->registerClasses();
     }
@@ -182,7 +182,7 @@ trait Module
      */
     public function registerClass($sClassName)
     {
-        $this->_setup();
+        $this->_jaxonSetup();
         $jaxon = jaxon();
         $jaxon->registerClass($sClassName);
     }
@@ -194,7 +194,7 @@ trait Module
      */
     public function script($bIncludeJs = false, $bIncludeCss = false)
     {
-        $this->_setup();
+        $this->_jaxonSetup();
         $jaxon = jaxon();
         return $jaxon->getScript($bIncludeJs, $bIncludeCss);
     }
@@ -206,7 +206,7 @@ trait Module
      */
     public function js()
     {
-        $this->_setup();
+        $this->_jaxonSetup();
         $jaxon = jaxon();
         return $jaxon->getJs();
     }
@@ -218,7 +218,7 @@ trait Module
      */
     public function css()
     {
-        $this->_setup();
+        $this->_jaxonSetup();
         $jaxon = jaxon();
         return $jaxon->getCss();
     }
@@ -281,7 +281,7 @@ trait Module
         // The default view is used only if there is none already set
         if(!$controller->view)
         {
-            $controller->view = $this->view();
+            $controller->view = $this->jaxonView();
         }
     }
 
@@ -294,7 +294,7 @@ trait Module
      */
     public function controller($classname)
     {
-        $this->_setup();
+        $this->_jaxonSetup();
         $jaxon = jaxon();
         $controller = $jaxon->registerClass($classname, true);
         if(!$controller)
@@ -367,7 +367,7 @@ trait Module
      */
     public function canProcessRequest()
     {
-        $this->_setup();
+        $this->_jaxonSetup();
         $jaxon = jaxon();
         return $jaxon->canProcessRequest();
     }
@@ -379,7 +379,7 @@ trait Module
      */
     public function processRequest()
     {
-        $this->_setup();
+        $this->_jaxonSetup();
         // Process Jaxon Request
         $jaxon = jaxon();
         $jaxon->register(Jaxon::PROCESSING_EVENT, Jaxon::PROCESSING_EVENT_BEFORE, array($this, 'preProcess'));
