@@ -37,7 +37,26 @@ class Module
     {
         // Read config file
         $this->appConfig = $jaxon->readConfigFile($this->configFile, 'lib', 'app');
-        // Todo: check the mandatory options
+
+        // Check the mandatory options
+        // Jaxon library settings
+        $aMandatoryOptions = ['js.app.extern', 'js.app.minify', 'js.app.uri', 'js.app.dir'];
+        foreach($aMandatoryOptions as $sOption)
+        {
+            if(!$jaxon->hasOption($sOption))
+            {
+                throw new \Jaxon\Exception\Config\Data('missing', 'lib:' . $sOption);
+            }
+        }
+        // Jaxon application settings
+        $aMandatoryOptions = ['controllers.directory', 'controllers.namespace'];
+        foreach($aMandatoryOptions as $sOption)
+        {
+            if(!$this->appConfig->hasOption($sOption))
+            {
+                throw new \Jaxon\Exception\Config\Data('missing', 'app:' . $sOption);
+            }
+        }
     }
 
     /**
@@ -59,11 +78,11 @@ class Module
      */
     protected function view()
     {
-        if($this->viewRenderer == null)
+        if($this->jaxonViewRenderer == null)
         {
-            $this->viewRenderer = new View();
+            $this->jaxonViewRenderer = new View();
         }
-        return $this->viewRenderer;
+        return $this->jaxonViewRenderer;
     }
 
     /**

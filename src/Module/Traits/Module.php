@@ -3,21 +3,31 @@
 namespace Jaxon\Module\Traits;
 
 use Jaxon\Jaxon;
+use Jaxon\Module\Controller;
+use Jaxon\Response\Response;
+
+use stdClass;
 
 trait Module
 {
-    protected $setupCalled = false;
+    protected $jaxonSetupCalled = false;
 
-    protected $preCallback = null;
-    protected $postCallback = null;
-    protected $initCallback = null;
+    protected $jaxonPreCallback = null;
+    protected $jaxonPostCallback = null;
+    protected $jaxonInitCallback = null;
 
     // Requested class and method
-    private $reqObject = null;
-    private $reqMethod = null;
+    private $jaxonRequestObject = null;
+    private $jaxonRequestMethod = null;
 
-    protected $viewRenderer = null;
-    protected $controllerClass = '\\Jaxon\\Module\\Controller';
+    protected $appConfig = null;
+    protected $jaxonResponse = null;
+    protected $jaxonViewRenderer = null;
+    protected $jaxonControllerClass = '\\Jaxon\\Module\\Controller';
+
+    // Library and application options
+    private $jaxonLibOptions = null;
+    private $jaxonAppOptions = null;
 
     /**
      * Set the module specific options for the Jaxon library.
@@ -50,13 +60,45 @@ trait Module
     abstract public function httpResponse($code = '200');
 
     /**
-     * Set the Jaxon class name and "protected" methods.
+     * Set the Jaxon library default options.
+     *
+     * @return void
+     */
+    protected function setLibraryOptions($bExtern, $bMinify, $sJsUri, $sJsDir)
+    {
+        if(!$this->jaxonLibOptions)
+        {
+            $this->jaxonLibOptions = new stdClass();
+        }
+        $this->jaxonLibOptions->bExtern = $bExtern;
+        $this->jaxonLibOptions->bMinify = $bMinify;
+        $this->jaxonLibOptions->sJsUri = $sJsUri;
+        $this->jaxonLibOptions->sJsDir = $sJsDir;
+    }
+
+    /**
+     * Set the Jaxon application default options.
+     *
+     * @return void
+     */
+    protected function setApplicationOptions($sDirectory, $sNamespace)
+    {
+        if(!$this->jaxonAppOptions)
+        {
+            $this->jaxonAppOptions = new stdClass();
+        }
+        $this->jaxonAppOptions->sDirectory = $sDirectory;
+        $this->jaxonAppOptions->sNamespace = $sNamespace;
+    }
+
+    /**
+     * Set the Jaxon controller base class name.
      *
      * @return void
      */
     protected function setControllerClass($controllerClass)
     {
-        $this->controllerClass = $controllerClass;
+        $this->jaxonControllerClass = $controllerClass;
     }
 
     /**
@@ -66,7 +108,7 @@ trait Module
      */
     private function _setup()
     {
-        if(($this->setupCalled))
+        if(($this->jaxonSetupCalled))
         {
             return;
         }
@@ -77,18 +119,40 @@ trait Module
         $jaxon = jaxon();
         // Use the Composer autoloader
         $jaxon->useComposerAutoloader();
+        // Create the Jaxon response
+        $this->jaxonResponse = new Response();
 
-        // Jaxon application config
-        $protected = $this->appConfig->getOption('protected', array());
+        // Jaxon library settings
+        if(!$jaxon->hasOption('js.app.extern'))
+        {
+            $jaxon->setOption('js.app.extern', $this->jaxonLibOptions->bExtern);
+        }
+        if(!$jaxon->hasOption('js.app.minify'))
+        {
+            $jaxon->setOption('js.app.minify', $this->jaxonLibOptions->bMinify);
+        }
+        if(!$jaxon->hasOption('js.app.uri'))
+        {
+            $jaxon->setOption('js.app.uri', $this->jaxonLibOptions->sJsUri);
+        }
+        if(!$jaxon->hasOption('js.app.dir'))
+        {
+            $jaxon->setOption('js.app.dir', $this->jaxonLibOptions->sJsDir);
+        }
+
+        // Jaxon application settings
+        // Register the default Jaxon class directory
+        $directory = $this->appConfig->getOption('controllers.directory', $this->jaxonAppOptions->sDirectory);
+        $namespace = $this->appConfig->getOption('controllers.namespace', $this->jaxonAppOptions->sNamespace);
+        $separator = $this->appConfig->getOption('controllers.separator', '.');
+        $protected = $this->appConfig->getOption('controllers.protected', array());
         // The public methods of the Controller base class must not be exported to javascript
-        $controllerClass = new \ReflectionClass($this->controllerClass);
+        $controllerClass = new \ReflectionClass($this->jaxonControllerClass);
         foreach ($controllerClass->getMethods(\ReflectionMethod::IS_PUBLIC) as $xMethod)
         {
             $protected[] = $xMethod->getShortName();
         }
-
-        // Register the default Jaxon class directory
-        $jaxon->addClassDir($this->appConfig->getOption('directory'), $this->appConfig->getOption('namespace'), $protected);
+        $jaxon->addClassDir($directory, $namespace, $separator, $protected);
         // Set the request URI
         if(!$jaxon->hasOption('core.request.uri'))
         {
@@ -96,7 +160,7 @@ trait Module
         }
 
         $this->check();
-        $this->setupCalled = true;
+        $this->jaxonSetupCalled = true;
     }
 
     /**
@@ -167,7 +231,7 @@ trait Module
      */
     public function setInitCallback($callable)
     {
-        $this->initCallback = $callable;
+        $this->jaxonInitCallback = $callable;
     }
 
     /**
@@ -178,7 +242,7 @@ trait Module
      */
     public function setPreCallback($callable)
     {
-        $this->preCallback = $callable;
+        $this->jaxonPreCallback = $callable;
     }
 
     /**
@@ -190,7 +254,7 @@ trait Module
      */
     public function setPostCallback($callable)
     {
-        $this->postCallback = $callable;
+        $this->jaxonPostCallback = $callable;
     }
 
     /**
@@ -207,10 +271,10 @@ trait Module
         }
         // Init the controller
         $controller->module = $this;
-        $controller->response = $this->response;
-        if(($this->initCallback))
+        $controller->response = $this->jaxonResponse;
+        if(($this->jaxonInitCallback))
         {
-            $cb = $this->initCallback;
+            $cb = $this->jaxonInitCallback;
             $cb($controller);
         }
         $controller->init();
@@ -253,31 +317,32 @@ trait Module
         // Validate the inputs
         $class = $_POST['jxncls'];
         $method = $_POST['jxnmthd'];
+        $jaxon = jaxon();
         if(!$jaxon->validateClass($class) || !$jaxon->validateMethod($method))
         {
             // End the request processing if the input data are not valid.
             // Todo: write an error message in the response
             $bEndRequest = true;
-            return $this->response;
+            return $this->jaxonResponse;
         }
         // Instanciate the controller. This will include the required file.
-        $this->reqObject = $this->controller($class);
-        $this->reqMethod = $method;
-        if(!$this->reqObject)
+        $this->jaxonRequestObject = $this->controller($class);
+        $this->jaxonRequestMethod = $method;
+        if(!$this->jaxonRequestObject)
         {
             // End the request processing if a controller cannot be found.
             // Todo: write an error message in the response
             $bEndRequest = true;
-            return $this->response;
+            return $this->jaxonResponse;
         }
 
         // Call the user defined callback
-        if(($this->preCallback))
+        if(($this->jaxonPreCallback))
         {
-            $cb = $this->preCallback;
-            $cb($this->reqObject, $method, $bEndRequest);
+            $cb = $this->jaxonPreCallback;
+            $cb($this->jaxonRequestObject, $method, $bEndRequest);
         }
-        return $this->response;
+        return $this->jaxonResponse;
     }
 
     /**
@@ -287,12 +352,12 @@ trait Module
      */
     public function postProcess()
     {
-        if(($this->postCallback))
+        if(($this->jaxonPostCallback))
         {
-            $cb = $this->postCallback;
-            $cb($this->reqObject, $this->reqMethod);
+            $cb = $this->jaxonPostCallback;
+            $cb($this->jaxonRequestObject, $this->jaxonRequestMethod);
         }
-        return $this->response;
+        return $this->jaxonResponse;
     }
 
     /**
