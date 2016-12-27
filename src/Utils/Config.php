@@ -26,54 +26,74 @@ class Config
     /**
      * Set the value of a config option
      *
-     * @param string        $sName            The option name
-     * @param mixed            $sValue            The option value
+     * @param string            $sName              The option name
+     * @param mixed             $xValue             The option value
      *
      * @return void
      */
-    public function setOption($sName, $sValue)
+    public function setOption($sName, $xValue)
     {
-        $this->aOptions[$sName] = $sValue;
+        $this->aOptions[$sName] = $xValue;
     }
 
     /**
      * Recursively set Jaxon options from a data array
      *
-     * @param array         $aOptions           The options array
-     * @param string        $sPrefix            The prefix for option names
-     * @param integer       $nDepth             The depth from the first call
+     * @param array             $aOptions           The options array
+     * @param string            $sPrefix            The prefix for option names
+     * @param integer           $nDepth             The depth from the first call
      *
      * @return void
      */
     private function _setOptions(array $aOptions, $sPrefix = '', $nDepth = 0)
     {
-        $sPrefix = (string)$sPrefix;
+        $sPrefix = trim((string)$sPrefix);
         $nDepth = intval($nDepth);
         // Check the max depth
         if($nDepth < 0 || $nDepth > 9)
         {
             throw new \Jaxon\Exception\Config\Data('depth', $sPrefix, $nDepth);
         }
-        foreach ($aOptions as $sName => $xOption)
+        $aValues = false;
+        foreach($aOptions as $sName => $xOption)
         {
+            if(is_int($sName))
+            {
+                if(is_array($aValues))
+                {
+                    $aValues[] = $xOption;
+                }
+                else
+                {
+                    $aValues = array($xOption);
+                }
+                continue;
+            }
+
+            $sName = trim($sName);
+            $sFullName = ($sPrefix) ? $sPrefix . '.' . $sName : $sName;
             if(is_array($xOption))
             {
                 // Recursively read the options in the array
-                $this->_setOptions($xOption, $sPrefix . $sName . '.', $nDepth + 1);
+                $this->_setOptions($xOption, $sFullName, $nDepth + 1);
             }
             else if(is_string($xOption) || is_numeric($xOption) || is_bool($xOption))
             {
                 // Save the value of this option
-                $this->aOptions[$sPrefix . $sName] = $xOption;
+                $this->aOptions[$sFullName] = $xOption;
             }
+        }
+        if(is_array($aValues) && ($sPrefix))
+        {
+            $this->aOptions[$sPrefix] = $aValues;
         }
     }
 
     /**
      * Set the values of an array of config options
      *
-     * @param array         $aOptions           The options array
-     * @param string        $sKeys              The keys of the options in the array
+     * @param array             $aOptions           The options array
+     * @param string            $sKeys              The keys of the options in the array
      *
      * @return void
      */
@@ -98,10 +118,10 @@ class Config
     /**
      * Get the value of a config option
      *
-     * @param string        $sName            The option name
-     * @param mixed         $xDefault         The default value, to be returned if the option is not defined
+     * @param string            $sName              The option name
+     * @param mixed             $xDefault           The default value, to be returned if the option is not defined
      *
-     * @return mixed        The option value, or its default value
+     * @return mixed            The option value, or its default value
      */
     public function getOption($sName, $xDefault = null)
     {
@@ -111,9 +131,9 @@ class Config
     /**
      * Check the presence of a config option
      *
-     * @param string        $sName            The option name
+     * @param string            $sName              The option name
      *
-     * @return bool        True if the option exists, and false if not
+     * @return bool             True if the option exists, and false if not
      */
     public function hasOption($sName)
     {
@@ -123,9 +143,9 @@ class Config
     /**
      * Get the names of the options matching a given prefix
      *
-     * @param string        $sPrefix        The prefix to match
+     * @param string            $sPrefix            The prefix to match
      *
-     * @return array        The options matching the prefix
+     * @return array            The options matching the prefix
      */
     public function getOptionNames($sPrefix)
     {
