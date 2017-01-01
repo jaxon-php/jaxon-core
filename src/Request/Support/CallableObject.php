@@ -98,7 +98,7 @@ class CallableObject
         else // if(is_object($xCallable)) // Received a class instance
         {
             $this->reflectionClass = new \ReflectionClass(get_class($xCallable));
-            $this->initCallable($xCallable);
+            $this->setCallable($xCallable);
         }
         $this->aConfiguration = array();
         // By default, no method is "protected"
@@ -106,22 +106,22 @@ class CallableObject
     }
 
     /**
-     * Initialize a registered callable.
+     * Set a user registered callable object.
      * 
-     * If the input parameter is null, an instance of the callable is first created.
+     * If the input parameter is null, the callable is first created with its reflection object.
      *
      * @param object|null           $xCallable          The callable object instance or null
      *
      * @return void
      */
-    private function initCallable($xCallable = null)
+    private function setCallable($xCallable = null)
     {
         if($xCallable == null)
         {
             $xCallable = $this->reflectionClass->newInstance();
         }
         // Save the Jaxon callable object into the user callable object
-        if($xCallable instanceof \Jaxon\Request\Traits\Factory)
+        if($this->reflectionClass->hasMethod('setJaxonCallable'))
         {
             $xCallable->setJaxonCallable($this);
         }
@@ -137,7 +137,7 @@ class CallableObject
     {
         if($this->callableObject == null)
         {
-            $this->initCallable();
+            $this->setCallable();
         }
         return $this->callableObject;
     }
