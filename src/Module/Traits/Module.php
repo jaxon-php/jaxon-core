@@ -51,13 +51,23 @@ trait Module
     abstract protected function jaxonView();
 
     /**
-     * Send the Jaxon response back to the browser.
+     * Wrap the Jaxon response into an HTTP response and send it back to the browser.
      *
      * @param  $code        The HTTP Response code
      *
      * @return HTTP Response
      */
     abstract public function httpResponse($code = '200');
+
+    /**
+     * Get the Jaxon response.
+     *
+     * @return HTTP Response
+     */
+    public function ajaxResponse()
+    {
+        return $this->jaxonResponse;
+    }
 
     /**
      * Set the Jaxon library default options.
