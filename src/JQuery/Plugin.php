@@ -61,7 +61,7 @@ jaxon.command.handler.register("jquery", function(args) {
      *
      * @return Jaxon\JQuery\Dom\Element
      */
-    public function element($sSelector, $sContext = '')
+    public function element($sSelector = '', $sContext = '')
     {
         $xElement = new Dom\Element($sSelector, $sContext);
         $this->addCommand(array('cmd' => 'jquery'), $xElement);

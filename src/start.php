@@ -76,7 +76,7 @@ function jaxon_register_plugin(\Jaxon\Plugin\Plugin $xPlugin, $nPriority = 1000)
  *
  * @return Jaxon\JQuery\Dom\Element
  */
-function jq($sSelector, $sContext = '')
+function jq($sSelector = '', $sContext = '')
 {
     return new \Jaxon\JQuery\Dom\Element($sSelector, $sContext);
 }
