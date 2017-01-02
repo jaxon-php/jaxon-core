@@ -252,7 +252,22 @@ class Request
      */
     public function confirm($sQuestion)
     {
-        $this->sConfirmQuestion = $sQuestion;
+        $aArgs = func_get_args();
+        $nArgs = func_num_args();
+
+        // Use the String.supplant function to generate the final string
+        $this->sConfirmQuestion = "'" . addslashes($sQuestion) . "'"; // Wrap the question with single quotes
+        if($nArgs > 1)
+        {
+            $sSeparator = '';
+            $this->sConfirmQuestion .= ".supplant({";
+            for($i = 1; $i < $nArgs; $i++)
+            {
+                $this->sConfirmQuestion .= $sSeparator . "'" . $i . "':" . $aArgs[$i];
+                $sSeparator = ',';
+            }
+            $this->sConfirmQuestion .= '})';
+        }
         return $this;
     }
 
