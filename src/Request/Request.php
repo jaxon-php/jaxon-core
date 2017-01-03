@@ -20,9 +20,10 @@
 
 namespace Jaxon\Request;
 
+use JsonSerializable;
 use Jaxon\Jaxon;
 
-class Request
+class Request implements JsonSerializable
 {
     use \Jaxon\Utils\Traits\Container;
 
@@ -303,6 +304,18 @@ class Request
      * @return string
      */
     public function __toString()
+    {
+        return $this->getScript();
+    }
+
+    /**
+     * Convert this request object to string, when converting the response into json.
+     * 
+     * This is a method of the JsonSerializable interface.
+     *
+     * @return string
+     */
+    public function jsonSerialize()
     {
         return $this->getScript();
     }
