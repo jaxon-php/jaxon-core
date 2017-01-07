@@ -285,7 +285,7 @@ class Request implements JsonSerializable
         {
             return $sScript;
         }
-        return $this->getPluginManager()->getConfirm()->getScriptWithQuestion($this->sConfirmQuestion, $sScript);
+        return $this->getPluginManager()->getConfirm()->confirm($this->sConfirmQuestion, $sScript);
     }
 
     /**
