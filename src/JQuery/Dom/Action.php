@@ -2,9 +2,12 @@
 
 namespace Jaxon\JQuery\Dom;
 
-use Jaxon\Jaxon, Jaxon\Request\Request, Jaxon\Request\Interfaces\Parameter;
+use Jaxon\Jaxon;
+use Jaxon\Request\JsCall;
+use Jaxon\Request\Request;
+use Jaxon\Request\Interfaces\Parameter;
 
-class Action extends Request
+class Action extends JsCall
 {
     /**
      * The constructor.
@@ -14,7 +17,10 @@ class Action extends Request
      */
     public function __construct($sMethod, $aArguments)
     {
-        parent::__construct($sMethod, 'jquery');
+        parent::__construct($sMethod);
+        // Always use single quotes
+        $this->useSingleQuotes();
+        // Add the arguments to the parameter list
         foreach($aArguments as $xArgument)
         {
             if($xArgument instanceof Request)
@@ -42,6 +48,5 @@ class Action extends Request
                 $this->addParameter(Jaxon::JS_VALUE, $xArgument);
             }
         }
-        $this->useSingleQuotes();
     }
 }
