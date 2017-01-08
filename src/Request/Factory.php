@@ -23,8 +23,8 @@ class Factory
     /**
      * Return the javascript call to an Jaxon function or object method
      *
-     * @param string         $sName            The function or method (with class) name
-     * @param ...            $xParams        The parameters of the function or method
+     * @param string            $sName              The function or method (with class) name
+     * @param ...               $xParams            The parameters of the function or method
      *
      * @return \Jaxon\Request\Request
      */
@@ -70,11 +70,11 @@ class Factory
     /**
      * Make the pagination links for a registered Jaxon class method
      *
-     * @param integer $nItemsTotal the total number of items
-     * @param integer $nItemsPerPage the number of items per page page
-     * @param integer $nCurrentPage the current page
-     * @param string  $sMethod the name of function or a method prepended with its class name
-     * @param ... $parameters the parameters of the method
+     * @param integer       $nItemsTotal            The total number of items
+     * @param integer       $nItemsPerPage          The number of items per page page
+     * @param integer       $nCurrentPage           The current page
+     * @param string        $sMethod                The name of function or a method prepended with its class name
+     * @param ...           $parameters             The parameters of the method
      *
      * @return string the pagination links
      */
@@ -92,7 +92,7 @@ class Factory
     /**
      * Make a parameter of type Jaxon::FORM_VALUES
      * 
-     * @param string $sFormId the id of the HTML form
+     * @param string        $sFormId                The id of the HTML form
      * 
      * @return Parameter
      */

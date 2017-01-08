@@ -2,24 +2,10 @@
 
 namespace Jaxon\JQuery\Dom;
 
-use Jaxon\Jaxon, Jaxon\Request\Request, Jaxon\Request\Parameter, ArrayAccess;
+use Jaxon\Jaxon, Jaxon\Request\Request, Jaxon\Request\Interfaces\Parameter;
 
 class Action extends Request
 {
-    /**
-     * The jQuery function
-     *
-     * @var string
-     */
-    protected $sMethod;
-
-    /**
-     * The arguments of the jQuery function
-     *
-     * @var array
-     */
-    protected $aArguments;
-
     /**
      * The constructor.
      * 
@@ -28,32 +14,16 @@ class Action extends Request
      */
     public function __construct($sMethod, $aArguments)
     {
-        parent::__construct($sMethod, $aArguments);
-        $this->sMethod = $sMethod;
-        $this->aArguments = $aArguments;
-    }
-
-    /**
-     * Return a string representation of the call to this jQuery function
-     *
-     * @return string
-     */
-    public function getScript()
-    {
-        $this->useSingleQuotes();
-        foreach($this->aArguments as $xArgument)
+        parent::__construct($sMethod, 'jquery');
+        foreach($aArguments as $xArgument)
         {
-            if($xArgument instanceof Element)
+            if($xArgument instanceof Request)
             {
-                $this->addParameter(Jaxon::JS_VALUE, $xArgument->getScript());
+                $this->addParameter(Jaxon::JS_VALUE, 'function(){' . $xArgument->getScript() . ';}');
             }
             else if($xArgument instanceof Parameter)
             {
                 $this->addParameter($xArgument->getType(), $xArgument->getValue());
-            }
-            else if($xArgument instanceof Request)
-            {
-                $this->addParameter(Jaxon::JS_VALUE, 'function(){' . $xArgument->getScript() . ';}');
             }
             else if(is_numeric($xArgument))
             {
@@ -72,6 +42,6 @@ class Action extends Request
                 $this->addParameter(Jaxon::JS_VALUE, $xArgument);
             }
         }
-        return $this->sMethod . '(' . implode(', ', $this->aParameters) . ')';
+        $this->useSingleQuotes();
     }
 }

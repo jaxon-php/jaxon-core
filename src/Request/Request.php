@@ -50,7 +50,7 @@ class Request implements JsonSerializable
      *
      * @var string
      */
-    protected $sQuoteCharacter;
+    public $sQuoteCharacter;
     
     /**
      * An array of parameters that will be used to populate the argument list for this function
@@ -156,7 +156,7 @@ class Request implements JsonSerializable
         $nPageNumber = intval($nPageNumber);
         if($this->nPageNumberIndex >= 0 && $nPageNumber > 0)
         {
-            $this->aParameters[$this->nPageNumberIndex] = $nPageNumber;
+            $this->aParameters[$this->nPageNumberIndex]->setValue($nPageNumber);
         }
         return $this;
     }
@@ -164,18 +164,8 @@ class Request implements JsonSerializable
     /**
      * Add a parameter value to the parameter list for this request
      *
-     * @param string        $sType                The type of the value to be used
-     * @param string        $sValue                The value to be used
-     *
-     * @return void
-     */
-    public function addParameter($sType, $sValue)
-    {
-        $this->setParameter(count($this->aParameters), $sType, $sValue);
-    }
-    
-    /**
-     * Set a specific parameter value
+     * @param string            $sType              The type of the value to be used
+     * @param string            $sValue             The value to be used
      *
      * Types should be one of the following <Jaxon::FORM_VALUES>, <Jaxon::QUOTED_VALUE>, <Jaxon::NUMERIC_VALUE>,
      * <Jaxon::JS_VALUE>, <Jaxon::INPUT_VALUE>, <Jaxon::CHECKED_VALUE>, <Jaxon::PAGE_NUMBER>.
@@ -186,62 +176,29 @@ class Request implements JsonSerializable
      *   (either a javascript variable name that will be in scope at the time of the call or
      *   a javascript function call whose return value will become the parameter).
      *
-     * @param integer         $nParameter            The index of the parameter to set
-     * @param string        $sType                The type of the value to be used
-     * @param string        $sValue                The value to be used
+     * @return void
+     */
+    public function addParameter($sType, $sValue)
+    {
+        $this->setParameter(count($this->aParameters), new Parameter($sType, $sValue));
+    }
+    
+    /**
+     * Set a specific parameter value
+     *
+     * @param integer           $nPosition                  The position of the parameter to set
+     * @param Parameter         $xParameter                 The value to be used
      *
      * @return void
      */
-    public function setParameter($nParameter, $sType, $xValue)
+    public function setParameter($nPosition, Parameter $xParameter)
     {
-        switch($sType)
+        $xParameter->xRequest = $this;
+        if($xParameter->getType() == Jaxon::PAGE_NUMBER)
         {
-        case Jaxon::FORM_VALUES:
-            $sFormID = (string)$xValue;
-            $this->aParameters[$nParameter] = "jaxon.getFormValues(" . $this->sQuoteCharacter 
-                . $sFormID . $this->sQuoteCharacter . ")";
-            break;
-        case Jaxon::INPUT_VALUE:
-            $sInputID = (string)$xValue;
-            $this->aParameters[$nParameter] =  "jaxon.$("  . $this->sQuoteCharacter 
-                . $sInputID . $this->sQuoteCharacter  . ").value";
-            break;
-        case Jaxon::CHECKED_VALUE:
-            $sCheckedID = (string)$xValue;
-            $this->aParameters[$nParameter] =  "jaxon.$("  . $this->sQuoteCharacter 
-                . $sCheckedID  . $this->sQuoteCharacter . ").checked";
-            break;
-        case Jaxon::ELEMENT_INNERHTML:
-            $sElementID = (string)$xValue;
-            $this->aParameters[$nParameter] = "jaxon.$(" . $this->sQuoteCharacter 
-                . $sElementID . $this->sQuoteCharacter . ").innerHTML";
-            break;
-        case Jaxon::QUOTED_VALUE:
-            $this->aParameters[$nParameter] = $this->sQuoteCharacter . addslashes($xValue) . $this->sQuoteCharacter;
-            break;
-        case Jaxon::BOOL_VALUE:
-            $this->aParameters[$nParameter] = ($xValue) ? 'true' : 'false';
-            break;
-        case Jaxon::PAGE_NUMBER:
-            $this->nPageNumberIndex = $nParameter;
-            $this->aParameters[$nParameter] = (string)$xValue;
-            break;
-        case Jaxon::NUMERIC_VALUE:
-            $this->aParameters[$nParameter] = (string)$xValue;
-            break;
-        case Jaxon::JS_VALUE:
-            if(is_array($xValue) || is_object($xValue))
-            {
-                // Unable to use double quotes here because they cannot be handled on client side.
-                // So we are using simple quotes even if the Json standard recommends double quotes.
-                $this->aParameters[$nParameter] = str_replace(['"'], ["'"], json_encode($xValue, JSON_HEX_APOS | JSON_HEX_QUOT));
-            }
-            else
-            {
-                $this->aParameters[$nParameter] = (string)$xValue;
-            }
-            break;
+            $this->nPageNumberIndex = $nPosition;
         }
+        $this->aParameters[$nPosition] = $xParameter;
     }
 
     /**

@@ -16,7 +16,7 @@ namespace Jaxon\Request\Interfaces;
 interface Confirm
 {
     /**
-     * Get the script which makes a call only if the user answers yes to the given question
+     * Return a script which makes a call only if the user answers yes to the given question
      * 
      * @return string
      */
