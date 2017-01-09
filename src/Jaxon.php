@@ -700,4 +700,16 @@ class Jaxon
         // Register an instance of the JQuery plugin
         $this->registerPlugin(new \Jaxon\JQuery\Plugin(), 700);
     }
+
+    /**
+     * Get a registered response plugin
+     *
+     * @param string        $sName                The name of the plugin
+     *
+     * @return \Jaxon\Plugin\Response
+     */
+    public function plugin($sName)
+    {
+        return $this->xPluginManager->getResponsePlugin($sName);
+    }
 }
