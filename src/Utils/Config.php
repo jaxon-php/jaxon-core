@@ -149,7 +149,8 @@ class Config
      */
     public function getOptionNames($sPrefix)
     {
-        $sPrefix = (string)$sPrefix;
+        $sPrefix = trim((string)$sPrefix);
+        $sPrefix = rtrim($sPrefix, '.') . '.';
         $sPrefixLen = strlen($sPrefix);
         $aOptions = array();
         foreach($this->aOptions as $sName => $xValue)
