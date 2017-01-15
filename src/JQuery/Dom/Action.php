@@ -29,7 +29,7 @@ class Action extends JsCall
             }
             else if($xArgument instanceof Parameter)
             {
-                $this->addParameter($xArgument->getType(), $xArgument->getValue());
+                $this->pushParameter($xArgument);
             }
             else if(is_numeric($xArgument))
             {

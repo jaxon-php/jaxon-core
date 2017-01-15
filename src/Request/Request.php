@@ -37,11 +37,11 @@ class Request extends JsCall
     private $sType;
 
     /**
-     * A confirmation question which is asked to the user before sending this request
+     * The arguments of the confirm() call
      *
      * @var string
      */
-    protected $sConfirmQuestion = null;
+    protected $sConfirmArgs = null;
 
     /**
      * The constructor.
@@ -101,22 +101,8 @@ class Request extends JsCall
      */
     public function confirm($sQuestion)
     {
-        $aArgs = func_get_args();
-        $nArgs = func_num_args();
-
-        // Use the String.supplant function to generate the final string
-        $this->sConfirmQuestion = "'" . addslashes($sQuestion) . "'"; // Wrap the question with single quotes
-        if($nArgs > 1)
-        {
-            $sSeparator = '';
-            $this->sConfirmQuestion .= ".supplant({";
-            for($i = 1; $i < $nArgs; $i++)
-            {
-                $this->sConfirmQuestion .= $sSeparator . "'" . $i . "':" . $aArgs[$i];
-                $sSeparator = ',';
-            }
-            $this->sConfirmQuestion .= '})';
-        }
+        // Save the arguments of the call.
+        $this->sConfirmArgs = func_get_args();
         return $this;
     }
 
@@ -127,12 +113,75 @@ class Request extends JsCall
      */
     public function getScript()
     {
-        $sScript = $this->getOption('core.prefix.' . $this->sType) . parent::getScript();
-        if(!$this->sConfirmQuestion)
+        if(!is_array($this->sConfirmArgs) || count($this->sConfirmArgs) < 1)
         {
-            return $sScript;
+            return $this->getOption('core.prefix.' . $this->sType) . parent::getScript();
         }
-        return $this->getPluginManager()->getConfirm()->confirm($this->sConfirmQuestion, $sScript);
+
+        /*
+         * JQuery variables sometimes depend on the context where they are used, eg. when they use $(this).
+         * When a confirmation question is added, the Jaxon calls are maid in a different context,
+         * making those variables invalid.
+         * To avoid issues related to these context changes, the JQuery selectors values are first saved into
+         * local variables which are then used in function calls.
+         */
+        $sVars = ''; // Array of local variables for JQuery selectors
+        $nVarId = 1; // Position of the variables, starting to 1
+        // This array will avoid declaring many variables with the same value.
+        // The array key is the variable value, while the array value is the variable name.
+        $aVariables = array();
+        foreach($this->aParameters as &$xParameter)
+        {
+            if($xParameter instanceof \Jaxon\JQuery\Dom\Element)
+            {
+                if(!array_key_exists((string)$xParameter, $aVariables))
+                {
+                    // The value is not yet defined. A new variable is created.
+                    $sVarName = "jxnVar$nVarId";
+                    $aVariables[(string)$xParameter] = $sVarName;
+                    $sVars .= "$sVarName=$xParameter;";
+                    $xParameter = $sVarName;
+                    $nVarId++;
+                }
+                else
+                {
+                    // The value is already defined. The corresponding variable is assigned.
+                    $xParameter = $aVariables[(string)$xParameter];
+                }
+            }
+        }
+        $sScript = $this->getOption('core.prefix.' . $this->sType) . parent::getScript();
+
+        $sConfirmQuestion = array_shift($this->sConfirmArgs); // The first array entry is the question.
+        $sConfirmQuestion = "'" . addslashes($sConfirmQuestion) . "'"; // Wrap the question with single quotes
+        $nParamId = 1;
+        foreach($this->sConfirmArgs as &$xParameter)
+        {
+            if($xParameter instanceof \Jaxon\JQuery\Dom\Element)
+            {
+                if(!array_key_exists((string)$xParameter, $aVariables))
+                {
+                    // The value is not yet defined. A new variable is created.
+                    $sVarName = "jxnVar$nVarId";
+                    $aVariables[(string)$xParameter] = $sVarName;
+                    $sVars .= "$sVarName=$xParameter;";
+                    $xParameter = "'$nParamId':$sVarName";
+                    $nVarId++;
+                }
+                else
+                {
+                    // The value is already defined. The corresponding variable is assigned.
+                    $xParameter = "'$nParamId':" . $aVariables[(string)$xParameter];
+                }
+                $nParamId++;
+            }
+        }
+
+        if(count($this->sConfirmArgs) > 0)
+        {
+            $sConfirmQuestion .= '.supplant({' . implode(',', $this->sConfirmArgs) . '})';
+        }
+        return $sVars . $this->getPluginManager()->getConfirm()->confirm($sConfirmQuestion, $sScript);
     }
 
     /**

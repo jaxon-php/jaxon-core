@@ -45,7 +45,7 @@ class Factory
             $xParam = func_get_arg($nArg);
             if($xParam instanceof Interfaces\Parameter)
             {
-                $xRequest->addParameter($xParam->getType(), $xParam->getValue());
+                $xRequest->pushParameter($xParam);
             }
             else if(is_numeric($xParam))
             {

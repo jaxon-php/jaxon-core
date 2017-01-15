@@ -110,14 +110,14 @@ class JsCall implements JsonSerializable
     }
 
     /**
-     * Set a specific parameter value
+     * Set the value of the parameter at the given position
      *
-     * @param integer           $nPosition                  The position of the parameter to set
-     * @param Parameter         $xParameter                 The value to be used
+     * @param integer                   $nPosition              The position of the parameter to set
+     * @param Interfaces\Parameter      $xParameter             The value to be used
      *
      * @return void
      */
-    public function setParameter($nPosition, Parameter $xParameter)
+    public function setParameter($nPosition, Interfaces\Parameter $xParameter)
     {
         $xParameter->xRequest = $this;
         $this->aParameters[$nPosition] = $xParameter;
@@ -143,6 +143,18 @@ class JsCall implements JsonSerializable
     public function addParameter($sType, $sValue)
     {
         $this->setParameter(count($this->aParameters), new Parameter($sType, $sValue));
+    }
+
+    /**
+     * Add a parameter at the end of the list for this request
+     *
+     * @param Interfaces\Parameter      $xParameter             The value to be used
+     *
+     * @return void
+     */
+    public function pushParameter(Interfaces\Parameter $xParameter)
+    {
+        $this->setParameter(count($this->aParameters), $xParameter);
     }
 
     /**
