@@ -30,40 +30,16 @@ class Factory
      */
     public static function call($sName)
     {
-        // There should be at least on argument to this method, the name of the Jaxon function or method
-        if(($nArgs = func_num_args()) < 1 || !is_string(($sName = func_get_arg(0))))
-        {
-            return null;
-        }
+        $aArguments = func_get_args();
+        $sName = (string)$sName;
+        // Remove the function name from the arguments array.
+        array_shift($aArguments);
         // If there is a dot in the name, then it is a call to a class, else it is a call to a function
         $sType = (strpos($sName, '.') === false ? 'function' : 'class');
         // Make the request
         $xRequest = new Request($sName, $sType);
         $xRequest->useSingleQuote();
-        for($nArg = 1; $nArg < $nArgs; $nArg++)
-        {
-            $xParam = func_get_arg($nArg);
-            if($xParam instanceof Interfaces\Parameter)
-            {
-                $xRequest->pushParameter($xParam);
-            }
-            else if(is_numeric($xParam))
-            {
-                $xRequest->addParameter(Jaxon::NUMERIC_VALUE, $xParam);
-            }
-            else if(is_string($xParam))
-            {
-                $xRequest->addParameter(Jaxon::QUOTED_VALUE, $xParam);
-            }
-            else if(is_bool($xParam))
-            {
-                $xRequest->addParameter(Jaxon::BOOL_VALUE, $xParam);
-            }
-            else if(is_array($xParam) || is_object($xParam))
-            {
-                $xRequest->addParameter(Jaxon::JS_VALUE, $xParam);
-            }
-        }
+        $xRequest->addParameters($aArguments);
         return $xRequest;
     }
 

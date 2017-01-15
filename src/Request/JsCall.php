@@ -146,15 +146,41 @@ class JsCall implements JsonSerializable
     }
 
     /**
-     * Add a parameter at the end of the list for this request
+     * Add a set of parameters to this request
      *
-     * @param Interfaces\Parameter      $xParameter             The value to be used
+     * @param array             $xParameters             The parameters
      *
      * @return void
      */
-    public function pushParameter(Interfaces\Parameter $xParameter)
+    public function addParameters(array $aParameters)
     {
-        $this->setParameter(count($this->aParameters), $xParameter);
+        foreach($aParameters as $xParameter)
+        {
+            if($xParameter instanceof Request)
+            {
+                $this->addParameter(Jaxon::JS_VALUE, 'function(){' . $xParameter->getScript() . ';}');
+            }
+            else if($xParameter instanceof Interfaces\Parameter)
+            {
+                $this->setParameter(count($this->aParameters), $xParameter);
+            }
+            else if(is_numeric($xParameter))
+            {
+                $this->addParameter(Jaxon::NUMERIC_VALUE, $xParameter);
+            }
+            else if(is_string($xParameter))
+            {
+                $this->addParameter(Jaxon::QUOTED_VALUE, $xParameter);
+            }
+            else if(is_bool($xParameter))
+            {
+                $this->addParameter(Jaxon::BOOL_VALUE, $xParameter);
+            }
+            else if(is_array($xParameter) || is_object($xParameter))
+            {
+                $this->addParameter(Jaxon::JS_VALUE, $xParameter);
+            }
+        }
     }
 
     /**
