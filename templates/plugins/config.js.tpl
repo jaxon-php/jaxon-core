@@ -35,3 +35,5 @@ for(i = 0; i < metaTags.length; i++)
     }
 }
 {/if}
+
+{$sConfirmScript|noescape}

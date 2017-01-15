@@ -20,8 +20,15 @@ class Confirm
      * 
      * @return string
      */
-    public function confirm($question, $script)
+    public function confirm($question, $yesScript, $noScript)
     {
-        return "if(confirm(" . $question . ")){" . $script . ";}";
+        if(!$noScript)
+        {
+            return 'if(confirm(' . $question . ')){' . $yesScript . ';}';
+        }
+        else
+        {
+            return 'if(confirm(' . $question . ')){' . $yesScript . ';}else{' . $noScript . ';}';
+        }
     }
 }

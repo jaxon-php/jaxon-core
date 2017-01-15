@@ -20,5 +20,5 @@ interface Confirm
      * 
      * @return string
      */
-    public function confirm($question, $script);
+    public function confirm($question, $yesScript, $noScript);
 }

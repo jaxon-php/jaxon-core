@@ -181,7 +181,7 @@ class Request extends JsCall
         {
             $sConfirmQuestion .= '.supplant({' . implode(',', $this->sConfirmArgs) . '})';
         }
-        return $sVars . $this->getPluginManager()->getConfirm()->confirm($sConfirmQuestion, $sScript);
+        return $sVars . $this->getPluginManager()->getConfirm()->confirm($sConfirmQuestion, $sScript, '');
     }
 
     /**
