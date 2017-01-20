@@ -33,7 +33,7 @@ class Module
      *
      * @return void
      */
-    protected function setup()
+    protected function jaxonSetup()
     {
         // Read config file
         $this->appConfig = $jaxon->readConfigFile($this->configFile, 'lib', 'app');
@@ -66,7 +66,7 @@ class Module
      *
      * @return void
      */
-    protected function check()
+    protected function jaxonCheck()
     {
         // Todo: check the mandatory options
     }
@@ -76,7 +76,7 @@ class Module
      *
      * @return void
      */
-    protected function view()
+    protected function jaxonView()
     {
         if($this->jaxonViewRenderer == null)
         {
