@@ -83,6 +83,37 @@ class Parameter implements Interfaces\Parameter
     }
 
     /**
+     * Create a Parameter instance using the given value
+     * 
+     * @param mixed         $xValue                 The parameter value
+     * 
+     * @return Parameter
+     */
+    public static function make($xValue)
+    {
+        if($xParameter instanceof Interfaces\Parameter)
+        {
+            return $xValue;
+        }
+        else if(is_numeric($xValue))
+        {
+            return new Parameter(Jaxon::NUMERIC_VALUE, $xValue);
+        }
+        else if(is_string($xValue))
+        {
+            return new Parameter(Jaxon::QUOTED_VALUE, $xValue);
+        }
+        else if(is_bool($xValue))
+        {
+            return new Parameter(Jaxon::BOOL_VALUE, $xValue);
+        }
+        else // if(is_array($xValue) || is_object($xValue))
+        {
+            return new Parameter(Jaxon::JS_VALUE, $xValue);
+        }
+    }
+
+    /**
      * Generate the javascript code.
      *
      * @return string

@@ -44,6 +44,13 @@ class Request extends JsCall
     protected $sConfirmArgs = null;
 
     /**
+     * A condition to chech before sending this request
+     *
+     * @var string
+     */
+    protected $sCondition = null;
+
+    /**
      * The constructor.
      * 
      * @param string        $sFunction            The javascript function
@@ -95,7 +102,7 @@ class Request extends JsCall
     /**
      * Add a confirmation question to the request
      *
-     * @param string        $sQuestion                The question to ask before calling this function
+     * @param string        $sQuestion                The question to ask
      *
      * @return Request
      */
@@ -103,6 +110,36 @@ class Request extends JsCall
     {
         // Save the arguments of the call.
         $this->sConfirmArgs = func_get_args();
+        return $this;
+    }
+
+    /**
+     * Add a condition to the request
+     *
+     * @param string        $sCondition               The condition to check
+     *
+     * The request is sent only if the condition is true.
+     *
+     * @return Request
+     */
+    public function when($sCondition)
+    {
+        $this->sCondition = Parameter::make($sCondition)->getScript();
+        return $this;
+    }
+
+    /**
+     * Add a condition to the request
+     * 
+     * The request is sent only if the condition is false.
+     *
+     * @param string        $sCondition               The condition to check
+     *
+     * @return Request
+     */
+    public function unless($sCondition)
+    {
+        $this->sCondition = '!' . Parameter::make($sCondition)->getScript();
         return $this;
     }
 
@@ -115,7 +152,12 @@ class Request extends JsCall
     {
         if(!is_array($this->sConfirmArgs) || count($this->sConfirmArgs) < 1)
         {
-            return $this->getOption('core.prefix.' . $this->sType) . parent::getScript();
+            $sJsCode = $this->getOption('core.prefix.' . $this->sType) . parent::getScript();
+            if(($this->sCondition))
+            {
+                $sJsCode = 'if(' . $this->sCondition . '){' . $sJsCode . ';}';
+            }
+            return $sJsCode;
         }
 
         /*
@@ -181,7 +223,12 @@ class Request extends JsCall
         {
             $sConfirmQuestion .= '.supplant({' . implode(',', $this->sConfirmArgs) . '})';
         }
-        return $sVars . $this->getPluginManager()->getConfirm()->confirm($sConfirmQuestion, $sScript, '');
+        $sJsCode = $sVars . $this->getPluginManager()->getConfirm()->confirm($sConfirmQuestion, $sScript, '');
+        if(($this->sCondition))
+        {
+            $sJsCode = 'if(' . $this->sCondition . '){' . $sJsCode . ';}';
+        }
+        return $sJsCode;
     }
 
     /**

@@ -117,10 +117,24 @@ class JsCall implements JsonSerializable
      *
      * @return void
      */
-    public function setParameter($nPosition, Interfaces\Parameter $xParameter)
+    public function setParameter(Interfaces\Parameter $xParameter)
     {
         $xParameter->xRequest = $this;
         $this->aParameters[$nPosition] = $xParameter;
+    }
+
+    /**
+     * Set the value of the parameter at the given position
+     *
+     * @param integer                   $nPosition              The position of the parameter to set
+     * @param Interfaces\Parameter      $xParameter             The value to be used
+     *
+     * @return void
+     */
+    public function pushParameter(Interfaces\Parameter $xParameter)
+    {
+        $xParameter->xRequest = $this;
+        $this->aParameters[] = $xParameter;
     }
 
     /**
@@ -142,7 +156,7 @@ class JsCall implements JsonSerializable
      */
     public function addParameter($sType, $sValue)
     {
-        $this->setParameter(count($this->aParameters), new Parameter($sType, $sValue));
+        $this->pushParameter(new Parameter($sType, $sValue));
     }
 
     /**
@@ -160,25 +174,9 @@ class JsCall implements JsonSerializable
             {
                 $this->addParameter(Jaxon::JS_VALUE, 'function(){' . $xParameter->getScript() . ';}');
             }
-            else if($xParameter instanceof Interfaces\Parameter)
+            else
             {
-                $this->setParameter(count($this->aParameters), $xParameter);
-            }
-            else if(is_numeric($xParameter))
-            {
-                $this->addParameter(Jaxon::NUMERIC_VALUE, $xParameter);
-            }
-            else if(is_string($xParameter))
-            {
-                $this->addParameter(Jaxon::QUOTED_VALUE, $xParameter);
-            }
-            else if(is_bool($xParameter))
-            {
-                $this->addParameter(Jaxon::BOOL_VALUE, $xParameter);
-            }
-            else if(is_array($xParameter) || is_object($xParameter))
-            {
-                $this->addParameter(Jaxon::JS_VALUE, $xParameter);
+                $this->pushParameter(Parameter::make($xParameter));
             }
         }
     }
