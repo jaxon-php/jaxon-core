@@ -112,24 +112,4 @@ class Element implements JsonSerializable, Parameter
     {
         return $this->getScript();
     }
-
-    /**
-     * Get the parameter type
-     * 
-     * @return string
-     */
-    public function getType()
-    {
-        return Jaxon::JS_VALUE;
-    }
-
-    /**
-     * Get the parameter value
-     * 
-     * @return mixed
-     */
-    public function getValue()
-    {
-        return $this->getScript();
-    }
 }

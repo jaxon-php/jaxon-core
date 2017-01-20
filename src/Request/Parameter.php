@@ -91,7 +91,7 @@ class Parameter implements Interfaces\Parameter
      */
     public static function make($xValue)
     {
-        if($xParameter instanceof Interfaces\Parameter)
+        if($xValue instanceof Interfaces\Parameter)
         {
             return $xValue;
         }
