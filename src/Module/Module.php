@@ -37,7 +37,17 @@ class Module
     {
         // Read config file
         $this->appConfig = $jaxon->readConfigFile($this->configFile, 'lib', 'app');
+    }
 
+    /**
+     * Set the module specific options for the Jaxon library.
+     *
+     * This method needs to set at least the Jaxon request URI.
+     *
+     * @return void
+     */
+    protected function jaxonCheck()
+    {
         // Check the mandatory options
         // Jaxon library settings
         $aMandatoryOptions = ['js.app.extern', 'js.app.minify', 'js.app.uri', 'js.app.dir'];
@@ -57,18 +67,6 @@ class Module
                 throw new \Jaxon\Exception\Config\Data('missing', 'app:' . $sOption);
             }
         }
-    }
-
-    /**
-     * Set the module specific options for the Jaxon library.
-     *
-     * This method needs to set at least the Jaxon request URI.
-     *
-     * @return void
-     */
-    protected function jaxonCheck()
-    {
-        // Todo: check the mandatory options
     }
 
     /**

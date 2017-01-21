@@ -141,41 +141,44 @@ trait Module
         // Create the Jaxon response
         $this->jaxonResponse = new Response();
 
-        // Jaxon library settings
-        if(!$jaxon->hasOption('js.app.extern'))
+        if(($this->jaxonLibOptions) && ($this->jaxonAppOptions))
         {
-            $jaxon->setOption('js.app.extern', $this->jaxonLibOptions->bExtern);
-        }
-        if(!$jaxon->hasOption('js.app.minify'))
-        {
-            $jaxon->setOption('js.app.minify', $this->jaxonLibOptions->bMinify);
-        }
-        if(!$jaxon->hasOption('js.app.uri'))
-        {
-            $jaxon->setOption('js.app.uri', $this->jaxonLibOptions->sJsUri);
-        }
-        if(!$jaxon->hasOption('js.app.dir'))
-        {
-            $jaxon->setOption('js.app.dir', $this->jaxonLibOptions->sJsDir);
-        }
-
-        // Jaxon application settings
-        // Register the default Jaxon class directory
-        $directory = $this->appConfig->getOption('controllers.directory', $this->jaxonAppOptions->sDirectory);
-        $namespace = $this->appConfig->getOption('controllers.namespace', $this->jaxonAppOptions->sNamespace);
-        $separator = $this->appConfig->getOption('controllers.separator', '.');
-        $protected = $this->appConfig->getOption('controllers.protected', array());
-        // The public methods of the Controller base class must not be exported to javascript
-        $controllerClass = new \ReflectionClass($this->jaxonControllerClass);
-        foreach ($controllerClass->getMethods(\ReflectionMethod::IS_PUBLIC) as $xMethod)
-        {
-            $protected[] = $xMethod->getShortName();
-        }
-        $jaxon->addClassDir($directory, $namespace, $separator, $protected);
-        // Set the request URI
-        if(!$jaxon->hasOption('core.request.uri'))
-        {
-            $jaxon->setOption('core.request.uri', 'jaxon');
+            // Jaxon library settings
+            if(!$jaxon->hasOption('js.app.extern'))
+            {
+                $jaxon->setOption('js.app.extern', $this->jaxonLibOptions->bExtern);
+            }
+            if(!$jaxon->hasOption('js.app.minify'))
+            {
+                $jaxon->setOption('js.app.minify', $this->jaxonLibOptions->bMinify);
+            }
+            if(!$jaxon->hasOption('js.app.uri'))
+            {
+                $jaxon->setOption('js.app.uri', $this->jaxonLibOptions->sJsUri);
+            }
+            if(!$jaxon->hasOption('js.app.dir'))
+            {
+                $jaxon->setOption('js.app.dir', $this->jaxonLibOptions->sJsDir);
+            }
+    
+            // Jaxon application settings
+            // Register the default Jaxon class directory
+            $directory = $this->appConfig->getOption('controllers.directory', $this->jaxonAppOptions->sDirectory);
+            $namespace = $this->appConfig->getOption('controllers.namespace', $this->jaxonAppOptions->sNamespace);
+            $separator = $this->appConfig->getOption('controllers.separator', '.');
+            $protected = $this->appConfig->getOption('controllers.protected', array());
+            // The public methods of the Controller base class must not be exported to javascript
+            $controllerClass = new \ReflectionClass($this->jaxonControllerClass);
+            foreach ($controllerClass->getMethods(\ReflectionMethod::IS_PUBLIC) as $xMethod)
+            {
+                $protected[] = $xMethod->getShortName();
+            }
+            $jaxon->addClassDir($directory, $namespace, $separator, $protected);
+            // Set the request URI
+            if(!$jaxon->hasOption('core.request.uri'))
+            {
+                $jaxon->setOption('core.request.uri', 'jaxon');
+            }
         }
 
         // Event before checking the module
