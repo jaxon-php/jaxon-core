@@ -15,6 +15,7 @@
 namespace Jaxon\Utils\Traits;
 
 use Jaxon\Utils\Container as JaxonContainer;
+use Jaxon\Utils\Interfaces\EventListener;
 
 trait Container
 {
@@ -208,5 +209,15 @@ trait Container
     public function validateMethod($sName)
     {
         return JaxonContainer::getInstance()->getValidator()->validateMethod($sName);
+    }
+
+    /**
+     * Register an event listener.
+     *
+     * @return void
+     */
+    public function addEventListener(EventListener $xEventListener)
+    {
+        JaxonContainer::getInstance()->getEventDispatcher()->addSubscriber($xEventListener);
     }
 }

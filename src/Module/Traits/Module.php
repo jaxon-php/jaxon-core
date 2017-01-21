@@ -5,11 +5,14 @@ namespace Jaxon\Module\Traits;
 use Jaxon\Jaxon;
 use Jaxon\Module\Controller;
 use Jaxon\Response\Response;
+use Jaxon\Utils\Traits\Event;
 
 use stdClass;
 
 trait Module
 {
+    use Event;
+
     protected $jaxonSetupCalled = false;
 
     protected $jaxonPreCallback = null;
@@ -123,8 +126,14 @@ trait Module
             return;
         }
 
+        // Event before setting up the module
+        $this->triggerEvent('pre.setup');
+
         // Set the module/package/bundle specific specific options
         $this->jaxonSetup();
+
+        // Event after the module has read the config
+        $this->triggerEvent('post.config');
 
         $jaxon = jaxon();
         // Use the Composer autoloader
@@ -169,7 +178,14 @@ trait Module
             $jaxon->setOption('core.request.uri', 'jaxon');
         }
 
+        // Event before checking the module
+        $this->triggerEvent('pre.check');
+
         $this->jaxonCheck();
+
+        // Event after setting up the module
+        $this->triggerEvent('post.setup');
+
         $this->jaxonSetupCalled = true;
     }
 

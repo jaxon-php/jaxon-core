@@ -14,6 +14,8 @@
 
 namespace Jaxon\Utils;
 
+use Lemon\Event\EventDispatcher;
+
 class Container
 {
     // The Dependency Injection Container
@@ -96,6 +98,10 @@ class Container
         // Paginator
         $this->di['paginator'] = function($c){
             return new Paginator(0, 1, 1, null);
+        };
+        // Event Dispatcher
+        $this->di['events'] = function($c){
+            return new EventDispatcher();
         };
     }
 
@@ -187,5 +193,15 @@ class Container
     public function getPaginator()
     {
         return $this->di['paginator'];
+    }
+
+    /**
+     * Get the event dispatcher
+     *
+     * @return object        The event dispatcher
+     */
+    public function getEventDispatcher()
+    {
+        return $this->di['events'];
     }
 }

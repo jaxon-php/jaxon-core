@@ -221,6 +221,11 @@ class Manager
         {
             $this->setConfirm($xPlugin);
         }
+        // Register the plugin as an event listener
+        if($xPlugin instanceof \Jaxon\Utils\Interfaces\EventListener)
+        {
+            $this->addEventListener($xPlugin);
+        }
 
         $this->setPluginPriority($xPlugin, $nPriority);
     }
