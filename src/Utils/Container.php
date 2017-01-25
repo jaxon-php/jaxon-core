@@ -71,6 +71,10 @@ class Container
         $this->di['response'] = function($c){
             return new \Jaxon\Response\Manager();
         };
+        // Module
+        $this->di['module'] = function($c){
+            return new \Jaxon\Module\Module();
+        };
 
         /*
          * Services
@@ -133,6 +137,16 @@ class Container
     public function getResponseManager()
     {
         return $this->di['response'];
+    }
+
+    /**
+     * Get the module
+     *
+     * @return object        The module
+     */
+    public function getModule()
+    {
+        return $this->di['module'];
     }
 
     /**

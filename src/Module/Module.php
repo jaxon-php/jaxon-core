@@ -2,8 +2,6 @@
 
 namespace Jaxon\Module;
 
-use Jaxon\Config\Config;
-
 class Module
 {
     use Traits\Module;
@@ -19,11 +17,37 @@ class Module
     {}
 
     /**
+     * Read and set Jaxon options from a config file
+     *
+     * @return array
+     */
+    protected function readConfig()
+    {
+        $sExt = pathinfo($this->configFile, PATHINFO_EXTENSION);
+        switch($sExt)
+        {
+        case 'php':
+            return \Jaxon\Config\Php::read($this->configFile, 'lib', 'app');
+            break;
+        case 'yaml':
+        case 'yml':
+            return \Jaxon\Config\Yaml::read($this->configFile, 'lib', 'app');
+            break;
+        case 'json':
+            return \Jaxon\Config\Json::read($this->configFile, 'lib', 'app');
+            break;
+        default:
+            throw new \Jaxon\Exception\Config\File('access', $this->configFile);
+            break;
+        }
+    }
+
+    /**
      * Set the config file path.
      *
      * @return void
      */
-    public function setConfigFile($configFile)
+    public function config($configFile)
     {
         $this->configFile = $configFile;
     }
@@ -36,7 +60,7 @@ class Module
     protected function jaxonSetup()
     {
         // Read config file
-        $this->appConfig = $jaxon->readConfigFile($this->configFile, 'lib', 'app');
+        $this->appConfig = $this->readConfig();
     }
 
     /**
@@ -50,14 +74,14 @@ class Module
     {
         // Check the mandatory options
         // Jaxon library settings
-        $aMandatoryOptions = ['js.app.extern', 'js.app.minify', 'js.app.uri', 'js.app.dir'];
+        /*$aMandatoryOptions = ['js.app.extern', 'js.app.minify', 'js.app.uri', 'js.app.dir'];
         foreach($aMandatoryOptions as $sOption)
         {
             if(!$jaxon->hasOption($sOption))
             {
                 throw new \Jaxon\Exception\Config\Data('missing', 'lib:' . $sOption);
             }
-        }
+        }*/
         // Jaxon application settings
         $aMandatoryOptions = ['controllers.directory', 'controllers.namespace'];
         foreach($aMandatoryOptions as $sOption)
@@ -93,7 +117,6 @@ class Module
     public function httpResponse($code = '200')
     {
         // Send HTTP Headers
-        $jaxon = jaxon();
-        $jaxon->sendResponse();
+        jaxon()->sendResponse();
     }
 }

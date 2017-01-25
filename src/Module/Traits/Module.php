@@ -161,19 +161,15 @@ trait Module
                 $jaxon->setOption('js.app.dir', $this->jaxonLibOptions->sJsDir);
             }
     
-            // Jaxon application settings
-            // Register the default Jaxon class directory
-            $directory = $this->appConfig->getOption('controllers.directory', $this->jaxonAppOptions->sDirectory);
-            $namespace = $this->appConfig->getOption('controllers.namespace', $this->jaxonAppOptions->sNamespace);
-            $separator = $this->appConfig->getOption('controllers.separator', '.');
-            $protected = $this->appConfig->getOption('controllers.protected', array());
-            // The public methods of the Controller base class must not be exported to javascript
-            $controllerClass = new \ReflectionClass($this->jaxonControllerClass);
-            foreach ($controllerClass->getMethods(\ReflectionMethod::IS_PUBLIC) as $xMethod)
+            if(!$this->appConfig->hasOption('controllers.directory'))
             {
-                $protected[] = $xMethod->getShortName();
+                $this->appConfig->setOption('controllers.directory', $this->jaxonAppOptions->sDirectory);
             }
-            $jaxon->addClassDir($directory, $namespace, $separator, $protected);
+            if(!$this->appConfig->hasOption('controllers.namespace'))
+            {
+                $this->appConfig->setOption('controllers.namespace', $this->jaxonAppOptions->sNamespace);
+            }
+    
             // Set the request URI
             if(!$jaxon->hasOption('core.request.uri'))
             {
@@ -185,6 +181,20 @@ trait Module
         $this->triggerEvent('pre.check');
 
         $this->jaxonCheck();
+
+        // Jaxon application settings
+        // Register the default Jaxon class directory
+        $directory = $this->appConfig->getOption('controllers.directory');
+        $namespace = $this->appConfig->getOption('controllers.namespace');
+        $separator = $this->appConfig->getOption('controllers.separator', '.');
+        $protected = $this->appConfig->getOption('controllers.protected', array());
+        // The public methods of the Controller base class must not be exported to javascript
+        $controllerClass = new \ReflectionClass($this->jaxonControllerClass);
+        foreach ($controllerClass->getMethods(\ReflectionMethod::IS_PUBLIC) as $xMethod)
+        {
+            $protected[] = $xMethod->getShortName();
+        }
+        $jaxon->addClassDir($directory, $namespace, $separator, $protected);
 
         // Event after setting up the module
         $this->triggerEvent('post.setup');
@@ -200,8 +210,7 @@ trait Module
     public function register()
     {
         $this->_jaxonSetup();
-        $jaxon = jaxon();
-        $jaxon->registerClasses();
+        jaxon()->registerClasses();
     }
 
     /**
@@ -212,8 +221,7 @@ trait Module
     public function registerClass($sClassName)
     {
         $this->_jaxonSetup();
-        $jaxon = jaxon();
-        $jaxon->registerClass($sClassName);
+        jaxon()->registerClass($sClassName);
     }
 
     /**
@@ -224,8 +232,7 @@ trait Module
     public function script($bIncludeJs = false, $bIncludeCss = false)
     {
         $this->_jaxonSetup();
-        $jaxon = jaxon();
-        return $jaxon->getScript($bIncludeJs, $bIncludeCss);
+        return jaxon()->getScript($bIncludeJs, $bIncludeCss);
     }
 
     /**
@@ -236,8 +243,7 @@ trait Module
     public function js()
     {
         $this->_jaxonSetup();
-        $jaxon = jaxon();
-        return $jaxon->getJs();
+        return jaxon()->getJs();
     }
 
     /**
@@ -248,8 +254,7 @@ trait Module
     public function css()
     {
         $this->_jaxonSetup();
-        $jaxon = jaxon();
-        return $jaxon->getCss();
+        return jaxon()->getCss();
     }
 
     /**
@@ -324,8 +329,7 @@ trait Module
     public function controller($classname)
     {
         $this->_jaxonSetup();
-        $jaxon = jaxon();
-        $controller = $jaxon->registerClass($classname, true);
+        $controller = jaxon()->registerClass($classname, true);
         if(!$controller)
         {
             return null;
@@ -397,8 +401,7 @@ trait Module
     public function canProcessRequest()
     {
         $this->_jaxonSetup();
-        $jaxon = jaxon();
-        return $jaxon->canProcessRequest();
+        return jaxon()->canProcessRequest();
     }
 
     /**

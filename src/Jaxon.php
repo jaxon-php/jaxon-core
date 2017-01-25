@@ -712,4 +712,14 @@ class Jaxon
     {
         return $this->xPluginManager->getResponsePlugin($sName);
     }
+
+    /**
+     * Get the single Module instance
+     *
+     * @return \Jaxon\Module\Module
+     */
+    public function module()
+    {
+        return Utils\Container::getInstance()->getModule();
+    }
 }
