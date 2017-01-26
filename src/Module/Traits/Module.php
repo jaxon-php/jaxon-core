@@ -5,6 +5,7 @@ namespace Jaxon\Module\Traits;
 use Jaxon\Jaxon;
 use Jaxon\Module\Controller;
 use Jaxon\Response\Response;
+use Jaxon\Utils\Container;
 use Jaxon\Utils\Traits\Event;
 
 use stdClass;
@@ -126,6 +127,10 @@ trait Module
             return;
         }
 
+        // Set this object as the Module in the DI container.
+        // Now it will be returned by a call to jaxon()->module().
+        Container::getInstance()->setModule($this);
+
         // Event before setting up the module
         $this->triggerEvent('pre.setup');
 
@@ -188,6 +193,7 @@ trait Module
         $namespace = $this->appConfig->getOption('controllers.namespace');
         $separator = $this->appConfig->getOption('controllers.separator', '.');
         $protected = $this->appConfig->getOption('controllers.protected', array());
+
         // The public methods of the Controller base class must not be exported to javascript
         $controllerClass = new \ReflectionClass($this->jaxonControllerClass);
         foreach ($controllerClass->getMethods(\ReflectionMethod::IS_PUBLIC) as $xMethod)

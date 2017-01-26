@@ -140,6 +140,18 @@ class Container
     }
 
     /**
+     * Set the module
+     *
+     * @param mixed             $xModule        The new module
+     *
+     * @return object        The module
+     */
+    public function setModule($xModule)
+    {
+        $this->di['module'] = $xModule;
+    }
+
+    /**
      * Get the module
      *
      * @return object        The module
