@@ -129,7 +129,10 @@ trait Module
 
         // Set this object as the Module in the DI container.
         // Now it will be returned by a call to jaxon()->module().
-        Container::getInstance()->setModule($this);
+        if(get_class($this) != 'Jaxon\\Module\\Module')
+        {
+            Container::getInstance()->setModule($this);
+        }
 
         // Event before setting up the module
         $this->triggerEvent('pre.setup');
