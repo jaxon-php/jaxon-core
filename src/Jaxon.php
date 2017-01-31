@@ -50,6 +50,7 @@ class Jaxon
     const PROCESSING_EVENT_BEFORE = 'BeforeProcessing';
     const PROCESSING_EVENT_AFTER = 'AfterProcessing';
     const PROCESSING_EVENT_INVALID = 'InvalidRequest';
+    const PROCESSING_EVENT_ERROR = 'ProcessingError';
 
     /*
      * Request methods
@@ -417,15 +418,20 @@ class Jaxon
                 $this->xResponseManager->clear();
                 $this->xResponseManager->append(new Response\Response());
                 $this->xResponseManager->debug($e->getMessage());
+                $mResult = false;
 
                 if($e instanceof \Jaxon\Exception\Error)
                 {
-                    // handle invalidRequest event
+                    // Handle invalid request event
                     if(isset($this->aProcessingEvents[self::PROCESSING_EVENT_INVALID]))
                     {
                         $this->aProcessingEvents[self::PROCESSING_EVENT_INVALID]->call(array($e->getMessage()));
                     }
-                    $mResult = false;
+                }
+                else if(isset($this->aProcessingEvents[self::PROCESSING_EVENT_ERROR]))
+                {
+                    // Process exception
+                    $this->aProcessingEvents[self::PROCESSING_EVENT_ERROR]->call(array($e));
                 }
                 else
                 {
