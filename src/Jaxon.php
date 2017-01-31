@@ -30,6 +30,7 @@ use Jaxon\Request\Manager as RequestManager;
 use Jaxon\Response\Manager as ResponseManager;
 
 use Jaxon\Utils\URI;
+use Exception;
 
 class Jaxon extends Base
 {
@@ -621,16 +622,41 @@ class Jaxon extends Base
         // handle beforeProcessing event
         if(isset($this->aProcessingEvents[self::PROCESSING_EVENT_BEFORE]))
         {
-            $xResponse = $this->aProcessingEvents[self::PROCESSING_EVENT_BEFORE]->call(array(&$bEndRequest));
-            if($xResponse instanceof Response\Response)
-            {
-                $this->xResponseManager->append($xResponse);
-            }
+            $this->aProcessingEvents[self::PROCESSING_EVENT_BEFORE]->call(array(&$bEndRequest));
         }
 
         if(!$bEndRequest)
         {
-            $mResult = $this->xPluginManager->processRequest();
+            try
+            {
+                $mResult = $this->xPluginManager->processRequest();
+            }
+            catch(Exception $e)
+            {
+                // An exception was thrown while processing the request.
+                // The request missed the corresponding handler function,
+                // or an error occurred while attempting to execute the handler.
+                // Replace the response, if one has been started and send a debug message.
+
+                $this->xResponseManager->clear();
+                $this->xResponseManager->append(new Response\Response());
+                $this->xResponseManager->debug($e->getMessage());
+
+                if($e instanceof \Jaxon\Exception\Error)
+                {
+                    // handle invalidRequest event
+                    if(isset($this->aProcessingEvents[self::PROCESSING_EVENT_INVALID]))
+                    {
+                        $this->aProcessingEvents[self::PROCESSING_EVENT_INVALID]->call(array($e->getMessage()));
+                    }
+                    $mResult = false;
+                }
+                else
+                {
+                    // The exception is not to be processed here.
+                    throw $e;
+                }
+            }
         }
         // Clean the processing buffer
         if(($this->getOption('core.process.clean_buffer')))
@@ -649,34 +675,8 @@ class Jaxon extends Base
             if(isset($this->aProcessingEvents[self::PROCESSING_EVENT_AFTER]))
             {
                 $bEndRequest = false;
-                $xResponse = $this->aProcessingEvents[self::PROCESSING_EVENT_AFTER]->call(array($bEndRequest));
-                if($xResponse instanceof Response\Response)
-                {
-                    $this->xResponseManager->append($xResponse);
-                }
+                $this->aProcessingEvents[self::PROCESSING_EVENT_AFTER]->call(array($bEndRequest));
             }
-        }
-        else if(is_string($mResult))
-        {
-            // $mResult contains an error message
-            // the request was missing the cooresponding handler function
-            // or an error occurred while attempting to execute the
-            // handler.  replace the response, if one has been started
-            // and send a debug message.
-
-            $this->xResponseManager->clear();
-            $this->xResponseManager->append(new Response\Response());
-
-            // handle invalidRequest event
-            if(isset($this->aProcessingEvents[self::PROCESSING_EVENT_INVALID]))
-            {
-                $xResponse = $this->aProcessingEvents[self::PROCESSING_EVENT_INVALID]->call($mResult);
-                if($xResponse instanceof Response\Response)
-                {
-                    $this->xResponseManager->append($xResponse);
-                }
-            }
-            $this->xResponseManager->debug($mResult);
         }
 
         if(($this->sErrorMessage) && ($this->getOption('core.error.handle')) &&
