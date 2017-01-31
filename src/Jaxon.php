@@ -30,6 +30,7 @@ use Jaxon\Request\Manager as RequestManager;
 use Jaxon\Response\Manager as ResponseManager;
 
 use Jaxon\Utils\URI;
+use Exception;
 
 class Jaxon
 {
@@ -349,36 +350,6 @@ class Jaxon
     }
 
     /**
-     * This function is registered with PHP's set_error_handler if the jaxon error handling system is enabled
-     *
-     * @return void
-     */
-    public function errorHandler($errno, $errstr, $errfile, $errline)
-    {
-        $errorReporting = error_reporting();
-        if (($errno & $errorReporting) == 0 || (defined('E_STRICT') && $errno == E_STRICT))
-        {
-            return;
-        }
-
-        $aErrTypes = array(
-            E_NOTICE => 'NOTICE',
-            E_WARNING => 'WARNING',
-            E_USER_NOTICE => 'USER NOTICE',
-            E_USER_WARNING => 'USER    WARNING',
-            E_USER_ERROR => 'USER FATAL ERROR',
-        );
-        $sErrorType = (array_key_exists($errno, $aErrTypes) ? $aErrTypes[$errno] : 'UNKNOWN: ' . $errno);
-        $this->sErrorMessage = $this->render('plugins/errors.txt.tpl', array(
-            'sPrevMessage' => $this->sErrorMessage,
-            'sErrorType' => $sErrorType,
-            'sErrorMessage' => $errstr,
-            'sErrorFile' => $errfile,
-            'sErrorLine' => $errline,
-        ));
-    }
-
-    /**
      * Determine if a call is a jaxon request or a page load request
      *
      * @return boolean
@@ -420,13 +391,6 @@ class Jaxon
         {
             return;
         }
-
-        // Use jaxon error handler if necessary
-        if(($this->getOption('core.error.handle')))
-        {
-            $this->setErrorMessage('');
-            set_error_handler(array($this, "errorHandler"));
-        }
         
         $bEndRequest = false;
         $mResult = true;
@@ -434,16 +398,41 @@ class Jaxon
         // handle beforeProcessing event
         if(isset($this->aProcessingEvents[self::PROCESSING_EVENT_BEFORE]))
         {
-            $xResponse = $this->aProcessingEvents[self::PROCESSING_EVENT_BEFORE]->call(array(&$bEndRequest));
-            if($xResponse instanceof Response\Response)
-            {
-                $this->xResponseManager->append($xResponse);
-            }
+            $this->aProcessingEvents[self::PROCESSING_EVENT_BEFORE]->call(array(&$bEndRequest));
         }
 
         if(!$bEndRequest)
         {
-            $mResult = $this->xPluginManager->processRequest();
+            try
+            {
+                $mResult = $this->xPluginManager->processRequest();
+            }
+            catch(Exception $e)
+            {
+                // An exception was thrown while processing the request.
+                // The request missed the corresponding handler function,
+                // or an error occurred while attempting to execute the handler.
+                // Replace the response, if one has been started and send a debug message.
+
+                $this->xResponseManager->clear();
+                $this->xResponseManager->append(new Response\Response());
+                $this->xResponseManager->debug($e->getMessage());
+
+                if($e instanceof \Jaxon\Exception\Error)
+                {
+                    // handle invalidRequest event
+                    if(isset($this->aProcessingEvents[self::PROCESSING_EVENT_INVALID]))
+                    {
+                        $this->aProcessingEvents[self::PROCESSING_EVENT_INVALID]->call(array($e->getMessage()));
+                    }
+                    $mResult = false;
+                }
+                else
+                {
+                    // The exception is not to be processed here.
+                    throw $e;
+                }
+            }
         }
         // Clean the processing buffer
         if(($this->getOption('core.process.clean_buffer')))
@@ -462,64 +451,12 @@ class Jaxon
             if(isset($this->aProcessingEvents[self::PROCESSING_EVENT_AFTER]))
             {
                 $bEndRequest = false;
-                $xResponse = $this->aProcessingEvents[self::PROCESSING_EVENT_AFTER]->call(array($bEndRequest));
-                if($xResponse instanceof Response\Response)
-                {
-                    $this->xResponseManager->append($xResponse);
-                }
+                $this->aProcessingEvents[self::PROCESSING_EVENT_AFTER]->call(array($bEndRequest));
             }
-        }
-        else if(is_string($mResult))
-        {
-            // $mResult contains an error message
-            // the request was missing the cooresponding handler function
-            // or an error occurred while attempting to execute the
-            // handler.  replace the response, if one has been started
-            // and send a debug message.
-
-            $this->xResponseManager->clear();
-            $this->xResponseManager->append(new Response\Response());
-
-            // handle invalidRequest event
-            if(isset($this->aProcessingEvents[self::PROCESSING_EVENT_INVALID]))
-            {
-                $xResponse = $this->aProcessingEvents[self::PROCESSING_EVENT_INVALID]->call($mResult);
-                if($xResponse instanceof Response\Response)
-                {
-                    $this->xResponseManager->append($xResponse);
-                }
-            }
-            $this->xResponseManager->debug($mResult);
-        }
-
-        if(($this->sErrorMessage) && ($this->getOption('core.error.handle')) &&
-            $this->hasOption('core.error.log_file'))
-        {
-            if(($fH = @fopen($this->getOption('core.error.log_file'), "a")) != null)
-            {
-                fwrite($fH, $this->trans('errors.debug.ts-message', array(
-                    'timestamp' => strftime("%b %e %Y %I:%M:%S %p"),
-                    'message' => $this->sErrorMessage
-                )));
-                fclose($fH);
-            }
-            else
-            {
-                $this->xResponseManager->debug($this->trans('errors.debug.write-log', array(
-                    'file' => $this->getOption('core.error.log_file')
-                )));
-            }
-            $this->xResponseManager->debug($this->trans('errors.debug.message', array(
-                'message' => $this->sErrorMessage
-            )));
         }
 
         $this->xResponseManager->send();
 
-        if(($this->getOption('core.error.handle')))
-        {
-            restore_error_handler();
-        }
         if(($this->getOption('core.process.exit_after')))
         {
             exit();
