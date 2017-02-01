@@ -121,13 +121,6 @@ class Jaxon
      * @var \Jaxon\Response\Manager
      */
     private $xResponseManager;
-
-    /**
-     * The challenge response sent by the client in the HTTP request
-     *
-     * @var string
-     */
-    private $challengeResponse;
     
     /**
      * A reference to the global <\Jaxon\Response\Response>
@@ -304,7 +297,7 @@ class Jaxon
                 // Todo: return error
             }
         }
-        
+
         return $this->xPluginManager->register($aArgs);
     }
 
@@ -376,9 +369,6 @@ class Jaxon
      */
     public function processRequest()
     {
-        if(isset($_SERVER['HTTP_CHALLENGE_RESPONSE']))
-            $this->challengeResponse = $_SERVER['HTTP_CHALLENGE_RESPONSE'];
-
         // Check to see if headers have already been sent out, in which case we can't do our job
         if(headers_sent($filename, $linenumber))
         {
@@ -387,16 +377,17 @@ class Jaxon
             )), "\n", $this->trans('errors.output.advice');
             exit();
         }
-        // 
+
+        // Check if there is a plugin to process this request
         if(!$this->canProcessRequest())
         {
             return;
         }
-        
+
         $bEndRequest = false;
         $mResult = true;
 
-        // handle beforeProcessing event
+        // Handle before processing event
         if(isset($this->aProcessingEvents[self::PROCESSING_EVENT_BEFORE]))
         {
             $this->aProcessingEvents[self::PROCESSING_EVENT_BEFORE]->call(array(&$bEndRequest));
@@ -422,16 +413,19 @@ class Jaxon
 
                 if($e instanceof \Jaxon\Exception\Error)
                 {
-                    // Handle invalid request event
-                    if(isset($this->aProcessingEvents[self::PROCESSING_EVENT_INVALID]))
-                    {
-                        $this->aProcessingEvents[self::PROCESSING_EVENT_INVALID]->call(array($e->getMessage()));
-                    }
+                    $sEvent = self::PROCESSING_EVENT_INVALID;
+                    $aParams = array($e->getMessage());
                 }
-                else if(isset($this->aProcessingEvents[self::PROCESSING_EVENT_ERROR]))
+                else
                 {
-                    // Process exception
-                    $this->aProcessingEvents[self::PROCESSING_EVENT_ERROR]->call(array($e));
+                    $sEvent = self::PROCESSING_EVENT_ERROR;
+                    $aParams = array($e);
+                }
+
+                if(isset($this->aProcessingEvents[$sEvent]))
+                {
+                    // Call the processing event
+                    $this->aProcessingEvents[$sEvent]->call($aParams);
                 }
                 else
                 {
@@ -453,7 +447,7 @@ class Jaxon
 
         if($mResult === true)
         {
-            // handle afterProcessing event
+            // Handle after processing event
             if(isset($this->aProcessingEvents[self::PROCESSING_EVENT_AFTER]))
             {
                 $bEndRequest = false;
@@ -467,6 +461,16 @@ class Jaxon
         {
             exit();
         }
+    }
+
+    /**
+     * Send the current response back to the browser
+     *
+     * @return void
+     */
+    public function sendResponse()
+    {
+        $this->xResponseManager->send();
     }
 
     /**
