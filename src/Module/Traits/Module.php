@@ -8,7 +8,7 @@ use Jaxon\Response\Response;
 use Jaxon\Utils\Container;
 use Jaxon\Utils\Traits\Event;
 
-use stdClass;
+use stdClass, Exception;
 
 trait Module
 {
@@ -16,9 +16,11 @@ trait Module
 
     protected $jaxonSetupCalled = false;
 
-    protected $jaxonPreCallback = null;
-    protected $jaxonPostCallback = null;
+    protected $jaxonBeforeCallback = null;
+    protected $jaxonAfterCallback = null;
     protected $jaxonInitCallback = null;
+    protected $jaxonInvalidCallback = null;
+    protected $jaxonErrorCallback = null;
 
     // Requested class and method
     private $jaxonRequestObject = null;
@@ -269,10 +271,10 @@ trait Module
     /**
      * Set the init callback, used to initialise controllers.
      *
-     * @param  callable  $callable the callback function
+     * @param  callable         $callable               The callback function
      * @return void
      */
-    public function setInitCallback($callable)
+    public function onInit($callable)
     {
         $this->jaxonInitCallback = $callable;
     }
@@ -280,24 +282,48 @@ trait Module
     /**
      * Set the pre-request processing callback.
      *
-     * @param  callable  $callable the callback function
+     * @param  callable         $callable               The callback function
      * @return void
      */
-    public function setPreCallback($callable)
+    public function onBefore($callable)
     {
-        $this->jaxonPreCallback = $callable;
+        $this->jaxonBeforeCallback = $callable;
     }
 
     /**
      * Set the post-request processing callback.
      *
-     * @param  callable  $callable the callback function
+     * @param  callable         $callable               The callback function
      * 
      * @return void
      */
-    public function setPostCallback($callable)
+    public function onAfter($callable)
     {
-        $this->jaxonPostCallback = $callable;
+        $this->jaxonAfterCallback = $callable;
+    }
+
+    /**
+     * Set the processing error callback.
+     *
+     * @param  callable         $callable               The callback function
+     * 
+     * @return void
+     */
+    public function onInvalid($callable)
+    {
+        $this->jaxonInvalidCallback = $callable;
+    }
+
+    /**
+     * Set the processing exception callback.
+     *
+     * @param  callable         $callable               The callback function
+     * 
+     * @return void
+     */
+    public function onError($callable)
+    {
+        $this->jaxonErrorCallback = $callable;
     }
 
     /**
@@ -317,8 +343,7 @@ trait Module
         $controller->response = $this->jaxonResponse;
         if(($this->jaxonInitCallback))
         {
-            $cb = $this->jaxonInitCallback;
-            $cb($controller);
+            call_user_func_array($this->jaxonInitCallback, array($controller));
         }
         $controller->init();
         // The default view is used only if there is none already set
@@ -354,7 +379,7 @@ trait Module
      * 
      * @return object  the Jaxon response
      */
-    public function preProcess(&$bEndRequest)
+    public function onEventBefore(&$bEndRequest)
     {
         // Validate the inputs
         $class = $_POST['jxncls'];
@@ -379,10 +404,10 @@ trait Module
         }
 
         // Call the user defined callback
-        if(($this->jaxonPreCallback))
+        if(($this->jaxonBeforeCallback))
         {
-            $cb = $this->jaxonPreCallback;
-            $cb($this->jaxonRequestObject, $method, $bEndRequest);
+            call_user_func_array($this->jaxonBeforeCallback,
+                array($this->jaxonResponse, $this->jaxonRequestObject, $method, $bEndRequest));
         }
         return $this->jaxonResponse;
     }
@@ -392,12 +417,44 @@ trait Module
      *
      * @return object  the Jaxon response
      */
-    public function postProcess()
+    public function onEventAfter()
     {
-        if(($this->jaxonPostCallback))
+        if(($this->jaxonAfterCallback))
         {
-            $cb = $this->jaxonPostCallback;
-            $cb($this->jaxonRequestObject, $this->jaxonRequestMethod);
+            call_user_func_array($this->jaxonAfterCallback,
+                array($this->jaxonResponse, $this->jaxonRequestObject, $this->jaxonRequestMethod));
+        }
+        return $this->jaxonResponse;
+    }
+
+    /**
+     * This callback is called whenever an invalid request is processed.
+     *
+     * @return object  the Jaxon response
+     */
+    public function onEventInvalid($sMessage)
+    {
+        if(($this->jaxonInvalidCallback))
+        {
+            call_user_func_array($this->jaxonInvalidCallback, array($this->jaxonResponse, $sMessage));
+        }
+        return $this->jaxonResponse;
+    }
+
+    /**
+     * This callback is called whenever an invalid request is processed.
+     *
+     * @return object  the Jaxon response
+     */
+    public function onEventError(Exception $e)
+    {
+        if(($this->jaxonErrorCallback))
+        {
+            call_user_func_array($this->jaxonErrorCallback, array($this->jaxonResponse, $e));
+        }
+        else
+        {
+            throw $e;
         }
         return $this->jaxonResponse;
     }
@@ -423,8 +480,10 @@ trait Module
         $this->_jaxonSetup();
         // Process Jaxon Request
         $jaxon = jaxon();
-        $jaxon->register(Jaxon::PROCESSING_EVENT, Jaxon::PROCESSING_EVENT_BEFORE, array($this, 'preProcess'));
-        $jaxon->register(Jaxon::PROCESSING_EVENT, Jaxon::PROCESSING_EVENT_AFTER, array($this, 'postProcess'));
+        $jaxon->register(Jaxon::PROCESSING_EVENT, Jaxon::PROCESSING_EVENT_BEFORE, array($this, 'onEventBefore'));
+        $jaxon->register(Jaxon::PROCESSING_EVENT, Jaxon::PROCESSING_EVENT_AFTER, array($this, 'onEventAfter'));
+        $jaxon->register(Jaxon::PROCESSING_EVENT, Jaxon::PROCESSING_EVENT_INVALID, array($this, 'onEventInvalid'));
+        $jaxon->register(Jaxon::PROCESSING_EVENT, Jaxon::PROCESSING_EVENT_ERROR, array($this, 'onEventError'));
         if($jaxon->canProcessRequest())
         {
             // Traiter la requete
