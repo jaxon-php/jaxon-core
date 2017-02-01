@@ -385,8 +385,7 @@ trait Module
         // Validate the inputs
         $class = $_POST['jxncls'];
         $method = $_POST['jxnmthd'];
-        $jaxon = jaxon();
-        if(!$jaxon->validateClass($class) || !$jaxon->validateMethod($method))
+        if(!$this->validateClass($class) || !$this->validateMethod($method))
         {
             // End the request processing if the input data are not valid.
             // Todo: write an error message in the response
