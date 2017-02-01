@@ -33,13 +33,13 @@ class Json
         $sConfigFile = realpath($sConfigFile);
         if(!is_readable($sConfigFile))
         {
-            throw new \Jaxon\Exception\Config\File('access', $sConfigFile);
+            throw new \Jaxon\Exception\Config\File(jaxon_trans('config.errors.file.access', array('path' => $sConfigFile)));
         }
         $sFileContent = file_get_contents($sConfigFile);
         $aConfigOptions = json_decode($sFileContent, true);
         if(!is_array($aConfigOptions))
         {
-            throw new \Jaxon\Exception\Config\File('content', $sConfigFile);
+            throw new \Jaxon\Exception\Config\File(jaxon_trans('config.errors.file.content', array('path' => $sConfigFile)));
         }
 
         // Setup the config options into the library.

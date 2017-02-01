@@ -37,7 +37,7 @@ class Module
             return \Jaxon\Config\Json::read($this->configFile, 'lib', 'app');
             break;
         default:
-            throw new \Jaxon\Exception\Config\File('access', $this->configFile);
+            throw new \Jaxon\Exception\Config\File(jaxon_trans('config.errors.file.extension', array('path' => $this->configFile)));
             break;
         }
     }
@@ -79,7 +79,7 @@ class Module
         {
             if(!$jaxon->hasOption($sOption))
             {
-                throw new \Jaxon\Exception\Config\Data('missing', 'lib:' . $sOption);
+                throw new \Jaxon\Exception\Config\Data(jaxon_trans('config.errors.data.missing', array('key' => 'lib:' . $sOption)));
             }
         }*/
         // Jaxon application settings
@@ -88,7 +88,7 @@ class Module
         {
             if(!$this->appConfig->hasOption($sOption))
             {
-                throw new \Jaxon\Exception\Config\Data('missing', 'app:' . $sOption);
+                throw new \Jaxon\Exception\Config\Data(jaxon_trans('config.errors.data.missing', array('key' => 'app:' . $sOption)));
             }
         }
     }

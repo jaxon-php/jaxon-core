@@ -9,6 +9,7 @@ return array(
         'file' => array(
             'access' => "Unable to access config file at :path",
             'content' => "Unable to get data array from config file at :path",
+            'extension' => "The config file extension is not supported :path",
         ),
         'yaml' => array(
             'install' => "The Yaml package for PHP is not installed",

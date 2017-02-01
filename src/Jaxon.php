@@ -602,7 +602,7 @@ class Jaxon
             return $this->readJsonConfigFile($sConfigFile, $sKey);
             break;
         default:
-            throw new \Jaxon\Exception\Config\File('access', $sConfigFile);
+            throw new \Jaxon\Exception\Config\File($this->trans('config.errors.file.extension', array('path' => $sConfigFile)));
             break;
         }
     }

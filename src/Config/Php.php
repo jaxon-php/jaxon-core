@@ -33,12 +33,12 @@ class Php
         $sConfigFile = realpath($sConfigFile);
         if(!is_readable($sConfigFile))
         {
-            throw new \Jaxon\Exception\Config\File('access', $sConfigFile);
+            throw new \Jaxon\Exception\Config\File(jaxon_trans('config.errors.file.access', array('path' => $sConfigFile)));
         }
         $aConfigOptions = include($sConfigFile);
         if(!is_array($aConfigOptions))
         {
-            throw new \Jaxon\Exception\Config\File('content', $sConfigFile);
+            throw new \Jaxon\Exception\Config\File(jaxon_trans('config.errors.file.content', array('path' => $sConfigFile)));
         }
 
         // Setup the config options into the library.

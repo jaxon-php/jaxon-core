@@ -175,6 +175,6 @@ class UserFunction extends RequestPlugin
             return true;
         }
         // Unable to find the requested function
-        throw new \Jaxon\Exception\Error('errors.functions.invalid', array('name' => $this->sRequestedFunction));
+        throw new \Jaxon\Exception\Error($this->trans('errors.functions.invalid', array('name' => $this->sRequestedFunction)));
     }
 }

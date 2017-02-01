@@ -301,7 +301,7 @@ class Manager
             }
             else
             {
-                throw new \Jaxon\Exception\Error('errors.request.conversion');
+                throw new \Jaxon\Exception\Error($this->trans('errors.request.conversion'));
             }
 
             $mFunction = array(&$this, '__argumentDecodeUTF8_' . $sFunction);

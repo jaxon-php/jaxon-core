@@ -214,7 +214,7 @@ class Manager
         }
         else if(!$bIsConfirm)
         {
-            throw new \Jaxon\Exception\Error('errors.register.invalid', array('name' => get_class($xPlugin)));
+            throw new \Jaxon\Exception\Error($this->trans('errors.register.invalid', array('name' => get_class($xPlugin))));
         }
         // This plugin implements the Confirmation interface
         if($bIsConfirm)
@@ -306,7 +306,7 @@ class Manager
                 return $mResult;
             }
         }
-        throw new \Jaxon\Exception\Error('errors.register.method', array('args' => print_r($aArgs, true)));
+        throw new \Jaxon\Exception\Error($this->trans('errors.register.method', array('args' => print_r($aArgs, true))));
     }
 
     /**

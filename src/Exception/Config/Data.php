@@ -16,9 +16,8 @@ namespace Jaxon\Exception\Config;
 
 class Data extends \Exception
 {
-    public function __contruct($sMessage, $sKey, $nDepth = 0)
+    public function __contruct($sMessage)
     {
-        parent::__construct(jaxon_trans('config.errors.data.' . $sMessage,
-            array('key' => $sKey, 'depth' => $nDepth)));
+        parent::__construct($sMessage);
     }
 }

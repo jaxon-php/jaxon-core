@@ -182,6 +182,6 @@ class BrowserEvent extends RequestPlugin
             return true;
         }
         // Unable to find the requested event
-        throw new \Jaxon\Exception\Error('errors.events.invalid', array('name' => $this->sRequestedEvent));
+        throw new \Jaxon\Exception\Error($this->trans('errors.events.invalid', array('name' => $this->sRequestedEvent)));
     }
 }

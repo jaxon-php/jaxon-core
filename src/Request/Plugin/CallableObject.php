@@ -111,11 +111,11 @@ class CallableObject extends RequestPlugin
 
                 if(!is_object($xCallableObject) && !is_string($xCallableObject))
                 {
-                    throw new \Jaxon\Exception\Error('errors.objects.instance');
+                    throw new \Jaxon\Exception\Error($this->trans('errors.objects.instance'));
                 }
                 if(is_string($xCallableObject) && !class_exists($xCallableObject))
                 {
-                    throw new \Jaxon\Exception\Error('errors.objects.instance');
+                    throw new \Jaxon\Exception\Error($this->trans('errors.objects.instance'));
                 }
                 if(!($xCallableObject instanceof \Jaxon\Request\Support\CallableObject))
                 {
@@ -244,8 +244,8 @@ class CallableObject extends RequestPlugin
             }
         }
         // Unable to find the requested object or method
-        throw new \Jaxon\Exception\Error('errors.objects.invalid',
-            array('class' => $this->sRequestedClass, 'method' => $this->sRequestedMethod));
+        throw new \Jaxon\Exception\Error($this->trans('errors.objects.invalid',
+            array('class' => $this->sRequestedClass, 'method' => $this->sRequestedMethod)));
     }
 
     /**

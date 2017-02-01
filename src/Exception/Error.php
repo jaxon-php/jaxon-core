@@ -18,9 +18,8 @@ use Exception;
 
 class Error extends Exception
 {
-    public function __construct($sMessageKey, array $aPlaceHolders = array())
+    public function __construct($sMessage)
     {
-        $sMessage = jaxon_trans($sMessageKey, $aPlaceHolders);
         parent::__construct($sMessage);
     }
 }

@@ -9,6 +9,7 @@ return array(
         'file' => array(
             'access' => "Impossible d'accéder au fichier de configuration :path",
             'content' => "Erreur dans les données du fichier de configuration :path",
+            'extension' => "L'extension du fichier de configuration n'est pas supportée :path",
         ),
         'yaml' => array(
             'install' => "Le package Yaml pour PHP n'est pas installé",

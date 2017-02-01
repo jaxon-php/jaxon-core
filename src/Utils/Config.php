@@ -52,7 +52,8 @@ class Config
         // Check the max depth
         if($nDepth < 0 || $nDepth > 9)
         {
-            throw new \Jaxon\Exception\Config\Data('depth', $sPrefix, $nDepth);
+            throw new \Jaxon\Exception\Config\Data(jaxon_trans('config.errors.data.depth',
+                array('key' => $sPrefix, 'depth' => $nDepth)));
         }
         $aValues = false;
         foreach($aOptions as $sName => $xOption)
@@ -107,7 +108,7 @@ class Config
             {
                 if(!array_key_exists($sKey, $aOptions) || !is_array($aOptions[$sKey]))
                 {
-                    throw new \Jaxon\Exception\Config\Data('missing', $sKeys);
+                    throw new \Jaxon\Exception\Config\Data(jaxon_trans('config.errors.data.missing', array('key' => $sKeys)));
                 }
                 $aOptions = $aOptions[$sKey];
             }

@@ -234,7 +234,7 @@ class Response
         {
             if(!empty($mCommands))
             {
-                throw new \Jaxon\Exception\Error('errors.response.data.invalid');
+                throw new \Jaxon\Exception\Error($this->trans('errors.response.data.invalid'));
             }
         }
     }

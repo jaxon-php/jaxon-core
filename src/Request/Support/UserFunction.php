@@ -91,7 +91,7 @@ class UserFunction
         {
             if(count($sUserFunction) != 2 && count($sUserFunction) != 3)
             {
-                throw new \Jaxon\Exception\Error('errors.functions.invalid-declaration');
+                throw new \Jaxon\Exception\Error($this->trans('errors.functions.invalid-declaration'));
             }
             if(count($sUserFunction) == 3)
             {
@@ -109,7 +109,7 @@ class UserFunction
         }
         else
         {
-            throw new \Jaxon\Exception\Error('errors.functions.invalid-declaration');
+            throw new \Jaxon\Exception\Error($this->trans('errors.functions.invalid-declaration'));
         }
     }
     

@@ -33,16 +33,16 @@ class Yaml
         $sConfigFile = realpath($sConfigFile);
         if(!extension_loaded('yaml'))
         {
-            throw new \Jaxon\Exception\Config\Yaml('install');
+            throw new \Jaxon\Exception\Config\Yaml(jaxon_trans('config.errors.yaml.install'));
         }
         if(!is_readable($sConfigFile))
         {
-            throw new \Jaxon\Exception\Config\File('access', $sConfigFile);
+            throw new \Jaxon\Exception\Config\File(jaxon_trans('config.errors.file.access', array('path' => $sConfigFile)));
         }
         $aConfigOptions = yaml_parse_file($sConfigFile);
         if(!is_array($aConfigOptions))
         {
-            throw new \Jaxon\Exception\Config\File('content', $sConfigFile);
+            throw new \Jaxon\Exception\Config\File(jaxon_trans('config.errors.file.content', array('path' => $sConfigFile)));
         }
 
         // Setup the config options into the library.

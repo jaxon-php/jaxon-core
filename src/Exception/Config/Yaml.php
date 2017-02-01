@@ -19,6 +19,6 @@ class Yaml extends \Exception
 {
     public function __contruct($sMessage)
     {
-        parent::__construct(jaxon_trans('config.errors.yaml.' . $sMessage));
+        parent::__construct($sMessage);
     }
 }
