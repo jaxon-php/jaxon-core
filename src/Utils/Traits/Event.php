@@ -12,7 +12,7 @@
 
 namespace Jaxon\Utils\Traits;
 
-use Jaxon\Utils\Container as JaxonContainer;
+use Jaxon\Utils\Container;
 
 trait Event
 {
@@ -25,7 +25,7 @@ trait Event
      */
     public function triggerEvent($sEvent)
     {
-        JaxonContainer::getInstance()->getEventDispatcher()->dispatch($sEvent);
+        Container::getInstance()->getEventDispatcher()->dispatch($sEvent);
     }
 
     /**

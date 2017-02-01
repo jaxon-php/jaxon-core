@@ -7,12 +7,13 @@ use Jaxon\Module\Controller;
 use Jaxon\Response\Response;
 use Jaxon\Utils\Container;
 use Jaxon\Utils\Traits\Event;
+use Jaxon\Utils\Traits\Validator;
 
 use stdClass, Exception;
 
 trait Module
 {
-    use Event;
+    use Event, Validator;
 
     protected $jaxonSetupCalled = false;
 

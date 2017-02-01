@@ -26,7 +26,8 @@ use Jaxon\Jaxon;
 
 class Manager
 {
-    use \Jaxon\Utils\Traits\Container;
+    use \Jaxon\Utils\Traits\Config;
+    use \Jaxon\Utils\Traits\Translator;
 
     /**
      * An array of arguments received via the GET or POST parameter jxnargs.

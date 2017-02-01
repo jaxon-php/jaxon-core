@@ -25,7 +25,8 @@ use Jaxon\Jaxon;
 
 class Request extends JsCall
 {
-    use \Jaxon\Utils\Traits\Container;
+    use \Jaxon\Utils\Traits\Config;
+    use \Jaxon\Utils\Traits\Manager;
 
     /**
      * The type of the request

@@ -34,7 +34,9 @@ use Exception;
 
 class Jaxon
 {
-    use \Jaxon\Utils\Traits\Container;
+    use \Jaxon\Utils\Traits\Config;
+    use \Jaxon\Utils\Traits\Manager;
+    use \Jaxon\Utils\Traits\Translator;
 
     /**
      * Package version number

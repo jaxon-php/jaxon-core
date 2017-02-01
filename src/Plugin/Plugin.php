@@ -22,6 +22,8 @@ namespace Jaxon\Plugin;
 
 abstract class Plugin
 {
+    use \Jaxon\Utils\Traits\Config;
+
     /**
      * Generate the javascript code for this plugin
      *

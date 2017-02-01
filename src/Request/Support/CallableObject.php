@@ -28,7 +28,9 @@ use Jaxon\Request\Request;
 
 class CallableObject
 {
-    use \Jaxon\Utils\Traits\Container;
+    use \Jaxon\Utils\Traits\Config;
+    use \Jaxon\Utils\Traits\Manager;
+    use \Jaxon\Utils\Traits\Template;
 
     /**
      * A reference to the callable object the user has registered

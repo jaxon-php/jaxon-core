@@ -16,10 +16,11 @@
 namespace Jaxon\Request;
 
 use Jaxon\Jaxon;
-use Jaxon\Utils\Container;
 
 class Factory
 {
+    use \Jaxon\Utils\Traits\Paginator;
+
     /**
      * Return the javascript call to an Jaxon function or object method
      *
@@ -60,8 +61,7 @@ class Factory
         $aArgs = array_slice(func_get_args(), 3);
         // Make the request
         $request = call_user_func_array('self::call', $aArgs);
-        $paginator = Container::getInstance()->getPaginator();
-        $paginator->setup($nItemsTotal, $nItemsPerPage, $nCurrentPage, $request);
+        $paginator = $this->paginator($nItemsTotal, $nItemsPerPage, $nCurrentPage, $request);
         return $paginator->toHtml();
     }
 

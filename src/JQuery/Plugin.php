@@ -4,8 +4,6 @@ namespace Jaxon\JQuery;
 
 class Plugin extends \Jaxon\Plugin\Response
 {
-    use \Jaxon\Utils\Traits\Container;
-
     /**
      * The plugin constructor.
      */

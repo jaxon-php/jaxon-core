@@ -29,7 +29,12 @@ use RecursiveRegexIterator;
 
 class Manager
 {
-    use \Jaxon\Utils\Traits\Container;
+    use \Jaxon\Utils\Traits\Manager;
+    use \Jaxon\Utils\Traits\Config;
+    use \Jaxon\Utils\Traits\Cache;
+    use \Jaxon\Utils\Traits\Minifier;
+    use \Jaxon\Utils\Traits\Template;
+    use \Jaxon\Utils\Traits\Translator;
 
     /**
      * All plugins, indexed by priority
