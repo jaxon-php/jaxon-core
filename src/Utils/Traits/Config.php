@@ -20,7 +20,7 @@ Trait Config
      * Set the value of a config option
      *
      * @param string        $sName                The option name
-     * @param mixed            $sValue                The option value
+     * @param mixed         $sValue               The option value
      *
      * @return void
      */
@@ -45,19 +45,20 @@ Trait Config
     /**
      * Get the value of a config option
      *
-     * @param string        $sName                The option name
+     * @param string        $sName              The option name
+     * @param mixed         $xDefault           The default value, to be returned if the option is not defined
      *
      * @return mixed        The option value, or null if the option is unknown
      */
-    public function getOption($sName)
+    public function getOption($sName, $xDefault = null)
     {
-        return Container::getInstance()->getConfig()->getOption($sName);
+        return Container::getInstance()->getConfig()->getOption($sName, $xDefault);
     }
 
     /**
      * Check the presence of a config option
      *
-     * @param string        $sName            The option name
+     * @param string        $sName              The option name
      *
      * @return bool        True if the option exists, and false if not
      */
