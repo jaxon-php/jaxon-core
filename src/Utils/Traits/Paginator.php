@@ -29,7 +29,7 @@ Trait Paginator
     public function paginator($nItemsTotal, $nItemsPerPage, $nCurrentPage, $xRequest)
     {
         $paginator = Container::getInstance()->getPaginator();
-        $paginator->setup($nItemsTotal, $nItemsPerPage, $nCurrentPage, $request);
-        return Container::getInstance()->getMinifier()->minify($sJsFile, $sMinFile);
+        $paginator->setup($nItemsTotal, $nItemsPerPage, $nCurrentPage, $xRequest);
+        return $paginator;
     }
 }

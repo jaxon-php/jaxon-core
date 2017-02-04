@@ -407,7 +407,7 @@ trait Module
         if(($this->jaxonBeforeCallback))
         {
             call_user_func_array($this->jaxonBeforeCallback,
-                array($this->jaxonResponse, $this->jaxonRequestObject, $method, $bEndRequest));
+                array($this->jaxonResponse, $this->jaxonRequestObject, $this->jaxonRequestMethod, &$bEndRequest));
         }
         return $this->jaxonResponse;
     }
