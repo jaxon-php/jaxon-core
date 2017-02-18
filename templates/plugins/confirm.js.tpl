@@ -37,4 +37,3 @@ jaxon.confirm.commands = function(command) {
     {$sConfirmScript|noescape};
     return true;
 };
-jaxon.command.handler.register('cc', jaxon.confirm.commands);

@@ -366,15 +366,10 @@ trait Module
     public function controller($classname)
     {
         $this->_jaxonSetup();
-        $controller = jaxon()->getPluginManager()->getRegisteredObject($classname);
-        /*if(!$controller)
+        // Find the class instance, and register the class if the instance is not found.
+        if(!($controller = jaxon()->getPluginManager()->getRegisteredObject($classname)))
         {
-            // Try to register the class 
-            $controller = jaxon()->registerClass($classname);
-        }*/
-        if(!$controller)
-        {
-            return null;
+            $controller = jaxon()->registerClass($classname, [], true);
         }
         $this->initController($controller);
         return $controller;
