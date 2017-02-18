@@ -7,13 +7,6 @@ class Controller
     use \Jaxon\Request\Traits\Factory;
 
     /**
-     * The Jaxon module/package/bundle/plugin, as defined in the framework Jaxon is integrated to.
-     *
-     * @var mixed
-     */
-    public $module = null;
-
-    /**
      * The Jaxon response returned by all controllers methods
      *
      * @var Jaxon\Response\Response
@@ -144,10 +137,6 @@ class Controller
      */
     public function controller($name)
     {
-        if(!$this->module)
-        {
-            return null; // Cannot find a controller without the Jaxon module/package/bundle/plugin
-        }
         // If the class name starts with a dot, then find the class in the same class path as the caller
         if(substr($name, 0, 1) == '.')
         {
@@ -156,9 +145,9 @@ class Controller
         // The controller namespace is prepended to the class name
         else if(($namespace = $this->getJaxonNamespace()))
         {
-            $name = str_replace(array('\\'), array('.'), trim($namespace, '\\')) . '.' . $name;
+            $name = str_replace('\\', '.', trim($namespace, '\\')) . '.' . $name;
         }
-        return $this->module->controller($name);
+        return jaxon()->module()->controller($name);
     }
 
     /**

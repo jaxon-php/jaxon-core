@@ -338,19 +338,18 @@ trait Module
     protected function initController(Controller $controller)
     {
         // Return if the controller has already been initialised.
-        if(!($controller) || ($controller->module))
+        if(!($controller) || ($controller->response))
         {
             return;
         }
         // Init the controller
-        $controller->module = $this;
         $controller->response = $this->jaxonResponse;
         if(($this->jaxonInitCallback))
         {
             call_user_func_array($this->jaxonInitCallback, array($controller));
         }
         $controller->init();
-        // The default view is used only if there is none already set
+        // The default view is used only none is already set
         if(!$controller->view)
         {
             $controller->view = $this->jaxonView();
