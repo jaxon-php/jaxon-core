@@ -335,14 +335,15 @@ class Jaxon
      * The class name can be dot, slash or anti-slash separated.
      * If the $bGetObject parameter is set to true, the registered instance of the class is returned.
      * 
-     * @param string        $sClassName        The name of the class to register
-     * @param boolean        $bGetObject        Return the registered instance of the class
+     * @param string            $sClassName             The name of the class to register
+     * @param array             $aOptions               The options to register the class with
+     * @param boolean           $bGetObject             Return the registered instance of the class
      *
      * @return void
      */
-    public function registerClass($sClassName, $bGetObject = false)
+    public function registerClass($sClassName, array $aOptions = array(), $bGetObject = false)
     {
-        $this->xPluginManager->registerClass($sClassName);
+        $this->xPluginManager->registerClass($sClassName, $aOptions);
         return (($bGetObject) ? $this->xPluginManager->getRegisteredObject($sClassName) : null);
     }
 

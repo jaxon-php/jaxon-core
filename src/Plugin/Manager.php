@@ -375,12 +375,14 @@ class Manager
      * @param object            $xFile                  The PHP file containing the class
      * @param string            $sDirectory             The path to the directory
      * @param string|null       $sNamespace             The associated namespace
-     * @param array             $aProtected             The functions that are not to be exported
      * @param string            $sSeparator             The character to use as separator in javascript class names
+     * @param array             $aProtected             The functions that are not to be exported
+     * @param array             $aOptions               The options to register the class with
      *
      * @return void
      */
-    protected function registerClassFromFile($xFile, $sDirectory, $sNamespace = null, $sSeparator = '.', array $aProtected = array())
+    protected function registerClassFromFile($xFile, $sDirectory, $sNamespace = null, $sSeparator = '.',
+        array $aProtected = array(), array $aOptions = array())
     {
         // Get the corresponding class path and name
         $sClassPath = trim(substr($xFile->getPath(), strlen($sDirectory)), DIRECTORY_SEPARATOR);
@@ -399,7 +401,11 @@ class Manager
             require_once($xFile->getPathname());
         }
         // Create and register an instance of the class
-        $aOptions = array('*' => array('separator' => $sSeparator));
+        if(!array_key_exists('*', $aOptions) || !is_array($aOptions['*']))
+        {
+            $aOptions['*'] = array();
+        }
+        $aOptions['*']['separator'] = $sSeparator;
         if(($sNamespace))
         {
             $aOptions['*']['namespace'] = $sNamespace;
@@ -446,11 +452,11 @@ class Manager
      * Register an instance of a given class
      *
      * @param string            $sClassName             The name of the class to be registered
-     * @param array             $aProtected              The functions that are not to be exported
+     * @param array             $aOptions               The options to register the class with
      *
      * @return bool
      */
-    public function registerClass($sClassName, array $aProtected = array())
+    public function registerClass($sClassName, array $aOptions = array())
     {
         if(!($sInitialClassName = trim($sClassName)))
         {
@@ -490,7 +496,8 @@ class Manager
                 // Found the file in this directory
                 $xFileInfo = new \SplFileInfo($sClassFile);
                 $sDirectory = $aClassDir['directory'];
-                $this->registerClassFromFile($xFileInfo, $sDirectory, $sNamespace, $sSeparator, $aProtected);
+                $aProtected = $aClassDir['protected'];
+                $this->registerClassFromFile($xFileInfo, $sDirectory, $sNamespace, $sSeparator, $aProtected, $aOptions);
                 return true;
             }
         }

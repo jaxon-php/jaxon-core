@@ -228,12 +228,15 @@ trait Module
     /**
      * Register a specified Jaxon class.
      *
+     * @param string            $sClassName             The name of the class to be registered
+     * @param array             $aOptions               The options to register the class with
+     *
      * @return void
      */
-    public function registerClass($sClassName)
+    public function registerClass($sClassName, array $aOptions = array())
     {
         $this->_jaxonSetup();
-        jaxon()->registerClass($sClassName);
+        jaxon()->registerClass($sClassName, $aOptions);
     }
 
     /**
@@ -364,7 +367,12 @@ trait Module
     public function controller($classname)
     {
         $this->_jaxonSetup();
-        $controller = jaxon()->registerClass($classname, true);
+        $controller = jaxon()->getPluginManager()->getRegisteredObject($classname);
+        /*if(!$controller)
+        {
+            // Try to register the class 
+            $controller = jaxon()->registerClass($classname);
+        }*/
         if(!$controller)
         {
             return null;
