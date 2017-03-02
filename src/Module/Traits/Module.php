@@ -376,6 +376,18 @@ trait Module
     }
 
     /**
+     * Get a plugin instance.
+     *
+     * @param  string  $name the plugin name
+     * 
+     * @return object  The plugin instance
+     */
+    public function plugin($name)
+    {
+        return jaxon()->plugin($name);
+    }
+
+    /**
      * This is the pre-request processing callback passed to the Jaxon library.
      *
      * @param  boolean  &$bEndRequest if set to true, the request processing is interrupted.
