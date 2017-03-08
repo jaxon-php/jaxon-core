@@ -110,7 +110,7 @@ class Controller
      *
      * @return Jaxon\JQuery\Dom\Element
      */
-    public function jQuery($sSelector = '', string $sContext = '')
+    public function jQuery($sSelector = '', $sContext = '')
     {
         return $this->response->plugin('jquery')->element($sSelector, $sContext);
     }
@@ -123,7 +123,7 @@ class Controller
      *
      * @return Jaxon\JQuery\Dom\Element
      */
-    public function jq($sSelector = '', string $sContext = '')
+    public function jq($sSelector = '', $sContext = '')
     {
         return $this->jQuery($sSelector, $sContext);
     }
