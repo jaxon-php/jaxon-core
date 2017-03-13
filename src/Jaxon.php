@@ -44,7 +44,7 @@ class Jaxon
      *
      * @var string
      */
-    private $sVersion = 'Jaxon 2.0-beta.13';
+    private $sVersion = 'Jaxon 2.0-beta.14';
 
     /*
      * Processing events
@@ -104,70 +104,10 @@ class Jaxon
      */
     private $aProcessingEvents;
 
-    /**
-     * A reference to the global <\Jaxon\Plugin\Manager>
-     *
-     * @var \Jaxon\Plugin\Manager
-     */
-    private $xPluginManager;
-    
-    /**
-     * A reference to the global <\Jaxon\Request\Manager>
-     *
-     * @var \Jaxon\Request\Manager
-     */
-    private $xRequestManager;
-    
-    /**
-     * A reference to the global <\Jaxon\Response\Manager>
-     *
-     * @var \Jaxon\Response\Manager
-     */
-    private $xResponseManager;
-    
-    /**
-     * A reference to the global <\Jaxon\Response\Response>
-     *
-     * @var \Jaxon\Response\Response
-     */
-    protected static $gxResponse = null;
-
-    /**
-     * The error message generated when the Jaxon error handling system is enabled
-     *
-     * @var unknown
-     */
-    private $sErrorMessage = '';
-
-    private function __construct()
+    public function __construct()
     {
         $this->aProcessingEvents = array();
-        $container = Utils\Container::getInstance();
-
-        $sTranslationDir = realpath(__DIR__ . '/../translations');
-        $sTemplateDir = realpath(__DIR__ . '/../templates');
-        $container->init($sTranslationDir, $sTemplateDir);
-
-        $this->xPluginManager = $container->getPluginManager();
-        $this->xRequestManager = $container->getRequestManager();
-        $this->xResponseManager = $container->getResponseManager();
-
         $this->setDefaultOptions();
-    }
-
-    /**
-     * Get the unique instance of the Jaxon class
-     *
-     * @return object
-     */
-    public static function getInstance()
-    {
-        static $xInstance = null;
-        if(!$xInstance)
-        {
-            $xInstance = new Jaxon();
-        }
-        return $xInstance;
     }
 
     /**
@@ -214,7 +154,7 @@ class Jaxon
      */
     public function useComposerAutoloader()
     {
-        $this->xPluginManager->useComposerAutoloader();
+        $this->getPluginManager()->useComposerAutoloader();
     }
 
     /**
@@ -224,26 +164,7 @@ class Jaxon
      */
     public function disableAutoload()
     {
-        $this->xPluginManager->disableAutoload();
-    }
-
-    /**
-     * Return the <Jaxon\Response\Response> object preconfigured with the encoding and entity
-     * settings from this instance of <Jaxon\Jaxon>
-     *
-     * This is used for singleton-pattern response development.
-     *
-     * @return Jaxon\Response\Response
-     *
-     * @see The <Jaxon\Response\Manager> class
-     */
-    public static function getGlobalResponse()
-    {
-        if(!self::$gxResponse)
-        {
-            self::$gxResponse = new Response\Response();
-        }
-        return self::$gxResponse;
+        $this->getPluginManager()->disableAutoload();
     }
 
     /**
@@ -301,7 +222,7 @@ class Jaxon
             }
         }
 
-        return $this->xPluginManager->register($aArgs);
+        return $this->getPluginManager()->register($aArgs);
     }
 
     /**
@@ -316,7 +237,7 @@ class Jaxon
      */
     public function addClassDir($sDirectory, $sNamespace = null, $sSeparator = '.', array $aExcluded = array())
     {
-        return $this->xPluginManager->addClassDir($sDirectory, $sNamespace, $sSeparator, $aExcluded);
+        return $this->getPluginManager()->addClassDir($sDirectory, $sNamespace, $sSeparator, $aExcluded);
     }
 
     /**
@@ -326,7 +247,7 @@ class Jaxon
      */
     public function registerClasses()
     {
-        return $this->xPluginManager->registerClasses();
+        return $this->getPluginManager()->registerClasses();
     }
 
     /**
@@ -343,8 +264,8 @@ class Jaxon
      */
     public function registerClass($sClassName, array $aOptions = array(), $bGetObject = false)
     {
-        $this->xPluginManager->registerClass($sClassName, $aOptions);
-        return (($bGetObject) ? $this->xPluginManager->getRegisteredObject($sClassName) : null);
+        $this->getPluginManager()->registerClass($sClassName, $aOptions);
+        return (($bGetObject) ? $this->getPluginManager()->getRegisteredObject($sClassName) : null);
     }
 
     /**
@@ -354,7 +275,7 @@ class Jaxon
      */
     public function canProcessRequest()
     {
-        return $this->xPluginManager->canProcessRequest();
+        return $this->getPluginManager()->canProcessRequest();
     }
 
     /**
@@ -401,7 +322,7 @@ class Jaxon
         {
             try
             {
-                $mResult = $this->xPluginManager->processRequest();
+                $mResult = $this->getPluginManager()->processRequest();
             }
             catch(Exception $e)
             {
@@ -410,9 +331,10 @@ class Jaxon
                 // or an error occurred while attempting to execute the handler.
                 // Replace the response, if one has been started and send a debug message.
 
-                $this->xResponseManager->clear();
-                $this->xResponseManager->append(new Response\Response());
-                $this->xResponseManager->debug($e->getMessage());
+                $xResponseManager = $this->getResponseManager();
+                $xResponseManager->clear();
+                $xResponseManager->append(new Response\Response());
+                $xResponseManager->debug($e->getMessage());
                 $mResult = false;
 
                 if($e instanceof \Jaxon\Exception\Error)
@@ -459,7 +381,7 @@ class Jaxon
             }
         }
 
-        $this->xResponseManager->send();
+        $this->getResponseManager()->send();
 
         if(($this->getOption('core.process.exit_after')))
         {
@@ -474,7 +396,7 @@ class Jaxon
      */
     public function sendResponse()
     {
-        $this->xResponseManager->send();
+        $this->getResponseManager()->send();
     }
 
     /**
@@ -497,13 +419,13 @@ class Jaxon
         $sCode = '';
         if(($bIncludeCss))
         {
-            $sCode .= $this->xPluginManager->getCss() . "\n";
+            $sCode .= $this->getPluginManager()->getCss() . "\n";
         }
         if(($bIncludeJs))
         {
-            $sCode .= $this->xPluginManager->getJs() . "\n";
+            $sCode .= $this->getPluginManager()->getJs() . "\n";
         }
-        $sCode .= $this->xPluginManager->getScript();
+        $sCode .= $this->getPluginManager()->getScript();
         return $sCode;
     }
 
@@ -530,7 +452,7 @@ class Jaxon
      */
     public function getJs()
     {
-        return $this->xPluginManager->getJs();
+        return $this->getPluginManager()->getJs();
     }
 
     /**
@@ -540,7 +462,7 @@ class Jaxon
      */
     public function getCss()
     {
-        return $this->xPluginManager->getCss();
+        return $this->getPluginManager()->getCss();
     }
 
     /**
@@ -626,7 +548,7 @@ class Jaxon
      */
     public function registerPlugin(\Jaxon\Plugin\Plugin $xPlugin, $nPriority = 1000)
     {
-        $this->xPluginManager->registerPlugin($xPlugin, $nPriority);
+        $this->getPluginManager()->registerPlugin($xPlugin, $nPriority);
     }
 
     /**
@@ -650,18 +572,6 @@ class Jaxon
     {
         // Register an instance of the JQuery plugin
         $this->registerPlugin(new \Jaxon\JQuery\Plugin(), 700);
-    }
-
-    /**
-     * Get a registered response plugin
-     *
-     * @param string        $sName                The name of the plugin
-     *
-     * @return \Jaxon\Plugin\Response
-     */
-    public function plugin($sName)
-    {
-        return $this->xPluginManager->getResponsePlugin($sName);
     }
 
     /**

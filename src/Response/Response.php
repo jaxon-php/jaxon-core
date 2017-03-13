@@ -56,13 +56,6 @@ class Response
      */
     private $returnValue;
 
-    /**
-     * A reference to the global plugin manager
-     *
-     * @var \Jaxon\Plugin\Manager
-     */
-    private $xPluginManager;
-
     public function __construct()
     {
         $this->aCommands = array();

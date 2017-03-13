@@ -36,17 +36,21 @@ class Container
     private function __construct()
     {
         $this->di = new \Pimple\Container();
+
+        $sTranslationDir = realpath(__DIR__ . '/../../translations');
+        $sTemplateDir = realpath(__DIR__ . '/../../templates');
+        $this->init($sTranslationDir, $sTemplateDir);
     }
 
     /**
      * Set the parameters and create the objects in the dependency injection container
      *
-     * @param string        $sTranslationDir    The translation directory
+     * @param string        $sTranslationDir     The translation directory
      * @param string        $sTemplateDir        The template directory
      *
      * @return void
      */
-    public function init($sTranslationDir, $sTemplateDir)
+    private function init($sTranslationDir, $sTemplateDir)
     {
         /*
          * Parameters
@@ -60,20 +64,16 @@ class Container
          * Managers
          */
         // Plugin Manager
-        $this->di['plugin'] = function($c){
+        $this->di['plugin_manager'] = function($c){
             return new \Jaxon\Plugin\Manager();
         };
         // Request Manager
-        $this->di['request'] = function($c){
+        $this->di['request_manager'] = function($c){
             return new \Jaxon\Request\Manager();
         };
         // Response Manager
-        $this->di['response'] = function($c){
+        $this->di['response_manager'] = function($c){
             return new \Jaxon\Response\Manager();
-        };
-        // Module
-        $this->di['module'] = function($c){
-            return new \Jaxon\Module\Module();
         };
 
         /*
@@ -107,6 +107,22 @@ class Container
         $this->di['events'] = function($c){
             return new EventDispatcher();
         };
+
+        /*
+         * Core library objects
+         */
+        // Global Response
+        $this->di['response'] = function($c){
+            return new \Jaxon\Response\Response();
+        };
+        // Jaxon Core
+        $this->di['jaxon'] = function($c){
+            return new \Jaxon\Jaxon();
+        };
+        // Module
+        $this->di['module'] = function($c){
+            return new \Jaxon\Module\Module();
+        };
     }
 
     /**
@@ -116,7 +132,7 @@ class Container
      */
     public function getPluginManager()
     {
-        return $this->di['plugin'];
+        return $this->di['plugin_manager'];
     }
 
     /**
@@ -126,7 +142,7 @@ class Container
      */
     public function getRequestManager()
     {
-        return $this->di['request'];
+        return $this->di['request_manager'];
     }
 
     /**
@@ -136,29 +152,7 @@ class Container
      */
     public function getResponseManager()
     {
-        return $this->di['response'];
-    }
-
-    /**
-     * Set the module
-     *
-     * @param mixed             $xModule        The new module
-     *
-     * @return object        The module
-     */
-    public function setModule($xModule)
-    {
-        $this->di['module'] = $xModule;
-    }
-
-    /**
-     * Get the module
-     *
-     * @return object        The module
-     */
-    public function getModule()
-    {
-        return $this->di['module'];
+        return $this->di['response_manager'];
     }
 
     /**
@@ -229,5 +223,57 @@ class Container
     public function getEventDispatcher()
     {
         return $this->di['events'];
+    }
+
+    /**
+     * Get the Global Response object
+     *
+     * @return object        The Global Response object
+     */
+    public function getResponse()
+    {
+        return $this->di['response'];
+    }
+
+    /**
+     * Create a new Jaxon response object
+     *
+     * @return \Jaxon\Response\Response        The new Jaxon response object
+     */
+    public function newResponse()
+    {
+        return new \Jaxon\Response\Response();
+    }
+
+    /**
+     * Get the main Jaxon object
+     *
+     * @return object        The Jaxon object
+     */
+    public function getJaxon()
+    {
+        return $this->di['jaxon'];
+    }
+
+    /**
+     * Get the Module object
+     *
+     * @return object        The Module object
+     */
+    public function getModule()
+    {
+        return $this->di['module'];
+    }
+
+    /**
+     * Set the module
+     *
+     * @param mixed             $xModule        The new module
+     *
+     * @return object        The module
+     */
+    public function setModule($xModule)
+    {
+        $this->di['module'] = $xModule;
     }
 }

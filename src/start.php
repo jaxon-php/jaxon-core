@@ -17,25 +17,11 @@
 /**
  * Return the only instance of the Jaxon/Jaxon class
  *
- * @param string        $sRequestURI            The URI to send the requests to
- * @param string        $sLanguage              The language of the library
- *
  * @return Jaxon\Jaxon
  */
-function jaxon($sRequestURI = null, $sLanguage = null)
+function jaxon()
 {
-    $jaxon = \Jaxon\Jaxon::getInstance();
-    // Set the request URI
-    if(($sRequestURI))
-    {
-        $jaxon->setOption('core.request.uri', $sRequestURI);
-    }
-    // Set the language
-    if(($sLanguage))
-    {
-        $jaxon->setOption('core.language', $sLanguage);
-    }
-    return $jaxon;
+    return \Jaxon\Utils\Container::getInstance()->getJaxon();
 }
 
 /**
@@ -62,7 +48,7 @@ function jaxon_trans($sText, array $aPlaceHolders = array(), $sLanguage = null)
  */
 function jaxon_register_plugin(\Jaxon\Plugin\Plugin $xPlugin, $nPriority = 1000)
 {
-    \Jaxon\Jaxon::getInstance()->registerPlugin($xPlugin, $nPriority);
+    \Jaxon\Utils\Container::getInstance()->getJaxon()->registerPlugin($xPlugin, $nPriority);
 }
 
 /**
@@ -84,9 +70,9 @@ function jq($sSelector = '', $sContext = '')
 /*
  * Load the Jaxon request plugins
  */
-\Jaxon\Jaxon::getInstance()->registerRequestPlugins();
+jaxon()->registerRequestPlugins();
 
 /*
  * Load the Jaxon response plugins
  */
-\Jaxon\Jaxon::getInstance()->registerResponsePlugins();
+jaxon()->registerResponsePlugins();

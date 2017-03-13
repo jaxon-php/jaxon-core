@@ -30,6 +30,18 @@ trait Manager
     }
 
     /**
+     * Get a registered response plugin
+     *
+     * @param string        $sName                The name of the plugin
+     *
+     * @return \Jaxon\Plugin\Response
+     */
+    public function plugin($sName)
+    {
+        return $this->getPluginManager()->getResponsePlugin($sName);
+    }
+
+    /**
      * Get the request manager
      *
      * @return object        The request manager
@@ -57,5 +69,25 @@ trait Manager
     public function addEventListener(EventListener $xEventListener)
     {
         Container::getInstance()->getEventDispatcher()->addSubscriber($xEventListener);
+    }
+
+    /**
+     * Get the Global Response object
+     *
+     * @return object        The Global Response object
+     */
+    public function getResponse()
+    {
+        return Container::getInstance()->getResponse();
+    }
+
+    /**
+     * Create a new Jaxon response object
+     *
+     * @return \Jaxon\Response\Response        The new Jaxon response object
+     */
+    public function newResponse()
+    {
+        return Container::getInstance()->newResponse();
     }
 }

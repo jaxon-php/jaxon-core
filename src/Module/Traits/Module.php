@@ -4,8 +4,9 @@ namespace Jaxon\Module\Traits;
 
 use Jaxon\Jaxon;
 use Jaxon\Module\Controller;
-use Jaxon\Response\Response;
 use Jaxon\Utils\Container;
+use Jaxon\Utils\Traits\Config;
+use Jaxon\Utils\Traits\Manager;
 use Jaxon\Utils\Traits\Event;
 use Jaxon\Utils\Traits\Validator;
 
@@ -13,7 +14,7 @@ use stdClass, Exception;
 
 trait Module
 {
-    use Event, Validator;
+    use Config, Manager, Event, Validator;
 
     protected $jaxonSetupCalled = false;
 
@@ -150,7 +151,7 @@ trait Module
         // Use the Composer autoloader
         $jaxon->useComposerAutoloader();
         // Create the Jaxon response
-        $this->jaxonResponse = new Response();
+        $this->jaxonResponse = jaxon()->getResponse();
 
         if(($this->jaxonLibOptions) && ($this->jaxonAppOptions))
         {
