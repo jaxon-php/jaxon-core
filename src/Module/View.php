@@ -2,11 +2,15 @@
 
 namespace Jaxon\Module;
 
-use View\Store;
-use View\Facade;
+use Jaxon\Utils\Traits\Template;
 
-class View extends Facade
+class View extends View\Facade
 {
+    public function __construct()
+    {
+        parent::__construct();
+    }
+
     /**
      * Render a view
      * 
@@ -14,9 +18,9 @@ class View extends Facade
      * 
      * @return string        The string representation of the view
      */
-    public function make(Store $store)
+    public function make(View\Store $store)
     {
-        // TODO: render the template with the Jaxon\Utils\Template class.
-        return "";
+        // Render the template
+        return trim(jaxon()->render($store->getViewPath(), $store->getViewData()), " \t\n");
     }
 }

@@ -38,6 +38,7 @@ class Jaxon
     use \Jaxon\Utils\Traits\Manager;
     use \Jaxon\Utils\Traits\Translator;
     use \Jaxon\Utils\Traits\Paginator;
+    use \Jaxon\Utils\Traits\Template;
 
     /**
      * Package version number
