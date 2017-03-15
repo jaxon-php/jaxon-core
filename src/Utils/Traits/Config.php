@@ -78,4 +78,19 @@ Trait Config
     {
         return Container::getInstance()->getConfig()->getOptionNames($sPrefix);
     }
+
+    /**
+     * Add a namespace to the template system
+     *
+     * @param string        $sName              The namespace name
+     * @param string        $sPath              The namespace full path
+     * @param string        $bIsDefault         Is it the defalut namespace?
+     * @param string        $sExtension         The extension to append to template names
+     *
+     * @return void
+     */
+    public function addTemplateNamespace($sName, $sPath, $bIsDefault = false, $sExtension = '')
+    {
+        return Container::getInstance()->getTemplate()->addNamespace($sName, $sPath, $bIsDefault, $sExtension);
+    }
 }

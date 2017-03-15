@@ -177,7 +177,7 @@ class UserFunction
         $sFunction = $this->getName();
         $sAlias = (($this->sAlias) ? $this->sAlias : $sFunction);
 
-        return $this->render('support/function.js.tpl', array(
+        return $this->render('jaxon::support/function.js', array(
             'sPrefix' => $sJaxonPrefix,
             'sAlias' => $sAlias,
             'sFunction' => $sFunction,

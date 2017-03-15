@@ -304,7 +304,7 @@ class CallableObject
             $aMethods[] = $aMethod;
         }
 
-        return $this->render('support/object.js.tpl', array(
+        return $this->render('jaxon::support/object.js', array(
             'sPrefix' => $sJaxonPrefix,
             'sClass' => $sClass,
             'aMethods' => $aMethods,

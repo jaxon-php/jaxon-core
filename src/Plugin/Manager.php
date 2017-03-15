@@ -624,7 +624,7 @@ class Manager
 
         // Set the template engine cache dir
         $this->setTemplateCacheDir();
-        $sCode = $this->render('plugins/includes.js.tpl', array(
+        $sCode = $this->render('jaxon::plugins/includes.js', array(
             'sJsOptions' => $this->getOption('js.app.options'),
             'aUrls' => $aJsFiles,
         ));
@@ -694,9 +694,9 @@ class Manager
         $sYesScript = 'jaxon.confirm.skip(command);jaxon.tools.queue.process(command.response)';
         $sNoScript = 'jaxon.tools.queue.process(command.response)';
         $sConfirmScript = $this->getConfirm()->confirm('msg', $sYesScript, $sNoScript);
-        $aVars['sConfirmScript'] = $this->render('plugins/confirm.js.tpl', array('sConfirmScript' => $sConfirmScript));
+        $aVars['sConfirmScript'] = $this->render('jaxon::plugins/confirm.js', array('sConfirmScript' => $sConfirmScript));
 
-        return $this->render('plugins/config.js.tpl', $aVars);
+        return $this->render('jaxon::plugins/config.js', $aVars);
     }
 
     /**
@@ -712,7 +712,7 @@ class Manager
     private function getLibScript()
     {
         $aVars = array('sRegexp' => "\\{([^{}]*)\\}");
-        return $this->render('libraries/string.js.tpl', $aVars);
+        return $this->render('jaxon::libraries/string.js', $aVars);
     }
 
     /**
@@ -763,7 +763,7 @@ class Manager
         $aVars['sJsVerboseError'] = $sJsVerboseError;
         $aVars['sJsLanguageError'] = $sJsLanguageError;
 
-        return $this->render('plugins/ready.js.tpl', $aVars);
+        return $this->render('jaxon::plugins/ready.js', $aVars);
     }
 
     /**
@@ -809,7 +809,7 @@ class Manager
             }
 
             // The returned code loads the generated javascript file
-            $sScript = $this->render('plugins/include.js.tpl', array(
+            $sScript = $this->render('jaxon::plugins/include.js', array(
                 'sJsOptions' => $this->getOption('js.app.options'),
                 'sUrl' => $sJsAppURI . $sOutFile,
             ));
@@ -817,7 +817,7 @@ class Manager
         else
         {
             // The plugins scripts are wrapped with javascript tags
-            $sScript = $this->render('plugins/wrapper.js.tpl', array(
+            $sScript = $this->render('jaxon::plugins/wrapper.js', array(
                 'sJsOptions' => $this->getOption('js.app.options'),
                 'sScript' => $sScript,
             ));

@@ -128,7 +128,7 @@ class BrowserEvent
             $sMethod = $this->aConfiguration['method'];
         }
 
-        return $this->render('support/event.js.tpl', array(
+        return $this->render('jaxon::support/event.js', array(
             'sPrefix' => $sEventPrefix,
             'sEvent' => $this->sName,
             'sMode' => $sMode,
