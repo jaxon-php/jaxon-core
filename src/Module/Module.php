@@ -61,6 +61,11 @@ class Module
     {
         // Read config file
         $this->appConfig = $this->readConfig();
+
+        // Set the view
+        $this->setJaxonView(function(){
+            return new View();
+        });
     }
 
     /**
@@ -91,20 +96,6 @@ class Module
                 throw new \Jaxon\Exception\Config\Data(jaxon_trans('config.errors.data.missing', array('key' => 'app:' . $sOption)));
             }
         }
-    }
-
-    /**
-     * Return the view renderer.
-     *
-     * @return void
-     */
-    protected function jaxonView()
-    {
-        if($this->jaxonViewRenderer == null)
-        {
-            $this->jaxonViewRenderer = new View();
-        }
-        return $this->jaxonViewRenderer;
     }
 
     /**

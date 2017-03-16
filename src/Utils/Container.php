@@ -268,12 +268,56 @@ class Container
     /**
      * Set the module
      *
-     * @param mixed             $xModule        The new module
+     * @param object                $xModule            The new module
      *
-     * @return object        The module
+     * @return void
      */
     public function setModule($xModule)
     {
         $this->di['module'] = $xModule;
+    }
+
+    /**
+     * Get the view object
+     *
+     * @return object        The view object
+     */
+    public function getView()
+    {
+        return $this->di['module.view'];
+    }
+
+    /**
+     * Set the view
+     *
+     * @param Closure               $xClosure           A closure to create the view instance
+     *
+     * @return void
+     */
+    public function setView($xClosure)
+    {
+        $this->di['module.view'] = $xClosure;
+    }
+
+    /**
+     * Get the session object
+     *
+     * @return object        The session object
+     */
+    public function getSession()
+    {
+        return $this->di['module.session'];
+    }
+
+    /**
+     * Set the session
+     *
+     * @param Closure               $xClosure           A closure to create the session instance
+     *
+     * @return void
+     */
+    public function setSession($xClosure)
+    {
+        $this->di['module.session'] = $xClosure;
     }
 }

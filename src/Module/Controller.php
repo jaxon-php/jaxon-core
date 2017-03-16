@@ -14,13 +14,6 @@ class Controller
     public $response = null;
 
     /**
-     * A wrapper to the framework view component
-     *
-     * @var mixed
-     */
-    public $view = null;
-
-    /**
      * The controller request factory
      *
      * @var Request\Factory
@@ -52,6 +45,16 @@ class Controller
      */
     public function init()
     {}
+
+    /**
+     * Get the view renderer
+     *
+     * @return object
+     */
+    public function view()
+    {
+        return jaxon()->module()->getJaxonView();
+    }
 
     /**
      * Get the request factory.

@@ -30,7 +30,6 @@ trait Module
 
     protected $appConfig = null;
     protected $jaxonResponse = null;
-    protected $jaxonViewRenderer = null;
     protected $jaxonControllerClass = '\\Jaxon\\Module\\Controller';
 
     // Library and application options
@@ -52,13 +51,6 @@ trait Module
     abstract protected function jaxonCheck();
 
     /**
-     * Return the view renderer.
-     *
-     * @return void
-     */
-    abstract protected function jaxonView();
-
-    /**
      * Wrap the Jaxon response into an HTTP response and send it back to the browser.
      *
      * @param  $code        The HTTP Response code
@@ -75,6 +67,50 @@ trait Module
     public function ajaxResponse()
     {
         return $this->jaxonResponse;
+    }
+
+    /**
+     * Get the view object
+     *
+     * @return object        The view object
+     */
+    public function getJaxonView()
+    {
+        return Container::getInstance()->getView();
+    }
+    
+    /**
+     * Set the view
+     *
+     * @param Closure               $xClosure           A closure to create the view instance
+     *
+     * @return void
+     */
+    public function setJaxonView($xClosure)
+    {
+        Container::getInstance()->setView($xClosure);
+    }
+    
+    /**
+     * Get the session object
+     *
+     * @return object        The session object
+     */
+    public function getJaxonSession()
+    {
+        return Container::getInstance()->getSession();
+    }
+    
+    /**
+     * Set the session
+     *
+     * @param Closure               $xClosure           A closure to create the session instance
+     *
+     * @return void
+     */
+    public function setJaxonSession($xClosure)
+    {
+        Container::getInstance()->setSession($xClosure);
     }
 
     /**
@@ -350,11 +386,6 @@ trait Module
             call_user_func_array($this->jaxonInitCallback, array($controller));
         }
         $controller->init();
-        // The default view is used only none is already set
-        if(!$controller->view)
-        {
-            $controller->view = $this->jaxonView();
-        }
     }
 
     /**
