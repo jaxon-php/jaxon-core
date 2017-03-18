@@ -57,6 +57,16 @@ class Controller
     }
 
     /**
+     * Get the session object
+     *
+     * @return object
+     */
+    public function session()
+    {
+        return jaxon()->module()->getJaxonSession();
+    }
+
+    /**
      * Get the request factory.
      *
      * @return Factory\Request

@@ -66,6 +66,11 @@ class Module
         $this->setJaxonView(function(){
             return new View();
         });
+
+        // Set the session
+        $this->setJaxonSession(function(){
+            return new Session();
+        });
     }
 
     /**
