@@ -5,6 +5,22 @@ namespace Jaxon\Module\Interfaces;
 interface Session
 {
     /**
+     * Get the current session id
+     * 
+     * @return string           The session id
+     */
+    public function getId();
+
+    /**
+     * Generate a new session id
+     * 
+     * @param bool          $bDeleteData         Whether to delete data from the previous session
+     * 
+     * @return void
+     */
+    public function newId($bDeleteData = false);
+
+    /**
      * Save data in the session
      *
      * @param string        $sKey                The session key
@@ -42,4 +58,27 @@ interface Session
      * @return mixed|$xDefault             The data under the session key, or the $xDefault parameter
      */
     public function get($sKey, $xDefault = null);
+
+    /**
+     * Get all data in the session
+     * 
+     * @return array             An array of all data in the session
+     */
+    public function all();
+
+    /**
+     * Delete a session key and its data
+     *
+     * @param string        $sKey                The session key
+     * 
+     * @return void
+     */
+    public function delete($sKey);
+
+    /**
+     * Delete all data in the session
+     * 
+     * @return void
+     */
+    public function clear();
 }
