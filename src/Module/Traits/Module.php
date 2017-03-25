@@ -403,8 +403,24 @@ trait Module
         {
             $controller = jaxon()->registerClass($classname, [], true);
         }
-        $this->initController($controller);
+        if(($controller))
+        {
+            $this->initController($controller);
+        }
         return $controller;
+    }
+
+    /**
+     * Get a Jaxon request to a given controller.
+     *
+     * @param  string  $classname the controller class name
+     * 
+     * @return object  The request to the controller
+     */
+    public function request($classname)
+    {
+        $controller = $this->controller($classname);
+        return ($controller != null ? $controller->request() : null);
     }
 
     /**
