@@ -52,10 +52,23 @@ function jaxon_register_plugin(\Jaxon\Plugin\Plugin $xPlugin, $nPriority = 1000)
 }
 
 /**
- * Create a JQuery Element with a given selector
+ * Get an instance of the request factory
  * 
- * This element is not linked to any Jaxon response, so this function shall be used to insert
- * jQuery code into a javascript function, or as a parameter of a Jaxon function call.
+ * The returned element is not linked to any Jaxon class, so this function shall
+ * only be used as a parameter of a Jaxon function call.
+ *
+ * @return Jaxon\JQuery\Dom\Element
+ */
+function rq()
+{
+    return \Jaxon\Utils\Container::getInstance()->getRequestFactory();
+}
+
+/**
+ * Create a JQuery Element with a given selector
+ *
+ * The returned element is not linked to any Jaxon response, so this function shall be used
+ * to insert jQuery code into a javascript function, or as a parameter of a Jaxon function call.
  *
  * @param string        $sSelector            The jQuery selector
  * @param string        $sContext             A context associated to the selector

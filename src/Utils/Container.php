@@ -71,6 +71,10 @@ class Container
         $this->di['request_manager'] = function($c){
             return new \Jaxon\Request\Manager();
         };
+        // Request Factory
+        $this->di['request_factory'] = function($c){
+            return new \Jaxon\Request\Factory();
+        };
         // Response Manager
         $this->di['response_manager'] = function($c){
             return new \Jaxon\Response\Manager();
@@ -143,6 +147,16 @@ class Container
     public function getRequestManager()
     {
         return $this->di['request_manager'];
+    }
+
+    /**
+     * Get the request factory
+     *
+     * @return object        The request factory
+     */
+    public function getRequestFactory()
+    {
+        return $this->di['request_factory'];
     }
 
     /**
