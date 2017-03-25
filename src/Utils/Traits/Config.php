@@ -82,15 +82,15 @@ Trait Config
     /**
      * Add a namespace to the template system
      *
-     * @param string        $sName              The namespace name
-     * @param string        $sPath              The namespace full path
-     * @param string        $bIsDefault         Is it the defalut namespace?
+     * @param string        $sNamespace         The namespace name
+     * @param string        $sDirectory         The namespace directory
      * @param string        $sExtension         The extension to append to template names
+     * @param string        $bIsDefault         Is it the default namespace?
      *
      * @return void
      */
-    public function addTemplateNamespace($sName, $sPath, $bIsDefault = false, $sExtension = '')
+    public function addViewNamespace($sNamespace, $sDirectory, $sExtension = '', $bIsDefault = false)
     {
-        return Container::getInstance()->getTemplate()->addNamespace($sName, $sPath, $bIsDefault, $sExtension);
+        return Container::getInstance()->getTemplate()->addNamespace($sNamespace, $sDirectory, $sExtension, $bIsDefault);
     }
 }

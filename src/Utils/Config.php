@@ -158,7 +158,10 @@ class Config
         {
             if(substr($sName, 0, $sPrefixLen) == $sPrefix)
             {
-                $aOptions[substr($sName, $sPrefixLen)] = $sName;
+                $iNextDotPos = strpos($sName, '.', $sPrefixLen);
+                $sOptionName = $iNextDotPos === false ? substr($sName, $sPrefixLen) :
+                    substr($sName, $sPrefixLen, $iNextDotPos - $sPrefixLen);
+                $aOptions[$sOptionName] = $sPrefix . $sOptionName;
             }
         }
         return $aOptions;

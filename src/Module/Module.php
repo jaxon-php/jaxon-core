@@ -62,12 +62,22 @@ class Module
         // Read config file
         $this->appConfig = $this->readConfig();
 
-        // Set the view
+        // Set the view namespaces
+        $namespaces = $this->appConfig->getOptionNames('views.namespaces');
+        foreach($namespaces as $namespace => $option)
+        {
+            $directory = $this->appConfig->getOption($option . '.directory');
+            $extension = $this->appConfig->getOption($option . '.extension', '');
+            $isDefault = $this->appConfig->getOption($option . '.isdefault', false);
+            $this->addViewNamespace($namespace, $directory, $extension, $isDefault);
+        }
+
+        // Set the view renderer
         $this->setJaxonView(function(){
             return new View();
         });
 
-        // Set the session
+        // Set the session manager
         $this->setJaxonSession(function(){
             return new Session();
         });

@@ -25,28 +25,32 @@ class Template
         $this->xEngine = new \Latte\Engine;
         $this->aNamespaces = [];
         $this->sDefaultNamespace = '';
-        $this->addNamespace('jaxon', rtrim(trim($sTemplateDir), "/\\"), false, '.tpl');
+        $this->addNamespace('jaxon', rtrim(trim($sTemplateDir), "/\\"), '.tpl', false);
     }
 
     /**
      * Add a namespace to the template system
      *
-     * @param string        $sName              The namespace name
-     * @param string        $sPath              The namespace full path
-     * @param string        $bIsDefault         Is it the defalut namespace?
+     * @param string        $sNamespace         The namespace name
+     * @param string        $sDirectory         The namespace directory
      * @param string        $sExtension         The extension to append to template names
+     * @param string        $bIsDefault         Is it the default namespace?
      *
      * @return void
      */
-    public function addNamespace($sName, $sPath, $bIsDefault = false, $sExtension = '')
+    public function addNamespace($sNamespace, $sDirectory, $sExtension = '', $bIsDefault = false)
     {
-        $this->aNamespaces[$sName] = [
-            'path' => $sPath,
+        if($sNamespace == 'jaxon' && key_exists($sNamespace, $this->aNamespaces))
+        {
+            return;
+        }
+        $this->aNamespaces[$sNamespace] = [
+            'directory' => $sDirectory,
             'extension' => $sExtension,
         ];
         if($bIsDefault)
         {
-            $this->sDefaultNamespace = $sName;
+            $this->sDefaultNamespace = $sNamespace;
         }
     }
 
@@ -97,7 +101,7 @@ class Template
         $sNamespace = $this->aNamespaces[$sNamespace];
         // Get the template path
         $sTemplateName = trim($sTemplate) . $sNamespace['extension'];
-        $sTemplatePath = $sNamespace['path'] . '/' . $sTemplateName;
+        $sTemplatePath = $sNamespace['directory'] . '/' . $sTemplateName;
         // Render the template
         $sRendered = $this->xEngine->renderToString($sTemplatePath, $aVars);
         return $sRendered;
