@@ -106,6 +106,36 @@ class Response
     }
 
     /**
+     * Create a JQuery Element with a given selector, and link it to the current response.
+     *
+     * This is a shortcut to the JQuery plugin.
+     *
+     * @param string        $sSelector            The jQuery selector
+     * @param string        $sContext             A context associated to the selector
+     *
+     * @return Jaxon\JQuery\Dom\Element
+     */
+    public function jquery($sSelector = '', $sContext = '')
+    {
+        return $this->plugin('jquery')->element($sSelector, $sContext);
+    }
+
+    /**
+     * Create a JQuery Element with a given selector, and link it to the current response.
+     *
+     * This is a shortcut to the JQuery plugin.
+     *
+     * @param string        $sSelector            The jQuery selector
+     * @param string        $sContext             A context associated to the selector
+     *
+     * @return Jaxon\JQuery\Dom\Element
+     */
+    public function jq($sSelector = '', $sContext = '')
+    {
+        return $this->plugin('jquery')->element($sSelector, $sContext);
+    }
+
+    /**
      * Magic PHP function
      *
      * Used to permit plugins to be called as if they where native members of the Response instance.
