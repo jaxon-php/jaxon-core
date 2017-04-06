@@ -531,7 +531,7 @@ class Manager
     {
         if(!$this->hasOption('js.lib.uri'))
         {
-            return 'https://cdn.jsdelivr.net/jaxon/1.0.0/';
+            return 'https://cdn.jsdelivr.net/jaxon/1.1.0/';
         }
         // Todo: check the validity of the URI
         return rtrim($this->getOption('js.lib.uri'), '/') . '/';
@@ -605,13 +605,12 @@ class Manager
         $sJsLibUri = $this->getJsLibUri();
         $sJsLibExt = $this->getJsLibExt();
         $sJsCoreUrl = $sJsLibUri . 'jaxon.core' . $sJsLibExt;
-        $sJsReadyUrl = $sJsLibUri . 'jaxon.ready' . $sJsLibExt;
         $sJsDebugUrl = $sJsLibUri . 'jaxon.debug' . $sJsLibExt;
         $sJsVerboseUrl = $sJsLibUri . 'jaxon.verbose' . $sJsLibExt;
         $sJsLanguageUrl = $sJsLibUri . 'lang/jaxon.' . $this->getOption('core.language') . $sJsLibExt;
 
         // Add component files to the javascript file array;
-        $aJsFiles = array($sJsCoreUrl, $sJsReadyUrl);
+        $aJsFiles = array($sJsCoreUrl);
         if($this->getOption('core.debug.on'))
         {
             $aJsFiles[] = $sJsDebugUrl;
@@ -700,22 +699,6 @@ class Manager
     }
 
     /**
-     * Get the javascript code to be sent to the browser
-     *
-     * Also call each of the request plugins giving them the opportunity
-     * to output some javascript to the page being generated.
-     * This is called only when the page is being loaded initially.
-     * This is not called when processing a request.
-     *
-     * @return string
-     */
-    private function getLibScript()
-    {
-        $aVars = array('sRegexp' => "\\{([^{}]*)\\}");
-        return $this->render('jaxon::libraries/string.js', $aVars);
-    }
-
-    /**
      * Get the javascript code to be run after page load
      *
      * Also call each of the response plugins giving them the opportunity
@@ -782,7 +765,7 @@ class Manager
         $this->setTemplateCacheDir();
 
         // Get the config and plugins scripts
-        $sScript = $this->getLibScript() . "\n" . $this->getConfigScript() . "\n" . $this->getReadyScript() . "\n";
+        $sScript = $this->getConfigScript() . "\n" . $this->getReadyScript() . "\n";
         foreach($this->aRequestPlugins as $xPlugin)
         {
             $sScript .= "\n" . trim($xPlugin->getScript(), " \n");
