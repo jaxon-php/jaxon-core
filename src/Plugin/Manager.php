@@ -677,7 +677,6 @@ class Manager
             'nResponseQueueSize'        => $this->getOption('js.lib.queue_size'),
             'sStatusMessages'           => $this->getOption('js.lib.show_status') ? 'true' : 'false',
             'sWaitCursor'               => $this->getOption('js.lib.show_cursor') ? 'true' : 'false',
-            'nScriptLoadTimeout'        => $this->getOption('js.lib.load_timeout'),
             'sDefer'                    => $this->getOption('js.app.options'),
         );
     }
