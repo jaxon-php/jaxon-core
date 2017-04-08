@@ -288,8 +288,8 @@ class Response
     /**
      * Add a command to assign the specified value to the given element's attribute
      *
-     * @param string        $sTarget            The id of the html element on the browser
-     * @param string        $sAttribute            The attribute to be assigned
+     * @param string        $sTarget              The id of the html element on the browser
+     * @param string        $sAttribute           The attribute to be assigned
      * @param string        $sData                The value to be assigned to the attribute
      *
      * @return \Jaxon\Plugin\Response
@@ -303,6 +303,21 @@ class Response
             ),
             trim((string)$sData, " \t\n")
         );
+    }
+
+    /**
+     * Add a command to assign the specified HTML content to the given element
+     * 
+     * This is a shortcut for assign() on the innerHTML attribute.
+     *
+     * @param string        $sTarget              The id of the html element on the browser
+     * @param string        $sData                The value to be assigned to the attribute
+     *
+     * @return \Jaxon\Plugin\Response
+     */
+    public function html($sTarget, $sData)
+    {
+        return $this->assign($sTarget, 'innerHTML', $sData);
     }
 
     /**
