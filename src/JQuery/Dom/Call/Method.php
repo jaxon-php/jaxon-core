@@ -1,13 +1,10 @@
 <?php
 
-namespace Jaxon\JQuery\Dom;
+namespace Jaxon\JQuery\Dom\Call;
 
-use Jaxon\Jaxon;
 use Jaxon\Request\JsCall;
-use Jaxon\Request\Request;
-use Jaxon\Request\Interfaces\Parameter;
 
-class Action extends JsCall
+class Method extends JsCall
 {
     /**
      * The constructor.

@@ -37,7 +37,7 @@ class Element implements JsonSerializable, Parameter
      *
      * @var array
      */
-    protected $aActions;
+    protected $aCalls;
 
     /**
      * The constructor.
@@ -49,7 +49,7 @@ class Element implements JsonSerializable, Parameter
     {
         $sSelector = trim($sSelector, " \t");
         $sContext = trim($sContext, " \t");
-        $this->aActions = array();
+        $this->aCalls = array();
         if(!$sSelector)
         {
             $this->sSelector = "$(this)"; // If an empty selector is given, use javascript "this" instead
@@ -72,9 +72,35 @@ class Element implements JsonSerializable, Parameter
     public function __call($sMethod, $aArguments)
     {
         // Push the action into the array
-        $this->aActions[] = new Action($sMethod, $aArguments);
+        $this->aCalls[] = new Call\Method($sMethod, $aArguments);
         // Return $this so the calls can be chained
         return $this;
+    }
+
+    /**
+     * Get the value of an attribute on the first selected element
+     *
+     * @return Element
+     */
+    public function __get($sAttribute)
+    {
+        // Push the action into the array
+        $this->aCalls[] = new Call\AttrGet($sAttribute);
+        // Return $this so the calls can be chained
+        return $this;
+    }
+
+    /**
+     * Set the value of an attribute on the first selected element
+     *
+     * @return Element
+     */
+    public function __set($sAttribute, $xValue)
+    {
+        // Push the action into the array
+        $this->aCalls[] = new Call\AttrSet($sAttribute, $xValue);
+        // Return null because no other call is allowed after a set
+        return null;
     }
 
     /**
@@ -84,11 +110,11 @@ class Element implements JsonSerializable, Parameter
      */
     public function getScript()
     {
-        if(count($this->aActions) == 0)
+        if(count($this->aCalls) == 0)
         {
             return $this->sSelector;
         }
-        return $this->sSelector . '.' . implode('.', $this->aActions);
+        return $this->sSelector . '.' . implode('.', $this->aCalls);
     }
 
     /**
