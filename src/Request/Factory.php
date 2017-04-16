@@ -20,7 +20,7 @@ use Jaxon\Jaxon;
 class Factory
 {
     /**
-     * Return the javascript call to an Jaxon function or object method
+     * Return the javascript call to a Jaxon function or object method
      *
      * @param string            $sName              The function or method (with class) name
      * @param ...               $xParams            The parameters of the function or method
@@ -37,6 +37,27 @@ class Factory
         $sType = (strpos($sName, '.') === false ? 'function' : 'class');
         // Make the request
         $xRequest = new Request($sName, $sType);
+        $xRequest->useSingleQuote();
+        $xRequest->addParameters($aArguments);
+        return $xRequest;
+    }
+
+    /**
+     * Return the javascript call to a generic function
+     *
+     * @param string            $sName              The function or method (with class) name
+     * @param ...               $xParams            The parameters of the function or method
+     *
+     * @return \Jaxon\Request\Request
+     */
+    public static function func($sName)
+    {
+        $aArguments = func_get_args();
+        $sName = (string)$sName;
+        // Remove the function name from the arguments array.
+        array_shift($aArguments);
+        // Make the request
+        $xRequest = new JsCall($sName);
         $xRequest->useSingleQuote();
         $xRequest->addParameters($aArguments);
         return $xRequest;
