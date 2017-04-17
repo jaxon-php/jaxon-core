@@ -531,7 +531,7 @@ class Manager
     {
         if(!$this->hasOption('js.lib.uri'))
         {
-            return 'https://cdn.jsdelivr.net/jaxon/1.1.0/';
+            return 'https://cdn.jsdelivr.net/jaxon/1.2.0/';
         }
         // Todo: check the validity of the URI
         return rtrim($this->getOption('js.lib.uri'), '/') . '/';
