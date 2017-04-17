@@ -28,8 +28,8 @@ class AttrSet implements JsonSerializable
      */
     public function __construct($sAttrName, $xAttrValue)
     {
-        $this->sAttrName = $sAttrName;
-        $this->xAttrValue = $xAttrValue;
+        $this->sAttrName = (string)$sAttrName;
+        $this->xAttrValue = (string)$xAttrValue;
     }
 
     /**
@@ -39,7 +39,7 @@ class AttrSet implements JsonSerializable
      */
     public function getScript()
     {
-        return (string)$this->sAttrName . ' = ' . (string)$this->xAttrValue;
+        return $this->sAttrName . ' = ' . $this->xAttrValue;
     }
 
     /**

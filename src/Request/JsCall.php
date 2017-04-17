@@ -119,7 +119,7 @@ class JsCall implements JsonSerializable
      */
     public function setParameter(Interfaces\Parameter $xParameter)
     {
-        $xParameter->xRequest = $this;
+        $xParameter->setCall($this);
         $this->aParameters[$nPosition] = $xParameter;
     }
 
@@ -133,7 +133,7 @@ class JsCall implements JsonSerializable
      */
     public function pushParameter(Interfaces\Parameter $xParameter)
     {
-        $xParameter->xRequest = $this;
+        $xParameter->setCall($this);
         $this->aParameters[] = $xParameter;
     }
 
@@ -170,7 +170,7 @@ class JsCall implements JsonSerializable
     {
         foreach($aParameters as $xParameter)
         {
-            if($xParameter instanceof Request)
+            if($xParameter instanceof JsCall)
             {
                 $this->addParameter(Jaxon::JS_VALUE, 'function(){' . $xParameter->getScript() . ';}');
             }

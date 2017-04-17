@@ -20,7 +20,7 @@ class AttrGet implements JsonSerializable
      */
     public function __construct($sAttrName)
     {
-        $this->sAttrName = $sAttrName;
+        $this->sAttrName = (string)$sAttrName;
     }
 
     /**
@@ -30,7 +30,7 @@ class AttrGet implements JsonSerializable
      */
     public function getScript()
     {
-        return (string)$this->sAttrName;
+        return $this->sAttrName;
     }
 
     /**

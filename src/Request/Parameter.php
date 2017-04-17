@@ -114,6 +114,16 @@ class Parameter implements Interfaces\Parameter
     }
 
     /**
+     * Set the call this parameter is passed to.
+     *
+     * @return void
+     */
+    public function setCall(JsCall $xCall)
+    {
+        $this->xRequest = $xCall;
+    }
+
+    /**
      * Generate the javascript code.
      *
      * @return string

@@ -21,7 +21,9 @@
 namespace Jaxon\JQuery\Dom;
 
 use JsonSerializable;
-use Jaxon\Jaxon, Jaxon\Request\Interfaces\Parameter;
+use Jaxon\Jaxon;
+use Jaxon\Request\JsCall;
+use Jaxon\Request\Interfaces\Parameter;
 
 class Element implements JsonSerializable, Parameter
 {
@@ -101,6 +103,16 @@ class Element implements JsonSerializable, Parameter
         $this->aCalls[] = new Call\AttrSet($sAttribute, $xValue);
         // Return null because no other call is allowed after a set
         return null;
+    }
+
+    /**
+     * Set the call this parameter is passed to.
+     *
+     * @return void
+     */
+    public function setCall(JsCall $xCall)
+    {
+        // Nothing to do.
     }
 
     /**
