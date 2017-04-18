@@ -115,7 +115,7 @@ class Response
      *
      * @return Jaxon\JQuery\Dom\Element
      */
-    public function jquery($sSelector = '', $sContext = '')
+    public function jQuery($sSelector = '', $sContext = '')
     {
         return $this->plugin('jquery')->element($sSelector, $sContext);
     }

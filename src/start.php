@@ -80,7 +80,7 @@ function rq($classname = null)
  *
  * @return Jaxon\JQuery\Dom\Element
  */
-function jquery($sSelector = '', $sContext = '')
+function jQuery($sSelector = '', $sContext = '')
 {
     return new \Jaxon\JQuery\Dom\Element($sSelector, $sContext);
 }
@@ -98,7 +98,7 @@ function jquery($sSelector = '', $sContext = '')
  */
 function jq($sSelector = '', $sContext = '')
 {
-    return jquery($sSelector, $sContext);
+    return jQuery($sSelector, $sContext);
 }
 
 /*
