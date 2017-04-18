@@ -115,7 +115,7 @@ class Response
      *
      * @return Jaxon\JQuery\Dom\Element
      */
-    public function jQuery($sSelector = '', $sContext = '')
+    public function jq($sSelector = '', $sContext = '')
     {
         return $this->plugin('jquery')->element($sSelector, $sContext);
     }
@@ -130,9 +130,9 @@ class Response
      *
      * @return Jaxon\JQuery\Dom\Element
      */
-    public function jq($sSelector = '', $sContext = '')
+    public function jQuery($sSelector = '', $sContext = '')
     {
-        return $this->plugin('jquery')->element($sSelector, $sContext);
+        return $this->jq($sSelector, $sContext);
     }
 
     /**
