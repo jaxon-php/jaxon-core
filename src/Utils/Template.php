@@ -17,15 +17,13 @@ namespace Jaxon\Utils;
 class Template
 {
     protected $aNamespaces;
-    protected $sDefaultNamespace;
     protected $xEngine;
 
     public function __construct($sTemplateDir)
     {
         $this->xEngine = new \Latte\Engine;
         $this->aNamespaces = [];
-        $this->sDefaultNamespace = '';
-        $this->addNamespace('jaxon', rtrim(trim($sTemplateDir), "/\\"), '.tpl', false);
+        $this->addNamespace('jaxon', rtrim(trim($sTemplateDir), "/\\"), '.tpl');
     }
 
     /**
@@ -34,11 +32,10 @@ class Template
      * @param string        $sNamespace         The namespace name
      * @param string        $sDirectory         The namespace directory
      * @param string        $sExtension         The extension to append to template names
-     * @param string        $bIsDefault         Is it the default namespace?
      *
      * @return void
      */
-    public function addNamespace($sNamespace, $sDirectory, $sExtension = '', $bIsDefault = false)
+    public function addNamespace($sNamespace, $sDirectory, $sExtension = '')
     {
         if($sNamespace == 'jaxon' && key_exists($sNamespace, $this->aNamespaces))
         {
@@ -48,10 +45,6 @@ class Template
             'directory' => $sDirectory,
             'extension' => $sExtension,
         ];
-        if($bIsDefault)
-        {
-            $this->sDefaultNamespace = $sNamespace;
-        }
     }
 
     /**
@@ -82,15 +75,11 @@ class Template
     {
         // Get the namespace name
         $sNamespace = '';
-        $iSeparatorPosition = strpos($sTemplate, '::');
+        $iSeparatorPosition = strrpos($sTemplate, '::');
         if($iSeparatorPosition !== false)
         {
             $sNamespace = substr($sTemplate, 0, $iSeparatorPosition);
             $sTemplate = substr($sTemplate, $iSeparatorPosition + 2);
-        }
-        if($sNamespace == '')
-        {
-            $sNamespace = $this->sDefaultNamespace;
         }
         // Check if the namespace is defined
         $sNamespace = trim($sNamespace);

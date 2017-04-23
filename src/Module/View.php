@@ -2,13 +2,26 @@
 
 namespace Jaxon\Module;
 
+use Jaxon\Module\Interfaces\View as ViewRenderer;
 use Jaxon\Utils\Traits\Template;
 
-class View extends View\Facade
+class View implements ViewRenderer
 {
-    public function __construct()
+    use Template;
+
+    /**
+     * Add a namespace to this view renderer
+     *
+     * @param string        $sNamespace         The namespace name
+     * @param string        $sDirectory         The namespace directory
+     * @param string        $sExtension         The extension to append to template names
+     *
+     * @return void
+     */
+    public function addNamespace($sNamespace, $sDirectory, $sExtension = '')
     {
-        parent::__construct();
+        // This method is provided by the Config trait
+        $this->addViewNamespace($sNamespace, $sDirectory, $sExtension);
     }
 
     /**
@@ -21,6 +34,6 @@ class View extends View\Facade
     public function make(View\Store $store)
     {
         // Render the template
-        return trim(jaxon()->render($store->getViewPath(), $store->getViewData()), " \t\n");
+        return trim($this->render($store->getViewName(), $store->getViewData()), " \t\n");
     }
 }

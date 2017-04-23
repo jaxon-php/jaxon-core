@@ -2,15 +2,22 @@
 
 namespace Jaxon\Module\View;
 
-abstract class Facade
+class Facade
 {
-    protected $xStore = null;
-    protected $aViewData;
+    use \Jaxon\Utils\Traits\Config;
+    use \Jaxon\Utils\Traits\View;
 
-    public function __construct()
+    protected $xStore;
+    protected $aViewData;
+    protected $aRenderers;
+    protected $sNamespace;
+
+    public function __construct($aRenderers, $sNamespace)
     {
         $this->xStore = null;
         $this->aViewData = array();
+        $this->aRenderers = $aRenderers;
+        $this->sNamespace = $sNamespace; // The default view namespace
     }
 
     /**
@@ -60,28 +67,37 @@ abstract class Facade
      *
      * The store returned by this function will later be used with the make() method to render the view.
      *
-     * @param string        $sViewPath        The view path
+     * @param string        $sViewName        The view name
      * @param array         $aViewData        The view data
      * 
      * @return Store        A store populated with the view data
      */
-    public function render($sViewPath, array $aViewData = array())
+    public function render($sViewName, array $aViewData = array())
     {
         // Get the store
         $store = $this->store();
-        $store->setView($sViewPath, array_merge($this->aViewData, $aViewData));
+        // Get the default view namespace
+        $sNamespace = $this->sNamespace;
+        // Get the namespace from the view name
+        $iSeparatorPosition = strrpos($sViewName, '::');
+        if($iSeparatorPosition !== false)
+        {
+            $sNamespace = substr($sViewName, 0, $iSeparatorPosition);
+        }
+        else
+        {
+            $sViewName = $sNamespace . '::' . $sViewName;
+        }
+        if(!key_exists($sNamespace, $this->aRenderers))
+        {
+            // Cannot render a view if there's no renderer corresponding to the namespace.
+            return null;
+        }
+        $sRenderer = $this->aRenderers[$sNamespace];
+        $store->setView($sRenderer, $sViewName, array_merge($this->aViewData, $aViewData));
         // Set the store to null so a new store will be created for the next view.
         $this->xStore = null;
         // Return the store
         return $store;
     }
-
-    /**
-     * Render a view using third party view system
-     * 
-     * @param Store         $store        A store populated with the view data
-     * 
-     * @return string        The string representation of the view
-     */
-    abstract public function make(Store $store);
 }

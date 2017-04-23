@@ -53,7 +53,7 @@ class Controller
      */
     public function view()
     {
-        return jaxon()->module()->getJaxonView();
+        return jaxon()->module()->getViewRenderer();
     }
 
     /**
@@ -63,7 +63,7 @@ class Controller
      */
     public function session()
     {
-        return jaxon()->module()->getJaxonSession();
+        return jaxon()->module()->getSessionManager();
     }
 
     /**

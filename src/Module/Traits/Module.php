@@ -6,6 +6,8 @@ use Jaxon\Jaxon;
 use Jaxon\Module\Controller;
 use Jaxon\Utils\Container;
 use Jaxon\Utils\Traits\Config;
+use Jaxon\Utils\Traits\View;
+use Jaxon\Utils\Traits\Session;
 use Jaxon\Utils\Traits\Manager;
 use Jaxon\Utils\Traits\Event;
 use Jaxon\Utils\Traits\Validator;
@@ -14,7 +16,7 @@ use stdClass, Exception;
 
 trait Module
 {
-    use Config, Manager, Event, Validator;
+    use Config, View, Session, Manager, Event, Validator;
 
     protected $jaxonSetupCalled = false;
 
@@ -31,6 +33,8 @@ trait Module
     protected $appConfig = null;
     protected $jaxonResponse = null;
     protected $jaxonControllerClass = '\\Jaxon\\Module\\Controller';
+    protected $jaxonViewRenderers = array();
+    protected $jaxonViewNamespaces = array();
 
     // Library and application options
     private $jaxonLibOptions = null;
@@ -68,49 +72,33 @@ trait Module
     {
         return $this->jaxonResponse;
     }
-
-    /**
-     * Get the view object
-     *
-     * @return object        The view object
-     */
-    public function getJaxonView()
-    {
-        return Container::getInstance()->getView();
-    }
     
     /**
-     * Set the view
+     * Add a view namespace, and set the corresponding renderer.
      *
-     * @param Closure               $xClosure           A closure to create the view instance
+     * @param string        $sNamespace         The namespace name
+     * @param string        $sDirectory         The namespace directory
+     * @param string        $sExtension         The extension to append to template names
+     * @param string        $sRenderer          The corresponding renderer name
      *
      * @return void
      */
-    public function setJaxonView($xClosure)
+    public function addViewNamespace($sNamespace, $sDirectory, $sExtension, $sRenderer)
     {
-        Container::getInstance()->setView($xClosure);
-    }
-    
-    /**
-     * Get the session object
-     *
-     * @return object        The session object
-     */
-    public function getJaxonSession()
-    {
-        return Container::getInstance()->getSession();
-    }
-    
-    /**
-     * Set the session
-     *
-     * @param Closure               $xClosure           A closure to create the session instance
-     *
-     * @return void
-     */
-    public function setJaxonSession($xClosure)
-    {
-        Container::getInstance()->setSession($xClosure);
+        $aNamespace = array(
+            'namespace' => $sNamespace,
+            'directory' => $sDirectory,
+            'extension' => $sExtension,
+        );
+        if(key_exists($sRenderer, $this->jaxonViewNamespaces))
+        {
+            $this->jaxonViewNamespaces[$sRenderer][] = $aNamespace;
+        }
+        else
+        {
+            $this->jaxonViewNamespaces[$sRenderer] = array($aNamespace);
+        }
+        $this->jaxonViewRenderers[$sNamespace] = $sRenderer;
     }
 
     /**
@@ -180,6 +168,9 @@ trait Module
         // Set the module/package/bundle specific specific options
         $this->jaxonSetup();
 
+        // Event before the module has set the config
+        $this->triggerEvent('pre.config');
+
         // Event after the module has read the config
         $this->triggerEvent('post.config');
 
@@ -230,7 +221,34 @@ trait Module
 
         $this->jaxonCheck();
 
+        // Event after checking the module
+        $this->triggerEvent('post.check');
+
         // Jaxon application settings
+
+        // Save the view namespaces
+        $sDefaultNamespace = $this->appConfig->getOption('options.views.default', false);
+        if(is_array($namespaces = $this->appConfig->getOptionNames('views')))
+        {
+            foreach($namespaces as $namespace => $option)
+            {
+                // If no default namespace is defined, use the first one as default.
+                if($sDefaultNamespace == false)
+                {
+                    $sDefaultNamespace = $namespace;
+                }
+                // Save the namespace
+                $directory = $this->appConfig->getOption($option . '.directory');
+                $extension = $this->appConfig->getOption($option . '.extension', '');
+                $renderer = $this->appConfig->getOption($option . '.renderer', 'jaxon');
+                $this->addViewNamespace($namespace, $directory, $extension, $renderer);
+            }
+        }
+
+        // Save the view renderers and namespaces in the DI container
+        $this->initViewRenderers($this->jaxonViewRenderers);
+        $this->initViewNamespaces($this->jaxonViewNamespaces, $sDefaultNamespace);
+
         // Register the default Jaxon class directory
         $directory = $this->appConfig->getOption('controllers.directory');
         $namespace = $this->appConfig->getOption('controllers.namespace');

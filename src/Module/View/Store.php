@@ -5,8 +5,9 @@ namespace Jaxon\Module\View;
 class Store
 {
     protected $xFacade;
+    protected $sRenderer;
     protected $aViewData;
-    protected $sViewPath;
+    protected $sViewName;
 
     public function __construct(Facade $xFacade)
     {
@@ -31,25 +32,26 @@ class Store
     /**
      * Set the view to be rendered, with optional data
      *
-     * @param string        $sViewPath        The view path
+     * @param string        $sViewName        The view name
      * @param string        $aViewData        The view data
      * 
      * @return void
      */
-    public function setView($sViewPath, array $aViewData = array())
+    public function setView($sRenderer, $sViewName, array $aViewData = array())
     {
-        $this->sViewPath = trim($sViewPath);
+        $this->sRenderer = trim($sRenderer);
+        $this->sViewName = trim($sViewName);
         $this->aViewData = array_merge($this->aViewData, $aViewData);
     }
 
     /**
-     * Get the view path
+     * Get the view name
      * 
-     * @return string        The view path
+     * @return string        The view name
      */
-    public function getViewPath()
+    public function getViewName()
     {
-        return $this->sViewPath;
+        return $this->sViewName;
     }
 
     /**
@@ -63,12 +65,13 @@ class Store
     }
 
     /**
-     * Render the view
+     * Render a view using third party view system
      * 
      * @return string        The string representation of the view
      */
     public function __toString()
     {
-        return $this->xFacade->make($this);
+        $xRenderer = $this->xFacade->getViewRenderer($this->sRenderer);
+        return ($xRenderer) ? $xRenderer->make($this) : '';
     }
 }

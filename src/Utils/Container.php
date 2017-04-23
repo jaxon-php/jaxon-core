@@ -15,6 +15,7 @@
 namespace Jaxon\Utils;
 
 use Lemon\Event\EventDispatcher;
+use Jaxon\Module\View\Renderer;
 
 class Container
 {
@@ -126,6 +127,12 @@ class Container
         // Module
         $this->di['module'] = function($c){
             return new \Jaxon\Module\Module();
+        };
+        // View Renderer Facade
+        $this->di['module.view.renderer'] = function($c){
+            $aRenderers = $c['view.data.renderers'];
+            $sDefaultNamespace = $c['view.data.namespace.default'];
+            return new \Jaxon\Module\View\Facade($aRenderers, $sDefaultNamespace);
         };
     }
 
@@ -292,25 +299,77 @@ class Container
     }
 
     /**
-     * Get the view object
+     * Set the view renderers data
      *
-     * @return object        The view object
+     * @param array                $aRenderers          Array of renderer names with namespace as key
+     *
+     * @return void
      */
-    public function getView()
+    public function initViewRenderers($aRenderers)
     {
-        return $this->di['module.view'];
+        $this->di['view.data.renderers'] = $aRenderers;
     }
 
     /**
-     * Set the view
+     * Set the view namespaces data
      *
+     * @param array                $aNamespaces         Array of namespaces with renderer name as key
+     *
+     * @return void
+     */
+    public function initViewNamespaces($aNamespaces, $sDefaultNamespace)
+    {
+        $this->di['view.data.namespaces'] = $aNamespaces;
+        $this->di['view.data.namespace.default'] = $sDefaultNamespace;
+    }
+
+    /**
+     * Add a view renderer
+     *
+     * @param string                $sId                The unique identifier of the view renderer
      * @param Closure               $xClosure           A closure to create the view instance
      *
      * @return void
      */
-    public function setView($xClosure)
+    public function addViewRenderer($sId, $xClosure)
     {
-        $this->di['module.view'] = $xClosure;
+        // Return the non-initialiazed view renderer
+        $this->di['module.view.base.' . $sId] = $xClosure;
+
+        // Return the initialized view renderer
+        $this->di['module.view.' . $sId] = function($c) use($sId) {
+            // Get the defined renderer
+            $renderer = $c['module.view.base.' . $sId];
+            // Init the renderer with the template namespaces
+            $aNamespaces = $this->di['view.data.namespaces'];
+            if(key_exists($sId, $aNamespaces))
+            {
+                foreach($aNamespaces[$sId] as $namespace)
+                {
+                    $renderer->addNamespace($namespace['namespace'],
+                        $namespace['directory'], $namespace['extension']);
+                }
+            }
+            return $renderer;
+        };
+    }
+
+    /**
+     * Get the view object
+     *
+     * @param string                $sId                The unique identifier of the view renderer
+     *
+     * @return object        The view object
+     */
+    public function getViewRenderer($sId = '')
+    {
+        if(!$sId)
+        {
+            // Return the view renderer facade
+            return $this->di['module.view.renderer'];
+        }
+        // Return the view renderer with the given id
+        return $this->di['module.view.' . $sId];
     }
 
     /**
@@ -318,7 +377,7 @@ class Container
      *
      * @return object        The session object
      */
-    public function getSession()
+    public function getSessionManager()
     {
         return $this->di['module.session'];
     }
@@ -330,7 +389,7 @@ class Container
      *
      * @return void
      */
-    public function setSession($xClosure)
+    public function setSessionManager($xClosure)
     {
         $this->di['module.session'] = $xClosure;
     }

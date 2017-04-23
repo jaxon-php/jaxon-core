@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Confin.php - Trait for config functions
+ * Config.php - Trait for config functions
  *
  * @package jaxon-core
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
@@ -77,20 +77,5 @@ Trait Config
     public function getOptionNames($sPrefix)
     {
         return Container::getInstance()->getConfig()->getOptionNames($sPrefix);
-    }
-
-    /**
-     * Add a namespace to the template system
-     *
-     * @param string        $sNamespace         The namespace name
-     * @param string        $sDirectory         The namespace directory
-     * @param string        $sExtension         The extension to append to template names
-     * @param string        $bIsDefault         Is it the default namespace?
-     *
-     * @return void
-     */
-    public function addViewNamespace($sNamespace, $sDirectory, $sExtension = '', $bIsDefault = false)
-    {
-        return Container::getInstance()->getTemplate()->addNamespace($sNamespace, $sDirectory, $sExtension, $bIsDefault);
     }
 }

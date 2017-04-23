@@ -37,7 +37,8 @@ class Module
             return \Jaxon\Config\Json::read($this->configFile, 'lib', 'app');
             break;
         default:
-            throw new \Jaxon\Exception\Config\File(jaxon_trans('config.errors.file.extension', array('path' => $this->configFile)));
+            $msg = jaxon_trans('config.errors.file.extension', array('path' => $this->configFile));
+            throw new \Jaxon\Exception\Config\File($msg);
             break;
         }
     }
@@ -62,23 +63,13 @@ class Module
         // Read config file
         $this->appConfig = $this->readConfig();
 
-        // Set the view namespaces
-        $namespaces = $this->appConfig->getOptionNames('views.namespaces');
-        foreach($namespaces as $namespace => $option)
-        {
-            $directory = $this->appConfig->getOption($option . '.directory');
-            $extension = $this->appConfig->getOption($option . '.extension', '');
-            $isDefault = $this->appConfig->getOption($option . '.isdefault', false);
-            $this->addViewNamespace($namespace, $directory, $extension, $isDefault);
-        }
-
-        // Set the view renderer
-        $this->setJaxonView(function(){
+        // Add the view renderer
+        $this->addViewRenderer('jaxon', function(){
             return new View();
         });
 
         // Set the session manager
-        $this->setJaxonSession(function(){
+        $this->setSessionManager(function(){
             return new Session();
         });
     }
