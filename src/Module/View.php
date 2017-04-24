@@ -20,7 +20,7 @@ class View implements ViewRenderer
      */
     public function addNamespace($sNamespace, $sDirectory, $sExtension = '')
     {
-        // This method is provided by the Config trait
+        // This method is provided by the Template trait
         $this->addViewNamespace($sNamespace, $sDirectory, $sExtension);
     }
 
@@ -33,7 +33,14 @@ class View implements ViewRenderer
      */
     public function make(View\Store $store)
     {
+        $sViewName = $store->getViewName();
+        $sNamespace = $store->getNamespace();
+        // In this view renderer, the namespace must always be prepended to the view name.
+        if(substr($sViewName, 0, strlen($sNamespace) + 2) != $sNamespace . '::')
+        {
+            $sViewName = $sNamespace . '::' . $sViewName;
+        }
         // Render the template
-        return trim($this->render($store->getViewName(), $store->getViewData()), " \t\n");
+        return trim($this->render($sViewName, $store->getViewData()), " \t\n");
     }
 }

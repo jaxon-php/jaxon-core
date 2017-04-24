@@ -84,17 +84,13 @@ class Facade
         {
             $sNamespace = substr($sViewName, 0, $iSeparatorPosition);
         }
-        else
-        {
-            $sViewName = $sNamespace . '::' . $sViewName;
-        }
         if(!key_exists($sNamespace, $this->aRenderers))
         {
             // Cannot render a view if there's no renderer corresponding to the namespace.
             return null;
         }
         $sRenderer = $this->aRenderers[$sNamespace];
-        $store->setView($sRenderer, $sViewName, array_merge($this->aViewData, $aViewData));
+        $store->setView($sRenderer, $sNamespace, $sViewName, array_merge($this->aViewData, $aViewData));
         // Set the store to null so a new store will be created for the next view.
         $this->xStore = null;
         // Return the store

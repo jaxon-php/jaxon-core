@@ -6,8 +6,9 @@ class Store
 {
     protected $xFacade;
     protected $sRenderer;
-    protected $aViewData;
+    protected $sNamespace;
     protected $sViewName;
+    protected $aViewData;
 
     public function __construct(Facade $xFacade)
     {
@@ -32,16 +33,29 @@ class Store
     /**
      * Set the view to be rendered, with optional data
      *
+     * @param string        $sRenderer        The view renderer
+     * @param string        $sNamespace       The view namespace
      * @param string        $sViewName        The view name
      * @param string        $aViewData        The view data
      * 
      * @return void
      */
-    public function setView($sRenderer, $sViewName, array $aViewData = array())
+    public function setView($sRenderer, $sNamespace, $sViewName, array $aViewData = array())
     {
         $this->sRenderer = trim($sRenderer);
+        $this->sNamespace = trim($sNamespace);
         $this->sViewName = trim($sViewName);
         $this->aViewData = array_merge($this->aViewData, $aViewData);
+    }
+
+    /**
+     * Get the view namespace
+     * 
+     * @return string        The view namespace
+     */
+    public function getNamespace()
+    {
+        return $this->sNamespace;
     }
 
     /**
