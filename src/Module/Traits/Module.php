@@ -72,7 +72,7 @@ trait Module
     {
         return $this->jaxonResponse;
     }
-    
+
     /**
      * Add a view namespace, and set the corresponding renderer.
      *

@@ -79,18 +79,32 @@ class Manager
     private $xAutoloader;
 
     /**
-     * Confirmation question for Jaxon requests
+     * Javascript confirm function
      *
      * @var Jaxon\Request\Interfaces\Confirm
      */
     private $xConfirm;
 
     /**
-     * Default confirmation question for Jaxon requests
+     * Default javascript confirm function
      *
      * @var Jaxon\Request\Support\Confirm
      */
     private $xDefaultConfirm;
+
+    /**
+     * Javascript dialog function
+     *
+     * @var Jaxon\Request\Interfaces\Dialog
+     */
+    // private $xDialog;
+
+    /**
+     * Default javascript dialog function
+     *
+     * @var Jaxon\Request\Support\Dialog
+     */
+    // private $xDefaultDialog;
 
     /**
      * Initialize the Jaxon Plugin Manager
@@ -108,9 +122,13 @@ class Manager
         // Set response type to JSON
         $this->sResponseType = 'JSON';
 
-        // Confirmation question for Jaxon requests
+        // Javascript confirm function
         $this->xConfirm = null;
         $this->xDefaultConfirm = new \Jaxon\Request\Support\Confirm();
+
+        // Javascript dialog function
+        // $this->xDialog = null;
+        // $this->xDefaultDialog = new \Jaxon\Request\Support\Dialog();
     }
 
     /**
@@ -138,9 +156,9 @@ class Manager
     }
 
     /**
-     * Set the Jaxon request Confirmation object
+     * Set the javascript confirm function
      *
-     * @param \Jaxon\Request\Interfaces\Confirm        $xConfirm     The Jaxon request Confirmation
+     * @param \Jaxon\Request\Interfaces\Confirm        $xConfirm     The javascript confirm function
      *
      * @return void
      */
@@ -150,7 +168,7 @@ class Manager
     }
 
     /**
-     * Get the Jaxon request Confirmation object
+     * Get the javascript confirm function
      *
      * @return \Jaxon\Request\Interfaces\Confirm
      */
@@ -160,7 +178,7 @@ class Manager
     }
 
     /**
-     * Get the Jaxon request default Confirmation object
+     * Get the default javascript confirm function
      *
      * @return \Jaxon\Request\Support\Confirm
      */
@@ -168,6 +186,38 @@ class Manager
     {
         return $this->xDefaultConfirm;
     }
+
+    /**
+     * Set the javascript dialog function
+     *
+     * @param \Jaxon\Request\Interfaces\Dialog        $xDialog     The javascript dialog function
+     *
+     * @return void
+     */
+    /*public function setDialog(\Jaxon\Request\Interfaces\Dialog $xDialog)
+    {
+        $this->xDialog = $xDialog;
+    }*/
+
+    /**
+     * Get the javascript dialog function
+     *
+     * @return \Jaxon\Request\Interfaces\Dialog
+     */
+    /*public function getDialog()
+    {
+        return (($this->xDialog) ? $this->xDialog : $this->xDefaultDialog);
+    }*/
+
+    /**
+     * Get the default javascript dialog function
+     *
+     * @return \Jaxon\Request\Support\Dialog
+     */
+    /*public function getDefaultDialog()
+    {
+        return $this->xDefaultDialog;
+    }*/
 
     /**
      * Inserts an entry into an array given the specified priority number

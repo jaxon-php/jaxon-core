@@ -31,25 +31,25 @@ class Request extends JsCall
     /**
      * The type of the request
      * 
-     * Can be one of "function", "class" or "event".
+     * Can be one of "function" or "class".
      *
      * @var unknown
      */
     private $sType;
 
     /**
-     * The arguments of the confirm() call
-     *
-     * @var string
-     */
-    protected $sConfirmArgs = null;
-
-    /**
-     * A condition to chech before sending this request
+     * A condition to check before sending this request
      *
      * @var string
      */
     protected $sCondition = null;
+
+    /**
+     * The arguments of the confirm() call
+     *
+     * @var array
+     */
+    protected $aMessageArgs = null;
 
     /**
      * The constructor.
@@ -109,23 +109,34 @@ class Request extends JsCall
      */
     public function confirm($sQuestion)
     {
-        // Save the arguments of the call.
-        $this->sConfirmArgs = func_get_args();
+        $this->sCondition = '__confirm__';
+        $this->aMessageArgs = func_get_args();
+        array_walk($this->aMessageArgs, function(&$xParameter){
+            $xParameter = Parameter::make($xParameter);
+            $xParameter->setCall($this);
+        });
         return $this;
     }
 
     /**
      * Add a condition to the request
      *
-     * @param string        $sCondition               The condition to check
-     *
      * The request is sent only if the condition is true.
+     *
+     * @param string        $sCondition               The condition to check
+     * @param string        $sMessage                 The message to show if the request is not sent
      *
      * @return Request
      */
-    public function when($sCondition)
+    public function when($sCondition, $sMessage = '')
     {
         $this->sCondition = Parameter::make($sCondition)->getScript();
+        $this->aMessageArgs = func_get_args();
+        array_shift($this->aMessageArgs); // Remove the first entry (the condition) from the array
+        array_walk($this->aMessageArgs, function(&$xParameter){
+            $xParameter = Parameter::make($xParameter);
+            $xParameter->setCall($this);
+        });
         return $this;
     }
 
@@ -135,12 +146,19 @@ class Request extends JsCall
      * The request is sent only if the condition is false.
      *
      * @param string        $sCondition               The condition to check
+     * @param string        $sMessage                 The message to show if the request is not sent
      *
      * @return Request
      */
-    public function unless($sCondition)
+    public function unless($sCondition, $sMessage = '')
     {
-        $this->sCondition = '!' . Parameter::make($sCondition)->getScript();
+        $this->sCondition = '!(' . Parameter::make($sCondition)->getScript() . ')';
+        $this->aMessageArgs = func_get_args();
+        array_shift($this->aMessageArgs); // Remove the first entry (the condition) from the array
+        array_walk($this->aMessageArgs, function(&$xParameter){
+            $xParameter = Parameter::make($xParameter);
+            $xParameter->setCall($this);
+        });
         return $this;
     }
 
@@ -151,85 +169,90 @@ class Request extends JsCall
      */
     public function getScript()
     {
-        if(!is_array($this->sConfirmArgs) || count($this->sConfirmArgs) < 1)
-        {
-            $sJsCode = $this->getOption('core.prefix.' . $this->sType) . parent::getScript();
-            if(($this->sCondition))
-            {
-                $sJsCode = 'if(' . $this->sCondition . '){' . $sJsCode . ';}';
-            }
-            return $sJsCode;
-        }
-
         /*
-         * JQuery variables sometimes depend on the context where they are used, eg. when they use $(this).
-         * When a confirmation question is added, the Jaxon calls are maid in a different context,
+         * JQuery variables sometimes depend on the context where they are used, eg. when their value depends on $(this).
+         * When a confirmation question is added, the Jaxon calls are made in a different context,
          * making those variables invalid.
          * To avoid issues related to these context changes, the JQuery selectors values are first saved into
-         * local variables which are then used in function calls.
+         * local variables, which are then used in Jaxon function calls.
          */
-        $sVars = ''; // Array of local variables for JQuery selectors
-        $nVarId = 1; // Position of the variables, starting to 1
+        $sVars = ''; // Javascript code defining all the variables values.
+        $nVarId = 1; // Position of the variables, starting from 1.
         // This array will avoid declaring many variables with the same value.
         // The array key is the variable value, while the array value is the variable name.
-        $aVariables = array();
+        $aVariables = array(); // Array of local variables.
         foreach($this->aParameters as &$xParameter)
         {
+            $sParameterStr = $xParameter->getScript();
             if($xParameter instanceof \Jaxon\JQuery\Dom\Element)
             {
-                if(!array_key_exists((string)$xParameter, $aVariables))
+                if(!array_key_exists($sParameterStr, $aVariables))
                 {
                     // The value is not yet defined. A new variable is created.
                     $sVarName = "jxnVar$nVarId";
-                    $aVariables[(string)$xParameter] = $sVarName;
+                    $aVariables[$sParameterStr] = $sVarName;
                     $sVars .= "$sVarName=$xParameter;";
-                    $xParameter = $sVarName;
+                    $xParameter = Parameter::make($sVarName);
                     $nVarId++;
                 }
                 else
                 {
                     // The value is already defined. The corresponding variable is assigned.
-                    $xParameter = $aVariables[(string)$xParameter];
+                    $xParameter = Parameter::make($aVariables[$sParameterStr]);
                 }
             }
         }
+
+        $sPhrase = '';
+        if(count($this->aMessageArgs) > 0)
+        {
+            $sPhrase = array_shift($this->aMessageArgs); // The first array entry is the question.
+            // $sPhrase = "'" . addslashes($sPhrase) . "'"; // Wrap the phrase with single quotes
+            if(count($this->aMessageArgs) > 0)
+            {
+                $nParamId = 1;
+                foreach($this->aMessageArgs as &$xParameter)
+                {
+                    $sParameterStr = $xParameter->getScript();
+                    if($xParameter instanceof \Jaxon\JQuery\Dom\Element)
+                    {
+                        if(!array_key_exists($sParameterStr, $aVariables))
+                        {
+                            // The value is not yet defined. A new variable is created.
+                            $sVarName = "jxnVar$nVarId";
+                            $aVariables[$sParameterStr] = $sVarName;
+                            $sVars .= "$sVarName=$xParameter;";
+                            $xParameter = Parameter::make($sVarName);
+                            $nVarId++;
+                        }
+                        else
+                        {
+                            // The value is already defined. The corresponding variable is assigned.
+                            $xParameter = Parameter::make($aVariables[$sParameterStr]);
+                        }
+                    }
+                    $xParameter = "'$nParamId':" . $xParameter->getScript();
+                    $nParamId++;
+                }
+                $sPhrase .= '.supplant({' . implode(',', $this->aMessageArgs) . '})';
+            }
+        }
+
         $sScript = $this->getOption('core.prefix.' . $this->sType) . parent::getScript();
-
-        $sConfirmQuestion = array_shift($this->sConfirmArgs); // The first array entry is the question.
-        $sConfirmQuestion = "'" . addslashes($sConfirmQuestion) . "'"; // Wrap the question with single quotes
-        $nParamId = 1;
-        foreach($this->sConfirmArgs as &$xParameter)
+        if($this->sCondition == '__confirm__')
         {
-            if($xParameter instanceof \Jaxon\JQuery\Dom\Element)
+            $xDialog = $this->getPluginManager()->getConfirm();
+            $sScript = $xDialog->confirm($sPhrase, $sScript, '');
+        }
+        else if($this->sCondition !== null)
+        {
+            $sScript = 'if(' . $this->sCondition . '){' . $sScript . ';}';
+            if(($sPhrase))
             {
-                if(!array_key_exists((string)$xParameter, $aVariables))
-                {
-                    // The value is not yet defined. A new variable is created.
-                    $sVarName = "jxnVar$nVarId";
-                    $aVariables[(string)$xParameter] = $sVarName;
-                    $sVars .= "$sVarName=$xParameter;";
-                    $xParameter = "'$nParamId':$sVarName";
-                    $nVarId++;
-                }
-                else
-                {
-                    // The value is already defined. The corresponding variable is assigned.
-                    $xParameter = "'$nParamId':" . $aVariables[(string)$xParameter];
-                }
-                $nParamId++;
+                $sScript .= 'else{alert(' . $sPhrase . ');}';
             }
         }
-
-        if(count($this->sConfirmArgs) > 0)
-        {
-            $sConfirmQuestion .= '.supplant({' . implode(',', $this->sConfirmArgs) . '})';
-        }
-        $sJsCode = $sVars . $this->getPluginManager()->getConfirm()->confirm($sConfirmQuestion, $sScript, '');
-        if(($this->sCondition))
-        {
-            $sJsCode = 'if(' . $this->sCondition . '){' . $sJsCode . ';}';
-        }
-        return $sJsCode;
+        return $sVars . $sScript;
     }
 
     /**
