@@ -130,7 +130,7 @@ class Request extends JsCall
      */
     public function when($sCondition, $sMessage = '')
     {
-        $this->sCondition = Parameter::make($sCondition)->getScript();
+        $this->sCondition = Parameter::make($sCondition)->setCall($this)->getScript();
         $this->aMessageArgs = func_get_args();
         array_shift($this->aMessageArgs); // Remove the first entry (the condition) from the array
         array_walk($this->aMessageArgs, function(&$xParameter){
@@ -152,7 +152,7 @@ class Request extends JsCall
      */
     public function unless($sCondition, $sMessage = '')
     {
-        $this->sCondition = '!(' . Parameter::make($sCondition)->getScript() . ')';
+        $this->sCondition = '!(' . Parameter::make($sCondition)->setCall($this)->getScript() . ')';
         $this->aMessageArgs = func_get_args();
         array_shift($this->aMessageArgs); // Remove the first entry (the condition) from the array
         array_walk($this->aMessageArgs, function(&$xParameter){
@@ -241,15 +241,17 @@ class Request extends JsCall
         $sScript = $this->getOption('core.prefix.' . $this->sType) . parent::getScript();
         if($this->sCondition == '__confirm__')
         {
-            $xDialog = $this->getPluginManager()->getConfirm();
-            $sScript = $xDialog->confirm($sPhrase, $sScript, '');
+            $xConfirm = $this->getPluginManager()->getConfirm();
+            $sScript = $xConfirm->confirm($sPhrase, $sScript, '');
         }
         else if($this->sCondition !== null)
         {
+            $xAlert = $this->getPluginManager()->getAlert();
+            $xAlert->setReturn(true);
             $sScript = 'if(' . $this->sCondition . '){' . $sScript . ';}';
             if(($sPhrase))
             {
-                $sScript .= 'else{alert(' . $sPhrase . ');}';
+                $sScript .= 'else{' . $xAlert->warning($sPhrase) . ';}';
             }
         }
         return $sVars . $sScript;
