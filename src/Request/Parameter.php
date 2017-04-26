@@ -121,6 +121,7 @@ class Parameter implements Interfaces\Parameter
     public function setCall(JsCall $xCall)
     {
         $this->xRequest = $xCall;
+        return $this;
     }
 
     /**
