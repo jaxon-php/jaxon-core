@@ -232,13 +232,13 @@ class Jaxon
      * @param string            $sDirectory             The path to the directory
      * @param string|null       $sNamespace             The associated namespace
      * @param string            $sSeparator             The character to use as separator in javascript class names
-     * @param array             $aExcluded              The functions that are not to be exported
+     * @param array             $aProtected             The functions that are not to be exported
      *
      * @return boolean
      */
-    public function addClassDir($sDirectory, $sNamespace = null, $sSeparator = '.', array $aExcluded = array())
+    public function addClassDir($sDirectory, $sNamespace = null, $sSeparator = '.', array $aProtected = array())
     {
-        return $this->getPluginManager()->addClassDir($sDirectory, $sNamespace, $sSeparator, $aExcluded);
+        return $this->getPluginManager()->addClassDir($sDirectory, $sNamespace, $sSeparator, $aProtected);
     }
 
     /**

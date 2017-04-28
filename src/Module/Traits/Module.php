@@ -32,13 +32,14 @@ trait Module
 
     protected $appConfig = null;
     protected $jaxonResponse = null;
-    protected $jaxonControllerClass = '\\Jaxon\\Module\\Controller';
+
+    protected $jaxonBaseClass = '\\Jaxon\\Module\\Controller';
+
     protected $jaxonViewRenderers = array();
     protected $jaxonViewNamespaces = array();
 
-    // Library and application options
-    private $jaxonLibOptions = null;
-    private $jaxonAppOptions = null;
+    // Library options
+    protected $jaxonLibraryOptions = null;
 
     /**
      * Set the module specific options for the Jaxon library.
@@ -71,6 +72,27 @@ trait Module
     public function ajaxResponse()
     {
         return $this->jaxonResponse;
+    }
+
+    /**
+     * Add a controller namespace.
+     *
+     * @param string            $sDirectory             The path to the directory
+     * @param string            $sNamespace             The associated namespace
+     * @param string            $sSeparator             The character to use as separator in javascript class names
+     * @param array             $aProtected             The functions that are not to be exported
+     *
+     * @return void
+     */
+    public function addClassNamespace($sDirectory, $sNamespace, $sSeparator = '.', array $aProtected = array())
+    {
+        // Valid separator values are '.' and '_'. Any other value is considered as '.'.
+        $sSeparator = trim($sSeparator);
+        if($sSeparator != '_')
+        {
+            $sSeparator = '.';
+        }
+        jaxon()->addClassDir(trim($sDirectory), trim($sNamespace), $sSeparator, $aProtected);
     }
 
     /**
@@ -108,39 +130,14 @@ trait Module
      */
     protected function setLibraryOptions($bExtern, $bMinify, $sJsUri, $sJsDir)
     {
-        if(!$this->jaxonLibOptions)
+        if(!$this->jaxonLibraryOptions)
         {
-            $this->jaxonLibOptions = new stdClass();
+            $this->jaxonLibraryOptions = new stdClass();
         }
-        $this->jaxonLibOptions->bExtern = $bExtern;
-        $this->jaxonLibOptions->bMinify = $bMinify;
-        $this->jaxonLibOptions->sJsUri = $sJsUri;
-        $this->jaxonLibOptions->sJsDir = $sJsDir;
-    }
-
-    /**
-     * Set the Jaxon application default options.
-     *
-     * @return void
-     */
-    protected function setApplicationOptions($sDirectory, $sNamespace)
-    {
-        if(!$this->jaxonAppOptions)
-        {
-            $this->jaxonAppOptions = new stdClass();
-        }
-        $this->jaxonAppOptions->sDirectory = $sDirectory;
-        $this->jaxonAppOptions->sNamespace = $sNamespace;
-    }
-
-    /**
-     * Set the Jaxon controller base class name.
-     *
-     * @return void
-     */
-    protected function setControllerClass($controllerClass)
-    {
-        $this->jaxonControllerClass = $controllerClass;
+        $this->jaxonLibraryOptions->bExtern = $bExtern;
+        $this->jaxonLibraryOptions->bMinify = $bMinify;
+        $this->jaxonLibraryOptions->sJsUri = $sJsUri;
+        $this->jaxonLibraryOptions->sJsDir = $sJsDir;
     }
 
     /**
@@ -154,6 +151,10 @@ trait Module
         {
             return;
         }
+
+        $jaxon = jaxon();
+        // Use the Composer autoloader. It's important to call this before triggers and callbacks.
+        $jaxon->useComposerAutoloader();
 
         // Set this object as the Module in the DI container.
         // Now it will be returned by a call to jaxon()->module().
@@ -174,39 +175,27 @@ trait Module
         // Event after the module has read the config
         $this->triggerEvent('post.config');
 
-        $jaxon = jaxon();
-        // Use the Composer autoloader
-        $jaxon->useComposerAutoloader();
         // Create the Jaxon response
         $this->jaxonResponse = jaxon()->getResponse();
 
-        if(($this->jaxonLibOptions) && ($this->jaxonAppOptions))
+        if(($this->jaxonLibraryOptions))
         {
             // Jaxon library settings
             if(!$jaxon->hasOption('js.app.extern'))
             {
-                $jaxon->setOption('js.app.extern', $this->jaxonLibOptions->bExtern);
+                $jaxon->setOption('js.app.extern', $this->jaxonLibraryOptions->bExtern);
             }
             if(!$jaxon->hasOption('js.app.minify'))
             {
-                $jaxon->setOption('js.app.minify', $this->jaxonLibOptions->bMinify);
+                $jaxon->setOption('js.app.minify', $this->jaxonLibraryOptions->bMinify);
             }
             if(!$jaxon->hasOption('js.app.uri'))
             {
-                $jaxon->setOption('js.app.uri', $this->jaxonLibOptions->sJsUri);
+                $jaxon->setOption('js.app.uri', $this->jaxonLibraryOptions->sJsUri);
             }
             if(!$jaxon->hasOption('js.app.dir'))
             {
-                $jaxon->setOption('js.app.dir', $this->jaxonLibOptions->sJsDir);
-            }
-    
-            if(!$this->appConfig->hasOption('controllers.directory'))
-            {
-                $this->appConfig->setOption('controllers.directory', $this->jaxonAppOptions->sDirectory);
-            }
-            if(!$this->appConfig->hasOption('controllers.namespace'))
-            {
-                $this->appConfig->setOption('controllers.namespace', $this->jaxonAppOptions->sNamespace);
+                $jaxon->setOption('js.app.dir', $this->jaxonLibraryOptions->sJsDir);
             }
     
             // Set the request URI
@@ -225,6 +214,36 @@ trait Module
         $this->triggerEvent('post.check');
 
         // Jaxon application settings
+        // The public methods of the base class must not be exported to javascript
+        $protected = array();
+        $controllerClass = new \ReflectionClass($this->jaxonBaseClass);
+        foreach ($controllerClass->getMethods(\ReflectionMethod::IS_PUBLIC) as $xMethod)
+        {
+            $protected[] = $xMethod->getShortName();
+        }
+        if($this->appConfig->hasOption('controllers') && is_array($this->appConfig->getOption('controllers')))
+        {
+            $aNamespaces = $this->appConfig->getOption('controllers');
+            foreach($aNamespaces as $aNamespace)
+            {
+                // Check mandatory options
+                if(!key_exists('directory', $aNamespace) || !key_exists('namespace', $aNamespace))
+                {
+                    continue;
+                }
+                // Set the default values for optional parameters
+                if(!key_exists('separator', $aNamespace))
+                {
+                    $aNamespace['separator'] = '.';
+                }
+                if(!key_exists('protected', $aNamespace))
+                {
+                    $aNamespace['protected'] = [];
+                }
+                $this->addClassNamespace($aNamespace['directory'], $aNamespace['namespace'],
+                    $aNamespace['separator'], array_merge($aNamespace['protected'], $protected));
+            }
+        }
 
         // Save the view namespaces
         $sDefaultNamespace = $this->appConfig->getOption('options.views.default', false);
@@ -248,20 +267,6 @@ trait Module
         // Save the view renderers and namespaces in the DI container
         $this->initViewRenderers($this->jaxonViewRenderers);
         $this->initViewNamespaces($this->jaxonViewNamespaces, $sDefaultNamespace);
-
-        // Register the default Jaxon class directory
-        $directory = $this->appConfig->getOption('controllers.directory');
-        $namespace = $this->appConfig->getOption('controllers.namespace');
-        $separator = $this->appConfig->getOption('controllers.separator', '.');
-        $protected = $this->appConfig->getOption('controllers.protected', array());
-
-        // The public methods of the Controller base class must not be exported to javascript
-        $controllerClass = new \ReflectionClass($this->jaxonControllerClass);
-        foreach ($controllerClass->getMethods(\ReflectionMethod::IS_PUBLIC) as $xMethod)
-        {
-            $protected[] = $xMethod->getShortName();
-        }
-        $jaxon->addClassDir($directory, $namespace, $separator, $protected);
 
         // Event after setting up the module
         $this->triggerEvent('post.setup');

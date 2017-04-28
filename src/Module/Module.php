@@ -94,14 +94,14 @@ class Module
             }
         }*/
         // Jaxon application settings
-        $aMandatoryOptions = ['controllers.directory', 'controllers.namespace'];
+        /*$aMandatoryOptions = ['controllers.directory', 'controllers.namespace'];
         foreach($aMandatoryOptions as $sOption)
         {
             if(!$this->appConfig->hasOption($sOption))
             {
                 throw new \Jaxon\Exception\Config\Data(jaxon_trans('config.errors.data.missing', array('key' => 'app:' . $sOption)));
             }
-        }
+        }*/
     }
 
     /**
