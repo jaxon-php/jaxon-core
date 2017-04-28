@@ -86,6 +86,6 @@ class Store
     public function __toString()
     {
         $xRenderer = $this->xFacade->getViewRenderer($this->sRenderer);
-        return ($xRenderer) ? $xRenderer->make($this) : '';
+        return ($xRenderer) ? $xRenderer->render($this) : '';
     }
 }

@@ -24,5 +24,5 @@ interface View
      * 
      * @return string        The string representation of the view
      */
-    public function make(Store $store);
+    public function render(Store $store);
 }

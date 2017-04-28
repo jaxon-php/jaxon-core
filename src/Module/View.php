@@ -2,13 +2,11 @@
 
 namespace Jaxon\Module;
 
-use Jaxon\Module\Interfaces\View as ViewRenderer;
+use Jaxon\Module\Interfaces\View as ViewInterface;
 use Jaxon\Utils\Traits\Template;
 
-class View implements ViewRenderer
+class View implements ViewInterface
 {
-    use Template;
-
     /**
      * Add a namespace to this view renderer
      *
@@ -21,7 +19,7 @@ class View implements ViewRenderer
     public function addNamespace($sNamespace, $sDirectory, $sExtension = '')
     {
         // This method is provided by the Template trait
-        $this->addViewNamespace($sNamespace, $sDirectory, $sExtension);
+        jaxon()->addViewNamespace($sNamespace, $sDirectory, $sExtension);
     }
 
     /**
@@ -31,7 +29,7 @@ class View implements ViewRenderer
      * 
      * @return string        The string representation of the view
      */
-    public function make(View\Store $store)
+    public function render(View\Store $store)
     {
         $sViewName = $store->getViewName();
         $sNamespace = $store->getNamespace();
@@ -41,6 +39,6 @@ class View implements ViewRenderer
             $sViewName = $sNamespace . '::' . $sViewName;
         }
         // Render the template
-        return trim($this->render($sViewName, $store->getViewData()), " \t\n");
+        return trim(jaxon()->render($sViewName, $store->getViewData()), " \t\n");
     }
 }
