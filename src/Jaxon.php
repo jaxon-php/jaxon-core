@@ -576,12 +576,22 @@ class Jaxon
     }
 
     /**
-     * Get the single Module instance
+     * Get the Sentry instance
      *
-     * @return \Jaxon\Module\Module
+     * @return \Jaxon\Sentry\Sentry
      */
-    public function module()
+    public function sentry()
     {
-        return Utils\Container::getInstance()->getModule();
+        return Utils\Container::getInstance()->getSentry();
+    }
+
+    /**
+     * Get the Armada instance
+     *
+     * @return \Jaxon\Sentry\Traits\Armada
+     */
+    public function armada()
+    {
+        return Utils\Container::getInstance()->getArmada();
     }
 }

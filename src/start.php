@@ -63,8 +63,7 @@ function rq($classname = null)
 {
     if(($classname))
     {
-        $controller = jaxon()->module()->controller($classname);
-        return ($controller) ? $controller->request() : null;
+        return jaxon()->sentry()->request($classname);
     }
     return \Jaxon\Utils\Container::getInstance()->getRequestFactory();
 }

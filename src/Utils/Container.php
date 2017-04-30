@@ -15,7 +15,7 @@
 namespace Jaxon\Utils;
 
 use Lemon\Event\EventDispatcher;
-use Jaxon\Module\View\Renderer;
+use Jaxon\Sentry\View\Renderer;
 
 class Container
 {
@@ -124,15 +124,23 @@ class Container
         $this->di['jaxon'] = function($c){
             return new \Jaxon\Jaxon();
         };
-        // Module
-        $this->di['module'] = function($c){
-            return new \Jaxon\Module\Module();
+        // Jaxon Sentry
+        $this->di['sentry'] = function($c){
+            // This class is not defined in this package
+            $sClass = '\\Jaxon\\Sentry\\Sentry';
+            return new $sClass;
+        };
+        // Armada
+        $this->di['armada'] = function($c){
+            // This class is not defined in this package
+            $sClass = '\\Jaxon\\Armada\\Armada';
+            return new $sClass;
         };
         // View Renderer Facade
-        $this->di['module.view.renderer'] = function($c){
+        $this->di['armada.view.renderer'] = function($c){
             $aRenderers = $c['view.data.renderers'];
             $sDefaultNamespace = $c['view.data.namespace.default'];
-            return new \Jaxon\Module\View\Facade($aRenderers, $sDefaultNamespace);
+            return new \Jaxon\Sentry\View\Facade($aRenderers, $sDefaultNamespace);
         };
     }
 
@@ -277,25 +285,35 @@ class Container
     }
 
     /**
-     * Get the Module object
+     * Get the Sentry instance
      *
-     * @return object        The Module object
+     * @return object        The Sentry instance
      */
-    public function getModule()
+    public function getSentry()
     {
-        return $this->di['module'];
+        return $this->di['sentry'];
     }
 
     /**
-     * Set the module
+     * Get the Armada object
      *
-     * @param object                $xModule            The new module
+     * @return object        The Armada object
+     */
+    public function getArmada()
+    {
+        return $this->di['armada'];
+    }
+
+    /**
+     * Set the armada
+     *
+     * @param object                $xArmada            The new armada
      *
      * @return void
      */
-    public function setModule($xModule)
+    public function setArmada($xArmada)
     {
-        $this->di['module'] = $xModule;
+        $this->di['armada'] = $xArmada;
     }
 
     /**
@@ -334,12 +352,12 @@ class Container
     public function addViewRenderer($sId, $xClosure)
     {
         // Return the non-initialiazed view renderer
-        $this->di['module.view.base.' . $sId] = $xClosure;
+        $this->di['armada.view.base.' . $sId] = $xClosure;
 
         // Return the initialized view renderer
-        $this->di['module.view.' . $sId] = function($c) use($sId) {
+        $this->di['armada.view.' . $sId] = function($c) use($sId) {
             // Get the defined renderer
-            $renderer = $c['module.view.base.' . $sId];
+            $renderer = $c['armada.view.base.' . $sId];
             // Init the renderer with the template namespaces
             $aNamespaces = $this->di['view.data.namespaces'];
             if(key_exists($sId, $aNamespaces))
@@ -366,10 +384,10 @@ class Container
         if(!$sId)
         {
             // Return the view renderer facade
-            return $this->di['module.view.renderer'];
+            return $this->di['armada.view.renderer'];
         }
         // Return the view renderer with the given id
-        return $this->di['module.view.' . $sId];
+        return $this->di['armada.view.' . $sId];
     }
 
     /**
@@ -379,7 +397,7 @@ class Container
      */
     public function getSessionManager()
     {
-        return $this->di['module.session'];
+        return $this->di['armada.session'];
     }
 
     /**
@@ -391,6 +409,6 @@ class Container
      */
     public function setSessionManager($xClosure)
     {
-        $this->di['module.session'] = $xClosure;
+        $this->di['armada.session'] = $xClosure;
     }
 }
