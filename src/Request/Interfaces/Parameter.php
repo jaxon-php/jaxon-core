@@ -18,13 +18,6 @@ use Jaxon\Request\JsCall;
 interface Parameter
 {
     /**
-     * Set the call this parameter is passed to.
-     *
-     * @return void
-     */
-    public function setCall(JsCall $xCall);
-
-    /**
      * Generate the javascript code of the parameter.
      *
      * @return string

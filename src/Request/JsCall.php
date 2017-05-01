@@ -67,6 +67,7 @@ class JsCall implements JsonSerializable
     public function useSingleQuote()
     {
         $this->sQuoteCharacter = "'";
+        return $this;
     }
 
     /**
@@ -77,6 +78,7 @@ class JsCall implements JsonSerializable
     public function useSingleQuotes()
     {
         $this->sQuoteCharacter = "'";
+        return $this;
     }
 
     /**
@@ -119,7 +121,6 @@ class JsCall implements JsonSerializable
      */
     public function setParameter(Interfaces\Parameter $xParameter)
     {
-        $xParameter->setCall($this);
         $this->aParameters[$nPosition] = $xParameter;
     }
 
@@ -133,7 +134,6 @@ class JsCall implements JsonSerializable
      */
     public function pushParameter(Interfaces\Parameter $xParameter)
     {
-        $xParameter->setCall($this);
         $this->aParameters[] = $xParameter;
     }
 

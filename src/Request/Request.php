@@ -113,7 +113,6 @@ class Request extends JsCall
         $this->aMessageArgs = func_get_args();
         array_walk($this->aMessageArgs, function(&$xParameter){
             $xParameter = Parameter::make($xParameter);
-            $xParameter->setCall($this);
         });
         return $this;
     }
@@ -130,12 +129,11 @@ class Request extends JsCall
      */
     public function when($sCondition, $sMessage = '')
     {
-        $this->sCondition = Parameter::make($sCondition)->setCall($this)->getScript();
+        $this->sCondition = Parameter::make($sCondition)->getScript();
         $this->aMessageArgs = func_get_args();
         array_shift($this->aMessageArgs); // Remove the first entry (the condition) from the array
         array_walk($this->aMessageArgs, function(&$xParameter){
             $xParameter = Parameter::make($xParameter);
-            $xParameter->setCall($this);
         });
         return $this;
     }
@@ -152,12 +150,11 @@ class Request extends JsCall
      */
     public function unless($sCondition, $sMessage = '')
     {
-        $this->sCondition = '!(' . Parameter::make($sCondition)->setCall($this)->getScript() . ')';
+        $this->sCondition = '!(' . Parameter::make($sCondition)->getScript() . ')';
         $this->aMessageArgs = func_get_args();
         array_shift($this->aMessageArgs); // Remove the first entry (the condition) from the array
         array_walk($this->aMessageArgs, function(&$xParameter){
             $xParameter = Parameter::make($xParameter);
-            $xParameter->setCall($this);
         });
         return $this;
     }
@@ -192,14 +189,14 @@ class Request extends JsCall
                     $sVarName = "jxnVar$nVarId";
                     $aVariables[$sParameterStr] = $sVarName;
                     $sVars .= "$sVarName=$xParameter;";
-                    $xParameter = Parameter::make($sVarName);
                     $nVarId++;
                 }
                 else
                 {
                     // The value is already defined. The corresponding variable is assigned.
-                    $xParameter = Parameter::make($aVariables[$sParameterStr]);
+                    $sVarName = $aVariables[$sParameterStr];
                 }
+                $xParameter = new Parameter(Jaxon::JS_VALUE, $sVarName);
             }
         }
 
@@ -222,14 +219,14 @@ class Request extends JsCall
                             $sVarName = "jxnVar$nVarId";
                             $aVariables[$sParameterStr] = $sVarName;
                             $sVars .= "$sVarName=$xParameter;";
-                            $xParameter = Parameter::make($sVarName);
                             $nVarId++;
                         }
                         else
                         {
                             // The value is already defined. The corresponding variable is assigned.
-                            $xParameter = Parameter::make($aVariables[$sParameterStr]);
+                            $sVarName = $aVariables[$sParameterStr];
                         }
+                        $xParameter = new Parameter(Jaxon::JS_VALUE, $sVarName);
                     }
                     $xParameter = "'$nParamId':" . $xParameter->getScript();
                     $nParamId++;

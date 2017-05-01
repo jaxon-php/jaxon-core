@@ -106,16 +106,6 @@ class Element implements JsonSerializable, Parameter
     }
 
     /**
-     * Set the call this parameter is passed to.
-     *
-     * @return void
-     */
-    public function setCall(JsCall $xCall)
-    {
-        // Nothing to do.
-    }
-
-    /**
      * Generate the jQuery call.
      *
      * @return string

@@ -114,17 +114,6 @@ class Parameter implements Interfaces\Parameter
     }
 
     /**
-     * Set the call this parameter is passed to.
-     *
-     * @return void
-     */
-    public function setCall(JsCall $xCall)
-    {
-        $this->xRequest = $xCall;
-        return $this;
-    }
-
-    /**
      * Generate the javascript code.
      *
      * @return string
@@ -132,7 +121,7 @@ class Parameter implements Interfaces\Parameter
     public function getScript()
     {
         $sJsCode = '';
-        $sQuoteCharacter = $this->xRequest->sQuoteCharacter;
+        $sQuoteCharacter = "'";
         switch($this->sType)
         {
         case Jaxon::FORM_VALUES:
