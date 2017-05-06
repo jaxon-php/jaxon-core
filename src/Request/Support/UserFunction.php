@@ -38,7 +38,7 @@
  * @copyright Copyright (c) 2005-2007 by Jared White & J. Max Wilson
  * @copyright Copyright (c) 2008-2010 by Joseph Woolley, Steffen Konerow, Jared White  & J. Max Wilson
  * @copyright 2016 Thierry Feuzeu <thierry.feuzeu@gmail.com>
- * @license https://opensource.org/licenses/BSD-2-Clause BSD 2-Clause License
+ * @license https://opensource.org/licenses/BSD-3-Clause BSD 3-Clause License
  * @link https://github.com/jaxon-php/jaxon-core
  */
 

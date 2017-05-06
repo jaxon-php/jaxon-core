@@ -8,7 +8,7 @@
  * @package jaxon-core
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
  * @copyright 2016 Thierry Feuzeu <thierry.feuzeu@gmail.com>
- * @license https://opensource.org/licenses/BSD-2-Clause BSD 2-Clause License
+ * @license https://opensource.org/licenses/BSD-3-Clause BSD 3-Clause License
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
@@ -137,7 +137,7 @@ class Container
             return new $sClass;
         };
         // View Renderer Facade
-        $this->di['armada.view.renderer'] = function($c){
+        $this->di['sentry.view.renderer'] = function($c){
             $aRenderers = $c['view.data.renderers'];
             $sDefaultNamespace = $c['view.data.namespace.default'];
             return new \Jaxon\Sentry\View\Facade($aRenderers, $sDefaultNamespace);
@@ -352,12 +352,12 @@ class Container
     public function addViewRenderer($sId, $xClosure)
     {
         // Return the non-initialiazed view renderer
-        $this->di['armada.view.base.' . $sId] = $xClosure;
+        $this->di['sentry.view.base.' . $sId] = $xClosure;
 
         // Return the initialized view renderer
-        $this->di['armada.view.' . $sId] = function($c) use($sId) {
+        $this->di['sentry.view.' . $sId] = function($c) use($sId) {
             // Get the defined renderer
-            $renderer = $c['armada.view.base.' . $sId];
+            $renderer = $c['sentry.view.base.' . $sId];
             // Init the renderer with the template namespaces
             $aNamespaces = $this->di['view.data.namespaces'];
             if(key_exists($sId, $aNamespaces))
@@ -384,10 +384,10 @@ class Container
         if(!$sId)
         {
             // Return the view renderer facade
-            return $this->di['armada.view.renderer'];
+            return $this->di['sentry.view.renderer'];
         }
         // Return the view renderer with the given id
-        return $this->di['armada.view.' . $sId];
+        return $this->di['sentry.view.' . $sId];
     }
 
     /**
