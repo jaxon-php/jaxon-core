@@ -307,7 +307,7 @@ class Manager
 
             $mFunction = array(&$this, '__argumentDecodeUTF8_' . $sFunction);
             array_walk($this->aArgs, $mFunction);
-            $this->setOption('decodeUTF8Input', false);
+            $this->setOption('core.decode_utf8', false);
         }
         
         return $this->aArgs;
