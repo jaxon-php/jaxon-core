@@ -298,7 +298,7 @@ class Manager
      */
     private function generateHash()
     {
-        $sHash = '';
+        $sHash = $this->getVersion();
         foreach($this->aPlugins as $xPlugin)
         {
             $sHash .= $xPlugin->generateHash();

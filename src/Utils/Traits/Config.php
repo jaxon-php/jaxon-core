@@ -17,6 +17,16 @@ use Jaxon\Utils\Container;
 Trait Config
 {
     /**
+     * Get the Jaxon library version number
+     *
+     * @return string        The version number
+     */
+    public function getVersion()
+    {
+        return Container::getInstance()->getVersion();
+    }
+
+    /**
      * Set the value of a config option
      *
      * @param string        $sName                The option name

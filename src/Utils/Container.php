@@ -285,6 +285,16 @@ class Container
     }
 
     /**
+     * Get the Jaxon library version number
+     *
+     * @return string        The version number
+     */
+    public function getVersion()
+    {
+        return $this->getJaxon()->getVersion();
+    }
+
+    /**
      * Get the Sentry instance
      *
      * @return object        The Sentry instance
