@@ -3,7 +3,7 @@
 /**
  * Template.php - Template engine
  *
- * Generate from templates with template vars.
+ * Generate templates with template vars.
  *
  * @package jaxon-core
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
@@ -17,13 +17,13 @@ namespace Jaxon\Utils;
 class Template
 {
     protected $aNamespaces;
-    protected $xEngine;
 
     public function __construct($sTemplateDir)
     {
-        $this->xEngine = new \Latte\Engine;
-        $this->aNamespaces = [];
-        $this->addNamespace('jaxon', rtrim(trim($sTemplateDir), "/\\"), '.tpl');
+        $this->aNamespaces = ['jaxon' => [
+            'directory' => rtrim(trim($sTemplateDir), "/\\") . DIRECTORY_SEPARATOR,
+            'extension' => '.php',
+        ]];
     }
 
     /**
@@ -37,12 +37,14 @@ class Template
      */
     public function addNamespace($sNamespace, $sDirectory, $sExtension = '')
     {
-        if($sNamespace == 'jaxon' && key_exists($sNamespace, $this->aNamespaces))
+        // The 'jaxon' key cannot be overriden
+        if($sNamespace == 'jaxon')
         {
             return;
         }
+        // Save the namespace
         $this->aNamespaces[$sNamespace] = [
-            'directory' => $sDirectory,
+            'directory' => rtrim(trim($sDirectory), "/\\") . DIRECTORY_SEPARATOR,
             'extension' => $sExtension,
         ];
     }
@@ -56,11 +58,7 @@ class Template
      */
     public function setCacheDir($sCacheDir)
     {
-        $sCacheDir = (string)$sCacheDir;
-        if(is_writable($sCacheDir))
-        {
-            $this->xEngine->setTempDirectory($sCacheDir);
-        }
+        // Nothing to do
     }
 
     /**
@@ -73,6 +71,7 @@ class Template
      */
     public function render($sTemplate, array $aVars = array())
     {
+        $sTemplate = trim($sTemplate);
         // Get the namespace name
         $sNamespace = '';
         $iSeparatorPosition = strrpos($sTemplate, '::');
@@ -81,18 +80,21 @@ class Template
             $sNamespace = substr($sTemplate, 0, $iSeparatorPosition);
             $sTemplate = substr($sTemplate, $iSeparatorPosition + 2);
         }
+        // The default namespace is 'jaxon'
+        if(!($sNamespace = trim($sNamespace)))
+        {
+            $sNamespace = 'jaxon';
+        }
         // Check if the namespace is defined
-        $sNamespace = trim($sNamespace);
         if(!key_exists($sNamespace, $this->aNamespaces))
         {
             return false;
         }
-        $sNamespace = $this->aNamespaces[$sNamespace];
+        $aNamespace = $this->aNamespaces[$sNamespace];
         // Get the template path
-        $sTemplateName = trim($sTemplate) . $sNamespace['extension'];
-        $sTemplatePath = $sNamespace['directory'] . '/' . $sTemplateName;
+        $sTemplatePath = $aNamespace['directory'] . $sTemplate . $aNamespace['extension'];
         // Render the template
-        $sRendered = $this->xEngine->renderToString($sTemplatePath, $aVars);
-        return $sRendered;
+        $xRenderer = new Template\Renderer();
+        return $xRenderer->render($sTemplatePath, $aVars);
     }
 }

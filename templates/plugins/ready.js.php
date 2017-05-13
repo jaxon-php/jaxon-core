@@ -1,7 +1,7 @@
 jaxon.dom.ready(function() {
     jaxon.command.handler.register('cc', jaxon.confirm.commands);
 
-{if ($sPluginScript)}
-{$sPluginScript|noescape}
-{/if}
+<?php if($this->sPluginScript): ?>
+<?php echo $this->sPluginScript ?>
+<?php endif ?>
 });
