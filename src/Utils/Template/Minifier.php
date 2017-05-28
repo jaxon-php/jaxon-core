@@ -12,7 +12,7 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Utils;
+namespace Jaxon\Utils\Template;
 
 use MatthiasMullie\Minify\JS as JsMinifier;
 
@@ -21,8 +21,8 @@ class Minifier
     /**
      * Minify javascript code
      *
-     * @param string        $sJsFile            The javascript file to be minified
-     * @param string        $sMinFile            The minified javascript file
+     * @param string        $sJsFile                The javascript file to be minified
+     * @param string        $sMinFile               The minified javascript file
      *
      * @return boolean        True if the file was minified
      */

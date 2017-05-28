@@ -13,9 +13,7 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Config;
-
-use Jaxon\Utils\Config;
+namespace Jaxon\Utils\Config;
 
 class Yaml
 {
@@ -26,7 +24,7 @@ class Yaml
      * @param string        $sLibKeys           The keys of the library options in the file
      * @param string        $sAppKeys           The keys of the application options in the file
      *
-     * @return Jaxon\Utils\Config
+     * @return Jaxon\Utils\Config\Config
      */
     public static function read($sConfigFile, $sLibKeys = '', $sAppKeys = null)
     {

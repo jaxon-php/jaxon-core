@@ -1,9 +1,9 @@
 <?php
 
 /**
- * Php.php - Jaxon config reader
+ * Json.php - Jaxon config reader
  *
- * Read the config data from a PHP config file, save it locally
+ * Read the config data from a JSON formatted config file, save it locally
  * using the Config class, and then set the options in the library.
  *
  * @package jaxon-core
@@ -13,20 +13,18 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Config;
+namespace Jaxon\Utils\Config;
 
-use Jaxon\Utils\Config;
-
-class Php
+class Json
 {
     /**
-     * Read and set Jaxon options from a PHP config file
+     * Read and set Jaxon options from a JSON formatted config file
      *
      * @param array         $sConfigFile        The full path to the config file
      * @param string        $sLibKeys           The keys of the library options in the file
      * @param string        $sAppKeys           The keys of the application options in the file
      *
-     * @return Jaxon\Utils\Config
+     * @return Jaxon\Utils\Config\Config
      */
     public static function read($sConfigFile, $sLibKeys = '', $sAppKeys = null)
     {
@@ -35,7 +33,8 @@ class Php
         {
             throw new \Jaxon\Exception\Config\File(jaxon_trans('config.errors.file.access', array('path' => $sConfigFile)));
         }
-        $aConfigOptions = include($sConfigFile);
+        $sFileContent = file_get_contents($sConfigFile);
+        $aConfigOptions = json_decode($sFileContent, true);
         if(!is_array($aConfigOptions))
         {
             throw new \Jaxon\Exception\Config\File(jaxon_trans('config.errors.file.content', array('path' => $sConfigFile)));
@@ -44,12 +43,12 @@ class Php
         // Setup the config options into the library.
         $jaxon = jaxon();
         $jaxon->setOptions($aConfigOptions, $sLibKeys);
-        if(!is_string($sAppKeys))
+        $config = null;
+        if(is_string($sAppKeys))
         {
-            return null;
+            $config = new Config();
+            $config->setOptions($aConfigOptions, $sAppKeys);
         }
-        $config = new Config();
-        $config->setOptions($aConfigOptions, $sAppKeys);
         return $config;
     }
 }

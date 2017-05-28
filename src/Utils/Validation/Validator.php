@@ -12,7 +12,7 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Utils;
+namespace Jaxon\Utils\Validation;
 
 /*
  * See the following links to get explanations about the regexp.
@@ -23,13 +23,6 @@ namespace Jaxon\Utils;
  */
 class Validator
 {
-    protected $xValidator;
-
-    public function __construct()
-    {
-        $this->xValidator = false;
-    }
-
     /**
      * Validate a function name
      *

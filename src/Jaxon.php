@@ -476,7 +476,7 @@ class Jaxon
      */
     public function readPhpConfigFile($sConfigFile, $sKey = '')
     {
-        return \Jaxon\Config\Php::read($sConfigFile, $sKey);
+        return Utils\Config\Php::read($sConfigFile, $sKey);
     }
 
     /**
@@ -489,7 +489,7 @@ class Jaxon
      */
     public function readYamlConfigFile($sConfigFile, $sKey = '')
     {
-        return \Jaxon\Config\Yaml::read($sConfigFile, $sKey);
+        return Utils\Config\Yaml::read($sConfigFile, $sKey);
     }
 
     /**
@@ -502,7 +502,7 @@ class Jaxon
      */
     public function readJsonConfigFile($sConfigFile, $sKey = '')
     {
-        return \Jaxon\Config\Json::read($sConfigFile, $sKey);
+        return Utils\Config\Json::read($sConfigFile, $sKey);
     }
 
     /**

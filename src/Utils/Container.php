@@ -86,27 +86,27 @@ class Container
          */
         // Config manager
         $this->di['config'] = function($c){
-            return new Config();
+            return new Config\Config();
         };
         // Minifier
         $this->di['minifier'] = function($c){
-            return new Minifier();
+            return new Template\Minifier();
         };
         // Translator
         $this->di['translator'] = function($c){
-            return new Translator($c['translation_dir'], $c['config']);
+            return new Translation\Translator($c['translation_dir'], $c['config']);
         };
         // Template engine
         $this->di['template'] = function($c){
-            return new Template($c['template_dir']);
+            return new Template\Template($c['template_dir']);
         };
         // Validator
         $this->di['validator'] = function($c){
-            return new Validator();
+            return new Validation\Validator();
         };
         // Paginator
         $this->di['paginator'] = function($c){
-            return new Paginator(0, 1, 1, null);
+            return new Pagination\Paginator(0, 1, 1, null);
         };
         // Event Dispatcher
         $this->di['events'] = function($c){
