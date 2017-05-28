@@ -187,11 +187,21 @@ class Container
     /**
      * Get the config manager
      *
-     * @return object        The config manager
+     * @return Jaxon\Utils\Config\Config            The config manager
      */
     public function getConfig()
     {
         return $this->di['config'];
+    }
+
+    /**
+     * Create a new the config manager
+     *
+     * @return Jaxon\Utils\Config\Config            The config manager
+     */
+    public function newConfig()
+    {
+        return new Config\Config();
     }
 
     /**

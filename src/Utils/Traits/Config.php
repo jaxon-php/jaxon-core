@@ -88,4 +88,14 @@ Trait Config
     {
         return Container::getInstance()->getConfig()->getOptionNames($sPrefix);
     }
+
+    /**
+     * Create a new the config manager
+     *
+     * @return Jaxon\Utils\Config\Config            The config manager
+     */
+    public function newConfig()
+    {
+        return Container::getInstance()->newConfig();
+    }
 }
