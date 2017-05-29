@@ -1,0 +1,1 @@
+    <li class="disabled"><span><?php echo $this->text ?></span></li>

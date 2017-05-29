@@ -49,25 +49,18 @@ class Paginator
     protected $numPages = 0;
     protected $itemsPerPage = 0;
     protected $currentPage = 0;
-    protected $request;
     protected $maxPagesToShow = 10;
     protected $previousText = '';
     protected $nextText = '';
+    protected $request = null;
+    protected $renderer = null;
 
     /**
-     * @param int $totalItems The total number of items.
-     * @param int $itemsPerPage The number of items per page.
-     * @param int $currentPage The current page number.
-     * @param \Jaxon\Request\Request $request A request to a method of an Jaxon class
+     * @param object $renderer
      */
-    public function __construct($totalItems, $itemsPerPage, $currentPage, $request)
+    public function __construct($renderer)
     {
-        $this->totalItems = $totalItems;
-        $this->itemsPerPage = $itemsPerPage;
-        $this->currentPage = $currentPage;
-        $this->setRequest($request);
-
-        $this->updateNumPages();
+        $this->renderer = $renderer;
     }
 
     protected function updateNumPages()
@@ -81,7 +74,8 @@ class Paginator
      */
     public function setMaxPagesToShow($maxPagesToShow)
     {
-        if ($maxPagesToShow < 3) {
+        if($maxPagesToShow < 3)
+        {
             throw new \InvalidArgumentException('maxPagesToShow cannot be less than 3.');
         }
         $this->maxPagesToShow = $maxPagesToShow;
@@ -194,12 +188,13 @@ class Paginator
      */
     public function getPageCall($pageNum)
     {
-        return $this->request->setPageNumber($pageNum)->getScript() . ';return false;';
+        return $this->request->setPageNumber($pageNum)->getScript();
     }
 
     public function getNextPage()
     {
-        if ($this->currentPage < $this->numPages) {
+        if($this->currentPage < $this->numPages)
+        {
             return $this->currentPage + 1;
         }
 
@@ -208,7 +203,8 @@ class Paginator
 
     public function getPrevPage()
     {
-        if ($this->currentPage > 1) {
+        if($this->currentPage > 1)
+        {
             return $this->currentPage - 1;
         }
 
@@ -217,7 +213,8 @@ class Paginator
 
     public function getNextCall()
     {
-        if (!$this->getNextPage()) {
+        if(!$this->getNextPage())
+        {
             return null;
         }
 
@@ -229,7 +226,8 @@ class Paginator
      */
     public function getPrevCall()
     {
-        if (!$this->getPrevPage()) {
+        if(!$this->getPrevPage())
+        {
             return null;
         }
 
@@ -256,43 +254,58 @@ class Paginator
     {
         $pages = array();
 
-        if ($this->numPages <= 1) {
+        if($this->numPages <= 1)
+        {
             return array();
         }
 
-        if ($this->numPages <= $this->maxPagesToShow) {
-            for ($i = 1; $i <= $this->numPages; $i++) {
+        if($this->numPages <= $this->maxPagesToShow)
+        {
+            for($i = 1; $i <= $this->numPages; $i++)
+            {
                 $pages[] = $this->createPage($i, $i == $this->currentPage);
             }
-        } else {
-
+        }
+        else
+        {
             // Determine the sliding range, centered around the current page.
             $numAdjacents = (int) floor(($this->maxPagesToShow - 3) / 2);
 
-            if ($this->currentPage + $numAdjacents > $this->numPages) {
+            if($this->currentPage + $numAdjacents > $this->numPages)
+            {
                 $slidingStart = $this->numPages - $this->maxPagesToShow + 2;
-            } else {
+            }
+            else
+            {
                 $slidingStart = $this->currentPage - $numAdjacents;
             }
-            if ($slidingStart < 2) $slidingStart = 2;
+            if($slidingStart < 2)
+            {
+                $slidingStart = 2;
+            }
 
             $slidingEnd = $slidingStart + $this->maxPagesToShow - 3;
-            if ($slidingEnd >= $this->numPages) $slidingEnd = $this->numPages - 1;
+            if($slidingEnd >= $this->numPages)
+            {
+                $slidingEnd = $this->numPages - 1;
+            }
 
             // Build the list of pages.
             $pages[] = $this->createPage(1, $this->currentPage == 1);
-            if ($slidingStart > 2) {
+            if($slidingStart > 2)
+            {
                 $pages[] = $this->createPageEllipsis();
             }
-            for ($i = $slidingStart; $i <= $slidingEnd; $i++) {
+            for($i = $slidingStart; $i <= $slidingEnd; $i++)
+            {
                 $pages[] = $this->createPage($i, $i == $this->currentPage);
             }
-            if ($slidingEnd < $this->numPages - 1) {
+            if($slidingEnd < $this->numPages - 1)
+            {
                 $pages[] = $this->createPageEllipsis();
             }
             $pages[] = $this->createPage($this->numPages, $this->currentPage == $this->numPages);
         }
-
 
         return $pages;
     }
@@ -333,33 +346,22 @@ class Paginator
      */
     public function toHtml()
     {
-        if ($this->numPages <= 1) {
+        $this->renderer->setPaginator($this);
+        return $this->renderer->toHtml();
+    }
+
+    /**
+     * Render an HTML pagination control.
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        if($this->getNumPages() <= 1)
+        {
             return '';
         }
 
-        $html = '<ul class="pagination">';
-        if ($this->getPrevCall()) {
-            $html .= '<li><a href="javascript:;" onclick="' . $this->getPrevCall() . '">&laquo; '. $this->previousText .'</a></li>';
-        }
-
-        foreach ($this->getPages() as $page) {
-            if ($page['call']) {
-                $html .= '<li' . ($page['isCurrent'] ? ' class="active"' : '') . '><a href="javascript:;" onclick="' . $page['call'] . '">' . $page['num'] . '</a></li>';
-            } else {
-                $html .= '<li class="disabled"><span>' . $page['num'] . '</span></li>';
-            }
-        }
-
-        if ($this->getNextCall()) {
-            $html .= '<li><a href="javascript:;" onclick="' . $this->getNextCall() . '">'. $this->nextText .' &raquo;</a></li>';
-        }
-        $html .= '</ul>';
-
-        return $html;
-    }
-
-    public function __toString()
-    {
         return $this->toHtml();
     }
 
@@ -367,7 +369,8 @@ class Paginator
     {
         $first = ($this->currentPage - 1) * $this->itemsPerPage + 1;
 
-        if ($first > $this->totalItems) {
+        if($first > $this->totalItems)
+        {
             return null;
         }
 
@@ -377,12 +380,14 @@ class Paginator
     public function getCurrentPageLastItem()
     {
         $first = $this->getCurrentPageFirstItem();
-        if ($first === null) {
+        if($first === null)
+        {
             return null;
         }
 
         $last = $first + $this->itemsPerPage - 1;
-        if ($last > $this->totalItems) {
+        if($last > $this->totalItems)
+        {
             return $this->totalItems;
         }
 
@@ -395,9 +400,19 @@ class Paginator
         return $this;
     }
 
+    public function getPreviousText()
+    {
+        return $this->previousText;
+    }
+
     public function setNextText($text)
     {
         $this->nextText = $text;
         return $this;
+    }
+
+    public function getNextText()
+    {
+        return $this->nextText;
     }
 }

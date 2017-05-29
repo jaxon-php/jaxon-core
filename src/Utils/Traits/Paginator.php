@@ -17,6 +17,18 @@ use Jaxon\Utils\Container;
 Trait Paginator
 {
     /**
+     * Set the pagination renderer
+     *
+     * @param object        $xRenderer              The pagination renderer
+     *
+     * @return void
+     */
+    public function setPaginationRenderer($xRenderer)
+    {
+        Container::getInstance()->setPaginationRenderer($xRenderer);
+    }
+
+    /**
      * Get the pagination object for a Jaxon request
      *
      * @param integer                   $nItemsTotal        The total number of items

@@ -1,0 +1,1 @@
+    <li><a href="javascript:;" onclick="<?php echo $this->call ?>">&laquo; <?php echo $this->text ?></a></li>

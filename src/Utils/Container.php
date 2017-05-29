@@ -104,9 +104,13 @@ class Container
         $this->di['validator'] = function($c){
             return new Validation\Validator();
         };
-        // Paginator
-        $this->di['paginator'] = function($c){
-            return new Pagination\Paginator(0, 1, 1, null);
+        // Pagination Renderer
+        $this->di['pagination.renderer'] = function($c){
+            return new Pagination\Renderer();
+        };
+        // Pagination Paginator
+        $this->di['pagination.paginator'] = function($c){
+            return new Pagination\Paginator($c['pagination.renderer']);
         };
         // Event Dispatcher
         $this->di['events'] = function($c){
@@ -251,7 +255,19 @@ class Container
      */
     public function getPaginator()
     {
-        return $this->di['paginator'];
+        return $this->di['pagination.paginator'];
+    }
+
+    /**
+     * Set the pagination renderer
+     *
+     * @param object        $xRenderer              The pagination renderer
+     *
+     * @return void
+     */
+    public function setPaginationRenderer($xRenderer)
+    {
+        $this->di['pagination.renderer'] = $xRenderer;
     }
 
     /**
@@ -382,10 +398,9 @@ class Container
             $aNamespaces = $this->di['view.data.namespaces'];
             if(key_exists($sId, $aNamespaces))
             {
-                foreach($aNamespaces[$sId] as $namespace)
+                foreach($aNamespaces[$sId] as $ns)
                 {
-                    $renderer->addNamespace($namespace['namespace'],
-                        $namespace['directory'], $namespace['extension']);
+                    $renderer->addNamespace($ns['namespace'], $ns['directory'], $ns['extension']);
                 }
             }
             return $renderer;

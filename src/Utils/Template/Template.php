@@ -20,10 +20,17 @@ class Template
 
     public function __construct($sTemplateDir)
     {
-        $this->aNamespaces = ['jaxon' => [
-            'directory' => rtrim(trim($sTemplateDir), "/\\") . DIRECTORY_SEPARATOR,
-            'extension' => '.php',
-        ]];
+        $sTemplateDir = rtrim(trim($sTemplateDir), "/\\");
+        $this->aNamespaces = [
+            'jaxon' => [
+                'directory' => $sTemplateDir . DIRECTORY_SEPARATOR,
+                'extension' => '.php',
+            ],
+            'pagination' => [
+                'directory' => $sTemplateDir . DIRECTORY_SEPARATOR . 'pagination' . DIRECTORY_SEPARATOR,
+                'extension' => '.php',
+            ],
+        ];
     }
 
     /**
