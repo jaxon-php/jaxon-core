@@ -20,13 +20,13 @@ class Json
     /**
      * Read and set Jaxon options from a JSON formatted config file
      *
-     * @param array         $sConfigFile        The full path to the config file
-     * @param string        $sLibKeys           The keys of the library options in the file
-     * @param string        $sAppKeys           The keys of the application options in the file
+     * @param string        $sConfigFile        The full path to the config file
+     * @param string        $sLibKey            The key of the library options in the file
+     * @param string|null   $sAppKey            The key of the application options in the file
      *
      * @return Jaxon\Utils\Config\Config
      */
-    public static function read($sConfigFile, $sLibKeys = '', $sAppKeys = null)
+    public static function read($sConfigFile, $sLibKey = '', $sAppKey = null)
     {
         $sConfigFile = realpath($sConfigFile);
         if(!is_readable($sConfigFile))
@@ -42,12 +42,12 @@ class Json
 
         // Setup the config options into the library.
         $jaxon = jaxon();
-        $jaxon->setOptions($aConfigOptions, $sLibKeys);
+        $jaxon->setOptions($aConfigOptions, $sLibKey);
         $config = null;
-        if(is_string($sAppKeys))
+        if(is_string($sAppKey))
         {
             $config = new Config();
-            $config->setOptions($aConfigOptions, $sAppKeys);
+            $config->setOptions($aConfigOptions, $sAppKey);
         }
         return $config;
     }

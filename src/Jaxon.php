@@ -469,67 +469,72 @@ class Jaxon
     /**
      * Read and set Jaxon options from a PHP config file
      *
-     * @param array         $sConfigFile        The full path to the config file
-     * @param string        $sKeys              The keys of the options in the file
+     * @param string        $sConfigFile        The full path to the config file
+     * @param string        $sLibKey            The key of the library options in the file
+     * @param string|null   $sAppKey            The key of the application options in the file
      *
      * @return array
      */
-    public function readPhpConfigFile($sConfigFile, $sKey = '')
+    public function readPhpConfigFile($sConfigFile, $sLibKey = '', $sAppKey = null)
     {
-        return Utils\Config\Php::read($sConfigFile, $sKey);
+        return Utils\Config\Php::read($sConfigFile, $sLibKey, $sAppKey);
     }
 
     /**
      * Read and set Jaxon options from a YAML config file
      *
-     * @param array         $sConfigFile        The full path to the config file
-     * @param string        $sKeys              The keys of the options in the file
+     * @param string        $sConfigFile        The full path to the config file
+     * @param string        $sLibKey            The key of the library options in the file
+     * @param string|null   $sAppKey            The key of the application options in the file
      *
      * @return array
      */
-    public function readYamlConfigFile($sConfigFile, $sKey = '')
+    public function readYamlConfigFile($sConfigFile, $sLibKey = '', $sAppKey = null)
     {
-        return Utils\Config\Yaml::read($sConfigFile, $sKey);
+        return Utils\Config\Yaml::read($sConfigFile, $sLibKey, $sAppKey);
     }
 
     /**
      * Read and set Jaxon options from a JSON config file
      *
-     * @param array         $sConfigFile        The full path to the config file
-     * @param string        $sKeys              The keys of the options in the file
+     * @param string        $sConfigFile        The full path to the config file
+     * @param string        $sLibKey            The key of the library options in the file
+     * @param string|null   $sAppKey            The key of the application options in the file
      *
      * @return array
      */
-    public function readJsonConfigFile($sConfigFile, $sKey = '')
+    public function readJsonConfigFile($sConfigFile, $sLibKey = '', $sAppKey = null)
     {
-        return Utils\Config\Json::read($sConfigFile, $sKey);
+        return Utils\Config\Json::read($sConfigFile, $sLibKey, $sAppKey);
     }
 
     /**
      * Read and set Jaxon options from a config file
      *
-     * @param array         $sConfigFile        The full path to the config file
-     * @param string        $sKeys              The keys of the options in the file
+     * @param string        $sConfigFile        The full path to the config file
+     * @param string        $sLibKey            The key of the library options in the file
+     * @param string|null   $sAppKey            The key of the application options in the file
      *
      * @return array
      */
-    public function readConfigFile($sConfigFile, $sKey = '')
+    public function readConfigFile($sConfigFile, $sLibKey = '', $sAppKey = null)
     {
         $sExt = pathinfo($sConfigFile, PATHINFO_EXTENSION);
         switch($sExt)
         {
         case 'php':
-            return $this->readPhpConfigFile($sConfigFile, $sKey);
+            return $this->readPhpConfigFile($sConfigFile, $sLibKey, $sAppKey);
             break;
         case 'yaml':
         case 'yml':
-            return $this->readYamlConfigFile($sConfigFile, $sKey);
+            return $this->readYamlConfigFile($sConfigFile, $sLibKey, $sAppKey);
             break;
         case 'json':
-            return $this->readJsonConfigFile($sConfigFile, $sKey);
+            return $this->readJsonConfigFile($sConfigFile, $sLibKey, $sAppKey);
             break;
         default:
-            throw new \Jaxon\Exception\Config\File($this->trans('config.errors.file.extension', array('path' => $sConfigFile)));
+            $sErrorMsg = jaxon_trans('config.errors.file.extension', array('path' => $sConfigFile));
+            throw new \Jaxon\Exception\Config\File(sErrorMsg);
             break;
         }
     }
