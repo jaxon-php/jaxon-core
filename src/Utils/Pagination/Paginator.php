@@ -346,8 +346,13 @@ class Paginator
      */
     public function toHtml()
     {
+        if($this->getNumPages() <= 1)
+        {
+            return '';
+        }
+
         $this->renderer->setPaginator($this);
-        return $this->renderer->toHtml();
+        return $this->renderer->render();
     }
 
     /**
@@ -357,11 +362,6 @@ class Paginator
      */
     public function __toString()
     {
-        if($this->getNumPages() <= 1)
-        {
-            return '';
-        }
-
         return $this->toHtml();
     }
 

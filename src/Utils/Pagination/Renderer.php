@@ -43,7 +43,7 @@ class Renderer
      *
      * @return string        The template content
      */
-    protected function render($sTemplate, array $aVars = array())
+    protected function _render($sTemplate, array $aVars = array())
     {
         return jaxon()->render($sTemplate, $aVars);
     }
@@ -59,7 +59,7 @@ class Renderer
         {
             return '';
         }
-        return $this->render('pagination::links/prev', ['call' => $sCall, 'text' => $this->xPaginator->getPreviousText()]);
+        return $this->_render('pagination::links/prev', ['call' => $sCall, 'text' => $this->xPaginator->getPreviousText()]);
     }
 
     /**
@@ -73,7 +73,7 @@ class Renderer
         {
             return '';
         }
-        return $this->render('pagination::links/next', ['call' => $sCall, 'text' => $this->xPaginator->getNextText()]);
+        return $this->_render('pagination::links/next', ['call' => $sCall, 'text' => $this->xPaginator->getNextText()]);
     }
 
     /**
@@ -89,11 +89,11 @@ class Renderer
             if($page['call'])
             {
                 $sTemplate = ($page['isCurrent'] ? 'pagination::links/current' : 'pagination::links/enabled');
-                $sLinks .= $this->render($sTemplate, ['call' => $page['call'], 'text' => $page['num']]);
+                $sLinks .= $this->_render($sTemplate, ['call' => $page['call'], 'text' => $page['num']]);
             }
             else
             {
-                $sLinks .= $this->render('pagination::links/disabled', ['text' => $page['num']]);
+                $sLinks .= $this->_render('pagination::links/disabled', ['text' => $page['num']]);
             }
         }
         return $sLinks;
@@ -104,9 +104,9 @@ class Renderer
      *
      * @return string
      */
-    public function toHtml()
+    public function render()
     {
-        return $this->render('pagination::wrapper', [
+        return $this->_render('pagination::wrapper', [
             'links' => $this->getLinks(),
             'prev' => $this->getPrevLink(),
             'next' => $this->getNextLink(),
