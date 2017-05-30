@@ -581,6 +581,18 @@ class Jaxon
     }
 
     /**
+     * Set a new directory for pagination templates
+     *
+     * @param string        $sDirectory             The directory path
+     *
+     * @return void
+     */
+    public function setPaginationDir($sDirectory)
+    {
+        $this->addViewNamespace('pagination', $sDirectory, '.php');
+    }
+
+    /**
      * Get the Sentry instance
      *
      * @return \Jaxon\Sentry\Sentry
