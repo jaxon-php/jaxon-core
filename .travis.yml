@@ -1,16 +1,41 @@
 language: php
 
-# Versions of PHP to run.
 php:
-  - '5.4'
-  - '5.5'
-  - '5.6'
-  - '7.0'
-  - '7.1'
+    - 5.4
+    - 5.5
+    - 5.6
+    - 7.0
+    - 7.1
 
-script: phpunit
+# run build against nightly but allow them to fail
+matrix:
+    fast_finish: true
+    # allow_failures:
+    # only one build will send the coverage, this'll speed up other one
+    include:
+        - php: 7.0
+          env: PHPUNIT_FLAGS="--coverage-clover build/logs/clover.xml" CS_FIXER=run
 
-# Customize when the notification emails are sent.
-notifications:
-  on_success: never
-  on_failure: always
+# faster builds on new travis setup not using sudo
+sudo: false
+
+# cache vendor dirs
+cache:
+    directories:
+        - vendor
+        - $HOME/.composer/cache
+
+before_install:
+    - if [ -n "$GH_TOKEN" ]; then composer config github-oauth.github.com ${GH_TOKEN}; fi;
+    - composer self-update
+
+install:
+    - composer install --no-interaction --prefer-dist -o
+
+script:
+    - mkdir -p build/logs
+    - php vendor/bin/simple-phpunit -v $PHPUNIT_FLAGS
+    - if [ "$CS_FIXER" = "run" ]; then php vendor/bin/php-cs-fixer fix --verbose --dry-run ; fi;
+
+after_script:
+    - if [[ "$PHPUNIT_FLAGS" != "" ]]; then php vendor/bin/coveralls -v; fi;
