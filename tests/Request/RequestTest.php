@@ -1,11 +1,12 @@
 <?php
-
 namespace Jaxon\Tests\Request;
+
+use PHPUnit\Framework\TestCase;
 
 /**
  * @covers Jaxon\Request
  */
-final class RequestTest extends \PHPUnit_Framework_TestCase
+final class RequestTest extends TestCase
 {
     public function testRequestToGlobalFunction()
     {
