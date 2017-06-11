@@ -31,5 +31,10 @@
         "files": [
             "src/start.php"
         ]
-    }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Jaxon\\Tests\\": "tests/"
+        }
+  }
 }

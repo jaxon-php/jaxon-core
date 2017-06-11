@@ -130,11 +130,11 @@ class Parameter implements Interfaces\Parameter
             break;
         case Jaxon::INPUT_VALUE:
             $sInputID = (string)$this->xValue;
-            $sJsCode =  "jaxon.$("  . $sQuoteCharacter . $sInputID . $sQuoteCharacter  . ").value";
+            $sJsCode = "jaxon.$("  . $sQuoteCharacter . $sInputID . $sQuoteCharacter  . ").value";
             break;
         case Jaxon::CHECKED_VALUE:
             $sCheckedID = (string)$this->xValue;
-            $sJsCode =  "jaxon.$("  . $sQuoteCharacter . $sCheckedID  . $sQuoteCharacter . ").checked";
+            $sJsCode = "jaxon.$("  . $sQuoteCharacter . $sCheckedID  . $sQuoteCharacter . ").checked";
             break;
         case Jaxon::ELEMENT_INNERHTML:
             $sElementID = (string)$this->xValue;
