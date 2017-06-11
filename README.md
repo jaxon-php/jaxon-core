@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/jaxon-php/jaxon-core.svg?branch=master)](https://travis-ci.org/jaxon-php/jaxon-core)
+
 The Jaxon core library
 ======================
 
