@@ -24,6 +24,14 @@ final class RequestTest extends TestCase
         );
     }
 
+    public function testRequestToGlobalFunctionWithJaxonParameter()
+    {
+        $this->assertEquals(
+            "testFunction('string', 2, true, jaxon.getFormValues('elt_id'), jaxon.$('elt_id').value)",
+            rq()->func('testFunction', 'string', 2, true, rq()->form('elt_id'), rq()->input('elt_id'))
+        );
+    }
+
     public function testRequestToJaxonFunction()
     {
         $this->assertEquals(
@@ -37,6 +45,14 @@ final class RequestTest extends TestCase
         $this->assertEquals(
             "jaxon_testFunction('string', 2, true)",
             rq()->call('testFunction', 'string', 2, true)
+        );
+    }
+
+    public function testRequestToJaxonFunctionWithJaxonParameter()
+    {
+        $this->assertEquals(
+            "jaxon_testFunction('string', 2, true, jaxon.getFormValues('elt_id'), jaxon.$('elt_id').value)",
+            rq()->call('testFunction', 'string', 2, true, rq()->form('elt_id'), rq()->input('elt_id'))
         );
     }
 
