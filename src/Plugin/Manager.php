@@ -37,6 +37,13 @@ class Manager
     use \Jaxon\Utils\Traits\Translator;
 
     /**
+     * The response type.
+     *
+     * @var string
+     */
+    const RESPONSE_TYPE = 'JSON';
+
+    /**
      * All plugins, indexed by priority
      *
      * @var array
@@ -118,9 +125,6 @@ class Manager
 
         $this->bAutoloadEnabled = true;
         $this->xAutoloader = null;
-
-        // Set response type to JSON
-        $this->sResponseType = 'JSON';
 
         // Javascript confirm function
         $this->xConfirm = null;
@@ -719,7 +723,7 @@ class Manager
     private function getOptionVars()
     {
         return array(
-            'sResponseType'             => $this->sResponseType,
+            'sResponseType'             => self::RESPONSE_TYPE,
             'sVersion'                  => $this->getOption('core.version'),
             'sLanguage'                 => $this->getOption('core.language'),
             'bLanguage'                 => $this->hasOption('core.language') ? true : false,
