@@ -141,6 +141,7 @@ class Manager
                 $value = ($sValue == floor($sValue) ? (int)$sValue : (float)$sValue);
                 break;
             case '*':
+            default:
                 $value = null;
                 break;
         }

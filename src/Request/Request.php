@@ -54,7 +54,8 @@ class Request extends JsCall
     /**
      * The constructor.
      * 
-     * @param string        $sFunction            The javascript function
+     * @param string        $sName            The javascript function or method name
+     * @param string        $sType            The type (function or a method)
      */
     public function __construct($sName, $sType)
     {

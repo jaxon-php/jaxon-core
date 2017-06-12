@@ -74,13 +74,13 @@ class BrowserEvent
      * the client script that is sent to the browser
      *
      * @param string        $sName                The name of the configuration option
-     * @param string        $sValue                The value of the configuration option
+     * @param string        $sValue               The value of the configuration option
      *
      * @return void
      */
-    public function configure($sName, $mValue)
+    public function configure($sName, $sValue)
     {
-        $this->aConfiguration[$sName] = $mValue;
+        $this->aConfiguration[$sName] = $sValue;
     }
     
     /**

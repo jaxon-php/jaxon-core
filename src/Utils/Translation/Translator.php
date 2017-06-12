@@ -74,7 +74,7 @@ class Translator
      *
      * @return string        The translated string
      */
-    public function trans($sText, array $placeholders = array(), $sLanguage = null)
+    public function trans($sText, array $aPlaceHolders = array(), $sLanguage = null)
     {
         $sText = trim((string)$sText);
         if(!$sLanguage)
@@ -90,7 +90,7 @@ class Translator
            return $sText;
         }
         $message = $this->aMessages[$sLanguage][$sText];
-        foreach($placeholders as $name => $value)
+        foreach($aPlaceHolders as $name => $value)
         {
             $message = str_replace(":$name", $value, $message);
         }
