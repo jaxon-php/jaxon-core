@@ -17,7 +17,7 @@ trait Alert
     /**
      * All plugins, indexed by priority
      *
-     * @var array
+     * @var boolean
      */
     private $bReturn;
 

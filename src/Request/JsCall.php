@@ -148,7 +148,7 @@ class JsCall implements JsonSerializable
     /**
      * Add a set of parameters to this request
      *
-     * @param array             $xParameters             The parameters
+     * @param array             $aParameters             The parameters
      *
      * @return void
      */

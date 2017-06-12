@@ -111,7 +111,7 @@ class UserFunction extends RequestPlugin
             }
         }
 
-        return false;
+        return null;
     }
 
     /**

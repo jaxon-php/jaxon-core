@@ -107,9 +107,9 @@ class BrowserEvent extends RequestPlugin
                 if(isset($this->aEvents[$sEvent]) && isset($aArgs[2]))
                 {
                     $xUserFunction = $aArgs[2];
-                    if(!($xUserFunction instanceof \Jaxon\Support\UserFunction))
+                    if(!($xUserFunction instanceof \Jaxon\Request\Support\UserFunction))
                     {
-                        $xUserFunction = new \Jaxon\Support\UserFunction($xUserFunction);
+                        $xUserFunction = new \Jaxon\Request\Support\UserFunction($xUserFunction);
                     }
                     $objEvent = $this->aEvents[$sEvent];
                     $objEvent->addHandler($xUserFunction);
@@ -118,7 +118,7 @@ class BrowserEvent extends RequestPlugin
             }
         }
 
-        return false;
+        return null;
     }
 
     /**

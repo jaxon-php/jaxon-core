@@ -13,7 +13,7 @@
 
 namespace Jaxon\Request\Support;
 
-class Confirm
+class Confirm implements \Jaxon\Request\Interfaces\Confirm
 {
     /**
      * Get the script which makes a call only if the user answers yes to the given question

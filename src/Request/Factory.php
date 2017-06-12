@@ -70,7 +70,7 @@ class Factory
      * @param integer       $nItemsPerPage          The number of items per page page
      * @param integer       $nCurrentPage           The current page
      * @param string        $sMethod                The name of function or a method prepended with its class name
-     * @param ...           $parameters             The parameters of the method
+     * @param ...           $xParams                The parameters of the function or method
      *
      * @return string the pagination links
      */

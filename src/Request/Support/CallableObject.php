@@ -42,7 +42,7 @@ class CallableObject
     /**
      * The reflection class of the user registered callable object
      *
-     * @var ReflectionClass
+     * @var \ReflectionClass
      */
     private $reflectionClass;
     

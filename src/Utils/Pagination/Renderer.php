@@ -19,7 +19,7 @@ class Renderer
     /**
      * Set the paginator to be rendered.
      *
-     * @var Jaxon\Utils\Pagination\Paginator
+     * @var Paginator
      */
     protected $xPaginator = null;
 
