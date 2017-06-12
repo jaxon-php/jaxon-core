@@ -85,7 +85,7 @@ class CallableObject
     private $aConfiguration;
     
     /**
-     * The class contructor
+     * The class constructor
      *
      * @param object|string            $xCallable               The callable object instance or class name
      * 

@@ -26,8 +26,6 @@ interface Alert
     /**
      * Tells if the library should return the js code or run it in the browser.
      * 
-     * @param boolean             $return               Whether to return the code
-     * 
      * @return void
      */
     public function getReturn();

@@ -88,28 +88,28 @@ class Manager
     /**
      * Javascript confirm function
      *
-     * @var Jaxon\Request\Interfaces\Confirm
+     * @var \Jaxon\Request\Interfaces\Confirm
      */
     private $xConfirm;
 
     /**
      * Default javascript confirm function
      *
-     * @var Jaxon\Request\Support\Confirm
+     * @var \Jaxon\Request\Support\Confirm
      */
     private $xDefaultConfirm;
 
     /**
      * Javascript alert function
      *
-     * @var Jaxon\Request\Interfaces\Alert
+     * @var \Jaxon\Request\Interfaces\Alert
      */
     private $xAlert;
 
     /**
      * Default javascript alert function
      *
-     * @var Jaxon\Request\Support\Alert
+     * @var \Jaxon\Request\Support\Alert
      */
     private $xDefaultAlert;
 

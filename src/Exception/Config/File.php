@@ -16,7 +16,7 @@ namespace Jaxon\Exception\Config;
 
 class File extends \Exception
 {
-    public function __contruct($sMessage)
+    public function __construct($sMessage)
     {
         parent::__construct($sMessage);
     }

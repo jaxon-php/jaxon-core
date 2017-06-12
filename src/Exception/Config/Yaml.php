@@ -17,7 +17,7 @@ namespace Jaxon\Exception\Config;
 
 class Yaml extends \Exception
 {
-    public function __contruct($sMessage)
+    public function __construct($sMessage)
     {
         parent::__construct($sMessage);
     }
