@@ -37,7 +37,7 @@ abstract class Response extends Plugin
     /**
      * Set the <Jaxon\Response\Response> object
      *
-     * @param array         $xResponse            The response
+     * @param \Jaxon\Response\Response         $xResponse            The response
      *
      * @return void
      */
@@ -49,7 +49,7 @@ abstract class Response extends Plugin
     /**
      * Get the <Jaxon\Response\Response> object
      *
-     * @return object
+     * @return \Jaxon\Response\Response
      */
     public function response()
     {

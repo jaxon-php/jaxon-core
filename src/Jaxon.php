@@ -201,7 +201,7 @@ class Jaxon
      *
      * @return mixed
      */
-    public function register($sType, $mArg)
+    public function register($sType, $xArgs)
     {
         $aArgs = func_get_args();
         $nArgs = func_num_args();
@@ -217,10 +217,10 @@ class Jaxon
                 $this->aProcessingEvents[$sEvent] = $xUserFunction;
                 return true;
             }
-            else
+            /*else
             {
                 // Todo: return error
-            }
+            }*/
         }
 
         return $this->getPluginManager()->register($aArgs);
@@ -524,18 +524,14 @@ class Jaxon
         {
         case 'php':
             return $this->readPhpConfigFile($sConfigFile, $sLibKey, $sAppKey);
-            break;
         case 'yaml':
         case 'yml':
             return $this->readYamlConfigFile($sConfigFile, $sLibKey, $sAppKey);
-            break;
         case 'json':
             return $this->readJsonConfigFile($sConfigFile, $sLibKey, $sAppKey);
-            break;
         default:
             $sErrorMsg = jaxon_trans('config.errors.file.extension', array('path' => $sConfigFile));
             throw new \Jaxon\Exception\Config\File(sErrorMsg);
-            break;
         }
     }
 
