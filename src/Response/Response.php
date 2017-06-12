@@ -42,6 +42,13 @@ class Response
     use \Jaxon\Utils\Traits\Translator;
 
     /**
+     * The response type
+     *
+     * @var string
+     */
+    public  $sContentType = 'application/json';
+
+    /**
      * The commands that will be sent to the browser in the response
      *
      * @var array
@@ -59,9 +66,6 @@ class Response
     public function __construct()
     {
         $this->aCommands = array();
-
-        // Set response type to JSON
-        $this->sContentType = 'application/json';
     }
 
     /**
@@ -92,14 +96,14 @@ class Response
      *
      * @param string        $sName                The name of the plugin
      *
-     * @return \Jaxon\Plugin\Response
+     * @return null|\Jaxon\Plugin\Response
      */
     public function plugin($sName)
     {
         $xPlugin = $this->getPluginManager()->getResponsePlugin($sName);
         if(!$xPlugin)
         {
-            return false;
+            return null;
         }
         $xPlugin->setResponse($this);
         return $xPlugin;
@@ -651,7 +655,7 @@ class Response
      * Add a command to insert a new element just prior to the specified element
      *
      * @param string        $sBefore            The id of the element used as a reference point for the insertion
-     * @param string        $sTag                The tag name to be used for the new element
+     * @param string        $sTag               The tag name to be used for the new element
      * @param string        $sId                The id to assign to the new element
      *
      * @return \Jaxon\Plugin\Response
@@ -671,8 +675,8 @@ class Response
     /**
      * Add a command to insert a new element after the specified
      *
-     * @param string        $sBefore            The id of the element used as a reference point for the insertion
-     * @param string        $sTag                The tag name to be used for the new element
+     * @param string        $sAfter             The id of the element used as a reference point for the insertion
+     * @param string        $sTag               The tag name to be used for the new element
      * @param string        $sId                The id to assign to the new element
      *
      * @return \Jaxon\Plugin\Response

@@ -26,7 +26,7 @@ class Renderer
     /**
      * Set the paginator to be rendered.
      *
-     * @param \Jaxon\Utils\Pagination\Paginator         $xPaginator         The paginator to be rendered
+     * @param Paginator         $xPaginator         The paginator to be rendered
      *
      * @return void
      */

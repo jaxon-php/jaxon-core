@@ -32,7 +32,7 @@ trait Factory
      */
     public function setGlobalResponse()
     {
-        $this->response = Jaxon::getGlobalResponse();
+        $this->response = jaxon()->getResponse();
     }
 
     /**
@@ -42,6 +42,6 @@ trait Factory
      */
     public function newResponse()
     {
-        return new Response();
+        return jaxon()->newResponse();
     }
 }

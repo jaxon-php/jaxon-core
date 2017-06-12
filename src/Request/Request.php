@@ -33,7 +33,7 @@ class Request extends JsCall
      * 
      * Can be one of "function" or "class".
      *
-     * @var unknown
+     * @var string
      */
     private $sType;
 
