@@ -531,7 +531,7 @@ class Jaxon
             return $this->readJsonConfigFile($sConfigFile, $sLibKey, $sAppKey);
         default:
             $sErrorMsg = jaxon_trans('config.errors.file.extension', array('path' => $sConfigFile));
-            throw new \Jaxon\Exception\Config\File(sErrorMsg);
+            throw new \Jaxon\Exception\Config\File($sErrorMsg);
         }
     }
 

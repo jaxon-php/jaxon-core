@@ -188,7 +188,6 @@ class CallableObject extends RequestPlugin
                 $offset = $dotPosition + 1;
             }
         }
-        $classes = null;
 
         foreach($this->aCallableObjects as $xCallableObject)
         {
