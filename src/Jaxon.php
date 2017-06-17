@@ -132,8 +132,8 @@ class Jaxon
             'core.request.method'               => 'POST',    // W3C: Method is case sensitive
             'core.debug.on'                     => false,
             'core.debug.verbose'                => false,
-            'core.process.exit_after'           => true,
-            'core.process.clean_buffer'         => false,
+            'core.process.exit'                 => true,
+            'core.process.clean'                => false,
             'core.process.timeout'              => 6000,
             'core.error.handle'                 => false,
             'core.error.log_file'               => '',
@@ -287,7 +287,7 @@ class Jaxon
      * If your RequestURI is the same as your web page, then this function should be called before ANY
      * headers or HTML is output from your script.
      * 
-     * This function may exit after the request is processed, if the 'core.exit_after' option is set to true.
+     * This function may exit after the request is processed, if the 'core.process.exit' option is set to true.
      *
      * @return void
      * 
@@ -362,7 +362,7 @@ class Jaxon
             }
         }
         // Clean the processing buffer
-        if(($this->getOption('core.process.clean_buffer')))
+        if(($this->getOption('core.process.clean')))
         {
             $er = error_reporting(0);
             while (ob_get_level() > 0)
@@ -382,22 +382,43 @@ class Jaxon
             }
         }
 
-        $this->getResponseManager()->send();
+        $this->getResponseManager()->printDebug();
 
-        if(($this->getOption('core.process.exit_after')))
+        if(($this->getOption('core.process.exit')))
         {
+            $this->getResponseManager()->sendOutput();
             exit();
         }
     }
 
     /**
-     * Send the current response back to the browser
+     * Send the response output back to the browser
      *
      * @return void
      */
     public function sendResponse()
     {
-        $this->getResponseManager()->send();
+        $this->getResponseManager()->sendOutput();
+    }
+
+    /**
+     * Send the HTTP headers back to the browser
+     *
+     * @return void
+     */
+    public function sendHeaders()
+    {
+        $this->getResponseManager()->sendHeaders();
+    }
+
+    /**
+     * Get the response output
+     *
+     * @return string
+     */
+    public function getOutput()
+    {
+        $this->getResponseManager()->getOutput();
     }
 
     /**

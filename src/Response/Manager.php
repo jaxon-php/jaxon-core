@@ -32,7 +32,7 @@ class Manager
      * @var \Jaxon\Response\Response
      */
     private $xResponse;
-    
+
     /**
      * The debug messages
      *
@@ -78,14 +78,16 @@ class Manager
         else if(get_class($this->xResponse) == get_class($xResponse))
         {
             if($this->xResponse != $xResponse)
+            {
                 $this->xResponse->appendResponse($xResponse);
+            }
         }
         else
         {
             $this->debug($this->trans('errors.mismatch.types', array('class' => get_class($xResponse))));
         }
     }
-    
+
     /**
      * Appends a debug message on the end of the debug message queue
      *
@@ -100,13 +102,13 @@ class Manager
     {
         $this->aDebugMessages[] = $sMessage;
     }
-    
+
     /**
-     * Prints the response object to the output stream, thus sending the response to the client
+     * Prints the debug messages into the current response object
      *
      * @return void
      */
-    public function send()
+    public function printDebug()
     {
         if(($this->xResponse))
         {
@@ -115,6 +117,45 @@ class Manager
                 $this->xResponse->debug($sMessage);
             }
             $this->aDebugMessages = array();
+        }
+    }
+
+    /**
+     * Sends the HTTP headers back to the browser
+     *
+     * @return void
+     */
+    public function sendHeaders()
+    {
+        if(($this->xResponse))
+        {
+            $this->xResponse->sendHeaders();
+        }
+    }
+
+    /**
+     * Get the JSON output of the response
+     *
+     * @return string
+     */
+    public function getOutput()
+    {
+        if(($this->xResponse))
+        {
+            return $this->xResponse->getOutput();
+        }
+        return '';
+    }
+
+    /**
+     * Prints the response object to the output stream, thus sending the response to the browser
+     *
+     * @return void
+     */
+    public function sendOutput()
+    {
+        if(($this->xResponse))
+        {
             $this->xResponse->sendHeaders();
             $this->xResponse->printOutput();
         }
