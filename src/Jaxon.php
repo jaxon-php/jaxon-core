@@ -45,7 +45,7 @@ class Jaxon
      *
      * @var string
      */
-    private $sVersion = 'Jaxon 2.0-beta.25';
+    private $sVersion = 'Jaxon 2.0-beta.28';
 
     /*
      * Processing events
@@ -141,7 +141,7 @@ class Jaxon
             'js.lib.queue_size'                 => 0,
             'js.lib.load_timeout'               => 2000,
             'js.lib.show_status'                => false,
-            'js.lib.wait_cursor'                => true,
+            'js.lib.show_cursor'                => true,
             'js.app.dir'                        => '',
             'js.app.minify'                     => true,
             'js.app.options'                    => '',
