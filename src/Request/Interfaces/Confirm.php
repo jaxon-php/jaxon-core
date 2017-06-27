@@ -17,7 +17,7 @@ interface Confirm
 {
     /**
      * Return a script which makes a call only if the user answers yes to the given question
-     * 
+     *
      * @return string
      */
     public function confirm($question, $yesScript, $noScript);

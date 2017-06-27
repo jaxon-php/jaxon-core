@@ -6,14 +6,14 @@
  * This class collects commands to be sent back to the browser in response to a jaxon request.
  * Commands are encoded and packaged in a format that is acceptable to the response handler
  * from the javascript library running on the client side.
- * 
+ *
  * Common commands include:
  * - <Response->assign>: Assign a value to an element's attribute.
  * - <Response->append>: Append a value on to an element's attribute.
  * - <Response->script>: Execute a portion of javascript code.
  * - <Response->call>: Execute an existing javascript function.
  * - <Response->alert>: Display an alert dialog to the user.
- * 
+ *
  * Elements are identified by the value of the HTML id attribute.
  * If you do not see your updates occuring on the browser side, ensure that you are using
  * the correct id in your response.
@@ -46,14 +46,14 @@ class Response
      *
      * @var string
      */
-    public  $sContentType = 'application/json';
+    public $sContentType = 'application/json';
 
     /**
      * The commands that will be sent to the browser in the response
      *
      * @var array
      */
-    public  $aCommands;
+    public $aCommands;
 
     /**
      * A string, array or integer value to be returned to the caller when using 'synchronous' mode requests.
@@ -170,11 +170,11 @@ class Response
             {
                 if($aLastCommand['cmd'] == $aAttributes['cmd'])
                 {
-                    if($aLastCommand['cmd'] == 'js') 
+                    if($aLastCommand['cmd'] == 'js')
                     {
                         $mData = $aLastCommand['data'].'; '.$mData;
-                    } 
-                    else if($aLastCommand['cmd'] == 'ap' &&
+                    }
+                    elseif($aLastCommand['cmd'] == 'ap' &&
                             $aLastCommand['id'] == $aAttributes['id'] &&
                             $aLastCommand['prop'] == $aAttributes['prop'])
                     {
@@ -190,7 +190,7 @@ class Response
                     $this->aCommands[] = $aLastCommand;
                 }
             }
-        } 
+        }
         $aAttributes['data'] = $mData;
         $this->aCommands[] = $aAttributes;
 
@@ -235,7 +235,7 @@ class Response
      */
     public function appendResponse($mCommands, $bBefore = false)
     {
-        if( $mCommands instanceof Response )
+        if($mCommands instanceof Response)
         {
             $this->returnValue = $mCommands->returnValue;
             
@@ -248,7 +248,7 @@ class Response
                 $this->aCommands = array_merge($this->aCommands, $mCommands->aCommands);
             }
         }
-        else if(is_array($mCommands))
+        elseif(is_array($mCommands))
         {
             if($bBefore)
             {
@@ -313,7 +313,7 @@ class Response
 
     /**
      * Add a command to assign the specified HTML content to the given element
-     * 
+     *
      * This is a shortcut for assign() on the innerHTML attribute.
      *
      * @param string        $sTarget              The id of the html element on the browser
@@ -336,7 +336,7 @@ class Response
      * @return \Jaxon\Plugin\Response
      */
     public function append($sTarget, $sAttribute, $sData)
-    {    
+    {
         return $this->addCommand(
             array(
                 'cmd' => 'ap',
@@ -421,7 +421,7 @@ class Response
     {
         return $this->addCommand(
             array(
-                'cmd' => 'c:as', 
+                'cmd' => 'c:as',
                 'prop' => trim((string)$sAttribute, " \t")
             ),
             trim((string)$sData, " \t\n")
@@ -443,12 +443,12 @@ class Response
     {
         return $this->addCommand(
             array(
-                'cmd' => 'c:ap', 
+                'cmd' => 'c:ap',
                 'prop' => trim((string)$sAttribute, " \t")
-            ), 
+            ),
             trim((string)$sData, " \t\n")
         );
-    }    
+    }
 
     /**
      * Add a command to prepend the speicified data to the given member of the current
@@ -465,9 +465,9 @@ class Response
     {
         return $this->addCommand(
             array(
-                'cmd' => 'c:pp', 
+                'cmd' => 'c:pp',
                 'prop' => trim((string)$sAttribute, " \t")
-            ), 
+            ),
             trim((string)$sData, " \t\n")
         );
     }
@@ -555,7 +555,7 @@ class Response
                         $newQueryPart .= '&';
                     $newQueryPart .= rawurlencode($key).'='.rawurlencode($value);
                 }
-            } else if($_SERVER['QUERY_STRING']) {
+            } elseif($_SERVER['QUERY_STRING']) {
                     //couldn't break up the query, but there's one there
                     //possibly "http://url/page.html?query1234" type of query?
                     //just encode it and hope it works
@@ -607,7 +607,7 @@ class Response
             array(
                 'cmd' => 'jc',
                 'func' => $sFunc
-            ), 
+            ),
             $aArgs
         );
     }
@@ -1011,7 +1011,7 @@ class Response
         $sData = "";
         return $this->addCommand(
             array(
-                'cmd' => 'wcss', 
+                'cmd' => 'wcss',
                 'prop' => $iTimeout
             ),
             $sData
@@ -1037,7 +1037,7 @@ class Response
             array(
                 'cmd' => 'wf',
                 'prop' => $tenths
-            ), 
+            ),
             trim((string)$script, " \t\n")
         );
     }
@@ -1058,7 +1058,7 @@ class Response
             array(
                 'cmd' => 's',
                 'prop' => $tenths
-            ), 
+            ),
             ''
         );
     }
@@ -1257,10 +1257,10 @@ class Response
         $xRequestManager = $this->getRequestManager();
         if($xRequestManager->getRequestMethod() == Jaxon::METHOD_GET)
         {
-            header ("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
-            header ("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
-            header ("Cache-Control: no-cache, must-revalidate");
-            header ("Pragma: no-cache");
+            header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
+            header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
+            header("Cache-Control: no-cache, must-revalidate");
+            header("Pragma: no-cache");
         }
         
         $sCharacterSet = '';

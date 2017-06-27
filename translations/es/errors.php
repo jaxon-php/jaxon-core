@@ -6,7 +6,7 @@ return array(
     'errors.debug.write-log' => "Jaxon es incapaz de escribir en el archivo de registro de errores: :file",
     'errors.debug.message' => "Mensajes de error de PHP: :message",
     'errors.response.result.invalid' => "Una respuesta invalida fue devuelta al procesar esta solicitud.",
-    'errors.response.data.invalid' => "El objeto de respuesta Jaxon no podía cargar comandos ya que los datos proporcionados no eran válidos.",    
+    'errors.response.data.invalid' => "El objeto de respuesta Jaxon no podía cargar comandos ya que los datos proporcionados no eran válidos.",
     'errors.uri.detect.message' => "Jaxon no pudo identificar automáticamente la URI de la solicitud.",
     'errors.uri.detect.advice' => "Por favor ajuste la URI de la solicitud explícita cuando instancia el objeto Jaxon.",
     'errors.request.conversion' => "Los datos entrantes Jaxon no se pueden convertir de UTF-8.",

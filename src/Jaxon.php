@@ -256,7 +256,7 @@ class Jaxon
      *
      * The class name can be dot, slash or anti-slash separated.
      * If the $bGetObject parameter is set to true, the registered instance of the class is returned.
-     * 
+     *
      * @param string            $sClassName             The name of the class to register
      * @param array             $aOptions               The options to register the class with
      * @param boolean           $bGetObject             Return the registered instance of the class
@@ -286,11 +286,11 @@ class Jaxon
      * It handles all the incoming requests, including the firing of events and handling of the response.
      * If your RequestURI is the same as your web page, then this function should be called before ANY
      * headers or HTML is output from your script.
-     * 
+     *
      * This function may exit after the request is processed, if the 'core.process.exit' option is set to true.
      *
      * @return void
-     * 
+     *
      * @see <Jaxon\Jaxon->canProcessRequest>
      */
     public function processRequest()

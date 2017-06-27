@@ -78,7 +78,7 @@ class Config
                 // Recursively read the options in the array
                 $this->_setOptions($xOption, $sFullName, $nDepth + 1);
             }
-            else if(is_string($xOption) || is_numeric($xOption) || is_bool($xOption))
+            elseif(is_string($xOption) || is_numeric($xOption) || is_bool($xOption))
             {
                 // Save the value of this option
                 $this->aOptions[$sFullName] = $xOption;

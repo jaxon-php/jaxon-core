@@ -29,7 +29,7 @@ class Container
     {
         if(!self::$xInstance)
         {
-            self::$xInstance = new Container();    
+            self::$xInstance = new Container();
         }
         return self::$xInstance;
     }
@@ -65,19 +65,19 @@ class Container
          * Managers
          */
         // Plugin Manager
-        $this->di['plugin_manager'] = function($c){
+        $this->di['plugin_manager'] = function ($c) {
             return new \Jaxon\Plugin\Manager();
         };
         // Request Manager
-        $this->di['request_manager'] = function($c){
+        $this->di['request_manager'] = function ($c) {
             return new \Jaxon\Request\Manager();
         };
         // Request Factory
-        $this->di['request_factory'] = function($c){
+        $this->di['request_factory'] = function ($c) {
             return new \Jaxon\Request\Factory();
         };
         // Response Manager
-        $this->di['response_manager'] = function($c){
+        $this->di['response_manager'] = function ($c) {
             return new \Jaxon\Response\Manager();
         };
 
@@ -85,35 +85,35 @@ class Container
          * Services
          */
         // Config manager
-        $this->di['config'] = function($c){
+        $this->di['config'] = function ($c) {
             return new Config\Config();
         };
         // Minifier
-        $this->di['minifier'] = function($c){
+        $this->di['minifier'] = function ($c) {
             return new Template\Minifier();
         };
         // Translator
-        $this->di['translator'] = function($c){
+        $this->di['translator'] = function ($c) {
             return new Translation\Translator($c['translation_dir'], $c['config']);
         };
         // Template engine
-        $this->di['template'] = function($c){
+        $this->di['template'] = function ($c) {
             return new Template\Template($c['template_dir']);
         };
         // Validator
-        $this->di['validator'] = function($c){
+        $this->di['validator'] = function ($c) {
             return new Validation\Validator();
         };
         // Pagination Renderer
-        $this->di['pagination.renderer'] = function($c){
+        $this->di['pagination.renderer'] = function ($c) {
             return new Pagination\Renderer();
         };
         // Pagination Paginator
-        $this->di['pagination.paginator'] = function($c){
+        $this->di['pagination.paginator'] = function ($c) {
             return new Pagination\Paginator($c['pagination.renderer']);
         };
         // Event Dispatcher
-        $this->di['events'] = function($c){
+        $this->di['events'] = function ($c) {
             return new EventDispatcher();
         };
 
@@ -121,27 +121,27 @@ class Container
          * Core library objects
          */
         // Global Response
-        $this->di['response'] = function($c){
+        $this->di['response'] = function ($c) {
             return new \Jaxon\Response\Response();
         };
         // Jaxon Core
-        $this->di['jaxon'] = function($c){
+        $this->di['jaxon'] = function ($c) {
             return new \Jaxon\Jaxon();
         };
         // Jaxon Sentry
-        $this->di['sentry'] = function($c){
+        $this->di['sentry'] = function ($c) {
             // This class is not defined in this package
             $sClass = '\\Jaxon\\Sentry\\Sentry';
             return new $sClass;
         };
         // Armada
-        $this->di['armada'] = function($c){
+        $this->di['armada'] = function ($c) {
             // This class is not defined in this package
             $sClass = '\\Jaxon\\Armada\\Armada';
             return new $sClass;
         };
         // View Renderer Facade
-        $this->di['sentry.view.renderer'] = function($c){
+        $this->di['sentry.view.renderer'] = function ($c) {
             $aRenderers = $c['view.data.renderers'];
             $sDefaultNamespace = $c['view.data.namespace.default'];
             return new \Jaxon\Sentry\View\Facade($aRenderers, $sDefaultNamespace);
@@ -391,7 +391,7 @@ class Container
         $this->di['sentry.view.base.' . $sId] = $xClosure;
 
         // Return the initialized view renderer
-        $this->di['sentry.view.' . $sId] = function($c) use($sId) {
+        $this->di['sentry.view.' . $sId] = function ($c) use ($sId) {
             // Get the defined renderer
             $renderer = $c['sentry.view.base.' . $sId];
             // Init the renderer with the template namespaces

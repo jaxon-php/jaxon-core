@@ -14,7 +14,7 @@ namespace Jaxon\Utils\Traits;
 
 use Jaxon\Utils\Container;
 
-Trait Minifier
+trait Minifier
 {
     /**
      * Minify javascript code

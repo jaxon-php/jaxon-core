@@ -86,9 +86,9 @@ class Factory
 
     /**
      * Make a parameter of type Jaxon::FORM_VALUES
-     * 
+     *
      * @param string        $sFormId                The id of the HTML form
-     * 
+     *
      * @return Parameter
      */
     public static function form($sFormId)
@@ -98,9 +98,9 @@ class Factory
 
     /**
      * Make a parameter of type Jaxon::INPUT_VALUE
-     * 
+     *
      * @param string $sInputId the id of the HTML input element
-     * 
+     *
      * @return Parameter
      */
     public static function input($sInputId)
@@ -110,9 +110,9 @@ class Factory
 
     /**
      * Make a parameter of type Jaxon::CHECKED_VALUE
-     * 
+     *
      * @param string $sInputId the name of the HTML form element
-     * 
+     *
      * @return Parameter
      */
     public static function checked($sInputId)
@@ -122,9 +122,9 @@ class Factory
 
     /**
      * Make a parameter of type Jaxon::CHECKED_VALUE
-     * 
+     *
      * @param string $sInputId the name of the HTML form element
-     * 
+     *
      * @return Parameter
      */
     public static function select($sInputId)
@@ -134,9 +134,9 @@ class Factory
 
     /**
      * Make a parameter of type Jaxon::ELEMENT_INNERHTML
-     * 
+     *
      * @param string $sElementId the id of the HTML element
-     * 
+     *
      * @return Parameter
      */
     public static function html($sElementId)
@@ -146,9 +146,9 @@ class Factory
 
     /**
      * Make a parameter of type Jaxon::QUOTED_VALUE
-     * 
+     *
      * @param string $sValue the value of the parameter
-     * 
+     *
      * @return Parameter
      */
     public static function string($sValue)
@@ -158,9 +158,9 @@ class Factory
 
     /**
      * Make a parameter of type Jaxon::NUMERIC_VALUE
-     * 
+     *
      * @param numeric $nValue the value of the parameter
-     * 
+     *
      * @return Parameter
      */
     public static function numeric($nValue)
@@ -170,9 +170,9 @@ class Factory
 
     /**
      * Make a parameter of type Jaxon::NUMERIC_VALUE
-     * 
+     *
      * @param numeric $nValue the value of the parameter
-     * 
+     *
      * @return Parameter
      */
     public static function int($nValue)
@@ -182,9 +182,9 @@ class Factory
 
     /**
      * Make a parameter of type Jaxon::JS_VALUE
-     * 
+     *
      * @param string $sValue the javascript code of the parameter
-     * 
+     *
      * @return Parameter
      */
     public static function javascript($sValue)
@@ -194,9 +194,9 @@ class Factory
 
     /**
      * Make a parameter of type Jaxon::JS_VALUE
-     * 
+     *
      * @param string $sValue the javascript code of the parameter
-     * 
+     *
      * @return Parameter
      */
     public static function js($sValue)
@@ -206,7 +206,7 @@ class Factory
 
     /**
      * Make a parameter of type Jaxon::PAGE_NUMBER
-     * 
+     *
      * @return Parameter
      */
     public static function page()

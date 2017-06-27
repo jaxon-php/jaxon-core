@@ -57,7 +57,7 @@ class URI
                     $aURL['host'] = $_SERVER['HTTP_X_FORWARDED_HOST'];
                 }
             }
-            else if(!empty($_SERVER['HTTP_HOST']))
+            elseif(!empty($_SERVER['HTTP_HOST']))
             {
                 if(strpos($_SERVER['HTTP_HOST'], ':') > 0)
                 {
@@ -68,7 +68,7 @@ class URI
                     $aURL['host'] = $_SERVER['HTTP_HOST'];
                 }
             }
-            else if(!empty($_SERVER['SERVER_NAME']))
+            elseif(!empty($_SERVER['SERVER_NAME']))
             {
                 $aURL['host'] = $_SERVER['SERVER_NAME'];
             }

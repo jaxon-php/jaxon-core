@@ -16,7 +16,7 @@ namespace Jaxon\Utils\Traits;
 
 use Jaxon\Utils\Container;
 
-Trait Translator
+trait Translator
 {
     /**
      * Get a translated string

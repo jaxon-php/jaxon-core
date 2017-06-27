@@ -88,7 +88,7 @@ class CallableObject
      * The class constructor
      *
      * @param object|string            $xCallable               The callable object instance or class name
-     * 
+     *
      */
     public function __construct($xCallable)
     {
@@ -109,7 +109,7 @@ class CallableObject
 
     /**
      * Set a user registered callable object.
-     * 
+     *
      * If the input parameter is null, the callable is first created with its reflection object.
      *
      * @param object|null           $xCallable          The callable object instance or null
@@ -259,7 +259,7 @@ class CallableObject
         {
             if(is_array($sValue))
                 $this->aProtectedMethods = array_merge($this->aProtectedMethods, $sValue);
-            else if(is_string($sValue))
+            elseif(is_string($sValue))
                 $this->aProtectedMethods[] = $sValue;
             return;
         }
@@ -267,7 +267,7 @@ class CallableObject
         if(!isset($this->aConfiguration[$sMethod]))
         {
             $this->aConfiguration[$sMethod] = array();
-        }    
+        }
         $this->aConfiguration[$sMethod][$sName] = $sValue;
     }
     

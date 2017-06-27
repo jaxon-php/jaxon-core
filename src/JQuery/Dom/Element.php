@@ -4,10 +4,10 @@
  * Element.php - A jQuery selector
  *
  * This class is used to create client side requests to the Jaxon functions and callable objects.
- * 
+ *
  * When inserted into a Jaxon response, an Element object must be converted to the corresponding jQuery code.
  * Therefore, the Element class implements the JsonSerializable interface.
- * 
+ *
  * When used as a parameter of a Jaxon call, the Element must be converted to Jaxon request parameter.
  * Therefore, the Element class also implements the Jaxon\Request\Interfaces\Parameter interface.
  *
@@ -43,7 +43,7 @@ class Element implements JsonSerializable, Parameter
 
     /**
      * The constructor.
-     * 
+     *
      * @param string        $sSelector            The jQuery selector
      * @param string        $sContext             A context associated to the selector
      */
@@ -56,7 +56,7 @@ class Element implements JsonSerializable, Parameter
         {
             $this->sSelector = "$(this)"; // If an empty selector is given, use javascript "this" instead
         }
-        else if(($sContext))
+        elseif(($sContext))
         {
             $this->sSelector = "$('" . $sSelector . "', $('" . $sContext . "'))";
         }
@@ -131,7 +131,7 @@ class Element implements JsonSerializable, Parameter
 
     /**
      * Generate the jQuery call, when converting the response into json.
-     * 
+     *
      * This is a method of the JsonSerializable interface.
      *
      * @return string

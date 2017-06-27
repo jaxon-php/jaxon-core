@@ -60,7 +60,7 @@ class Manager
             $this->nMethod = Jaxon::METHOD_POST;
             $this->aArgs = $_POST['jxnargs'];
         }
-        else if(isset($_GET['jxnargs']))
+        elseif(isset($_GET['jxnargs']))
         {
             $this->nMethod = Jaxon::METHOD_GET;
             $this->aArgs = $_GET['jxnargs'];
@@ -198,7 +198,7 @@ class Manager
                 $this->__argumentDecodeUTF8_iconv($xArg);
             }
         }
-        else if(is_string($mArg))
+        elseif(is_string($mArg))
         {
             $mArg = iconv("UTF-8", $this->getOption('core.encoding') . '//TRANSLIT', $mArg);
         }
@@ -228,7 +228,7 @@ class Manager
                 $this->__argumentDecodeUTF8_mb_convert_encoding($xArg);
             }
         }
-        else if(is_string($mArg))
+        elseif(is_string($mArg))
         {
             $mArg = mb_convert_encoding($mArg, $this->getOption('core.encoding'), "UTF-8");
         }
@@ -260,7 +260,7 @@ class Manager
                 $this->__argumentDecodeUTF8_utf8_decode($xArg);
             }
         }
-        else if(is_string($mArg))
+        elseif(is_string($mArg))
         {
             $mArg = utf8_decode($mArg);
         }
@@ -293,11 +293,11 @@ class Manager
             {
                 $sFunction = "iconv";
             }
-            else if(function_exists('mb_convert_encoding'))
+            elseif(function_exists('mb_convert_encoding'))
             {
                 $sFunction = "mb_convert_encoding";
             }
-            else if($this->getOption('core.encoding') == "ISO-8859-1")
+            elseif($this->getOption('core.encoding') == "ISO-8859-1")
             {
                 $sFunction = "utf8_decode";
             }

@@ -49,7 +49,7 @@ class JsCall implements JsonSerializable
 
     /**
      * The constructor.
-     * 
+     *
      * @param string        $sFunction            The javascript function
      */
     public function __construct($sFunction)
@@ -189,7 +189,7 @@ class JsCall implements JsonSerializable
 
     /**
      * Convert this request object to string, when converting the response into json.
-     * 
+     *
      * This is a method of the JsonSerializable interface.
      *
      * @return string

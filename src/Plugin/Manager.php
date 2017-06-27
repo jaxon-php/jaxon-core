@@ -143,7 +143,7 @@ class Manager
     public function useComposerAutoloader()
     {
         $this->bAutoloadEnabled = true;
-        $this->xAutoloader = require (__DIR__ . '/../../../../autoload.php');
+        $this->xAutoloader = require(__DIR__ . '/../../../../autoload.php');
     }
 
     /**
@@ -267,12 +267,12 @@ class Manager
             // The name of a request plugin is used as key in the plugin table
             $this->aRequestPlugins[$xPlugin->getName()] = $xPlugin;
         }
-        else if( $xPlugin instanceof Response)
+        elseif($xPlugin instanceof Response)
         {
             // The name of a response plugin is used as key in the plugin table
             $this->aResponsePlugins[$xPlugin->getName()] = $xPlugin;
         }
-        else if(!$bIsConfirm && !$bIsAlert)
+        elseif(!$bIsConfirm && !$bIsAlert)
         {
             throw new \Jaxon\Exception\Error($this->trans('errors.register.invalid', array('name' => get_class($xPlugin))));
         }
@@ -408,7 +408,7 @@ class Manager
                 $this->xAutoloader->setPsr4($sNamespace . '\\', $sDirectory);
             }
         }
-        else if(($this->xAutoloader))
+        elseif(($this->xAutoloader))
         {
             // If there is an autoloader, register the dir with classmap autoloading
             $itDir = new RecursiveDirectoryIterator($sDirectory);
@@ -475,7 +475,7 @@ class Manager
             $aOptions['*']['classpath'] = $sClassPath;
         }
         // Filter excluded methods
-        $aProtected = array_filter($aProtected, function($sName){return is_string($sName);});
+        $aProtected = array_filter($aProtected, function ($sName) {return is_string($sName);});
         if(count($aProtected) > 0)
         {
             $aOptions['*']['protected'] = $aProtected;
@@ -546,7 +546,7 @@ class Manager
                 $sClassFile = $aClassDir['directory'] . DIRECTORY_SEPARATOR . substr($sClassFile, $nLen);
                 $bRegister = true;
             }
-            else if(!($sNamespace))
+            elseif(!($sNamespace))
             {
                 $sClassFile = $aClassDir['directory'] . DIRECTORY_SEPARATOR . $sClassFile;
                 $bRegister = true;

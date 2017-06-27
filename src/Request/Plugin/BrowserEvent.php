@@ -49,7 +49,7 @@ class BrowserEvent extends RequestPlugin
     {
         $this->aEvents = array();
 
-        $this->sRequestedEvent = NULL;
+        $this->sRequestedEvent = null;
 
         if(isset($_GET['jxnevt']))
         {
@@ -101,7 +101,7 @@ class BrowserEvent extends RequestPlugin
                     return $xBrowserEvent->generateRequest();
                 }
             }
-            else if($sType == Jaxon::EVENT_HANDLER)
+            elseif($sType == Jaxon::EVENT_HANDLER)
             {
                 $sEvent = $aArgs[1];
                 if(isset($this->aEvents[$sEvent]) && isset($aArgs[2]))
@@ -163,7 +163,7 @@ class BrowserEvent extends RequestPlugin
         {
             $this->sRequestedEvent = null;
         }
-        return ($this->sRequestedEvent != NULL);
+        return ($this->sRequestedEvent != null);
     }
 
     /**

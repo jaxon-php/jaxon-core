@@ -1,7 +1,7 @@
 <?php
 
 /**
- * start.php - 
+ * start.php -
  *
  * This file is automatically loaded by the Composer autoloader
  *
@@ -53,7 +53,7 @@ function jaxon_register_plugin(\Jaxon\Plugin\Plugin $xPlugin, $nPriority = 1000)
 
 /**
  * Get an instance of the request factory
- * 
+ *
  * The returned element is not linked to any Jaxon class, so this function shall
  * only be used as a parameter of a Jaxon function call.
  *

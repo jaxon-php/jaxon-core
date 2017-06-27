@@ -14,7 +14,7 @@ namespace Jaxon\Utils\Traits;
 
 use Jaxon\Utils\Container;
 
-Trait Paginator
+trait Paginator
 {
     /**
      * Set the pagination renderer
