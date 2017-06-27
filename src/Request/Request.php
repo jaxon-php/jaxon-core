@@ -30,7 +30,7 @@ class Request extends JsCall
 
     /**
      * The type of the request
-     * 
+     *
      * Can be one of "function" or "class".
      *
      * @var string
@@ -53,7 +53,7 @@ class Request extends JsCall
 
     /**
      * The constructor.
-     * 
+     *
      * @param string        $sName            The javascript function or method name
      * @param string        $sType            The type (function or a method)
      */
@@ -112,7 +112,7 @@ class Request extends JsCall
     {
         $this->sCondition = '__confirm__';
         $this->aMessageArgs = func_get_args();
-        array_walk($this->aMessageArgs, function(&$xParameter){
+        array_walk($this->aMessageArgs, function (&$xParameter) {
             $xParameter = Parameter::make($xParameter);
         });
         return $this;
@@ -133,7 +133,7 @@ class Request extends JsCall
         $this->sCondition = Parameter::make($sCondition)->getScript();
         $this->aMessageArgs = func_get_args();
         array_shift($this->aMessageArgs); // Remove the first entry (the condition) from the array
-        array_walk($this->aMessageArgs, function(&$xParameter){
+        array_walk($this->aMessageArgs, function (&$xParameter) {
             $xParameter = Parameter::make($xParameter);
         });
         return $this;
@@ -141,7 +141,7 @@ class Request extends JsCall
 
     /**
      * Add a condition to the request
-     * 
+     *
      * The request is sent only if the condition is false.
      *
      * @param string        $sCondition               The condition to check
@@ -154,7 +154,7 @@ class Request extends JsCall
         $this->sCondition = '!(' . Parameter::make($sCondition)->getScript() . ')';
         $this->aMessageArgs = func_get_args();
         array_shift($this->aMessageArgs); // Remove the first entry (the condition) from the array
-        array_walk($this->aMessageArgs, function(&$xParameter){
+        array_walk($this->aMessageArgs, function (&$xParameter) {
             $xParameter = Parameter::make($xParameter);
         });
         return $this;
@@ -242,7 +242,7 @@ class Request extends JsCall
             $xConfirm = $this->getPluginManager()->getConfirm();
             $sScript = $xConfirm->confirm($sPhrase, $sScript, '');
         }
-        else if($this->sCondition !== null)
+        elseif($this->sCondition !== null)
         {
             $xAlert = $this->getPluginManager()->getAlert();
             $xAlert->setReturn(true);

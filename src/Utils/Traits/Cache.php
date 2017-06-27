@@ -16,7 +16,7 @@ namespace Jaxon\Utils\Traits;
 
 use Jaxon\Utils\Container;
 
-Trait Cache
+trait Cache
 {
     /**
      * Set a cache directory for the template engine

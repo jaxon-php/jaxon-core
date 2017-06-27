@@ -5,7 +5,7 @@
  *
  * Interface for Jaxon Response plugins.
  *
- * A response plugin provides additional services not already provided by the 
+ * A response plugin provides additional services not already provided by the
  * <Jaxon\Response\Response> class with regard to sending response commands to the client.
  * In addition, a response command may send javascript to the browser at page load
  * to aid in the processing of it's response commands.

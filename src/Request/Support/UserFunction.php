@@ -106,7 +106,7 @@ class UserFunction
                 $this->sUserFunction = $sUserFunction;
             }
         }
-        else if(is_string($sUserFunction))
+        elseif(is_string($sUserFunction))
         {
             $this->sUserFunction = $sUserFunction;
         }

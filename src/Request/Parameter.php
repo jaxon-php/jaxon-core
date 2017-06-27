@@ -40,7 +40,7 @@ class Parameter implements Interfaces\Parameter
 
     /**
      * The constructor.
-     * 
+     *
      * @param string        $sType                  The parameter type
      * @param mixed         $xValue                 The parameter value
      */
@@ -52,7 +52,7 @@ class Parameter implements Interfaces\Parameter
 
     /**
      * Get the parameter type
-     * 
+     *
      * @return string
      */
     public function getType()
@@ -62,7 +62,7 @@ class Parameter implements Interfaces\Parameter
 
     /**
      * Get the parameter value
-     * 
+     *
      * @return mixed
      */
     public function getValue()
@@ -72,9 +72,9 @@ class Parameter implements Interfaces\Parameter
 
     /**
      * Set the parameter value
-     * 
+     *
      * @param mixed         $xValue                 The parameter value
-     * 
+     *
      * @return void
      */
     public function setValue($xValue)
@@ -84,9 +84,9 @@ class Parameter implements Interfaces\Parameter
 
     /**
      * Create a Parameter instance using the given value
-     * 
+     *
      * @param mixed         $xValue                 The parameter value
-     * 
+     *
      * @return Parameter
      */
     public static function make($xValue)
@@ -95,15 +95,15 @@ class Parameter implements Interfaces\Parameter
         {
             return $xValue;
         }
-        else if(is_numeric($xValue))
+        elseif(is_numeric($xValue))
         {
             return new Parameter(Jaxon::NUMERIC_VALUE, $xValue);
         }
-        else if(is_string($xValue))
+        elseif(is_string($xValue))
         {
             return new Parameter(Jaxon::QUOTED_VALUE, $xValue);
         }
-        else if(is_bool($xValue))
+        elseif(is_bool($xValue))
         {
             return new Parameter(Jaxon::BOOL_VALUE, $xValue);
         }
@@ -180,7 +180,7 @@ class Parameter implements Interfaces\Parameter
 
     /**
      * Generate the jQuery call, when converting the response into json.
-     * 
+     *
      * This is a method of the JsonSerializable interface.
      *
      * @return string

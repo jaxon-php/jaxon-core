@@ -23,9 +23,9 @@ trait Alert
 
     /**
      * Set the library to return the javascript code or run it in the browser.
-     * 
+     *
      * @param boolean             $bReturn              Whether to return the code
-     * 
+     *
      * @return void
      */
     public function setReturn($bReturn)
@@ -35,7 +35,7 @@ trait Alert
 
     /**
      * Check if the library should return the js code or run it in the browser.
-     * 
+     *
      * @return boolean
      */
     public function getReturn()

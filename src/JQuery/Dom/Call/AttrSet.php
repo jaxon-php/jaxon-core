@@ -22,7 +22,7 @@ class AttrSet implements JsonSerializable
 
     /**
      * The constructor.
-     * 
+     *
      * @param string        $sAttrName            The attribute name
      * @param mixed         $xAttrValue           The attribute value
      */
@@ -54,7 +54,7 @@ class AttrSet implements JsonSerializable
 
     /**
      * Convert this call to string, when converting the response into json.
-     * 
+     *
      * This is a method of the JsonSerializable interface.
      *
      * @return string

@@ -14,7 +14,7 @@ namespace Jaxon\Utils\Traits;
 
 use Jaxon\Utils\Container;
 
-Trait Template
+trait Template
 {
     /**
      * Render a template

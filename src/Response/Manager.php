@@ -75,7 +75,7 @@ class Manager
         {
             $this->xResponse = $xResponse;
         }
-        else if(get_class($this->xResponse) == get_class($xResponse))
+        elseif(get_class($this->xResponse) == get_class($xResponse))
         {
             if($this->xResponse != $xResponse)
             {

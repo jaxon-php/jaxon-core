@@ -14,7 +14,7 @@ namespace Jaxon\Utils\Traits;
 
 use Jaxon\Utils\Container;
 
-Trait Config
+trait Config
 {
     /**
      * Get the Jaxon library version number

@@ -14,7 +14,7 @@ namespace Jaxon\Utils\Traits;
 
 use Jaxon\Utils\Container;
 
-Trait Validator
+trait Validator
 {
     /**
      * Validate a function name

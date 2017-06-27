@@ -18,10 +18,10 @@ class Alert implements \Jaxon\Request\Interfaces\Alert
 
     /**
      * Print an alert message.
-     * 
+     *
      * @param string              $message              The text of the message
      * @param string              $title                The title of the message
-     * 
+     *
      * @return string|void
      */
     protected function alert($message, $title)
@@ -34,12 +34,12 @@ class Alert implements \Jaxon\Request\Interfaces\Alert
 
     /**
      * Print a success message.
-     * 
+     *
      * It is a function of the Jaxon\Dialogs\Interfaces\Alert interface.
-     * 
+     *
      * @param string              $message              The text of the message
      * @param string|null         $title                The title of the message
-     * 
+     *
      * @return string|void
      */
     public function success($message, $title = null)
@@ -49,12 +49,12 @@ class Alert implements \Jaxon\Request\Interfaces\Alert
 
     /**
      * Print an information message.
-     * 
+     *
      * It is a function of the Jaxon\Dialogs\Interfaces\Alert interface.
-     * 
+     *
      * @param string              $message              The text of the message
      * @param string|null         $title                The title of the message
-     * 
+     *
      * @return string|void
      */
     public function info($message, $title = null)
@@ -64,12 +64,12 @@ class Alert implements \Jaxon\Request\Interfaces\Alert
 
     /**
      * Print a warning message.
-     * 
+     *
      * It is a function of the Jaxon\Dialogs\Interfaces\Alert interface.
-     * 
+     *
      * @param string              $message              The text of the message
      * @param string|null         $title                The title of the message
-     * 
+     *
      * @return string|void
      */
     public function warning($message, $title = null)
@@ -79,12 +79,12 @@ class Alert implements \Jaxon\Request\Interfaces\Alert
 
     /**
      * Print an error message.
-     * 
+     *
      * It is a function of the Jaxon\Dialogs\Interfaces\Alert interface.
-     * 
+     *
      * @param string              $message              The text of the message
      * @param string|null         $title                The title of the message
-     * 
+     *
      * @return string|void
      */
     public function error($message, $title = null)

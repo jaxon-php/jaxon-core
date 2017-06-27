@@ -8,7 +8,7 @@ class Method extends JsCall
 {
     /**
      * The constructor.
-     * 
+     *
      * @param string        $sMethod            The jQuery function
      * @param array         $aArguments         The arguments of the jQuery function
      */

@@ -37,7 +37,7 @@ trait Factory
 
     /**
      * Get the Jaxon class name
-     * 
+     *
      * This is the name to be used in Jaxon javascript calls.
      *
      * @return string        The Jaxon class name
