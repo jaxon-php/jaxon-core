@@ -27,8 +27,8 @@ final class RequestTest extends TestCase
     public function testRequestToGlobalFunctionWithJaxonParameter()
     {
         $this->assertEquals(
-            "testFunction('string', 2, true, jaxon.getFormValues('form_id'), jaxon.$('input_id').value)",
-            rq()->func('testFunction', 'string', 2, true, rq()->form('form_id'), rq()->input('input_id'))->getScript()
+            "testFunction('string', 2, true, jaxon.getFormValues('elt_id'), jaxon.$('elt_id').value)",
+            rq()->func('testFunction', 'string', 2, true, rq()->form('elt_id'), rq()->input('elt_id'))->getScript()
         );
     }
 
@@ -51,8 +51,8 @@ final class RequestTest extends TestCase
     public function testRequestToJaxonFunctionWithJaxonParameter()
     {
         $this->assertEquals(
-            "jaxon_testFunction('string', 2, true, jaxon.getFormValues('form_id'), jaxon.$('input_id').value)",
-            rq()->call('testFunction', 'string', 2, true, rq()->form('form_id'), rq()->input('input_id'))->getScript()
+            "jaxon_testFunction('string', 2, true, jaxon.getFormValues('elt_id'), jaxon.$('elt_id').value)",
+            rq()->call('testFunction', 'string', 2, true, rq()->form('elt_id'), rq()->input('elt_id'))->getScript()
         );
     }
 
@@ -75,32 +75,32 @@ final class RequestTest extends TestCase
     public function testRequestToJaxonClassWithFormParameter()
     {
         $this->assertEquals(
-            "JaxonTest.method(jaxon.getFormValues('form_id'))",
-            rq()->call('Test.method', rq()->form('form_id'))->getScript()
+            "JaxonTest.method(jaxon.getFormValues('elt_id'))",
+            rq()->call('Test.method', rq()->form('elt_id'))->getScript()
         );
     }
 
     public function testRequestToJaxonClassWithInputParameter()
     {
         $this->assertEquals(
-            "JaxonTest.method(jaxon.$('input_id').value)",
-            rq()->call('Test.method', rq()->input('input_id'))->getScript()
+            "JaxonTest.method(jaxon.$('elt_id').value)",
+            rq()->call('Test.method', rq()->input('elt_id'))->getScript()
         );
     }
 
     public function testRequestToJaxonClassWithCheckedParameter()
     {
         $this->assertEquals(
-            "JaxonTest.method(jaxon.$('check_id').checked)",
-            rq()->call('Test.method', rq()->checked('check_id'))->getScript()
+            "JaxonTest.method(jaxon.$('elt_id').checked)",
+            rq()->call('Test.method', rq()->checked('cond_id'))->getScript()
         );
     }
 
     public function testRequestToJaxonClassWithSelectParameter()
     {
         $this->assertEquals(
-            "JaxonTest.method(jaxon.$('select_id').value)",
-            rq()->call('Test.method', rq()->select('select_id'))->getScript()
+            "JaxonTest.method(jaxon.$('elt_id').value)",
+            rq()->call('Test.method', rq()->select('elt_id'))->getScript()
         );
     }
 
@@ -115,8 +115,8 @@ final class RequestTest extends TestCase
     public function testRequestToJaxonClassWithMultipleParameter()
     {
         $this->assertEquals(
-            "JaxonTest.method(jaxon.$('check_id').checked, jaxon.$('select_id').value, jaxon.$('elt_id').innerHTML)",
-            rq()->call('Test.method', rq()->checked('check_id'), rq()->select('select_id'), rq()->html('elt_id'))->getScript()
+            "JaxonTest.method(jaxon.$('elt_id').checked, jaxon.$('elt_id').value, jaxon.$('elt_id').innerHTML)",
+            rq()->call('Test.method', rq()->checked('cond_id'), rq()->select('elt_id'), rq()->html('elt_id'))->getScript()
         );
     }
 
