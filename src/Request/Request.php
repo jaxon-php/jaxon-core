@@ -176,7 +176,7 @@ class Request extends JsCall
          */
         $sVars = ''; // Javascript code defining all the variables values.
         $nVarId = 1; // Position of the variables, starting from 1.
-        // This array will avoid declaring many variables with the same value.
+        // This array will avoid declaring multiple variables with the same value.
         // The array key is the variable value, while the array value is the variable name.
         $aVariables = array(); // Array of local variables.
         foreach($this->aParameters as &$xParameter)
@@ -244,11 +244,11 @@ class Request extends JsCall
         }
         elseif($this->sCondition !== null)
         {
-            $xAlert = $this->getPluginManager()->getAlert();
-            $xAlert->setReturn(true);
             $sScript = 'if(' . $this->sCondition . '){' . $sScript . ';}';
             if(($sPhrase))
             {
+                $xAlert = $this->getPluginManager()->getAlert();
+                $xAlert->setReturn(true);
                 $sScript .= 'else{' . $xAlert->warning($sPhrase) . ';}';
             }
         }
