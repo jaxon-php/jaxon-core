@@ -150,7 +150,8 @@ final class RequestTest extends TestCase
             "if(jaxon.$('cond_id').checked){JaxonTest.method(jaxon.$('elt_id').innerHTML);}" .
                 "else{alert('Please check the option');}",
             rq()->call('Test.method', rq()->html('elt_id'))
-                ->when(rq()->checked('cond_id'), "Please check the option")->getScript()
+                ->when(rq()->checked('cond_id'))
+                ->else("Please check the option")->getScript()
         );
     }
 
@@ -160,7 +161,8 @@ final class RequestTest extends TestCase
             "if(jaxon.$('cond_id').checked){JaxonTest.method(jaxon.$('elt_id').innerHTML);}else" .
                 "{alert('M. {1}, please check the option'.supplant({'1':jaxon.$('name_id').innerHTML}));}",
             rq()->call('Test.method', rq()->html('elt_id'))
-                ->when(rq()->checked('cond_id'), "M. {1}, please check the option", rq()->html('name_id'))->getScript()
+                ->when(rq()->checked('cond_id'))
+                ->else("M. {1}, please check the option", rq()->html('name_id'))->getScript()
         );
     }
 
@@ -168,7 +170,8 @@ final class RequestTest extends TestCase
     {
          $this->assertEquals(
             "if(!(jaxon.$('cond_id').checked)){JaxonTest.method(jaxon.$('elt_id').innerHTML);}",
-            rq()->call('Test.method', rq()->html('elt_id'))->unless(rq()->checked('cond_id'))->getScript()
+            rq()->call('Test.method', rq()->html('elt_id'))
+                ->unless(rq()->checked('cond_id'))->getScript()
         );
     }
 
@@ -178,7 +181,8 @@ final class RequestTest extends TestCase
             "if(!(jaxon.$('cond_id').checked)){JaxonTest.method(jaxon.$('elt_id').innerHTML);}" .
                 "else{alert('Please uncheck the option');}",
             rq()->call('Test.method', rq()->html('elt_id'))
-                ->unless(rq()->checked('cond_id'), "Please uncheck the option")->getScript()
+                ->unless(rq()->checked('cond_id'))
+                ->else("Please uncheck the option")->getScript()
         );
     }
 
@@ -188,7 +192,8 @@ final class RequestTest extends TestCase
             "if(!(jaxon.$('cond_id').checked)){JaxonTest.method(jaxon.$('elt_id').innerHTML);}" .
                 "else{alert('M. {1}, please uncheck the option'.supplant({'1':jaxon.$('name_id').innerHTML}));}",
             rq()->call('Test.method', rq()->html('elt_id'))
-                ->unless(rq()->checked('cond_id'), "M. {1}, please uncheck the option", rq()->html('name_id'))->getScript()
+                ->unless(rq()->checked('cond_id'))
+                ->else("M. {1}, please uncheck the option", rq()->html('name_id'))->getScript()
         );
     }
 }
