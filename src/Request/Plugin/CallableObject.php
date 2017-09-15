@@ -136,7 +136,9 @@ class CallableObject extends RequestPlugin
                         }
                     }
                 }
-                $this->aCallableObjects[$xCallableObject->getName()] = $xCallableObject;
+                // Replace all separators ('.' and '_') with antislashes.
+                $sClassName = str_replace(['.', '_'], ['\\', '\\'], $xCallableObject->getName());
+                $this->aCallableObjects[trim($sClassName, '\\')] = $xCallableObject;
 
                 return true;
             }
@@ -230,24 +232,40 @@ class CallableObject extends RequestPlugin
 
         $aArgs = $this->getRequestManager()->process();
 
-        // Try to register an instance of the requested class, if it isn't yet
-        if(!array_key_exists($this->sRequestedClass, $this->aCallableObjects))
+        // Register an instance of the requested class, if it isn't yet
+        if(!($xCallableObject = $this->getCallableObject($this->sRequestedClass)))
         {
             $this->getPluginManager()->registerClass($this->sRequestedClass);
+            $xCallableObject = $this->getCallableObject($this->sRequestedClass);
         }
 
-        if(array_key_exists($this->sRequestedClass, $this->aCallableObjects))
+        // Find the requested method
+        if(!$xCallableObject || !$xCallableObject->hasMethod($this->sRequestedMethod))
         {
-            $xCallableObject = $this->aCallableObjects[$this->sRequestedClass];
-            if($xCallableObject->hasMethod($this->sRequestedMethod))
-            {
-                $xCallableObject->call($this->sRequestedMethod, $aArgs);
-                return true;
-            }
+            // Unable to find the requested object or method
+            throw new \Jaxon\Exception\Error($this->trans('errors.objects.invalid',
+                array('class' => $this->sRequestedClass, 'method' => $this->sRequestedMethod)));
         }
-        // Unable to find the requested object or method
-        throw new \Jaxon\Exception\Error($this->trans('errors.objects.invalid',
-            array('class' => $this->sRequestedClass, 'method' => $this->sRequestedMethod)));
+
+        // Call the requested method
+        $xCallableObject->call($this->sRequestedMethod, $aArgs);
+        return true;
+    }
+
+    /**
+     * Find a callable object by class name
+     *
+     * @param string        $sClassName            The class name of the callable object
+     *
+     * @return object
+     */
+    public function getCallableObject($sClassName)
+    {
+        // Replace all separators ('.' and '_') with antislashes, and remove the antislashes
+        // at the beginning and the end of the class name.
+        $sClassName = trim(str_replace(['.', '_'], ['\\', '\\'], (string)$sClassName), '\\');
+        return array_key_exists($sClassName, $this->aCallableObjects) ?
+            $this->aCallableObjects[$sClassName] : null;
     }
 
     /**
@@ -257,17 +275,10 @@ class CallableObject extends RequestPlugin
      *
      * @return object
      */
-    public function getRegisteredObject($sClassName = null)
+    public function getRegisteredObject($sClassName)
     {
-        $sClassName = (string)$sClassName;
-        if(!$sClassName)
-        {
-            $sClassName = $this->sRequestedClass;
-        }
-        if(!array_key_exists($sClassName, $this->aCallableObjects))
-        {
-            return null;
-        }
-        return $this->aCallableObjects[$sClassName]->getRegisteredObject();
+        // Get the corresponding callable object
+        $xCallableObject = $this->getCallableObject($sClassName);
+        return ($xCallableObject) ? $xCallableObject->getRegisteredObject() : null;
     }
 }
