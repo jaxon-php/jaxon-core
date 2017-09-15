@@ -124,11 +124,10 @@ class Request extends JsCall
      * The request is sent only if the condition is true.
      *
      * @param string        $sCondition               The condition to check
-     * @param string        $sMessage                 The message to show if the request is not sent
      *
      * @return Request
      */
-    public function when($sCondition, $sMessage = '')
+    public function when($sCondition)
     {
         $this->sCondition = Parameter::make($sCondition)->getScript();
         $this->aMessageArgs = func_get_args();
@@ -154,6 +153,109 @@ class Request extends JsCall
         $this->sCondition = '!(' . Parameter::make($sCondition)->getScript() . ')';
         $this->aMessageArgs = func_get_args();
         array_shift($this->aMessageArgs); // Remove the first entry (the condition) from the array
+        array_walk($this->aMessageArgs, function (&$xParameter) {
+            $xParameter = Parameter::make($xParameter);
+        });
+        return $this;
+    }
+
+    /**
+     * Check if a value is equal to another before sending the request
+     *
+     * @param string        $sValue1                  The first value to compare
+     * @param string        $sValue2                  The second value to compare
+     *
+     * @return Request
+     */
+    public function ifeq($sValue1, $sValue2)
+    {
+        $this->sCondition = '(' . Parameter::make($sValue1) . '==' . Parameter::make($sValue2) . ')';
+        return $this;
+    }
+
+    /**
+     * Check if a value is not equal to another before sending the request
+     *
+     * @param string        $sValue1                  The first value to compare
+     * @param string        $sValue2                  The second value to compare
+     *
+     * @return Request
+     */
+    public function ifne($sValue1, $sValue2)
+    {
+        $this->sCondition = '(' . Parameter::make($sValue1) . '!=' . Parameter::make($sValue2) . ')';
+        return $this;
+    }
+
+    /**
+     * Check if a value is greater than another before sending the request
+     *
+     * @param string        $sValue1                  The first value to compare
+     * @param string        $sValue2                  The second value to compare
+     *
+     * @return Request
+     */
+    public function ifgt($sValue1, $sValue2)
+    {
+        $this->sCondition = '(' . Parameter::make($sValue1) . '>' . Parameter::make($sValue2) . ')';
+        return $this;
+    }
+
+    /**
+     * Check if a value is greater or equal to another before sending the request
+     *
+     * @param string        $sValue1                  The first value to compare
+     * @param string        $sValue2                  The second value to compare
+     *
+     * @return Request
+     */
+    public function ifge($sValue1, $sValue2)
+    {
+        $this->sCondition = '(' . Parameter::make($sValue1) . '>=' . Parameter::make($sValue2) . ')';
+        return $this;
+    }
+
+    /**
+     * Check if a value is lower than another before sending the request
+     *
+     * @param string        $sValue1                  The first value to compare
+     * @param string        $sValue2                  The second value to compare
+     *
+     * @return Request
+     */
+    public function iflt($sValue1, $sValue2)
+    {
+        $this->sCondition = '(' . Parameter::make($sValue1) . '<' . Parameter::make($sValue2) . ')';
+        return $this;
+    }
+
+    /**
+     * Check if a value is lower or equal to another before sending the request
+     *
+     * @param string        $sValue1                  The first value to compare
+     * @param string        $sValue2                  The second value to compare
+     *
+     * @return Request
+     */
+    public function ifle($sValue1, $sValue2)
+    {
+        $this->sCondition = '(' . Parameter::make($sValue1) . '<=' . Parameter::make($sValue2) . ')';
+        return $this;
+    }
+
+    /**
+     * Set the message to show if the condition to send the request is not met
+     *
+     * The first parameter is the message to show. The followin allow to insert data from
+     * the webpage in the message using positional placeholders.
+     *
+     * @param string        $sMessage                 The message to show if the request is not sent
+     *
+     * @return Request
+     */
+    public function else($sMessage)
+    {
+        $this->aMessageArgs = func_get_args();
         array_walk($this->aMessageArgs, function (&$xParameter) {
             $xParameter = Parameter::make($xParameter);
         });
