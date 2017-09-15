@@ -130,11 +130,6 @@ class Request extends JsCall
     public function when($sCondition)
     {
         $this->sCondition = Parameter::make($sCondition)->getScript();
-        $this->aMessageArgs = func_get_args();
-        array_shift($this->aMessageArgs); // Remove the first entry (the condition) from the array
-        array_walk($this->aMessageArgs, function (&$xParameter) {
-            $xParameter = Parameter::make($xParameter);
-        });
         return $this;
     }
 
@@ -144,18 +139,12 @@ class Request extends JsCall
      * The request is sent only if the condition is false.
      *
      * @param string        $sCondition               The condition to check
-     * @param string        $sMessage                 The message to show if the request is not sent
      *
      * @return Request
      */
-    public function unless($sCondition, $sMessage = '')
+    public function unless($sCondition)
     {
         $this->sCondition = '!(' . Parameter::make($sCondition)->getScript() . ')';
-        $this->aMessageArgs = func_get_args();
-        array_shift($this->aMessageArgs); // Remove the first entry (the condition) from the array
-        array_walk($this->aMessageArgs, function (&$xParameter) {
-            $xParameter = Parameter::make($xParameter);
-        });
         return $this;
     }
 
