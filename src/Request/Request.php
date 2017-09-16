@@ -242,7 +242,7 @@ class Request extends JsCall
      *
      * @return Request
      */
-    public function else($sMessage)
+    public function elseShow($sMessage)
     {
         $this->aMessageArgs = func_get_args();
         array_walk($this->aMessageArgs, function (&$xParameter) {

@@ -151,7 +151,7 @@ final class RequestTest extends TestCase
                 "else{alert('Please check the option');}",
             rq()->call('Test.method', rq()->html('elt_id'))
                 ->when(rq()->checked('cond_id'))
-                ->else("Please check the option")->getScript()
+                ->elseShow("Please check the option")->getScript()
         );
     }
 
@@ -162,7 +162,7 @@ final class RequestTest extends TestCase
                 "{alert('M. {1}, please check the option'.supplant({'1':jaxon.$('name_id').innerHTML}));}",
             rq()->call('Test.method', rq()->html('elt_id'))
                 ->when(rq()->checked('cond_id'))
-                ->else("M. {1}, please check the option", rq()->html('name_id'))->getScript()
+                ->elseShow("M. {1}, please check the option", rq()->html('name_id'))->getScript()
         );
     }
 
@@ -182,7 +182,7 @@ final class RequestTest extends TestCase
                 "else{alert('Please uncheck the option');}",
             rq()->call('Test.method', rq()->html('elt_id'))
                 ->unless(rq()->checked('cond_id'))
-                ->else("Please uncheck the option")->getScript()
+                ->elseShow("Please uncheck the option")->getScript()
         );
     }
 
@@ -193,7 +193,7 @@ final class RequestTest extends TestCase
                 "else{alert('M. {1}, please uncheck the option'.supplant({'1':jaxon.$('name_id').innerHTML}));}",
             rq()->call('Test.method', rq()->html('elt_id'))
                 ->unless(rq()->checked('cond_id'))
-                ->else("M. {1}, please uncheck the option", rq()->html('name_id'))->getScript()
+                ->elseShow("M. {1}, please uncheck the option", rq()->html('name_id'))->getScript()
         );
     }
 }
