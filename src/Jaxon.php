@@ -244,11 +244,13 @@ class Jaxon
     /**
      * Register callable objects from all class directories
      *
+     * @param array             $aOptions               The options to register the classes with
+     *
      * @return void
      */
-    public function registerClasses()
+    public function registerClasses(array $aOptions = array())
     {
-        return $this->getPluginManager()->registerClasses();
+        return $this->getPluginManager()->registerClasses($aOptions);
     }
 
     /**

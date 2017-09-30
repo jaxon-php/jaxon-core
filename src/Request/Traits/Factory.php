@@ -52,7 +52,7 @@ trait Factory
             // Return the class name without the namespace.
             return $xReflectionClass->getShortName();
         }
-        return $this->xJaxonCallable->getName();
+        return $this->xJaxonCallable->getJsName();
     }
 
     /**

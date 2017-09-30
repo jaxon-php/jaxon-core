@@ -158,8 +158,6 @@ class CallableObject
     /**
      * Return the name of this callable object
      *
-     * This is the name of the generated javascript class.
-     *
      * @return string
      */
     public function getName()
@@ -169,9 +167,19 @@ class CallableObject
         // Append the classpath to the name
         if(($this->classpath))
         {
-            $name = $this->classpath . $this->separator . $name;
+            $name = $this->classpath . '\\' . $name;
         }
         return $name;
+    }
+
+    /**
+     * Return the javascript name of this callable object
+     *
+     * @return string
+     */
+    public function getJsName()
+    {
+        return str_replace('\\', $this->separator, $this->getName());
     }
 
     /**
@@ -193,7 +201,7 @@ class CallableObject
     public function getPath()
     {
         // The class path without the trailing separator.
-        return rtrim($this->classpath, $this->separator);
+        return $this->classpath;
     }
 
     /**
@@ -244,7 +252,7 @@ class CallableObject
         if($sName == 'classpath')
         {
             if($sValue != '')
-                $this->classpath = $sValue;
+                $this->classpath = trim($sValue, '\\');
             return;
         }
         // Set the separator
@@ -279,7 +287,8 @@ class CallableObject
     public function getScript()
     {
         $sJaxonPrefix = $this->getOption('core.prefix.class');
-        $sClass = $this->getName();
+        // "\" are replaced with the configured separator in the generated javascript code.
+        $sClass = str_replace('\\', $this->separator, $this->getName());
         $aMethods = array();
 
         // Common options to be set on all methods

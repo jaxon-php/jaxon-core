@@ -126,19 +126,40 @@ class CallableObject extends RequestPlugin
                 }
                 if(count($aArgs) > 2 && is_array($aArgs[2]))
                 {
+                    $aOptions = $aArgs[2];
+                    // Save the classpath and the separator in this class
+                    if(array_key_exists('*', $aOptions) && is_array($aOptions['*']))
+                    {
+                        $aOptions = $aOptions['*'];
+                        $sSeparator = '.';
+                        if(array_key_exists('separator', $aOptions))
+                        {
+                            $sSeparator = trim($aOptions['separator']);
+                        }
+                        if(!in_array($sSeparator, ['.', '_']))
+                        {
+                            $sSeparator = '.';
+                        }
+                        $aOptions['separator'] = $sSeparator;
+                        if(array_key_exists('classpath', $aOptions))
+                        {
+                            $aOptions['classpath'] = trim($aOptions['classpath'], ' \\._');
+                            // Save classpath with "\" in the parameters
+                            $aOptions['classpath'] = str_replace(['.', '_'], ['\\', '\\'], $aOptions['classpath']);
+                            // Save classpath with separator locally
+                            $this->aClassPaths[] = str_replace('\\', $sSeparator, $aOptions['classpath']);
+                        }
+                    }
                     foreach($aArgs[2] as $sKey => $aValue)
                     {
                         foreach($aValue as $sName => $sValue)
                         {
-                            if($sName == 'classpath' && $sValue != '')
-                                $this->aClassPaths[] = $sValue;
                             $xCallableObject->configure($sKey, $sName, $sValue);
                         }
                     }
                 }
-                // Replace all separators ('.' and '_') with antislashes.
-                $sClassName = str_replace(['.', '_'], ['\\', '\\'], $xCallableObject->getName());
-                $this->aCallableObjects[trim($sClassName, '\\')] = $xCallableObject;
+                // Add the new object in the callable objects array.
+                $this->aCallableObjects[$xCallableObject->getName()] = $xCallableObject;
 
                 return true;
             }
@@ -171,7 +192,7 @@ class CallableObject extends RequestPlugin
     public function getScript()
     {
         $sJaxonPrefix = $this->getOption('core.prefix.class');
-        // Generate code for javascript classes declaration
+        // Generate code for javascript objects declaration
         $code = '';
         $classes = array();
         foreach($this->aClassPaths as $sClassPath)
@@ -181,7 +202,7 @@ class CallableObject extends RequestPlugin
             while(($dotPosition = strpos($sClassPath, '.', $offset)) !== false)
             {
                 $class = substr($sClassPath, 0, $dotPosition);
-                // Generate code for this class
+                // Generate code for this object
                 if(!array_key_exists($class, $classes))
                 {
                     $code .= "$sJaxonPrefix$class = {};\n";
@@ -190,7 +211,7 @@ class CallableObject extends RequestPlugin
                 $offset = $dotPosition + 1;
             }
         }
-
+        // Generate code for javascript methods
         foreach($this->aCallableObjects as $xCallableObject)
         {
             $code .= $xCallableObject->getScript();
