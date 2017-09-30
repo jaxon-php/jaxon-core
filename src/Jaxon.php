@@ -206,21 +206,21 @@ class Jaxon
         $aArgs = func_get_args();
         $nArgs = func_num_args();
 
-        if(self::PROCESSING_EVENT == $aArgs[0])
+        if(self::PROCESSING_EVENT == $sType)
         {
             if($nArgs > 2)
             {
-                $sEvent = $aArgs[1];
+                $sEvent = $xArgs;
                 $xUserFunction = $aArgs[2];
                 if(!is_a($xUserFunction, 'Request\\Support\\UserFunction'))
                     $xUserFunction = new Request\Support\UserFunction($xUserFunction);
                 $this->aProcessingEvents[$sEvent] = $xUserFunction;
-                return true;
             }
             /*else
             {
                 // Todo: return error
             }*/
+            return true;
         }
 
         return $this->getPluginManager()->register($aArgs);
