@@ -45,7 +45,7 @@ class Jaxon
      *
      * @var string
      */
-    private $sVersion = 'Jaxon 2.0.0';
+    private $sVersion = 'Jaxon 2.0.3';
 
     /*
      * Processing events
