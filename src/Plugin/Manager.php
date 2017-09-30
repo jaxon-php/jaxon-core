@@ -384,7 +384,7 @@ class Manager
      *
      * @return boolean
      */
-    public function addClassDir($sDirectory, $sNamespace = null, $sSeparator = '.', array $aProtected = array())
+    public function addClassDir($sDirectory, $sNamespace = '', $sSeparator = '.', array $aProtected = array())
     {
         if(!is_dir(($sDirectory = trim($sDirectory))))
         {
@@ -397,7 +397,7 @@ class Manager
         }
         if(!($sNamespace = trim($sNamespace, ' \\')))
         {
-            $sNamespace = null;
+            $sNamespace = '';
         }
         if(($sNamespace))
         {
@@ -437,14 +437,14 @@ class Manager
      *
      * @param object            $xFile                  The PHP file containing the class
      * @param string            $sDirectory             The path to the directory
-     * @param string|null       $sNamespace             The associated namespace
+     * @param string|''         $sNamespace             The associated namespace
      * @param string            $sSeparator             The character to use as separator in javascript class names
      * @param array             $aProtected             The functions that are not to be exported
      * @param array             $aOptions               The options to register the class with
      *
      * @return void
      */
-    protected function registerClassFromFile($xFile, $sDirectory, $sNamespace = null, $sSeparator = '.',
+    protected function registerClassFromFile($xFile, $sDirectory, $sNamespace = '', $sSeparator = '.',
         array $aProtected = array(), array $aOptions = array())
     {
         $sDS = DIRECTORY_SEPARATOR;
@@ -508,7 +508,6 @@ class Manager
             $sDirectory = $aClassDir['directory'];
             // Get the namespace
             $sNamespace = $aClassDir['namespace'];
-            $nLen = strlen($sNamespace);
 
             $itDir = new RecursiveDirectoryIterator($sDirectory);
             $itFile = new RecursiveIteratorIterator($itDir);
