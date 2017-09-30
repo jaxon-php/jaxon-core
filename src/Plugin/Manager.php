@@ -449,11 +449,12 @@ class Manager
     {
         $sDS = DIRECTORY_SEPARATOR;
         // Get the corresponding class path and name
-        $sClassPath = trim(substr($xFile->getPath(), strlen($sDirectory)), $sDS);
+        $sClassPath = substr($xFile->getPath(), strlen($sDirectory));
+        $sClassPath = str_replace($sDS, '\\', trim($sClassPath, $sDS));
         $sClassName = $xFile->getBasename('.php');
         if(($sNamespace))
         {
-            $sClassPath = $sNamespace . '\\' . $sClassPath;
+            $sClassPath = ($sClassPath) ? $sNamespace . '\\' . $sClassPath : $sNamespace;
             $sClassName = '\\' . $sClassPath . '\\' . $sClassName;
         }
         // Require the file only if autoload is enabled but there is no autoloader
