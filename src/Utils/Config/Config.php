@@ -55,38 +55,23 @@ class Config
             throw new \Jaxon\Exception\Config\Data(jaxon_trans('config.errors.data.depth',
                 array('key' => $sPrefix, 'depth' => $nDepth)));
         }
-        $aValues = false;
         foreach($aOptions as $sName => $xOption)
         {
             if(is_int($sName))
             {
-                if(is_array($aValues))
-                {
-                    $aValues[] = $xOption;
-                }
-                else
-                {
-                    $aValues = array($xOption);
-                }
                 continue;
             }
 
             $sName = trim($sName);
             $sFullName = ($sPrefix) ? $sPrefix . '.' . $sName : $sName;
+            // Save the value of this option
+            $this->aOptions[$sFullName] = $xOption;
+            // Save the values of its sub-options
             if(is_array($xOption))
             {
                 // Recursively read the options in the array
                 $this->_setOptions($xOption, $sFullName, $nDepth + 1);
             }
-            elseif(is_string($xOption) || is_numeric($xOption) || is_bool($xOption))
-            {
-                // Save the value of this option
-                $this->aOptions[$sFullName] = $xOption;
-            }
-        }
-        if(is_array($aValues) && ($sPrefix))
-        {
-            $this->aOptions[$sPrefix] = $aValues;
         }
     }
 
