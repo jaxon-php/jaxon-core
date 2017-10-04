@@ -197,17 +197,7 @@ class UserFunction
     {
         if(($this->sInclude))
         {
-            ob_start();
             require_once $this->sInclude;
-            $sOutput = ob_get_clean();
-            if(($sOutput))
-            {
-                $sOutput = $this->trans('debug.function.include', array(
-                    'file' => $this->sInclude,
-                    'output' => $sOutput
-                ));
-                $this->getResponseManager()->debug($sOutput);
-            }
         }
         $mFunction = $this->sUserFunction;
         $this->getResponseManager()->append(call_user_func_array($mFunction, $aArgs));
