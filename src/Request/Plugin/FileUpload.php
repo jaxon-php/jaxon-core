@@ -1,21 +1,11 @@
 <?php
 
 /**
- * FileUpload.php - Jaxon browser event
- *
- * This class adds server side event handling capabilities to Jaxon
- *
- * Events can be registered, then event handlers attached.
+ * FileUpload.php - This class handles Ajax uploaded files.
  *
  * @package jaxon-core
- * @author Jared White
- * @author J. Max Wilson
- * @author Joseph Woolley
- * @author Steffen Konerow
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
- * @copyright Copyright (c) 2005-2007 by Jared White & J. Max Wilson
- * @copyright Copyright (c) 2008-2010 by Joseph Woolley, Steffen Konerow, Jared White  & J. Max Wilson
- * @copyright 2016 Thierry Feuzeu <thierry.feuzeu@gmail.com>
+ * @copyright 2017 Thierry Feuzeu <thierry.feuzeu@gmail.com>
  * @license https://opensource.org/licenses/BSD-3-Clause BSD 3-Clause License
  * @link https://github.com/jaxon-php/jaxon-core
  */
@@ -24,6 +14,7 @@ namespace Jaxon\Request\Plugin;
 
 use Jaxon\Jaxon;
 use Jaxon\Plugin\Request as RequestPlugin;
+use Jaxon\Request\Support\UploadedFile;
 
 class FileUpload extends RequestPlugin
 {
@@ -174,21 +165,14 @@ class FileUpload extends RequestPlugin
                     throw new \Jaxon\Exception\Error($this->getValidatorMessage());
                 }
                 // Verify that the upload dir exists and is writable
-                $sUploadDir = trim($this->getOption('upload.files.' . $sVarName . '.dir', $sDefaultUploadDir));
-                $sUploadDir = rtrim($sUploadDir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+                $sUploadDir = $this->getOption('upload.files.' . $sVarName . '.dir', $sDefaultUploadDir);
+                $sUploadDir = rtrim(trim($sUploadDir), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
                 if(!is_writable($sUploadDir))
                 {
                     throw new \Jaxon\Exception\Error($this->trans('errors.upload.access'));
                 }
                 // Set the user file data
-                $this->aUserFiles[$sVarName][] = [
-                    'type' => $aFile['type'],
-                    'name' => $aFile['name'],
-                    'path' => $sUploadDir . $aFile["name"],
-                    'size' => $aFile['size'],
-                    // 'extension' => $aFile['extension'],
-                    // 'filename' => $aFile['filename'],
-                ];
+                $this->aUserFiles[$sVarName][] = new UploadedFile($sUploadDir, $aFile);
             }
         }
         // Copy the uploaded files from the temp dir to the user dir
@@ -197,7 +181,7 @@ class FileUpload extends RequestPlugin
             for($i = 0; $i < count($aFiles); $i++)
             {
                 // All's right, move the file to the user dir.
-                move_uploaded_file($aFiles[$i]["tmp_name"], $this->aUserFiles[$sVarName][$i]["path"]);
+                move_uploaded_file($aFiles[$i]["tmp_name"], $this->aUserFiles[$sVarName][$i]->path());
             }
         }
         return true;
