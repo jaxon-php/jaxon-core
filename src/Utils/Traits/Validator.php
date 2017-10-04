@@ -17,6 +17,16 @@ use Jaxon\Utils\Container;
 trait Validator
 {
     /**
+     * Get the last error message
+     *
+     * @return string          The last error message
+     */
+    public function getValidatorMessage()
+    {
+        return Container::getInstance()->getValidator()->getErrorMessage();
+    }
+
+    /**
      * Validate a function name
      *
      * @param string        $sName            The function name
@@ -67,12 +77,13 @@ trait Validator
     /**
      * Validate an uploaded file
      *
+     * @param string        $sName            The uploaded file variable name
      * @param array         $aUploadedFile    The file data received in the $_FILES array
      *
      * @return bool            True if the file data are valid, and false if not
      */
-    public function validateUploadedFile(array $aUploadedFile)
+    public function validateUploadedFile($sName, array $aUploadedFile)
     {
-        return Container::getInstance()->getValidator()->validateUploadedFile($aUploadedFile);
+        return Container::getInstance()->getValidator()->validateUploadedFile($sName, $aUploadedFile);
     }
 }

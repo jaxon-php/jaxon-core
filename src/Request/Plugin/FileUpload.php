@@ -49,32 +49,36 @@ class FileUpload extends RequestPlugin
         $this->aUserFiles = [];
         $this->aFiles = [];
 
-        foreach($_FILES as $var => $aFile)
+        foreach($_FILES as $sVarName => $aFile)
         {
-            $this->aFiles[$var] = [];
+            $this->aFiles[$sVarName] = [];
             if(is_array($aFile['name']))
             {
                 for($i = 0; $i < count($aFile['name']); $i++)
                 {
                     // Copy the file data into the local array
-                    $this->aFiles[$var][] = [
+                    $this->aFiles[$sVarName][] = [
                         'name' => $aFile['name'][$i],
                         'type' => $aFile['type'][$i],
                         'tmp_name' => $aFile['tmp_name'][$i],
                         'error' => $aFile['error'][$i],
                         'size' => $aFile['size'][$i],
+                        'filename' => pathinfo($aFile['name'][$i], PATHINFO_FILENAME), // without the extension
+                        'extension' => pathinfo($aFile['name'][$i], PATHINFO_EXTENSION),
                     ];
                 }
             }
             else
             {
                 // Copy the file data into the local array
-                $this->aFiles[$var][] = [
+                $this->aFiles[$sVarName][] = [
                     'name' => $aFile['name'],
                     'type' => $aFile['type'],
                     'tmp_name' => $aFile['tmp_name'],
                     'error' => $aFile['error'],
                     'size' => $aFile['size'],
+                    'filename' => pathinfo($aFile['name'], PATHINFO_FILENAME), // without the extension
+                    'extension' => pathinfo($aFile['name'], PATHINFO_EXTENSION),
                 ];
             }
         }
@@ -152,12 +156,12 @@ class FileUpload extends RequestPlugin
     public function processRequest()
     {
         // Default upload dir
-        $sDefaultUploadDir = $this->getOption('upload.dir');
+        $sDefaultUploadDir = $this->getOption('upload.default.dir');
         // Check validity of the uploaded files
-        foreach($this->aFiles as $var => &$aFiles)
+        foreach($this->aFiles as $sVarName => $aFiles)
         {
-            $this->aUserFiles[$var] = [];
-            foreach($aFiles as &$aFile)
+            $this->aUserFiles[$sVarName] = [];
+            foreach($aFiles as $aFile)
             {
                 // Verify upload result
                 if($aFile['error'] != 0)
@@ -165,33 +169,35 @@ class FileUpload extends RequestPlugin
                     throw new \Jaxon\Exception\Error($this->trans('errors.upload.failed', $aFile));
                 }
                 // Verify file validity (format, size)
-                if(!$this->validateUploadedFile($aFile))
+                if(!$this->validateUploadedFile($sVarName, $aFile))
                 {
-                    throw new \Jaxon\Exception\Error($this->trans('errors.upload.invalid', $aFile));
+                    throw new \Jaxon\Exception\Error($this->getValidatorMessage());
                 }
                 // Verify that the upload dir exists and is writable
-                $sUploadDir = trim($this->getOption('upload.files.' . $var . '.dir', $sDefaultUploadDir));
+                $sUploadDir = trim($this->getOption('upload.files.' . $sVarName . '.dir', $sDefaultUploadDir));
                 $sUploadDir = rtrim($sUploadDir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
                 if(!is_writable($sUploadDir))
                 {
                     throw new \Jaxon\Exception\Error($this->trans('errors.upload.access'));
                 }
                 // Set the user file data
-                $this->aUserFiles[$var][] = [
+                $this->aUserFiles[$sVarName][] = [
                     'type' => $aFile['type'],
                     'name' => $aFile['name'],
                     'path' => $sUploadDir . $aFile["name"],
                     'size' => $aFile['size'],
+                    // 'extension' => $aFile['extension'],
+                    // 'filename' => $aFile['filename'],
                 ];
             }
         }
         // Copy the uploaded files from the temp dir to the user dir
-        foreach($this->aFiles as $var => $aFiles)
+        foreach($this->aFiles as $sVarName => $aFiles)
         {
             for($i = 0; $i < count($aFiles); $i++)
             {
                 // All's right, move the file to the user dir.
-                move_uploaded_file($aFiles[$i]["tmp_name"], $this->aUserFiles[$var][$i]["path"]);
+                move_uploaded_file($aFiles[$i]["tmp_name"], $this->aUserFiles[$sVarName][$i]["path"]);
             }
         }
         return true;

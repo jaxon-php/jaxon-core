@@ -102,7 +102,7 @@ class Container
         };
         // Validator
         $this->di['validator'] = function ($c) {
-            return new Validation\Validator();
+            return new Validation\Validator($c['translator'], $c['config']);
         };
         // Pagination Renderer
         $this->di['pagination.renderer'] = function ($c) {
