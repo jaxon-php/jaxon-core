@@ -34,9 +34,14 @@ class Translator
         $this->loadTranslations($this->sResourceDir . '/en/errors.php', 'en');
         $this->loadTranslations($this->sResourceDir . '/fr/errors.php', 'fr');
         $this->loadTranslations($this->sResourceDir . '/es/errors.php', 'es');
+        // Load the config translations
         $this->loadTranslations($this->sResourceDir . '/en/config.php', 'en');
         $this->loadTranslations($this->sResourceDir . '/fr/config.php', 'fr');
         $this->loadTranslations($this->sResourceDir . '/es/config.php', 'es');
+        // Load the upload translations
+        $this->loadTranslations($this->sResourceDir . '/en/upload.php', 'en');
+        $this->loadTranslations($this->sResourceDir . '/fr/upload.php', 'fr');
+        $this->loadTranslations($this->sResourceDir . '/es/upload.php', 'es');
     }
 
     /**
