@@ -63,4 +63,16 @@ trait Validator
     {
         return Container::getInstance()->getValidator()->validateMethod($sName);
     }
+
+    /**
+     * Validate an uploaded file
+     *
+     * @param array         $aUploadedFile    The file data received in the $_FILES array
+     *
+     * @return bool            True if the file data are valid, and false if not
+     */
+    public function validateUploadedFile(array $aUploadedFile)
+    {
+        return Container::getInstance()->getValidator()->validateUploadedFile($aUploadedFile);
+    }
 }

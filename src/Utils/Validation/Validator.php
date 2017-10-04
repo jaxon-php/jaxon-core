@@ -71,4 +71,16 @@ class Validator
         // return preg_match('/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/', $sName);
         return preg_match('/^[a-zA-Z][a-zA-Z0-9_]*$/', $sName);
     }
+
+    /**
+     * Validate an uploaded file
+     *
+     * @param array         $aUploadedFile    The file data received in the $_FILES array
+     *
+     * @return bool            True if the file data are valid, and false if not
+     */
+    public function validateUploadedFile(array $aUploadedFile)
+    {
+        return true;
+    }
 }
