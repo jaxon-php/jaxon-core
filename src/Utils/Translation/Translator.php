@@ -20,19 +20,51 @@ class Translator
     protected $sDefaultLocale = 'en';
     protected $sResourceDir;
     // Translations
-    protected $aMessages;
+    protected $aTranslations;
 
     public function __construct($sResourceDir, $xConfig)
     {
         // Translations
-        $this->aMessages = array();
+        $this->aTranslations = array();
         // Set the translation resource directory
         $this->sResourceDir = trim($sResourceDir);
         // Set the config manager
         $this->xConfig = $xConfig;
         // Load the Jaxon package translations
-        $this->loadMessages($this->sResourceDir . '/en/errors.php', 'en');
-        $this->loadMessages($this->sResourceDir . '/fr/errors.php', 'fr');
+        $this->loadTranslations($this->sResourceDir . '/en/errors.php', 'en');
+        $this->loadTranslations($this->sResourceDir . '/fr/errors.php', 'fr');
+        $this->loadTranslations($this->sResourceDir . '/es/errors.php', 'es');
+        $this->loadTranslations($this->sResourceDir . '/en/config.php', 'en');
+        $this->loadTranslations($this->sResourceDir . '/fr/config.php', 'fr');
+        $this->loadTranslations($this->sResourceDir . '/es/config.php', 'es');
+    }
+
+    /**
+     * Recursively load translated strings from a array
+     *
+     * @param string            $sLanguage            The language of the translations
+     * @param string            $sPrefix              The prefix for names
+     * @param array             $aTranslations        The translated strings
+     *
+     * @return void
+     */
+    private function _loadTranslations($sLanguage, $sPrefix, array $aTranslations)
+    {
+        foreach($aTranslations as $sName => $xTranslation)
+        {
+            $sName = trim($sName);
+            $sName = ($sPrefix) ? $sPrefix . '.' . $sName : $sName;
+            if(!is_array($xTranslation))
+            {
+                // Save this translation
+                $this->aTranslations[$sLanguage][$sName] = $xTranslation;
+            }
+            else
+            {
+                // Recursively read the translations in the array
+                $this->_loadTranslations($sLanguage, $sName, $xTranslation);
+            }
+        }
     }
 
     /**
@@ -43,26 +75,23 @@ class Translator
      *
      * @return void
      */
-    public function loadMessages($sFilePath, $sLanguage)
+    public function loadTranslations($sFilePath, $sLanguage)
     {
         if(!file_exists($sFilePath))
         {
             return;
         }
-        $aMessages = require($sFilePath);
-        if(!is_array($aMessages))
+        $aTranslations = require($sFilePath);
+        if(!is_array($aTranslations))
         {
             return;
         }
         // Load the translations
-        if(!array_key_exists($sLanguage, $this->aMessages))
+        if(!array_key_exists($sLanguage, $this->aTranslations))
         {
-            $this->aMessages[$sLanguage] = $aMessages;
+            $this->aTranslations[$sLanguage] = [];
         }
-        else
-        {
-            $this->aMessages[$sLanguage] = array_merge($aMessages, $this->aMessages[$sLanguage]);
-        }
+        $this->_loadTranslations($sLanguage, '', $aTranslations);
     }
 
     /**
@@ -85,14 +114,14 @@ class Translator
         {
             $sLanguage = $this->sDefaultLocale;
         }
-        if(!array_key_exists($sLanguage, $this->aMessages) || !array_key_exists($sText, $this->aMessages[$sLanguage]))
+        if(!array_key_exists($sLanguage, $this->aTranslations) || !array_key_exists($sText, $this->aTranslations[$sLanguage]))
         {
            return $sText;
         }
-        $message = $this->aMessages[$sLanguage][$sText];
+        $message = $this->aTranslations[$sLanguage][$sText];
         foreach($aPlaceHolders as $name => $value)
         {
-            $message = str_replace(":$name", $value, $message);
+            $message = str_replace(':' . $name, $value, $message);
         }
         return $message;
     }
