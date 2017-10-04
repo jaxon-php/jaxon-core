@@ -586,6 +586,7 @@ class Jaxon
         $this->registerPlugin(new \Jaxon\Request\Plugin\CallableObject(), 101);
         $this->registerPlugin(new \Jaxon\Request\Plugin\UserFunction(), 102);
         $this->registerPlugin(new \Jaxon\Request\Plugin\BrowserEvent(), 103);
+        $this->registerPlugin(new \Jaxon\Request\Plugin\FileUpload(), 104);
     }
 
     /**
@@ -609,6 +610,20 @@ class Jaxon
     public function setPaginationDir($sDirectory)
     {
         $this->addViewNamespace('pagination', $sDirectory, '.php');
+    }
+
+   /**
+     * Get the uploaded files
+     *
+     * @return array
+     */
+    public function getUploadedFiles()
+    {
+        if(($xUploadPlugin = $this->getPluginManager()->getRequestPlugin('FileUpload')) == null)
+        {
+            return [];
+        }
+        return $xUploadPlugin->getUploadedFiles();
     }
 
     /**

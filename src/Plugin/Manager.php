@@ -340,10 +340,17 @@ class Manager
      */
     public function processRequest()
     {
+        $xUploadPlugin = $this->getRequestPlugin('FileUpload');
         foreach($this->aRequestPlugins as $xPlugin)
         {
             if($xPlugin->canProcessRequest())
             {
+                // Process uploaded files
+                if($xUploadPlugin != null)
+                {
+                    $xUploadPlugin->processRequest();
+                }
+                // Process the request
                 return $xPlugin->processRequest();
             }
         }

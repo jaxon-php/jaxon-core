@@ -27,6 +27,7 @@ Features
 - The javascript library is provided in a separated and javascript-only package, loaded by default from the [jsDelivr CDN](https://www.jsdelivr.com/projects/jaxon).
 - The generated javascript classes are named according to their namespace or the subdirectory where they are located.
 - All PHP packages install with `Composer`, are fully namespaced, and implement `PSR-4` autoloading.
+- Starting from release 2.1, the library natively implements Ajax file upload.
 - The Jaxon library runs on PHP versions 5.4 to 7.0.
 
 Documentation
