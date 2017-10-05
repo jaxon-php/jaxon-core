@@ -33,7 +33,7 @@ class UploadedFile
      *
      * @var string
      */
-    protected $sFullname;
+    protected $sFilename;
 
     /**
      * The uploaded file path
@@ -60,8 +60,8 @@ class UploadedFile
     {
         $this->sType = $aFile['type'];
         $this->sName = $this->slugify($aFile['filename']);
+        $this->sFilename = $aFile['name'];
         $this->sExtension = $aFile['extension'];
-        $this->sFullname = $aFile['name'];
         $this->sSize = $aFile['size'];
         $this->sPath = $sUploadDir . $this->sName . '.' . $this->sExtension;
     }
@@ -102,9 +102,9 @@ class UploadedFile
      *
      * @return string
      */
-    public function fullname()
+    public function filename()
     {
-        return $this->sFullname;
+        return $this->sFilename;
     }
 
     /**
