@@ -92,7 +92,7 @@ class CallableObject extends RequestPlugin
      */
     public function getName()
     {
-        return 'CallableObject';
+        return Jaxon::CALLABLE_OBJECT;
     }
 
     /**

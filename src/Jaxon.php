@@ -66,14 +66,16 @@ class Jaxon
     /*
      * Request plugins
      */
-    // An object who's methods will be callable from the browser.
+    // For objects who's methods will be callable from the browser.
     const CALLABLE_OBJECT = 'CallableObject';
-    // A php function available at global scope, or a specific function from an instance of an object.
+    // For functions available at global scope, or from an instance of an object.
     const USER_FUNCTION = 'UserFunction';
-    // A browser event.
+    // For browser events.
     const BROWSER_EVENT = 'BrowserEvent';
-    // An event handler.
+    // For event handlers.
     const EVENT_HANDLER = 'EventHandler';
+    // For uploaded files.
+    const FILE_UPLOAD = 'FileUpload';
 
     /*
      * Request parameters
@@ -613,13 +615,63 @@ class Jaxon
     }
 
    /**
+     * Check if uploaded files are available
+     *
+     * @return boolean
+     */
+    public function hasUploadedFiles()
+    {
+        if(($xUploadPlugin = $this->getPluginManager()->getRequestPlugin(self::FILE_UPLOAD)) == null)
+        {
+            return false;
+        }
+        return $xUploadPlugin->canProcessRequest();
+    }
+
+   /**
+     * Check uploaded files validity and move them to the user dir
+     *
+     * @return boolean
+     */
+    public function saveUploadedFiles()
+    {
+        try
+        {
+            if(($xUploadPlugin = $this->getPluginManager()->getRequestPlugin(self::FILE_UPLOAD)) == null)
+            {
+                throw new Exception($this->trans('errors.upload.plugin'));
+            }
+            else if(!$xUploadPlugin->canProcessRequest())
+            {
+                throw new Exception($this->trans('errors.upload.request'));
+            }
+            // Save uploaded files
+            $sKey = $xUploadPlugin->saveUploadedFiles();
+            $sResponse = '{"code": "success", "upl": "' . $sKey . '"}';
+            $return = true;
+        }
+        catch(Exception $e)
+        {
+            $sResponse = '{"code": "error", "msg": "' . addslashes($e->getMessage()) . '"}';
+            $return = false;
+        }
+        // Send the response back to the browser
+        echo '<script>var res = ', $sResponse, '; </script>';
+        if(($this->getOption('core.process.exit')))
+        {
+            exit();
+        }
+        return $return;
+    }
+
+    /**
      * Get the uploaded files
      *
      * @return array
      */
     public function getUploadedFiles()
     {
-        if(($xUploadPlugin = $this->getPluginManager()->getRequestPlugin('FileUpload')) == null)
+        if(($xUploadPlugin = $this->getPluginManager()->getRequestPlugin(self::FILE_UPLOAD)) == null)
         {
             return [];
         }

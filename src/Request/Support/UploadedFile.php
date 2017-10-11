@@ -56,14 +56,60 @@ class UploadedFile
      */
     protected $sExtension;
 
-    public function __construct($sUploadDir, array $aFile)
+    /**
+     * Create an instance of this class using data from the $_FILES global var.
+     *
+     * @param string        $sUploadDir     The directory where to save the uploaded file
+     * @param array         $aFile          The uploaded file data
+     *
+     * @return UploadedFile
+     */
+    public static function fromHttpData($sUploadDir, array $aFile)
     {
-        $this->sType = $aFile['type'];
-        $this->sName = $this->slugify($aFile['filename']);
-        $this->sFilename = $aFile['name'];
-        $this->sExtension = $aFile['extension'];
-        $this->sSize = $aFile['size'];
-        $this->sPath = $sUploadDir . $this->sName . '.' . $this->sExtension;
+        $xFile = new UploadedFile();
+        $xFile->sType = $aFile['type'];
+        $xFile->sName = $xFile->slugify($aFile['filename']);
+        $xFile->sFilename = $aFile['name'];
+        $xFile->sExtension = $aFile['extension'];
+        $xFile->sSize = $aFile['size'];
+        $xFile->sPath = $sUploadDir . $xFile->sName . '.' . $xFile->sExtension;
+        return $xFile;
+    }
+
+    /**
+     * Convert the UploadedFile instance to array.
+     *
+     * @return array
+     */
+    public function toTempData()
+    {
+        return [
+            'type' => $this->sType,
+            'name' => $this->sName,
+            'filename' => $this->sFilename,
+            'extension' => $this->sExtension,
+            'size' => $this->sSize,
+            'path' => $this->sPath,
+        ];
+    }
+
+    /**
+     * Create an instance of this class using data from an array.
+     *
+     * @param array         $aFile          The uploaded file data
+     *
+     * @return UploadedFile
+     */
+    public static function fromTempData(array $aFile)
+    {
+        $xFile = new UploadedFile();
+        $xFile->sType = $aFile['type'];
+        $xFile->sName = $aFile['name'];
+        $xFile->sFilename = $aFile['filename'];
+        $xFile->sExtension = $aFile['extension'];
+        $xFile->sSize = $aFile['size'];
+        $xFile->sPath = $aFile['path'];
+        return $xFile;
     }
 
     /**

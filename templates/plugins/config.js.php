@@ -17,9 +17,13 @@ jaxon.config.responseType = "<?php echo $this->sResponseType ?>";
 <?php if($this->nResponseQueueSize > 0): ?>
 jaxon.config.responseQueueSize = <?php echo $this->nResponseQueueSize ?>;
 <?php endif ?>
-<?php if(($this->bDebug) && ($this->sDebugOutputID)): ?>
-jaxon.debug = {};
+<?php if(($this->bDebug)): ?>
+<?php if(($this->sDebugOutputID)): ?>
 jaxon.debug.outputID = "<?php echo $this->sDebugOutputID ?>";
+<?php endif ?>
+<?php if(($this->bVerboseDebug)): ?>
+jaxon.debug.verbose.active = true;
+<?php endif ?>
 <?php endif ?>
 <?php if(($this->sCsrfMetaName)): ?>
 metaTags = document.getElementsByTagName('meta');

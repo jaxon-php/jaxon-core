@@ -322,7 +322,7 @@ class Manager
     {
         foreach($this->aRequestPlugins as $xPlugin)
         {
-            if($xPlugin->canProcessRequest())
+            if($xPlugin->getName() != Jaxon::FILE_UPLOAD && $xPlugin->canProcessRequest())
             {
                 return true;
             }
@@ -340,10 +340,10 @@ class Manager
      */
     public function processRequest()
     {
-        $xUploadPlugin = $this->getRequestPlugin('FileUpload');
+        $xUploadPlugin = $this->getRequestPlugin(Jaxon::FILE_UPLOAD);
         foreach($this->aRequestPlugins as $xPlugin)
         {
-            if($xPlugin->canProcessRequest())
+            if($xPlugin->getName() != Jaxon::FILE_UPLOAD && $xPlugin->canProcessRequest())
             {
                 // Process uploaded files
                 if($xUploadPlugin != null)
@@ -718,10 +718,10 @@ class Manager
         {
             $aJsFiles[] = $sJsDebugUrl;
             $aJsFiles[] = $sJsLanguageUrl;
-            if($this->getOption('core.debug.verbose'))
+            /*if($this->getOption('core.debug.verbose'))
             {
                 $aJsFiles[] = $sJsVerboseUrl;
-            }
+            }*/
         }
 
         // Set the template engine cache dir
@@ -776,7 +776,7 @@ class Manager
             'sCsrfMetaName'             => $this->getOption('core.request.csrf_meta'),
             'bDebug'                    => $this->getOption('core.debug.on'),
             'bVerboseDebug'             => $this->getOption('core.debug.verbose'),
-            'sDebugOutputID'            => $this->getOption('js.lib.output_id'),
+            'sDebugOutputID'            => $this->getOption('core.debug.output_id'),
             'nResponseQueueSize'        => $this->getOption('js.lib.queue_size'),
             'sStatusMessages'           => $this->getOption('js.lib.show_status') ? 'true' : 'false',
             'sWaitCursor'               => $this->getOption('js.lib.show_cursor') ? 'true' : 'false',

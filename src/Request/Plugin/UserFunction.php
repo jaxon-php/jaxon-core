@@ -68,7 +68,7 @@ class UserFunction extends RequestPlugin
      */
     public function getName()
     {
-        return 'UserFunction';
+        return Jaxon::USER_FUNCTION;
     }
 
     /**

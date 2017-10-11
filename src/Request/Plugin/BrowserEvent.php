@@ -68,7 +68,7 @@ class BrowserEvent extends RequestPlugin
      */
     public function getName()
     {
-        return 'BrowserEvent';
+        return Jaxon::BROWSER_EVENT;
     }
 
     /**
