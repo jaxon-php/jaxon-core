@@ -861,17 +861,32 @@ class Manager
      *
      * @return string
      */
-    public function getScript()
+    private function getAllScripts()
     {
-        // Set the template engine cache dir
-        $this->setTemplateCacheDir();
-
         // Get the config and plugins scripts
         $sScript = $this->getConfigScript() . "\n" . $this->getReadyScript() . "\n";
         foreach($this->aRequestPlugins as $xPlugin)
         {
             $sScript .= "\n" . trim($xPlugin->getScript(), " \n");
         }
+        return $sScript;
+    }
+
+    /**
+     * Get the javascript code to be sent to the browser
+     *
+     * Also call each of the request plugins giving them the opportunity
+     * to output some javascript to the page being generated.
+     * This is called only when the page is being loaded initially.
+     * This is not called when processing a request.
+     *
+     * @return string
+     */
+    public function getScript()
+    {
+        // Set the template engine cache dir
+        $this->setTemplateCacheDir();
+
         if($this->canExportJavascript())
         {
             $sJsAppURI = rtrim($this->getOption('js.app.uri'), '/') . '/';
@@ -883,9 +898,9 @@ class Manager
             $sMinFile = $sHash . '.min.js';
             if(!is_file($sJsAppDir . $sOutFile))
             {
-                file_put_contents($sJsAppDir . $sOutFile, $sScript);
+                file_put_contents($sJsAppDir . $sOutFile, $this->getAllScripts());
             }
-            if(($this->getOption('js.app.minify')))
+            if(($this->getOption('js.app.minify')) && !is_file($sJsAppDir . $sMinFile))
             {
                 if(($this->minify($sJsAppDir . $sOutFile, $sJsAppDir . $sMinFile)))
                 {
@@ -904,7 +919,7 @@ class Manager
             // The plugins scripts are wrapped with javascript tags
             $sScript = $this->render('jaxon::plugins/wrapper.js', array(
                 'sJsOptions' => $this->getOption('js.app.options'),
-                'sScript' => $sScript,
+                'sScript' => $this->getAllScripts(),
             ));
         }
         
