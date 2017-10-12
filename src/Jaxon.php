@@ -679,6 +679,22 @@ class Jaxon
     }
 
     /**
+     * Filter uploaded file name
+     *
+     * @param Closure       $fFileFilter            The closure which filters filenames
+     *
+     * @return void
+     */
+    public function setUploadFileFilter($fFileFilter)
+    {
+        if(($xUploadPlugin = $this->getPluginManager()->getRequestPlugin(self::FILE_UPLOAD)) == null)
+        {
+            return;
+        }
+        $xUploadPlugin->setFileFilter($fFileFilter);
+    }
+
+    /**
      * Get the Sentry instance
      *
      * @return \Jaxon\Sentry\Sentry
