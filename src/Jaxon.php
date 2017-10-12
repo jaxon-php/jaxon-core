@@ -641,7 +641,7 @@ class Jaxon
             {
                 throw new Exception($this->trans('errors.upload.plugin'));
             }
-            else if(!$xUploadPlugin->canProcessRequest())
+            elseif(!$xUploadPlugin->canProcessRequest())
             {
                 throw new Exception($this->trans('errors.upload.request'));
             }

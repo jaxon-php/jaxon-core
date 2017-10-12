@@ -53,7 +53,7 @@ class FileUpload extends RequestPlugin
         {
             $this->sTempFile = $_POST['jxnupl'];
         }
-        else if(array_key_exists('jxnupl', $_GET))
+        elseif(array_key_exists('jxnupl', $_GET))
         {
             $this->sTempFile = $_GET['jxnupl'];
         }
@@ -332,7 +332,7 @@ class FileUpload extends RequestPlugin
         {
             $this->readFromHttpData();
         }
-        else if(($this->sTempFile))
+        elseif(($this->sTempFile))
         {
             $this->readFromTempFile();
         }
