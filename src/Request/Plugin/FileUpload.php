@@ -16,6 +16,8 @@ use Jaxon\Jaxon;
 use Jaxon\Plugin\Request as RequestPlugin;
 use Jaxon\Request\Support\UploadedFile;
 
+use Closure;
+
 class FileUpload extends RequestPlugin
 {
     use \Jaxon\Utils\Traits\Validator;
@@ -66,7 +68,7 @@ class FileUpload extends RequestPlugin
      *
      * @return void
      */
-    public function setFileFilter($fFileFilter)
+    public function setFileFilter(Closure $fFileFilter)
     {
         $this->fFileFilter = $fFileFilter;
     }

@@ -31,6 +31,7 @@ use Jaxon\Response\Manager as ResponseManager;
 
 use Jaxon\Utils\URI;
 use Exception;
+use Closure;
 
 class Jaxon
 {
@@ -685,7 +686,7 @@ class Jaxon
      *
      * @return void
      */
-    public function setUploadFileFilter($fFileFilter)
+    public function setUploadFileFilter(Closure $fFileFilter)
     {
         if(($xUploadPlugin = $this->getPluginManager()->getRequestPlugin(self::FILE_UPLOAD)) == null)
         {
