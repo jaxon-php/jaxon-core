@@ -649,7 +649,6 @@ class Jaxon
             // Save uploaded files
             $sKey = $xUploadPlugin->saveUploadedFiles();
             $sResponse = '{"code": "success", "upl": "' . $sKey . '"}';
-            $sResponse = '{"code": "error", "msg": "Haha !! Pas vraiment une erreur : ' . $sKey . '"}';
             $return = true;
         }
         catch(Exception $e)
