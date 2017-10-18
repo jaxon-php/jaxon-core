@@ -634,7 +634,8 @@ class Manager
     {
         if(!$this->hasOption('js.lib.uri'))
         {
-            return 'https://cdn.jsdelivr.net/jaxon/1.2.0/';
+            // return 'https://cdn.jsdelivr.net/jaxon/1.2.0/';
+            return 'https://cdn.jsdelivr.net/gh/jaxon-php/jaxon-js@2.0/dist/';
         }
         // Todo: check the validity of the URI
         return rtrim($this->getOption('js.lib.uri'), '/') . '/';
@@ -649,10 +650,12 @@ class Manager
      */
     private function getJsLibExt()
     {
-        $jsDelivrUri = 'https://cdn.jsdelivr.net';
-        $nLen = strlen($jsDelivrUri);
+        // $jsDelivrUri = 'https://cdn.jsdelivr.net';
+        // $nLen = strlen($jsDelivrUri);
         // The jsDelivr CDN only hosts minified files
-        if(($this->getOption('js.app.minify')) || substr($this->getJsLibUri(), 0, $nLen) == $jsDelivrUri)
+        // if(($this->getOption('js.app.minify')) || substr($this->getJsLibUri(), 0, $nLen) == $jsDelivrUri)
+        // Starting from version 2.0.0 of the js lib, the jsDelivr CDN also hosts non minified files.
+        if(($this->getOption('js.app.minify')))
         {
             return '.min.js';
         }
@@ -709,7 +712,7 @@ class Manager
         $sJsLibExt = $this->getJsLibExt();
         $sJsCoreUrl = $sJsLibUri . 'jaxon.core' . $sJsLibExt;
         $sJsDebugUrl = $sJsLibUri . 'jaxon.debug' . $sJsLibExt;
-        $sJsVerboseUrl = $sJsLibUri . 'jaxon.verbose' . $sJsLibExt;
+        // $sJsVerboseUrl = $sJsLibUri . 'jaxon.verbose' . $sJsLibExt;
         $sJsLanguageUrl = $sJsLibUri . 'lang/jaxon.' . $this->getOption('core.language') . $sJsLibExt;
 
         // Add component files to the javascript file array;
@@ -811,7 +814,7 @@ class Manager
     private function getReadyScript()
     {
         // Print Jaxon config vars
-        $sJsLibUri = $this->getJsLibUri();
+        /*$sJsLibUri = $this->getJsLibUri();
         $sJsLibExt = $this->getJsLibExt();
         $sJsCoreUrl = $sJsLibUri . 'jaxon.core' . $sJsLibExt;
         $sJsDebugUrl = $sJsLibUri . 'jaxon.debug' . $sJsLibExt;
@@ -833,7 +836,7 @@ class Manager
         $sJsLanguageError = $this->trans('errors.component.load', array(
             'name' => 'jaxon.debug.lang',
             'url' => $sJsLanguageUrl,
-        ));
+        ));*/
 
         $sPluginScript = '';
         foreach($this->aResponsePlugins as $xPlugin)
@@ -841,14 +844,15 @@ class Manager
             $sPluginScript .= "\n" . trim($xPlugin->getScript(), " \n");
         }
 
-        $aVars = $this->getOptionVars();
+        /*$aVars = $this->getOptionVars();
         $aVars['sPluginScript'] = $sPluginScript;
         $aVars['sJsCoreError'] = $sJsCoreError;
         $aVars['sJsDebugError'] = $sJsDebugError;
         $aVars['sJsVerboseError'] = $sJsVerboseError;
         $aVars['sJsLanguageError'] = $sJsLanguageError;
 
-        return $this->render('jaxon::plugins/ready.js', $aVars);
+        return $this->render('jaxon::plugins/ready.js', $aVars);*/
+        return $this->render('jaxon::plugins/ready.js', ['sPluginScript' => $sPluginScript]);
     }
 
     /**
