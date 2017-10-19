@@ -3,14 +3,14 @@
 return [
     'errors' => [
         'upload' => [
-            'failed' => "The upload of file :name has failed.",
-            'access' => "Cannot get write access to upload directory.",
-            'type' => "Upload is not allowed for file of type :type.",
-            'extension' => "Upload is not allowed for file with extension :extension.",
-            'max-size' => "Upload is not allowed for file of size :size. Too big.",
-            'max-size' => "Upload is not allowed for file of size :size. Too small.",
-            'plugin' => "Upload plugin not found",
-            'request' => "Upload data not available in the request",
+            'failed' => "El archivo :name no se ha podido subir.",
+            'access' => "No se tiene permiso de escritura el directorio de subida.",
+            'type' => "Los archivos de tipo :type no están permitidos.",
+            'extension' => "Los archivos con la extensión :extension no estan permitidos.",
+            'max-size' => "No se pueden subir archivos con peso :size. Muy grande.",
+            'max-size' => "No se pueden subir archivos con peso :size. Muy pequeño.",
+            'plugin' => "No se ha encontrado el plugin upload.",
+            'request' => "No hay datos de subida en la petición.",
         ],
     ],
 ];
