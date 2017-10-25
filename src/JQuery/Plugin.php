@@ -28,7 +28,7 @@ class Plugin extends \Jaxon\Plugin\Response
     public function generateHash()
     {
         // Use the version number as hash
-        return '1.1.0';
+        return '2.0.0';
     }
 
     /**
@@ -43,7 +43,7 @@ class Plugin extends \Jaxon\Plugin\Response
     {
         return '
 jaxon.command.handler.register("jquery", function(args) {
-    jaxon.js.execute(args);
+    jaxon.cmd.script.execute(args);
 });
 ';
     }
