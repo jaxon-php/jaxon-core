@@ -531,7 +531,11 @@ class Manager
                 // Get the class name
                 $sClassPath = substr($xFile->getPath(), strlen($sDirectory));
                 $sClassPath = trim(str_replace($sDS, '\\', $sClassPath), '\\');
-                $sClassName = $sClassPath . '\\' . $xFile->getBasename('.php');
+                $sClassName = $xFile->getBasename('.php');
+                if(($sClassPath))
+                {
+                    $sClassName = $sClassPath . '\\' . $sClassName;
+                }
                 if(($sNamespace))
                 {
                     $sClassName = $sNamespace . '\\' . $sClassName;
