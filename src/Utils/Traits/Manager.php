@@ -15,7 +15,6 @@
 namespace Jaxon\Utils\Traits;
 
 use Jaxon\Utils\Container;
-use Jaxon\Utils\Interfaces\EventListener;
 
 trait Manager
 {
@@ -59,16 +58,6 @@ trait Manager
     public function getResponseManager()
     {
         return Container::getInstance()->getResponseManager();
-    }
-
-    /**
-     * Register an event listener.
-     *
-     * @return void
-     */
-    public function addEventListener(EventListener $xEventListener)
-    {
-        Container::getInstance()->getEventDispatcher()->addSubscriber($xEventListener);
     }
 
     /**

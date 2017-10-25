@@ -13,9 +13,20 @@
 namespace Jaxon\Utils\Traits;
 
 use Jaxon\Utils\Container;
+use Jaxon\Utils\Interfaces\EventListener;
 
 trait Event
 {
+    /**
+     * Register an event listener.
+     *
+     * @return void
+     */
+    public function addEventListener(EventListener $xEventListener)
+    {
+        Container::getInstance()->getEventDispatcher()->addSubscriber($xEventListener);
+    }
+
     /**
      * Trigger an event.
      *
