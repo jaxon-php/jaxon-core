@@ -93,7 +93,7 @@ class Config
             {
                 if(!array_key_exists($sKey, $aOptions) || !is_array($aOptions[$sKey]))
                 {
-                    throw new \Jaxon\Exception\Config\Data(jaxon_trans('config.errors.data.missing', array('key' => $sKeys)));
+                    return;
                 }
                 $aOptions = $aOptions[$sKey];
             }
