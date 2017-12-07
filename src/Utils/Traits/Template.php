@@ -42,4 +42,16 @@ trait Template
     {
         return Container::getInstance()->getTemplate()->addNamespace($sNamespace, $sDirectory, $sExtension);
     }
+
+    /**
+     * Set a new directory for pagination templates
+     *
+     * @param string        $sDirectory             The directory path
+     *
+     * @return void
+     */
+    public function setPaginationDir($sDirectory)
+    {
+        return Container::getInstance()->getTemplate()->setPaginationDir($sDirectory);
+    }
 }
