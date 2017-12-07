@@ -801,9 +801,9 @@ class Response
      *
      * You can add more than one event handler to an element's event using this method.
      *
-     * @param string        $sTarget            The id of the element
-     * @param string        $sEvent                The name of the event
-     * @param string        $sHandler            The javascript function to call when the event is fired
+     * @param string        $sTarget             The id of the element
+     * @param string        $sEvent              The name of the event
+     * @param string        $sHandler            The name of the javascript function to call when the event is fired
      *
      * @return \Jaxon\Plugin\Response
      */
@@ -822,9 +822,9 @@ class Response
     /**
      * Add a command to remove an event handler from an element
      *
-     * @param string        $sTarget            The id of the element
-     * @param string        $sEvent                The name of the event
-     * @param string        $sHandler            The javascript function called when the event is fired
+     * @param string        $sTarget             The id of the element
+     * @param string        $sEvent              The name of the event
+     * @param string        $sHandler            The name of the javascript function called when the event is fired
      *
      * @return \Jaxon\Plugin\Response
      */
