@@ -41,6 +41,12 @@ class Jaxon
     use \Jaxon\Utils\Traits\Paginator;
     use \Jaxon\Utils\Traits\Template;
 
+    use Traits\Autoload;
+    use Traits\Config;
+    use Traits\Plugin;
+    use Traits\Upload;
+    use Traits\Sentry;
+
     /**
      * Package version number
      *
@@ -112,63 +118,6 @@ class Jaxon
     {
         $this->aProcessingEvents = array();
         $this->setDefaultOptions();
-    }
-
-    /**
-     * Set the default options of all components of the library
-     *
-     * @return void
-     */
-    private function setDefaultOptions()
-    {
-        // The default configuration settings.
-        $this->setOptions(array(
-            'core.version'                      => $this->getVersion(),
-            'core.language'                     => 'en',
-            'core.encoding'                     => 'utf-8',
-            'core.decode_utf8'                  => false,
-            'core.prefix.function'              => 'jaxon_',
-            'core.prefix.class'                 => 'Jaxon',
-            'core.prefix.event'                 => 'jaxon_event_',
-            // 'core.request.uri'               => '',
-            'core.request.mode'                 => 'asynchronous',
-            'core.request.method'               => 'POST',    // W3C: Method is case sensitive
-            'core.debug.on'                     => false,
-            'core.debug.verbose'                => false,
-            'core.process.exit'                 => true,
-            'core.process.clean'                => false,
-            'core.process.timeout'              => 6000,
-            'core.error.handle'                 => false,
-            'core.error.log_file'               => '',
-            'js.lib.output_id'                  => 0,
-            'js.lib.queue_size'                 => 0,
-            'js.lib.load_timeout'               => 2000,
-            'js.lib.show_status'                => false,
-            'js.lib.show_cursor'                => true,
-            'js.app.dir'                        => '',
-            'js.app.minify'                     => true,
-            'js.app.options'                    => '',
-        ));
-    }
-
-    /**
-     * Set Jaxon to use the Composer autoloader
-     *
-     * @return void
-     */
-    public function useComposerAutoloader()
-    {
-        $this->getPluginManager()->useComposerAutoloader();
-    }
-
-    /**
-     * Disable Jaxon classes autoloading
-     *
-     * @return void
-     */
-    public function disableAutoload()
-    {
-        $this->getPluginManager()->disableAutoload();
     }
 
     /**
@@ -272,6 +221,72 @@ class Jaxon
     {
         $this->getPluginManager()->registerClass($sClassName, $aOptions);
         return (($bGetObject) ? $this->getPluginManager()->getRegisteredObject($sClassName) : null);
+    }
+
+    /**
+     * Returns the Jaxon Javascript header and wrapper code to be printed into the page
+     *
+     * The javascript code returned by this function is dependent on the plugins
+     * that are included and the functions and classes that are registered.
+     *
+     * @param boolean        $bIncludeJs            Also get the JS files
+     * @param boolean        $bIncludeCss        Also get the CSS files
+     *
+     * @return string
+     */
+    public function getScript($bIncludeJs = false, $bIncludeCss = false)
+    {
+        if(!$this->getOption('core.request.uri'))
+        {
+            $this->setOption('core.request.uri', URI::detect());
+        }
+        $sCode = '';
+        if(($bIncludeCss))
+        {
+            $sCode .= $this->getPluginManager()->getCss() . "\n";
+        }
+        if(($bIncludeJs))
+        {
+            $sCode .= $this->getPluginManager()->getJs() . "\n";
+        }
+        $sCode .= $this->getPluginManager()->getScript();
+        return $sCode;
+    }
+    
+    /**
+     * Print the jaxon Javascript header and wrapper code into your page
+     *
+     * The javascript code returned by this function is dependent on the plugins
+     * that are included and the functions and classes that are registered.
+     *
+     * @param boolean        $bIncludeJs            Also print the JS files
+     * @param boolean        $bIncludeCss        Also print the CSS files
+     *
+     * @return void
+     */
+    public function printScript($bIncludeJs = false, $bIncludeCss = false)
+    {
+        print $this->getScript($bIncludeJs, $bIncludeCss);
+    }
+    
+    /**
+     * Return the javascript header code and file includes
+     *
+     * @return string
+     */
+    public function getJs()
+    {
+        return $this->getPluginManager()->getJs();
+    }
+    
+    /**
+     * Return the CSS header code and file includes
+     *
+     * @return string
+     */
+    public function getCss()
+    {
+        return $this->getPluginManager()->getCss();
     }
 
     /**
@@ -424,294 +439,5 @@ class Jaxon
     public function getOutput()
     {
         $this->getResponseManager()->getOutput();
-    }
-
-    /**
-     * Returns the Jaxon Javascript header and wrapper code to be printed into the page
-     *
-     * The javascript code returned by this function is dependent on the plugins
-     * that are included and the functions and classes that are registered.
-     *
-     * @param boolean        $bIncludeJs            Also get the JS files
-     * @param boolean        $bIncludeCss        Also get the CSS files
-     *
-     * @return string
-     */
-    public function getScript($bIncludeJs = false, $bIncludeCss = false)
-    {
-        if(!$this->getOption('core.request.uri'))
-        {
-            $this->setOption('core.request.uri', URI::detect());
-        }
-        $sCode = '';
-        if(($bIncludeCss))
-        {
-            $sCode .= $this->getPluginManager()->getCss() . "\n";
-        }
-        if(($bIncludeJs))
-        {
-            $sCode .= $this->getPluginManager()->getJs() . "\n";
-        }
-        $sCode .= $this->getPluginManager()->getScript();
-        return $sCode;
-    }
-
-    /**
-     * Print the jaxon Javascript header and wrapper code into your page
-     *
-     * The javascript code returned by this function is dependent on the plugins
-     * that are included and the functions and classes that are registered.
-     *
-     * @param boolean        $bIncludeJs            Also print the JS files
-     * @param boolean        $bIncludeCss        Also print the CSS files
-     *
-     * @return void
-     */
-    public function printScript($bIncludeJs = false, $bIncludeCss = false)
-    {
-        print $this->getScript($bIncludeJs, $bIncludeCss);
-    }
-
-    /**
-     * Return the javascript header code and file includes
-     *
-     * @return string
-     */
-    public function getJs()
-    {
-        return $this->getPluginManager()->getJs();
-    }
-
-    /**
-     * Return the CSS header code and file includes
-     *
-     * @return string
-     */
-    public function getCss()
-    {
-        return $this->getPluginManager()->getCss();
-    }
-
-    /**
-     * Read and set Jaxon options from a PHP config file
-     *
-     * @param string        $sConfigFile        The full path to the config file
-     * @param string        $sLibKey            The key of the library options in the file
-     * @param string|null   $sAppKey            The key of the application options in the file
-     *
-     * @return array
-     */
-    public function readPhpConfigFile($sConfigFile, $sLibKey = '', $sAppKey = null)
-    {
-        return Utils\Config\Php::read($sConfigFile, $sLibKey, $sAppKey);
-    }
-
-    /**
-     * Read and set Jaxon options from a YAML config file
-     *
-     * @param string        $sConfigFile        The full path to the config file
-     * @param string        $sLibKey            The key of the library options in the file
-     * @param string|null   $sAppKey            The key of the application options in the file
-     *
-     * @return array
-     */
-    public function readYamlConfigFile($sConfigFile, $sLibKey = '', $sAppKey = null)
-    {
-        return Utils\Config\Yaml::read($sConfigFile, $sLibKey, $sAppKey);
-    }
-
-    /**
-     * Read and set Jaxon options from a JSON config file
-     *
-     * @param string        $sConfigFile        The full path to the config file
-     * @param string        $sLibKey            The key of the library options in the file
-     * @param string|null   $sAppKey            The key of the application options in the file
-     *
-     * @return array
-     */
-    public function readJsonConfigFile($sConfigFile, $sLibKey = '', $sAppKey = null)
-    {
-        return Utils\Config\Json::read($sConfigFile, $sLibKey, $sAppKey);
-    }
-
-    /**
-     * Read and set Jaxon options from a config file
-     *
-     * @param string        $sConfigFile        The full path to the config file
-     * @param string        $sLibKey            The key of the library options in the file
-     * @param string|null   $sAppKey            The key of the application options in the file
-     *
-     * @return array
-     */
-    public function readConfigFile($sConfigFile, $sLibKey = '', $sAppKey = null)
-    {
-        $sExt = pathinfo($sConfigFile, PATHINFO_EXTENSION);
-        switch($sExt)
-        {
-        case 'php':
-            return $this->readPhpConfigFile($sConfigFile, $sLibKey, $sAppKey);
-        case 'yaml':
-        case 'yml':
-            return $this->readYamlConfigFile($sConfigFile, $sLibKey, $sAppKey);
-        case 'json':
-            return $this->readJsonConfigFile($sConfigFile, $sLibKey, $sAppKey);
-        default:
-            $sErrorMsg = jaxon_trans('config.errors.file.extension', array('path' => $sConfigFile));
-            throw new \Jaxon\Exception\Config\File($sErrorMsg);
-        }
-    }
-
-    /**
-     * Register a plugin
-     *
-     * Below is a table for priorities and their description:
-     * - 0 thru 999: Plugins that are part of or extensions to the jaxon core
-     * - 1000 thru 8999: User created plugins, typically, these plugins don't care about order
-     * - 9000 thru 9999: Plugins that generally need to be last or near the end of the plugin list
-     *
-     * @param Plugin         $xPlugin               An instance of a plugin
-     * @param integer        $nPriority             The plugin priority, used to order the plugins
-     *
-     * @return void
-     */
-    public function registerPlugin(\Jaxon\Plugin\Plugin $xPlugin, $nPriority = 1000)
-    {
-        $this->getPluginManager()->registerPlugin($xPlugin, $nPriority);
-    }
-
-    /**
-     * Register the Jaxon request plugins
-     *
-     * @return void
-     */
-    public function registerRequestPlugins()
-    {
-        $this->registerPlugin(new \Jaxon\Request\Plugin\CallableObject(), 101);
-        $this->registerPlugin(new \Jaxon\Request\Plugin\UserFunction(), 102);
-        $this->registerPlugin(new \Jaxon\Request\Plugin\BrowserEvent(), 103);
-        $this->registerPlugin(new \Jaxon\Request\Plugin\FileUpload(), 104);
-    }
-
-    /**
-     * Register the Jaxon response plugins
-     *
-     * @return void
-     */
-    public function registerResponsePlugins()
-    {
-        // Register an instance of the JQuery plugin
-        $this->registerPlugin(new \Jaxon\JQuery\Plugin(), 700);
-    }
-
-    /**
-     * Set a new directory for pagination templates
-     *
-     * @param string        $sDirectory             The directory path
-     *
-     * @return void
-     */
-    public function setPaginationDir($sDirectory)
-    {
-        $this->addViewNamespace('pagination', $sDirectory, '.php');
-    }
-
-   /**
-     * Check if uploaded files are available
-     *
-     * @return boolean
-     */
-    public function hasUploadedFiles()
-    {
-        if(($xUploadPlugin = $this->getPluginManager()->getRequestPlugin(self::FILE_UPLOAD)) == null)
-        {
-            return false;
-        }
-        return $xUploadPlugin->canProcessRequest();
-    }
-
-   /**
-     * Check uploaded files validity and move them to the user dir
-     *
-     * @return boolean
-     */
-    public function saveUploadedFiles()
-    {
-        try
-        {
-            if(($xUploadPlugin = $this->getPluginManager()->getRequestPlugin(self::FILE_UPLOAD)) == null)
-            {
-                throw new Exception($this->trans('errors.upload.plugin'));
-            }
-            elseif(!$xUploadPlugin->canProcessRequest())
-            {
-                throw new Exception($this->trans('errors.upload.request'));
-            }
-            // Save uploaded files
-            $sKey = $xUploadPlugin->saveUploadedFiles();
-            $sResponse = '{"code": "success", "upl": "' . $sKey . '"}';
-            $return = true;
-        }
-        catch(Exception $e)
-        {
-            $sResponse = '{"code": "error", "msg": "' . addslashes($e->getMessage()) . '"}';
-            $return = false;
-        }
-        // Send the response back to the browser
-        echo '<script>var res = ', $sResponse, '; </script>';
-        if(($this->getOption('core.process.exit')))
-        {
-            exit();
-        }
-        return $return;
-    }
-
-    /**
-     * Get the uploaded files
-     *
-     * @return array
-     */
-    public function getUploadedFiles()
-    {
-        if(($xUploadPlugin = $this->getPluginManager()->getRequestPlugin(self::FILE_UPLOAD)) == null)
-        {
-            return [];
-        }
-        return $xUploadPlugin->getUploadedFiles();
-    }
-
-    /**
-     * Filter uploaded file name
-     *
-     * @param Closure       $fFileFilter            The closure which filters filenames
-     *
-     * @return void
-     */
-    public function setUploadFileFilter(Closure $fFileFilter)
-    {
-        if(($xUploadPlugin = $this->getPluginManager()->getRequestPlugin(self::FILE_UPLOAD)) == null)
-        {
-            return;
-        }
-        $xUploadPlugin->setFileFilter($fFileFilter);
-    }
-
-    /**
-     * Get the Sentry instance
-     *
-     * @return \Jaxon\Sentry\Sentry
-     */
-    public function sentry()
-    {
-        return Utils\Container::getInstance()->getSentry();
-    }
-
-    /**
-     * Get the Armada instance
-     *
-     * @return \Jaxon\Sentry\Traits\Armada
-     */
-    public function armada()
-    {
-        return Utils\Container::getInstance()->getArmada();
     }
 }

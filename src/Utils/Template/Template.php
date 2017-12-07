@@ -57,6 +57,18 @@ class Template
     }
 
     /**
+     * Set a new directory for pagination templates
+     *
+     * @param string        $sDirectory             The directory path
+     *
+     * @return void
+     */
+    public function setPaginationDir($sDirectory)
+    {
+        $this->addNamespace('pagination', $sDirectory, '.php');
+    }
+
+    /**
      * Set a cache directory for the template engine
      *
      * @param string        $sCacheDir            The cache directory
