@@ -128,18 +128,6 @@ class Container
         $this->di['jaxon'] = function ($c) {
             return new \Jaxon\Jaxon();
         };
-        // Jaxon Sentry
-        $this->di['sentry'] = function ($c) {
-            // This class is not defined in this package
-            $sClass = '\\Jaxon\\Sentry\\Sentry';
-            return new $sClass;
-        };
-        // Armada
-        $this->di['armada'] = function ($c) {
-            // This class is not defined in this package
-            $sClass = '\\Jaxon\\Armada\\Armada';
-            return new $sClass;
-        };
         // View Renderer Facade
         $this->di['sentry.view.renderer'] = function ($c) {
             $aRenderers = $c['view.data.renderers'];
@@ -331,9 +319,21 @@ class Container
     }
 
     /**
-     * Get the Armada object
+     * Set the Sentry instance
      *
-     * @return object        The Armada object
+     * @param object                $xSentry            The Sentry instance
+     *
+     * @return void
+     */
+    public function setSentry($xSentry)
+    {
+        $this->di['sentry'] = $xSentry;
+    }
+
+    /**
+     * Get the Armada instance
+     *
+     * @return object        The Armada instance
      */
     public function getArmada()
     {
@@ -341,9 +341,9 @@ class Container
     }
 
     /**
-     * Set the armada
+     * Set the Armada instance
      *
-     * @param object                $xArmada            The new armada
+     * @param object                $xArmada            The Armada instance
      *
      * @return void
      */
