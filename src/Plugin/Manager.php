@@ -800,8 +800,8 @@ class Manager
     private function getConfigScript()
     {
         $aVars = $this->getOptionVars();
-        $sYesScript = 'jaxon.confirm.skip(command);jaxon.tools.queue.process(command.response)';
-        $sNoScript = 'jaxon.tools.queue.process(command.response)';
+        $sYesScript = 'jaxon.confirm.skip(command);jaxon.ajax.response.process(command.response)';
+        $sNoScript = 'jaxon.ajax.response.process(command.response)';
         $sConfirmScript = $this->getConfirm()->confirm('msg', $sYesScript, $sNoScript);
         $aVars['sConfirmScript'] = $this->render('jaxon::plugins/confirm.js', array('sConfirmScript' => $sConfirmScript));
 
