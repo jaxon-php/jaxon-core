@@ -185,7 +185,7 @@ class Manager
     {
         if(is_array($mArg))
         {
-            foreach($mArg as $sKey => $xArg)
+            foreach($mArg as $sKey => &$xArg)
             {
                 $sNewKey = $sKey;
                 $this->__argumentDecodeUTF8_iconv($sNewKey);
@@ -215,7 +215,7 @@ class Manager
     {
         if(is_array($mArg))
         {
-            foreach($mArg as $sKey => $xArg)
+            foreach($mArg as $sKey => &$xArg)
             {
                 $sNewKey = $sKey;
                 $this->__argumentDecodeUTF8_mb_convert_encoding($sNewKey);
@@ -245,7 +245,7 @@ class Manager
     {
         if(is_array($mArg))
         {
-            foreach($mArg as $sKey => $xArg)
+            foreach($mArg as $sKey => &$xArg)
             {
                 $sNewKey = $sKey;
                 $this->__argumentDecodeUTF8_utf8_decode($sNewKey);
