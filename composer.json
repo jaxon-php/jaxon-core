@@ -13,8 +13,6 @@
     "license": "BSD-3-Clause",
     "keywords": ["Jaxon", "Xajax", "Ajax", "PHP", "Asynchronous"],
     "support": {
-        "forum": "http://community.jaxon-project.org",
-        "irc": "irc://irc.freenode.org/jaxon",
         "issues": "https://github.com/jaxon-php/jaxon-core/issues",
         "source": "https://github.com/jaxon-php/jaxon-core"
     },
