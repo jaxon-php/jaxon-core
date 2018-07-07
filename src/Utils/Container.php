@@ -137,6 +137,29 @@ class Container
     }
 
     /**
+     * Get a class instance
+     *
+     * @return object        The class instance
+     */
+    public function get($sClass)
+    {
+        return $this->di[$sClass];
+    }
+
+    /**
+     * Set a DI closure
+     *
+     * @param string                $sClass             The full class name
+     * @param Closure               $xClosure           The closure
+     *
+     * @return void
+     */
+    public function set($sClass, $xClosure)
+    {
+        $this->di[$sClass] = $xClosure;
+    }
+
+    /**
      * Get the plugin manager
      *
      * @return object        The plugin manager

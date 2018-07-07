@@ -50,5 +50,9 @@ return [
             'already-sent' => "La salida ha sido enviada al navegador en :location.",
             'advice' => "Asegúrese que el comando \$jaxon->processRequest() fue colocado antes de esto.",
         ],
+        'magic' => [
+            'get' => "Intentando leer propiedad desconocida :name con sobrecarga __get en línea :line en archivo :file.",
+            'set' => "Intentando escribir propiedad desconocida :name con sobrecarga __set en línea :line en archivo :file.",
+        ],
     ],
 ];

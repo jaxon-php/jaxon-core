@@ -50,5 +50,9 @@ return [
             'already-sent' => "Output has already been sent to the browser at :location.",
             'advice' => "Please make sure the command \$jaxon->processRequest() is placed before this.",
         ],
+        'magic' => [
+            'get' => "Trying to read unknown property :name with magic property __get at line :line in file :file.",
+            'set' => "Trying to write unknown property :name with magic property __set at line :line in file :file.",
+        ],
     ],
 ];

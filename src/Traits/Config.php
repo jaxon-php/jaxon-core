@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Config.php - Upload Trait
+ * Config.php - Config Trait
  *
  * The Jaxon class uses a modular plug-in system to facilitate the processing
  * of special Ajax requests made by a PHP page.

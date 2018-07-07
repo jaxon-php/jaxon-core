@@ -50,5 +50,9 @@ return [
             'already-sent' => "La sortie a déjà été envoyée au navigateur à :location.",
             'advice' => "Assurez-vous que la commande \$jaxon->processRequest() est placée avant ceci.",
         ],
+        'magic' => [
+            'get' => "Accès à la propriété inconnue :name avec la surcharge magique __get à la ligne :line du fichier :file.",
+            'set' => "Accès à la propriété inconnue :name avec la surcharge magique __set à la ligne :line du fichier :file.",
+        ],
     ],
 ];

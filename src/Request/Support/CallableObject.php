@@ -31,6 +31,7 @@ class CallableObject
     use \Jaxon\Utils\Traits\Config;
     use \Jaxon\Utils\Traits\Manager;
     use \Jaxon\Utils\Traits\Template;
+    use \Jaxon\Utils\Traits\DI;
 
     /**
      * A reference to the callable object the user has registered
@@ -102,9 +103,9 @@ class CallableObject
             $this->reflectionClass = new \ReflectionClass(get_class($xCallable));
             $this->setCallable($xCallable);
         }
-        $this->aConfiguration = array();
+        $this->aConfiguration = [];
         // By default, no method is "protected"
-        $this->aProtectedMethods = array();
+        $this->aProtectedMethods = [];
     }
 
     /**
@@ -120,7 +121,22 @@ class CallableObject
     {
         if($xCallable == null)
         {
-            $xCallable = $this->reflectionClass->newInstance();
+            // Use the Reflection class to get the parameters of the constructor
+            if(($constructor = $this->reflectionClass->getConstructor()) != null)
+            {
+                $parameters = $constructor->getParameters();
+                $parameterInstances = [];
+                foreach($parameters as $parameter)
+                {
+                    // Get the parameter instance from the DI
+                    $parameterInstance[] = $this->diGet($parameter->getClass()->getName());
+                }
+                $xCallable = $this->reflectionClass->newInstanceArgs($parameterInstance);
+            }
+            else
+            {
+                $xCallable = $this->reflectionClass->newInstance();
+            }
         }
         // Save the Jaxon callable object into the user callable object
         if($this->reflectionClass->hasMethod('setJaxonCallable'))
@@ -211,7 +227,7 @@ class CallableObject
      */
     public function getMethods()
     {
-        $aReturn = array();
+        $aReturn = [];
         foreach($this->reflectionClass->getMethods(\ReflectionMethod::IS_PUBLIC) as $xMethod)
         {
             $sMethodName = $xMethod->getShortName();
@@ -274,7 +290,7 @@ class CallableObject
         
         if(!isset($this->aConfiguration[$sMethod]))
         {
-            $this->aConfiguration[$sMethod] = array();
+            $this->aConfiguration[$sMethod] = [];
         }
         $this->aConfiguration[$sMethod][$sName] = $sValue;
     }
@@ -289,10 +305,10 @@ class CallableObject
         $sJaxonPrefix = $this->getOption('core.prefix.class');
         // "\" are replaced with the configured separator in the generated javascript code.
         $sClass = str_replace('\\', $this->separator, $this->getName());
-        $aMethods = array();
+        $aMethods = [];
 
         // Common options to be set on all methods
-        $aCommonConfig = array_key_exists('*', $this->aConfiguration) ? $this->aConfiguration['*'] : array();
+        $aCommonConfig = array_key_exists('*', $this->aConfiguration) ? $this->aConfiguration['*'] : [];
         foreach($this->reflectionClass->getMethods(\ReflectionMethod::IS_PUBLIC) as $xMethod)
         {
             $sMethodName = $xMethod->getShortName();
