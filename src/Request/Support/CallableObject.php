@@ -129,9 +129,9 @@ class CallableObject
                 foreach($parameters as $parameter)
                 {
                     // Get the parameter instance from the DI
-                    $parameterInstance[] = $this->diGet($parameter->getClass()->getName());
+                    $parameterInstances[] = $this->diGet($parameter->getClass()->getName());
                 }
-                $xCallable = $this->reflectionClass->newInstanceArgs($parameterInstance);
+                $xCallable = $this->reflectionClass->newInstanceArgs($parameterInstances);
             }
             else
             {
