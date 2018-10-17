@@ -170,11 +170,13 @@ class Response
             {
                 if($aLastCommand['cmd'] == $aAttributes['cmd'])
                 {
-                    if($aLastCommand['cmd'] == 'js')
+                    if($this->getOption('core.response.merge.js') &&
+                            $aLastCommand['cmd'] == 'js')
                     {
                         $mData = $aLastCommand['data'].'; '.$mData;
                     }
-                    elseif($aLastCommand['cmd'] == 'ap' &&
+                    elseif($this->getOption('core.response.merge.ap') &&
+                            $aLastCommand['cmd'] == 'ap' &&
                             $aLastCommand['id'] == $aAttributes['id'] &&
                             $aLastCommand['prop'] == $aAttributes['prop'])
                     {
