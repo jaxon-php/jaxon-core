@@ -30,7 +30,7 @@ use Jaxon\Request\Manager as RequestManager;
 use Jaxon\Response\Manager as ResponseManager;
 
 use Jaxon\Utils\URI;
-use Jaxon\Utils\Container;
+use Jaxon\DI\Container;
 use Exception;
 use Closure;
 
@@ -253,7 +253,7 @@ class Jaxon
         $sCode .= $this->getPluginManager()->getScript();
         return $sCode;
     }
-    
+
     /**
      * Print the jaxon Javascript header and wrapper code into your page
      *
@@ -269,7 +269,7 @@ class Jaxon
     {
         print $this->getScript($bIncludeJs, $bIncludeCss);
     }
-    
+
     /**
      * Return the javascript header code and file includes
      *
@@ -279,7 +279,7 @@ class Jaxon
     {
         return $this->getPluginManager()->getJs();
     }
-    
+
     /**
      * Return the CSS header code and file includes
      *
@@ -445,7 +445,7 @@ class Jaxon
     /**
      * Get the DI container
      *
-     * @return Jaxon\Utils\Container
+     * @return Jaxon\DI\Container
      */
     public function di()
     {

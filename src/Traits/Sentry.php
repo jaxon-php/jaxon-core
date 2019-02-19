@@ -19,7 +19,7 @@
 
 namespace Jaxon\Traits;
 
-use Jaxon\Utils\Container;
+use Jaxon\DI\Container;
 
 trait Sentry
 {
