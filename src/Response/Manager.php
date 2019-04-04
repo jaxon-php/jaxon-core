@@ -59,6 +59,16 @@ class Manager
     }
 
     /**
+     * Check if there is currently no response
+     *
+     * @return boolean
+     */
+    public function hasNoResponse()
+    {
+        return ($this->xResponse == null);
+    }
+
+    /**
      * Append one response object onto the end of another
      *
      * You cannot append a given response onto the end of a response of different type.
