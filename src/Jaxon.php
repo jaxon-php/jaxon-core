@@ -53,7 +53,7 @@ class Jaxon
      *
      * @var string
      */
-    private $sVersion = 'Jaxon 2.1.6';
+    private $sVersion = 'Jaxon 2.2.4';
 
     /*
      * Processing events
@@ -253,7 +253,7 @@ class Jaxon
         $sCode .= $this->getPluginManager()->getScript();
         return $sCode;
     }
-    
+
     /**
      * Print the jaxon Javascript header and wrapper code into your page
      *
@@ -269,7 +269,7 @@ class Jaxon
     {
         print $this->getScript($bIncludeJs, $bIncludeCss);
     }
-    
+
     /**
      * Return the javascript header code and file includes
      *
@@ -279,7 +279,7 @@ class Jaxon
     {
         return $this->getPluginManager()->getJs();
     }
-    
+
     /**
      * Return the CSS header code and file includes
      *
