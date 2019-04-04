@@ -46,35 +46,35 @@ class CallableObject
      * @var \ReflectionClass
      */
     private $reflectionClass;
-    
+
     /**
      * A list of methods of the user registered callable object the library must not export to javascript
      *
      * @var array
      */
     private $aProtectedMethods;
-    
+
     /**
      * The namespace where the callable object class is defined
      *
      * @var string
      */
     private $namespace = '';
-    
+
     /**
      * The path to the directory where the callable object class is defined, starting from the namespace root
      *
      * @var string
      */
     private $classpath = '';
-    
+
     /**
      * The character to use as separator in javascript class names
      *
      * @var string
      */
     private $separator = '.';
-    
+
     /**
      * An associative array that will contain configuration options for zero or more of the objects methods
      *
@@ -84,7 +84,7 @@ class CallableObject
      * @var array
      */
     private $aConfiguration;
-    
+
     /**
      * The class constructor
      *
@@ -287,14 +287,14 @@ class CallableObject
                 $this->aProtectedMethods[] = $sValue;
             return;
         }
-        
+
         if(!isset($this->aConfiguration[$sMethod]))
         {
             $this->aConfiguration[$sMethod] = [];
         }
         $this->aConfiguration[$sMethod][$sName] = $sValue;
     }
-    
+
     /**
      * Generate client side javascript code for calls to all methods exposed by this callable object
      *
@@ -335,7 +335,7 @@ class CallableObject
             'aMethods' => $aMethods,
         ));
     }
-    
+
     /**
      * Check if the specified class name matches the class name of the registered callable object
      *
@@ -345,7 +345,7 @@ class CallableObject
     {
         return ($this->reflectionClass->getName() === $sClass);
     }
-    
+
     /**
      * Check if the specified method name is one of the methods of the registered callable object
      *
@@ -357,7 +357,7 @@ class CallableObject
     {
         return $this->reflectionClass->hasMethod($sMethod) || $this->reflectionClass->hasMethod('__call');
     }
-    
+
     /**
      * Call the specified method of the registered callable object using the specified array of arguments
      *
@@ -369,9 +369,15 @@ class CallableObject
     public function call($sMethod, $aArgs)
     {
         if(!$this->hasMethod($sMethod))
+        {
             return;
+        }
         $reflectionMethod = $this->reflectionClass->getMethod($sMethod);
         $callableObject = $this->getRegisteredObject();
-        $this->getResponseManager()->append($reflectionMethod->invokeArgs($callableObject, $aArgs));
+        $response = $reflectionMethod->invokeArgs($callableObject, $aArgs);
+        if(($response))
+        {
+            $this->getResponseManager()->append($response);
+        }
     }
 }
