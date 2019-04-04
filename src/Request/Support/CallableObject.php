@@ -369,9 +369,15 @@ class CallableObject
     public function call($sMethod, $aArgs)
     {
         if(!$this->hasMethod($sMethod))
+        {
             return;
+        }
         $reflectionMethod = $this->reflectionClass->getMethod($sMethod);
         $callableObject = $this->getRegisteredObject();
-        $this->getResponseManager()->append($reflectionMethod->invokeArgs($callableObject, $aArgs));
+        $response = $reflectionMethod->invokeArgs($callableObject, $aArgs);
+        if(($response))
+        {
+            $this->getResponseManager()->append($response);
+        }
     }
 }

@@ -63,21 +63,21 @@ class UserFunction
      * @var string
      */
     private $sAlias;
-    
+
     /**
      * A string or an array which defines the function to be registered
      *
      * @var string
      */
     private $sUserFunction;
-    
+
     /**
      * The path and file name of the include file where the function is defined
      *
      * @var string
      */
     private $sInclude;
-    
+
     /**
      * An associative array containing call options that will be sent
      * to the browser curing client script generation
@@ -85,7 +85,7 @@ class UserFunction
      * @var array
      */
     private $aConfiguration;
-    
+
     public function __construct($sUserFunction)
     {
         $this->aConfiguration = array();
@@ -115,7 +115,7 @@ class UserFunction
             throw new \Jaxon\Exception\Error($this->trans('errors.functions.invalid-declaration'));
         }
     }
-    
+
     /**
      * Get the name of the function being referenced
      *
@@ -130,7 +130,7 @@ class UserFunction
         }
         return $this->sUserFunction;
     }
-    
+
     /**
      * Set call options for this instance
      *
@@ -154,7 +154,7 @@ class UserFunction
             break;
         }
     }
-    
+
     /**
      * Constructs and returns a <Jaxon\Request\Request> object which is capable of generating the javascript call to invoke this jaxon enabled function
      *
@@ -165,7 +165,7 @@ class UserFunction
         $sAlias = (($this->sAlias) ? $this->sAlias : $this->getName());
         return new Request($sAlias, 'function');
     }
-    
+
     /**
      * Generate the javascript function stub that is sent to the browser on initial page load
      *
@@ -199,7 +199,10 @@ class UserFunction
         {
             require_once $this->sInclude;
         }
-        $mFunction = $this->sUserFunction;
-        $this->getResponseManager()->append(call_user_func_array($mFunction, $aArgs));
+        $response = call_user_func_array($this->sUserFunction, $aArgs);
+        if(($response))
+        {
+            $this->getResponseManager()->append($response);
+        }
     }
 }

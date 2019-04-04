@@ -53,6 +53,7 @@ trait Config
             'core.process.timeout'              => 6000,
             'core.error.handle'                 => false,
             'core.error.log_file'               => '',
+            'core.jquery.no_conflict'           => false,
             'js.lib.output_id'                  => 0,
             'js.lib.queue_size'                 => 0,
             'js.lib.load_timeout'               => 2000,

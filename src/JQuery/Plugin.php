@@ -4,11 +4,7 @@ namespace Jaxon\JQuery;
 
 class Plugin extends \Jaxon\Plugin\Response
 {
-    /**
-     * The plugin constructor.
-     */
-    public function __construct()
-    {}
+    use \Jaxon\Utils\Traits\Config;
 
     /**
      * Return the name of the plugin.
@@ -28,7 +24,7 @@ class Plugin extends \Jaxon\Plugin\Response
     public function generateHash()
     {
         // Use the version number as hash
-        return '2.0.0';
+        return '2.2.4';
     }
 
     /**
