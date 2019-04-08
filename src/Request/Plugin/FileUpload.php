@@ -38,6 +38,13 @@ class FileUpload extends RequestPlugin
     protected $sTempFile = '';
 
     /**
+     * The subdir where uploaded files are stored
+     *
+     * @var string
+     */
+    protected $sUploadSubdir = '';
+
+    /**
      * A user defined function to transform uploaded file names
      *
      * @var Closure
@@ -50,6 +57,7 @@ class FileUpload extends RequestPlugin
     public function __construct()
     {
         $this->aUserFiles = [];
+        $this->sUploadSubdir = uniqid() . DIRECTORY_SEPARATOR;
 
         if(array_key_exists('jxnupl', $_POST))
         {
@@ -89,6 +97,67 @@ class FileUpload extends RequestPlugin
             $sFilename = (string)$fFileFilter($sFilename, $sVarName);
         }
         return $sFilename;
+    }
+
+    /**
+     * Get the path to the upload dir
+     *
+     * @param string        $sFieldId               The filename
+     *
+     * @return string
+     */
+    protected function getUploadDir($sFieldId)
+    {
+        // Default upload dir
+        $sDefaultUploadDir = $this->getOption('upload.default.dir');
+        $sUploadDir = $this->getOption('upload.files.' . $sFieldId . '.dir', $sDefaultUploadDir);
+        $sUploadDir = rtrim(trim($sUploadDir), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+        // Verify that the upload dir exists and is writable
+        if(!is_writable($sUploadDir))
+        {
+            throw new \Jaxon\Exception\Error($this->trans('errors.upload.access'));
+        }
+        $sUploadDir .= $this->sUploadSubdir;
+        @mkdir($sUploadDir);
+        return $sUploadDir;
+    }
+
+    /**
+     * Get the path to the upload temp dir
+     *
+     * @return string
+     */
+    protected function getUploadTempDir()
+    {
+        // Default upload dir
+        $sUploadDir = $this->getOption('upload.default.dir');
+        $sUploadDir = rtrim(trim($sUploadDir), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+        // Verify that the upload dir exists and is writable
+        if(!is_writable($sUploadDir))
+        {
+            throw new \Jaxon\Exception\Error($this->trans('errors.upload.access'));
+        }
+        $sUploadDir .= 'tmp' . DIRECTORY_SEPARATOR;
+        @mkdir($sUploadDir);
+        return $sUploadDir;
+    }
+
+    /**
+     * Get the path to the upload temp file
+     *
+     * @return string
+     */
+    protected function getUploadTempFile()
+    {
+        $sUploadDir = $this->getOption('upload.default.dir');
+        $sUploadDir = rtrim(trim($sUploadDir), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+        $sUploadDir .= 'tmp' . DIRECTORY_SEPARATOR;
+        $sUploadTempFile = $sUploadDir . $this->sTempFile . '.json';
+        if(!is_readable($sUploadTempFile))
+        {
+            throw new \Jaxon\Exception\Error($this->trans('errors.upload.access'));
+        }
+        return $sUploadTempFile;
     }
 
     /**
@@ -153,9 +222,6 @@ class FileUpload extends RequestPlugin
             }
         }
 
-        // Default upload dir
-        $sDefaultUploadDir = $this->getOption('upload.default.dir');
-
         // Check uploaded files validity
         foreach($aTempFiles as $sVarName => $aFiles)
         {
@@ -171,13 +237,8 @@ class FileUpload extends RequestPlugin
                 {
                     throw new \Jaxon\Exception\Error($this->getValidatorMessage());
                 }
-                // Verify that the upload dir exists and is writable
-                $sUploadDir = $this->getOption('upload.files.' . $sVarName . '.dir', $sDefaultUploadDir);
-                $sUploadDir = rtrim(trim($sUploadDir), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
-                if(!is_writable($sUploadDir))
-                {
-                    throw new \Jaxon\Exception\Error($this->trans('errors.upload.access'));
-                }
+                // Get the path to the upload dir
+                $sUploadDir = $this->getUploadDir($sVarName);
             }
         }
 
@@ -187,9 +248,9 @@ class FileUpload extends RequestPlugin
             $this->aUserFiles[$sVarName] = [];
             foreach($aTempFiles as $aFile)
             {
+                // Get the path to the upload dir
+                $sUploadDir = $this->getUploadDir($sVarName);
                 // Set the user file data
-                $sUploadDir = $this->getOption('upload.files.' . $sVarName . '.dir', $sDefaultUploadDir);
-                $sUploadDir = rtrim(trim($sUploadDir), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
                 $xUploadedFile = UploadedFile::fromHttpData($sUploadDir, $aFile);
                 // All's right, move the file to the user dir.
                 move_uploaded_file($aFile["tmp_name"], $xUploadedFile->path());
@@ -205,13 +266,6 @@ class FileUpload extends RequestPlugin
      */
     protected function saveToTempFile()
     {
-        // Default upload dir
-        $sUploadDir = $this->getOption('upload.default.dir');
-        $sUploadDir = rtrim(trim($sUploadDir), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
-        if(!is_writable($sUploadDir))
-        {
-            throw new \Jaxon\Exception\Error($this->trans('errors.upload.access'));
-        }
         // Convert uploaded file to an array
         $aFiles = [];
         foreach($this->aUserFiles as $sVarName => $aUserFiles)
@@ -223,9 +277,8 @@ class FileUpload extends RequestPlugin
             }
         }
         // Save upload data in a temp file
+        $sUploadDir = $this->getUploadTempDir();
         $this->sTempFile = uniqid();
-        $sUploadDir .= 'tmp' . DIRECTORY_SEPARATOR;
-        @mkdir($sUploadDir);
         file_put_contents($sUploadDir . $this->sTempFile . '.json', json_encode($aFiles));
     }
 
@@ -236,16 +289,9 @@ class FileUpload extends RequestPlugin
      */
     protected function readFromTempFile()
     {
-        // Default upload dir
-        $sUploadDir = $this->getOption('upload.default.dir');
-        $sUploadDir = rtrim(trim($sUploadDir), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
-        $sUploadDir .= 'tmp' . DIRECTORY_SEPARATOR;
-        if(!is_readable($sUploadDir . $this->sTempFile . '.json'))
-        {
-            throw new \Jaxon\Exception\Error($this->trans('errors.upload.access'));
-        }
-        $aFiles = file_get_contents($sUploadDir . $this->sTempFile . '.json');
-        $aFiles = json_decode($aFiles, true);
+        // Upload temp file
+        $sUploadTempFile = $this->getUploadTempFile();
+        $aFiles = json_decode(file_get_contents($sUploadTempFile), true);
         foreach($aFiles as $sVarName => $aUserFiles)
         {
             $this->aUserFiles[$sVarName] = [];
@@ -254,7 +300,7 @@ class FileUpload extends RequestPlugin
                 $this->aUserFiles[$sVarName][] = UploadedFile::fromTempData($aUserFile);
             }
         }
-        unlink($sUploadDir . $this->sTempFile . '.json');
+        unlink($sUploadTempFile);
     }
 
     /**
