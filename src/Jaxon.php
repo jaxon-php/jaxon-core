@@ -333,6 +333,7 @@ class Jaxon
 
         $bEndRequest = false;
         $mResult = true;
+        $xResponseManager = $this->getResponseManager();
 
         // Handle before processing event
         if(isset($this->aProcessingEvents[self::PROCESSING_EVENT_BEFORE]))
@@ -353,7 +354,6 @@ class Jaxon
                 // or an error occurred while attempting to execute the handler.
                 // Replace the response, if one has been started and send a debug message.
 
-                $xResponseManager = $this->getResponseManager();
                 $xResponseManager->clear();
                 $xResponseManager->append(new Response\Response());
                 $xResponseManager->debug($e->getMessage());
@@ -401,13 +401,18 @@ class Jaxon
                 $bEndRequest = false;
                 $this->aProcessingEvents[self::PROCESSING_EVENT_AFTER]->call(array($bEndRequest));
             }
+            // If the called function returned no response, give the the global response instead
+            if($xResponseManager->hasNoResponse())
+            {
+                $xResponseManager->append($this->getResponse());
+            }
         }
 
-        $this->getResponseManager()->printDebug();
+        $xResponseManager->printDebug();
 
         if(($this->getOption('core.process.exit')))
         {
-            $this->getResponseManager()->sendOutput();
+            $xResponseManager->sendOutput();
             exit();
         }
     }
