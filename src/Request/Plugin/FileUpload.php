@@ -38,6 +38,13 @@ class FileUpload extends RequestPlugin
     protected $sTempFile = '';
 
     /**
+     * The subdir where uploaded files are stored
+     *
+     * @var string
+     */
+    protected $sUploadSubdir = '';
+
+    /**
      * A user defined function to transform uploaded file names
      *
      * @var Closure
@@ -50,6 +57,7 @@ class FileUpload extends RequestPlugin
     public function __construct()
     {
         $this->aUserFiles = [];
+        $this->sUploadSubdir = uniqid() . DIRECTORY_SEPARATOR;
 
         if(array_key_exists('jxnupl', $_POST))
         {
@@ -109,7 +117,7 @@ class FileUpload extends RequestPlugin
         {
             throw new \Jaxon\Exception\Error($this->trans('errors.upload.access'));
         }
-        $sUploadDir .= uniqid() . DIRECTORY_SEPARATOR;
+        $sUploadDir .= $this->sUploadSubdir;
         @mkdir($sUploadDir);
         return $sUploadDir;
     }
@@ -122,7 +130,7 @@ class FileUpload extends RequestPlugin
     protected function getUploadTempDir()
     {
         // Default upload dir
-        $sDefaultUploadDir = $this->getOption('upload.default.dir');
+        $sUploadDir = $this->getOption('upload.default.dir');
         $sUploadDir = rtrim(trim($sUploadDir), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
         // Verify that the upload dir exists and is writable
         if(!is_writable($sUploadDir))
@@ -213,9 +221,6 @@ class FileUpload extends RequestPlugin
                 ];
             }
         }
-
-        // Default upload dir
-        $sDefaultUploadDir = $this->getOption('upload.default.dir');
 
         // Check uploaded files validity
         foreach($aTempFiles as $sVarName => $aFiles)
