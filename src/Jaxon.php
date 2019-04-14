@@ -109,11 +109,11 @@ class Jaxon
      *
      * @var array
      */
-    private $aProcessingEvents;
+    private $aProcessingEvents = [];
 
     public function __construct()
     {
-        $this->aProcessingEvents = array();
+        $this->aProcessingEvents;
         $this->setDefaultOptions();
     }
 
@@ -181,7 +181,7 @@ class Jaxon
      *
      * @return boolean
      */
-    public function addClassDir($sDirectory, $sNamespace = null, $sSeparator = '.', array $aProtected = array())
+    public function addClassDir($sDirectory, $sNamespace = null, $sSeparator = '.', array $aProtected = [])
     {
         return $this->getPluginManager()->addClassDir($sDirectory, $sNamespace, $sSeparator, $aProtected);
     }
@@ -193,7 +193,7 @@ class Jaxon
      *
      * @return void
      */
-    public function registerClasses(array $aOptions = array())
+    public function registerClasses(array $aOptions = [])
     {
         return $this->getPluginManager()->registerClasses($aOptions);
     }
@@ -210,7 +210,7 @@ class Jaxon
      *
      * @return void
      */
-    public function registerClass($sClassName, array $aOptions = array(), $bGetObject = false)
+    public function registerClass($sClassName, array $aOptions = [], $bGetObject = false)
     {
         $this->getPluginManager()->registerClass($sClassName, $aOptions);
         return (($bGetObject) ? $this->getPluginManager()->getRegisteredObject($sClassName) : null);

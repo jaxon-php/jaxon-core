@@ -27,7 +27,7 @@ trait Translator
      *
      * @return string        The translated string
      */
-    public function trans($sText, array $aPlaceHolders = array(), $sLanguage = null)
+    public function trans($sText, array $aPlaceHolders = [], $sLanguage = null)
     {
         return Container::getInstance()->getTranslator()->trans($sText, $aPlaceHolders, $sLanguage);
     }

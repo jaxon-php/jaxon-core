@@ -119,10 +119,10 @@ class Manager
      */
     public function __construct()
     {
-        $this->aRequestPlugins = array();
-        $this->aResponsePlugins = array();
-        $this->aPlugins = array();
-        $this->aClassDirs = array();
+        $this->aRequestPlugins = [];
+        $this->aResponsePlugins = [];
+        $this->aPlugins = [];
+        $this->aClassDirs = [];
 
         $this->bAutoloadEnabled = true;
         $this->xAutoloader = null;
@@ -358,7 +358,7 @@ class Manager
         // Todo: throw an exception
         return false;
     }
-    
+
     /**
      * Register a function, event or callable object
      *
@@ -392,7 +392,7 @@ class Manager
      *
      * @return boolean
      */
-    public function addClassDir($sDirectory, $sNamespace = '', $sSeparator = '.', array $aProtected = array())
+    public function addClassDir($sDirectory, $sNamespace = '', $sSeparator = '.', array $aProtected = [])
     {
         if(!is_dir(($sDirectory = trim($sDirectory))))
         {
@@ -453,7 +453,7 @@ class Manager
      * @return void
      */
     protected function registerClassFromFile($xFile, $sDirectory, $sNamespace = '', $sSeparator = '.',
-        array $aProtected = array(), array $aOptions = array())
+        array $aProtected = [], array $aOptions = [])
     {
         $sDS = DIRECTORY_SEPARATOR;
         // Get the corresponding class path and name
@@ -473,7 +473,7 @@ class Manager
         // Create and register an instance of the class
         if(!array_key_exists('*', $aOptions) || !is_array($aOptions['*']))
         {
-            $aOptions['*'] = array();
+            $aOptions['*'] = [];
         }
         $aOptions['*']['separator'] = $sSeparator;
         if(($sNamespace))
@@ -500,11 +500,11 @@ class Manager
      *
      * @return void
      */
-    public function registerClasses(array $aOptions = array())
+    public function registerClasses(array $aOptions = [])
     {
         $sDS = DIRECTORY_SEPARATOR;
         // Change the keys in $aOptions to have "\" as separator
-        $aNewOptions = array();
+        $aNewOptions = [];
         foreach($aOptions as $key => $aOption)
         {
             $key = trim(str_replace(['.', '_'], ['\\', '\\'], $key), ' \\');
@@ -562,7 +562,7 @@ class Manager
      *
      * @return bool
      */
-    public function registerClass($sClassName, array $aOptions = array())
+    public function registerClass($sClassName, array $aOptions = [])
     {
         if(!($sClassName = trim($sClassName, ' \\._')))
         {
@@ -645,7 +645,7 @@ class Manager
         // Todo: check the validity of the URI
         return rtrim($this->getOption('js.lib.uri'), '/') . '/';
     }
-    
+
     /**
      * Get the extension of the Jaxon library javascript files
      *
@@ -931,7 +931,7 @@ class Manager
                 'sScript' => $this->getAllScripts(),
             ));
         }
-        
+
         return $sScript;
     }
 

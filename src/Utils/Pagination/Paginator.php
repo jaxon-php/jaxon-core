@@ -252,11 +252,11 @@ class Paginator
      */
     public function getPages()
     {
-        $pages = array();
+        $pages = [];
 
         if($this->numPages <= 1)
         {
-            return array();
+            return [];
         }
 
         if($this->numPages <= $this->maxPagesToShow)

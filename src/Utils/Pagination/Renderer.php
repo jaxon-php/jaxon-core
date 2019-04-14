@@ -43,7 +43,7 @@ class Renderer
      *
      * @return string        The template content
      */
-    protected function _render($sTemplate, array $aVars = array())
+    protected function _render($sTemplate, array $aVars = [])
     {
         return jaxon()->render($sTemplate, $aVars);
     }

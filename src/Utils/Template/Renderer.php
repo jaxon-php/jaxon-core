@@ -24,7 +24,7 @@ class Renderer
      *
      * @return string        The template content
      */
-    public function render($sPath, array $aVars = array())
+    public function render($sPath, array $aVars = [])
     {
         // Make the template vars available as attributes
         foreach($aVars as $sName => $xValue)

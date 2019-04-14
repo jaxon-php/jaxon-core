@@ -33,7 +33,7 @@ function jaxon()
  *
  * @return string
  */
-function jaxon_trans($sText, array $aPlaceHolders = array(), $sLanguage = null)
+function jaxon_trans($sText, array $aPlaceHolders = [], $sLanguage = null)
 {
     return \Jaxon\DI\Container::getInstance()->getTranslator()->trans($sText, $aPlaceHolders, $sLanguage);
 }

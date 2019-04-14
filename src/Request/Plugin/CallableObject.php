@@ -51,7 +51,7 @@ class CallableObject extends RequestPlugin
      * @var string
      */
     protected $sRequestedClass;
-    
+
     /**
      * The value of the method parameter of the incoming Jaxon request
      *
@@ -61,8 +61,8 @@ class CallableObject extends RequestPlugin
 
     public function __construct()
     {
-        $this->aCallableObjects = array();
-        $this->aClassPaths = array();
+        $this->aCallableObjects = [];
+        $this->aClassPaths = [];
 
         $this->sRequestedClass = null;
         $this->sRequestedMethod = null;
@@ -194,7 +194,7 @@ class CallableObject extends RequestPlugin
         $sJaxonPrefix = $this->getOption('core.prefix.class');
         // Generate code for javascript objects declaration
         $code = '';
-        $classes = array();
+        $classes = [];
         foreach($this->aClassPaths as $sClassPath)
         {
             $offset = 0;

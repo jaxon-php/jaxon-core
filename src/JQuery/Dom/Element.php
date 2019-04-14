@@ -51,7 +51,7 @@ class Element implements JsonSerializable, Parameter
     {
         $sSelector = trim($sSelector, " \t");
         $sContext = trim($sContext, " \t");
-        $this->aCalls = array();
+        $this->aCalls = [];
 
         $jQueryNs = jaxon()->getOption('core.jquery.no_conflict', false) ? 'jQuery' : '$';
         if(!$sSelector)

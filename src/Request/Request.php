@@ -269,7 +269,7 @@ class Request extends JsCall
         $nVarId = 1; // Position of the variables, starting from 1.
         // This array will avoid declaring multiple variables with the same value.
         // The array key is the variable value, while the array value is the variable name.
-        $aVariables = array(); // Array of local variables.
+        $aVariables = []; // Array of local variables.
         foreach($this->aParameters as &$xParameter)
         {
             $sParameterStr = $xParameter->getScript();

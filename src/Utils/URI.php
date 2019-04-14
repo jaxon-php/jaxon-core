@@ -23,14 +23,14 @@ class URI
      */
     public static function detect()
     {
-        $aURL = array();
+        $aURL = [];
         // Try to get the request URL
         if(!empty($_SERVER['REQUEST_URI']))
         {
             $_SERVER['REQUEST_URI'] = str_replace(array('"',"'",'<','>'), array('%22','%27','%3C','%3E'), $_SERVER['REQUEST_URI']);
             $aURL = parse_url($_SERVER['REQUEST_URI']);
         }
-        
+
         // Fill in the empty values
         if(empty($aURL['scheme']))
         {
@@ -43,7 +43,7 @@ class URI
                 $aURL['scheme'] = ((!empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) != 'off') ? 'https' : 'http');
             }
         }
-        
+
         if(empty($aURL['host']))
         {
             if(!empty($_SERVER['HTTP_X_FORWARDED_HOST']))
@@ -77,20 +77,20 @@ class URI
                 throw new \Jaxon\Exception\URI();
             }
         }
-        
+
         if(empty($aURL['port']) && !empty($_SERVER['SERVER_PORT']))
         {
             $aURL['port'] = $_SERVER['SERVER_PORT'];
         }
-        
+
         if(!empty($aURL['path']) && strlen(basename($aURL['path'])) == 0)
         {
             unset($aURL['path']);
         }
-        
+
         if(empty($aURL['path']))
         {
-            $sPath = array();
+            $sPath = [];
             if(!empty($_SERVER['PATH_INFO']))
             {
                 $sPath = parse_url($_SERVER['PATH_INFO']);
@@ -105,17 +105,17 @@ class URI
             }
             unset($sPath);
         }
-        
+
         if(empty($aURL['query']) && !empty($_SERVER['QUERY_STRING']))
         {
             $aURL['query'] = $_SERVER['QUERY_STRING'];
         }
-        
+
         if(!empty($aURL['query']))
         {
             $aURL['query'] = '?'.$aURL['query'];
         }
-        
+
         // Build the URL: Start with scheme, user and pass
         $sURL = $aURL['scheme'].'://';
         if(!empty($aURL['user']))
@@ -127,10 +127,10 @@ class URI
             }
             $sURL.= '@';
         }
-        
+
         // Add the host
         $sURL.= $aURL['host'];
-        
+
         // Add the port if needed
         if(!empty($aURL['port'])
                 && (($aURL['scheme'] == 'http' && $aURL['port'] != 80)
@@ -138,32 +138,32 @@ class URI
         {
             $sURL.= ':'.$aURL['port'];
         }
-        
+
         // Add the path and the query string
         $sURL.= $aURL['path'].@$aURL['query'];
-        
+
         // Clean up
         unset($aURL);
-        
+
         $aURL = explode("?", $sURL);
-        
+
         if(1 < count($aURL))
         {
             $aQueries = explode("&", $aURL[1]);
-        
+
             foreach($aQueries as $sKey => $sQuery)
             {
                 if("jxnGenerate" == substr($sQuery, 0, 11))
                     unset($aQueries[$sKey]);
             }
-                
+
             $sQueries = implode("&", $aQueries);
-                
+
             $aURL[1] = $sQueries;
-                
+
             $sURL = implode("?", $aURL);
         }
-        
+
         return $sURL;
     }
 }

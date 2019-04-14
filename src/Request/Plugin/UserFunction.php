@@ -47,10 +47,10 @@ class UserFunction extends RequestPlugin
 
     public function __construct()
     {
-        $this->aFunctions = array();
+        $this->aFunctions = [];
 
         $this->sRequestedFunction = null;
-        
+
         if(isset($_GET['jxnfun']))
         {
             $this->sRequestedFunction = $_GET['jxnfun'];

@@ -20,7 +20,7 @@ class Config
 
     public function __construct()
     {
-        $this->aOptions = array();
+        $this->aOptions = [];
     }
 
     /**
@@ -138,7 +138,7 @@ class Config
         $sPrefix = trim((string)$sPrefix);
         $sPrefix = rtrim($sPrefix, '.') . '.';
         $sPrefixLen = strlen($sPrefix);
-        $aOptions = array();
+        $aOptions = [];
         foreach($this->aOptions as $sName => $xValue)
         {
             if(substr($sName, 0, $sPrefixLen) == $sPrefix)

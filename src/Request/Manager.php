@@ -35,7 +35,7 @@ class Manager
      * @var array
      */
     private $aArgs;
-    
+
     /**
      * Stores the method that was used to send the arguments from the client.
      * Will be one of: Jaxon::METHOD_UNKNOWN, Jaxon::METHOD_GET, Jaxon::METHOD_POST.
@@ -43,7 +43,7 @@ class Manager
      * @var integer
      */
     private $nMethod;
-    
+
     /**
      * The constructor
      *
@@ -52,9 +52,9 @@ class Manager
     public function __construct()
     {
 
-        $this->aArgs = array();
+        $this->aArgs = [];
         $this->nMethod = Jaxon::METHOD_UNKNOWN;
-        
+
         if(isset($_POST['jxnargs']))
         {
             $this->nMethod = Jaxon::METHOD_POST;
@@ -99,7 +99,7 @@ class Manager
         }
         return false;
     }
-    
+
     /**
      * Strip the slashes from a string
      *
@@ -115,7 +115,7 @@ class Manager
         }
         $sArg = stripslashes($sArg);
     }
-    
+
     /**
      * Convert an Jaxon request argument to its value
      *
@@ -203,7 +203,7 @@ class Manager
             $mArg = iconv("UTF-8", $this->getOption('core.encoding') . '//TRANSLIT', $mArg);
         }
     }
-    
+
     /**
      * Decode an Jaxon request argument and convert to UTF8 with mb_convert_encoding
      *
@@ -233,7 +233,7 @@ class Manager
             $mArg = mb_convert_encoding($mArg, $this->getOption('core.encoding'), "UTF-8");
         }
     }
-    
+
     /**
      * Decode an Jaxon request argument from UTF8
      *
@@ -249,14 +249,14 @@ class Manager
             {
                 $sNewKey = $sKey;
                 $this->__argumentDecodeUTF8_utf8_decode($sNewKey);
-                
+
                 if($sNewKey != $sKey)
                 {
                     $mArg[$sNewKey] = $xArg;
                     unset($mArg[$sKey]);
                     $sKey = $sNewKey;
                 }
-                
+
                 $this->__argumentDecodeUTF8_utf8_decode($xArg);
             }
         }
@@ -265,7 +265,7 @@ class Manager
             $mArg = utf8_decode($mArg);
         }
     }
-    
+
     /**
      * Return the method that was used to send the arguments from the client
      *
@@ -277,7 +277,7 @@ class Manager
     {
         return $this->nMethod;
     }
-    
+
     /**
      * Return the array of arguments that were extracted and parsed from the GET or POST data
      *
@@ -288,7 +288,7 @@ class Manager
         if(($this->getOption('core.decode_utf8')))
         {
             $sFunction = '';
-            
+
             if(function_exists('iconv'))
             {
                 $sFunction = "iconv";
@@ -310,7 +310,7 @@ class Manager
             array_walk($this->aArgs, $mFunction);
             $this->setOption('core.decode_utf8', false);
         }
-        
+
         return $this->aArgs;
     }
 }

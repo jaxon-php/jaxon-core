@@ -88,7 +88,7 @@ class UserFunction
 
     public function __construct($sUserFunction)
     {
-        $this->aConfiguration = array();
+        $this->aConfiguration = [];
         $this->sAlias = '';
         if(is_array($sUserFunction))
         {
@@ -193,7 +193,7 @@ class UserFunction
      *
      * @return void
      */
-    public function call($aArgs = array())
+    public function call($aArgs = [])
     {
         if(($this->sInclude))
         {

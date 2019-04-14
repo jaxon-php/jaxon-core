@@ -88,7 +88,7 @@ class Template
      *
      * @return string        The template content
      */
-    public function render($sTemplate, array $aVars = array())
+    public function render($sTemplate, array $aVars = [])
     {
         $sTemplate = trim($sTemplate);
         // Get the namespace name

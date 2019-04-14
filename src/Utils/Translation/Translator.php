@@ -25,7 +25,7 @@ class Translator
     public function __construct($sResourceDir, $xConfig)
     {
         // Translations
-        $this->aTranslations = array();
+        $this->aTranslations = [];
         // Set the translation resource directory
         $this->sResourceDir = trim($sResourceDir);
         // Set the config manager
@@ -108,7 +108,7 @@ class Translator
      *
      * @return string        The translated string
      */
-    public function trans($sText, array $aPlaceHolders = array(), $sLanguage = null)
+    public function trans($sText, array $aPlaceHolders = [], $sLanguage = null)
     {
         $sText = trim((string)$sText);
         if(!$sLanguage)

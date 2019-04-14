@@ -24,7 +24,7 @@ trait Template
      *
      * @return string        The template content
      */
-    public function render($sTemplate, array $aVars = array())
+    public function render($sTemplate, array $aVars = [])
     {
         return Container::getInstance()->getTemplate()->render($sTemplate, $aVars);
     }
