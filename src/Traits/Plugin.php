@@ -50,7 +50,6 @@ trait Plugin
     {
         $this->registerPlugin(new \Jaxon\Request\Plugin\CallableObject(), 101);
         $this->registerPlugin(new \Jaxon\Request\Plugin\UserFunction(), 102);
-        $this->registerPlugin(new \Jaxon\Request\Plugin\BrowserEvent(), 103);
         $this->registerPlugin(new \Jaxon\Request\Plugin\FileUpload(), 104);
     }
 

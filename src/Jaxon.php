@@ -78,10 +78,6 @@ class Jaxon
     const CALLABLE_OBJECT = 'CallableObject';
     // For functions available at global scope, or from an instance of an object.
     const USER_FUNCTION = 'UserFunction';
-    // For browser events.
-    const BROWSER_EVENT = 'BrowserEvent';
-    // For event handlers.
-    const EVENT_HANDLER = 'EventHandler';
     // For uploaded files.
     const FILE_UPLOAD = 'FileUpload';
 
@@ -140,17 +136,13 @@ class Jaxon
      *        Options include:
      *        - Jaxon::USER_FUNCTION: a function declared at global scope
      *        - Jaxon::CALLABLE_OBJECT: an object who's methods are to be registered
-     *        - Jaxon::BROWSER_EVENT: an event which will cause zero or more event handlers to be called
-     *        - Jaxon::EVENT_HANDLER: register an event handler function.
-     * @param mixed        $sFunction | $objObject | $sEvent
+     * @param mixed        $sFunction | $objObject
      *        When registering a function, this is the name of the function
      *        When registering a callable object, this is the object being registered
-     *        When registering an event or event handler, this is the name of the event
-     * @param mixed        $sIncludeFile | $aCallOptions | $sEventHandler
+     * @param mixed        $sIncludeFile | $aCallOptions
      *        When registering a function, this is the (optional) include file
      *        When registering a callable object, this is an (optional) array
      *             of call options for the functions being registered
-     *        When registering an event handler, this is the name of the function
      *
      * @return mixed
      */
