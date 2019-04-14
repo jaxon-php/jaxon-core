@@ -113,7 +113,6 @@ class Jaxon
 
     public function __construct()
     {
-        $this->aProcessingEvents;
         $this->setDefaultOptions();
     }
 
@@ -140,7 +139,8 @@ class Jaxon
      *        When registering a function, this is the name of the function
      *        When registering a callable object, this is the object being registered
      * @param mixed        $sIncludeFile | $aCallOptions
-     *        When registering a function, this is the (optional) include file
+     *        When registering a function, this is an (optional) array
+     *             of call options, or the (optional) include file
      *        When registering a callable object, this is an (optional) array
      *             of call options for the functions being registered
      *
@@ -149,24 +149,6 @@ class Jaxon
     public function register($sType, $xArgs)
     {
         $aArgs = func_get_args();
-        $nArgs = func_num_args();
-
-        if(self::PROCESSING_EVENT == $sType)
-        {
-            if($nArgs > 2)
-            {
-                $sEvent = $xArgs;
-                $xUserFunction = $aArgs[2];
-                if(!is_a($xUserFunction, 'Request\\Support\\UserFunction'))
-                    $xUserFunction = new Request\Support\UserFunction($xUserFunction);
-                $this->aProcessingEvents[$sEvent] = $xUserFunction;
-            }
-            /*else
-            {
-                // Todo: return error
-            }*/
-            return true;
-        }
 
         return $this->getPluginManager()->register($aArgs);
     }
