@@ -22,10 +22,12 @@
 namespace Jaxon\Plugin;
 
 use Jaxon\Jaxon;
+use Jaxon\Plugin\Package;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use RegexIterator;
 use RecursiveRegexIterator;
+use Closure;
 
 class Manager
 {
@@ -49,28 +51,35 @@ class Manager
      *
      * @var array
      */
-    private $aPlugins;
+    private $aPlugins = [];
 
     /**
      * Request plugins, indexed by name
      *
      * @var array
      */
-    private $aRequestPlugins;
+    private $aRequestPlugins = [];
 
     /**
      * Response plugins, indexed by name
      *
      * @var array
      */
-    private $aResponsePlugins;
+    private $aResponsePlugins = [];
 
     /**
      * Directories where Jaxon classes to be registered are found
      *
      * @var array
      */
-    private $aClassDirs;
+    private $aClassDirs = [];
+
+    /**
+     * An array of package names
+     *
+     * @var array
+     */
+    private $aPackages = [];
 
     /**
      * True if the Composer autoload is enabled
@@ -119,11 +128,6 @@ class Manager
      */
     public function __construct()
     {
-        $this->aRequestPlugins = [];
-        $this->aResponsePlugins = [];
-        $this->aPlugins = [];
-        $this->aClassDirs = [];
-
         $this->bAutoloadEnabled = true;
         $this->xAutoloader = null;
 
@@ -294,6 +298,20 @@ class Manager
         }
 
         $this->setPluginPriority($xPlugin, $nPriority);
+    }
+
+    /**
+     * Register a package
+     *
+     * @param string         $sPackageClass         The package class name
+     * @param Closure        $xClosure              A closure to create package instance
+     *
+     * @return void
+     */
+    public function registerPackage(string $sPackageClass, Closure $xClosure)
+    {
+        $this->aPackages[] = $sPackageClass;
+        jaxon()->di()->set($sPackageClass, $xClosure);
     }
 
     /**
@@ -740,7 +758,18 @@ class Manager
         ));
         foreach($this->aResponsePlugins as $xPlugin)
         {
-            $sCode .= rtrim($xPlugin->getJs(), " \n") . "\n";
+            if(($str = trim($xPlugin->getJs())))
+            {
+                $sCode .= rtrim($str, " \n") . "\n";
+            }
+        }
+        foreach($this->aPackages as $sClass)
+        {
+            $xPackage = jaxon()->di()->get($sClass);
+            if(($str = trim($xPackage->js())))
+            {
+                $sCode .= rtrim($str, " \n") . "\n";
+            }
         }
         return $sCode;
     }
@@ -758,7 +787,18 @@ class Manager
         $sCode = '';
         foreach($this->aResponsePlugins as $xPlugin)
         {
-            $sCode .= rtrim($xPlugin->getCss(), " \n") . "\n";
+            if(($str = trim($xPlugin->getCss())))
+            {
+                $sCode .= rtrim($str, " \n") . "\n";
+            }
+        }
+        foreach($this->aPackages as $sClass)
+        {
+            $xPackage = jaxon()->di()->get($sClass);
+            if(($str = trim($xPackage->css())))
+            {
+                $sCode .= rtrim($str, " \n") . "\n";
+            }
         }
         return $sCode;
     }
@@ -818,45 +858,23 @@ class Manager
      */
     private function getReadyScript()
     {
-        // Print Jaxon config vars
-        /*$sJsLibUri = $this->getJsLibUri();
-        $sJsLibExt = $this->getJsLibExt();
-        $sJsCoreUrl = $sJsLibUri . 'jaxon.core' . $sJsLibExt;
-        $sJsDebugUrl = $sJsLibUri . 'jaxon.debug' . $sJsLibExt;
-        $sJsVerboseUrl = $sJsLibUri . 'jaxon.verbose' . $sJsLibExt;
-        $sJsLanguageUrl = $sJsLibUri . 'lang/jaxon.' . $this->getOption('core.language') . $sJsLibExt;
-
-        $sJsCoreError = $this->trans('errors.component.load', array(
-            'name' => 'jaxon',
-            'url' => $sJsCoreUrl,
-        ));
-        $sJsDebugError = $this->trans('errors.component.load', array(
-            'name' => 'jaxon.debug',
-            'url' => $sJsDebugUrl,
-        ));
-        $sJsVerboseError = $this->trans('errors.component.load', array(
-            'name' => 'jaxon.debug.verbose',
-            'url' => $sJsVerboseUrl,
-        ));
-        $sJsLanguageError = $this->trans('errors.component.load', array(
-            'name' => 'jaxon.debug.lang',
-            'url' => $sJsLanguageUrl,
-        ));*/
-
         $sPluginScript = '';
         foreach($this->aResponsePlugins as $xPlugin)
         {
-            $sPluginScript .= "\n" . trim($xPlugin->getScript(), " \n");
+            if(($str = trim($xPlugin->getScript())))
+            {
+                $sPluginScript .= "\n" . trim($str, " \n");
+            }
+        }
+        foreach($this->aPackages as $sClass)
+        {
+            $xPackage = jaxon()->di()->get($sClass);
+            if(($str = trim($xPackage->ready())))
+            {
+                $sPluginScript .= "\n" . trim($str, " \n");
+            }
         }
 
-        /*$aVars = $this->getOptionVars();
-        $aVars['sPluginScript'] = $sPluginScript;
-        $aVars['sJsCoreError'] = $sJsCoreError;
-        $aVars['sJsDebugError'] = $sJsDebugError;
-        $aVars['sJsVerboseError'] = $sJsVerboseError;
-        $aVars['sJsLanguageError'] = $sJsLanguageError;
-
-        return $this->render('jaxon::plugins/ready.js', $aVars);*/
         return $this->render('jaxon::plugins/ready.js', ['sPluginScript' => $sPluginScript]);
     }
 
