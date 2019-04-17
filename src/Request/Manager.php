@@ -170,7 +170,7 @@ class Manager
         {
             $sContentType = substr($_SERVER['CONTENT_TYPE'], 0, $iLen);
         }
-        else if(key_exists('HTTP_CONTENT_TYPE', $_SERVER))
+        elseif(key_exists('HTTP_CONTENT_TYPE', $_SERVER))
         {
             $sContentType = substr($_SERVER['HTTP_CONTENT_TYPE'], 0, $iLen);
         }
