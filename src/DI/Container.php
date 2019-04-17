@@ -12,7 +12,7 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Utils;
+namespace Jaxon\DI;
 
 use Lemon\Event\EventDispatcher;
 use Jaxon\Sentry\View\Renderer;
@@ -20,7 +20,10 @@ use Jaxon\Sentry\View\Renderer;
 class Container
 {
     // The Dependency Injection Container
-    private $di = null;
+    private $coreContainer = null;
+
+    // The Dependency Injection Container
+    private $sentryContainer = null;
 
     // The only instance of the Container (Singleton)
     private static $xInstance = null;
@@ -36,11 +39,33 @@ class Container
 
     private function __construct()
     {
-        $this->di = new \Pimple\Container();
+        $this->coreContainer = new \Pimple\Container();
 
         $sTranslationDir = realpath(__DIR__ . '/../../translations');
         $sTemplateDir = realpath(__DIR__ . '/../../templates');
         $this->init($sTranslationDir, $sTemplateDir);
+    }
+
+    /**
+     * Get the container provided by the integrated framework
+     *
+     * @return ContainerInterface
+     */
+    public function getSentryContainer()
+    {
+        return $this->sentryContainer;
+    }
+
+    /**
+     * Set the container provided by the integrated framework
+     *
+     * @param ContainerInterface  $container     The container implementation
+     *
+     * @return void
+     */
+    public function setSentryContainer(ContainerInterface $container)
+    {
+        $this->sentryContainer = $container;
     }
 
     /**
@@ -57,27 +82,27 @@ class Container
          * Parameters
          */
         // Translation directory
-        $this->di['translation_dir'] = $sTranslationDir;
+        $this->coreContainer['jaxon.core.translation_dir'] = $sTranslationDir;
         // Template directory
-        $this->di['template_dir'] = $sTemplateDir;
+        $this->coreContainer['jaxon.core.template_dir'] = $sTemplateDir;
 
         /*
          * Managers
          */
         // Plugin Manager
-        $this->di['plugin_manager'] = function ($c) {
+        $this->coreContainer['jaxon.core.plugin_manager'] = function ($c) {
             return new \Jaxon\Plugin\Manager();
         };
         // Request Manager
-        $this->di['request_manager'] = function ($c) {
+        $this->coreContainer['jaxon.core.request_manager'] = function ($c) {
             return new \Jaxon\Request\Manager();
         };
         // Request Factory
-        $this->di['request_factory'] = function ($c) {
+        $this->coreContainer['jaxon.core.request_factory'] = function ($c) {
             return new \Jaxon\Request\Factory();
         };
         // Response Manager
-        $this->di['response_manager'] = function ($c) {
+        $this->coreContainer['jaxon.core.response_manager'] = function ($c) {
             return new \Jaxon\Response\Manager();
         };
 
@@ -85,35 +110,35 @@ class Container
          * Services
          */
         // Config manager
-        $this->di['config'] = function ($c) {
-            return new Config\Config();
+        $this->coreContainer['jaxon.core.config'] = function ($c) {
+            return new \Jaxon\Utils\Config\Config();
         };
         // Minifier
-        $this->di['minifier'] = function ($c) {
-            return new Template\Minifier();
+        $this->coreContainer['jaxon.core.minifier'] = function ($c) {
+            return new \Jaxon\Utils\Template\Minifier();
         };
         // Translator
-        $this->di['translator'] = function ($c) {
-            return new Translation\Translator($c['translation_dir'], $c['config']);
+        $this->coreContainer['jaxon.core.translator'] = function ($c) {
+            return new \Jaxon\Utils\Translation\Translator($c['jaxon.core.translation_dir'], $c['jaxon.core.config']);
         };
         // Template engine
-        $this->di['template'] = function ($c) {
-            return new Template\Template($c['template_dir']);
+        $this->coreContainer['jaxon.core.template'] = function ($c) {
+            return new \Jaxon\Utils\Template\Template($c['jaxon.core.template_dir']);
         };
         // Validator
-        $this->di['validator'] = function ($c) {
-            return new Validation\Validator($c['translator'], $c['config']);
+        $this->coreContainer['jaxon.core.validator'] = function ($c) {
+            return new \Jaxon\Utils\Validation\Validator($c['jaxon.core.translator'], $c['jaxon.core.config']);
         };
         // Pagination Renderer
-        $this->di['pagination.renderer'] = function ($c) {
-            return new Pagination\Renderer();
+        $this->coreContainer['jaxon.pagination.renderer'] = function ($c) {
+            return new \Jaxon\Utils\Pagination\Renderer();
         };
         // Pagination Paginator
-        $this->di['pagination.paginator'] = function ($c) {
-            return new Pagination\Paginator($c['pagination.renderer']);
+        $this->coreContainer['jaxon.pagination.paginator'] = function ($c) {
+            return new \Jaxon\Utils\Pagination\Paginator($c['jaxon.pagination.renderer']);
         };
         // Event Dispatcher
-        $this->di['events'] = function ($c) {
+        $this->coreContainer['jaxon.core.events'] = function ($c) {
             return new EventDispatcher();
         };
 
@@ -121,17 +146,17 @@ class Container
          * Core library objects
          */
         // Global Response
-        $this->di['response'] = function ($c) {
+        $this->coreContainer['jaxon.core.response'] = function ($c) {
             return new \Jaxon\Response\Response();
         };
         // Jaxon Core
-        $this->di['jaxon'] = function ($c) {
+        $this->coreContainer['jaxon.core.jaxon'] = function ($c) {
             return new \Jaxon\Jaxon();
         };
         // View Renderer Facade
-        $this->di['sentry.view.renderer'] = function ($c) {
-            $aRenderers = $c['view.data.renderers'];
-            $sDefaultNamespace = $c['view.data.namespace.default'];
+        $this->coreContainer['jaxon.sentry.view.renderer'] = function ($c) {
+            $aRenderers = $c['jaxon.view.data.renderers'];
+            $sDefaultNamespace = $c['jaxon.view.data.namespace.default'];
             return new \Jaxon\Sentry\View\Facade($aRenderers, $sDefaultNamespace);
         };
     }
@@ -143,7 +168,11 @@ class Container
      */
     public function get($sClass)
     {
-        return $this->di[$sClass];
+        if($this->sentryContainer != null && $this->sentryContainer->has($sClass))
+        {
+            return $this->sentryContainer->get($sClass);
+        }
+        return $this->coreContainer[$sClass];
     }
 
     /**
@@ -156,7 +185,7 @@ class Container
      */
     public function set($sClass, $xClosure)
     {
-        $this->di[$sClass] = $xClosure;
+        $this->coreContainer[$sClass] = $xClosure;
     }
 
     /**
@@ -166,7 +195,7 @@ class Container
      */
     public function getPluginManager()
     {
-        return $this->di['plugin_manager'];
+        return $this->coreContainer['jaxon.core.plugin_manager'];
     }
 
     /**
@@ -176,7 +205,7 @@ class Container
      */
     public function getRequestManager()
     {
-        return $this->di['request_manager'];
+        return $this->coreContainer['jaxon.core.request_manager'];
     }
 
     /**
@@ -186,7 +215,7 @@ class Container
      */
     public function getRequestFactory()
     {
-        return $this->di['request_factory'];
+        return $this->coreContainer['jaxon.core.request_factory'];
     }
 
     /**
@@ -196,7 +225,7 @@ class Container
      */
     public function getResponseManager()
     {
-        return $this->di['response_manager'];
+        return $this->coreContainer['jaxon.core.response_manager'];
     }
 
     /**
@@ -206,7 +235,7 @@ class Container
      */
     public function getConfig()
     {
-        return $this->di['config'];
+        return $this->coreContainer['jaxon.core.config'];
     }
 
     /**
@@ -216,7 +245,7 @@ class Container
      */
     public function newConfig()
     {
-        return new Config\Config();
+        return new \Jaxon\Utils\Config\Config();
     }
 
     /**
@@ -226,7 +255,7 @@ class Container
      */
     public function getMinifier()
     {
-        return $this->di['minifier'];
+        return $this->coreContainer['jaxon.core.minifier'];
     }
 
     /**
@@ -236,7 +265,7 @@ class Container
      */
     public function getTranslator()
     {
-        return $this->di['translator'];
+        return $this->coreContainer['jaxon.core.translator'];
     }
 
     /**
@@ -246,7 +275,7 @@ class Container
      */
     public function getTemplate()
     {
-        return $this->di['template'];
+        return $this->coreContainer['jaxon.core.template'];
     }
 
     /**
@@ -256,7 +285,7 @@ class Container
      */
     public function getValidator()
     {
-        return $this->di['validator'];
+        return $this->coreContainer['jaxon.core.validator'];
     }
 
     /**
@@ -266,7 +295,7 @@ class Container
      */
     public function getPaginator()
     {
-        return $this->di['pagination.paginator'];
+        return $this->coreContainer['jaxon.pagination.paginator'];
     }
 
     /**
@@ -278,7 +307,7 @@ class Container
      */
     public function setPaginationRenderer($xRenderer)
     {
-        $this->di['pagination.renderer'] = $xRenderer;
+        $this->coreContainer['jaxon.pagination.renderer'] = $xRenderer;
     }
 
     /**
@@ -288,7 +317,7 @@ class Container
      */
     public function getEventDispatcher()
     {
-        return $this->di['events'];
+        return $this->coreContainer['jaxon.core.events'];
     }
 
     /**
@@ -298,7 +327,7 @@ class Container
      */
     public function getResponse()
     {
-        return $this->di['response'];
+        return $this->coreContainer['jaxon.core.response'];
     }
 
     /**
@@ -318,7 +347,7 @@ class Container
      */
     public function getJaxon()
     {
-        return $this->di['jaxon'];
+        return $this->coreContainer['jaxon.core.jaxon'];
     }
 
     /**
@@ -338,7 +367,7 @@ class Container
      */
     public function getSentry()
     {
-        return $this->di['sentry'];
+        return $this->coreContainer['jaxon.sentry'];
     }
 
     /**
@@ -350,7 +379,7 @@ class Container
      */
     public function setSentry($xSentry)
     {
-        $this->di['sentry'] = $xSentry;
+        $this->coreContainer['jaxon.sentry'] = $xSentry;
     }
 
     /**
@@ -360,7 +389,7 @@ class Container
      */
     public function getArmada()
     {
-        return $this->di['armada'];
+        return $this->coreContainer['jaxon.armada'];
     }
 
     /**
@@ -372,7 +401,7 @@ class Container
      */
     public function setArmada($xArmada)
     {
-        $this->di['armada'] = $xArmada;
+        $this->coreContainer['jaxon.armada'] = $xArmada;
     }
 
     /**
@@ -384,7 +413,7 @@ class Container
      */
     public function initViewRenderers($aRenderers)
     {
-        $this->di['view.data.renderers'] = $aRenderers;
+        $this->coreContainer['jaxon.view.data.renderers'] = $aRenderers;
     }
 
     /**
@@ -396,8 +425,8 @@ class Container
      */
     public function initViewNamespaces($aNamespaces, $sDefaultNamespace)
     {
-        $this->di['view.data.namespaces'] = $aNamespaces;
-        $this->di['view.data.namespace.default'] = $sDefaultNamespace;
+        $this->coreContainer['jaxon.view.data.namespaces'] = $aNamespaces;
+        $this->coreContainer['jaxon.view.data.namespace.default'] = $sDefaultNamespace;
     }
 
     /**
@@ -411,14 +440,14 @@ class Container
     public function addViewRenderer($sId, $xClosure)
     {
         // Return the non-initialiazed view renderer
-        $this->di['sentry.view.base.' . $sId] = $xClosure;
+        $this->coreContainer['jaxon.sentry.view.base.' . $sId] = $xClosure;
 
         // Return the initialized view renderer
-        $this->di['sentry.view.' . $sId] = function ($c) use ($sId) {
+        $this->coreContainer['jaxon.sentry.view.' . $sId] = function ($c) use ($sId) {
             // Get the defined renderer
-            $renderer = $c['sentry.view.base.' . $sId];
+            $renderer = $c['jaxon.sentry.view.base.' . $sId];
             // Init the renderer with the template namespaces
-            $aNamespaces = $this->di['view.data.namespaces'];
+            $aNamespaces = $this->coreContainer['jaxon.view.data.namespaces'];
             if(key_exists($sId, $aNamespaces))
             {
                 foreach($aNamespaces[$sId] as $ns)
@@ -442,10 +471,10 @@ class Container
         if(!$sId)
         {
             // Return the view renderer facade
-            return $this->di['sentry.view.renderer'];
+            return $this->coreContainer['jaxon.sentry.view.renderer'];
         }
         // Return the view renderer with the given id
-        return $this->di['sentry.view.' . $sId];
+        return $this->coreContainer['jaxon.sentry.view.' . $sId];
     }
 
     /**
@@ -455,7 +484,7 @@ class Container
      */
     public function getSessionManager()
     {
-        return $this->di['armada.session'];
+        return $this->coreContainer['jaxon.armada.session'];
     }
 
     /**
@@ -467,6 +496,6 @@ class Container
      */
     public function setSessionManager($xClosure)
     {
-        $this->di['armada.session'] = $xClosure;
+        $this->coreContainer['jaxon.armada.session'] = $xClosure;
     }
 }

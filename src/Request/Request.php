@@ -49,7 +49,7 @@ class Request extends JsCall
      *
      * @var array
      */
-    protected $aMessageArgs = null;
+    protected $aMessageArgs = [];
 
     /**
      * The constructor.

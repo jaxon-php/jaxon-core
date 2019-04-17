@@ -21,7 +21,7 @@
  */
 function jaxon()
 {
-    return \Jaxon\Utils\Container::getInstance()->getJaxon();
+    return \Jaxon\DI\Container::getInstance()->getJaxon();
 }
 
 /**
@@ -35,7 +35,7 @@ function jaxon()
  */
 function jaxon_trans($sText, array $aPlaceHolders = array(), $sLanguage = null)
 {
-    return \Jaxon\Utils\Container::getInstance()->getTranslator()->trans($sText, $aPlaceHolders, $sLanguage);
+    return \Jaxon\DI\Container::getInstance()->getTranslator()->trans($sText, $aPlaceHolders, $sLanguage);
 }
 
 /**
@@ -48,7 +48,7 @@ function jaxon_trans($sText, array $aPlaceHolders = array(), $sLanguage = null)
  */
 function jaxon_register_plugin(\Jaxon\Plugin\Plugin $xPlugin, $nPriority = 1000)
 {
-    \Jaxon\Utils\Container::getInstance()->getJaxon()->registerPlugin($xPlugin, $nPriority);
+    \Jaxon\DI\Container::getInstance()->getJaxon()->registerPlugin($xPlugin, $nPriority);
 }
 
 /**
@@ -65,7 +65,7 @@ function rq($classname = null)
     {
         return jaxon()->sentry()->request($classname);
     }
-    return \Jaxon\Utils\Container::getInstance()->getRequestFactory();
+    return \Jaxon\DI\Container::getInstance()->getRequestFactory();
 }
 
 /**

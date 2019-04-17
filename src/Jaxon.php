@@ -30,7 +30,7 @@ use Jaxon\Request\Manager as RequestManager;
 use Jaxon\Response\Manager as ResponseManager;
 
 use Jaxon\Utils\URI;
-use Jaxon\Utils\Container;
+use Jaxon\DI\Container;
 use Exception;
 use Closure;
 
@@ -450,7 +450,7 @@ class Jaxon
     /**
      * Get the DI container
      *
-     * @return Jaxon\Utils\Container
+     * @return Jaxon\DI\Container
      */
     public function di()
     {
