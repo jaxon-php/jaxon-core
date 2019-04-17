@@ -162,6 +162,23 @@ class Manager
             return '';
         }
 
+        // Arguments are url encoded when uploading files
+        $sType = 'multipart/form-data';
+        $iLen = strlen($sType);
+        $sContentType = '';
+        if(key_exists('CONTENT_TYPE', $_SERVER))
+        {
+            $sContentType = substr($_SERVER['CONTENT_TYPE'], 0, $iLen);
+        }
+        else if(key_exists('HTTP_CONTENT_TYPE', $_SERVER))
+        {
+            $sContentType = substr($_SERVER['HTTP_CONTENT_TYPE'], 0, $iLen);
+        }
+        if($sContentType == $sType)
+        {
+            $sArg = urldecode($sArg);
+        }
+
         $data = json_decode($sArg, true);
 
         if($data !== null && $sArg != $data)
