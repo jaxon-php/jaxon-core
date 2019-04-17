@@ -12,7 +12,7 @@
 
 namespace Jaxon\Utils\Traits;
 
-use Jaxon\Utils\Container;
+use Jaxon\DI\Container;
 
 trait Validator
 {

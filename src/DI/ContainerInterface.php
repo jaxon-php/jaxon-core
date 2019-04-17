@@ -1,9 +1,7 @@
 <?php
 
 /**
- * DI.php - Trait for dependency injection
- *
- * Define closures for instanciating classes, and return class instances.
+ * ContainerInterface.php - Interface for dependency injection
  *
  * @package jaxon-core
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
@@ -12,21 +10,25 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Utils\Traits;
+namespace Jaxon\DI;
 
-use Jaxon\DI\Container;
-
-trait DI
+interface ContainerInterface
 {
+    /**
+     * Check if a given class is defined in the container
+     *
+     * @param string                $sClass             A full class name
+     *
+     * @return bool
+     */
+    public function has($sClass);
+
     /**
      * Get a class instance
      *
      * @param string                $sClass             A full class name
      *
-     * @return object               The class instance
+     * @return mixed                The class instance
      */
-    public function diGet($sClass)
-    {
-        return Container::getInstance()->get($sClass);
-    }
+    public function get($sClass);
 }

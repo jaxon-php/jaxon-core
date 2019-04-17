@@ -1,9 +1,7 @@
 <?php
 
 /**
- * DI.php - Trait for dependency injection
- *
- * Define closures for instanciating classes, and return class instances.
+ * ContainerTrait.php - Trait for dependency injection
  *
  * @package jaxon-core
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
@@ -12,11 +10,9 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Utils\Traits;
+namespace Jaxon\DI;
 
-use Jaxon\DI\Container;
-
-trait DI
+trait ContainerTrait
 {
     /**
      * Get a class instance

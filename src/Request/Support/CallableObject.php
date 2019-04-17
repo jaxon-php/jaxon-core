@@ -31,7 +31,7 @@ class CallableObject
     use \Jaxon\Utils\Traits\Config;
     use \Jaxon\Utils\Traits\Manager;
     use \Jaxon\Utils\Traits\Template;
-    use \Jaxon\Utils\Traits\DI;
+    use \Jaxon\DI\ContainerTrait;
 
     /**
      * A reference to the callable object the user has registered
