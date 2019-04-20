@@ -119,7 +119,7 @@ class UserFunction extends RequestPlugin
             }
         }
 
-        jaxon()->di()->set($sFunctionName, function() use($sUserFunction, $aOptions) {
+        jaxon()->di()->set($sFunctionName, function () use ($sUserFunction, $aOptions) {
             $xUserFunction = new \Jaxon\Request\Support\UserFunction($sUserFunction);
 
             foreach($aOptions as $sName => $sValue)
