@@ -161,11 +161,11 @@ class CallableObject extends RequestPlugin
         jaxon()->di()->set($sUserFunction, function() use($sCallableObject, $aOptions) {
             $xCallableObject = new \Jaxon\Request\Support\CallableObject($sCallableObject);
 
-            foreach($aOptions as $sKey => $aValue)
+            foreach($aOptions as $sMethod => $aValue)
             {
                 foreach($aValue as $sName => $sValue)
                 {
-                    $xCallableObject->configure($sKey, $sName, $sValue);
+                    $xCallableObject->configure($sMethod, $sName, $sValue);
                 }
             }
 

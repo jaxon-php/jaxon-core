@@ -31,7 +31,6 @@ class CallableObject
     use \Jaxon\Utils\Traits\Config;
     use \Jaxon\Utils\Traits\Manager;
     use \Jaxon\Utils\Traits\Template;
-    use \Jaxon\DI\ContainerTrait;
 
     /**
      * A reference to the callable object the user has registered
@@ -88,21 +87,13 @@ class CallableObject
     /**
      * The class constructor
      *
-     * @param object|string            $xCallable               The callable object instance or class name
+     * @param string            $sCallable               The callable object instance or class name
      *
      */
-    public function __construct($xCallable)
+    public function __construct($sCallable)
     {
-        if(is_string($xCallable)) // Received a class name
-        {
-            $this->reflectionClass = new \ReflectionClass($xCallable);
-            $this->callableObject = null;
-        }
-        else // if(is_object($xCallable)) // Received a class instance
-        {
-            $this->reflectionClass = new \ReflectionClass(get_class($xCallable));
-            $this->setCallable($xCallable);
-        }
+        $this->reflectionClass = new \ReflectionClass($sCallable);
+        $this->callableObject = null;
         $this->aConfiguration = [];
         // By default, no method is "protected"
         $this->aProtectedMethods = [];
@@ -121,6 +112,7 @@ class CallableObject
     {
         if($xCallable == null)
         {
+            $di = jaxon()->di();
             // Use the Reflection class to get the parameters of the constructor
             if(($constructor = $this->reflectionClass->getConstructor()) != null)
             {
@@ -129,7 +121,7 @@ class CallableObject
                 foreach($parameters as $parameter)
                 {
                     // Get the parameter instance from the DI
-                    $parameterInstances[] = $this->diGet($parameter->getClass()->getName());
+                    $parameterInstances[] = $di->get($parameter->getClass()->getName());
                 }
                 $xCallable = $this->reflectionClass->newInstanceArgs($parameterInstances);
             }
