@@ -96,27 +96,30 @@ class UserFunction extends RequestPlugin
         {
             throw new \Jaxon\Exception\Error($this->trans('errors.functions.invalid-declaration'));
         }
-
         $this->aFunctions[] = $sUserFunction;
-        $xOptions = count($aArgs) > 2 ? $aArgs[2] : [];
 
-        jaxon()->di()->set($sUserFunction, function() use($sUserFunction, $xOptions) {
+        $aOptions = count($aArgs) > 2 ? $aArgs[2] : [];
+        if(is_string($aOptions))
+        {
+            $aOptions = ['include' => $aOptions];
+        }
+        if(!is_array($aOptions))
+        {
+            throw new \Jaxon\Exception\Error($this->trans('errors.functions.invalid-declaration'));
+        }
+
+        jaxon()->di()->set($sUserFunction, function() use($sUserFunction, $aOptions) {
             $xUserFunction = new \Jaxon\Request\Support\UserFunction($sUserFunction);
 
-            if(is_array($xOptions))
+            foreach($aOptions as $sName => $sValue)
             {
-                foreach($xOptions as $sName => $sValue)
-                {
-                    $xUserFunction->configure($sName, $sValue);
-                }
-            }
-            else
-            {
-                $xUserFunction->configure('include', $xOptions);
+                $xUserFunction->configure($sName, $sValue);
             }
 
-            return $xUserFunction->generateRequest();
+            return $xUserFunction;
         });
+
+        return true;
     }
 
     /**
@@ -136,10 +139,11 @@ class UserFunction extends RequestPlugin
      */
     public function getScript()
     {
+        $di = jaxon()->di();
         $code = '';
         foreach($this->aFunctions as $sName)
         {
-            $xFunction = jaxon()->di()->get($sName);
+            $xFunction = $di->get($sName);
             $code .= $xFunction->getScript();
         }
         return $code;

@@ -106,86 +106,73 @@ class CallableObject extends RequestPlugin
     {
         if(count($aArgs) < 2)
         {
-            return null;
+            return false;
         }
 
         $sType = $aArgs[0];
         if($sType != Jaxon::CALLABLE_OBJECT)
         {
-            return null;
+            return false;
         }
 
         $sCallableObject = $aArgs[1];
-        if(!is_string($sCallableObject))
+        if(!is_string($sCallableObject) || !class_exists($sCallableObject))
+        {
+            throw new \Jaxon\Exception\Error($this->trans('errors.objects.invalid-declaration'));
+        }
+        $sCallableObject = trim($sCallableObject, '\\');
+        $this->aCallableObjects[] = $sCallableObject;
+
+        $aOptions = count($aArgs) > 2 ? $aArgs[2] : [];
+        if(is_string($aOptions))
+        {
+            $aOptions = ['namespace' => $aOptions];
+        }
+        if(!is_array($aOptions))
         {
             throw new \Jaxon\Exception\Error($this->trans('errors.objects.invalid-declaration'));
         }
 
-        $this->aCallableObjects[] = $sCallableObject;
-        $xOptions = count($aArgs) > 2 ? $aArgs[2] : [];
-
-        if(count($aArgs) > 1)
+        // Save the classpath and the separator in this class
+        if(key_exists('*', $aOptions) && is_array($aOptions['*']))
         {
-            $sType = $aArgs[0];
-
-            if($sType == Jaxon::CALLABLE_OBJECT)
+            $_aOptions = $aOptions['*'];
+            $sSeparator = '.';
+            if(key_exists('separator', $_aOptions))
             {
-                $xCallableObject = $aArgs[1];
+                $sSeparator = trim($_aOptions['separator']);
+            }
+            if(!in_array($sSeparator, ['.', '_']))
+            {
+                $sSeparator = '.';
+            }
+            $_aOptions['separator'] = $sSeparator;
 
-                if(!is_object($xCallableObject) && !is_string($xCallableObject))
-                {
-                    throw new \Jaxon\Exception\Error($this->trans('errors.objects.instance'));
-                }
-                if(is_string($xCallableObject) && !class_exists($xCallableObject))
-                {
-                    throw new \Jaxon\Exception\Error($this->trans('errors.objects.instance'));
-                }
-                if(!($xCallableObject instanceof \Jaxon\Request\Support\CallableObject))
-                {
-                    $xCallableObject = new \Jaxon\Request\Support\CallableObject($xCallableObject);
-                }
-                if(count($aArgs) > 2 && is_array($aArgs[2]))
-                {
-                    $aOptions = $aArgs[2];
-                    // Save the classpath and the separator in this class
-                    if(array_key_exists('*', $aOptions) && is_array($aOptions['*']))
-                    {
-                        $aOptions = $aOptions['*'];
-                        $sSeparator = '.';
-                        if(array_key_exists('separator', $aOptions))
-                        {
-                            $sSeparator = trim($aOptions['separator']);
-                        }
-                        if(!in_array($sSeparator, ['.', '_']))
-                        {
-                            $sSeparator = '.';
-                        }
-                        $aOptions['separator'] = $sSeparator;
-                        if(array_key_exists('classpath', $aOptions))
-                        {
-                            $aOptions['classpath'] = trim($aOptions['classpath'], ' \\._');
-                            // Save classpath with "\" in the parameters
-                            $aOptions['classpath'] = str_replace(['.', '_'], ['\\', '\\'], $aOptions['classpath']);
-                            // Save classpath with separator locally
-                            $this->aClassPaths[] = str_replace('\\', $sSeparator, $aOptions['classpath']);
-                        }
-                    }
-                    foreach($aArgs[2] as $sKey => $aValue)
-                    {
-                        foreach($aValue as $sName => $sValue)
-                        {
-                            $xCallableObject->configure($sKey, $sName, $sValue);
-                        }
-                    }
-                }
-                // Add the new object in the callable objects array.
-                $this->aCallableObjects[$xCallableObject->getName()] = $xCallableObject;
-
-                return true;
+            if(array_key_exists('classpath', $_aOptions))
+            {
+                $_aOptions['classpath'] = trim($_aOptions['classpath'], ' \\._');
+                // Save classpath with "\" in the parameters
+                $_aOptions['classpath'] = str_replace(['.', '_'], ['\\', '\\'], $_aOptions['classpath']);
+                // Save classpath with separator locally
+                $this->aClassPaths[] = str_replace('\\', $sSeparator, $_aOptions['classpath']);
             }
         }
 
-        return false;
+        jaxon()->di()->set($sUserFunction, function() use($sCallableObject, $aOptions) {
+            $xCallableObject = new \Jaxon\Request\Support\CallableObject($sCallableObject);
+
+            foreach($aOptions as $sKey => $aValue)
+            {
+                foreach($aValue as $sName => $sValue)
+                {
+                    $xCallableObject->configure($sKey, $sName, $sValue);
+                }
+            }
+
+            return $xCallableObject;
+        });
+
+        return true;
     }
 
     /**
@@ -195,11 +182,12 @@ class CallableObject extends RequestPlugin
      */
     public function generateHash()
     {
+        $di = jaxon()->di();
         $sHash = '';
-        foreach($this->aCallableObjects as $xCallableObject)
+        foreach($this->aCallableObjects as $sName)
         {
-            $sHash .= $xCallableObject->getName();
-            $sHash .= implode('|', $xCallableObject->getMethods());
+            $xCallableObject = $di->get($sName);
+            $sHash .= $sName . implode('|', $xCallableObject->getMethods());
         }
         return md5($sHash);
     }
@@ -232,8 +220,10 @@ class CallableObject extends RequestPlugin
             }
         }
         // Generate code for javascript methods
-        foreach($this->aCallableObjects as $xCallableObject)
+        $di = jaxon()->di();
+        foreach($this->aCallableObjects as $sName)
         {
+            $xCallableObject = $di->get($sName);
             $code .= $xCallableObject->getScript();
         }
         return $code;
@@ -269,23 +259,19 @@ class CallableObject extends RequestPlugin
     public function processRequest()
     {
         if(!$this->canProcessRequest())
+        {
             return false;
+        }
 
         $aArgs = $this->getRequestManager()->process();
 
-        // Register an instance of the requested class, if it isn't yet
-        if(!($xCallableObject = $this->getCallableObject($this->sRequestedClass)))
-        {
-            $this->getPluginManager()->registerClass($this->sRequestedClass);
-            $xCallableObject = $this->getCallableObject($this->sRequestedClass);
-        }
-
         // Find the requested method
+        $xCallableObject = $this->getCallableObject($this->sRequestedClass);
         if(!$xCallableObject || !$xCallableObject->hasMethod($this->sRequestedMethod))
         {
             // Unable to find the requested object or method
             throw new \Jaxon\Exception\Error($this->trans('errors.objects.invalid',
-                array('class' => $this->sRequestedClass, 'method' => $this->sRequestedMethod)));
+                ['class' => $this->sRequestedClass, 'method' => $this->sRequestedMethod]));
         }
 
         // Call the requested method
@@ -305,8 +291,12 @@ class CallableObject extends RequestPlugin
         // Replace all separators ('.' and '_') with antislashes, and remove the antislashes
         // at the beginning and the end of the class name.
         $sClassName = trim(str_replace(['.', '_'], ['\\', '\\'], (string)$sClassName), '\\');
-        return array_key_exists($sClassName, $this->aCallableObjects) ?
-            $this->aCallableObjects[$sClassName] : null;
+        // Register an instance of the requested class, if it isn't yet
+        if(!key_exists($sClassName, $this->aCallableObjects))
+        {
+            $this->getPluginManager()->registerClass($sClassName);
+        }
+        return key_exists($sClassName, $this->aCallableObjects) ? jaxon()->di()->get($sClassName) : null;
     }
 
     /**
