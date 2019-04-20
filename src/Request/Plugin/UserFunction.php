@@ -108,7 +108,18 @@ class UserFunction extends RequestPlugin
             throw new \Jaxon\Exception\Error($this->trans('errors.functions.invalid-declaration'));
         }
 
-        jaxon()->di()->set($sUserFunction, function() use($sUserFunction, $aOptions) {
+        // Check if an alias is defined
+        $sFunctionName = $sUserFunction;
+        foreach($aOptions as $sName => $sValue)
+        {
+            if($sName == 'alias')
+            {
+                $sFunctionName = $sValue;
+                break;
+            }
+        }
+
+        jaxon()->di()->set($sFunctionName, function() use($sUserFunction, $aOptions) {
             $xUserFunction = new \Jaxon\Request\Support\UserFunction($sUserFunction);
 
             foreach($aOptions as $sName => $sValue)
