@@ -30,7 +30,9 @@ trait Autoload
      */
     public function useComposerAutoloader()
     {
-        $this->getPluginManager()->useComposerAutoloader();
+        // The CallableObject plugin
+        $xPlugin = $this->getPluginManager()->getRequestPlugin(self::CALLABLE_OBJECT);
+        $xPlugin->useComposerAutoloader();
     }
 
     /**
@@ -40,6 +42,8 @@ trait Autoload
      */
     public function disableAutoload()
     {
-        $this->getPluginManager()->disableAutoload();
+        // The CallableObject plugin
+        $xPlugin = $this->getPluginManager()->getRequestPlugin(self::CALLABLE_OBJECT);
+        $xPlugin->disableAutoload();
     }
 }

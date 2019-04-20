@@ -165,7 +165,9 @@ class Jaxon
      */
     public function addClassDir($sDirectory, $sNamespace = null, $sSeparator = '.', array $aProtected = [])
     {
-        return $this->getPluginManager()->addClassDir($sDirectory, $sNamespace, $sSeparator, $aProtected);
+        // The CallableObject plugin
+        $xPlugin = $this->getPluginManager()->getRequestPlugin(self::CALLABLE_OBJECT);
+        return $xPlugin->addClassDir($sDirectory, $sNamespace, $sSeparator, $aProtected);
     }
 
     /**
@@ -177,7 +179,9 @@ class Jaxon
      */
     public function registerClasses(array $aOptions = [])
     {
-        return $this->getPluginManager()->registerClasses($aOptions);
+        // The CallableObject plugin
+        $xPlugin = $this->getPluginManager()->getRequestPlugin(self::CALLABLE_OBJECT);
+        return $xPlugin->registerClasses($aOptions);
     }
 
     /**
@@ -194,8 +198,10 @@ class Jaxon
      */
     public function registerClass($sClassName, array $aOptions = [], $bGetObject = false)
     {
-        $this->getPluginManager()->registerClass($sClassName, $aOptions);
-        return (($bGetObject) ? $this->getPluginManager()->getRegisteredObject($sClassName) : null);
+        // The CallableObject plugin
+        $xPlugin = $this->getPluginManager()->getRequestPlugin(self::CALLABLE_OBJECT);
+        $xPlugin->registerClass($sClassName, $aOptions);
+        return (($bGetObject) ? $xPlugin->getRegisteredObject($sClassName) : null);
     }
 
     /**
