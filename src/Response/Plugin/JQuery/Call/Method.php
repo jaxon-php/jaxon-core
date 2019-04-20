@@ -1,6 +1,6 @@
 <?php
 
-namespace Jaxon\JQuery\Dom\Call;
+namespace Jaxon\Response\Plugin\Call;
 
 use Jaxon\Request\JsCall;
 

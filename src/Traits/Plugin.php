@@ -61,6 +61,6 @@ trait Plugin
     public function registerResponsePlugins()
     {
         // Register an instance of the JQuery plugin
-        $this->registerPlugin(new \Jaxon\JQuery\Plugin(), 700);
+        $this->registerPlugin(new \Jaxon\Response\Plugin\JQuery(), 700);
     }
 }

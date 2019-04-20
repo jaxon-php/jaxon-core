@@ -18,12 +18,16 @@
  * @link https://github.com/jaxon-php/jaxon-jquery
  */
 
-namespace Jaxon\JQuery\Dom;
+namespace Jaxon\Response\Plugin\JQuery\Dom;
 
 use JsonSerializable;
 use Jaxon\Jaxon;
 use Jaxon\Request\JsCall;
 use Jaxon\Request\Interfaces\Parameter;
+
+use Jaxon\Response\Plugin\Call\Method;
+use Jaxon\Response\Plugin\Call\AttrSet;
+use Jaxon\Response\Plugin\Call\AttrGet;
 
 class Element implements JsonSerializable, Parameter
 {
@@ -76,7 +80,7 @@ class Element implements JsonSerializable, Parameter
     public function __call($sMethod, $aArguments)
     {
         // Push the action into the array
-        $this->aCalls[] = new Call\Method($sMethod, $aArguments);
+        $this->aCalls[] = new Method($sMethod, $aArguments);
         // Return $this so the calls can be chained
         return $this;
     }
@@ -89,7 +93,7 @@ class Element implements JsonSerializable, Parameter
     public function __get($sAttribute)
     {
         // Push the action into the array
-        $this->aCalls[] = new Call\AttrGet($sAttribute);
+        $this->aCalls[] = new AttrGet($sAttribute);
         // Return $this so the calls can be chained
         return $this;
     }
@@ -102,7 +106,7 @@ class Element implements JsonSerializable, Parameter
     public function __set($sAttribute, $xValue)
     {
         // Push the action into the array
-        $this->aCalls[] = new Call\AttrSet($sAttribute, $xValue);
+        $this->aCalls[] = new AttrSet($sAttribute, $xValue);
         // Return null because no other call is allowed after a set
         return null;
     }

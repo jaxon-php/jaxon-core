@@ -77,11 +77,11 @@ function rq($classname = null)
  * @param string        $sSelector            The jQuery selector
  * @param string        $sContext             A context associated to the selector
  *
- * @return Jaxon\JQuery\Dom\Element
+ * @return Jaxon\Response\Plugin\JQuery\Dom\Element
  */
 function jq($sSelector = '', $sContext = '')
 {
-    return new \Jaxon\JQuery\Dom\Element($sSelector, $sContext);
+    return new \Jaxon\Response\Plugin\JQuery\Dom\Element($sSelector, $sContext);
 }
 
 /**
@@ -93,7 +93,7 @@ function jq($sSelector = '', $sContext = '')
  * @param string        $sSelector            The jQuery selector
  * @param string        $sContext             A context associated to the selector
  *
- * @return Jaxon\JQuery\Dom\Element
+ * @return Jaxon\Response\Plugin\JQuery\Dom\Element
  */
 function jQuery($sSelector = '', $sContext = '')
 {

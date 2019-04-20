@@ -1,8 +1,10 @@
 <?php
 
-namespace Jaxon\JQuery;
+namespace Jaxon\Response\Plugin;
 
-class Plugin extends \Jaxon\Plugin\Response
+use Jaxon\Response\Plugin\JQuery\Dom\Element;
+
+class JQuery extends \Jaxon\Plugin\Response
 {
     use \Jaxon\Utils\Traits\Config;
 
@@ -24,7 +26,7 @@ class Plugin extends \Jaxon\Plugin\Response
     public function generateHash()
     {
         // Use the version number as hash
-        return '2.2.4';
+        return '3.3.0';
     }
 
     /**
@@ -53,11 +55,11 @@ jaxon.command.handler.register("jquery", function(args) {
      * @param string        $sSelector            The jQuery selector
      * @param string        $sContext             A context associated to the selector
      *
-     * @return Jaxon\JQuery\Dom\Element
+     * @return Element
      */
     public function element($sSelector = '', $sContext = '')
     {
-        $xElement = new Dom\Element($sSelector, $sContext);
+        $xElement = new Element($sSelector, $sContext);
         $this->addCommand(array('cmd' => 'jquery'), $xElement);
         return $xElement;
     }
