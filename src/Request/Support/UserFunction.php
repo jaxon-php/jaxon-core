@@ -5,30 +5,6 @@
  *
  * This class stores a reference to a user defined function which can be called from the client via an Jaxon request
  *
- * The function specification passed to the constructor of this class in one of the following formats:
- * - a three element array:
- *     (string) Alternate function name: when a method of a class has the same name as
- *              another function in the system, you can provide an alias to help avoid collisions.
- *     (object or class name) Class: the name of the class or an instance of the object which contains
- *              the function to be called.
- *     (string) Method:  the name of the method that will be called.
- * - a two element array:
- *     (object or class name) Class: the name of the class or an instance of the object which contains
- *              the function to be called.
- *     (string) Method:  the name of the method that will be called.
- * - a string:
- *     the name of the function that is available at global scope (not in a class).
- *
- * Examples:
- *      $myFunction = array('alias', 'myClass', 'myMethod');
- *      $myFunction = array('alias', &$myObject, 'myMethod');
- *      $myFunction = array('myClass', 'myMethod');
- *      $myFunction = array(&$myObject, 'myMethod');
- *      $myFunction = 'myFunction';
- *
- *      $myUserFunction = new UserFunction($myFunction);
- *      $jaxon->register(Jaxon::USER_FUNCTION, $myUserFunction);
- *
  * @package jaxon-core
  * @author Jared White
  * @author J. Max Wilson
@@ -67,7 +43,7 @@ class UserFunction
     /**
      * A string or an array which defines the function to be registered
      *
-     * @var string
+     * @var string|array
      */
     private $sUserFunction;
 
@@ -90,30 +66,7 @@ class UserFunction
     {
         $this->aConfiguration = [];
         $this->sAlias = '';
-        if(is_array($sUserFunction))
-        {
-            if(count($sUserFunction) != 2 && count($sUserFunction) != 3)
-            {
-                throw new \Jaxon\Exception\Error($this->trans('errors.functions.invalid-declaration'));
-            }
-            if(count($sUserFunction) == 3)
-            {
-                $this->sAlias = $sUserFunction[0];
-                $this->sUserFunction = array_slice($sUserFunction, 1);
-            }
-            else
-            {
-                $this->sUserFunction = $sUserFunction;
-            }
-        }
-        elseif(is_string($sUserFunction))
-        {
-            $this->sUserFunction = $sUserFunction;
-        }
-        else
-        {
-            throw new \Jaxon\Exception\Error($this->trans('errors.functions.invalid-declaration'));
-        }
+        $this->sUserFunction = $sUserFunction;
     }
 
     /**
@@ -143,6 +96,9 @@ class UserFunction
     {
         switch($sName)
         {
+        case 'class': // The user function is a method in the given class
+            $this->sUserFunction = [$sValue, $this->sUserFunction];
+            break;
         case 'alias':
             $this->sAlias = $sValue;
             break;
