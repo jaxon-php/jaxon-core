@@ -37,6 +37,7 @@ return [
         'objects' => [
             'invalid' => "Invalid object request received; no object :class or method :method found.",
             'instance' => "To register a callable object, please provide an instance of the desired class.",
+            'invalid-declaration' => "Invalid object declaration.",
         ],
         'register' => [
             'method' => "Failed to locate registration method for the following: :args",

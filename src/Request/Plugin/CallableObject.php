@@ -104,6 +104,26 @@ class CallableObject extends RequestPlugin
      */
     public function register($aArgs)
     {
+        if(count($aArgs) < 2)
+        {
+            return null;
+        }
+
+        $sType = $aArgs[0];
+        if($sType != Jaxon::CALLABLE_OBJECT)
+        {
+            return null;
+        }
+
+        $sCallableObject = $aArgs[1];
+        if(!is_string($sCallableObject))
+        {
+            throw new \Jaxon\Exception\Error($this->trans('errors.objects.invalid-declaration'));
+        }
+
+        $this->aCallableObjects[] = $sCallableObject;
+        $xOptions = count($aArgs) > 2 ? $aArgs[2] : [];
+
         if(count($aArgs) > 1)
         {
             $sType = $aArgs[0];

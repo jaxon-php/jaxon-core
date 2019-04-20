@@ -37,6 +37,7 @@ return [
         'objects' => [
             'invalid' => "Solicitud de objeto invalida recibida; Sin objeto :class o metodo :method encontrado.",
             'instance' => "Para registrar un objeto, por favor de proveer una instancia de la clase deseada.",
+            'invalid-declaration' => "Declaración de objeto invalida.",
         ],
         'register' => [
             'method' => "Fallo al localizar metodo de registro con los siguientes argumentos: :args",

@@ -32,7 +32,7 @@ class UserFunction extends RequestPlugin
     use \Jaxon\Utils\Traits\Translator;
 
     /**
-     * The registered user functions
+     * The registered user functions names
      *
      * @var array
      */
@@ -80,38 +80,43 @@ class UserFunction extends RequestPlugin
      */
     public function register($aArgs)
     {
-        if(count($aArgs) > 1)
+        if(count($aArgs) < 2)
         {
-            $sType = $aArgs[0];
-
-            if($sType == Jaxon::USER_FUNCTION)
-            {
-                $xUserFunction = $aArgs[1];
-
-                if(!($xUserFunction instanceof \Jaxon\Request\Support\UserFunction))
-                    $xUserFunction = new \Jaxon\Request\Support\UserFunction($xUserFunction);
-
-                if(count($aArgs) > 2)
-                {
-                    if(is_array($aArgs[2]))
-                    {
-                        foreach($aArgs[2] as $sName => $sValue)
-                        {
-                            $xUserFunction->configure($sName, $sValue);
-                        }
-                    }
-                    else
-                    {
-                        $xUserFunction->configure('include', $aArgs[2]);
-                    }
-                }
-                $this->aFunctions[$xUserFunction->getName()] = $xUserFunction;
-
-                return $xUserFunction->generateRequest();
-            }
+            return false;
         }
 
-        return null;
+        $sType = $aArgs[0];
+        if($sType != Jaxon::USER_FUNCTION)
+        {
+            return false;
+        }
+
+        $sUserFunction = $aArgs[1];
+        if(!is_string($sUserFunction))
+        {
+            throw new \Jaxon\Exception\Error($this->trans('errors.functions.invalid-declaration'));
+        }
+
+        $this->aFunctions[] = $sUserFunction;
+        $xOptions = count($aArgs) > 2 ? $aArgs[2] : [];
+
+        jaxon()->di()->set($sUserFunction, function() use($sUserFunction, $xOptions) {
+            $xUserFunction = new \Jaxon\Request\Support\UserFunction($sUserFunction);
+
+            if(is_array($xOptions))
+            {
+                foreach($xOptions as $sName => $sValue)
+                {
+                    $xUserFunction->configure($sName, $sValue);
+                }
+            }
+            else
+            {
+                $xUserFunction->configure('include', $xOptions);
+            }
+
+            return $xUserFunction->generateRequest();
+        });
     }
 
     /**
@@ -121,12 +126,7 @@ class UserFunction extends RequestPlugin
      */
     public function generateHash()
     {
-        $sHash = '';
-        foreach($this->aFunctions as $xFunction)
-        {
-            $sHash .= $xFunction->getName();
-        }
-        return md5($sHash);
+        return md5(implode('', $this->aFunctions));
     }
 
     /**
@@ -137,8 +137,9 @@ class UserFunction extends RequestPlugin
     public function getScript()
     {
         $code = '';
-        foreach($this->aFunctions as $xFunction)
+        foreach($this->aFunctions as $sName)
         {
+            $xFunction = jaxon()->di()->get($sName);
             $code .= $xFunction->getScript();
         }
         return $code;
@@ -167,16 +168,20 @@ class UserFunction extends RequestPlugin
     public function processRequest()
     {
         if(!$this->canProcessRequest())
-            return false;
-
-        $aArgs = $this->getRequestManager()->process();
-
-        if(array_key_exists($this->sRequestedFunction, $this->aFunctions))
         {
-            $this->aFunctions[$this->sRequestedFunction]->call($aArgs);
-            return true;
+            return false;
         }
-        // Unable to find the requested function
-        throw new \Jaxon\Exception\Error($this->trans('errors.functions.invalid', array('name' => $this->sRequestedFunction)));
+
+        if(!key_exists($this->sRequestedFunction, $this->aFunctions))
+        {
+            // Unable to find the requested function
+            throw new \Jaxon\Exception\Error($this->trans('errors.functions.invalid',
+                ['name' => $this->sRequestedFunction]));
+        }
+
+        $xFunction = jaxon()->di()->get($this->sRequestedFunction);
+        $aArgs = $this->getRequestManager()->process();
+        $xFunction->call($aArgs);
+        return true;
     }
 }

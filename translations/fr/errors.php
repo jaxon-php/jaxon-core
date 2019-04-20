@@ -37,6 +37,7 @@ return [
         'objects' => [
             'invalid' => "La requête indique un objet invalide; il n'existe pas de classe :class ou de méthode :method.",
             'instance' => "Pour enregistrer un objet, vous devez fournir une instance de la classe correspondante.",
+            'invalid-declaration' => "La déclaration d'objet est invalide.",
         ],
         'register' => [
             'method' => "Une fonction d'enregistrement n'a pas pu être trouvée pour cet élément: :args",
