@@ -11,9 +11,9 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Request\Support;
+namespace Jaxon\Plugin\Dialogs;
 
-class Confirm implements \Jaxon\Request\Interfaces\Confirm
+class Confirm implements Interfaces\Confirm
 {
     /**
      * Get the script which makes a call only if the user answers yes to the given question

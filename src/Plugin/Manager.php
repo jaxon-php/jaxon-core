@@ -77,28 +77,28 @@ class Manager
     /**
      * Javascript confirm function
      *
-     * @var \Jaxon\Request\Interfaces\Confirm
+     * @var Dialogs\Interfaces\Confirm
      */
     private $xConfirm;
 
     /**
      * Default javascript confirm function
      *
-     * @var \Jaxon\Request\Support\Confirm
+     * @var Dialogs\Confirm
      */
     private $xDefaultConfirm;
 
     /**
      * Javascript alert function
      *
-     * @var \Jaxon\Request\Interfaces\Alert
+     * @var Dialogs\Interfaces\Alert
      */
     private $xAlert;
 
     /**
      * Default javascript alert function
      *
-     * @var \Jaxon\Request\Support\Alert
+     * @var Dialogs\Alert
      */
     private $xDefaultAlert;
 
@@ -109,21 +109,21 @@ class Manager
     {
         // Javascript confirm function
         $this->xConfirm = null;
-        $this->xDefaultConfirm = new \Jaxon\Request\Support\Confirm();
+        $this->xDefaultConfirm = new Dialogs\Confirm();
 
         // Javascript alert function
         $this->xAlert = null;
-        $this->xDefaultAlert = new \Jaxon\Request\Support\Alert();
+        $this->xDefaultAlert = new Dialogs\Alert();
     }
 
     /**
      * Set the javascript confirm function
      *
-     * @param \Jaxon\Request\Interfaces\Confirm         $xConfirm     The javascript confirm function
+     * @param Dialogs\Interfaces\Confirm         $xConfirm     The javascript confirm function
      *
      * @return void
      */
-    public function setConfirm(\Jaxon\Request\Interfaces\Confirm $xConfirm)
+    public function setConfirm(Dialogs\Interfaces\Confirm $xConfirm)
     {
         $this->xConfirm = $xConfirm;
     }
@@ -131,7 +131,7 @@ class Manager
     /**
      * Get the javascript confirm function
      *
-     * @return \Jaxon\Request\Interfaces\Confirm
+     * @return Dialogs\Interfaces\Confirm
      */
     public function getConfirm()
     {
@@ -141,7 +141,7 @@ class Manager
     /**
      * Get the default javascript confirm function
      *
-     * @return \Jaxon\Request\Support\Confirm
+     * @return Dialogs\Confirm
      */
     public function getDefaultConfirm()
     {
@@ -151,11 +151,11 @@ class Manager
     /**
      * Set the javascript alert function
      *
-     * @param \Jaxon\Request\Interfaces\Alert           $xAlert       The javascript alert function
+     * @param Dialogs\Interfaces\Alert           $xAlert       The javascript alert function
      *
      * @return void
      */
-    public function setAlert(\Jaxon\Request\Interfaces\Alert $xAlert)
+    public function setAlert(Dialogs\Interfaces\Alert $xAlert)
     {
         $this->xAlert = $xAlert;
     }
@@ -163,7 +163,7 @@ class Manager
     /**
      * Get the javascript alert function
      *
-     * @return \Jaxon\Request\Interfaces\Alert
+     * @return Dialogs\Interfaces\Alert
      */
     public function getAlert()
     {
@@ -173,7 +173,7 @@ class Manager
     /**
      * Get the default javascript alert function
      *
-     * @return \Jaxon\Request\Support\Alert
+     * @return Dialogs\Alert
      */
     public function getDefaultAlert()
     {
@@ -217,8 +217,8 @@ class Manager
      */
     public function registerPlugin(Plugin $xPlugin, $nPriority = 1000)
     {
-        $bIsAlert = ($xPlugin instanceof \Jaxon\Request\Interfaces\Alert);
-        $bIsConfirm = ($xPlugin instanceof \Jaxon\Request\Interfaces\Confirm);
+        $bIsAlert = ($xPlugin instanceof Dialogs\Interfaces\Alert);
+        $bIsConfirm = ($xPlugin instanceof Dialogs\Interfaces\Confirm);
         if($xPlugin instanceof Request)
         {
             // The name of a request plugin is used as key in the plugin table

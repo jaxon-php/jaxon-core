@@ -10,11 +10,11 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Request\Support;
+namespace Jaxon\Plugin\Dialogs;
 
-class Alert implements \Jaxon\Request\Interfaces\Alert
+class Alert implements Interfaces\Alert
 {
-    use \Jaxon\Request\Traits\Alert;
+    use Traits\Alert;
 
     /**
      * Print an alert message.
