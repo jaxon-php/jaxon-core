@@ -54,16 +54,23 @@ function jaxon_register_plugin(\Jaxon\Plugin\Plugin $xPlugin, $nPriority = 1000)
 }
 
 /**
- * Get an instance of the request factory
+ * Get the single instance of the request factory
  *
- * The returned element is not linked to any Jaxon class, so this function shall
- * only be used as a parameter of a Jaxon function call.
- *
- * @return Jaxon\Request\Factory
+ * @return Jaxon\Factory\Request
  */
 function rq($classname = null)
 {
     return Container::getInstance()->getRequestFactory()->setClassName($classname);
+}
+
+/**
+ * Get the single instance of the request factory
+ *
+ * @return Jaxon\Factory\Parameter
+ */
+function pr()
+{
+    return Container::getInstance()->getParameterFactory();
 }
 
 /**

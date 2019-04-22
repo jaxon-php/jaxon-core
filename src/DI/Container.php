@@ -101,6 +101,10 @@ class Container
         $this->coreContainer['jaxon.core.request_factory'] = function ($c) {
             return new \Jaxon\Factory\Request();
         };
+        // Parameter Factory
+        $this->coreContainer['jaxon.core.parameter_factory'] = function ($c) {
+            return new \Jaxon\Factory\Parameter();
+        };
         // Response Manager
         $this->coreContainer['jaxon.core.response_manager'] = function ($c) {
             return new \Jaxon\Response\Manager();
@@ -216,6 +220,16 @@ class Container
     public function getRequestFactory()
     {
         return $this->coreContainer['jaxon.core.request_factory'];
+    }
+
+    /**
+     * Get the parameter factory
+     *
+     * @return object        The parameter factory
+     */
+    public function getParameterFactory()
+    {
+        return $this->coreContainer['jaxon.core.parameter_factory'];
     }
 
     /**
