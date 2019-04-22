@@ -12,7 +12,7 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Factory\Request;
+namespace Jaxon\Factory\CallableObject;
 
 use Jaxon\DI\Container;
 use Jaxon\Request\Support\CallableObject;

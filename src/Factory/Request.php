@@ -16,6 +16,7 @@
 namespace Jaxon\Factory;
 
 use Jaxon\Jaxon;
+use Jaxon\Request\Request as JaxonRequest;
 use Jaxon\Request\Support\CallableObject;
 
 class Request
@@ -89,7 +90,7 @@ class Request
         }
 
         // Make the request
-        $xRequest = new Request($this->sPrefix . $sFunction);
+        $xRequest = new JaxonRequest($this->sPrefix . $sFunction);
         $xRequest->useSingleQuote();
         $xRequest->addParameters($aArguments);
         return $xRequest;
@@ -110,7 +111,7 @@ class Request
         // Remove the function name from the arguments array.
         array_shift($aArguments);
         // Make the request
-        $xRequest = new Request($sFunction);
+        $xRequest = new JaxonRequest($sFunction);
         $xRequest->useSingleQuote();
         $xRequest->addParameters($aArguments);
         return $xRequest;
