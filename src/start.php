@@ -1,5 +1,7 @@
 <?php
 
+use Jaxon\DI\Container;
+
 /**
  * start.php -
  *
@@ -21,7 +23,7 @@
  */
 function jaxon()
 {
-    return \Jaxon\DI\Container::getInstance()->getJaxon();
+    return Container::getInstance()->getJaxon();
 }
 
 /**
@@ -35,7 +37,7 @@ function jaxon()
  */
 function jaxon_trans($sText, array $aPlaceHolders = [], $sLanguage = null)
 {
-    return \Jaxon\DI\Container::getInstance()->getTranslator()->trans($sText, $aPlaceHolders, $sLanguage);
+    return Container::getInstance()->getTranslator()->trans($sText, $aPlaceHolders, $sLanguage);
 }
 
 /**
@@ -48,7 +50,7 @@ function jaxon_trans($sText, array $aPlaceHolders = [], $sLanguage = null)
  */
 function jaxon_register_plugin(\Jaxon\Plugin\Plugin $xPlugin, $nPriority = 1000)
 {
-    \Jaxon\DI\Container::getInstance()->getJaxon()->registerPlugin($xPlugin, $nPriority);
+    Container::getInstance()->getJaxon()->registerPlugin($xPlugin, $nPriority);
 }
 
 /**
@@ -61,11 +63,14 @@ function jaxon_register_plugin(\Jaxon\Plugin\Plugin $xPlugin, $nPriority = 1000)
  */
 function rq($classname = null)
 {
-    if(($classname))
-    {
-        return jaxon()->sentry()->request($classname);
-    }
-    return \Jaxon\DI\Container::getInstance()->getRequestFactory();
+    $factory = Container::getInstance()->getRequestFactory();
+    $factory->setCallable($classname);
+    return $factory;
+    // if(($classname))
+    // {
+    //     return jaxon()->sentry()->request($classname);
+    // }
+    // return \Jaxon\DI\Container::getInstance()->getRequestFactory();
 }
 
 /**

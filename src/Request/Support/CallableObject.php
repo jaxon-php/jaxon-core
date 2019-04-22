@@ -102,15 +102,12 @@ class CallableObject
     /**
      * Set a user registered callable object.
      *
-     * If the input parameter is null, the callable is first created with its reflection object.
-     *
-     * @param object|null           $xCallable          The callable object instance or null
-     *
      * @return void
      */
-    private function setCallable($xCallable = null)
+    private function makeCallable()
     {
-        if($xCallable == null)
+        // Create an instance of the registered class
+        if($this->callableObject == null)
         {
             $di = jaxon()->di();
             // Use the Reflection class to get the parameters of the constructor
@@ -123,19 +120,24 @@ class CallableObject
                     // Get the parameter instance from the DI
                     $parameterInstances[] = $di->get($parameter->getClass()->getName());
                 }
-                $xCallable = $this->reflectionClass->newInstanceArgs($parameterInstances);
+                $this->callableObject = $this->reflectionClass->newInstanceArgs($parameterInstances);
             }
             else
             {
-                $xCallable = $this->reflectionClass->newInstance();
+                $this->callableObject = $this->reflectionClass->newInstance();
+            }
+
+            // Save the Jaxon callable object into the user callable object
+            // if($this->reflectionClass->hasMethod('setJaxonCallable'))
+            // {
+            //     $this->callableObject->setJaxonCallable($this);
+            // }
+            // Todo: replace the above with the following
+            if($this->callableObject instanceof \Jaxon\Exportable)
+            {
+                // ...
             }
         }
-        // Save the Jaxon callable object into the user callable object
-        if($this->reflectionClass->hasMethod('setJaxonCallable'))
-        {
-            $xCallable->setJaxonCallable($this);
-        }
-        $this->callableObject = $xCallable;
     }
 
     /**
@@ -147,7 +149,7 @@ class CallableObject
     {
         if($this->callableObject == null)
         {
-            $this->setCallable();
+            $this->makeCallable();
         }
         return $this->callableObject;
     }

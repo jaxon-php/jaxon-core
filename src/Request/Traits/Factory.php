@@ -17,75 +17,6 @@ namespace Jaxon\Request\Traits;
 trait Factory
 {
     /**
-     * The \Jaxon\Request\Support\CallableObject instance associated to the Jaxon object using this trait
-     *
-     * @var \Jaxon\Request\Support\CallableObject
-     */
-    private $xJaxonCallable = null;
-
-    /**
-     * Set the associated \Jaxon\Request\Support\CallableObject instance
-     *
-     * @param object        $xJaxonCallable            The \Jaxon\Request\Support\CallableO object instance
-     *
-     * @return void
-     */
-    public function setJaxonCallable($xJaxonCallable)
-    {
-        $this->xJaxonCallable = $xJaxonCallable;
-    }
-
-    /**
-     * Get the Jaxon class name
-     *
-     * This is the name to be used in Jaxon javascript calls.
-     *
-     * @return string        The Jaxon class name
-     */
-    public function getJaxonClassName()
-    {
-        if(!$this->xJaxonCallable)
-        {
-            // Make the Jaxon class name for a class without an associated callable
-            // !! Warning !! This can happen only if this object is not registered with the Jaxon libary
-            $xReflectionClass = new \ReflectionClass(get_class($this));
-            // Return the class name without the namespace.
-            return $xReflectionClass->getShortName();
-        }
-        return $this->xJaxonCallable->getJsName();
-    }
-
-    /**
-     * Get the Jaxon class namespace
-     *
-     * @return string        The Jaxon class namespace
-     */
-    public function getJaxonNamespace()
-    {
-        if(!$this->xJaxonCallable)
-        {
-            // Return an empty string.
-            return '';
-        }
-        return $this->xJaxonCallable->getNamespace();
-    }
-
-    /**
-     * Get the Jaxon class path
-     *
-     * @return string        The Jaxon class path
-     */
-    public function getJaxonClassPath()
-    {
-        if(!$this->xJaxonCallable)
-        {
-            // Return an empty string.
-            return '';
-        }
-        return $this->xJaxonCallable->getPath();
-    }
-
-    /**
      * Return the javascript call to an Jaxon object method
      *
      * @param string         $sMethod           The method (without class) name
@@ -95,12 +26,9 @@ trait Factory
      */
     public function call($sMethod)
     {
-        $sMethod = (string)$sMethod;
         $aArgs = func_get_args();
-        // Prepend the class name to the method name
-        $aArgs[0] = $this->getJaxonClassName() . '.' . $sMethod;
         // Make the request
-        return call_user_func_array('\Jaxon\Request\Factory::call', $aArgs);
+        return call_user_func_array([rq(get_class()), 'call'], $aArgs);
     }
 
     /**
@@ -116,11 +44,8 @@ trait Factory
      */
     public function paginate($nItemsTotal, $nItemsPerPage, $nCurrentPage, $sMethod)
     {
-        $sMethod = (string)$sMethod;
         $aArgs = func_get_args();
-        // Prepend the class name to the method name
-        $aArgs[3] = $this->getJaxonClassName() . '.' . $sMethod;
         // Make the request
-        return call_user_func_array('\Jaxon\Request\Factory::paginate', $aArgs);
+        return call_user_func_array([rq(get_class()), 'paginate'], $aArgs);
     }
 }

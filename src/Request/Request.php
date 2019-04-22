@@ -25,17 +25,7 @@ use Jaxon\Jaxon;
 
 class Request extends JsCall
 {
-    use \Jaxon\Utils\Traits\Config;
     use \Jaxon\Utils\Traits\Manager;
-
-    /**
-     * The type of the request
-     *
-     * Can be one of "function" or "class".
-     *
-     * @var string
-     */
-    private $sType;
 
     /**
      * A condition to check before sending this request
@@ -55,12 +45,10 @@ class Request extends JsCall
      * The constructor.
      *
      * @param string        $sName            The javascript function or method name
-     * @param string        $sType            The type (function or a method)
      */
-    public function __construct($sName, $sType)
+    public function __construct($sName)
     {
         parent::__construct($sName);
-        $this->sType = $sType;
     }
 
     /**
@@ -327,7 +315,7 @@ class Request extends JsCall
             }
         }
 
-        $sScript = $this->getOption('core.prefix.' . $this->sType) . parent::getScript();
+        $sScript = parent::getScript();
         if($this->sCondition == '__confirm__')
         {
             $xConfirm = $this->getPluginManager()->getConfirm();

@@ -19,24 +19,60 @@ use Jaxon\Jaxon;
 
 class Factory
 {
+    use \Jaxon\Utils\Traits\Config;
+
+    /**
+     * The prefix to prepend on each call
+     *
+     * @var string
+     */
+    protected $sPrefix;
+
+    /**
+     * Set the name of the class to call
+     *
+     * @param string|null            $Class              The callable class
+     *
+     * @return Factory
+     */
+    public function setCallable($sClass)
+    {
+        $sClass = trim($sClass, '.\\ ');
+        if(($sClass))
+        {
+            $xCallable = jaxon()->di()->get($sClass);
+            $this->sPrefix = $this->getOption('core.prefix.class') . $xCallable->getJsName() . '.';
+        }
+        else
+        {
+            $this->sPrefix = $this->getOption('core.prefix.function');
+        }
+    }
+
     /**
      * Return the javascript call to a Jaxon function or object method
      *
-     * @param string            $sName              The function or method (with class) name
+     * @param string            $sFunction          The function or method (without class) name
      * @param ...               $xParams            The parameters of the function or method
      *
      * @return \Jaxon\Request\Request
      */
-    public static function call($sName)
+    public function call($sFunction)
     {
         $aArguments = func_get_args();
-        $sName = (string)$sName;
+        $sFunction = (string)$sFunction;
         // Remove the function name from the arguments array.
         array_shift($aArguments);
-        // If there is a dot in the name, then it is a call to a class, else it is a call to a function
-        $sType = (strpos($sName, '.') === false ? 'function' : 'class');
+
+        // Makes legacy code works
+        if(strpos($sFunction, '.') !== false)
+        {
+            // If there is a dot in the name, then it is a call to a class
+            $this->sPrefix = $this->getOption('core.prefix.class');
+        }
+
         // Make the request
-        $xRequest = new Request($sName, $sType);
+        $xRequest = new Request($this->sPrefix . $sFunction);
         $xRequest->useSingleQuote();
         $xRequest->addParameters($aArguments);
         return $xRequest;
@@ -45,19 +81,19 @@ class Factory
     /**
      * Return the javascript call to a generic function
      *
-     * @param string            $sName              The function or method (with class) name
+     * @param string            $sFunction          The function or method (with class) name
      * @param ...               $xParams            The parameters of the function or method
      *
      * @return \Jaxon\Request\Request
      */
-    public static function func($sName)
+    public function func($sFunction)
     {
         $aArguments = func_get_args();
-        $sName = (string)$sName;
+        $sFunction = (string)$sFunction;
         // Remove the function name from the arguments array.
         array_shift($aArguments);
         // Make the request
-        $xRequest = new JsCall($sName);
+        $xRequest = new Request($sFunction);
         $xRequest->useSingleQuote();
         $xRequest->addParameters($aArguments);
         return $xRequest;
@@ -74,7 +110,7 @@ class Factory
      *
      * @return string the pagination links
      */
-    public static function paginate($nItemsTotal, $nItemsPerPage, $nCurrentPage, $sMethod)
+    public function paginate($nItemsTotal, $nItemsPerPage, $nCurrentPage, $sMethod)
     {
         // Get the args list starting from the $sMethod
         $aArgs = array_slice(func_get_args(), 3);
@@ -91,7 +127,7 @@ class Factory
      *
      * @return Parameter
      */
-    public static function form($sFormId)
+    public function form($sFormId)
     {
         return new Parameter(Jaxon::FORM_VALUES, $sFormId);
     }
@@ -103,7 +139,7 @@ class Factory
      *
      * @return Parameter
      */
-    public static function input($sInputId)
+    public function input($sInputId)
     {
         return new Parameter(Jaxon::INPUT_VALUE, $sInputId);
     }
@@ -115,7 +151,7 @@ class Factory
      *
      * @return Parameter
      */
-    public static function checked($sInputId)
+    public function checked($sInputId)
     {
         return new Parameter(Jaxon::CHECKED_VALUE, $sInputId);
     }
@@ -127,7 +163,7 @@ class Factory
      *
      * @return Parameter
      */
-    public static function select($sInputId)
+    public function select($sInputId)
     {
         return self::input($sInputId);
     }
@@ -139,7 +175,7 @@ class Factory
      *
      * @return Parameter
      */
-    public static function html($sElementId)
+    public function html($sElementId)
     {
         return new Parameter(Jaxon::ELEMENT_INNERHTML, $sElementId);
     }
@@ -151,7 +187,7 @@ class Factory
      *
      * @return Parameter
      */
-    public static function string($sValue)
+    public function string($sValue)
     {
         return new Parameter(Jaxon::QUOTED_VALUE, $sValue);
     }
@@ -163,7 +199,7 @@ class Factory
      *
      * @return Parameter
      */
-    public static function numeric($nValue)
+    public function numeric($nValue)
     {
         return new Parameter(Jaxon::NUMERIC_VALUE, intval($nValue));
     }
@@ -175,7 +211,7 @@ class Factory
      *
      * @return Parameter
      */
-    public static function int($nValue)
+    public function int($nValue)
     {
         return self::numeric($nValue);
     }
@@ -187,7 +223,7 @@ class Factory
      *
      * @return Parameter
      */
-    public static function javascript($sValue)
+    public function javascript($sValue)
     {
         return new Parameter(Jaxon::JS_VALUE, $sValue);
     }
@@ -199,7 +235,7 @@ class Factory
      *
      * @return Parameter
      */
-    public static function js($sValue)
+    public function js($sValue)
     {
         return self::javascript($sValue);
     }
@@ -209,7 +245,7 @@ class Factory
      *
      * @return Parameter
      */
-    public static function page()
+    public function page()
     {
         // By default, the value of a parameter of type Jaxon::PAGE_NUMBER is 0.
         return new Parameter(Jaxon::PAGE_NUMBER, 0);
