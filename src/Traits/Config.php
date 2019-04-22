@@ -40,7 +40,6 @@ trait Config
             'core.decode_utf8'                  => false,
             'core.prefix.function'              => 'jaxon_',
             'core.prefix.class'                 => 'Jaxon',
-            'core.prefix.event'                 => 'jaxon_event_',
             // 'core.request.uri'               => '',
             'core.request.mode'                 => 'asynchronous',
             'core.request.method'               => 'POST',    // W3C: Method is case sensitive
