@@ -17,6 +17,7 @@ namespace Jaxon\Factory;
 
 use Jaxon\Jaxon;
 use Jaxon\Request\Request as JaxonRequest;
+use Jaxon\Request\Parameter;
 use Jaxon\Request\Support\CallableObject;
 
 class Request
