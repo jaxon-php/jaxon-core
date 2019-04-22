@@ -13,13 +13,12 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Request;
+namespace Jaxon\Factory;
 
 use Jaxon\Jaxon;
-
 use Jaxon\Request\Support\CallableObject;
 
-class Factory
+class Request
 {
     use \Jaxon\Utils\Traits\Config;
 

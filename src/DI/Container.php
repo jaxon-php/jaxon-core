@@ -99,7 +99,7 @@ class Container
         };
         // Request Factory
         $this->coreContainer['jaxon.core.request_factory'] = function ($c) {
-            return new \Jaxon\Request\Factory();
+            return new \Jaxon\Factory\Request();
         };
         // Response Manager
         $this->coreContainer['jaxon.core.response_manager'] = function ($c) {
