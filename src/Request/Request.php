@@ -273,7 +273,7 @@ class Request extends JsCall
         foreach($this->aParameters as &$xParameter)
         {
             $sParameterStr = $xParameter->getScript();
-            if($xParameter instanceof \Jaxon\JQuery\Dom\Element)
+            if($xParameter instanceof \Jaxon\Response\Plugin\JQuery\Dom\Element)
             {
                 if(!array_key_exists($sParameterStr, $aVariables))
                 {
@@ -303,7 +303,7 @@ class Request extends JsCall
                 foreach($this->aMessageArgs as &$xParameter)
                 {
                     $sParameterStr = $xParameter->getScript();
-                    if($xParameter instanceof \Jaxon\JQuery\Dom\Element)
+                    if($xParameter instanceof \Jaxon\Response\Plugin\JQuery\Dom\Element)
                     {
                         if(!array_key_exists($sParameterStr, $aVariables))
                         {

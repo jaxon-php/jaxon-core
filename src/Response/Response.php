@@ -117,7 +117,7 @@ class Response
      * @param string        $sSelector            The jQuery selector
      * @param string        $sContext             A context associated to the selector
      *
-     * @return Jaxon\JQuery\Dom\Element
+     * @return Jaxon\Response\Plugin\JQuery\Dom\Element
      */
     public function jq($sSelector = '', $sContext = '')
     {
@@ -132,7 +132,7 @@ class Response
      * @param string        $sSelector            The jQuery selector
      * @param string        $sContext             A context associated to the selector
      *
-     * @return Jaxon\JQuery\Dom\Element
+     * @return Jaxon\Response\Plugin\JQuery\Dom\Element
      */
     public function jQuery($sSelector = '', $sContext = '')
     {
