@@ -63,14 +63,7 @@ function jaxon_register_plugin(\Jaxon\Plugin\Plugin $xPlugin, $nPriority = 1000)
  */
 function rq($classname = null)
 {
-    $factory = Container::getInstance()->getRequestFactory();
-    $factory->setCallable($classname);
-    return $factory;
-    // if(($classname))
-    // {
-    //     return jaxon()->sentry()->request($classname);
-    // }
-    // return \Jaxon\DI\Container::getInstance()->getRequestFactory();
+    return Container::getInstance()->getRequestFactory()->setClassName($classname);
 }
 
 /**

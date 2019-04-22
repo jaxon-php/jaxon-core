@@ -206,6 +206,7 @@ class CallableObject extends RequestPlugin
             }
         }
 
+        // Register the callable object
         jaxon()->di()->set($sCallableObject, function () use ($sCallableObject, $aOptions) {
             $xCallableObject = new \Jaxon\Request\Support\CallableObject($sCallableObject);
 
@@ -218,6 +219,18 @@ class CallableObject extends RequestPlugin
             }
 
             return $xCallableObject;
+        });
+
+        // Register the request factory for this callable object
+        jaxon()->di()->set($sCallableObject . '\Factory\Rq', function ($di) use ($sCallableObject) {
+            $xCallableObject = $di->get($sCallableObject);
+            return new \Jaxon\Sentry\Factory\Request($xCallableObject);
+        });
+
+        // Register the paginator factory for this callable object
+        jaxon()->di()->set($sCallableObject . '\Factory\Pg', function ($di) use ($sCallableObject) {
+            $xCallableObject = $di->get($sCallableObject);
+            return new \Jaxon\Sentry\Factory\Paginator($xCallableObject);
         });
 
         return true;

@@ -17,6 +17,8 @@ namespace Jaxon\Request;
 
 use Jaxon\Jaxon;
 
+use Jaxon\Request\Support\CallableObject;
+
 class Factory
 {
     use \Jaxon\Utils\Traits\Config;
@@ -31,11 +33,11 @@ class Factory
     /**
      * Set the name of the class to call
      *
-     * @param string|null            $Class              The callable class
+     * @param string|null            $sClass              The callable class
      *
      * @return Factory
      */
-    public function setCallable($sClass)
+    public function setClassName($sClass)
     {
         $sClass = trim($sClass, '.\\ ');
         if(($sClass))
@@ -47,6 +49,22 @@ class Factory
         {
             $this->sPrefix = $this->getOption('core.prefix.function');
         }
+
+        return $this;
+    }
+
+    /**
+     * Set the callable object to call
+     *
+     * @param CallableObject          $xCallable              The callable object
+     *
+     * @return Factory
+     */
+    public function setCallable(CallableObject $xCallable)
+    {
+        $this->sPrefix = $this->getOption('core.prefix.class') . $xCallable->getJsName() . '.';
+
+        return $this;
     }
 
     /**

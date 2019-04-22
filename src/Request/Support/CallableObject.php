@@ -126,17 +126,6 @@ class CallableObject
             {
                 $this->callableObject = $this->reflectionClass->newInstance();
             }
-
-            // Save the Jaxon callable object into the user callable object
-            // if($this->reflectionClass->hasMethod('setJaxonCallable'))
-            // {
-            //     $this->callableObject->setJaxonCallable($this);
-            // }
-            // Todo: replace the above with the following
-            if($this->callableObject instanceof \Jaxon\Exportable)
-            {
-                // ...
-            }
         }
     }
 
