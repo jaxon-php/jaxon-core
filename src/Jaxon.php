@@ -131,26 +131,24 @@ class Jaxon
      *
      * New plugins can be added that support additional registration methods and request processors.
      *
-     * @param string    $sType            The type of request handler being registered
+     * @param string        $sType            The type of request handler being registered
      *        Options include:
      *        - Jaxon::USER_FUNCTION: a function declared at global scope
      *        - Jaxon::CALLABLE_OBJECT: an object who's methods are to be registered
-     * @param mixed        $sFunction | $objObject
+     * @param string        $sCallable
      *        When registering a function, this is the name of the function
-     *        When registering a callable object, this is the object being registered
-     * @param mixed        $sIncludeFile | $aCallOptions
+     *        When registering a callable object, this is the class name
+     * @param array|string  $aOptions | $sIncludeFile
      *        When registering a function, this is an (optional) array
      *             of call options, or the (optional) include file
      *        When registering a callable object, this is an (optional) array
-     *             of call options for the functions being registered
+     *             of call options for the class methods
      *
      * @return mixed
      */
-    public function register($sType, $xArgs)
+    public function register($sType, $sCallable, $aOptions)
     {
-        $aArgs = func_get_args();
-
-        return $this->getPluginManager()->register($aArgs);
+        return $this->getPluginManager()->register($sType, $sCallable, $aOptions);
     }
 
     /**

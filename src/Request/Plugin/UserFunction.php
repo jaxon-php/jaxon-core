@@ -74,31 +74,24 @@ class UserFunction extends RequestPlugin
     /**
      * Register a user defined function
      *
-     * @param array         $aArgs                An array containing the function specification
+     * @param string        $sType          The type of request handler being registered
+     * @param string        $sUserFunction  The name of the function being registered
+     * @param array|string  $aOptions       The associated options
      *
      * @return \Jaxon\Request\Request
      */
-    public function register($aArgs)
+    public function register($sType, $sUserFunction, $aOptions)
     {
-        if(count($aArgs) < 2)
+        if($sType != $this->getName())
         {
             return false;
         }
 
-        $sType = $aArgs[0];
-        if($sType != Jaxon::USER_FUNCTION)
-        {
-            return false;
-        }
-
-        $sUserFunction = $aArgs[1];
         if(!is_string($sUserFunction))
         {
             throw new \Jaxon\Exception\Error($this->trans('errors.functions.invalid-declaration'));
         }
-        $this->aFunctions[] = $sUserFunction;
 
-        $aOptions = count($aArgs) > 2 ? $aArgs[2] : [];
         if(is_string($aOptions))
         {
             $aOptions = ['include' => $aOptions];
@@ -119,6 +112,7 @@ class UserFunction extends RequestPlugin
             }
         }
 
+        $this->aFunctions[$sFunctionName] = $sUserFunction;
         jaxon()->di()->set($sFunctionName, function () use ($sUserFunction, $aOptions) {
             $xUserFunction = new \Jaxon\Request\Support\UserFunction($sUserFunction);
 

@@ -324,18 +324,6 @@ class FileUpload extends RequestPlugin
     }
 
     /**
-     * Register a browser event
-     *
-     * @param array         $aArgs                An array containing the event specification
-     *
-     * @return \Jaxon\Request\Request
-     */
-    public function register($aArgs)
-    {
-        return false;
-    }
-
-    /**
      * Generate a hash for the registered browser events
      *
      * @return string

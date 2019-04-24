@@ -31,13 +31,20 @@ abstract class Request extends Plugin
     /**
      * Register a function, an event or an object.
      *
-     * Called by the <Jaxon\Plugin\Manager> when a user script when a function, event
-     * or callable object is to be registered.
+     * Called by the <Jaxon\Plugin\Manager> when a user script
+     * when a function or callable object is to be registered.
      * Additional plugins may support other registration types.
+     *
+     * @param string        $sType          The type of request handler being registered
+     * @param string        $sCallable      The callable entity being registered
+     * @param array|string  $aOptions       The associated options
      *
      * @return mixed
      */
-    abstract public function register($aArgs);
+    public function register($sType, $sCallable, $aOptions)
+    {
+        return false;
+    }
 
     /**
      * Return true if the object is a request plugin. Always return true here.
@@ -58,7 +65,7 @@ abstract class Request extends Plugin
      * @return boolean
      */
     abstract public function canProcessRequest();
-    
+
     /**
      * Process the current request
      *

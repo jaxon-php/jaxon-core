@@ -88,7 +88,7 @@ class UserFunction
      * Set call options for this instance
      *
      * @param string        $sName                The name of the configuration option
-     * @param string        $sValue                The value of the configuration option
+     * @param string        $sValue               The value of the configuration option
      *
      * @return void
      */
@@ -97,7 +97,7 @@ class UserFunction
         switch($sName)
         {
         case 'class': // The user function is a method in the given class
-            $this->sUserFunction = [$sValue, $this->sUserFunction];
+            $this->sUserFunction = [new $sValue, $this->sUserFunction];
             break;
         case 'alias':
             $this->sAlias = $sValue;

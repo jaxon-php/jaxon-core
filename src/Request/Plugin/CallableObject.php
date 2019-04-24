@@ -144,34 +144,28 @@ class CallableObject extends RequestPlugin
     }
 
     /**
-     * Register a user defined callable object
+     * Register a callable class
      *
-     * @param array         $aArgs                An array containing the callable object specification
+     * @param string        $sType          The type of request handler being registered
+     * @param string        $sClassName     The name of the class being registered
+     * @param array|string  $aOptions       The associated options
      *
-     * @return array
+     * @return boolean
      */
-    public function register($aArgs)
+    public function register($sType, $sClassName, $aOptions)
     {
-        if(count($aArgs) < 2)
+        if($sType != $this->getName())
         {
             return false;
         }
 
-        $sType = $aArgs[0];
-        if($sType != Jaxon::CALLABLE_OBJECT)
-        {
-            return false;
-        }
-
-        $sCallableObject = $aArgs[1];
-        if(!is_string($sCallableObject) || !class_exists($sCallableObject))
+        if(!is_string($sClassName) || !class_exists($sClassName))
         {
             throw new \Jaxon\Exception\Error($this->trans('errors.objects.invalid-declaration'));
         }
-        $sCallableObject = trim($sCallableObject, '\\');
-        $this->aCallableObjects[] = $sCallableObject;
+        $sClassName = trim($sClassName, '\\');
+        $this->aCallableObjects[] = $sClassName;
 
-        $aOptions = count($aArgs) > 2 ? $aArgs[2] : [];
         if(is_string($aOptions))
         {
             $aOptions = ['namespace' => $aOptions];
@@ -207,8 +201,8 @@ class CallableObject extends RequestPlugin
         }
 
         // Register the callable object
-        jaxon()->di()->set($sCallableObject, function () use ($sCallableObject, $aOptions) {
-            $xCallableObject = new \Jaxon\Request\Support\CallableObject($sCallableObject);
+        jaxon()->di()->set($sClassName, function () use ($sClassName, $aOptions) {
+            $xCallableObject = new \Jaxon\Request\Support\CallableObject($sClassName);
 
             foreach($aOptions as $sMethod => $aValue)
             {
@@ -222,14 +216,14 @@ class CallableObject extends RequestPlugin
         });
 
         // Register the request factory for this callable object
-        jaxon()->di()->set($sCallableObject . '\Factory\Rq', function ($di) use ($sCallableObject) {
-            $xCallableObject = $di->get($sCallableObject);
+        jaxon()->di()->set($sClassName . '\Factory\Rq', function ($di) use ($sClassName) {
+            $xCallableObject = $di->get($sClassName);
             return new \Jaxon\Factory\Request\Portable($xCallableObject);
         });
 
         // Register the paginator factory for this callable object
-        jaxon()->di()->set($sCallableObject . '\Factory\Pg', function ($di) use ($sCallableObject) {
-            $xCallableObject = $di->get($sCallableObject);
+        jaxon()->di()->set($sClassName . '\Factory\Pg', function ($di) use ($sClassName) {
+            $xCallableObject = $di->get($sClassName);
             return new \Jaxon\Factory\Request\Paginator($xCallableObject);
         });
 

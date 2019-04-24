@@ -332,24 +332,31 @@ class Manager
     /**
      * Register a function, event or callable object
      *
-     * Call each of the request plugins and give them the opportunity to handle the
-     * registration of the specified function, event or callable object.
+     * Call the request plugin with the $sType defined as name.
      *
-     * @param array         $aArgs                The registration data
+     * @param string        $sType          The type of request handler being registered
+     * @param string        $sCallable      The callable entity being registered
+     * @param array|string  $aOptions       The associated options
      *
      * @return mixed
      */
-    public function register($aArgs)
+    public function register($sType, $sCallable, $aOptions)
     {
-        foreach($this->aRequestPlugins as $xPlugin)
+        if(!key_exists($sType, $this->aRequestPlugins))
         {
-            $mResult = $xPlugin->register($aArgs);
-            if($mResult instanceof \Jaxon\Request\Request || is_array($mResult) || $mResult === true)
-            {
-                return $mResult;
-            }
+            throw new \Jaxon\Exception\Error($this->trans('errors.register.plugin', ['name' => $sType]));
         }
-        throw new \Jaxon\Exception\Error($this->trans('errors.register.method', array('args' => print_r($aArgs, true))));
+
+        $xPlugin = $this->aRequestPlugins[$sType];
+        return $xPlugin->register($sType, $sCallable, $aOptions);
+        // foreach($this->aRequestPlugins as $xPlugin)
+        // {
+        //     if($mResult instanceof \Jaxon\Request\Request || is_array($mResult) || $mResult === true)
+        //     {
+        //         return $mResult;
+        //     }
+        // }
+        // throw new \Jaxon\Exception\Error($this->trans('errors.register.method', ['args' => print_r($aArgs, true)]));
     }
 
     /**
