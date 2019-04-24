@@ -36,21 +36,17 @@ class UserFunction extends RequestPlugin
      *
      * @var array
      */
-    protected $aFunctions;
+    protected $aFunctions = [];
 
     /**
      * The name of the function that is being requested (during the request processing phase)
      *
      * @var string
      */
-    protected $sRequestedFunction;
+    protected $sRequestedFunction = null;
 
     public function __construct()
     {
-        $this->aFunctions = [];
-
-        $this->sRequestedFunction = null;
-
         if(isset($_GET['jxnfun']))
         {
             $this->sRequestedFunction = $_GET['jxnfun'];

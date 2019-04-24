@@ -28,7 +28,7 @@ class FileUpload extends RequestPlugin
      *
      * @var array
      */
-    protected $aUserFiles;
+    protected $aUserFiles = [];
 
     /**
      * The name of file containing upload data
@@ -56,7 +56,6 @@ class FileUpload extends RequestPlugin
      */
     public function __construct()
     {
-        $this->aUserFiles = [];
         $this->sUploadSubdir = uniqid() . DIRECTORY_SEPARATOR;
 
         if(array_key_exists('jxnupl', $_POST))

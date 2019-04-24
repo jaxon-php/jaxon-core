@@ -75,7 +75,9 @@ class Jaxon
      * Request plugins
      */
     // For objects who's methods will be callable from the browser.
-    const CALLABLE_OBJECT = 'CallableObject';
+    const CALLABLE_CLASS = 'CallableClass';
+    const CALLABLE_DIR = 'CallableDir';
+    const CALLABLE_OBJECT = 'CallableClass'; // Same as CALLABLE_CLASS
     // For functions available at global scope, or from an instance of an object.
     const USER_FUNCTION = 'UserFunction';
     // For uploaded files.
@@ -127,45 +129,30 @@ class Jaxon
     }
 
     /**
-     * Register request handlers, including functions, callable objects and events.
-     *
-     * New plugins can be added that support additional registration methods and request processors.
+     * Register request handlers, including functions, callable classes and directories.
      *
      * @param string        $sType            The type of request handler being registered
      *        Options include:
      *        - Jaxon::USER_FUNCTION: a function declared at global scope
-     *        - Jaxon::CALLABLE_OBJECT: an object who's methods are to be registered
+     *        - Jaxon::CALLABLE_CLASS: a class who's methods are to be registered
+     *        - Jaxon::CALLABLE_DIR: a directory containing classes to be registered
      * @param string        $sCallable
      *        When registering a function, this is the name of the function
-     *        When registering a callable object, this is the class name
-     * @param array|string  $aOptions | $sIncludeFile
+     *        When registering a callable class, this is the class name
+     *        When registering a callable directory, this is the full path to the directory
+     * @param array|string  $aOptions | $sIncludeFile | $sNamespace
      *        When registering a function, this is an (optional) array
      *             of call options, or the (optional) include file
-     *        When registering a callable object, this is an (optional) array
+     *        When registering a callable class, this is an (optional) array
      *             of call options for the class methods
+     *        When registering a callable directory, this is an (optional) array
+     *             of call options for the class methods, or the (optional) namespace
      *
      * @return mixed
      */
-    public function register($sType, $sCallable, $aOptions)
+    public function register($sType, $sCallable, $aOptions = [])
     {
         return $this->getPluginManager()->register($sType, $sCallable, $aOptions);
-    }
-
-    /**
-     * Add a path to the class directories
-     *
-     * @param string            $sDirectory             The path to the directory
-     * @param string|null       $sNamespace             The associated namespace
-     * @param string            $sSeparator             The character to use as separator in javascript class names
-     * @param array             $aProtected             The functions that are not to be exported
-     *
-     * @return boolean
-     */
-    public function addClassDir($sDirectory, $sNamespace = null, $sSeparator = '.', array $aProtected = [])
-    {
-        // The CallableObject plugin
-        $xPlugin = $this->getPluginManager()->getRequestPlugin(self::CALLABLE_OBJECT);
-        return $xPlugin->addClassDir($sDirectory, $sNamespace, $sSeparator, $aProtected);
     }
 
     /**
@@ -177,29 +164,9 @@ class Jaxon
      */
     public function registerClasses(array $aOptions = [])
     {
-        // The CallableObject plugin
-        $xPlugin = $this->getPluginManager()->getRequestPlugin(self::CALLABLE_OBJECT);
+        // The CallableDir plugin
+        $xPlugin = $this->getPluginManager()->getRequestPlugin(self::CALLABLE_DIR);
         return $xPlugin->registerClasses($aOptions);
-    }
-
-    /**
-     * Register a callable object from one of the class directories
-     *
-     * The class name can be dot, slash or anti-slash separated.
-     * If the $bGetObject parameter is set to true, the registered instance of the class is returned.
-     *
-     * @param string            $sClassName             The name of the class to register
-     * @param array             $aOptions               The options to register the class with
-     * @param boolean           $bGetObject             Return the registered instance of the class
-     *
-     * @return void
-     */
-    public function registerClass($sClassName, array $aOptions = [], $bGetObject = false)
-    {
-        // The CallableObject plugin
-        $xPlugin = $this->getPluginManager()->getRequestPlugin(self::CALLABLE_OBJECT);
-        $xPlugin->registerClass($sClassName, $aOptions);
-        return (($bGetObject) ? $xPlugin->getRegisteredObject($sClassName) : null);
     }
 
     /**
