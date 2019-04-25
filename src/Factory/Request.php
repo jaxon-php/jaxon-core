@@ -15,6 +15,7 @@
 
 namespace Jaxon\Factory;
 
+use Jaxon\Jaxon;
 use Jaxon\Request\Request as JaxonRequest;
 use Jaxon\Request\Support\CallableObject;
 
@@ -31,6 +32,30 @@ class Request extends Parameter
     protected $sPrefix;
 
     /**
+     * The callable dir plugin
+     *
+     * @var Jaxon\Request\Plugin\CallableDir;
+     */
+    protected $xCallableDirPlugin;
+
+    /**
+     * The callable class plugin
+     *
+     * @var Jaxon\Request\Plugin\CallableClass;
+     */
+    protected $xCallableClassPlugin;
+
+    /**
+     * The class constructor
+     */
+    public function __construct()
+    {
+        $xPluginManager = jaxon()->getPluginManager();
+        $this->xCallableDirPlugin = $xPluginManager->getRequestPlugin(Jaxon::CALLABLE_DIR);
+        $this->xCallableClassPlugin = $xPluginManager->getRequestPlugin(Jaxon::CALLABLE_CLASS);
+    }
+
+    /**
      * Set the name of the class to call
      *
      * @param string|null            $sClass              The callable class
@@ -39,17 +64,27 @@ class Request extends Parameter
      */
     public function setClassName($sClass)
     {
+        $this->sPrefix = $this->getOption('core.prefix.function');
+
         $sClass = trim($sClass, '.\\ ');
-        if(($sClass))
+        if(!$sClass)
         {
-            $xCallable = jaxon()->di()->get($sClass);
-            $this->sPrefix = $this->getOption('core.prefix.class') . $xCallable->getJsName() . '.';
-        }
-        else
-        {
-            $this->sPrefix = $this->getOption('core.prefix.function');
+            return $this;
         }
 
+        $xCallable = $this->xCallableClassPlugin->getCallableObject($sClass);
+        if(!$xCallable)
+        {
+            $xCallable = $this->xCallableDirPlugin->getCallableObject($sClass);
+        }
+        if(!$xCallable)
+        {
+            // Todo: decide which of these values to return
+            // return null;
+            return $this;
+        }
+
+        $this->sPrefix = $this->getOption('core.prefix.class') . $xCallable->getJsName() . '.';
         return $this;
     }
 

@@ -297,7 +297,7 @@ class CallableDir extends RequestPlugin
         }
 
         $this->aCallableObjects[$sClassName] = $xCallableObject;
-        jaxon()->di()->set($sClassName, $xCallableObject);
+        // jaxon()->di()->set($sClassName, $xCallableObject);
         // Register the request factory for this callable object
         jaxon()->di()->set($sClassName . '_Factory_Rq', function ($di) use ($sClassName) {
             $xCallableObject = $this->aCallableObjects[$sClassName];
