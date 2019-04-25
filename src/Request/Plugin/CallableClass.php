@@ -162,13 +162,14 @@ class CallableClass extends RequestPlugin
         }
 
         $this->aCallableObjects[$sClassName] = $xCallableObject;
+        jaxon()->di()->set($sClassName, $xCallableObject);
         // Register the request factory for this callable object
-        jaxon()->di()->set($sClassName . '\Factory\Rq', function ($di) use ($sClassName) {
+        jaxon()->di()->set($sClassName . '_Factory_Rq', function ($di) use ($sClassName) {
             $xCallableObject = $this->aCallableObjects[$sClassName];
             return new \Jaxon\Factory\Request\Portable($xCallableObject);
         });
         // Register the paginator factory for this callable object
-        jaxon()->di()->set($sClassName . '\Factory\Pg', function ($di) use ($sClassName) {
+        jaxon()->di()->set($sClassName . '_Factory_Pg', function ($di) use ($sClassName) {
             $xCallableObject = $this->aCallableObjects[$sClassName];
             return new \Jaxon\Factory\Request\Paginator($xCallableObject);
         });

@@ -17,7 +17,7 @@ namespace Jaxon\Factory\CallableObject;
 use Jaxon\DI\Container;
 use Jaxon\Request\Support\CallableObject;
 
-class Portable
+class Request
 {
     /**
      * The callable object this factory is attached to
