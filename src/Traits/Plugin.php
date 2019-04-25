@@ -24,6 +24,13 @@ use Jaxon\DI\Container;
 trait Plugin
 {
     /**
+     * Get the plugin manager
+     *
+     * @return Jaxon\Plugin\Manager
+     */
+    abstract public function getPluginManager();
+
+    /**
      * Register a plugin
      *
      * Below is a table for priorities and their description:
