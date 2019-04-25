@@ -145,6 +145,7 @@ class CallableClass extends RequestPlugin
 
         // Create the callable object
         $xCallableObject = new \Jaxon\Request\Support\CallableObject($sClassName);
+        $aOptions = $this->aClassOptions[$sClassName];
         foreach($aOptions as $sMethod => $aValue)
         {
             foreach($aValue as $sName => $sValue)

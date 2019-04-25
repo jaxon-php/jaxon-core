@@ -288,11 +288,17 @@ class CallableDir extends RequestPlugin
         // Create the callable object
         $xCallableObject = new \Jaxon\Request\Support\CallableObject($sClassName);
         $aOptions = $this->aNamespaces[$sNamespace];
-        foreach($aOptions as $sMethod => $aValue)
+        foreach($aOptions as $sClass => $aClassOptions)
         {
-            foreach($aValue as $sName => $sValue)
+            if($sClass == '*' || trim(str_replace(['.', '_'], ['\\', '\\'], $sClass)) == $sClassName)
             {
-                $xCallableObject->configure($sMethod, $sName, $sValue);
+                foreach($aClassOptions as $sMethod => $aValue)
+                {
+                    foreach($aValue as $sName => $sValue)
+                    {
+                        $xCallableObject->configure($sMethod, $sName, $sValue);
+                    }
+                }
             }
         }
 
