@@ -37,7 +37,7 @@ class CallableObject
      *
      * @var object
      */
-    private $callableObject;
+    private $registeredObject = null;
 
     /**
      * The reflection class of the user registered callable object
@@ -51,7 +51,7 @@ class CallableObject
      *
      * @var array
      */
-    private $aProtectedMethods;
+    private $aProtectedMethods = [];
 
     /**
      * The namespace where the callable object class is defined
@@ -82,7 +82,7 @@ class CallableObject
      *
      * @var array
      */
-    private $aConfiguration;
+    private $aConfiguration = [];
 
     /**
      * The class constructor
@@ -93,21 +93,16 @@ class CallableObject
     public function __construct($sCallable)
     {
         $this->reflectionClass = new \ReflectionClass($sCallable);
-        $this->callableObject = null;
-        $this->aConfiguration = [];
-        // By default, no method is "protected"
-        $this->aProtectedMethods = [];
     }
 
     /**
-     * Set a user registered callable object.
+     * Return the registered callable object
      *
-     * @return void
+     * @return object
      */
-    private function makeCallable()
+    public function getRegisteredObject()
     {
-        // Create an instance of the registered class
-        if($this->callableObject == null)
+        if($this->registeredObject == null)
         {
             $di = jaxon()->di();
             // Use the Reflection class to get the parameters of the constructor
@@ -120,27 +115,14 @@ class CallableObject
                     // Get the parameter instance from the DI
                     $parameterInstances[] = $di->get($parameter->getClass()->getName());
                 }
-                $this->callableObject = $this->reflectionClass->newInstanceArgs($parameterInstances);
+                $this->registeredObject = $this->reflectionClass->newInstanceArgs($parameterInstances);
             }
             else
             {
-                $this->callableObject = $this->reflectionClass->newInstance();
+                $this->registeredObject = $this->reflectionClass->newInstance();
             }
         }
-    }
-
-    /**
-     * Return the registered callable object
-     *
-     * @return object
-     */
-    public function getRegisteredObject()
-    {
-        if($this->callableObject == null)
-        {
-            $this->makeCallable();
-        }
-        return $this->callableObject;
+        return $this->registeredObject;
     }
 
     /**
@@ -356,8 +338,8 @@ class CallableObject
             return;
         }
         $reflectionMethod = $this->reflectionClass->getMethod($sMethod);
-        $callableObject = $this->getRegisteredObject();
-        $response = $reflectionMethod->invokeArgs($callableObject, $aArgs);
+        $registeredObject = $this->getRegisteredObject();
+        $response = $reflectionMethod->invokeArgs($registeredObject, $aArgs);
         if(($response))
         {
             $this->getResponseManager()->append($response);

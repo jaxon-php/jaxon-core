@@ -32,11 +32,25 @@ class CallableDir extends RequestPlugin
     use \Jaxon\Utils\Traits\Translator;
 
     /**
+     * The registered namespaces with their directories
+     *
+     * @var array
+     */
+    protected $aNamespaces = [];
+
+    /**
+     * The classes of the registered callable objects
+     *
+     * @var array
+     */
+    protected $aClassNames = [];
+
+    /**
      * The registered callable objects
      *
      * @var array
      */
-    protected $aCallableDirs = [];
+    protected $aCallableObjects = [];
 
     /**
      * True if the Composer autoload is enabled
@@ -51,6 +65,40 @@ class CallableDir extends RequestPlugin
      * @var Autoloader
      */
     private $xAutoloader = null;
+
+    /**
+     * The value of the class parameter of the incoming Jaxon request
+     *
+     * @var string
+     */
+    protected $sRequestedClass = null;
+
+    /**
+     * The value of the method parameter of the incoming Jaxon request
+     *
+     * @var string
+     */
+    protected $sRequestedMethod = null;
+
+    public function __construct()
+    {
+        if(!empty($_GET['jxncls']))
+        {
+            $this->sRequestedClass = $_GET['jxncls'];
+        }
+        if(!empty($_GET['jxnmthd']))
+        {
+            $this->sRequestedMethod = $_GET['jxnmthd'];
+        }
+        if(!empty($_POST['jxncls']))
+        {
+            $this->sRequestedClass = $_POST['jxncls'];
+        }
+        if(!empty($_POST['jxnmthd']))
+        {
+            $this->sRequestedMethod = $_POST['jxnmthd'];
+        }
+    }
 
     /**
      * Return the name of this plugin
@@ -107,7 +155,6 @@ class CallableDir extends RequestPlugin
             throw new \Jaxon\Exception\Error($this->trans('errors.objects.invalid-declaration'));
         }
         $sDirectory = trim($sDirectory, DIRECTORY_SEPARATOR);
-        $this->aCallableDirs[] = $sDirectory;
 
         if(is_string($aOptions))
         {
@@ -122,12 +169,14 @@ class CallableDir extends RequestPlugin
         {
             return false;
         }
+        $aOptions['directory'] = $sDirectory;
 
         $aProtected = key_exists('protected', $aOptions) ? $aOptions['protected'] : [];
         if(!is_array($aProtected))
         {
             throw new \Jaxon\Exception\Error($this->trans('errors.objects.invalid-declaration'));
         }
+        $aOptions['protected'] = $aProtected;
 
         $sSeparator = key_exists('separator', $aOptions) ? $aOptions['separator'] : '.';
         // Only '.' and '_' are allowed to be used as separator. Any other value is ignored and '.' is used instead.
@@ -135,23 +184,40 @@ class CallableDir extends RequestPlugin
         {
             $sSeparator = '.';
         }
+        $aOptions['separator'] = $sSeparator;
 
         $sNamespace = key_exists('namespace', $aOptions) ? $aOptions['namespace'] : '';
         if(!($sNamespace = trim($sNamespace, ' \\')))
         {
             $sNamespace = '';
         }
+        $aOptions['namespace'] = $sNamespace;
+
+        // Todo: Change the keys in $aOptions['classes'] to have "\" as separator
+        // $aNewOptions = [];
+        // foreach($aOptions['classes'] as $sClass => $aOption)
+        // {
+        //     $sClass = trim(str_replace(['.', '_'], ['\\', '\\'], $sClass), ' \\');
+        //     $aNewOptions[$sClass] = $aOption;
+        // }
+        // $aOptions['classes'] = $aNewOptions;
+
         if(($sNamespace))
         {
-            // If there is an autoloader, register the dir with PSR4 autoloading
+            // Register the dir with PSR4 autoloading
             if(($this->xAutoloader))
             {
                 $this->xAutoloader->setPsr4($sNamespace . '\\', $sDirectory);
             }
+
+            $this->aNamespaces[$sNamespace] = $aOptions;
         }
-        elseif(($this->xAutoloader))
+        else
         {
-            // If there is an autoloader, register the dir with classmap autoloading
+            // Get the callable class plugin
+            $callableClassPlugin = $this->getPluginManager()->getRequestPlugin(Jaxon::CALLABLE_CLASS);
+
+            // Register the dir with classmap autoloading
             $itDir = new RecursiveDirectoryIterator($sDirectory);
             $itFile = new RecursiveIteratorIterator($itDir);
             // Iterate on dir content
@@ -162,102 +228,125 @@ class CallableDir extends RequestPlugin
                 {
                     continue;
                 }
-                $this->xAutoloader->addClassMap([$xFile->getBasename('.php') => $xFile->getPathname()]);
+
+                $sClassName = $xFile->getBasename('.php');
+                if(($this->xAutoloader))
+                {
+                    $this->xAutoloader->addClassMap([$sClassName => $xFile->getPathname()]);
+                }
+                elseif(!class_exists($sClassName))
+                {
+                    $aOptions['include'] = $xFile->getPathname();
+                }
+
+                $callableClassPlugin->register(Jaxon::CALLABLE_CLASS, $sClassName, $aOptions);
             }
         }
-
-        $this->aCallableDirs[$sDirectory] = [
-            'namespace' => $sNamespace,
-            'separator' => $sSeparator,
-            'protected' => $aProtected,
-        ];
 
         return true;
     }
 
     /**
-     * Register an instance of a given class from a file
+     * Find a callable object by class name
      *
-     * @param object            $xFile                  The PHP file containing the class
-     * @param string            $sDirectory             The path to the directory
-     * @param string|''         $sNamespace             The associated namespace
-     * @param string            $sSeparator             The character to use as separator in javascript class names
-     * @param array             $aProtected             The functions that are not to be exported
-     * @param array             $aOptions               The options to register the class with
+     * @param string        $sClassName            The class name of the callable object
      *
-     * @return void
+     * @return object
      */
-    protected function _registerClass($xFile, $sDirectory, $sNamespace = '', $sSeparator = '.',
-        array $aProtected = [], array $aOptions = [])
+    public function getCallableObject($sClassName)
     {
-        $sDS = DIRECTORY_SEPARATOR;
-        // Get the corresponding class path and name
-        $sClassPath = substr($xFile->getPath(), strlen($sDirectory));
-        $sClassPath = str_replace($sDS, '\\', trim($sClassPath, $sDS));
-        $sClassName = $xFile->getBasename('.php');
-        if(($sNamespace))
+        // Replace all separators ('.' and '_') with antislashes, and remove the antislashes
+        // at the beginning and the end of the class name.
+        $sClassName = trim(str_replace(['.', '_'], ['\\', '\\'], (string)$sClassName), '\\');
+
+        // Make sure the registered class exists
+        if(!class_exists('\\' . $sClassName))
         {
-            $sClassPath = ($sClassPath) ? $sNamespace . '\\' . $sClassPath : $sNamespace;
-            $sClassName = '\\' . $sClassPath . '\\' . $sClassName;
-        }
-        // Require the file only if autoload is enabled but there is no autoloader
-        if(($this->bAutoloadEnabled) && !($this->xAutoloader))
-        {
-            require_once($xFile->getPathname());
-        }
-        // Create and register an instance of the class
-        if(!array_key_exists('*', $aOptions) || !is_array($aOptions['*']))
-        {
-            $aOptions['*'] = [];
-        }
-        $aOptions['*']['separator'] = $sSeparator;
-        if(($sNamespace))
-        {
-            $aOptions['*']['namespace'] = $sNamespace;
-        }
-        if(($sClassPath))
-        {
-            $aOptions['*']['classpath'] = $sClassPath;
-        }
-        // Filter excluded methods
-        $aProtected = array_filter($aProtected, function ($sName) {return is_string($sName);});
-        if(count($aProtected) > 0)
-        {
-            $aOptions['*']['protected'] = $aProtected;
+            return null;
         }
 
-        $this->callableClassPlugin->register(Jaxon::CALLABLE_CLASS, $sClassName, $aOptions);
+        if(key_exists($sClassName, $this->aCallableObjects))
+        {
+            return $this->aCallableObjects[$sClassName];
+        }
+
+        // Find the corresponding namespace
+        $sNamespace = null;
+        foreach(array_keys($this->aNamespaces) as $_sNamespace)
+        {
+            if(substr($sClassName, 0, strlen($_sNamespace)) == $_sNamespace)
+            {
+                $sNamespace = $_sNamespace;
+                break;
+            }
+        }
+        if($sNamespace == null)
+        {
+            return null; // Class not registered
+        }
+
+        // Create the callable object
+        $xCallableObject = new \Jaxon\Request\Support\CallableObject($sClassName);
+        $aOptions = $this->aNamespaces[$sNamespace];
+        foreach($aOptions as $sMethod => $aValue)
+        {
+            foreach($aValue as $sName => $sValue)
+            {
+                $xCallableObject->configure($sMethod, $sName, $sValue);
+            }
+        }
+
+        $this->aCallableObjects[$sClassName] = $xCallableObject;
+        // Register the request factory for this callable object
+        jaxon()->di()->set($sClassName . '\Factory\Rq', function ($di) use ($sClassName) {
+            $xCallableObject = $this->aCallableObjects[$sClassName];
+            return new \Jaxon\Factory\Request\Portable($xCallableObject);
+        });
+        // Register the paginator factory for this callable object
+        jaxon()->di()->set($sClassName . '\Factory\Pg', function ($di) use ($sClassName) {
+            $xCallableObject = $this->aCallableObjects[$sClassName];
+            return new \Jaxon\Factory\Request\Paginator($xCallableObject);
+        });
+
+        return $xCallableObject;
     }
 
     /**
-     * Register callable objects from all class directories
+     * Find a user registered callable object by class name
      *
-     * @param array             $aOptions               The options to register the classes with
+     * @param string        $sClassName            The class name of the callable object
+     *
+     * @return object
+     */
+    public function getRegisteredObject($sClassName)
+    {
+        // Get the corresponding callable object
+        $xCallableObject = $this->getCallableObject($sClassName);
+        return ($xCallableObject) ? $xCallableObject->getRegisteredObject() : null;
+    }
+
+    /**
+     * Create callable objects for all registered namespaces
      *
      * @return void
      */
-    public function registerClasses(array $aOptions = [])
+    private function createCallableObjects()
     {
-        // Get the callable class plugin
-        $this->callableClassPlugin = $this->getPluginManager()->getRequestPlugin(Jaxon::CALLABLE_CLASS);
-
         $sDS = DIRECTORY_SEPARATOR;
-        // Change the keys in $aOptions to have "\" as separator
-        $aNewOptions = [];
-        foreach($aOptions as $key => $aOption)
-        {
-            $key = trim(str_replace(['.', '_'], ['\\', '\\'], $key), ' \\');
-            $aNewOptions[$key] = $aOption;
-        }
 
-        foreach($this->aCallableDirs as $sDirectory => $aDirOptions)
+        foreach($this->aNamespaces as $sNamespace => $aOptions)
         {
-            // Get the namespace
-            $sNamespace = $aDirOptions['namespace'];
+            if(key_exists($sNamespace, $this->aClassNames))
+            {
+                continue;
+            }
 
+            $this->aClassNames[$sNamespace] = [];
+
+            // Iterate on dir content
+            $sDirectory = $aOptions['directory'];
             $itDir = new RecursiveDirectoryIterator($sDirectory);
             $itFile = new RecursiveIteratorIterator($itDir);
-            // Iterate on dir content
             foreach($itFile as $xFile)
             {
                 // skip everything except PHP files
@@ -266,27 +355,22 @@ class CallableDir extends RequestPlugin
                     continue;
                 }
 
-                // Get the class name
-                $sClassPath = substr($xFile->getPath(), strlen($sDirectory));
-                $sClassPath = trim(str_replace($sDS, '\\', $sClassPath), '\\');
-                $sClassName = $xFile->getBasename('.php');
-                if(($sClassPath))
+                // Find the class path (the same as the class namespace)
+                $sClassPath = $sNamespace;
+                $sRelativePath = substr($xFile->getPath(), strlen($sDirectory));
+                $sRelativePath = trim(str_replace($sDS, '\\', $sClassPath), '\\');
+                if(($sRelativePath))
                 {
-                    $sClassName = $sClassPath . '\\' . $sClassName;
+                    $sClassPath .= '\\' . $sRelativePath;
                 }
-                if(($sNamespace))
+                if(!key_exists($sClassPath, $this->aClassNames))
                 {
-                    $sClassName = $sNamespace . '\\' . $sClassName;
-                }
-                // Get the class options
-                $aClassOptions = [];
-                if(array_key_exists($sClassName, $aNewOptions))
-                {
-                    $aClassOptions = $aNewOptions[$sClassName];
+                    $this->aClassNames[$sClassPath] = [];
                 }
 
-                $this->_registerClass($xFile, $sDirectory, $sNamespace,
-                    $aDirOptions['separator'], $aDirOptions['protected'], $aClassOptions);
+                $sClassName = $xFile->getBasename('.php');
+                $this->aClassNames[$sClassPath][] = $sClassName;
+                $this->getCallableObject($sNamespace . '\\' . $sClass);
             }
         }
     }
@@ -298,15 +382,23 @@ class CallableDir extends RequestPlugin
      */
     public function generateHash()
     {
-        if(count($this->aCallableDirs) == 0)
+        if(count($this->aNamespaces) == 0)
         {
             return '';
         }
+
+        $this->createCallableObjects();
+
         $sHash = '';
-        foreach($this->aCallableDirs as $sDirectory => $aDirOptions)
+        foreach($this->aNamespaces as $sNamespace => $aOptions)
         {
-            $sHash .= $sDirectory . $aDirOptions['namespace'] . $aDirOptions['separator'];
+            $sHash .= $sNamespace . $aOptions['directory'] . $aOptions['separator'];
         }
+        foreach($this->aCallableObjects as $sClassName => $xCallableObject)
+        {
+            $sHash .= $sClassName . implode('|', $xCallableObject->getMethods());
+        }
+
         return md5($sHash);
     }
 
@@ -317,8 +409,39 @@ class CallableDir extends RequestPlugin
      */
     public function getScript()
     {
-        $code = '';
-        return $code;
+        $this->createCallableObjects();
+
+        // Generate code for javascript objects declaration
+        $sJaxonPrefix = $this->getOption('core.prefix.class');
+        $aJsClasses = [];
+        $sCode = '';
+        foreach(array_keys($this->aClassNames) as $sNamespace)
+        {
+            // if(key_exists('separator', $aOptions) && $aOptions['separator'] != '.')
+            // {
+            //     continue;
+            // }
+            $offset = 0;
+            $sJsClasses = str_replace('\\', '.', $sNamespace);
+            $sJsClasses .= '.Null'; // This is a sentinel. The last token is not processed in the while loop.
+            while(($dotPosition = strpos($sJsClasses, '.', $offset)) !== false)
+            {
+                $sJsClass = substr($sJsClasses, 0, $dotPosition);
+                // Generate code for this object
+                if(!key_exists($sJsClass, $aJsClasses))
+                {
+                    $sCode .= "$sJaxonPrefix$sJsClass = {};\n";
+                    $aJsClasses[$sJsClass] = $sJsClass;
+                }
+                $offset = $dotPosition + 1;
+            }
+        }
+        foreach($this->aCallableObjects as $xCallableObject)
+        {
+            $sCode .= $xCallableObject->getScript();
+        }
+
+        return $sCode;
     }
 
     /**
@@ -328,8 +451,19 @@ class CallableDir extends RequestPlugin
      */
     public function canProcessRequest()
     {
-        // This plugin never processes any request
-        return false;
+        // Check the validity of the class name
+        if(($this->sRequestedClass) && !$this->validateClass($this->sRequestedClass))
+        {
+            $this->sRequestedClass = null;
+            $this->sRequestedMethod = null;
+        }
+        // Check the validity of the method name
+        if(($this->sRequestedMethod) && !$this->validateMethod($this->sRequestedMethod))
+        {
+            $this->sRequestedClass = null;
+            $this->sRequestedMethod = null;
+        }
+        return ($this->sRequestedClass != null && $this->sRequestedMethod != null);
     }
 
     /**
@@ -339,6 +473,24 @@ class CallableDir extends RequestPlugin
      */
     public function processRequest()
     {
-        return false;
+        if(!$this->canProcessRequest())
+        {
+            return false;
+        }
+
+        $aArgs = $this->getRequestManager()->process();
+
+        // Find the requested method
+        $xCallableObject = $this->getCallableObject($this->sRequestedClass);
+        if(!$xCallableObject || !$xCallableObject->hasMethod($this->sRequestedMethod))
+        {
+            // Unable to find the requested object or method
+            throw new \Jaxon\Exception\Error($this->trans('errors.objects.invalid',
+                ['class' => $this->sRequestedClass, 'method' => $this->sRequestedMethod]));
+        }
+
+        // Call the requested method
+        $xCallableObject->call($this->sRequestedMethod, $aArgs);
+        return true;
     }
 }

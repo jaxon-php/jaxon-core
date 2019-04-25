@@ -32,18 +32,18 @@ class CallableClass extends RequestPlugin
     use \Jaxon\Utils\Traits\Translator;
 
     /**
+     * The classes of the registered callable objects
+     *
+     * @var array
+     */
+    protected $aClassOptions = [];
+
+    /**
      * The registered callable objects
      *
      * @var array
      */
-    protected $aCallableClasses = [];
-
-    /**
-     * The classpaths of the registered callable objects
-     *
-     * @var array
-     */
-    protected $aClassPaths = [];
+    protected $aCallableObjects = [];
 
     /**
      * The value of the class parameter of the incoming Jaxon request
@@ -105,71 +105,102 @@ class CallableClass extends RequestPlugin
             return false;
         }
 
-        if(!is_string($sClassName) || !class_exists($sClassName))
+        if(!is_string($sClassName))
         {
             throw new \Jaxon\Exception\Error($this->trans('errors.objects.invalid-declaration'));
         }
-        $sClassName = trim($sClassName, '\\');
-        $this->aCallableClasses[] = $sClassName;
-
         if(!is_array($aOptions))
         {
             throw new \Jaxon\Exception\Error($this->trans('errors.objects.invalid-declaration'));
         }
 
-        // Save the classpath and the separator in this class
-        if(key_exists('*', $aOptions) && is_array($aOptions['*']))
-        {
-            $_aOptions = $aOptions['*'];
-            $sSeparator = '.';
-            if(key_exists('separator', $_aOptions))
-            {
-                $sSeparator = trim($_aOptions['separator']);
-            }
-            if(!in_array($sSeparator, ['.', '_']))
-            {
-                $sSeparator = '.';
-            }
-            $_aOptions['separator'] = $sSeparator;
+        $sClassName = trim($sClassName, '\\');
+        $this->aClassOptions[$sClassName] = $aOptions;
 
-            if(array_key_exists('classpath', $_aOptions))
+        return true;
+    }
+
+    /**
+     * Find a callable object by class name
+     *
+     * @param string        $sClassName            The class name of the callable object
+     *
+     * @return object
+     */
+    public function getCallableObject($sClassName)
+    {
+        // Replace all separators ('.' and '_') with antislashes, and remove the antislashes
+        // at the beginning and the end of the class name.
+        $sClassName = trim(str_replace(['.', '_'], ['\\', '\\'], (string)$sClassName), '\\');
+
+        if(!key_exists($sClassName, $this->aClassOptions))
+        {
+            return null; // Class not registered
+        }
+
+        if(key_exists($sClassName, $this->aCallableObjects))
+        {
+            return $this->aCallableObjects[$sClassName];
+        }
+
+        // Create the callable object
+        $xCallableObject = new \Jaxon\Request\Support\CallableObject($sClassName);
+        foreach($aOptions as $sMethod => $aValue)
+        {
+            foreach($aValue as $sName => $sValue)
             {
-                $_aOptions['classpath'] = trim($_aOptions['classpath'], ' \\._');
-                // Save classpath with "\" in the parameters
-                $_aOptions['classpath'] = str_replace(['.', '_'], ['\\', '\\'], $_aOptions['classpath']);
-                // Save classpath with separator locally
-                $this->aClassPaths[] = str_replace('\\', $sSeparator, $_aOptions['classpath']);
+                $xCallableObject->configure($sMethod, $sName, $sValue);
             }
         }
 
-        // Register the callable object
-        jaxon()->di()->set($sClassName, function () use ($sClassName, $aOptions) {
-            $xCallableObject = new \Jaxon\Request\Support\CallableObject($sClassName);
+        // Make sure the registered class exists
+        // We need to check this after the callable object is configured
+        // to take the 'include' option into account.
+        if(!class_exists($sClassName))
+        {
+            return null;
+        }
 
-            foreach($aOptions as $sMethod => $aValue)
-            {
-                foreach($aValue as $sName => $sValue)
-                {
-                    $xCallableObject->configure($sMethod, $sName, $sValue);
-                }
-            }
-
-            return $xCallableObject;
-        });
-
+        $this->aCallableObjects[$sClassName] = $xCallableObject;
         // Register the request factory for this callable object
         jaxon()->di()->set($sClassName . '\Factory\Rq', function ($di) use ($sClassName) {
-            $xCallableObject = $di->get($sClassName);
+            $xCallableObject = $this->aCallableObjects[$sClassName];
             return new \Jaxon\Factory\Request\Portable($xCallableObject);
         });
-
         // Register the paginator factory for this callable object
         jaxon()->di()->set($sClassName . '\Factory\Pg', function ($di) use ($sClassName) {
-            $xCallableObject = $di->get($sClassName);
+            $xCallableObject = $this->aCallableObjects[$sClassName];
             return new \Jaxon\Factory\Request\Paginator($xCallableObject);
         });
 
-        return true;
+        return $xCallableObject;
+    }
+
+    /**
+     * Find a user registered callable object by class name
+     *
+     * @param string        $sClassName            The class name of the callable object
+     *
+     * @return object
+     */
+    public function getRegisteredObject($sClassName)
+    {
+        // Get the corresponding callable object
+        $xCallableObject = $this->getCallableObject($sClassName);
+        return ($xCallableObject) ? $xCallableObject->getRegisteredObject() : null;
+    }
+
+    /**
+     * Create callable objects for all registered namespaces
+     *
+     * @return void
+     */
+    private function createCallableObjects()
+    {
+        foreach(array_keys($this->aClassOptions) as $sClassName)
+        {
+            $this->getCallableObject($sClassName);
+        }
     }
 
     /**
@@ -179,13 +210,14 @@ class CallableClass extends RequestPlugin
      */
     public function generateHash()
     {
-        $di = jaxon()->di();
+        $this->createCallableObjects();
+
         $sHash = '';
-        foreach($this->aCallableClasses as $sName)
+        foreach($this->aCallableObjects as $sClassName => $xCallableObject)
         {
-            $xCallableObject = $di->get($sName);
-            $sHash .= $sName . implode('|', $xCallableObject->getMethods());
+            $sHash .= $sClassName . implode('|', $xCallableObject->getMethods());
         }
+
         return md5($sHash);
     }
 
@@ -196,36 +228,38 @@ class CallableClass extends RequestPlugin
      */
     public function getScript()
     {
-        $code = '';
+        $this->createCallableObjects();
 
         // Generate code for javascript objects declaration
         $sJaxonPrefix = $this->getOption('core.prefix.class');
-        $classes = [];
-        foreach($this->aClassPaths as $sClassPath)
+        $aJsClasses = [];
+        $sCode = '';
+        foreach($this->aClassOptions as $sClassName => $aOptions)
         {
-            $offset = 0;
-            $sClassPath .= '.Null'; // This is a sentinel. The last token is not processed in the while loop.
-            while(($dotPosition = strpos($sClassPath, '.', $offset)) !== false)
+            if(key_exists('separator', $aOptions) && $aOptions['separator'] != '.')
             {
-                $class = substr($sClassPath, 0, $dotPosition);
+                continue;
+            }
+            $offset = 0;
+            $sJsClasses = str_replace('\\', '.', $sClassName);
+            while(($dotPosition = strpos($sJsClasses, '.', $offset)) !== false)
+            {
+                $sJsClass = substr($sJsClasses, 0, $dotPosition);
                 // Generate code for this object
-                if(!key_exists($class, $classes))
+                if(!key_exists($sJsClass, $aJsClasses))
                 {
-                    $code .= "$sJaxonPrefix$class = {};\n";
-                    $classes[$class] = $class;
+                    $sCode .= "$sJaxonPrefix$sJsClass = {};\n";
+                    $aJsClasses[$sJsClass] = $sJsClass;
                 }
                 $offset = $dotPosition + 1;
             }
         }
-
-        // Generate code for javascript methods
-        $di = jaxon()->di();
-        foreach($this->aCallableClasses as $sName)
+        foreach($this->aCallableObjects as $xCallableObject)
         {
-            $xCallableObject = $di->get($sName);
-            $code .= $xCallableObject->getScript();
+            $sCode .= $xCallableObject->getScript();
         }
-        return $code;
+
+        return $sCode;
     }
 
     /**
@@ -247,7 +281,8 @@ class CallableClass extends RequestPlugin
             $this->sRequestedClass = null;
             $this->sRequestedMethod = null;
         }
-        return ($this->sRequestedClass != null && $this->sRequestedMethod != null);
+        return ($this->sRequestedClass != null && $this->sRequestedMethod != null &&
+            key_exists($this->sRequestedClass, $this->aCallableObjects));
     }
 
     /**
@@ -276,39 +311,5 @@ class CallableClass extends RequestPlugin
         // Call the requested method
         $xCallableObject->call($this->sRequestedMethod, $aArgs);
         return true;
-    }
-
-    /**
-     * Find a callable object by class name
-     *
-     * @param string        $sClassName            The class name of the callable object
-     *
-     * @return object
-     */
-    public function getCallableObject($sClassName)
-    {
-        // Replace all separators ('.' and '_') with antislashes, and remove the antislashes
-        // at the beginning and the end of the class name.
-        $sClassName = trim(str_replace(['.', '_'], ['\\', '\\'], (string)$sClassName), '\\');
-        // Register an instance of the requested class, if it isn't yet
-        if(!key_exists($sClassName, $this->aCallableClasses))
-        {
-            $this->getPluginManager()->registerClass($sClassName);
-        }
-        return key_exists($sClassName, $this->aCallableClasses) ? jaxon()->di()->get($sClassName) : null;
-    }
-
-    /**
-     * Find a user registered callable object by class name
-     *
-     * @param string        $sClassName            The class name of the callable object
-     *
-     * @return object
-     */
-    public function getRegisteredObject($sClassName)
-    {
-        // Get the corresponding callable object
-        $xCallableObject = $this->getCallableObject($sClassName);
-        return ($xCallableObject) ? $xCallableObject->getRegisteredObject() : null;
     }
 }
