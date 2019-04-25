@@ -26,6 +26,23 @@ use Jaxon\Utils\Config\Json;
 trait Config
 {
     /**
+     * The current Jaxon version
+     *
+     * @return string
+     */
+    abstract public function getVersion();
+
+    /**
+     * Set the values of an array of config options
+     *
+     * @param array         $aOptions           The config options
+     * @param string        $sKeys              The keys of the options in the array
+     *
+     * @return void
+     */
+    abstract public function setOptions($aOptions, $sKeys = '');
+
+    /**
      * Set the default options of all components of the library
      *
      * @return void
@@ -33,7 +50,7 @@ trait Config
     private function setDefaultOptions()
     {
         // The default configuration settings.
-        $this->setOptions(array(
+        $this->setOptions([
             'core.version'                      => $this->getVersion(),
             'core.language'                     => 'en',
             'core.encoding'                     => 'utf-8',
@@ -61,7 +78,7 @@ trait Config
             'js.app.dir'                        => '',
             'js.app.minify'                     => true,
             'js.app.options'                    => '',
-        ));
+        ]);
     }
 
     /**

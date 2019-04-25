@@ -29,7 +29,35 @@ use Closure;
 
 trait Upload
 {
-   /**
+    /**
+     * Get the plugin manager
+     *
+     * @return Jaxon\Plugin\Manager
+     */
+    abstract public function getPluginManager();
+
+    /**
+     * Get the value of a config option
+     *
+     * @param string            $sName              The option name
+     * @param mixed             $xDefault           The default value, to be returned if the option is not defined
+     *
+     * @return mixed            The option value, or its default value
+     */
+    abstract public function getOption($sName, $xDefault = null);
+
+    /**
+     * Get a translated string
+     *
+     * @param string        $sText                The key of the translated string
+     * @param string        $aPlaceHolders        The placeholders of the translated string
+     * @param string        $sLanguage            The language of the translated string
+     *
+     * @return string        The translated string
+     */
+    abstract public function trans($sText, array $aPlaceHolders = [], $sLanguage = null);
+
+    /**
      * Check if uploaded files are available
      *
      * @return boolean
@@ -43,7 +71,7 @@ trait Upload
         return $xUploadPlugin->canProcessRequest();
     }
 
-   /**
+    /**
      * Check uploaded files validity and move them to the user dir
      *
      * @return boolean

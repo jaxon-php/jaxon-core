@@ -24,6 +24,13 @@ use Jaxon\DI\Container;
 trait Autoload
 {
     /**
+     * Get the plugin manager
+     *
+     * @return Jaxon\Plugin\Manager
+     */
+    abstract public function getPluginManager();
+
+    /**
      * Set Jaxon to use the Composer autoloader
      *
      * @return void

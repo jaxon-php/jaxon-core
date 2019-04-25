@@ -290,7 +290,7 @@ class CallableDir extends RequestPlugin
         $aOptions = $this->aNamespaces[$sNamespace];
         foreach($aOptions as $sClass => $aClassOptions)
         {
-            if($sClass == '*' || trim(str_replace(['.', '_'], ['\\', '\\'], $sClass)) == $sClassName)
+            if($sClass == '*' || trim(str_replace(['.', '_'], ['\\', '\\'], $sClass), ' \\') == $sClassName)
             {
                 foreach($aClassOptions as $sMethod => $aValue)
                 {
@@ -305,12 +305,12 @@ class CallableDir extends RequestPlugin
         $this->aCallableObjects[$sClassName] = $xCallableObject;
         // jaxon()->di()->set($sClassName, $xCallableObject);
         // Register the request factory for this callable object
-        jaxon()->di()->set($sClassName . '_Factory_Rq', function ($di) use ($sClassName) {
+        jaxon()->di()->set($sClassName . '_Factory_Rq', function () use ($sClassName) {
             $xCallableObject = $this->aCallableObjects[$sClassName];
             return new \Jaxon\Factory\Request\Portable($xCallableObject);
         });
         // Register the paginator factory for this callable object
-        jaxon()->di()->set($sClassName . '_Factory_Pg', function ($di) use ($sClassName) {
+        jaxon()->di()->set($sClassName . '_Factory_Pg', function () use ($sClassName) {
             $xCallableObject = $this->aCallableObjects[$sClassName];
             return new \Jaxon\Factory\Request\Paginator($xCallableObject);
         });
@@ -366,7 +366,7 @@ class CallableDir extends RequestPlugin
                 $sClassPath = $sNamespace;
                 $sRelativePath = substr($xFile->getPath(), strlen($sDirectory));
                 $sRelativePath = trim(str_replace($sDS, '\\', $sClassPath), '\\');
-                if(($sRelativePath))
+                if($sRelativePath != '')
                 {
                     $sClassPath .= '\\' . $sRelativePath;
                 }
@@ -377,7 +377,7 @@ class CallableDir extends RequestPlugin
 
                 $sClassName = $xFile->getBasename('.php');
                 $this->aClassNames[$sClassPath][] = $sClassName;
-                $this->getCallableObject($sNamespace . '\\' . $sClass);
+                $this->getCallableObject($sNamespace . '\\' . $sClassName);
             }
         }
     }
@@ -459,18 +459,18 @@ class CallableDir extends RequestPlugin
     public function canProcessRequest()
     {
         // Check the validity of the class name
-        if(($this->sRequestedClass) && !$this->validateClass($this->sRequestedClass))
+        if($this->sRequestedClass !== null && !$this->validateClass($this->sRequestedClass))
         {
             $this->sRequestedClass = null;
             $this->sRequestedMethod = null;
         }
         // Check the validity of the method name
-        if(($this->sRequestedMethod) && !$this->validateMethod($this->sRequestedMethod))
+        if($this->sRequestedMethod !== null && !$this->validateMethod($this->sRequestedMethod))
         {
             $this->sRequestedClass = null;
             $this->sRequestedMethod = null;
         }
-        return ($this->sRequestedClass != null && $this->sRequestedMethod != null);
+        return ($this->sRequestedClass !== null && $this->sRequestedMethod !== null);
     }
 
     /**

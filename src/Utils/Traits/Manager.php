@@ -21,7 +21,7 @@ trait Manager
     /**
      * Get the plugin manager
      *
-     * @return object        The plugin manager
+     * @return Jaxon\Plugin\Manager
      */
     public function getPluginManager()
     {
@@ -33,7 +33,7 @@ trait Manager
      *
      * @param string        $sName                The name of the plugin
      *
-     * @return \Jaxon\Plugin\Response
+     * @return Jaxon\Plugin\Response
      */
     public function plugin($sName)
     {
@@ -43,7 +43,7 @@ trait Manager
     /**
      * Get the request manager
      *
-     * @return object        The request manager
+     * @return Jaxon\Request\Manager
      */
     public function getRequestManager()
     {
@@ -53,7 +53,7 @@ trait Manager
     /**
      * Get the response manager
      *
-     * @return object        The response manager
+     * @return Jaxon\Response\Manager
      */
     public function getResponseManager()
     {
@@ -63,7 +63,7 @@ trait Manager
     /**
      * Get the Global Response object
      *
-     * @return object        The Global Response object
+     * @return Jaxon\Response\Response
      */
     public function getResponse()
     {
@@ -73,7 +73,7 @@ trait Manager
     /**
      * Create a new Jaxon response object
      *
-     * @return \Jaxon\Response\Response        The new Jaxon response object
+     * @return Jaxon\Response\Response
      */
     public function newResponse()
     {

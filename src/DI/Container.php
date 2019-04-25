@@ -195,7 +195,7 @@ class Container
     /**
      * Get the plugin manager
      *
-     * @return object        The plugin manager
+     * @return Jaxon\Plugin\Manager
      */
     public function getPluginManager()
     {
@@ -205,7 +205,7 @@ class Container
     /**
      * Get the request manager
      *
-     * @return object        The request manager
+     * @return Jaxon\Request\Manager
      */
     public function getRequestManager()
     {
@@ -215,7 +215,7 @@ class Container
     /**
      * Get the request factory
      *
-     * @return object        The request factory
+     * @return Jaxon\Factory\Request
      */
     public function getRequestFactory()
     {
@@ -225,7 +225,7 @@ class Container
     /**
      * Get the parameter factory
      *
-     * @return object        The parameter factory
+     * @return Jaxon\Factory\Parameter
      */
     public function getParameterFactory()
     {
@@ -235,7 +235,7 @@ class Container
     /**
      * Get the response manager
      *
-     * @return object        The response manager
+     * @return Jaxon\Response\Manager
      */
     public function getResponseManager()
     {
@@ -245,7 +245,7 @@ class Container
     /**
      * Get the config manager
      *
-     * @return Jaxon\Utils\Config\Config            The config manager
+     * @return Jaxon\Utils\Config\Config
      */
     public function getConfig()
     {
@@ -265,7 +265,7 @@ class Container
     /**
      * Get the minifier
      *
-     * @return object        The minifier
+     * @return Jaxon\Utils\Template\Minifier
      */
     public function getMinifier()
     {
@@ -275,7 +275,7 @@ class Container
     /**
      * Get the translator
      *
-     * @return object        The translator
+     * @return Jaxon\Utils\Translation\Translator
      */
     public function getTranslator()
     {
@@ -285,7 +285,7 @@ class Container
     /**
      * Get the template engine
      *
-     * @return object        The template engine
+     * @return Jaxon\Utils\Template\Template
      */
     public function getTemplate()
     {
@@ -295,7 +295,7 @@ class Container
     /**
      * Get the validator
      *
-     * @return object        The validator
+     * @return Jaxon\Utils\Validation\Validator
      */
     public function getValidator()
     {
@@ -305,7 +305,7 @@ class Container
     /**
      * Get the paginator
      *
-     * @return object        The paginator
+     * @return Jaxon\Utils\Pagination\Paginator
      */
     public function getPaginator()
     {
@@ -315,7 +315,7 @@ class Container
     /**
      * Set the pagination renderer
      *
-     * @param object        $xRenderer              The pagination renderer
+     * @param Jaxon\Utils\Pagination\Renderer  $xRenderer    The pagination renderer
      *
      * @return void
      */
@@ -327,7 +327,7 @@ class Container
     /**
      * Get the event dispatcher
      *
-     * @return object        The event dispatcher
+     * @return Lemon\Event\EventDispatcher
      */
     public function getEventDispatcher()
     {
@@ -335,9 +335,9 @@ class Container
     }
 
     /**
-     * Get the Global Response object
+     * Get the global Response object
      *
-     * @return object        The Global Response object
+     * @return Jaxon\Response\Response
      */
     public function getResponse()
     {
@@ -347,7 +347,7 @@ class Container
     /**
      * Create a new Jaxon response object
      *
-     * @return \Jaxon\Response\Response        The new Jaxon response object
+     * @return Jaxon\Response\Response
      */
     public function newResponse()
     {
@@ -357,7 +357,7 @@ class Container
     /**
      * Get the main Jaxon object
      *
-     * @return object        The Jaxon object
+     * @return Jaxon\Jaxon
      */
     public function getJaxon()
     {
@@ -367,7 +367,7 @@ class Container
     /**
      * Get the Jaxon library version number
      *
-     * @return string        The version number
+     * @return string
      */
     public function getVersion()
     {
@@ -377,7 +377,7 @@ class Container
     /**
      * Get the Sentry instance
      *
-     * @return object        The Sentry instance
+     * @return Jaxon\Sentry\Sentry
      */
     public function getSentry()
     {
@@ -387,7 +387,7 @@ class Container
     /**
      * Set the Sentry instance
      *
-     * @param object                $xSentry            The Sentry instance
+     * @param Jaxon\Sentry\Sentry     $xSentry            The Sentry instance
      *
      * @return void
      */
@@ -399,7 +399,7 @@ class Container
     /**
      * Get the Armada instance
      *
-     * @return object        The Armada instance
+     * @return Jaxon\Armada\Armada
      */
     public function getArmada()
     {
@@ -409,7 +409,7 @@ class Container
     /**
      * Set the Armada instance
      *
-     * @param object                $xArmada            The Armada instance
+     * @param Jaxon\Armada\Armada     $xArmada            The Armada instance
      *
      * @return void
      */
@@ -474,11 +474,11 @@ class Container
     }
 
     /**
-     * Get the view object
+     * Get the view renderer
      *
      * @param string                $sId                The unique identifier of the view renderer
      *
-     * @return object        The view object
+     * @return Jaxon\Sentry\Interfaces\View
      */
     public function getViewRenderer($sId = '')
     {
@@ -494,7 +494,7 @@ class Container
     /**
      * Get the session object
      *
-     * @return object        The session object
+     * @return Jaxon\Sentry\Interfaces\Session
      */
     public function getSessionManager()
     {
@@ -504,7 +504,7 @@ class Container
     /**
      * Set the session
      *
-     * @param Closure               $xClosure           A closure to create the session instance
+     * @param Closure      $xClosure      A closure to create the session instance
      *
      * @return void
      */

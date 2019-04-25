@@ -272,18 +272,18 @@ class CallableClass extends RequestPlugin
     public function canProcessRequest()
     {
         // Check the validity of the class name
-        if(($this->sRequestedClass) && !$this->validateClass($this->sRequestedClass))
+        if($this->sRequestedClass !== null && !$this->validateClass($this->sRequestedClass))
         {
             $this->sRequestedClass = null;
             $this->sRequestedMethod = null;
         }
         // Check the validity of the method name
-        if(($this->sRequestedMethod) && !$this->validateMethod($this->sRequestedMethod))
+        if($this->sRequestedMethod !== null && !$this->validateMethod($this->sRequestedMethod))
         {
             $this->sRequestedClass = null;
             $this->sRequestedMethod = null;
         }
-        return ($this->sRequestedClass != null && $this->sRequestedMethod != null &&
+        return ($this->sRequestedClass !== null && $this->sRequestedMethod !== null &&
             key_exists($this->sRequestedClass, $this->aCallableObjects));
     }
 
