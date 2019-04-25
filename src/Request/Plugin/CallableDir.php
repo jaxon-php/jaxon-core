@@ -365,7 +365,7 @@ class CallableDir extends RequestPlugin
                 // Find the class path (the same as the class namespace)
                 $sClassPath = $sNamespace;
                 $sRelativePath = substr($xFile->getPath(), strlen($sDirectory));
-                $sRelativePath = trim(str_replace($sDS, '\\', $sClassPath), '\\');
+                $sRelativePath = trim(str_replace($sDS, '\\', $sRelativePath), '\\');
                 if($sRelativePath != '')
                 {
                     $sClassPath .= '\\' . $sRelativePath;

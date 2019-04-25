@@ -172,7 +172,8 @@ class FileUpload extends RequestPlugin
         {
             if(is_array($aFile['name']))
             {
-                for($i = 0; $i < count($aFile['name']); $i++)
+                $nFileCount = count($aFile['name']);
+                for($i = 0; $i < $nFileCount; $i++)
                 {
                     if(!$aFile['name'][$i])
                     {
@@ -237,7 +238,7 @@ class FileUpload extends RequestPlugin
                     throw new \Jaxon\Exception\Error($this->getValidatorMessage());
                 }
                 // Get the path to the upload dir
-                $sUploadDir = $this->getUploadDir($sVarName);
+                $this->getUploadDir($sVarName);
             }
         }
 
