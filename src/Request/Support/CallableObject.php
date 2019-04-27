@@ -123,7 +123,7 @@ class CallableObject
         switch($sName)
         {
         // Set the separator
-        case 'separator';
+        case 'separator':
             if($sValue == '_' || $sValue == '.')
             {
                 $this->separator = $sValue;
