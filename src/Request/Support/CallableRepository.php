@@ -96,13 +96,13 @@ class CallableRepository
         {
             $aOptions['protected'] = $aDirectoryOptions['protected'];
         }
-        if(key_exists('*', $aDirectoryOptions[$sNamespace]))
+        if(key_exists('*', $aDirectoryOptions))
         {
-            $aOptions = array_merge($aOptions, $aDirectoryOptions[$sNamespace]['*']);
+            $aOptions = array_merge($aOptions, $aDirectoryOptions['*']);
         }
-        if(key_exists($sClassName, $aDirectoryOptions[$sNamespace]))
+        if(key_exists($sClassName, $aDirectoryOptions))
         {
-            $aOptions = array_merge($aOptions, $aDirectoryOptions[$sNamespace][$sClassName]);
+            $aOptions = array_merge($aOptions, $aDirectoryOptions[$sClassName]);
         }
 
         return $aOptions;
@@ -367,7 +367,7 @@ class CallableRepository
 
         $aJsClasses = [];
         $sCode = '';
-        foreach(array_keys($this->sNamespaces) as $sNamespace)
+        foreach(array_keys($this->aNamespaces) as $sNamespace)
         {
             $offset = 0;
             $sJsNamespace = str_replace('\\', '.', $sNamespace);
