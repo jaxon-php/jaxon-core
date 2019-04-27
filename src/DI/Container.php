@@ -141,7 +141,7 @@ class Container
         };
         // Pagination Renderer
         $this->coreContainer['jaxon.pagination.renderer'] = function ($c) {
-            return new \Jaxon\Utils\Pagination\Renderer();
+            return new \Jaxon\Utils\Pagination\Renderer($c['jaxon.core.template']);
         };
         // Pagination Paginator
         $this->coreContainer['jaxon.pagination.paginator'] = function ($c) {

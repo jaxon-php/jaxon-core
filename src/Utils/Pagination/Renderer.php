@@ -14,6 +14,8 @@
 
 namespace Jaxon\Utils\Pagination;
 
+use Jaxon\Utils\Template\Template;
+
 class Renderer
 {
     /**
@@ -22,6 +24,25 @@ class Renderer
      * @var Paginator
      */
     protected $xPaginator = null;
+
+    /**
+     * The template manager.
+     *
+     * Will be used to render HTML code for links.
+     *
+     * @var Template
+     */
+    protected $xTemplate = null;
+
+    /**
+     * The class contructor
+     *
+     * @param Template          $xTemplate
+     */
+    public function __constructor(Template $xTemplate)
+    {
+        $this->xTemplate = $xTemplate;
+    }
 
     /**
      * Set the paginator to be rendered.
@@ -36,19 +57,6 @@ class Renderer
     }
 
     /**
-     * Render a pagination template
-     *
-     * @param string        $sTemplate            The name of template to be rendered
-     * @param string        $aVars                The template vars
-     *
-     * @return string        The template content
-     */
-    protected function _render($sTemplate, array $aVars = [])
-    {
-        return jaxon()->render($sTemplate, $aVars);
-    }
-
-    /**
      * Render the previous link.
      *
      * @return string
@@ -59,7 +67,8 @@ class Renderer
         {
             return '';
         }
-        return $this->_render('pagination::links/prev', ['call' => $sCall, 'text' => $this->xPaginator->getPreviousText()]);
+        return $this->xTemplate->render('pagination::links/prev',
+            ['call' => $sCall, 'text' => $this->xPaginator->getPreviousText()]);
     }
 
     /**
@@ -73,7 +82,8 @@ class Renderer
         {
             return '';
         }
-        return $this->_render('pagination::links/next', ['call' => $sCall, 'text' => $this->xPaginator->getNextText()]);
+        return $this->xTemplate->render('pagination::links/next',
+            ['call' => $sCall, 'text' => $this->xPaginator->getNextText()]);
     }
 
     /**
@@ -89,11 +99,11 @@ class Renderer
             if($page['call'])
             {
                 $sTemplate = ($page['isCurrent'] ? 'pagination::links/current' : 'pagination::links/enabled');
-                $sLinks .= $this->_render($sTemplate, ['call' => $page['call'], 'text' => $page['num']]);
+                $sLinks .= $this->xTemplate->render($sTemplate, ['call' => $page['call'], 'text' => $page['num']]);
             }
             else
             {
-                $sLinks .= $this->_render('pagination::links/disabled', ['text' => $page['num']]);
+                $sLinks .= $this->xTemplate->render('pagination::links/disabled', ['text' => $page['num']]);
             }
         }
         return $sLinks;
@@ -106,7 +116,7 @@ class Renderer
      */
     public function render()
     {
-        return $this->_render('pagination::wrapper', [
+        return $this->xTemplate->render('pagination::wrapper', [
             'links' => $this->getLinks(),
             'prev' => $this->getPrevLink(),
             'next' => $this->getNextLink(),
