@@ -55,7 +55,7 @@ class CallableClass extends RequestPlugin
     /**
      * The class constructor
      *
-     * @param CallableRepository        $repository
+     * @param CallableRepository        $xRepository
      */
     public function __construct(CallableRepository $xRepository)
     {

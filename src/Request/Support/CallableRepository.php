@@ -253,12 +253,12 @@ class CallableRepository
         $this->aCallableObjects[$sClassName] = $xCallableObject;
 
         // Register the request factory for this callable object
-        jaxon()->di()->set($sClassName . '_Factory_Rq', function ($di) use ($sClassName) {
+        jaxon()->di()->set($sClassName . '_Factory_Rq', function () use ($sClassName) {
             $xCallableObject = $this->aCallableObjects[$sClassName];
             return new \Jaxon\Factory\Request\Portable($xCallableObject);
         });
         // Register the paginator factory for this callable object
-        jaxon()->di()->set($sClassName . '_Factory_Pg', function ($di) use ($sClassName) {
+        jaxon()->di()->set($sClassName . '_Factory_Pg', function () use ($sClassName) {
             $xCallableObject = $this->aCallableObjects[$sClassName];
             return new \Jaxon\Factory\Request\Paginator($xCallableObject);
         });
@@ -339,7 +339,7 @@ class CallableRepository
      */
     public function generateHash()
     {
-        return $this->createCallableObjects();
+        $this->createCallableObjects();
 
         $sHash = '';
         foreach($this->aNamespaces as $sNamespace => $aOptions)

@@ -48,9 +48,9 @@ class Paginator
     private $nCurrentPage = 0;
 
     /**
-     * Create a new Factory instance.
+     * The class constructor
      *
-     * @return void
+     * @param CallableObject        $xCallable
      */
     public function __construct(CallableObject $xCallable)
     {

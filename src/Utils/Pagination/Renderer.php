@@ -39,7 +39,7 @@ class Renderer
      *
      * @param Template          $xTemplate
      */
-    public function __constructor(Template $xTemplate)
+    public function __construct(Template $xTemplate)
     {
         $this->xTemplate = $xTemplate;
     }

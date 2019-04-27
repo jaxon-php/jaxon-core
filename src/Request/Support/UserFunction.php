@@ -117,7 +117,7 @@ class UserFunction
     public function generateRequest()
     {
         $sAlias = (($this->sAlias) ? $this->sAlias : $this->getName());
-        return new Request($sAlias, 'function');
+        return new Request($sAlias);
     }
 
     /**

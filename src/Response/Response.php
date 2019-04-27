@@ -604,7 +604,7 @@ class Response
     public function call($sFunc)
     {
         $aArgs = func_get_args();
-        $sFunc = array_shift($aArgs);
+        array_shift($aArgs);
         return $this->addCommand(
             array(
                 'cmd' => 'jc',
