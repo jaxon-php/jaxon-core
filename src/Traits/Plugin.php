@@ -55,8 +55,9 @@ trait Plugin
      */
     public function registerRequestPlugins()
     {
-        $this->registerPlugin(new \Jaxon\Request\Plugin\CallableClass(), 101);
-        $this->registerPlugin(new \Jaxon\Request\Plugin\CallableDir(), 102);
+        $callableRepository = new \Jaxon\Request\Support\CallableRepository;
+        $this->registerPlugin(new \Jaxon\Request\Plugin\CallableClass($callableRepository), 101);
+        $this->registerPlugin(new \Jaxon\Request\Plugin\CallableDir($callableRepository), 102);
         $this->registerPlugin(new \Jaxon\Request\Plugin\UserFunction(), 103);
         $this->registerPlugin(new \Jaxon\Request\Plugin\FileUpload(), 104);
     }

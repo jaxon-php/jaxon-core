@@ -28,10 +28,6 @@ use Jaxon\Request\Request;
 
 class CallableObject
 {
-    use \Jaxon\Utils\Traits\Config;
-    use \Jaxon\Utils\Traits\Manager;
-    use \Jaxon\Utils\Traits\Template;
-
     /**
      * A reference to the callable object the user has registered
      *
@@ -54,35 +50,11 @@ class CallableObject
     private $aProtectedMethods = [];
 
     /**
-     * The namespace where the callable object class is defined
-     *
-     * @var string
-     */
-    private $namespace = '';
-
-    /**
-     * The path to the directory where the callable object class is defined, starting from the namespace root
-     *
-     * @var string
-     */
-    private $classpath = '';
-
-    /**
      * The character to use as separator in javascript class names
      *
      * @var string
      */
     private $separator = '.';
-
-    /**
-     * An associative array that will contain configuration options for zero or more of the objects methods
-     *
-     * These configuration options will define the call options for each request.
-     * The call options will be passed to the client browser when the function stubs are generated.
-     *
-     * @var array
-     */
-    private $aConfiguration = [];
 
     /**
      * The class constructor
@@ -93,6 +65,110 @@ class CallableObject
     public function __construct($sCallable)
     {
         $this->reflectionClass = new \ReflectionClass($sCallable);
+    }
+
+    /**
+     * Return the class name of this callable object, without the namespace if any
+     *
+     * @return string
+     */
+    public function getClassName()
+    {
+        // Get the class name without the namespace.
+        return $this->reflectionClass->getShortName();
+    }
+
+    /**
+     * Return the name of this callable object
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        // Get the class name with the namespace.
+        return $this->reflectionClass->getName();
+    }
+
+    /**
+     * Return the name of the corresponding javascript class
+     *
+     * @return string
+     */
+    public function getJsName()
+    {
+        return str_replace('\\', $this->separator, $this->getName());
+    }
+
+    /**
+     * Return the namespace of this callable object
+     *
+     * @return string
+     */
+    public function getNamespace()
+    {
+        // The namespace the class was registered with.
+        return $this->reflectionClass->getNamespaceName();
+    }
+
+    /**
+     * Set configuration options / call options for each method
+     *
+     * @param string        $sName              The name of the configuration option
+     * @param string        $sValue             The value of the configuration option
+     *
+     * @return void
+     */
+    public function configure($sName, $sValue)
+    {
+        switch($sName)
+        {
+        // Set the separator
+        case 'separator';
+            if($sValue == '_' || $sValue == '.')
+            {
+                $this->separator = $sValue;
+            }
+            break;
+        // Set the protected methods
+        case 'protected':
+            if(is_array($sValue))
+            {
+                $this->aProtectedMethods = array_merge($this->aProtectedMethods, $sValue);
+            }
+            elseif(is_string($sValue))
+            {
+                $this->aProtectedMethods[] = $sValue;
+            }
+            break;
+        default:
+            break;
+        }
+    }
+
+    /**
+     * Return a list of methods of the callable object to export to javascript
+     *
+     * @return array
+     */
+    public function getMethods()
+    {
+        $aMethods = [];
+        foreach($this->reflectionClass->getMethods(\ReflectionMethod::IS_PUBLIC) as $xMethod)
+        {
+            $sMethodName = $xMethod->getShortName();
+            // Don't take magic __call, __construct, __destruct methods
+            if(strlen($sMethodName) > 2 && substr($sMethodName, 0, 2) == '__')
+            {
+                continue;
+            }
+            // Don't take excluded methods
+            if(in_array($sMethodName, $this->aProtectedMethods))
+            {
+                continue;
+            }
+            $aMethods[] = $sMethodName;
+        }
+        return $aMethods;
     }
 
     /**
@@ -126,192 +202,6 @@ class CallableObject
     }
 
     /**
-     * Return the class name of this callable object, without the namespace if any
-     *
-     * @return string
-     */
-    public function getClassName()
-    {
-        // Get the class name without the namespace.
-        return $this->reflectionClass->getShortName();
-    }
-
-    /**
-     * Return the name of this callable object
-     *
-     * @return string
-     */
-    public function getName()
-    {
-        // The class name without the namespace.
-        $name = $this->reflectionClass->getShortName();
-        // Append the classpath to the name
-        if(($this->classpath))
-        {
-            $name = $this->classpath . '\\' . $name;
-        }
-        return $name;
-    }
-
-    /**
-     * Return the javascript name of this callable object
-     *
-     * @return string
-     */
-    public function getJsName()
-    {
-        return str_replace('\\', $this->separator, $this->getName());
-    }
-
-    /**
-     * Return the namespace of this callable object
-     *
-     * @return string
-     */
-    public function getNamespace()
-    {
-        // The namespace the class was registered with.
-        return $this->namespace;
-    }
-
-    /**
-     * Return the class path of this callable object
-     *
-     * @return string
-     */
-    public function getPath()
-    {
-        // The class path without the trailing separator.
-        return $this->classpath;
-    }
-
-    /**
-     * Return a list of methods of the callable object to export to javascript
-     *
-     * @return array
-     */
-    public function getMethods()
-    {
-        $aReturn = [];
-        foreach($this->reflectionClass->getMethods(\ReflectionMethod::IS_PUBLIC) as $xMethod)
-        {
-            $sMethodName = $xMethod->getShortName();
-            // Don't take magic __call, __construct, __destruct methods
-            if(strlen($sMethodName) > 2 && substr($sMethodName, 0, 2) == '__')
-            {
-                continue;
-            }
-            // Don't take excluded methods
-            if(in_array($sMethodName, $this->aProtectedMethods))
-            {
-                continue;
-            }
-            $aReturn[] = $sMethodName;
-        }
-        return $aReturn;
-    }
-
-    /**
-     * Set configuration options / call options for each method
-     *
-     * @param string        $sMethod            The name of the method
-     * @param string        $sName                The name of the configuration option
-     * @param string        $sValue                The value of the configuration option
-     *
-     * @return void
-     */
-    public function configure($sMethod, $sName, $sValue)
-    {
-        // Set the namespace
-        if($sName == 'namespace')
-        {
-            if($sValue != '')
-                $this->namespace = $sValue;
-            return;
-        }
-        // Set the classpath
-        if($sName == 'classpath')
-        {
-            if($sValue != '')
-                $this->classpath = trim($sValue, '\\');
-            return;
-        }
-        // Set the separator
-        if($sName == 'separator')
-        {
-            if($sValue == '_' || $sValue == '.')
-                $this->separator = $sValue;
-            return;
-        }
-        // Set the excluded methods
-        if($sName == 'protected')
-        {
-            if(is_array($sValue))
-                $this->aProtectedMethods = array_merge($this->aProtectedMethods, $sValue);
-            elseif(is_string($sValue))
-                $this->aProtectedMethods[] = $sValue;
-            return;
-        }
-
-        if(!isset($this->aConfiguration[$sMethod]))
-        {
-            $this->aConfiguration[$sMethod] = [];
-        }
-        $this->aConfiguration[$sMethod][$sName] = $sValue;
-    }
-
-    /**
-     * Generate client side javascript code for calls to all methods exposed by this callable object
-     *
-     * @return string
-     */
-    public function getScript()
-    {
-        $sJaxonPrefix = $this->getOption('core.prefix.class');
-        // "\" are replaced with the configured separator in the generated javascript code.
-        $sClass = str_replace('\\', $this->separator, $this->getName());
-        $aMethods = [];
-
-        // Common options to be set on all methods
-        $aCommonConfig = array_key_exists('*', $this->aConfiguration) ? $this->aConfiguration['*'] : [];
-        foreach($this->reflectionClass->getMethods(\ReflectionMethod::IS_PUBLIC) as $xMethod)
-        {
-            $sMethodName = $xMethod->getShortName();
-            // Don't export magic __call, __construct, __destruct methods
-            if(strlen($sMethodName) > 0 && substr($sMethodName, 0, 2) == '__')
-            {
-                continue;
-            }
-            // Don't export "protected" methods
-            if(in_array($sMethodName, $this->aProtectedMethods))
-            {
-                continue;
-            }
-            // Specific options for this method
-            $aMethodConfig = array_key_exists($sMethodName, $this->aConfiguration) ?
-                array_merge($aCommonConfig, $this->aConfiguration[$sMethodName]) : $aCommonConfig;
-            $aMethod = array('name' => $sMethodName, 'config' => $aMethodConfig);
-            $aMethods[] = $aMethod;
-        }
-
-        return $this->render('jaxon::support/object.js', array(
-            'sPrefix' => $sJaxonPrefix,
-            'sClass' => $sClass,
-            'aMethods' => $aMethods,
-        ));
-    }
-
-    /**
-     * Check if the specified class name matches the class name of the registered callable object
-     *
-     * @return boolean
-     */
-    public function isClass($sClass)
-    {
-        return ($this->reflectionClass->getName() === $sClass);
-    }
-
-    /**
      * Check if the specified method name is one of the methods of the registered callable object
      *
      * @param string        $sMethod            The name of the method to check
@@ -320,7 +210,7 @@ class CallableObject
      */
     public function hasMethod($sMethod)
     {
-        return $this->reflectionClass->hasMethod($sMethod) || $this->reflectionClass->hasMethod('__call');
+        return $this->reflectionClass->hasMethod($sMethod)/* || $this->reflectionClass->hasMethod('__call')*/;
     }
 
     /**
