@@ -18,6 +18,7 @@ namespace Jaxon\Factory;
 use Jaxon\Jaxon;
 use Jaxon\Request\Request as JaxonRequest;
 use Jaxon\Request\Support\CallableObject;
+use Jaxon\Request\Support\CallableRepository;
 
 // Extends Parameter for compatibility with older versions (see function rq())
 class Request extends Parameter
@@ -29,30 +30,23 @@ class Request extends Parameter
      *
      * @var string
      */
-    protected $sPrefix;
+    protected $sPrefix = '';
 
     /**
-     * The callable dir plugin
+     * The callable repository
      *
-     * @var Jaxon\Request\Plugin\CallableDir;
+     * @var CallableRepository
      */
-    protected $xCallableDirPlugin;
-
-    /**
-     * The callable class plugin
-     *
-     * @var Jaxon\Request\Plugin\CallableClass;
-     */
-    protected $xCallableClassPlugin;
+    protected $xRepository = null;
 
     /**
      * The class constructor
+     *
+     * @param CallableRepository        $repository
      */
-    public function __construct()
+    public function __construct(CallableRepository $xRepository)
     {
-        $xPluginManager = jaxon()->getPluginManager();
-        $this->xCallableDirPlugin = $xPluginManager->getRequestPlugin(Jaxon::CALLABLE_DIR);
-        $this->xCallableClassPlugin = $xPluginManager->getRequestPlugin(Jaxon::CALLABLE_CLASS);
+        $this->xRepository = $xRepository;
     }
 
     /**
@@ -72,12 +66,7 @@ class Request extends Parameter
             return $this;
         }
 
-        $xCallable = $this->xCallableClassPlugin->getCallableObject($sClass);
-        if(!$xCallable)
-        {
-            $xCallable = $this->xCallableDirPlugin->getCallableObject($sClass);
-        }
-        if(!$xCallable)
+        if(!($xCallable = $this->xRepository->getCallableObject($sClass)))
         {
             // Todo: decide which of these values to return
             // return null;

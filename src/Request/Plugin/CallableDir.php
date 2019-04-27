@@ -34,7 +34,7 @@ class CallableDir extends RequestPlugin
      *
      * @var CallableRepository
      */
-    protected $repository = null;
+    protected $sRepository = null;
 
     /**
      * True if the Composer autoload is enabled
@@ -55,9 +55,9 @@ class CallableDir extends RequestPlugin
      *
      * @param CallableRepository        $repository
      */
-    public function __construct(CallableRepository $repository)
+    public function __construct(CallableRepository $xRepository)
     {
-        $this->repository = $repository;
+        $this->xRepository = $xRepository;
     }
 
     /**
@@ -160,7 +160,7 @@ class CallableDir extends RequestPlugin
                 $this->xAutoloader->setPsr4($sNamespace . '\\', $sDirectory);
             }
 
-            $this->repository->addNamespace($sNamespace, $aOptions);
+            $this->xRepository->addNamespace($sNamespace, $aOptions);
         }
         else
         {
@@ -169,7 +169,7 @@ class CallableDir extends RequestPlugin
             $aOptions['separator'] = '_';
             $aOptions['autoload'] = $this->bAutoloadEnabled;
 
-            $this->repository->addDirectory($sDirectory, $aOptions);
+            $this->xRepository->addDirectory($sDirectory, $aOptions);
         }
 
         return true;

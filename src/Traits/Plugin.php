@@ -19,7 +19,11 @@
 
 namespace Jaxon\Traits;
 
-use Jaxon\DI\Container;
+use Jaxon\Request\Support\CallableRepository;
+use \Jaxon\Request\Plugin\CallableClass;
+use \Jaxon\Request\Plugin\CallableDir;
+use \Jaxon\Request\Plugin\UserFunction;
+use \Jaxon\Request\Plugin\FileUpload;
 
 trait Plugin
 {
@@ -29,6 +33,13 @@ trait Plugin
      * @return Jaxon\Plugin\Manager
      */
     abstract public function getPluginManager();
+
+    /**
+     * Get the DI container
+     *
+     * @return Jaxon\DI\Container
+     */
+    abstract public function di();
 
     /**
      * Register a plugin
@@ -55,11 +66,11 @@ trait Plugin
      */
     public function registerRequestPlugins()
     {
-        $callableRepository = new \Jaxon\Request\Support\CallableRepository;
-        $this->registerPlugin(new \Jaxon\Request\Plugin\CallableClass($callableRepository), 101);
-        $this->registerPlugin(new \Jaxon\Request\Plugin\CallableDir($callableRepository), 102);
-        $this->registerPlugin(new \Jaxon\Request\Plugin\UserFunction(), 103);
-        $this->registerPlugin(new \Jaxon\Request\Plugin\FileUpload(), 104);
+        $callableRepository = $this->di()->get(CallableRepository::class);
+        $this->registerPlugin(new CallableClass($callableRepository), 101);
+        $this->registerPlugin(new CallableDir($callableRepository), 102);
+        $this->registerPlugin(new UserFunction(), 103);
+        $this->registerPlugin(new FileUpload(), 104);
     }
 
     /**

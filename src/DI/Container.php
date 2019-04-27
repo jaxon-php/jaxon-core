@@ -17,6 +17,8 @@ namespace Jaxon\DI;
 use Lemon\Event\EventDispatcher;
 use Jaxon\Sentry\View\Renderer;
 
+use Jaxon\Request\Support\CallableRepository;
+
 class Container
 {
     // The Dependency Injection Container
@@ -89,6 +91,10 @@ class Container
         /*
          * Managers
          */
+        // Callable objects repository
+        $this->coreContainer[CallableRepository::class] = function ($c) {
+            return new CallableRepository();
+        };
         // Plugin Manager
         $this->coreContainer['jaxon.core.plugin_manager'] = function ($c) {
             return new \Jaxon\Plugin\Manager();
@@ -99,7 +105,7 @@ class Container
         };
         // Request Factory
         $this->coreContainer['jaxon.core.request_factory'] = function ($c) {
-            return new \Jaxon\Factory\Request();
+            return new \Jaxon\Factory\Request($c[CallableRepository::class]);
         };
         // Parameter Factory
         $this->coreContainer['jaxon.core.parameter_factory'] = function ($c) {

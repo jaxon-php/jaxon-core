@@ -36,7 +36,7 @@ class CallableClass extends RequestPlugin
      *
      * @var CallableRepository
      */
-    protected $repository = null;
+    protected $xRepository = null;
 
     /**
      * The value of the class parameter of the incoming Jaxon request
@@ -57,9 +57,9 @@ class CallableClass extends RequestPlugin
      *
      * @param CallableRepository        $repository
      */
-    public function __construct(CallableRepository $repository)
+    public function __construct(CallableRepository $xRepository)
     {
-        $this->repository = $repository;
+        $this->xRepository = $xRepository;
 
         if(!empty($_GET['jxncls']))
         {
@@ -118,7 +118,7 @@ class CallableClass extends RequestPlugin
             throw new \Jaxon\Exception\Error($this->trans('errors.objects.invalid-declaration'));
         }
 
-        $this->repository->addClass($sClassName, $aOptions);
+        $this->xRepository->addClass($sClassName, $aOptions);
 
         return true;
     }
@@ -130,7 +130,7 @@ class CallableClass extends RequestPlugin
      */
     public function generateHash()
     {
-        return $this->repository->generateHash();
+        return $this->xRepository->generateHash();
     }
 
     /**
@@ -140,7 +140,7 @@ class CallableClass extends RequestPlugin
      */
     public function getScript()
     {
-        return $this->repository->getScript();
+        return $this->xRepository->getScript();
     }
 
     /**
@@ -180,7 +180,7 @@ class CallableClass extends RequestPlugin
         $aArgs = $this->getRequestManager()->process();
 
         // Find the requested method
-        $xCallableObject = $this->repository->getCallableObject($this->sRequestedClass);
+        $xCallableObject = $this->xRepository->getCallableObject($this->sRequestedClass);
         if(!$xCallableObject || !$xCallableObject->hasMethod($this->sRequestedMethod))
         {
             // Unable to find the requested object or method
