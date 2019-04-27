@@ -177,8 +177,6 @@ class CallableClass extends RequestPlugin
             return false;
         }
 
-        $aArgs = $this->getRequestManager()->process();
-
         // Find the requested method
         $xCallableObject = $this->xRepository->getCallableObject($this->sRequestedClass);
         if(!$xCallableObject || !$xCallableObject->hasMethod($this->sRequestedMethod))
@@ -189,7 +187,12 @@ class CallableClass extends RequestPlugin
         }
 
         // Call the requested method
-        $xCallableObject->call($this->sRequestedMethod, $aArgs);
+        $aArgs = $this->getRequestManager()->process();
+        $xResponse = $xCallableObject->call($this->sRequestedMethod, $aArgs);
+        if(($xResponse))
+        {
+            $this->getResponseManager()->append($xResponse);
+        }
         return true;
     }
 }

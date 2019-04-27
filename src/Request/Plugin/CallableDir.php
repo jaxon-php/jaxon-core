@@ -34,7 +34,7 @@ class CallableDir extends RequestPlugin
      *
      * @var CallableRepository
      */
-    protected $sRepository = null;
+    protected $xRepository = null;
 
     /**
      * True if the Composer autoload is enabled

@@ -229,10 +229,6 @@ class CallableObject
         }
         $reflectionMethod = $this->reflectionClass->getMethod($sMethod);
         $registeredObject = $this->getRegisteredObject();
-        $response = $reflectionMethod->invokeArgs($registeredObject, $aArgs);
-        if(($response))
-        {
-            $this->getResponseManager()->append($response);
-        }
+        return $reflectionMethod->invokeArgs($registeredObject, $aArgs);
     }
 }

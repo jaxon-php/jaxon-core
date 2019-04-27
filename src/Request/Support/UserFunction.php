@@ -26,9 +26,7 @@ use Jaxon\Request\Request;
 class UserFunction
 {
     use \Jaxon\Utils\Traits\Config;
-    use \Jaxon\Utils\Traits\Manager;
     use \Jaxon\Utils\Traits\Template;
-    use \Jaxon\Utils\Traits\Translator;
 
     /**
      * An alias to use for this function
@@ -155,10 +153,6 @@ class UserFunction
         {
             require_once $this->sInclude;
         }
-        $response = call_user_func_array($this->sUserFunction, $aArgs);
-        if(($response))
-        {
-            $this->getResponseManager()->append($response);
-        }
+        return call_user_func_array($this->sUserFunction, $aArgs);
     }
 }

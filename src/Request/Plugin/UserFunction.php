@@ -186,7 +186,11 @@ class UserFunction extends RequestPlugin
 
         $xFunction = jaxon()->di()->get($this->sRequestedFunction);
         $aArgs = $this->getRequestManager()->process();
-        $xFunction->call($aArgs);
+        $xResponse = $xFunction->call($aArgs);
+        if(($xResponse))
+        {
+            $this->getResponseManager()->append($xResponse);
+        }
         return true;
     }
 }
