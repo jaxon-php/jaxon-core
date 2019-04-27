@@ -40,13 +40,13 @@ class Jaxon
     use \Jaxon\Utils\Traits\Manager;
     use \Jaxon\Utils\Traits\Translator;
     use \Jaxon\Utils\Traits\Paginator;
-    use \Jaxon\Utils\Traits\Template;
 
     use Traits\Autoload;
     use Traits\Config;
     use Traits\Plugin;
     use Traits\Upload;
     use Traits\Sentry;
+    use Traits\Template;
 
     /**
      * Package version number
