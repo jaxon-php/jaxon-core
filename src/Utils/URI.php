@@ -90,7 +90,6 @@ class URI
 
         if(empty($aURL['path']))
         {
-            $sPath = [];
             if(!empty($_SERVER['PATH_INFO']))
             {
                 $sPath = parse_url($_SERVER['PATH_INFO']);

@@ -49,8 +49,8 @@ trait Plugin
      * - 1000 thru 8999: User created plugins, typically, these plugins don't care about order
      * - 9000 thru 9999: Plugins that generally need to be last or near the end of the plugin list
      *
-     * @param Plugin         $xPlugin               An instance of a plugin
-     * @param integer        $nPriority             The plugin priority, used to order the plugins
+     * @param Jaxon\Plugin\Plugin   $xPlugin        An instance of a plugin
+     * @param integer               $nPriority      The plugin priority, used to order the plugins
      *
      * @return void
      */
