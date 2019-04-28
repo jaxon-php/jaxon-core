@@ -16,12 +16,7 @@ namespace Jaxon\Config;
 
 class Config
 {
-    protected $aOptions;
-
-    public function __construct()
-    {
-        $this->aOptions = [];
-    }
+    protected $aOptions = [];
 
     /**
      * Set the value of a config option

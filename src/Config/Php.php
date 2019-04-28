@@ -3,8 +3,7 @@
 /**
  * Php.php - Jaxon config reader
  *
- * Read the config data from a PHP config file, save it locally
- * using the Config class, and then set the options in the library.
+ * Read the config data from a PHP config file.
  *
  * @package jaxon-core
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
@@ -18,15 +17,13 @@ namespace Jaxon\Config;
 class Php
 {
     /**
-     * Read and set Jaxon options from a PHP config file
+     * Read options from a PHP config file
      *
      * @param string        $sConfigFile        The full path to the config file
-     * @param string        $sLibKey            The key of the library options in the file
-     * @param string|null   $sAppKey            The key of the application options in the file
      *
-     * @return Jaxon\Config\Config
+     * @return array
      */
-    public static function read($sConfigFile, $sLibKey = '', $sAppKey = null)
+    public static function read($sConfigFile)
     {
         $sConfigFile = realpath($sConfigFile);
         if(!is_readable($sConfigFile))
@@ -39,15 +36,6 @@ class Php
             throw new \Jaxon\Config\Exception\File(jaxon_trans('config.errors.file.content', array('path' => $sConfigFile)));
         }
 
-        // Setup the config options into the library.
-        $jaxon = jaxon();
-        $jaxon->setOptions($aConfigOptions, $sLibKey);
-        if(!is_string($sAppKey))
-        {
-            return null;
-        }
-        $config = new Config();
-        $config->setOptions($aConfigOptions, $sAppKey);
-        return $config;
+        return $aConfigOptions;
     }
 }

@@ -17,6 +17,8 @@ namespace Jaxon\DI;
 use Lemon\Event\EventDispatcher;
 use Jaxon\Sentry\View\Renderer;
 
+use Jaxon\Config\Config;
+use Jaxon\Config\Reader as ConfigReader;
 use Jaxon\Request\Support\CallableRepository;
 
 class Container
@@ -117,19 +119,25 @@ class Container
         };
 
         /*
+         * Config
+         */
+        $this->coreContainer[Config::class] = function ($c) {
+            return new Config();
+        };
+        $this->coreContainer[ConfigReader::class] = function ($c) {
+            return new ConfigReader();
+        };
+
+        /*
          * Services
          */
-        // Config manager
-        $this->coreContainer['jaxon.core.config'] = function ($c) {
-            return new \Jaxon\Utils\Config\Config();
-        };
         // Minifier
         $this->coreContainer['jaxon.core.minifier'] = function ($c) {
             return new \Jaxon\Utils\Template\Minifier();
         };
         // Translator
         $this->coreContainer['jaxon.core.translator'] = function ($c) {
-            return new \Jaxon\Utils\Translation\Translator($c['jaxon.core.translation_dir'], $c['jaxon.core.config']);
+            return new \Jaxon\Utils\Translation\Translator($c['jaxon.core.translation_dir'], $c[Config::class]);
         };
         // Template engine
         $this->coreContainer['jaxon.core.template'] = function ($c) {
@@ -137,7 +145,7 @@ class Container
         };
         // Validator
         $this->coreContainer['jaxon.core.validator'] = function ($c) {
-            return new \Jaxon\Utils\Validation\Validator($c['jaxon.core.translator'], $c['jaxon.core.config']);
+            return new \Jaxon\Utils\Validation\Validator($c['jaxon.core.translator'], $c[Config::class]);
         };
         // Pagination Renderer
         $this->coreContainer['jaxon.pagination.renderer'] = function ($c) {
@@ -255,7 +263,7 @@ class Container
      */
     public function getConfig()
     {
-        return $this->coreContainer['jaxon.core.config'];
+        return $this->coreContainer[Config::class];
     }
 
     /**

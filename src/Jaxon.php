@@ -29,8 +29,10 @@ use Jaxon\Plugin\Manager as PluginManager;
 use Jaxon\Request\Manager as RequestManager;
 use Jaxon\Response\Manager as ResponseManager;
 
-use Jaxon\Utils\URI;
+use Jaxon\Config\Reader as ConfigReader;
 use Jaxon\DI\Container;
+use Jaxon\Utils\URI;
+
 use Exception;
 use Closure;
 
@@ -42,7 +44,6 @@ class Jaxon
     use \Jaxon\Utils\Traits\Paginator;
 
     use Traits\Autoload;
-    use Traits\Config;
     use Traits\Plugin;
     use Traits\Upload;
     use Traits\Sentry;
@@ -126,6 +127,16 @@ class Jaxon
     public function getVersion()
     {
         return $this->sVersion;
+    }
+
+    /**
+     * Get the config reader
+     *
+     * @return Jaxon\Config\Reader
+     */
+    public function config()
+    {
+        return $this->di()->get(ConfigReader::class);
     }
 
     /**
