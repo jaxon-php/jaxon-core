@@ -92,16 +92,6 @@ class Dialog
     }
 
     /**
-     * Get the script which makes a call only if the user answers yes to the given question
-     *
-     * @return string
-     */
-    public function confirm($question, $yesScript, $noScript)
-    {
-        return $this->getConfirm()->confirm($question, $yesScript, $noScript);
-    }
-
-    /**
      * Set the javascript alert function
      *
      * @param Jaxon\Dialog\Interfaces\Alert           $xAlert       The javascript alert function
@@ -131,5 +121,75 @@ class Dialog
     public function getDefaultAlert()
     {
         return $this->xDefaultAlert;
+    }
+
+    /**
+     * Get the script which makes a call only if the user answers yes to the given question
+     *
+     * @return string
+     */
+    public function confirm($question, $yesScript, $noScript)
+    {
+        return $this->getConfirm()->confirm($question, $yesScript, $noScript);
+    }
+
+    /**
+     * Print a success message.
+     *
+     * It is a function of the Jaxon\Dialog\Interfaces\Alert interface.
+     *
+     * @param string              $message              The text of the message
+     * @param string|null         $title                The title of the message
+     *
+     * @return string|void
+     */
+    public function success($message, $title = null)
+    {
+        return $this->getAlert()->success($message, $title);
+    }
+
+    /**
+     * Print an information message.
+     *
+     * It is a function of the Jaxon\Dialog\Interfaces\Alert interface.
+     *
+     * @param string              $message              The text of the message
+     * @param string|null         $title                The title of the message
+     *
+     * @return string|void
+     */
+    public function info($message, $title = null)
+    {
+        return $this->getAlert()->info($message, $title);
+    }
+
+    /**
+     * Print a warning message.
+     *
+     * It is a function of the Jaxon\Dialog\Interfaces\Alert interface.
+     *
+     * @param string              $message              The text of the message
+     * @param string|null         $title                The title of the message
+     *
+     * @return string|void
+     */
+    public function warning($message, $title = null)
+    {
+        return $this->getAlert()->warning($message, $title);
+    }
+
+    /**
+     * Print an error message.
+     *
+     * It is a function of the Jaxon\Dialog\Interfaces\Alert interface.
+     *
+     * @param string              $message              The text of the message
+     * @param string|null         $title                The title of the message
+     *
+     * @return string|void
+     */
+    public function error($message, $title = null)
+    {
+        return $this->getAlert()->error($message, $title);
     }
 }

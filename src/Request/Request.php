@@ -316,19 +316,18 @@ class Request extends JsCall
         }
 
         $sScript = parent::getScript();
+        $xDialog = jaxon()->dialog();
         if($this->sCondition == '__confirm__')
         {
-            $xConfirm = $this->getPluginManager()->getConfirm();
-            $sScript = $xConfirm->confirm($sPhrase, $sScript, '');
+            $sScript = $xDialog->confirm($sPhrase, $sScript, '');
         }
         elseif($this->sCondition !== null)
         {
             $sScript = 'if(' . $this->sCondition . '){' . $sScript . ';}';
             if(($sPhrase))
             {
-                $xAlert = $this->getPluginManager()->getAlert();
-                $xAlert->setReturn(true);
-                $sScript .= 'else{' . $xAlert->warning($sPhrase) . ';}';
+                $xDialog->getAlert()->setReturn(true);
+                $sScript .= 'else{' . $xDialog->warning($sPhrase) . ';}';
             }
         }
         return $sVars . $sScript;
