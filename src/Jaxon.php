@@ -247,15 +247,16 @@ class Jaxon
             $this->setOption('core.request.uri', URI::detect());
         }
         $sCode = '';
+        $xCodeGenerator = $this->di()->getCodeGenerator();
         if(($bIncludeCss))
         {
-            $sCode .= $this->getPluginManager()->getCss() . "\n";
+            $sCode .= $xCodeGenerator->getCss() . "\n";
         }
         if(($bIncludeJs))
         {
-            $sCode .= $this->getPluginManager()->getJs() . "\n";
+            $sCode .= $xCodeGenerator->getJs() . "\n";
         }
-        $sCode .= $this->getPluginManager()->getScript();
+        $sCode .= $xCodeGenerator->getScript();
         return $sCode;
     }
 
@@ -282,7 +283,7 @@ class Jaxon
      */
     public function getJs()
     {
-        return $this->getPluginManager()->getJs();
+        return $this->di()->getCodeGenerator()->getJs();
     }
 
     /**
@@ -292,7 +293,7 @@ class Jaxon
      */
     public function getCss()
     {
-        return $this->getPluginManager()->getCss();
+        return $this->di()->getCodeGenerator()->getCss();
     }
 
     /**

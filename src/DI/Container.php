@@ -27,6 +27,7 @@ use Jaxon\Response\Manager as ResponseManager;
 use Jaxon\Plugin\Manager as PluginManager;
 use Jaxon\Factory\Request as RequestFactory;
 use Jaxon\Factory\Parameter as ParameterFactory;
+use Jaxon\Code\Generator as CodeGenerator;
 use Jaxon\Utils\Template\Minifier;
 use Jaxon\Utils\Translation\Translator;
 use Jaxon\Utils\Template\Template;
@@ -141,6 +142,10 @@ class Container
         // Response Manager
         $this->coreContainer[ResponseManager::class] = function ($c) {
             return new ResponseManager();
+        };
+        // Code Generator
+        $this->coreContainer[CodeGenerator::class] = function ($c) {
+            return new CodeGenerator($c[PluginManager::class]);
         };
 
         /*
@@ -268,6 +273,16 @@ class Container
     public function getResponseManager()
     {
         return $this->coreContainer[ResponseManager::class];
+    }
+
+    /**
+     * Get the code generator
+     *
+     * @return Jaxon\Code\Generator
+     */
+    public function getCodeGenerator()
+    {
+        return $this->coreContainer[CodeGenerator::class];
     }
 
     /**
