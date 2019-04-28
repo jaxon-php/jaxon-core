@@ -11,7 +11,7 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Plugin\Dialogs;
+namespace Jaxon\Dialog;
 
 class Confirm implements Interfaces\Confirm
 {

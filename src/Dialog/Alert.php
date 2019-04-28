@@ -10,7 +10,7 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Plugin\Dialogs;
+namespace Jaxon\Dialog;
 
 class Alert implements Interfaces\Alert
 {
@@ -35,7 +35,7 @@ class Alert implements Interfaces\Alert
     /**
      * Print a success message.
      *
-     * It is a function of the Jaxon\Dialogs\Interfaces\Alert interface.
+     * It is a function of the Jaxon\Dialog\Interfaces\Alert interface.
      *
      * @param string              $message              The text of the message
      * @param string|null         $title                The title of the message
@@ -50,7 +50,7 @@ class Alert implements Interfaces\Alert
     /**
      * Print an information message.
      *
-     * It is a function of the Jaxon\Dialogs\Interfaces\Alert interface.
+     * It is a function of the Jaxon\Dialog\Interfaces\Alert interface.
      *
      * @param string              $message              The text of the message
      * @param string|null         $title                The title of the message
@@ -65,7 +65,7 @@ class Alert implements Interfaces\Alert
     /**
      * Print a warning message.
      *
-     * It is a function of the Jaxon\Dialogs\Interfaces\Alert interface.
+     * It is a function of the Jaxon\Dialog\Interfaces\Alert interface.
      *
      * @param string              $message              The text of the message
      * @param string|null         $title                The title of the message
@@ -80,7 +80,7 @@ class Alert implements Interfaces\Alert
     /**
      * Print an error message.
      *
-     * It is a function of the Jaxon\Dialogs\Interfaces\Alert interface.
+     * It is a function of the Jaxon\Dialog\Interfaces\Alert interface.
      *
      * @param string              $message              The text of the message
      * @param string|null         $title                The title of the message

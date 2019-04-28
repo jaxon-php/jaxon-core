@@ -10,7 +10,7 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Plugin\Dialogs\Interfaces;
+namespace Jaxon\Dialog\Interfaces;
 
 interface Alert
 {

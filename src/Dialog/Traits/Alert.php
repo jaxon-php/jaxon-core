@@ -10,12 +10,12 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Plugin\Dialogs\Traits;
+namespace Jaxon\Dialog\Traits;
 
 trait Alert
 {
     /**
-     * All plugins, indexed by priority
+     *
      *
      * @var boolean
      */

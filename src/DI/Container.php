@@ -28,6 +28,7 @@ use Jaxon\Plugin\Manager as PluginManager;
 use Jaxon\Factory\Request as RequestFactory;
 use Jaxon\Factory\Parameter as ParameterFactory;
 use Jaxon\Code\Generator as CodeGenerator;
+use Jaxon\Dialog\Dialog;
 use Jaxon\Utils\Template\Minifier;
 use Jaxon\Utils\Translation\Translator;
 use Jaxon\Utils\Template\Template;
@@ -114,6 +115,10 @@ class Container
         // Global Response
         $this->coreContainer[Response::class] = function ($c) {
             return new Response();
+        };
+        // Dialog
+        $this->coreContainer[Dialog::class] = function ($c) {
+            return new Dialog();
         };
 
         /*
@@ -288,7 +293,7 @@ class Container
     /**
      * Get the config manager
      *
-     * @return Jaxon\Utils\Config\Config
+     * @return Jaxon\Config\Config
      */
     public function getConfig()
     {
@@ -298,11 +303,21 @@ class Container
     /**
      * Create a new the config manager
      *
-     * @return Jaxon\Utils\Config\Config            The config manager
+     * @return Jaxon\Config\Config            The config manager
      */
     public function newConfig()
     {
-        return new \Jaxon\Utils\Config\Config();
+        return new \Jaxon\Config\Config();
+    }
+
+    /**
+     * Get the dialog wrapper
+     *
+     * @return Jaxon\Dialog\Config
+     */
+    public function getDialog()
+    {
+        return $this->coreContainer[Dialog::class];
     }
 
     /**

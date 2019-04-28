@@ -210,7 +210,7 @@ class Jaxon
      *
      * @param string        $sConfigFile        The full path to the config file
      *
-     * @return void
+     * @return Jaxon
      */
     public function setup($sConfigFile)
     {
@@ -227,6 +227,8 @@ class Jaxon
 
         // Register user functions and classes
         $this->getPluginManager()->registerFromConfig($xAppConfig);
+
+        return $this;
     }
 
     /**

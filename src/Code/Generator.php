@@ -309,7 +309,7 @@ class Generator
         $aVars = $this->getOptionVars();
         $sYesScript = 'jaxon.ajax.response.process(command.response)';
         $sNoScript = 'jaxon.confirm.skip(command);jaxon.ajax.response.process(command.response)';
-        $sConfirmScript = $this->xPluginManager->getConfirm()->confirm('msg', $sYesScript, $sNoScript);
+        $sConfirmScript = jaxon()->dialog()->confirm('msg', $sYesScript, $sNoScript);
         $aVars['sConfirmScript'] = $this->render('jaxon::plugins/confirm.js', ['sConfirmScript' => $sConfirmScript]);
 
         return $this->render('jaxon::plugins/config.js', $aVars) . "\n" . $this->sJsReady . "\n";

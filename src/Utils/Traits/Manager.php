@@ -79,4 +79,14 @@ trait Manager
     {
         return Container::getInstance()->newResponse();
     }
+
+    /**
+     * Get the dialog wrapper
+     *
+     * @return Jaxon\Dialog\Config
+     */
+    public function dialog()
+    {
+        return Container::getInstance()->getDialog();
+    }
 }
