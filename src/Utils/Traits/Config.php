@@ -17,16 +17,6 @@ use Jaxon\DI\Container;
 trait Config
 {
     /**
-     * Get the Jaxon library version number
-     *
-     * @return string        The version number
-     */
-    public function getVersion()
-    {
-        return Container::getInstance()->getVersion();
-    }
-
-    /**
      * Set the value of a config option
      *
      * @param string        $sName                The option name
@@ -37,19 +27,6 @@ trait Config
     public function setOption($sName, $sValue)
     {
         return Container::getInstance()->getConfig()->setOption($sName, $sValue);
-    }
-    
-    /**
-     * Set the values of an array of config options
-     *
-     * @param array         $aOptions           The config options
-     * @param string        $sKeys              The keys of the options in the array
-     *
-     * @return void
-     */
-    public function setOptions($aOptions, $sKeys = '')
-    {
-        return Container::getInstance()->getConfig()->setOptions($aOptions, $sKeys);
     }
 
     /**

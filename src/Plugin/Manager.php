@@ -23,6 +23,8 @@ namespace Jaxon\Plugin;
 
 use Jaxon\Jaxon;
 use Jaxon\Plugin\Package;
+use Jaxon\Config\Config;
+
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use RegexIterator;
@@ -357,6 +359,92 @@ class Manager
         //     }
         // }
         // throw new \Jaxon\Exception\Error($this->trans('errors.register.method', ['args' => print_r($aArgs, true)]));
+    }
+
+    /**
+     * Read and set Jaxon options from a JSON config file
+     *
+     * @param Config        $xAppConfig        The config options
+     *
+     * @return void
+     */
+    public function registerFromConfig($xAppConfig)
+    {
+        // Register user functions
+        $aFunctionsConfig = $xAppConfig->getOption('functions', []);
+        foreach($aFunctionsConfig as $xKey => $xValue)
+        {
+            if(is_integer($xKey) && is_string($xValue))
+            {
+                $sFunction = $xValue;
+                // Register a function without options
+                $this->register(Jaxon::USER_FUNCTION, $sFunction);
+            }
+            elseif(is_string($xKey) && is_array($xValue))
+            {
+                $sFunction = $xKey;
+                $aOptions = $xValue;
+                // Register a function with options
+                $this->register(Jaxon::USER_FUNCTION, $sFunction, $aOptions);
+            }
+            else
+            {
+                continue;
+                // Todo: throw an exception
+            }
+        }
+
+        // Register classes and directories
+        $aClassesConfig = $xAppConfig->getOption('classes', []);
+        foreach($aClassesConfig as $xKey => $xValue)
+        {
+            if(is_integer($xKey) && is_string($xValue))
+            {
+                $sClass = $xValue;
+                // Register a class without options
+                $this->register(Jaxon::CALLABLE_CLASS, $sClass);
+            }
+            elseif(is_string($xKey) && is_array($xValue))
+            {
+                $sClass = $xKey;
+                $aOptions = $xValue;
+                // Register a class with options
+                $this->register(Jaxon::CALLABLE_CLASS, $sClass, $aOptions);
+            }
+            elseif(is_integer($xKey) && is_array($xValue))
+            {
+                // The directory path is required
+                if(!key_exists('directory', $xValue))
+                {
+                    continue;
+                    // Todo: throw an exception
+                }
+                // Registering a directory
+                $sDirectory = $xValue['directory'];
+                $aOptions = [];
+                if(key_exists('options', $xValue) &&
+                    is_array($xValue['options']) || is_string($xValue['options']))
+                {
+                    $aOptions = $xValue['options'];
+                }
+                // Setup directory options
+                if(key_exists('namespace', $xValue))
+                {
+                    $aOptions['namespace'] = $xValue['namespace'];
+                }
+                if(key_exists('separator', $xValue))
+                {
+                    $aOptions['separator'] = $xValue['separator'];
+                }
+                // Register a class without options
+                $this->register(Jaxon::CALLABLE_DIR, $sDirectory, $aOptions);
+            }
+            else
+            {
+                continue;
+                // Todo: throw an exception
+            }
+        }
     }
 
     /**

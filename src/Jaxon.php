@@ -206,6 +206,30 @@ class Jaxon
     }
 
     /**
+     * Read config options from a config file and setup the library
+     *
+     * @param string        $sConfigFile        The full path to the config file
+     *
+     * @return void
+     */
+    public function setup($sConfigFile)
+    {
+        $aConfigOptions = $this->config()->read($sConfigFile);
+
+        // Setup the config options into the library.
+        $sLibKey = 'lib';
+        $xLibConfig = $this->di()->getConfig();
+        $xLibConfig->setOptions($aConfigOptions, $sLibKey);
+
+        $sAppKey = 'app';
+        $xAppConfig = new \Jaxon\Config\Config();
+        $xAppConfig->setOptions($aConfigOptions, $sAppKey);
+
+        // Register user functions and classes
+        $this->getPluginManager()->registerFromConfig($xAppConfig);
+    }
+
+    /**
      * Returns the Jaxon Javascript header and wrapper code to be printed into the page
      *
      * The javascript code returned by this function is dependent on the plugins
