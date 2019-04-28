@@ -1,10 +1,9 @@
 <?php
 
 /**
- * Yaml.php - Yaml-specific exception.
+ * File.php - Unable to read config file.
  *
- * This exception is thrown when an error related to Yaml occurs.
- * A typical example is when the php-yaml package is not installed.
+ * This exception is thrown when the config file cannot be read.
  *
  * @package jaxon-core
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
@@ -13,9 +12,9 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Exception\Config;
+namespace Jaxon\Config\Exception;
 
-class Yaml extends \Exception
+class File extends \Exception
 {
     public function __construct($sMessage)
     {

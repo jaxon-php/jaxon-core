@@ -19,68 +19,12 @@
 
 namespace Jaxon\Traits;
 
-use Jaxon\Utils\Config\Php;
-use Jaxon\Utils\Config\Yaml;
-use Jaxon\Utils\Config\Json;
+use Jaxon\Config\Php;
+use Jaxon\Config\Yaml;
+use Jaxon\Config\Json;
 
 trait Config
 {
-    /**
-     * The current Jaxon version
-     *
-     * @return string
-     */
-    abstract public function getVersion();
-
-    /**
-     * Set the values of an array of config options
-     *
-     * @param array         $aOptions           The config options
-     * @param string        $sKeys              The keys of the options in the array
-     *
-     * @return void
-     */
-    abstract public function setOptions($aOptions, $sKeys = '');
-
-    /**
-     * Set the default options of all components of the library
-     *
-     * @return void
-     */
-    private function setDefaultOptions()
-    {
-        // The default configuration settings.
-        $this->setOptions([
-            'core.version'                      => $this->getVersion(),
-            'core.language'                     => 'en',
-            'core.encoding'                     => 'utf-8',
-            'core.decode_utf8'                  => false,
-            'core.prefix.function'              => 'jaxon_',
-            'core.prefix.class'                 => 'Jaxon',
-            // 'core.request.uri'               => '',
-            'core.request.mode'                 => 'asynchronous',
-            'core.request.method'               => 'POST',    // W3C: Method is case sensitive
-            'core.response.merge.ap'            => true,
-            'core.response.merge.js'            => true,
-            'core.debug.on'                     => false,
-            'core.debug.verbose'                => false,
-            'core.process.exit'                 => true,
-            'core.process.clean'                => false,
-            'core.process.timeout'              => 6000,
-            'core.error.handle'                 => false,
-            'core.error.log_file'               => '',
-            'core.jquery.no_conflict'           => false,
-            'js.lib.output_id'                  => 0,
-            'js.lib.queue_size'                 => 0,
-            'js.lib.load_timeout'               => 2000,
-            'js.lib.show_status'                => false,
-            'js.lib.show_cursor'                => true,
-            'js.app.dir'                        => '',
-            'js.app.minify'                     => true,
-            'js.app.options'                    => '',
-        ]);
-    }
-
     /**
      * Read and set Jaxon options from a PHP config file
      *

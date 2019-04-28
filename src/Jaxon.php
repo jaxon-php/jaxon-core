@@ -129,6 +129,45 @@ class Jaxon
     }
 
     /**
+     * Set the default options of all components of the library
+     *
+     * @return void
+     */
+    private function setDefaultOptions()
+    {
+        // The default configuration settings.
+        $this->setOptions([
+            'core.version'                      => $this->getVersion(),
+            'core.language'                     => 'en',
+            'core.encoding'                     => 'utf-8',
+            'core.decode_utf8'                  => false,
+            'core.prefix.function'              => 'jaxon_',
+            'core.prefix.class'                 => 'Jaxon',
+            // 'core.request.uri'               => '',
+            'core.request.mode'                 => 'asynchronous',
+            'core.request.method'               => 'POST',    // W3C: Method is case sensitive
+            'core.response.merge.ap'            => true,
+            'core.response.merge.js'            => true,
+            'core.debug.on'                     => false,
+            'core.debug.verbose'                => false,
+            'core.process.exit'                 => true,
+            'core.process.clean'                => false,
+            'core.process.timeout'              => 6000,
+            'core.error.handle'                 => false,
+            'core.error.log_file'               => '',
+            'core.jquery.no_conflict'           => false,
+            'js.lib.output_id'                  => 0,
+            'js.lib.queue_size'                 => 0,
+            'js.lib.load_timeout'               => 2000,
+            'js.lib.show_status'                => false,
+            'js.lib.show_cursor'                => true,
+            'js.app.dir'                        => '',
+            'js.app.minify'                     => true,
+            'js.app.options'                    => '',
+        ]);
+    }
+
+    /**
      * Register request handlers, including functions, callable classes and directories.
      *
      * @param string        $sType            The type of request handler being registered
@@ -153,20 +192,6 @@ class Jaxon
     public function register($sType, $sCallable, $aOptions = [])
     {
         return $this->getPluginManager()->register($sType, $sCallable, $aOptions);
-    }
-
-    /**
-     * Register callable objects from all class directories
-     *
-     * @param array             $aOptions               The options to register the classes with
-     *
-     * @return void
-     */
-    public function registerClasses(array $aOptions = [])
-    {
-        // The CallableDir plugin
-        $xPlugin = $this->getPluginManager()->getRequestPlugin(self::CALLABLE_DIR);
-        return $xPlugin->registerClasses($aOptions);
     }
 
     /**

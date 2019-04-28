@@ -1,9 +1,9 @@
 <?php
 
 /**
- * File.php - Unable to read config file.
+ * Data.php - Incorrect config data exception
  *
- * This exception is thrown when the config file cannot be read.
+ * This exception is thrown when config data are incorrect.
  *
  * @package jaxon-core
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
@@ -12,9 +12,9 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Exception\Config;
+namespace Jaxon\Config\Exception;
 
-class File extends \Exception
+class Data extends \Exception
 {
     public function __construct($sMessage)
     {
