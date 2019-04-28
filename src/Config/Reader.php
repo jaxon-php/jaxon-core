@@ -28,14 +28,18 @@ class Reader
         {
         case 'php':
             $aConfigOptions = Php::read($sConfigFile);
+            break;
         case 'yaml':
         case 'yml':
             $aConfigOptions = Yaml::read($sConfigFile);
+            break;
         case 'json':
             $aConfigOptions = Json::read($sConfigFile);
+            break;
         default:
             $sErrorMsg = jaxon_trans('config.errors.file.extension', array('path' => $sConfigFile));
             throw new \Jaxon\Config\Exception\File($sErrorMsg);
+            break;
         }
         return $aConfigOptions;
     }

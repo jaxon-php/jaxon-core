@@ -275,7 +275,7 @@ class Manager
      */
     private function generateHash()
     {
-        $sHash = $this->getVersion();
+        $sHash = jaxon()->getVersion();
         foreach($this->aPlugins as $xPlugin)
         {
             $sHash .= $xPlugin->generateHash();
@@ -342,7 +342,7 @@ class Manager
      *
      * @return mixed
      */
-    public function register($sType, $sCallable, $aOptions)
+    public function register($sType, $sCallable, $aOptions = [])
     {
         if(!key_exists($sType, $this->aRequestPlugins))
         {
