@@ -302,7 +302,7 @@ class Jaxon
      */
     public function canProcessRequest()
     {
-        return $this->getPluginManager()->canProcessRequest();
+        return $this->getRequestHandler()->canProcessRequest();
     }
 
     /**
@@ -350,7 +350,7 @@ class Jaxon
         {
             try
             {
-                $mResult = $this->getPluginManager()->processRequest();
+                $mResult = $this->getRequestHandler()->processRequest();
             }
             catch(Exception $e)
             {

@@ -23,11 +23,9 @@ namespace Jaxon\Request\Plugin;
 
 use Jaxon\Jaxon;
 use Jaxon\Plugin\Request as RequestPlugin;
-use Jaxon\Request\Manager as RequestManager;
 
 class UserFunction extends RequestPlugin
 {
-    use \Jaxon\Utils\Traits\Manager;
     use \Jaxon\Utils\Traits\Validator;
     use \Jaxon\Utils\Traits\Translator;
 
@@ -178,6 +176,7 @@ class UserFunction extends RequestPlugin
             return false;
         }
 
+        // Security check: make sure the requested function was registered.
         if(!key_exists($this->sRequestedFunction, $this->aFunctions))
         {
             // Unable to find the requested function
@@ -186,11 +185,12 @@ class UserFunction extends RequestPlugin
         }
 
         $xFunction = jaxon()->di()->get($this->sRequestedFunction);
-        $aArgs = $this->getRequestManager()->process();
+        $jaxon = jaxon();
+        $aArgs = $jaxon->getRequestHandler()->processArguments();
         $xResponse = $xFunction->call($aArgs);
         if(($xResponse))
         {
-            $this->getResponseManager()->append($xResponse);
+            $jaxon->getResponseManager()->append($xResponse);
         }
         return true;
     }

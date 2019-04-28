@@ -22,7 +22,7 @@ use Jaxon\Response\Response;
 use Jaxon\Config\Config;
 use Jaxon\Config\Reader as ConfigReader;
 use Jaxon\Request\Support\CallableRepository;
-use Jaxon\Request\Manager as RequestManager;
+use Jaxon\Request\Handler as RequestHandler;
 use Jaxon\Response\Manager as ResponseManager;
 use Jaxon\Plugin\Manager as PluginManager;
 use Jaxon\Factory\Request as RequestFactory;
@@ -127,8 +127,8 @@ class Container
             return new PluginManager();
         };
         // Request Manager
-        $this->coreContainer[RequestManager::class] = function ($c) {
-            return new RequestManager();
+        $this->coreContainer[RequestHandler::class] = function ($c) {
+            return new RequestHandler($c[PluginManager::class]);
         };
         // Request Factory
         $this->coreContainer[RequestFactory::class] = function ($c) {
@@ -231,13 +231,13 @@ class Container
     }
 
     /**
-     * Get the request manager
+     * Get the request handler
      *
-     * @return Jaxon\Request\Manager
+     * @return Jaxon\Request\Handler
      */
-    public function getRequestManager()
+    public function getRequestHandler()
     {
-        return $this->coreContainer[RequestManager::class];
+        return $this->coreContainer[RequestHandler::class];
     }
 
     /**

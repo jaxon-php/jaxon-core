@@ -24,10 +24,17 @@ namespace Jaxon\Request;
 
 use Jaxon\Jaxon;
 
-class Manager
+class Handler
 {
     use \Jaxon\Utils\Traits\Config;
     use \Jaxon\Utils\Traits\Translator;
+
+    /**
+     * The plugin manager.
+     *
+     * @var Jaxon\Plugin\Manager
+     */
+    private $xPluginManager;
 
     /**
      * An array of arguments received via the GET or POST parameter jxnargs.
@@ -49,8 +56,9 @@ class Manager
      *
      * Get and decode the arguments of the HTTP request
      */
-    public function __construct()
+    public function __construct(\Jaxon\Plugin\Manager $xPluginManager)
     {
+        $this->xPluginManager = $xPluginManager;
 
         $this->aArgs = [];
         $this->nMethod = Jaxon::METHOD_UNKNOWN;
@@ -300,7 +308,7 @@ class Manager
      *
      * @return array
      */
-    public function process()
+    public function processArguments()
     {
         if(($this->getOption('core.decode_utf8')))
         {
@@ -329,5 +337,53 @@ class Manager
         }
 
         return $this->aArgs;
+    }
+
+    /**
+     * Check if the current request can be processed
+     *
+     * Calls each of the request plugins and determines if the current request can be processed by one of them.
+     * If no processor identifies the current request, then the request must be for the initial page load.
+     *
+     * @return boolean
+     */
+    public function canProcessRequest()
+    {
+        foreach($this->xPluginManager->getRequestPlugins() as $xPlugin)
+        {
+            if($xPlugin->getName() != Jaxon::FILE_UPLOAD && $xPlugin->canProcessRequest())
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Process the current request
+     *
+     * Calls each of the request plugins to request that they process the current request.
+     * If any plugin processes the request, it will return true.
+     *
+     * @return boolean
+     */
+    public function processRequest()
+    {
+        foreach($this->xPluginManager->getRequestPlugins() as $xPlugin)
+        {
+            if($xPlugin->getName() != Jaxon::FILE_UPLOAD && $xPlugin->canProcessRequest())
+            {
+                $xUploadPlugin = $this->xPluginManager->getRequestPlugin(Jaxon::FILE_UPLOAD);
+                // Process uploaded files
+                if($xUploadPlugin != null)
+                {
+                    $xUploadPlugin->processRequest();
+                }
+                // Process the request
+                return $xPlugin->processRequest();
+            }
+        }
+        // Todo: throw an exception
+        return false;
     }
 }

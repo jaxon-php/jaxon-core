@@ -43,11 +43,11 @@ trait Manager
     /**
      * Get the request manager
      *
-     * @return Jaxon\Request\Manager
+     * @return Jaxon\Request\Handler
      */
-    public function getRequestManager()
+    public function getRequestHandler()
     {
-        return Container::getInstance()->getRequestManager();
+        return Container::getInstance()->getRequestHandler();
     }
 
     /**

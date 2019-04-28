@@ -1256,8 +1256,7 @@ class Response
      */
     public function sendHeaders()
     {
-        $xRequestManager = $this->getRequestManager();
-        if($xRequestManager->getRequestMethod() == Jaxon::METHOD_GET)
+        if($this->getRequesthandler()->getRequestMethod() == Jaxon::METHOD_GET)
         {
             header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
             header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");

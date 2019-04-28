@@ -27,7 +27,6 @@ use Jaxon\Request\Support\CallableRepository;
 
 class CallableClass extends RequestPlugin
 {
-    use \Jaxon\Utils\Traits\Manager;
     use \Jaxon\Utils\Traits\Validator;
     use \Jaxon\Utils\Traits\Translator;
 
@@ -187,11 +186,12 @@ class CallableClass extends RequestPlugin
         }
 
         // Call the requested method
-        $aArgs = $this->getRequestManager()->process();
+        $jaxon = jaxon();
+        $aArgs = $jaxon->getRequestHandler()->processArguments();
         $xResponse = $xCallableObject->call($this->sRequestedMethod, $aArgs);
         if(($xResponse))
         {
-            $this->getResponseManager()->append($xResponse);
+            $jaxon->getResponseManager()->append($xResponse);
         }
         return true;
     }
