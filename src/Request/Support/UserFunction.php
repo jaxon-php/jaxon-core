@@ -29,21 +29,18 @@ class UserFunction
     use \Jaxon\Utils\Traits\Template;
 
     /**
-     * An alias to use for this function
-     *
-     * This is useful when you want to call the same jaxon enabled function with
-     * a different set of call options from what was already registered.
+     * The name of the corresponding javascript function
      *
      * @var string
      */
-    private $sAlias;
+    private $sJsFunction;
 
     /**
      * A string or an array which defines the function to be registered
      *
      * @var string|array
      */
-    private $sUserFunction;
+    private $xUserFunction;
 
     /**
      * The path and file name of the include file where the function is defined
@@ -63,8 +60,8 @@ class UserFunction
     public function __construct($sUserFunction)
     {
         $this->aConfiguration = [];
-        $this->sAlias = '';
-        $this->sUserFunction = $sUserFunction;
+        $this->sJsFunction = $sUserFunction;
+        $this->xUserFunction = $sUserFunction;
     }
 
     /**
@@ -74,12 +71,7 @@ class UserFunction
      */
     public function getName()
     {
-        // Do not use sAlias here!
-        if(is_array($this->sUserFunction))
-        {
-            return $this->sUserFunction[1];
-        }
-        return $this->sUserFunction;
+        return $this->sJsFunction;
     }
 
     /**
@@ -95,10 +87,10 @@ class UserFunction
         switch($sName)
         {
         case 'class': // The user function is a method in the given class
-            $this->sUserFunction = [new $sValue, $this->sUserFunction];
+            $this->xUserFunction = [$sValue, $this->xUserFunction];
             break;
         case 'alias':
-            $this->sAlias = $sValue;
+            $this->sJsFunction = $sValue;
             break;
         case 'include':
             $this->sInclude = $sValue;
@@ -116,8 +108,7 @@ class UserFunction
      */
     public function generateRequest()
     {
-        $sAlias = (($this->sAlias) ? $this->sAlias : $this->getName());
-        return new Request($sAlias);
+        return new Request($this->getName());
     }
 
     /**
@@ -127,14 +118,13 @@ class UserFunction
      */
     public function getScript()
     {
-        $sJaxonPrefix = $this->getOption('core.prefix.function');
-        $sFunction = $this->getName();
-        $sAlias = (($this->sAlias) ? $this->sAlias : $sFunction);
+        $sPrefix = $this->getOption('core.prefix.function');
+        $sJsFunction = $this->getName();
 
         return $this->render('jaxon::support/function.js', array(
-            'sPrefix' => $sJaxonPrefix,
-            'sAlias' => $sAlias,
-            'sFunction' => $sFunction,
+            'sPrefix' => $sPrefix,
+            'sAlias' => $sJsFunction,
+            'sFunction' => $sJsFunction, // sAlias is the same as sFunction
             'aConfig' => $this->aConfiguration,
         ));
     }
@@ -153,6 +143,14 @@ class UserFunction
         {
             require_once $this->sInclude;
         }
-        return call_user_func_array($this->sUserFunction, $aArgs);
+
+        // If the function is an alias for a class method, then instanciate the class
+        if(is_array($this->xUserFunction) && is_string($this->xUserFunction[0]))
+        {
+            $sClassName = $this->xUserFunction[0];
+            $this->xUserFunction[0] = new $sClassName;
+        }
+
+        return call_user_func_array($this->xUserFunction, $aArgs);
     }
 }

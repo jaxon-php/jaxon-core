@@ -108,10 +108,11 @@ class UserFunction extends RequestPlugin
             }
         }
 
-        $this->aFunctions[$sFunctionName] = $sUserFunction;
-        jaxon()->di()->set($sFunctionName, function () use ($sUserFunction, $aOptions) {
+        $this->aFunctions[$sFunctionName] = $aOptions;
+        jaxon()->di()->set($sFunctionName, function () use ($sFunctionName, $sUserFunction) {
             $xUserFunction = new \Jaxon\Request\Support\UserFunction($sUserFunction);
 
+            $aOptions = $this->aFunctions[$sFunctionName];
             foreach($aOptions as $sName => $sValue)
             {
                 $xUserFunction->configure($sName, $sValue);
@@ -142,7 +143,7 @@ class UserFunction extends RequestPlugin
     {
         $di = jaxon()->di();
         $code = '';
-        foreach($this->aFunctions as $sName)
+        foreach(array_keys($this->aFunctions) as $sName)
         {
             $xFunction = $di->get($sName);
             $code .= $xFunction->getScript();
