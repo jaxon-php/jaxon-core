@@ -147,7 +147,7 @@ class Jaxon
     private function setDefaultOptions()
     {
         // The default configuration settings.
-        $this->di()->getCongig()->setOptions([
+        $this->di()->getConfig()->setOptions([
             'core.version'                      => $this->getVersion(),
             'core.language'                     => 'en',
             'core.encoding'                     => 'utf-8',
