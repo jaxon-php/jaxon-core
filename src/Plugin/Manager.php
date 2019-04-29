@@ -130,8 +130,8 @@ class Manager
      */
     public function registerPlugin(Plugin $xPlugin, $nPriority = 1000)
     {
-        $bIsAlert = ($xPlugin instanceof Dialogs\Interfaces\Alert);
-        $bIsConfirm = ($xPlugin instanceof Dialogs\Interfaces\Confirm);
+        $bIsAlert = ($xPlugin instanceof \Jaxon\Dialog\Interfaces\Alert);
+        $bIsConfirm = ($xPlugin instanceof \Jaxon\Dialog\Interfaces\Confirm);
         if($xPlugin instanceof Request)
         {
             // The name of a request plugin is used as key in the plugin table
@@ -144,17 +144,17 @@ class Manager
         }
         elseif(!$bIsConfirm && !$bIsAlert)
         {
-            throw new \Jaxon\Exception\Error($this->trans('errors.register.invalid', array('name' => get_class($xPlugin))));
+            throw new \Jaxon\Exception\Error($this->trans('errors.register.invalid', ['name' => get_class($xPlugin)]));
         }
         // This plugin implements the Alert interface
         if($bIsAlert)
         {
-            $this->setAlert($xPlugin);
+            jaxon()->dialog()->setAlert($xPlugin);
         }
         // This plugin implements the Confirm interface
         if($bIsConfirm)
         {
-            $this->setConfirm($xPlugin);
+            jaxon()->dialog()->setConfirm($xPlugin);
         }
         // Register the plugin as an event listener
         if($xPlugin instanceof \Jaxon\Utils\Interfaces\EventListener)

@@ -20,28 +20,28 @@ class Dialog
     /**
      * Javascript confirm function
      *
-     * @var Jaxon\Dialog\Interfaces\Confirm
+     * @var Interfaces\Confirm
      */
     private $xConfirm;
 
     /**
      * Default javascript confirm function
      *
-     * @var Jaxon\Dialog\Confirm
+     * @var Confirm
      */
     private $xDefaultConfirm;
 
     /**
      * Javascript alert function
      *
-     * @var Jaxon\Dialog\Interfaces\Alert
+     * @var Interfaces\Alert
      */
     private $xAlert;
 
     /**
      * Default javascript alert function
      *
-     * @var Jaxon\Dialog\Alert
+     * @var Alert
      */
     private $xDefaultAlert;
 
@@ -62,7 +62,7 @@ class Dialog
     /**
      * Set the javascript confirm function
      *
-     * @param Jaxon\Dialog\Interfaces\Confirm         $xConfirm     The javascript confirm function
+     * @param Interfaces\Confirm         $xConfirm     The javascript confirm function
      *
      * @return void
      */
@@ -74,7 +74,7 @@ class Dialog
     /**
      * Get the javascript confirm function
      *
-     * @return Jaxon\Dialog\Interfaces\Confirm
+     * @return Interfaces\Confirm
      */
     public function getConfirm()
     {
@@ -84,7 +84,7 @@ class Dialog
     /**
      * Get the default javascript confirm function
      *
-     * @return Jaxon\Dialog\Confirm
+     * @return Confirm
      */
     public function getDefaultConfirm()
     {
@@ -94,7 +94,7 @@ class Dialog
     /**
      * Set the javascript alert function
      *
-     * @param Jaxon\Dialog\Interfaces\Alert           $xAlert       The javascript alert function
+     * @param Interfaces\Alert           $xAlert       The javascript alert function
      *
      * @return void
      */
@@ -106,7 +106,7 @@ class Dialog
     /**
      * Get the javascript alert function
      *
-     * @return Jaxon\Dialog\Interfaces\Alert
+     * @return Interfaces\Alert
      */
     public function getAlert()
     {
@@ -116,7 +116,7 @@ class Dialog
     /**
      * Get the default javascript alert function
      *
-     * @return Jaxon\Dialog\Alert
+     * @return Alert
      */
     public function getDefaultAlert()
     {
