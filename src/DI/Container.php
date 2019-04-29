@@ -109,15 +109,15 @@ class Container
          * Core library objects
          */
         // Jaxon Core
-        $this->coreContainer[Jaxon::class] = function ($c) {
+        $this->coreContainer[Jaxon::class] = function () {
             return new Jaxon();
         };
         // Global Response
-        $this->coreContainer[Response::class] = function ($c) {
+        $this->coreContainer[Response::class] = function () {
             return new Response();
         };
         // Dialog
-        $this->coreContainer[Dialog::class] = function ($c) {
+        $this->coreContainer[Dialog::class] = function () {
             return new Dialog();
         };
 
@@ -125,11 +125,11 @@ class Container
          * Managers
          */
         // Callable objects repository
-        $this->coreContainer[CallableRepository::class] = function ($c) {
+        $this->coreContainer[CallableRepository::class] = function () {
             return new CallableRepository();
         };
         // Plugin Manager
-        $this->coreContainer[PluginManager::class] = function ($c) {
+        $this->coreContainer[PluginManager::class] = function () {
             return new PluginManager();
         };
         // Request Manager
@@ -141,11 +141,11 @@ class Container
             return new RequestFactory($c[CallableRepository::class]);
         };
         // Parameter Factory
-        $this->coreContainer[ParameterFactory::class] = function ($c) {
+        $this->coreContainer[ParameterFactory::class] = function () {
             return new ParameterFactory();
         };
         // Response Manager
-        $this->coreContainer[ResponseManager::class] = function ($c) {
+        $this->coreContainer[ResponseManager::class] = function () {
             return new ResponseManager();
         };
         // Code Generator
@@ -156,10 +156,10 @@ class Container
         /*
          * Config
          */
-        $this->coreContainer[Config::class] = function ($c) {
+        $this->coreContainer[Config::class] = function () {
             return new Config();
         };
-        $this->coreContainer[ConfigReader::class] = function ($c) {
+        $this->coreContainer[ConfigReader::class] = function () {
             return new ConfigReader();
         };
 
@@ -167,7 +167,7 @@ class Container
          * Services
          */
         // Minifier
-        $this->coreContainer[Minifier::class] = function ($c) {
+        $this->coreContainer[Minifier::class] = function () {
             return new Minifier();
         };
         // Translator
@@ -191,7 +191,7 @@ class Container
             return new Paginator($c[PaginationRenderer::class]);
         };
         // Event Dispatcher
-        $this->coreContainer[EventDispatcher::class] = function ($c) {
+        $this->coreContainer[EventDispatcher::class] = function () {
             return new EventDispatcher();
         };
 

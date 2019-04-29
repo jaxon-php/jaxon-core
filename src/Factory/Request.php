@@ -147,17 +147,15 @@ class Request extends Parameter
      * @param integer       $nItemsTotal            The total number of items
      * @param integer       $nItemsPerPage          The number of items per page page
      * @param integer       $nCurrentPage           The current page
-     * @param string        $sMethod                The name of function or a method prepended with its class name
-     * @param ...           $xParams                The parameters of the function or method
      *
      * @return string the pagination links
      */
-    public function paginate($nItemsTotal, $nItemsPerPage, $nCurrentPage, $sMethod)
+    public function paginate($nItemsTotal, $nItemsPerPage, $nCurrentPage)
     {
         // Get the args list starting from the $sMethod
         $aArgs = array_slice(func_get_args(), 3);
         // Make the request
-        $request = call_user_func_array('self::call', $aArgs);
+        $request = call_user_func_array([$this, 'call'], $aArgs);
         $paginator = jaxon()->paginator($nItemsTotal, $nItemsPerPage, $nCurrentPage, $request);
         return $paginator->toHtml();
     }

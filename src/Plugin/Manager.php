@@ -251,7 +251,7 @@ class Manager
             elseif(is_string($xKey) && is_array($xValue))
             {
                 // Register a class with options
-                $this->register(Jaxon::CALLABLE_CLASS, $xKey, $aOptions);
+                $this->register(Jaxon::CALLABLE_CLASS, $xKey, $xValue);
             }
             elseif(is_integer($xKey) && is_array($xValue))
             {

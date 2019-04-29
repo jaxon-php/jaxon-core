@@ -19,33 +19,22 @@ trait Factory
     /**
      * Return the javascript call to an Jaxon object method
      *
-     * @param string         $sMethod           The method (without class) name
-     * @param ...            $xParams           The parameters of the method
-     *
-     * @return object
+     * @return \Jaxon\Request\Request
      */
-    public function call($sMethod)
+    public function call()
     {
-        $aArgs = func_get_args();
         // Make the request
-        return call_user_func_array([rq(get_class()), 'call'], $aArgs);
+        return call_user_func_array([rq(get_class()), 'call'], func_get_args());
     }
 
     /**
      * Make the pagination links for a registered Jaxon class method
      *
-     * @param integer $nItemsTotal the total number of items
-     * @param integer $nItemsPerPage the number of items per page
-     * @param integer $nCurrentPage the current page
-     * @param string  $sMethod the name of the method
-     * @param ... $parameters the parameters of the method
-     *
      * @return string the pagination links
      */
-    public function paginate($nItemsTotal, $nItemsPerPage, $nCurrentPage, $sMethod)
+    public function paginate()
     {
-        $aArgs = func_get_args();
         // Make the request
-        return call_user_func_array([rq(get_class()), 'paginate'], $aArgs);
+        return call_user_func_array([rq(get_class()), 'paginate'], func_get_args());
     }
 }

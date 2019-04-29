@@ -26,6 +26,7 @@ class Alert implements Interfaces\Alert
      */
     protected function alert($message, $title)
     {
+        $title = ''; // Not used.
         if($this->getReturn())
         {
             return 'alert(' . $message . ')';
