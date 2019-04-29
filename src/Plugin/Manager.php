@@ -224,16 +224,13 @@ class Manager
         {
             if(is_integer($xKey) && is_string($xValue))
             {
-                $sFunction = $xValue;
                 // Register a function without options
-                $this->register(Jaxon::USER_FUNCTION, $sFunction);
+                $this->register(Jaxon::USER_FUNCTION, $xValue);
             }
             elseif(is_string($xKey) && is_array($xValue))
             {
-                $sFunction = $xKey;
-                $aOptions = $xValue;
                 // Register a function with options
-                $this->register(Jaxon::USER_FUNCTION, $sFunction, $aOptions);
+                $this->register(Jaxon::USER_FUNCTION, $xKey, $xValue);
             }
             else
             {
@@ -248,16 +245,13 @@ class Manager
         {
             if(is_integer($xKey) && is_string($xValue))
             {
-                $sClass = $xValue;
                 // Register a class without options
-                $this->register(Jaxon::CALLABLE_CLASS, $sClass);
+                $this->register(Jaxon::CALLABLE_CLASS, $xValue);
             }
             elseif(is_string($xKey) && is_array($xValue))
             {
-                $sClass = $xKey;
-                $aOptions = $xValue;
                 // Register a class with options
-                $this->register(Jaxon::CALLABLE_CLASS, $sClass, $aOptions);
+                $this->register(Jaxon::CALLABLE_CLASS, $xKey, $aOptions);
             }
             elseif(is_integer($xKey) && is_array($xValue))
             {

@@ -53,7 +53,7 @@ class Response
      *
      * @var array
      */
-    public $aCommands;
+    public $aCommands = [];
 
     /**
      * A string, array or integer value to be returned to the caller when using 'synchronous' mode requests.
@@ -62,11 +62,6 @@ class Response
      * @var mixed
      */
     private $returnValue;
-
-    public function __construct()
-    {
-        $this->aCommands = [];
-    }
 
     /**
      * Get the content type, which is always set to 'application/json'
@@ -237,35 +232,33 @@ class Response
      */
     public function appendResponse($mCommands, $bBefore = false)
     {
+        $aCommands = [];
         if($mCommands instanceof Response)
         {
             $this->returnValue = $mCommands->returnValue;
-
-            if($bBefore)
-            {
-                $this->aCommands = array_merge($mCommands->aCommands, $this->aCommands);
-            }
-            else
-            {
-                $this->aCommands = array_merge($this->aCommands, $mCommands->aCommands);
-            }
+            $aCommands = $mCommands->aCommands;
         }
         elseif(is_array($mCommands))
         {
-            if($bBefore)
-            {
-                $this->aCommands = array_merge($mCommands, $this->aCommands);
-            }
-            else
-            {
-                $this->aCommands = array_merge($this->aCommands, $mCommands);
-            }
+            $aCommands = $mCommands;
         }
         else
         {
             if(!empty($mCommands))
             {
                 throw new \Jaxon\Exception\Error($this->trans('errors.response.data.invalid'));
+            }
+        }
+
+        if(count($aCommands) > 0)
+        {
+            if($bBefore)
+            {
+                $this->aCommands = array_merge($aCommands, $this->aCommands);
+            }
+            else
+            {
+                $this->aCommands = array_merge($this->aCommands, $aCommands);
             }
         }
     }
