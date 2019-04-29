@@ -265,7 +265,7 @@ class Manager
                 $sDirectory = $xValue['directory'];
                 $aOptions = [];
                 if(key_exists('options', $xValue) &&
-                    is_array($xValue['options']) || is_string($xValue['options']))
+                    (is_array($xValue['options']) || is_string($xValue['options'])))
                 {
                     $aOptions = $xValue['options'];
                 }
