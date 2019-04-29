@@ -39,7 +39,6 @@ class Reader
         default:
             $sErrorMsg = jaxon_trans('config.errors.file.extension', array('path' => $sConfigFile));
             throw new \Jaxon\Config\Exception\File($sErrorMsg);
-            break;
         }
         return $aConfigOptions;
     }

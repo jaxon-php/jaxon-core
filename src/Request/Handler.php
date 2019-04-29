@@ -24,6 +24,8 @@ namespace Jaxon\Request;
 
 use Jaxon\Jaxon;
 
+use Jaxon\Plugin\Manager as PluginManager;
+
 class Handler
 {
     use \Jaxon\Utils\Traits\Config;
@@ -32,7 +34,7 @@ class Handler
     /**
      * The plugin manager.
      *
-     * @var Jaxon\Plugin\Manager
+     * @var PluginManager
      */
     private $xPluginManager;
 
@@ -55,8 +57,10 @@ class Handler
      * The constructor
      *
      * Get and decode the arguments of the HTTP request
+     *
+     * @param PluginManager         $xPluginManager
      */
-    public function __construct(\Jaxon\Plugin\Manager $xPluginManager)
+    public function __construct(PluginManager $xPluginManager)
     {
         $this->xPluginManager = $xPluginManager;
 

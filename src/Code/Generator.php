@@ -33,7 +33,7 @@ class Generator
     /**
      * The plugin manager
      *
-     * @var Jaxon\Plugin\Manager
+     * @var Manager
      */
     protected $xPluginManager;
 
@@ -61,7 +61,7 @@ class Generator
     /**
      * The constructor
      *
-     * @param   Jaxon\Plugin\Manager    $xPluginManager
+     * @param Manager    $xPluginManager
      */
     public function __construct(Manager $xPluginManager)
     {
