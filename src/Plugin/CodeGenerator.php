@@ -12,11 +12,9 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Code;
+namespace Jaxon\Plugin;
 
-use Jaxon\Plugin\Manager;
-
-class Generator
+class CodeGenerator
 {
     use \Jaxon\Utils\Traits\Config;
     use \Jaxon\Utils\Traits\Cache;
