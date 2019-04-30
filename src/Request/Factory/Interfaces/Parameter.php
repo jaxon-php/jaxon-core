@@ -11,9 +11,7 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Request\Interfaces;
-
-use Jaxon\Request\JsCall;
+namespace Jaxon\Request\Factory\Interfaces;
 
 interface Parameter
 {

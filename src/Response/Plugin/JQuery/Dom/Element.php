@@ -21,9 +21,7 @@
 namespace Jaxon\Response\Plugin\JQuery\Dom;
 
 use JsonSerializable;
-use Jaxon\Jaxon;
-use Jaxon\Request\JsCall;
-use Jaxon\Request\Interfaces\Parameter;
+use Jaxon\Request\Factory\Interfaces\Parameter;
 
 use Jaxon\Response\Plugin\Call\Method;
 use Jaxon\Response\Plugin\Call\AttrSet;

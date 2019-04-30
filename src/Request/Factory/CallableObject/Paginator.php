@@ -12,9 +12,8 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Factory\CallableObject;
+namespace Jaxon\Request\Factory\CallableObject;
 
-use Jaxon\DI\Container;
 use Jaxon\Request\Support\CallableObject;
 
 class Paginator
@@ -87,7 +86,7 @@ class Paginator
         $aArguments = array_merge($aPgArgs, $aArguments);
 
         // Make the request
-        $factory = Container::getInstance()->getRequestFactory()->setCallable($this->xCallable);
+        $factory = rq()->setCallable($this->xCallable);
         return call_user_func_array([$factory, 'paginate'], $aArguments);
     }
 }

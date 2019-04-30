@@ -23,11 +23,10 @@ use Jaxon\Config\Config;
 use Jaxon\Config\Reader as ConfigReader;
 use Jaxon\Request\Support\CallableRepository;
 use Jaxon\Request\Handler as RequestHandler;
+use Jaxon\Request\Factory as RequestFactory;
 use Jaxon\Response\Manager as ResponseManager;
 use Jaxon\Plugin\Manager as PluginManager;
 use Jaxon\Plugin\CodeGenerator;
-use Jaxon\Factory\Request as RequestFactory;
-use Jaxon\Factory\Parameter as ParameterFactory;
 use Jaxon\Dialog\Dialog;
 use Jaxon\Utils\Template\Minifier;
 use Jaxon\Utils\Translation\Translator;
@@ -132,17 +131,13 @@ class Container
         $this->coreContainer[PluginManager::class] = function () {
             return new PluginManager();
         };
-        // Request Manager
+        // Request Handler
         $this->coreContainer[RequestHandler::class] = function ($c) {
             return new RequestHandler($c[PluginManager::class]);
         };
         // Request Factory
         $this->coreContainer[RequestFactory::class] = function ($c) {
             return new RequestFactory($c[CallableRepository::class]);
-        };
-        // Parameter Factory
-        $this->coreContainer[ParameterFactory::class] = function () {
-            return new ParameterFactory();
         };
         // Response Manager
         $this->coreContainer[ResponseManager::class] = function () {
@@ -258,16 +253,6 @@ class Container
     public function getRequestFactory()
     {
         return $this->coreContainer[RequestFactory::class];
-    }
-
-    /**
-     * Get the parameter factory
-     *
-     * @return Jaxon\Factory\Parameter
-     */
-    public function getParameterFactory()
-    {
-        return $this->coreContainer[ParameterFactory::class];
     }
 
     /**

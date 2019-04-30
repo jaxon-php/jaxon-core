@@ -13,15 +13,16 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Factory;
+namespace Jaxon\Request;
 
 use Jaxon\Jaxon;
-use Jaxon\Request\Request as JaxonRequest;
+use Jaxon\Request\Factory\Request;
+use Jaxon\Request\Factory\Parameter;
 use Jaxon\Request\Support\CallableObject;
 use Jaxon\Request\Support\CallableRepository;
 
 // Extends Parameter for compatibility with older versions (see function rq())
-class Request extends Parameter
+class Factory
 {
     use \Jaxon\Utils\Traits\Config;
 
@@ -97,7 +98,7 @@ class Request extends Parameter
      * @param string            $sFunction          The function or method (without class) name
      * @param ...               $xParams            The parameters of the function or method
      *
-     * @return \Jaxon\Request\Request
+     * @return Request
      */
     public function call($sFunction)
     {
@@ -114,7 +115,7 @@ class Request extends Parameter
         }
 
         // Make the request
-        $xRequest = new JaxonRequest($this->sPrefix . $sFunction);
+        $xRequest = new Request($this->sPrefix . $sFunction);
         $xRequest->useSingleQuote();
         $xRequest->addParameters($aArguments);
         return $xRequest;
@@ -126,7 +127,7 @@ class Request extends Parameter
      * @param string            $sFunction          The function or method (with class) name
      * @param ...               $xParams            The parameters of the function or method
      *
-     * @return \Jaxon\Request\Request
+     * @return Request
      */
     public function func($sFunction)
     {
@@ -135,7 +136,7 @@ class Request extends Parameter
         // Remove the function name from the arguments array.
         array_shift($aArguments);
         // Make the request
-        $xRequest = new JaxonRequest($sFunction);
+        $xRequest = new Request($sFunction);
         $xRequest->useSingleQuote();
         $xRequest->addParameters($aArguments);
         return $xRequest;
@@ -158,5 +159,136 @@ class Request extends Parameter
         $request = call_user_func_array([$this, 'call'], $aArgs);
         $paginator = jaxon()->paginator($nItemsTotal, $nItemsPerPage, $nCurrentPage, $request);
         return $paginator->toHtml();
+    }
+
+    /**
+     * Make a parameter of type Jaxon::FORM_VALUES
+     *
+     * @param string        $sFormId                The id of the HTML form
+     *
+     * @return Parameter
+     */
+    public function form($sFormId)
+    {
+        return new Parameter(Jaxon::FORM_VALUES, $sFormId);
+    }
+
+    /**
+     * Make a parameter of type Jaxon::INPUT_VALUE
+     *
+     * @param string $sInputId the id of the HTML input element
+     *
+     * @return Parameter
+     */
+    public function input($sInputId)
+    {
+        return new Parameter(Jaxon::INPUT_VALUE, $sInputId);
+    }
+
+    /**
+     * Make a parameter of type Jaxon::CHECKED_VALUE
+     *
+     * @param string $sInputId the name of the HTML form element
+     *
+     * @return Parameter
+     */
+    public function checked($sInputId)
+    {
+        return new Parameter(Jaxon::CHECKED_VALUE, $sInputId);
+    }
+
+    /**
+     * Make a parameter of type Jaxon::CHECKED_VALUE
+     *
+     * @param string $sInputId the name of the HTML form element
+     *
+     * @return Parameter
+     */
+    public function select($sInputId)
+    {
+        return self::input($sInputId);
+    }
+
+    /**
+     * Make a parameter of type Jaxon::ELEMENT_INNERHTML
+     *
+     * @param string $sElementId the id of the HTML element
+     *
+     * @return Parameter
+     */
+    public function html($sElementId)
+    {
+        return new Parameter(Jaxon::ELEMENT_INNERHTML, $sElementId);
+    }
+
+    /**
+     * Make a parameter of type Jaxon::QUOTED_VALUE
+     *
+     * @param string $sValue the value of the parameter
+     *
+     * @return Parameter
+     */
+    public function string($sValue)
+    {
+        return new Parameter(Jaxon::QUOTED_VALUE, $sValue);
+    }
+
+    /**
+     * Make a parameter of type Jaxon::NUMERIC_VALUE
+     *
+     * @param numeric $nValue the value of the parameter
+     *
+     * @return Parameter
+     */
+    public function numeric($nValue)
+    {
+        return new Parameter(Jaxon::NUMERIC_VALUE, intval($nValue));
+    }
+
+    /**
+     * Make a parameter of type Jaxon::NUMERIC_VALUE
+     *
+     * @param numeric $nValue the value of the parameter
+     *
+     * @return Parameter
+     */
+    public function int($nValue)
+    {
+        return self::numeric($nValue);
+    }
+
+    /**
+     * Make a parameter of type Jaxon::JS_VALUE
+     *
+     * @param string $sValue the javascript code of the parameter
+     *
+     * @return Parameter
+     */
+    public function javascript($sValue)
+    {
+        return new Parameter(Jaxon::JS_VALUE, $sValue);
+    }
+
+    /**
+     * Make a parameter of type Jaxon::JS_VALUE
+     *
+     * @param string $sValue the javascript code of the parameter
+     *
+     * @return Parameter
+     */
+    public function js($sValue)
+    {
+        return self::javascript($sValue);
+    }
+
+    /**
+     * Make a parameter of type Jaxon::PAGE_NUMBER
+     *
+     * @return Parameter
+     */
+    public function page()
+    {
+        // By default, the value of a parameter of type Jaxon::PAGE_NUMBER is 0.
+        return new Parameter(Jaxon::PAGE_NUMBER, 0);
     }
 }

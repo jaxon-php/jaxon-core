@@ -11,19 +11,12 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Request;
+namespace Jaxon\Request\Factory;
 
 use Jaxon\Jaxon;
 
 class Parameter implements Interfaces\Parameter
 {
-    /**
-     * The request this parameter belongs to.
-     *
-     * @var Jaxon\Request\Request
-     */
-    public $xRequest;
-
     /**
      * The parameter type
      *

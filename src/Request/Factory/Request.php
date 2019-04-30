@@ -18,21 +18,14 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Request;
+namespace Jaxon\Request\Factory;
 
 use JsonSerializable;
 use Jaxon\Jaxon;
 
 class Request extends JsCall
 {
-    use \Jaxon\Utils\Traits\Manager;
-
-    /**
-     * A condition to check before sending this request
-     *
-     * @var string
-     */
-    protected $sCondition = null;
+    use Traits\Condition;
 
     /**
      * The arguments of the confirm() call
@@ -49,21 +42,6 @@ class Request extends JsCall
     public function __construct($sName)
     {
         parent::__construct($sName);
-    }
-
-    /**
-     * Create parameters for message arguments
-     *
-     * @param   $aArgs          The arguments
-     *
-     * @return void
-     */
-    private function setMessageArgs(array $aArgs)
-    {
-        array_walk($aArgs, function (&$xParameter) {
-            $xParameter = Parameter::make($xParameter);
-        });
-        $this->aMessageArgs = $aArgs;
     }
 
     /**
@@ -105,6 +83,21 @@ class Request extends JsCall
     }
 
     /**
+     * Create parameters for message arguments
+     *
+     * @param   $aArgs          The arguments
+     *
+     * @return void
+     */
+    private function setMessageArgs(array $aArgs)
+    {
+        array_walk($aArgs, function (&$xParameter) {
+            $xParameter = Parameter::make($xParameter);
+        });
+        $this->aMessageArgs = $aArgs;
+    }
+
+    /**
      * Add a confirmation question to the request
      *
      * @param string        $sQuestion                The question to ask
@@ -115,120 +108,6 @@ class Request extends JsCall
     {
         $this->sCondition = '__confirm__';
         $this->setMessageArgs(func_get_args());
-        return $this;
-    }
-
-    /**
-     * Add a condition to the request
-     *
-     * The request is sent only if the condition is true.
-     *
-     * @param string        $sCondition               The condition to check
-     *
-     * @return Request
-     */
-    public function when($sCondition)
-    {
-        $this->sCondition = Parameter::make($sCondition)->getScript();
-        return $this;
-    }
-
-    /**
-     * Add a condition to the request
-     *
-     * The request is sent only if the condition is false.
-     *
-     * @param string        $sCondition               The condition to check
-     *
-     * @return Request
-     */
-    public function unless($sCondition)
-    {
-        $this->sCondition = '!(' . Parameter::make($sCondition)->getScript() . ')';
-        return $this;
-    }
-
-    /**
-     * Check if a value is equal to another before sending the request
-     *
-     * @param string        $sValue1                  The first value to compare
-     * @param string        $sValue2                  The second value to compare
-     *
-     * @return Request
-     */
-    public function ifeq($sValue1, $sValue2)
-    {
-        $this->sCondition = '(' . Parameter::make($sValue1) . '==' . Parameter::make($sValue2) . ')';
-        return $this;
-    }
-
-    /**
-     * Check if a value is not equal to another before sending the request
-     *
-     * @param string        $sValue1                  The first value to compare
-     * @param string        $sValue2                  The second value to compare
-     *
-     * @return Request
-     */
-    public function ifne($sValue1, $sValue2)
-    {
-        $this->sCondition = '(' . Parameter::make($sValue1) . '!=' . Parameter::make($sValue2) . ')';
-        return $this;
-    }
-
-    /**
-     * Check if a value is greater than another before sending the request
-     *
-     * @param string        $sValue1                  The first value to compare
-     * @param string        $sValue2                  The second value to compare
-     *
-     * @return Request
-     */
-    public function ifgt($sValue1, $sValue2)
-    {
-        $this->sCondition = '(' . Parameter::make($sValue1) . '>' . Parameter::make($sValue2) . ')';
-        return $this;
-    }
-
-    /**
-     * Check if a value is greater or equal to another before sending the request
-     *
-     * @param string        $sValue1                  The first value to compare
-     * @param string        $sValue2                  The second value to compare
-     *
-     * @return Request
-     */
-    public function ifge($sValue1, $sValue2)
-    {
-        $this->sCondition = '(' . Parameter::make($sValue1) . '>=' . Parameter::make($sValue2) . ')';
-        return $this;
-    }
-
-    /**
-     * Check if a value is lower than another before sending the request
-     *
-     * @param string        $sValue1                  The first value to compare
-     * @param string        $sValue2                  The second value to compare
-     *
-     * @return Request
-     */
-    public function iflt($sValue1, $sValue2)
-    {
-        $this->sCondition = '(' . Parameter::make($sValue1) . '<' . Parameter::make($sValue2) . ')';
-        return $this;
-    }
-
-    /**
-     * Check if a value is lower or equal to another before sending the request
-     *
-     * @param string        $sValue1                  The first value to compare
-     * @param string        $sValue2                  The second value to compare
-     *
-     * @return Request
-     */
-    public function ifle($sValue1, $sValue2)
-    {
-        $this->sCondition = '(' . Parameter::make($sValue1) . '<=' . Parameter::make($sValue2) . ')';
         return $this;
     }
 
