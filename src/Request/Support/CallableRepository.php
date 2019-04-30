@@ -18,8 +18,6 @@ use Jaxon\Request\Request;
 
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
-// use RegexIterator;
-// use RecursiveRegexIterator;
 
 class CallableRepository
 {
@@ -190,7 +188,7 @@ class CallableRepository
     private function getOptionsFromNamespace($sClassName, $sNamespace = null)
     {
         // Find the corresponding namespace
-        if($sNamespace == null)
+        if($sNamespace === null)
         {
             foreach(array_keys($this->aNamespaceOptions) as $_sNamespace)
             {
@@ -201,7 +199,7 @@ class CallableRepository
                 }
             }
         }
-        if($sNamespace == null)
+        if($sNamespace === null)
         {
             return null; // Class not registered
         }
@@ -352,7 +350,10 @@ class CallableRepository
                 if(!key_exists($sClassName, $this->aCallableObjects))
                 {
                     $aClassOptions = $this->getOptionsFromNamespace($sClassName, $sNamespace);
-                    $this->_getCallableObject($sClassName, $aClassOptions);
+                    if($aClassOptions !== null)
+                    {
+                        $this->_getCallableObject($sClassName, $aClassOptions);
+                    }
                 }
             }
         }
