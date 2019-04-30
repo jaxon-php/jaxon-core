@@ -107,6 +107,32 @@ class Parameter implements Interfaces\Parameter
     }
 
     /**
+     * Add quotes to a given value
+     *
+     * @param string    $xValue     The value to be quoted
+     *
+     * @return string
+     */
+    private function getQuotedValue($xValue)
+    {
+        $sQuoteCharacter = "'";
+        return $sQuoteCharacter . $xValue . $sQuoteCharacter;
+    }
+
+    /**
+     * Get a js call to Jaxon with a single parameter
+     *
+     * @param string    $sFunction      The function name
+     * @param string    $sParameter     The function parameter
+     *
+     * @return string
+     */
+    private function getJsCall($sFunction, $sParameter)
+    {
+        return 'jaxon.' . $sFunction . '(' . $this->getQuotedValue($sParameter) . ')';
+    }
+
+    /**
      * Generate the javascript code.
      *
      * @return string
@@ -114,23 +140,22 @@ class Parameter implements Interfaces\Parameter
     public function getScript()
     {
         $sJsCode = '';
-        $sQuoteCharacter = "'";
         switch($this->sType)
         {
         case Jaxon::FORM_VALUES:
-            $sJsCode = "jaxon.getFormValues(" . $sQuoteCharacter . $this->xValue . $sQuoteCharacter . ")";
+            $sJsCode = $this->getJsCall('getFormValues', $this->xValue);
             break;
         case Jaxon::INPUT_VALUE:
-            $sJsCode = "jaxon.$("  . $sQuoteCharacter . $this->xValue . $sQuoteCharacter  . ").value";
+            $sJsCode = $this->getJsCall('$', $this->xValue) . '.value';
             break;
         case Jaxon::CHECKED_VALUE:
-            $sJsCode = "jaxon.$("  . $sQuoteCharacter . $this->xValue  . $sQuoteCharacter . ").checked";
+            $sJsCode = $this->getJsCall('$', $this->xValue) . '.checked';
             break;
         case Jaxon::ELEMENT_INNERHTML:
-            $sJsCode = "jaxon.$(" . $sQuoteCharacter . $this->xValue . $sQuoteCharacter . ").innerHTML";
+            $sJsCode = $this->getJsCall('$', $this->xValue) . '.innerHTML';
             break;
         case Jaxon::QUOTED_VALUE:
-            $sJsCode = $sQuoteCharacter . addslashes($this->xValue) . $sQuoteCharacter;
+            $sJsCode = $this->getQuotedValue(addslashes($this->xValue));
             break;
         case Jaxon::BOOL_VALUE:
             $sJsCode = ($this->xValue) ? 'true' : 'false';

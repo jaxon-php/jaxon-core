@@ -173,34 +173,34 @@ class CodeGenerator
             $this->sCssCode = '';
             $this->sJsCode = '';
             $this->sJsReady = '';
-            foreach($this->xPluginManager->getResponsePlugins() as $xPlugin)
+            foreach($this->xPluginManager->getResponsePlugins() as $xResponsePlugin)
             {
-                if(($sCssCode = trim($xPlugin->getCss())))
+                if(($sCssCode = trim($xResponsePlugin->getCss())))
                 {
                     $this->sCssCode .= rtrim($sCssCode, " \n") . "\n";
                 }
-                if(($sJsCode = trim($xPlugin->getJs())))
+                if(($sJsCode = trim($xResponsePlugin->getJs())))
                 {
                     $this->sJsCode .= rtrim($sJsCode, " \n") . "\n";
                 }
-                if(($sJsReady = trim($xPlugin->getScript())))
+                if(($sJsReady = trim($xResponsePlugin->getScript())))
                 {
                     $this->sJsReady .= trim($sJsReady, " \n") . "\n";
                 }
             }
 
             $this->sJsReady = $this->render('jaxon::plugins/ready.js', ['sPluginScript' => $this->sJsReady]);
-            foreach($this->xPluginManager->getRequestPlugins() as $xPlugin)
+            foreach($this->xPluginManager->getRequestPlugins() as $xRequestPlugin)
             {
-                if(($sJsReady = trim($xPlugin->getScript())))
+                if(($sJsReady = trim($xRequestPlugin->getScript())))
                 {
                     $this->sJsReady .= trim($sJsReady, " \n") . "\n";
                 }
             }
 
-            foreach($this->xPluginManager->getPackages() as $sClass)
+            foreach($this->xPluginManager->getPackages() as $sPackageClass)
             {
-                $xPackage = jaxon()->di()->get($sClass);
+                $xPackage = jaxon()->di()->get($sPackageClass);
                 if(($sCssCode = trim($xPackage->css())))
                 {
                     $this->sCssCode .= rtrim($sCssCode, " \n") . "\n";
