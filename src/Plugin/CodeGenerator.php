@@ -209,7 +209,6 @@ class CodeGenerator
                 {
                     $this->sJsCode .= rtrim($sJsCode, " \n") . "\n";
                 }
-                $xPackage = jaxon()->di()->get($sClass);
                 if(($sJsReady = trim($xPackage->ready())))
                 {
                     $this->sJsReady .= trim($sJsReady, " \n") . "\n";
