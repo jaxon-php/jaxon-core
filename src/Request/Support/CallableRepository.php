@@ -153,8 +153,13 @@ class CallableRepository
      *
      * @return void
      */
-    public function addNamespace($sNamespace, $aOptions)
+    public function addNamespace($sNamespace, array $aOptions)
     {
+        // Separator default value
+        if(!key_exists('separator', $aOptions))
+        {
+            $aOptions['separator'] = '.';
+        }
         $this->aNamespaceOptions[$sNamespace] = $aOptions;
     }
 
@@ -178,19 +183,22 @@ class CallableRepository
      * Find a class name is register with Jaxon::CALLABLE_DIR type
      *
      * @param string        $sClassName            The class name of the callable object
+     * @param string|null   $sNamespace            The namespace
      *
      * @return array|null
      */
-    private function getOptionsFromNamespace($sClassName)
+    private function getOptionsFromNamespace($sClassName, $sNamespace = null)
     {
         // Find the corresponding namespace
-        $sNamespace = null;
-        foreach(array_keys($this->aNamespaceOptions) as $_sNamespace)
+        if($sNamespace == null)
         {
-            if(substr($sClassName, 0, strlen($_sNamespace) + 1) == $_sNamespace . '\\')
+            foreach(array_keys($this->aNamespaceOptions) as $_sNamespace)
             {
-                $sNamespace = $_sNamespace;
-                break;
+                if(substr($sClassName, 0, strlen($_sNamespace) + 1) == $_sNamespace . '\\')
+                {
+                    $sNamespace = $_sNamespace;
+                    break;
+                }
             }
         }
         if($sNamespace == null)
@@ -199,43 +207,31 @@ class CallableRepository
         }
 
         // Get the class options
-        return $this->getClassOptions($sClassName, $this->aNamespaceOptions[$sNamespace]);
+        $aOptions = $this->aNamespaceOptions[$sNamespace];
+        $aDefaultOptions = []; // ['namespace' => $aOptions['namespace']];
+        if(key_exists('separator', $aOptions))
+        {
+            $aDefaultOptions['separator'] = $aOptions['separator'];
+        }
+        return $this->getClassOptions($sClassName, $aOptions, $aDefaultOptions);
     }
 
     /**
      * Find a callable object by class name
      *
      * @param string        $sClassName            The class name of the callable object
+     * @param array         $aOptions              The callable object options
      *
      * @return object
      */
-    public function getCallableObject($sClassName)
+    protected function _getCallableObject($sClassName, array $aOptions)
     {
-        // Replace all separators ('.' and '_') with antislashes, and remove the antislashes
-        // at the beginning and the end of the class name.
-        $sClassName = trim(str_replace(['.', '_'], ['\\', '\\'], (string)$sClassName), '\\');
-
-        if(key_exists($sClassName, $this->aCallableObjects))
-        {
-            return $this->aCallableObjects[$sClassName];
-        }
-
-        $aOptions = $this->getOptionsFromClass($sClassName);
-        if($aOptions === null)
-        {
-            $aOptions = $this->getOptionsFromNamespace($sClassName);
-        }
-        if($aOptions === null)
-        {
-            return null;
-        }
-
         // Make sure the registered class exists
         if(key_exists('include', $aOptions))
         {
             require_once($aOptions['include']);
         }
-        if(!class_exists('\\' . $sClassName))
+        if(!class_exists($sClassName))
         {
             return null;
         }
@@ -272,6 +268,37 @@ class CallableRepository
     }
 
     /**
+     * Find a callable object by class name
+     *
+     * @param string        $sClassName            The class name of the callable object
+     *
+     * @return object
+     */
+    public function getCallableObject($sClassName)
+    {
+        // Replace all separators ('.' and '_') with antislashes, and remove the antislashes
+        // at the beginning and the end of the class name.
+        $sClassName = trim(str_replace(['.', '_'], ['\\', '\\'], (string)$sClassName), '\\');
+
+        if(key_exists($sClassName, $this->aCallableObjects))
+        {
+            return $this->aCallableObjects[$sClassName];
+        }
+
+        $aOptions = $this->getOptionsFromClass($sClassName);
+        if($aOptions === null)
+        {
+            $aOptions = $this->getOptionsFromNamespace($sClassName);
+        }
+        if($aOptions === null)
+        {
+            return null;
+        }
+
+        return $this->_getCallableObject($sClassName, $aOptions);
+    }
+
+    /**
      * Create callable objects for all registered namespaces
      *
      * @return void
@@ -279,9 +306,12 @@ class CallableRepository
     private function createCallableObjects()
     {
         // Create callable objects for registered classes
-        foreach(array_keys($this->aClassOptions) as $sClassName)
+        foreach($this->aClassOptions as $sClassName => $aClassOptions)
         {
-            $this->getCallableObject($sClassName);
+            if(!key_exists($sClassName, $this->aCallableObjects))
+            {
+                $this->_getCallableObject($sClassName, $aClassOptions);
+            }
         }
 
         // Create callable objects for registered namespaces
@@ -317,8 +347,13 @@ class CallableRepository
                 }
 
                 $this->aNamespaces[$sClassPath] = ['separator' => $aOptions['separator']];
-                $sClassName = $xFile->getBasename('.php');
-                $this->getCallableObject($sClassPath . '\\' . $sClassName);
+                $sClassName = $sClassPath . '\\' . $xFile->getBasename('.php');
+
+                if(!key_exists($sClassName, $this->aCallableObjects))
+                {
+                    $aClassOptions = $this->getOptionsFromNamespace($sClassName, $sNamespace);
+                    $this->_getCallableObject($sClassName, $aClassOptions);
+                }
             }
         }
     }

@@ -78,7 +78,7 @@ class CallableDir extends RequestPlugin
     public function useComposerAutoloader()
     {
         $this->bAutoloadEnabled = true;
-        $this->xAutoloader = require(__DIR__ . '/../../../../autoload.php');
+        $this->xAutoloader = require(__DIR__ . '/../../../../../autoload.php');
     }
 
     /**
@@ -128,7 +128,7 @@ class CallableDir extends RequestPlugin
         {
             return false;
         }
-        $aOptions['directory'] = $sDirectory;
+        $aOptions['directory'] = realpath($sDirectory);
 
         $sNamespace = key_exists('namespace', $aOptions) ? $aOptions['namespace'] : '';
         if(!($sNamespace = trim($sNamespace, ' \\')))
