@@ -23,7 +23,7 @@ class Parameter implements Interfaces\Parameter
      * @var Jaxon\Request\Request
      */
     public $xRequest;
-    
+
     /**
      * The parameter type
      *
@@ -125,20 +125,16 @@ class Parameter implements Interfaces\Parameter
         switch($this->sType)
         {
         case Jaxon::FORM_VALUES:
-            $sFormID = (string)$this->xValue;
-            $sJsCode = "jaxon.getFormValues(" . $sQuoteCharacter . $sFormID . $sQuoteCharacter . ")";
+            $sJsCode = "jaxon.getFormValues(" . $sQuoteCharacter . $this->xValue . $sQuoteCharacter . ")";
             break;
         case Jaxon::INPUT_VALUE:
-            $sInputID = (string)$this->xValue;
-            $sJsCode = "jaxon.$("  . $sQuoteCharacter . $sInputID . $sQuoteCharacter  . ").value";
+            $sJsCode = "jaxon.$("  . $sQuoteCharacter . $this->xValue . $sQuoteCharacter  . ").value";
             break;
         case Jaxon::CHECKED_VALUE:
-            $sCheckedID = (string)$this->xValue;
-            $sJsCode = "jaxon.$("  . $sQuoteCharacter . $sCheckedID  . $sQuoteCharacter . ").checked";
+            $sJsCode = "jaxon.$("  . $sQuoteCharacter . $this->xValue  . $sQuoteCharacter . ").checked";
             break;
         case Jaxon::ELEMENT_INNERHTML:
-            $sElementID = (string)$this->xValue;
-            $sJsCode = "jaxon.$(" . $sQuoteCharacter . $sElementID . $sQuoteCharacter . ").innerHTML";
+            $sJsCode = "jaxon.$(" . $sQuoteCharacter . $this->xValue . $sQuoteCharacter . ").innerHTML";
             break;
         case Jaxon::QUOTED_VALUE:
             $sJsCode = $sQuoteCharacter . addslashes($this->xValue) . $sQuoteCharacter;

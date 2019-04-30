@@ -52,6 +52,21 @@ class Request extends JsCall
     }
 
     /**
+     * Create parameters for message arguments
+     *
+     * @param   $aArgs          The arguments
+     *
+     * @return void
+     */
+    private function setMessageArgs(array $aArgs)
+    {
+        array_walk($aArgs, function (&$xParameter) {
+            $xParameter = Parameter::make($xParameter);
+        });
+        $this->aMessageArgs = $aArgs;
+    }
+
+    /**
      * Check if the request has a parameter of type Jaxon::PAGE_NUMBER
      *
      * @return boolean
@@ -99,10 +114,7 @@ class Request extends JsCall
     public function confirm($sQuestion)
     {
         $this->sCondition = '__confirm__';
-        $this->aMessageArgs = func_get_args();
-        array_walk($this->aMessageArgs, function (&$xParameter) {
-            $xParameter = Parameter::make($xParameter);
-        });
+        $this->setMessageArgs(func_get_args());
         return $this;
     }
 
@@ -232,10 +244,7 @@ class Request extends JsCall
      */
     public function elseShow($sMessage)
     {
-        $this->aMessageArgs = func_get_args();
-        array_walk($this->aMessageArgs, function (&$xParameter) {
-            $xParameter = Parameter::make($xParameter);
-        });
+        $this->setMessageArgs(func_get_args());
         return $this;
     }
 

@@ -20,16 +20,14 @@ class Alert implements Interfaces\Alert
      * Print an alert message.
      *
      * @param string              $message              The text of the message
-     * @param string              $title                The title of the message
      *
      * @return string|void
      */
-    protected function alert($message, $title)
+    protected function alert($message)
     {
-        $title = ''; // Not used.
         if($this->getReturn())
         {
-            return 'alert(' . $title . $message . ')';
+            return 'alert(' . $message . ')';
         }
     }
 
@@ -45,7 +43,7 @@ class Alert implements Interfaces\Alert
      */
     public function success($message, $title = null)
     {
-        return $this->alert($message, $title);
+        return $this->alert($message);
     }
 
     /**
@@ -60,7 +58,7 @@ class Alert implements Interfaces\Alert
      */
     public function info($message, $title = null)
     {
-        return $this->alert($message, $title);
+        return $this->alert($message);
     }
 
     /**
@@ -75,7 +73,7 @@ class Alert implements Interfaces\Alert
      */
     public function warning($message, $title = null)
     {
-        return $this->alert($message, $title);
+        return $this->alert($message);
     }
 
     /**
@@ -90,6 +88,6 @@ class Alert implements Interfaces\Alert
      */
     public function error($message, $title = null)
     {
-        return $this->alert($message, $title);
+        return $this->alert($message);
     }
 }

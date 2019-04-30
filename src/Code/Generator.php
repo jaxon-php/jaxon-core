@@ -177,44 +177,44 @@ class Generator
             $this->sJsReady = '';
             foreach($this->xPluginManager->getResponsePlugins() as $xPlugin)
             {
-                if(($str = trim($xPlugin->getCss())))
+                if(($sCssCode = trim($xPlugin->getCss())))
                 {
-                    $this->sCssCode .= rtrim($str, " \n") . "\n";
+                    $this->sCssCode .= rtrim($sCssCode, " \n") . "\n";
                 }
-                if(($str = trim($xPlugin->getJs())))
+                if(($sJsCode = trim($xPlugin->getJs())))
                 {
-                    $this->sJsCode .= rtrim($str, " \n") . "\n";
+                    $this->sJsCode .= rtrim($sJsCode, " \n") . "\n";
                 }
-                if(($str = trim($xPlugin->getScript())))
+                if(($sJsReady = trim($xPlugin->getScript())))
                 {
-                    $this->sJsReady .= "\n" . trim($str, " \n");
+                    $this->sJsReady .= trim($sJsReady, " \n") . "\n";
                 }
             }
 
             $this->sJsReady = $this->render('jaxon::plugins/ready.js', ['sPluginScript' => $this->sJsReady]);
             foreach($this->xPluginManager->getRequestPlugins() as $xPlugin)
             {
-                if(($str = trim($xPlugin->getScript())))
+                if(($sJsReady = trim($xPlugin->getScript())))
                 {
-                    $this->sJsReady .= "\n" . trim($str, " \n");
+                    $this->sJsReady .= trim($sJsReady, " \n") . "\n";
                 }
             }
 
             foreach($this->xPluginManager->getPackages() as $sClass)
             {
                 $xPackage = jaxon()->di()->get($sClass);
-                if(($str = trim($xPackage->css())))
+                if(($sCssCode = trim($xPackage->css())))
                 {
-                    $this->sCssCode .= rtrim($str, " \n") . "\n";
+                    $this->sCssCode .= rtrim($sCssCode, " \n") . "\n";
                 }
-                if(($str = trim($xPackage->js())))
+                if(($sJsCode = trim($xPackage->js())))
                 {
-                    $this->sJsCode .= rtrim($str, " \n") . "\n";
+                    $this->sJsCode .= rtrim($sJsCode, " \n") . "\n";
                 }
                 $xPackage = jaxon()->di()->get($sClass);
-                if(($str = trim($xPackage->ready())))
+                if(($sJsReady = trim($xPackage->ready())))
                 {
-                    $this->sJsReady .= "\n" . trim($str, " \n");
+                    $this->sJsReady .= trim($sJsReady, " \n") . "\n";
                 }
             }
         }
