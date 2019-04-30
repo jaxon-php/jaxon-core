@@ -12,6 +12,8 @@
 
 namespace Jaxon\Request\Factory\Traits;
 
+use Jaxon\Request\Factory\Parameter;
+
 trait Condition
 {
     /**
