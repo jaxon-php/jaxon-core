@@ -66,6 +66,16 @@ class UserFunction extends RequestPlugin
     }
 
     /**
+     * Return the name of target function
+     *
+     * @return string
+     */
+    public function getTarget()
+    {
+        return $this->sRequestedFunction;
+    }
+
+    /**
      * Register a user defined function
      *
      * @param string        $sType          The type of request handler being registered

@@ -57,6 +57,16 @@ abstract class Request extends Plugin
     }
 
     /**
+     * Return the name of target function
+     *
+     * @return string
+     */
+    public function getTarget()
+    {
+        return '';
+    }
+
+    /**
      * Check if this plugin can process the current request
      *
      * Called by the <Jaxon\Plugin\Manager> when a request has been received to determine

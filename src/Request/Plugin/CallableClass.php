@@ -62,19 +62,19 @@ class CallableClass extends RequestPlugin
 
         if(!empty($_GET['jxncls']))
         {
-            $this->sRequestedClass = $_GET['jxncls'];
+            $this->sRequestedClass = trim($_GET['jxncls']);
         }
         if(!empty($_GET['jxnmthd']))
         {
-            $this->sRequestedMethod = $_GET['jxnmthd'];
+            $this->sRequestedMethod = trim($_GET['jxnmthd']);
         }
         if(!empty($_POST['jxncls']))
         {
-            $this->sRequestedClass = $_POST['jxncls'];
+            $this->sRequestedClass = trim($_POST['jxncls']);
         }
         if(!empty($_POST['jxnmthd']))
         {
-            $this->sRequestedMethod = $_POST['jxnmthd'];
+            $this->sRequestedMethod = trim($_POST['jxnmthd']);
         }
     }
 
@@ -86,6 +86,17 @@ class CallableClass extends RequestPlugin
     public function getName()
     {
         return Jaxon::CALLABLE_CLASS;
+    }
+
+    /**
+     * Return the name of target function
+     *
+     * @return string
+     */
+    public function getTarget()
+    {
+        $sRequestedClass = str_replace(['.', '_'], ['\\', '\\'], $this->sRequestedClass);
+        return trim($sRequestedClass, '\\') . '::' . $this->sRequestedMethod;
     }
 
     /**

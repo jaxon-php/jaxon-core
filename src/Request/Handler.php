@@ -67,6 +67,13 @@ class Handler
     private $xCallbackManager;
 
     /**
+     * The request plugin that is able to process the current request
+     *
+     * @var \Jaxon\Plugin\Request
+     */
+    private $xTargetRequestPlugin;
+
+    /**
      * The constructor
      *
      * Get and decode the arguments of the HTTP request
@@ -148,7 +155,7 @@ class Handler
         // Call the user defined callback
         if(($xCallback = $this->xCallbackManager->before()))
         {
-            call_user_func_array($xCallback, array($this->sTarget, &$bEndRequest));
+            call_user_func_array($xCallback, [$this->xTargetRequestPlugin->getTarget(), &$bEndRequest]);
         }
         // return $this->xResponse;
     }
@@ -162,7 +169,7 @@ class Handler
     {
         if(($xCallback = $this->xCallbackManager->after()))
         {
-            call_user_func_array($xCallback, array($this->sTarget, $bEndRequest));
+            call_user_func_array($xCallback, [$this->xTargetRequestPlugin->getTarget(), $bEndRequest]);
         }
 
         // If the called function returned no response, give the the global response instead
@@ -182,7 +189,7 @@ class Handler
     {
         if(($xCallback = $this->xCallbackManager->invalid()))
         {
-            call_user_func_array($xCallback, array($this->xResponse, $sMessage));
+            call_user_func_array($xCallback, [$sMessage]);
         }
         // return $this->xResponse;
     }
@@ -192,15 +199,15 @@ class Handler
      *
      * @return Jaxon\Response\Response  the Jaxon response
      */
-    public function onError(Exception $e)
+    public function onError(Exception $xException)
     {
         if(($xCallback = $this->xCallbackManager->error()))
         {
-            call_user_func_array($xCallback, array($this->xResponse, $e));
+            call_user_func_array($xCallback, [$xException]);
         }
         else
         {
-            throw $e;
+            throw $xException;
         }
         // return $this->xResponse;
     }
@@ -219,6 +226,7 @@ class Handler
         {
             if($xPlugin->getName() != Jaxon::FILE_UPLOAD && $xPlugin->canProcessRequest())
             {
+                $this->xTargetRequestPlugin = $xPlugin;
                 return true;
             }
         }

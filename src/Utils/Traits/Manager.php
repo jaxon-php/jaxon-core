@@ -51,6 +51,16 @@ trait Manager
     }
 
     /**
+     * Get the request callback manager
+     *
+     * @return Jaxon\Request\Handler\Callback
+     */
+    public function callback()
+    {
+        return $this->getRequestHandler()->getCallbackManager();
+    }
+
+    /**
      * Get the response manager
      *
      * @return Jaxon\Response\Manager
