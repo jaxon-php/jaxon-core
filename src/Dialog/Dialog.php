@@ -11,10 +11,6 @@
 
 namespace Jaxon\Dialog;
 
-use Jaxon\Jaxon;
-use Jaxon\Plugin\Package;
-use Jaxon\Config\Config;
-
 class Dialog
 {
     /**

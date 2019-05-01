@@ -15,7 +15,7 @@
 namespace Jaxon\DI;
 
 use Lemon\Event\EventDispatcher;
-use Jaxon\Sentry\View\Renderer;
+use Jaxon\App\View\Renderer;
 
 use Jaxon\Jaxon;
 use Jaxon\Response\Response;
@@ -38,10 +38,10 @@ use Jaxon\Utils\Pagination\Renderer as PaginationRenderer;
 class Container
 {
     // The Dependency Injection Container
-    private $coreContainer = null;
+    private $libContainer = null;
 
     // The Dependency Injection Container
-    private $sentryContainer = null;
+    private $appContainer = null;
 
     // The only instance of the Container (Singleton)
     private static $xInstance = null;
@@ -57,7 +57,7 @@ class Container
 
     private function __construct()
     {
-        $this->coreContainer = new \Pimple\Container();
+        $this->libContainer = new \Pimple\Container();
 
         $sTranslationDir = realpath(__DIR__ . '/../../translations');
         $sTemplateDir = realpath(__DIR__ . '/../../templates');
@@ -69,9 +69,9 @@ class Container
      *
      * @return ContainerInterface
      */
-    public function getSentryContainer()
+    public function getAppContainer()
     {
-        return $this->sentryContainer;
+        return $this->appContainer;
     }
 
     /**
@@ -81,9 +81,9 @@ class Container
      *
      * @return void
      */
-    public function setSentryContainer(ContainerInterface $container)
+    public function setAppContainer(ContainerInterface $container)
     {
-        $this->sentryContainer = $container;
+        $this->appContainer = $container;
     }
 
     /**
@@ -100,23 +100,23 @@ class Container
          * Parameters
          */
         // Translation directory
-        $this->coreContainer['jaxon.core.translation_dir'] = $sTranslationDir;
+        $this->libContainer['jaxon.core.translation_dir'] = $sTranslationDir;
         // Template directory
-        $this->coreContainer['jaxon.core.template_dir'] = $sTemplateDir;
+        $this->libContainer['jaxon.core.template_dir'] = $sTemplateDir;
 
         /*
          * Core library objects
          */
         // Jaxon Core
-        $this->coreContainer[Jaxon::class] = function () {
+        $this->libContainer[Jaxon::class] = function () {
             return new Jaxon();
         };
         // Global Response
-        $this->coreContainer[Response::class] = function () {
+        $this->libContainer[Response::class] = function () {
             return new Response();
         };
         // Dialog
-        $this->coreContainer[Dialog::class] = function () {
+        $this->libContainer[Dialog::class] = function () {
             return new Dialog();
         };
 
@@ -124,37 +124,37 @@ class Container
          * Managers
          */
         // Callable objects repository
-        $this->coreContainer[CallableRepository::class] = function () {
+        $this->libContainer[CallableRepository::class] = function () {
             return new CallableRepository();
         };
         // Plugin Manager
-        $this->coreContainer[PluginManager::class] = function () {
+        $this->libContainer[PluginManager::class] = function () {
             return new PluginManager();
         };
         // Request Handler
-        $this->coreContainer[RequestHandler::class] = function ($c) {
-            return new RequestHandler($c[PluginManager::class]);
+        $this->libContainer[RequestHandler::class] = function ($c) {
+            return new RequestHandler($c[PluginManager::class], $c[ResponseManager::class]);
         };
         // Request Factory
-        $this->coreContainer[RequestFactory::class] = function ($c) {
+        $this->libContainer[RequestFactory::class] = function ($c) {
             return new RequestFactory($c[CallableRepository::class]);
         };
         // Response Manager
-        $this->coreContainer[ResponseManager::class] = function () {
+        $this->libContainer[ResponseManager::class] = function () {
             return new ResponseManager();
         };
         // Code Generator
-        $this->coreContainer[CodeGenerator::class] = function ($c) {
+        $this->libContainer[CodeGenerator::class] = function ($c) {
             return new CodeGenerator($c[PluginManager::class]);
         };
 
         /*
          * Config
          */
-        $this->coreContainer[Config::class] = function () {
+        $this->libContainer[Config::class] = function () {
             return new Config();
         };
-        $this->coreContainer[ConfigReader::class] = function () {
+        $this->libContainer[ConfigReader::class] = function () {
             return new ConfigReader();
         };
 
@@ -162,39 +162,39 @@ class Container
          * Services
          */
         // Minifier
-        $this->coreContainer[Minifier::class] = function () {
+        $this->libContainer[Minifier::class] = function () {
             return new Minifier();
         };
         // Translator
-        $this->coreContainer[Translator::class] = function ($c) {
+        $this->libContainer[Translator::class] = function ($c) {
             return new Translator($c['jaxon.core.translation_dir'], $c[Config::class]);
         };
         // Template engine
-        $this->coreContainer[Template::class] = function ($c) {
+        $this->libContainer[Template::class] = function ($c) {
             return new Template($c['jaxon.core.template_dir']);
         };
         // Validator
-        $this->coreContainer[Validator::class] = function ($c) {
+        $this->libContainer[Validator::class] = function ($c) {
             return new Validator($c[Translator::class], $c[Config::class]);
         };
         // Pagination Renderer
-        $this->coreContainer[PaginationRenderer::class] = function ($c) {
+        $this->libContainer[PaginationRenderer::class] = function ($c) {
             return new PaginationRenderer($c[Template::class]);
         };
         // Pagination Paginator
-        $this->coreContainer[Paginator::class] = function ($c) {
+        $this->libContainer[Paginator::class] = function ($c) {
             return new Paginator($c[PaginationRenderer::class]);
         };
         // Event Dispatcher
-        $this->coreContainer[EventDispatcher::class] = function () {
+        $this->libContainer[EventDispatcher::class] = function () {
             return new EventDispatcher();
         };
 
         // View Renderer Facade
-        // $this->coreContainer[\Jaxon\Sentry\View\Facade::class] = function ($c) {
+        // $this->libContainer[\Jaxon\App\View\Facade::class] = function ($c) {
         //     $aRenderers = $c['jaxon.view.data.renderers'];
         //     $sDefaultNamespace = $c['jaxon.view.data.namespace.default'];
-        //     return new \Jaxon\Sentry\View\Facade($aRenderers, $sDefaultNamespace);
+        //     return new \Jaxon\App\View\Facade($aRenderers, $sDefaultNamespace);
         // };
     }
 
@@ -205,11 +205,11 @@ class Container
      */
     public function get($sClass)
     {
-        if($this->sentryContainer != null && $this->sentryContainer->has($sClass))
+        if($this->appContainer != null && $this->appContainer->has($sClass))
         {
-            return $this->sentryContainer->get($sClass);
+            return $this->appContainer->get($sClass);
         }
-        return $this->coreContainer[$sClass];
+        return $this->libContainer[$sClass];
     }
 
     /**
@@ -222,7 +222,7 @@ class Container
      */
     public function set($sClass, $xClosure)
     {
-        $this->coreContainer[$sClass] = $xClosure;
+        $this->libContainer[$sClass] = $xClosure;
     }
 
     /**
@@ -232,7 +232,7 @@ class Container
      */
     public function getPluginManager()
     {
-        return $this->coreContainer[PluginManager::class];
+        return $this->libContainer[PluginManager::class];
     }
 
     /**
@@ -242,7 +242,7 @@ class Container
      */
     public function getRequestHandler()
     {
-        return $this->coreContainer[RequestHandler::class];
+        return $this->libContainer[RequestHandler::class];
     }
 
     /**
@@ -252,7 +252,7 @@ class Container
      */
     public function getRequestFactory()
     {
-        return $this->coreContainer[RequestFactory::class];
+        return $this->libContainer[RequestFactory::class];
     }
 
     /**
@@ -262,7 +262,7 @@ class Container
      */
     public function getResponseManager()
     {
-        return $this->coreContainer[ResponseManager::class];
+        return $this->libContainer[ResponseManager::class];
     }
 
     /**
@@ -272,7 +272,7 @@ class Container
      */
     public function getCodeGenerator()
     {
-        return $this->coreContainer[CodeGenerator::class];
+        return $this->libContainer[CodeGenerator::class];
     }
 
     /**
@@ -282,7 +282,7 @@ class Container
      */
     public function getConfig()
     {
-        return $this->coreContainer[Config::class];
+        return $this->libContainer[Config::class];
     }
 
     /**
@@ -302,7 +302,7 @@ class Container
      */
     public function getDialog()
     {
-        return $this->coreContainer[Dialog::class];
+        return $this->libContainer[Dialog::class];
     }
 
     /**
@@ -312,7 +312,7 @@ class Container
      */
     public function getMinifier()
     {
-        return $this->coreContainer[Minifier::class];
+        return $this->libContainer[Minifier::class];
     }
 
     /**
@@ -322,7 +322,7 @@ class Container
      */
     public function getTranslator()
     {
-        return $this->coreContainer[Translator::class];
+        return $this->libContainer[Translator::class];
     }
 
     /**
@@ -332,7 +332,7 @@ class Container
      */
     public function getTemplate()
     {
-        return $this->coreContainer[Template::class];
+        return $this->libContainer[Template::class];
     }
 
     /**
@@ -342,7 +342,7 @@ class Container
      */
     public function getValidator()
     {
-        return $this->coreContainer[Validator::class];
+        return $this->libContainer[Validator::class];
     }
 
     /**
@@ -352,7 +352,7 @@ class Container
      */
     public function getPaginator()
     {
-        return $this->coreContainer[Paginator::class];
+        return $this->libContainer[Paginator::class];
     }
 
     /**
@@ -364,7 +364,7 @@ class Container
      */
     public function setPaginationRenderer(PaginationRenderer $xRenderer)
     {
-        $this->coreContainer[PaginationRenderer::class] = $xRenderer;
+        $this->libContainer[PaginationRenderer::class] = $xRenderer;
     }
 
     /**
@@ -374,7 +374,7 @@ class Container
      */
     public function getEventDispatcher()
     {
-        return $this->coreContainer[EventDispatcher::class];
+        return $this->libContainer[EventDispatcher::class];
     }
 
     /**
@@ -384,7 +384,7 @@ class Container
      */
     public function getResponse()
     {
-        return $this->coreContainer[Response::class];
+        return $this->libContainer[Response::class];
     }
 
     /**
@@ -404,7 +404,7 @@ class Container
      */
     public function getJaxon()
     {
-        return $this->coreContainer[Jaxon::class];
+        return $this->libContainer[Jaxon::class];
     }
 
     /**
@@ -418,25 +418,25 @@ class Container
     }
 
     /**
-     * Get the Sentry instance
+     * Get the App instance
      *
-     * @return Jaxon\Sentry\Sentry
+     * @return Jaxon\App\App
      */
-    public function getSentry()
+    public function getApp()
     {
-        return $this->coreContainer['jaxon.sentry'];
+        return $this->libContainer['jaxon.app'];
     }
 
     /**
-     * Set the Sentry instance
+     * Set the App instance
      *
-     * @param Jaxon\Sentry\Sentry     $xSentry            The Sentry instance
+     * @param Jaxon\App\App     $xApp            The App instance
      *
      * @return void
      */
-    public function setSentry($xSentry)
+    public function setApp($xApp)
     {
-        $this->coreContainer['jaxon.sentry'] = $xSentry;
+        $this->libContainer['jaxon.app'] = $xApp;
     }
 
     /**
@@ -446,7 +446,7 @@ class Container
      */
     public function getArmada()
     {
-        return $this->coreContainer['jaxon.armada'];
+        return $this->libContainer['jaxon.armada'];
     }
 
     /**
@@ -458,7 +458,7 @@ class Container
      */
     public function setArmada($xArmada)
     {
-        $this->coreContainer['jaxon.armada'] = $xArmada;
+        $this->libContainer['jaxon.armada'] = $xArmada;
     }
 
     /**
@@ -470,7 +470,7 @@ class Container
      */
     public function initViewRenderers($aRenderers)
     {
-        $this->coreContainer['jaxon.view.data.renderers'] = $aRenderers;
+        $this->libContainer['jaxon.view.data.renderers'] = $aRenderers;
     }
 
     /**
@@ -482,8 +482,8 @@ class Container
      */
     public function initViewNamespaces($aNamespaces, $sDefaultNamespace)
     {
-        $this->coreContainer['jaxon.view.data.namespaces'] = $aNamespaces;
-        $this->coreContainer['jaxon.view.data.namespace.default'] = $sDefaultNamespace;
+        $this->libContainer['jaxon.view.data.namespaces'] = $aNamespaces;
+        $this->libContainer['jaxon.view.data.namespace.default'] = $sDefaultNamespace;
     }
 
     /**
@@ -497,14 +497,14 @@ class Container
     public function addViewRenderer($sId, $xClosure)
     {
         // Return the non-initialiazed view renderer
-        $this->coreContainer['jaxon.sentry.view.base.' . $sId] = $xClosure;
+        $this->libContainer['jaxon.app.view.base.' . $sId] = $xClosure;
 
         // Return the initialized view renderer
-        $this->coreContainer['jaxon.sentry.view.' . $sId] = function ($c) use ($sId) {
+        $this->libContainer['jaxon.app.view.' . $sId] = function ($c) use ($sId) {
             // Get the defined renderer
-            $renderer = $c['jaxon.sentry.view.base.' . $sId];
+            $renderer = $c['jaxon.app.view.base.' . $sId];
             // Init the renderer with the template namespaces
-            $aNamespaces = $this->coreContainer['jaxon.view.data.namespaces'];
+            $aNamespaces = $this->libContainer['jaxon.view.data.namespaces'];
             if(key_exists($sId, $aNamespaces))
             {
                 foreach($aNamespaces[$sId] as $ns)
@@ -521,27 +521,27 @@ class Container
      *
      * @param string                $sId                The unique identifier of the view renderer
      *
-     * @return Jaxon\Sentry\Interfaces\View
+     * @return Jaxon\App\Interfaces\View
      */
     public function getViewRenderer($sId = '')
     {
         if(!$sId)
         {
             // Return the view renderer facade
-            return $this->coreContainer[\Jaxon\Sentry\View\Facade::class];
+            return $this->libContainer[\Jaxon\App\View\Facade::class];
         }
         // Return the view renderer with the given id
-        return $this->coreContainer['jaxon.sentry.view.' . $sId];
+        return $this->libContainer['jaxon.app.view.' . $sId];
     }
 
     /**
      * Get the session object
      *
-     * @return Jaxon\Sentry\Interfaces\Session
+     * @return Jaxon\App\Interfaces\Session
      */
     public function getSessionManager()
     {
-        return $this->coreContainer['jaxon.armada.session'];
+        return $this->libContainer['jaxon.armada.session'];
     }
 
     /**
@@ -553,6 +553,6 @@ class Container
      */
     public function setSessionManager($xClosure)
     {
-        $this->coreContainer['jaxon.armada.session'] = $xClosure;
+        $this->libContainer['jaxon.armada.session'] = $xClosure;
     }
 }
