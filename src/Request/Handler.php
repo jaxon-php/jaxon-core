@@ -24,6 +24,7 @@ namespace Jaxon\Request;
 
 use Jaxon\Jaxon;
 use Jaxon\Plugin\Manager as PluginManager;
+use Jaxon\Response\Manager as ResponseManager;
 
 class Handler
 {
@@ -38,19 +39,32 @@ class Handler
     private $xPluginManager;
 
     /**
-     * An array of arguments received via the GET or POST parameter jxnargs.
+     * The response manager.
+     *
+     * @var ResponseManager
+     */
+    private $xResponseManager;
+
+    /**
+     * Processing event handlers that have been assigned during this run of the script
      *
      * @var array
      */
-    private $aArgs;
+    private $aProcessingEvents = [];
 
     /**
-     * Stores the method that was used to send the arguments from the client.
-     * Will be one of: Jaxon::METHOD_UNKNOWN, Jaxon::METHOD_GET, Jaxon::METHOD_POST.
+     * The arguments handler.
      *
-     * @var integer
+     * @var Handler\Argument
      */
-    private $nMethod;
+    private $xArgumentManager;
+
+    /**
+     * The callbacks to run while processing the request
+     *
+     * @var Handler\Callback
+     */
+    private $xCallbackManager;
 
     /**
      * The constructor
@@ -58,240 +72,15 @@ class Handler
      * Get and decode the arguments of the HTTP request
      *
      * @param PluginManager         $xPluginManager
+     * @param ResponseManager       $xResponseManager
      */
-    public function __construct(PluginManager $xPluginManager)
+    public function __construct(PluginManager $xPluginManager, ResponseManager $xResponseManager)
     {
         $this->xPluginManager = $xPluginManager;
+        $this->xResponseManager = $xResponseManager;
 
-        $this->aArgs = [];
-        $this->nMethod = Jaxon::METHOD_UNKNOWN;
-
-        if(isset($_POST['jxnargs']))
-        {
-            $this->nMethod = Jaxon::METHOD_POST;
-            $this->aArgs = $_POST['jxnargs'];
-        }
-        elseif(isset($_GET['jxnargs']))
-        {
-            $this->nMethod = Jaxon::METHOD_GET;
-            $this->aArgs = $_GET['jxnargs'];
-        }
-        if(get_magic_quotes_gpc() == 1)
-        {
-            array_walk($this->aArgs, array(&$this, '__argumentStripSlashes'));
-        }
-        array_walk($this->aArgs, array(&$this, '__argumentDecode'));
-    }
-
-    /**
-     * Converts a string to a boolean var
-     *
-     * @param string        $sValue                The string to be converted
-     *
-     * @return boolean
-     */
-    private function __convertStringToBool($sValue)
-    {
-        if(strcasecmp($sValue, 'true') == 0)
-        {
-            return true;
-        }
-        if(strcasecmp($sValue, 'false') == 0)
-        {
-            return false;
-        }
-        if(is_numeric($sValue))
-        {
-            if($sValue == 0)
-            {
-                return false;
-            }
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Strip the slashes from a string
-     *
-     * @param string        $sArg                The string to be stripped
-     *
-     * @return string
-     */
-    private function __argumentStripSlashes(&$sArg)
-    {
-        if(!is_string($sArg))
-        {
-            return '';
-        }
-        $sArg = stripslashes($sArg);
-    }
-
-    /**
-     * Convert an Jaxon request argument to its value
-     *
-     * Depending of its first char, the Jaxon request argument is converted to a given type.
-     *
-     * @param string        $sValue                The keys of the options in the file
-     *
-     * @return mixed
-     */
-    private function __convertValue($sValue)
-    {
-        $cType = substr($sValue, 0, 1);
-        $sValue = substr($sValue, 1);
-        switch ($cType)
-        {
-            case 'S':
-                $value = ($sValue === false ? '' : $sValue);
-                break;
-            case 'B':
-                $value = $this->__convertStringToBool($sValue);
-                break;
-            case 'N':
-                $value = ($sValue == floor($sValue) ? (int)$sValue : (float)$sValue);
-                break;
-            case '*':
-            default:
-                $value = null;
-                break;
-        }
-        return $value;
-    }
-
-    /**
-     * Decode and convert an Jaxon request argument from JSON
-     *
-     * @param string        $sArg                The Jaxon request argument
-     *
-     * @return mixed
-     */
-    private function __argumentDecode(&$sArg)
-    {
-        if($sArg == '')
-        {
-            return '';
-        }
-
-        // Arguments are url encoded when uploading files
-        $sType = 'multipart/form-data';
-        $iLen = strlen($sType);
-        $sContentType = '';
-        if(key_exists('CONTENT_TYPE', $_SERVER))
-        {
-            $sContentType = substr($_SERVER['CONTENT_TYPE'], 0, $iLen);
-        }
-        elseif(key_exists('HTTP_CONTENT_TYPE', $_SERVER))
-        {
-            $sContentType = substr($_SERVER['HTTP_CONTENT_TYPE'], 0, $iLen);
-        }
-        if($sContentType == $sType)
-        {
-            $sArg = urldecode($sArg);
-        }
-
-        $data = json_decode($sArg, true);
-
-        if($data !== null && $sArg != $data)
-        {
-            $sArg = $data;
-        }
-        else
-        {
-            $sArg = $this->__convertValue($sArg);
-        }
-    }
-
-    /**
-     * Decode an Jaxon request argument and convert to UTF8 with iconv
-     *
-     * @param string|array        $mArg                The Jaxon request argument
-     *
-     * @return void
-     */
-    private function __argumentDecodeUTF8_iconv(&$mArg)
-    {
-        if(is_array($mArg))
-        {
-            foreach($mArg as $sKey => &$xArg)
-            {
-                $sNewKey = $sKey;
-                $this->__argumentDecodeUTF8_iconv($sNewKey);
-                if($sNewKey != $sKey)
-                {
-                    $mArg[$sNewKey] = $xArg;
-                    unset($mArg[$sKey]);
-                    $sKey = $sNewKey;
-                }
-                $this->__argumentDecodeUTF8_iconv($xArg);
-            }
-        }
-        elseif(is_string($mArg))
-        {
-            $mArg = iconv("UTF-8", $this->getOption('core.encoding') . '//TRANSLIT', $mArg);
-        }
-    }
-
-    /**
-     * Decode an Jaxon request argument and convert to UTF8 with mb_convert_encoding
-     *
-     * @param string|array        $mArg                The Jaxon request argument
-     *
-     * @return void
-     */
-    private function __argumentDecodeUTF8_mb_convert_encoding(&$mArg)
-    {
-        if(is_array($mArg))
-        {
-            foreach($mArg as $sKey => &$xArg)
-            {
-                $sNewKey = $sKey;
-                $this->__argumentDecodeUTF8_mb_convert_encoding($sNewKey);
-                if($sNewKey != $sKey)
-                {
-                    $mArg[$sNewKey] = $xArg;
-                    unset($mArg[$sKey]);
-                    $sKey = $sNewKey;
-                }
-                $this->__argumentDecodeUTF8_mb_convert_encoding($xArg);
-            }
-        }
-        elseif(is_string($mArg))
-        {
-            $mArg = mb_convert_encoding($mArg, $this->getOption('core.encoding'), "UTF-8");
-        }
-    }
-
-    /**
-     * Decode an Jaxon request argument from UTF8
-     *
-     * @param string|array        $mArg                The Jaxon request argument
-     *
-     * @return void
-     */
-    private function __argumentDecodeUTF8_utf8_decode(&$mArg)
-    {
-        if(is_array($mArg))
-        {
-            foreach($mArg as $sKey => &$xArg)
-            {
-                $sNewKey = $sKey;
-                $this->__argumentDecodeUTF8_utf8_decode($sNewKey);
-
-                if($sNewKey != $sKey)
-                {
-                    $mArg[$sNewKey] = $xArg;
-                    unset($mArg[$sKey]);
-                    $sKey = $sNewKey;
-                }
-
-                $this->__argumentDecodeUTF8_utf8_decode($xArg);
-            }
-        }
-        elseif(is_string($mArg))
-        {
-            $mArg = utf8_decode($mArg);
-        }
+        $this->xArgumentManager = new Handler\Argument();
+        $this->xCallbackManager = new Handler\Callback();
     }
 
     /**
@@ -303,7 +92,7 @@ class Handler
      */
     public function getRequestMethod()
     {
-        return $this->nMethod;
+        return $this->xArgumentManager->getRequestMethod();
     }
 
     /**
@@ -313,33 +102,107 @@ class Handler
      */
     public function processArguments()
     {
-        if(($this->getOption('core.decode_utf8')))
+        return $this->xArgumentManager->process();
+    }
+
+    /**
+     * Get the callback handler
+     *
+     * @return Handler\Callback
+     */
+    public function getCallbackManager()
+    {
+        return $this->xCallbackManager();
+    }
+
+    /**
+     * This is the pre-request processing callback passed to the Jaxon library.
+     *
+     * @param  boolean  &$bEndRequest if set to true, the request processing is interrupted.
+     *
+     * @return Jaxon\Response\Response  the Jaxon response
+     */
+    public function onBefore(&$bEndRequest)
+    {
+        // // Validate the inputs
+        // $class = $_POST['jxncls'];
+        // $method = $_POST['jxnmthd'];
+        // if(!$this->validateClass($class) || !$this->validateMethod($method))
+        // {
+        //     // End the request processing if the input data are not valid.
+        //     // Todo: write an error message in the response
+        //     $bEndRequest = true;
+        //     return $this->xResponse;
+        // }
+        // // Instanciate the class. This will include the required file.
+        // $this->xRequestObject = $this->instance($class);
+        // $this->sRequestMethod = $method;
+        // if(!$this->xRequestObject)
+        // {
+        //     // End the request processing if the class cannot be found.
+        //     // Todo: write an error message in the response
+        //     $bEndRequest = true;
+        //     return $this->xResponse;
+        // }
+
+        // Call the user defined callback
+        if(($xCallback = $this->xCallbackManager->before()))
         {
-            $sFunction = '';
+            call_user_func_array($xCallback, array($this->sTarget, &$bEndRequest));
+        }
+        // return $this->xResponse;
+    }
 
-            if(function_exists('iconv'))
-            {
-                $sFunction = "iconv";
-            }
-            elseif(function_exists('mb_convert_encoding'))
-            {
-                $sFunction = "mb_convert_encoding";
-            }
-            elseif($this->getOption('core.encoding') == "ISO-8859-1")
-            {
-                $sFunction = "utf8_decode";
-            }
-            else
-            {
-                throw new \Jaxon\Exception\Error($this->trans('errors.request.conversion'));
-            }
-
-            $mFunction = array(&$this, '__argumentDecodeUTF8_' . $sFunction);
-            array_walk($this->aArgs, $mFunction);
-            $this->setOption('core.decode_utf8', false);
+    /**
+     * This is the post-request processing callback passed to the Jaxon library.
+     *
+     * @return Jaxon\Response\Response  the Jaxon response
+     */
+    public function onAfter($bEndRequest)
+    {
+        if(($xCallback = $this->xCallbackManager->after()))
+        {
+            call_user_func_array($xCallback, array($this->sTarget, $bEndRequest));
         }
 
-        return $this->aArgs;
+        // If the called function returned no response, give the the global response instead
+        if($this->xResponseManager->hasNoResponse())
+        {
+            $this->xResponseManager->append(jaxon()->getResponse());
+        }
+        // return $this->xResponse;
+    }
+
+    /**
+     * This callback is called whenever an invalid request is processed.
+     *
+     * @return Jaxon\Response\Response  the Jaxon response
+     */
+    public function onInvalid($sMessage)
+    {
+        if(($xCallback = $this->xCallbackManager->invalid()))
+        {
+            call_user_func_array($xCallback, array($this->xResponse, $sMessage));
+        }
+        // return $this->xResponse;
+    }
+
+    /**
+     * This callback is called whenever an invalid request is processed.
+     *
+     * @return Jaxon\Response\Response  the Jaxon response
+     */
+    public function onError(Exception $e)
+    {
+        if(($xCallback = $this->xCallbackManager->error()))
+        {
+            call_user_func_array($xCallback, array($this->xResponse, $e));
+        }
+        else
+        {
+            throw $e;
+        }
+        // return $this->xResponse;
     }
 
     /**
@@ -372,21 +235,92 @@ class Handler
      */
     public function processRequest()
     {
-        foreach($this->xPluginManager->getRequestPlugins() as $xPlugin)
+        // Check to see if headers have already been sent out, in which case we can't do our job
+        if(headers_sent($filename, $linenumber))
         {
-            if($xPlugin->getName() != Jaxon::FILE_UPLOAD && $xPlugin->canProcessRequest())
+            echo $this->trans('errors.output.already-sent', array(
+                'location' => $filename . ':' . $linenumber
+            )), "\n", $this->trans('errors.output.advice');
+            exit();
+        }
+
+        // Check if there is a plugin to process this request
+        if(!$this->canProcessRequest())
+        {
+            return;
+        }
+
+        $bEndRequest = false;
+        $mResult = true;
+
+        // Handle before processing event
+        $this->onBefore($bEndRequest);
+
+        if(!$bEndRequest)
+        {
+            try
             {
-                $xUploadPlugin = $this->xPluginManager->getRequestPlugin(Jaxon::FILE_UPLOAD);
-                // Process uploaded files
-                if($xUploadPlugin != null)
+                foreach($this->xPluginManager->getRequestPlugins() as $xPlugin)
                 {
-                    $xUploadPlugin->processRequest();
+                    if($xPlugin->getName() != Jaxon::FILE_UPLOAD && $xPlugin->canProcessRequest())
+                    {
+                        $xUploadPlugin = $this->xPluginManager->getRequestPlugin(Jaxon::FILE_UPLOAD);
+                        // Process uploaded files
+                        if($xUploadPlugin != null)
+                        {
+                            $xUploadPlugin->processRequest();
+                        }
+                        // Process the request
+                        $mResult = $xPlugin->processRequest();
+                        break;
+                    }
                 }
-                // Process the request
-                return $xPlugin->processRequest();
+                // Todo: throw an exception
+                $mResult = false;
+            }
+            catch(Exception $e)
+            {
+                // An exception was thrown while processing the request.
+                // The request missed the corresponding handler function,
+                // or an error occurred while attempting to execute the handler.
+                // Replace the response, if one has been started and send a debug message.
+
+                $this->xResponseManager->error($e->getMessage());
+                $mResult = false;
+
+                if($e instanceof \Jaxon\Exception\Error)
+                {
+                    $this->onInvalid($e->getMessage());
+                }
+                else
+                {
+                    $this->onError($e);
+                }
             }
         }
-        // Todo: throw an exception
-        return false;
+        // Clean the processing buffer
+        if(($this->getOption('core.process.clean')))
+        {
+            $er = error_reporting(0);
+            while (ob_get_level() > 0)
+            {
+                ob_end_clean();
+            }
+            error_reporting($er);
+        }
+
+        if($mResult === true)
+        {
+            // Handle after processing event
+            $this->onAfter($bEndRequest);
+        }
+
+        $this->xResponseManager->printDebug();
+
+        if(($this->getOption('core.process.exit')))
+        {
+            $this->xResponseManager->sendOutput();
+            exit();
+        }
     }
 }

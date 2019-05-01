@@ -114,6 +114,20 @@ class Manager
     }
 
     /**
+     * Clear the response and appends a debug message on the end of the debug message queue
+     *
+     * @param string        $sMessage            The debug message
+     *
+     * @return void
+     */
+    public function error($sMessage)
+    {
+        $this->clear();
+        $this->append(jaxon()->newResponse());
+        $this->debug($sMessage);
+    }
+
+    /**
      * Prints the debug messages into the current response object
      *
      * @return void

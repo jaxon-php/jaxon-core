@@ -46,8 +46,8 @@ class Jaxon
     use Traits\Autoload;
     use Traits\Plugin;
     use Traits\Upload;
-    use Traits\Sentry;
     use Traits\Template;
+    use Traits\App;
 
     /**
      * Package version number
@@ -108,12 +108,8 @@ class Jaxon
     const PAGE_NUMBER = 'PageNumber';
 
     /**
-     * Processing event handlers that have been assigned during this run of the script
-     *
-     * @var array
+     * The constructor
      */
-    private $aProcessingEvents = [];
-
     public function __construct()
     {
         $this->setDefaultOptions();
@@ -324,105 +320,7 @@ class Jaxon
      */
     public function processRequest()
     {
-        // Check to see if headers have already been sent out, in which case we can't do our job
-        if(headers_sent($filename, $linenumber))
-        {
-            echo $this->trans('errors.output.already-sent', array(
-                'location' => $filename . ':' . $linenumber
-            )), "\n", $this->trans('errors.output.advice');
-            exit();
-        }
-
-        // Check if there is a plugin to process this request
-        if(!$this->canProcessRequest())
-        {
-            return;
-        }
-
-        $bEndRequest = false;
-        $mResult = true;
-        $xResponseManager = $this->getResponseManager();
-
-        // Handle before processing event
-        if(isset($this->aProcessingEvents[self::PROCESSING_EVENT_BEFORE]))
-        {
-            $this->aProcessingEvents[self::PROCESSING_EVENT_BEFORE]->call(array(&$bEndRequest));
-        }
-
-        if(!$bEndRequest)
-        {
-            try
-            {
-                $mResult = $this->getRequestHandler()->processRequest();
-            }
-            catch(Exception $e)
-            {
-                // An exception was thrown while processing the request.
-                // The request missed the corresponding handler function,
-                // or an error occurred while attempting to execute the handler.
-                // Replace the response, if one has been started and send a debug message.
-
-                $xResponseManager->clear();
-                $xResponseManager->append(new Response\Response());
-                $xResponseManager->debug($e->getMessage());
-                $mResult = false;
-
-                if($e instanceof \Jaxon\Exception\Error)
-                {
-                    $sEvent = self::PROCESSING_EVENT_INVALID;
-                    $aParams = array($e->getMessage());
-                }
-                else
-                {
-                    $sEvent = self::PROCESSING_EVENT_ERROR;
-                    $aParams = array($e);
-                }
-
-                if(isset($this->aProcessingEvents[$sEvent]))
-                {
-                    // Call the processing event
-                    $this->aProcessingEvents[$sEvent]->call($aParams);
-                }
-                else
-                {
-                    // The exception is not to be processed here.
-                    throw $e;
-                }
-            }
-        }
-        // Clean the processing buffer
-        if(($this->getOption('core.process.clean')))
-        {
-            $er = error_reporting(0);
-            while (ob_get_level() > 0)
-            {
-                ob_end_clean();
-            }
-            error_reporting($er);
-        }
-
-        if($mResult === true)
-        {
-            // Handle after processing event
-            if(isset($this->aProcessingEvents[self::PROCESSING_EVENT_AFTER]))
-            {
-                $bEndRequest = false;
-                $this->aProcessingEvents[self::PROCESSING_EVENT_AFTER]->call(array($bEndRequest));
-            }
-            // If the called function returned no response, give the the global response instead
-            if($xResponseManager->hasNoResponse())
-            {
-                $xResponseManager->append($this->getResponse());
-            }
-        }
-
-        $xResponseManager->printDebug();
-
-        if(($this->getOption('core.process.exit')))
-        {
-            $xResponseManager->sendOutput();
-            exit();
-        }
+        return $this->getRequestHandler()->processRequest();
     }
 
     /**
