@@ -24,7 +24,7 @@ use Jaxon\Request\Support\CallableRepository;
 // Extends Parameter for compatibility with older versions (see function rq())
 class Factory
 {
-    use \Jaxon\Utils\Traits\Config;
+    use \Jaxon\Features\Config;
 
     /**
      * The prefix to prepend on each call

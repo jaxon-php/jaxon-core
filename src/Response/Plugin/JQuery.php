@@ -6,7 +6,7 @@ use Jaxon\Response\Plugin\JQuery\Dom\Element;
 
 class JQuery extends \Jaxon\Plugin\Response
 {
-    use \Jaxon\Utils\Traits\Config;
+    use \Jaxon\Features\Config;
 
     /**
      * Return the name of the plugin.

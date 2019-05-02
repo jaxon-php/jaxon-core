@@ -10,7 +10,7 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Utils\Traits;
+namespace Jaxon\Features;
 
 use Jaxon\DI\Container;
 
@@ -43,5 +43,17 @@ trait Paginator
         $paginator = Container::getInstance()->getPaginator();
         $paginator->setup($nItemsTotal, $nItemsPerPage, $nCurrentPage, $xRequest);
         return $paginator;
+    }
+
+    /**
+     * Set a new directory for pagination templates
+     *
+     * @param string        $sDirectory             The directory path
+     *
+     * @return void
+     */
+    public function setPaginationDir($sDirectory)
+    {
+        return Container::getInstance()->getTemplate()->setPaginationDir($sDirectory);
     }
 }

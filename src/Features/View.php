@@ -10,7 +10,7 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Utils\Traits;
+namespace Jaxon\Features;
 
 use Jaxon\DI\Container;
 
@@ -27,7 +27,7 @@ trait View
     {
         return Container::getInstance()->initViewRenderers($aRenderers);
     }
-    
+
     /**
      * Set the view namespaces data
      *
@@ -39,7 +39,7 @@ trait View
     {
         return Container::getInstance()->initViewNamespaces($aNamespaces, $sDefaultNamespace);
     }
-    
+
     /**
      * Get the view renderer facade
      *
@@ -51,7 +51,7 @@ trait View
     {
         return Container::getInstance()->getViewRenderer($sId);
     }
-    
+
     /**
      * Add a view renderer with an id
      *
@@ -63,5 +63,19 @@ trait View
     public function addViewRenderer($sId, $xClosure)
     {
         Container::getInstance()->addViewRenderer($sId, $xClosure);
+    }
+
+    /**
+     * Add a namespace to the template system
+     *
+     * @param string        $sNamespace         The namespace name
+     * @param string        $sDirectory         The namespace directory
+     * @param string        $sExtension         The extension to append to template names
+     *
+     * @return void
+     */
+    public function addViewNamespace($sNamespace, $sDirectory, $sExtension = '')
+    {
+        return Container::getInstance()->getTemplate()->addNamespace($sNamespace, $sDirectory, $sExtension);
     }
 }

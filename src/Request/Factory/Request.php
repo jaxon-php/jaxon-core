@@ -25,7 +25,7 @@ use Jaxon\Jaxon;
 
 class Request extends JsCall
 {
-    use Traits\Condition;
+    use Features\Condition;
 
     /**
      * The arguments of the confirm() call

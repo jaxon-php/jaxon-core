@@ -31,15 +31,15 @@ use Jaxon\Utils\URI;
 
 class Jaxon
 {
-    use \Jaxon\Utils\Traits\Config;
-    use \Jaxon\Utils\Traits\Translator;
-    use \Jaxon\Utils\Traits\Paginator;
-
-    use Traits\Autoload;
-    use Traits\Plugin;
-    use Traits\Upload;
-    use Traits\Template;
-    use Traits\App;
+    use Features\Config;
+    use Features\Translator;
+    use Features\Paginator;
+    use Features\Autoload;
+    use Features\Plugin;
+    use Features\Upload;
+    use Features\Template;
+    use Features\View;
+    use Features\App;
 
     /**
      * Package version number

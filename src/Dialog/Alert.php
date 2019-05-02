@@ -14,7 +14,7 @@ namespace Jaxon\Dialog;
 
 class Alert implements Interfaces\Alert
 {
-    use Traits\Alert;
+    use \Jaxon\Features\Dialog\Alert;
 
     /**
      * Print an alert message.

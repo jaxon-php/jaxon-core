@@ -37,9 +37,9 @@ use Jaxon\Jaxon;
 
 class Response
 {
-    use \Jaxon\Utils\Traits\Config;
-    use \Jaxon\Utils\Traits\Manager;
-    use \Jaxon\Utils\Traits\Translator;
+    use \Jaxon\Features\Config;
+    use \Jaxon\Features\Manager;
+    use \Jaxon\Features\Translator;
 
     /**
      * The response type

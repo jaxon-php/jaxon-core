@@ -26,8 +26,8 @@ use Jaxon\Plugin\Request as RequestPlugin;
 
 class UserFunction extends RequestPlugin
 {
-    use \Jaxon\Utils\Traits\Validator;
-    use \Jaxon\Utils\Traits\Translator;
+    use \Jaxon\Features\Validator;
+    use \Jaxon\Features\Translator;
 
     /**
      * The registered user functions names

@@ -17,7 +17,7 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Traits;
+namespace Jaxon\Features;
 
 use Jaxon\Plugin\Manager as PluginManager;
 use Jaxon\Request\Manager as RequestManager;

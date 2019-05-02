@@ -21,8 +21,8 @@ use RecursiveIteratorIterator;
 
 class CallableRepository
 {
-    use \Jaxon\Utils\Traits\Config;
-    use \Jaxon\Utils\Traits\Template;
+    use \Jaxon\Features\Config;
+    use \Jaxon\Features\Template;
 
     /**
      * The registered namespaces

@@ -10,7 +10,7 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Utils\Traits;
+namespace Jaxon\Features;
 
 use Jaxon\DI\Container;
 use Jaxon\Utils\Interfaces\EventListener;

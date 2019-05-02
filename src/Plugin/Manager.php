@@ -29,11 +29,11 @@ use Closure;
 
 class Manager
 {
-    use \Jaxon\Utils\Traits\Manager;
-    use \Jaxon\Utils\Traits\Config;
-    use \Jaxon\Utils\Traits\Cache;
-    use \Jaxon\Utils\Traits\Event;
-    use \Jaxon\Utils\Traits\Translator;
+    use \Jaxon\Features\Manager;
+    use \Jaxon\Features\Config;
+    use \Jaxon\Features\Cache;
+    use \Jaxon\Features\Event;
+    use \Jaxon\Features\Translator;
 
     /**
      * All plugins, indexed by priority

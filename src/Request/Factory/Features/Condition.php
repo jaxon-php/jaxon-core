@@ -10,7 +10,7 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Request\Factory\Traits;
+namespace Jaxon\Request\Factory\Features;
 
 use Jaxon\Request\Factory\Parameter;
 

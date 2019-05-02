@@ -26,7 +26,7 @@ use Jaxon\Jaxon;
 
 class Argument
 {
-    use \Jaxon\Utils\Traits\Config;
+    use \Jaxon\Features\Config;
 
     /**
      * An array of arguments received via the GET or POST parameter jxnargs.

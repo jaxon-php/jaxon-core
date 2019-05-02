@@ -20,8 +20,8 @@ use Closure;
 
 class FileUpload extends RequestPlugin
 {
-    use \Jaxon\Utils\Traits\Validator;
-    use \Jaxon\Utils\Traits\Translator;
+    use \Jaxon\Features\Validator;
+    use \Jaxon\Features\Translator;
 
     /**
      * The uploaded files copied in the user dir

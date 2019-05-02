@@ -10,7 +10,7 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Traits;
+namespace Jaxon\Features;
 
 use Jaxon\Request\Support\CallableRepository;
 use \Jaxon\Request\Plugin\CallableClass;

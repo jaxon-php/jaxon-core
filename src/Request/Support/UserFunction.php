@@ -25,8 +25,8 @@ use Jaxon\Request\Request;
 
 class UserFunction
 {
-    use \Jaxon\Utils\Traits\Config;
-    use \Jaxon\Utils\Traits\Template;
+    use \Jaxon\Features\Config;
+    use \Jaxon\Features\Template;
 
     /**
      * The name of the corresponding javascript function

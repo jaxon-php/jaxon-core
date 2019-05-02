@@ -16,10 +16,10 @@ namespace Jaxon\Plugin;
 
 class CodeGenerator
 {
-    use \Jaxon\Utils\Traits\Config;
-    use \Jaxon\Utils\Traits\Cache;
-    use \Jaxon\Utils\Traits\Minifier;
-    use \Jaxon\Utils\Traits\Template;
+    use \Jaxon\Features\Config;
+    use \Jaxon\Features\Cache;
+    use \Jaxon\Features\Minifier;
+    use \Jaxon\Features\Template;
 
     /**
      * The response type.

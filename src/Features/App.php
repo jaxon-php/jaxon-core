@@ -17,7 +17,7 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Traits;
+namespace Jaxon\Features;
 
 use Jaxon\DI\Container;
 
@@ -36,7 +36,7 @@ trait App
     /**
      * Get the Armada instance
      *
-     * @return \Jaxon\App\Traits\Armada
+     * @return \Jaxon\App\Armada
      */
     public function armada()
     {

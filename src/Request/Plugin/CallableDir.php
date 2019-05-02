@@ -27,7 +27,7 @@ use Jaxon\Request\Support\CallableRepository;
 
 class CallableDir extends RequestPlugin
 {
-    use \Jaxon\Utils\Traits\Translator;
+    use \Jaxon\Features\Translator;
 
     /**
      * The callable repository

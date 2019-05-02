@@ -28,8 +28,8 @@ use Jaxon\Response\Manager as ResponseManager;
 
 class Handler
 {
-    use \Jaxon\Utils\Traits\Config;
-    use \Jaxon\Utils\Traits\Translator;
+    use \Jaxon\Features\Config;
+    use \Jaxon\Features\Translator;
 
     /**
      * The plugin manager.
