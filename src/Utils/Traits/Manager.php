@@ -29,18 +29,6 @@ trait Manager
     }
 
     /**
-     * Get a registered response plugin
-     *
-     * @param string        $sName                The name of the plugin
-     *
-     * @return Jaxon\Plugin\Response
-     */
-    public function plugin($sName)
-    {
-        return $this->getPluginManager()->getResponsePlugin($sName);
-    }
-
-    /**
      * Get the request manager
      *
      * @return Jaxon\Request\Handler
@@ -51,16 +39,6 @@ trait Manager
     }
 
     /**
-     * Get the request callback manager
-     *
-     * @return Jaxon\Request\Handler\Callback
-     */
-    public function callback()
-    {
-        return $this->getRequestHandler()->getCallbackManager();
-    }
-
-    /**
      * Get the response manager
      *
      * @return Jaxon\Response\Manager
@@ -68,35 +46,5 @@ trait Manager
     public function getResponseManager()
     {
         return Container::getInstance()->getResponseManager();
-    }
-
-    /**
-     * Get the Global Response object
-     *
-     * @return Jaxon\Response\Response
-     */
-    public function getResponse()
-    {
-        return Container::getInstance()->getResponse();
-    }
-
-    /**
-     * Create a new Jaxon response object
-     *
-     * @return Jaxon\Response\Response
-     */
-    public function newResponse()
-    {
-        return Container::getInstance()->newResponse();
-    }
-
-    /**
-     * Get the dialog wrapper
-     *
-     * @return Jaxon\Dialog\Config
-     */
-    public function dialog()
-    {
-        return Container::getInstance()->getDialog();
     }
 }

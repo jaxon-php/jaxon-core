@@ -28,7 +28,7 @@ trait Autoload
      *
      * @return Jaxon\Plugin\Manager
      */
-    abstract public function getPluginManager();
+    abstract public function di();
 
     /**
      * Set Jaxon to use the Composer autoloader
@@ -38,7 +38,7 @@ trait Autoload
     public function useComposerAutoloader()
     {
         // The CallableDir plugin
-        $xPlugin = $this->getPluginManager()->getRequestPlugin(self::CALLABLE_DIR);
+        $xPlugin = $this->di()->getPluginManager()->getRequestPlugin(self::CALLABLE_DIR);
         $xPlugin->useComposerAutoloader();
     }
 
@@ -50,7 +50,7 @@ trait Autoload
     public function disableAutoload()
     {
         // The CallableDir plugin
-        $xPlugin = $this->getPluginManager()->getRequestPlugin(self::CALLABLE_DIR);
+        $xPlugin = $this->di()->getPluginManager()->getRequestPlugin(self::CALLABLE_DIR);
         $xPlugin->disableAutoload();
     }
 }

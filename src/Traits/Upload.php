@@ -34,7 +34,7 @@ trait Upload
      *
      * @return Jaxon\Plugin\Manager
      */
-    abstract public function getPluginManager();
+    abstract public function di();
 
     /**
      * Get the value of a config option
@@ -64,7 +64,7 @@ trait Upload
      */
     public function hasUploadedFiles()
     {
-        if(($xUploadPlugin = $this->getPluginManager()->getRequestPlugin(self::FILE_UPLOAD)) == null)
+        if(($xUploadPlugin = $this->di()->getPluginManager()->getRequestPlugin(self::FILE_UPLOAD)) == null)
         {
             return false;
         }
@@ -80,7 +80,7 @@ trait Upload
     {
         try
         {
-            if(($xUploadPlugin = $this->getPluginManager()->getRequestPlugin(self::FILE_UPLOAD)) == null)
+            if(($xUploadPlugin = $this->di()->getPluginManager()->getRequestPlugin(self::FILE_UPLOAD)) == null)
             {
                 throw new Exception($this->trans('errors.upload.plugin'));
             }
@@ -114,7 +114,7 @@ trait Upload
      */
     public function getUploadedFiles()
     {
-        if(($xUploadPlugin = $this->getPluginManager()->getRequestPlugin(self::FILE_UPLOAD)) == null)
+        if(($xUploadPlugin = $this->di()->getPluginManager()->getRequestPlugin(self::FILE_UPLOAD)) == null)
         {
             return [];
         }
@@ -130,7 +130,7 @@ trait Upload
      */
     public function setUploadFileFilter(Closure $fFileFilter)
     {
-        if(($xUploadPlugin = $this->getPluginManager()->getRequestPlugin(self::FILE_UPLOAD)) == null)
+        if(($xUploadPlugin = $this->di()->getPluginManager()->getRequestPlugin(self::FILE_UPLOAD)) == null)
         {
             return;
         }

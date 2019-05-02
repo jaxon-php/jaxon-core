@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Sentry.php - Upload Trait
+ * App.php - Upload Trait
  *
  * The Jaxon class uses a modular plug-in system to facilitate the processing
  * of special Ajax requests made by a PHP page.
@@ -21,22 +21,22 @@ namespace Jaxon\Traits;
 
 use Jaxon\DI\Container;
 
-trait Sentry
+trait App
 {
     /**
-     * Get the Sentry instance
+     * Get the App instance
      *
-     * @return \Jaxon\Sentry\Sentry
+     * @return \Jaxon\App\App
      */
-    public function sentry()
+    public function app()
     {
-        return Container::getInstance()->getSentry();
+        return Container::getInstance()->getApp();
     }
 
     /**
      * Get the Armada instance
      *
-     * @return \Jaxon\Sentry\Traits\Armada
+     * @return \Jaxon\App\Traits\Armada
      */
     public function armada()
     {

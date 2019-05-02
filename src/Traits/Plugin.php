@@ -21,13 +21,6 @@ use \Jaxon\Request\Plugin\FileUpload;
 trait Plugin
 {
     /**
-     * Get the plugin manager
-     *
-     * @return Jaxon\Plugin\Manager
-     */
-    abstract public function getPluginManager();
-
-    /**
      * Get the DI container
      *
      * @return Jaxon\DI\Container
@@ -49,7 +42,7 @@ trait Plugin
      */
     public function registerPlugin(\Jaxon\Plugin\Plugin $xPlugin, $nPriority = 1000)
     {
-        $this->getPluginManager()->registerPlugin($xPlugin, $nPriority);
+        $this->di()->getPluginManager()->registerPlugin($xPlugin, $nPriority);
     }
 
     /**

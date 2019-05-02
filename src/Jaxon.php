@@ -25,21 +25,13 @@
 
 namespace Jaxon;
 
-use Jaxon\Plugin\Manager as PluginManager;
-use Jaxon\Request\Manager as RequestManager;
-use Jaxon\Response\Manager as ResponseManager;
-
 use Jaxon\Config\Reader as ConfigReader;
 use Jaxon\DI\Container;
 use Jaxon\Utils\URI;
 
-use Exception;
-use Closure;
-
 class Jaxon
 {
     use \Jaxon\Utils\Traits\Config;
-    use \Jaxon\Utils\Traits\Manager;
     use \Jaxon\Utils\Traits\Translator;
     use \Jaxon\Utils\Traits\Paginator;
 
@@ -175,6 +167,36 @@ class Jaxon
     }
 
     /**
+     * Get the DI container
+     *
+     * @return Jaxon\DI\Container
+     */
+    public function di()
+    {
+        return Container::getInstance();
+    }
+
+    /**
+     * Get the Global Response object
+     *
+     * @return Jaxon\Response\Response
+     */
+    public function getResponse()
+    {
+        return Container::getInstance()->getResponse();
+    }
+
+    /**
+     * Create a new Jaxon response object
+     *
+     * @return Jaxon\Response\Response
+     */
+    public function newResponse()
+    {
+        return Container::getInstance()->newResponse();
+    }
+
+    /**
      * Register request handlers, including functions, callable classes and directories.
      *
      * @param string        $sType            The type of request handler being registered
@@ -198,7 +220,7 @@ class Jaxon
      */
     public function register($sType, $sCallable, $aOptions = [])
     {
-        return $this->getPluginManager()->register($sType, $sCallable, $aOptions);
+        return $this->di()->getPluginManager()->register($sType, $sCallable, $aOptions);
     }
 
     /**
@@ -222,7 +244,7 @@ class Jaxon
         $xAppConfig->setOptions($aConfigOptions, $sAppKey);
 
         // Register user functions and classes
-        $this->getPluginManager()->registerFromConfig($xAppConfig);
+        $this->di()->getPluginManager()->registerFromConfig($xAppConfig);
 
         return $this;
     }
@@ -290,7 +312,7 @@ class Jaxon
      */
     public function canProcessRequest()
     {
-        return $this->getRequestHandler()->canProcessRequest();
+        return $this->di()->getRequestHandler()->canProcessRequest();
     }
 
     /**
@@ -309,7 +331,7 @@ class Jaxon
      */
     public function processRequest()
     {
-        return $this->getRequestHandler()->processRequest();
+        return $this->di()->getRequestHandler()->processRequest();
     }
 
     /**
@@ -319,7 +341,7 @@ class Jaxon
      */
     public function sendResponse()
     {
-        $this->getResponseManager()->sendOutput();
+        $this->di()->getResponseManager()->sendOutput();
     }
 
     /**
@@ -329,7 +351,7 @@ class Jaxon
      */
     public function sendHeaders()
     {
-        $this->getResponseManager()->sendHeaders();
+        $this->di()->getResponseManager()->sendHeaders();
     }
 
     /**
@@ -339,16 +361,38 @@ class Jaxon
      */
     public function getOutput()
     {
-        return $this->getResponseManager()->getOutput();
+        return $this->di()->getResponseManager()->getOutput();
     }
 
     /**
-     * Get the DI container
+     * Get a registered response plugin
      *
-     * @return Jaxon\DI\Container
+     * @param string        $sName                The name of the plugin
+     *
+     * @return Jaxon\Plugin\Response
      */
-    public function di()
+    public function plugin($sName)
     {
-        return Container::getInstance();
+        return $this->di()->getPluginManager()->getResponsePlugin($sName);
+    }
+
+    /**
+     * Get the request callback manager
+     *
+     * @return Jaxon\Request\Handler\Callback
+     */
+    public function callback()
+    {
+        return $this->di()->getRequestHandler()->getCallbackManager();
+    }
+
+    /**
+     * Get the dialog wrapper
+     *
+     * @return Jaxon\Dialog\Config
+     */
+    public function dialog()
+    {
+        return Container::getInstance()->getDialog();
     }
 }
