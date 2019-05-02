@@ -244,18 +244,7 @@ class Jaxon
         {
             $this->setOption('core.request.uri', URI::detect());
         }
-        $sCode = '';
-        $xCodeGenerator = $this->di()->getCodeGenerator();
-        if(($bIncludeCss))
-        {
-            $sCode .= $xCodeGenerator->getCss() . "\n";
-        }
-        if(($bIncludeJs))
-        {
-            $sCode .= $xCodeGenerator->getJs() . "\n";
-        }
-        $sCode .= $xCodeGenerator->getScript();
-        return $sCode;
+        return $this->di()->getCodeGenerator()->getScript($bIncludeJs, $bIncludeCss);
     }
 
     /**

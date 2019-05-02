@@ -320,13 +320,26 @@ class CodeGenerator
      * This is called only when the page is being loaded initially.
      * This is not called when processing a request.
      *
+     * @param boolean        $bIncludeJs            Also get the JS files
+     * @param boolean        $bIncludeCss        Also get the CSS files
+     *
      * @return string
      */
-    public function getScript()
+    public function getScript($bIncludeJs = false, $bIncludeCss = false)
     {
         // Set the template engine cache dir
         $this->setTemplateCacheDir();
         $this->makePluginsCode();
+
+        $sScript = '';
+        if(($bIncludeCss))
+        {
+            $sScript .= $this->getCss() . "\n";
+        }
+        if(($bIncludeJs))
+        {
+            $sScript .= $this->getJs() . "\n";
+        }
 
         if($this->canExportJavascript())
         {
@@ -350,7 +363,7 @@ class CodeGenerator
             }
 
             // The returned code loads the generated javascript file
-            $sScript = $this->render('jaxon::plugins/include.js', array(
+            $sScript .= $this->render('jaxon::plugins/include.js', array(
                 'sJsOptions' => $this->getOption('js.app.options'),
                 'sUrl' => $sJsAppURI . $sOutFile,
             ));
@@ -358,7 +371,7 @@ class CodeGenerator
         else
         {
             // The plugins scripts are wrapped with javascript tags
-            $sScript = $this->render('jaxon::plugins/wrapper.js', array(
+            $sScript .= $this->render('jaxon::plugins/wrapper.js', array(
                 'sJsOptions' => $this->getOption('js.app.options'),
                 'sScript' => $this->_getScript(),
             ));
