@@ -10,7 +10,7 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Features\Dialog;
+namespace Jaxon\Features\Dialogs;
 
 trait Alert
 {

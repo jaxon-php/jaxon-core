@@ -13,7 +13,7 @@
 namespace Jaxon\Features;
 
 use Jaxon\DI\Container;
-use Jaxon\Utils\Interfaces\EventListener;
+use Jaxon\Contracts\Event\Listener as EventListener;
 
 trait Event
 {

@@ -13,11 +13,11 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Utils\Interfaces;
+namespace Jaxon\Contracts\Event;
 
 use Lemon\Event\EventSubscriberInterface;
 
-interface EventListener extends EventSubscriberInterface
+interface Listener extends EventSubscriberInterface
 {
     /**
      * Return an array of events to listen to.

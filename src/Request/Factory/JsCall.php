@@ -114,11 +114,11 @@ class JsCall implements JsonSerializable
     /**
      * Set the value of the parameter at the given position
      *
-     * @param Interfaces\Parameter      $xParameter             The value to be used
+     * @param Contracts\Parameter      $xParameter             The value to be used
      *
      * @return void
      */
-    public function pushParameter(Interfaces\Parameter $xParameter)
+    public function pushParameter(Contracts\Parameter $xParameter)
     {
         $this->aParameters[] = $xParameter;
     }

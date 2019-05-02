@@ -27,7 +27,7 @@ use Jaxon\Request\Factory as RequestFactory;
 use Jaxon\Response\Manager as ResponseManager;
 use Jaxon\Plugin\Manager as PluginManager;
 use Jaxon\Plugin\CodeGenerator;
-use Jaxon\Dialog\Dialog;
+use Jaxon\App\Dialogs\Dialog;
 use Jaxon\Utils\Template\Minifier;
 use Jaxon\Utils\Translation\Translator;
 use Jaxon\Utils\Template\Template;
@@ -228,7 +228,7 @@ class Container
     /**
      * Get the plugin manager
      *
-     * @return Jaxon\Plugin\Manager
+     * @return \Jaxon\Plugin\Manager
      */
     public function getPluginManager()
     {
@@ -238,7 +238,7 @@ class Container
     /**
      * Get the request handler
      *
-     * @return Jaxon\Request\Handler
+     * @return \Jaxon\Request\Handler
      */
     public function getRequestHandler()
     {
@@ -248,7 +248,7 @@ class Container
     /**
      * Get the request factory
      *
-     * @return Jaxon\Factory\Request
+     * @return \Jaxon\Factory\Request
      */
     public function getRequestFactory()
     {
@@ -258,7 +258,7 @@ class Container
     /**
      * Get the response manager
      *
-     * @return Jaxon\Response\Manager
+     * @return \Jaxon\Response\Manager
      */
     public function getResponseManager()
     {
@@ -268,7 +268,7 @@ class Container
     /**
      * Get the code generator
      *
-     * @return Jaxon\Code\Generator
+     * @return \Jaxon\Code\Generator
      */
     public function getCodeGenerator()
     {
@@ -278,7 +278,7 @@ class Container
     /**
      * Get the config manager
      *
-     * @return Jaxon\Config\Config
+     * @return \Jaxon\Config\Config
      */
     public function getConfig()
     {
@@ -288,7 +288,7 @@ class Container
     /**
      * Create a new the config manager
      *
-     * @return Jaxon\Config\Config            The config manager
+     * @return \Jaxon\Config\Config            The config manager
      */
     public function newConfig()
     {
@@ -298,7 +298,7 @@ class Container
     /**
      * Get the dialog wrapper
      *
-     * @return Jaxon\Dialog\Config
+     * @return \Jaxon\App\Dialogs\Dialog
      */
     public function getDialog()
     {
@@ -308,7 +308,7 @@ class Container
     /**
      * Get the minifier
      *
-     * @return Jaxon\Utils\Template\Minifier
+     * @return \Jaxon\Utils\Template\Minifier
      */
     public function getMinifier()
     {
@@ -318,7 +318,7 @@ class Container
     /**
      * Get the translator
      *
-     * @return Jaxon\Utils\Translation\Translator
+     * @return \Jaxon\Utils\Translation\Translator
      */
     public function getTranslator()
     {
@@ -328,7 +328,7 @@ class Container
     /**
      * Get the template engine
      *
-     * @return Jaxon\Utils\Template\Template
+     * @return \Jaxon\Utils\Template\Template
      */
     public function getTemplate()
     {
@@ -338,7 +338,7 @@ class Container
     /**
      * Get the validator
      *
-     * @return Jaxon\Utils\Validation\Validator
+     * @return \Jaxon\Utils\Validation\Validator
      */
     public function getValidator()
     {
@@ -348,7 +348,7 @@ class Container
     /**
      * Get the paginator
      *
-     * @return Jaxon\Utils\Pagination\Paginator
+     * @return \Jaxon\Utils\Pagination\Paginator
      */
     public function getPaginator()
     {
@@ -380,7 +380,7 @@ class Container
     /**
      * Get the global Response object
      *
-     * @return Jaxon\Response\Response
+     * @return \Jaxon\Response\Response
      */
     public function getResponse()
     {
@@ -390,7 +390,7 @@ class Container
     /**
      * Create a new Jaxon response object
      *
-     * @return Jaxon\Response\Response
+     * @return \Jaxon\Response\Response
      */
     public function newResponse()
     {
@@ -400,7 +400,7 @@ class Container
     /**
      * Get the main Jaxon object
      *
-     * @return Jaxon\Jaxon
+     * @return \Jaxon\Jaxon
      */
     public function getJaxon()
     {
@@ -420,7 +420,7 @@ class Container
     /**
      * Get the App instance
      *
-     * @return Jaxon\App\App
+     * @return \Jaxon\App\App
      */
     public function getApp()
     {
@@ -442,7 +442,7 @@ class Container
     /**
      * Get the Armada instance
      *
-     * @return Jaxon\Armada\Armada
+     * @return \Jaxon\Armada\Armada
      */
     public function getArmada()
     {
@@ -521,7 +521,7 @@ class Container
      *
      * @param string                $sId                The unique identifier of the view renderer
      *
-     * @return Jaxon\App\Interfaces\View
+     * @return \Jaxon\App\Contracts\View
      */
     public function getViewRenderer($sId = '')
     {
@@ -537,7 +537,7 @@ class Container
     /**
      * Get the session object
      *
-     * @return Jaxon\App\Interfaces\Session
+     * @return \Jaxon\App\Contracts\Session
      */
     public function getSessionManager()
     {

@@ -9,35 +9,38 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Dialog;
+namespace Jaxon\App\Dialogs;
+
+use Jaxon\Contracts\Dialogs\Alert as AlertContract;
+use Jaxon\Contracts\Dialogs\Confirm as ConfirmContract;
 
 class Dialog
 {
     /**
      * Javascript confirm function
      *
-     * @var Interfaces\Confirm
+     * @var ConfirmContract
      */
     private $xConfirm;
 
     /**
      * Default javascript confirm function
      *
-     * @var Confirm
+     * @var ConfirmContract
      */
     private $xDefaultConfirm;
 
     /**
      * Javascript alert function
      *
-     * @var Interfaces\Alert
+     * @var AlertContract
      */
     private $xAlert;
 
     /**
      * Default javascript alert function
      *
-     * @var Alert
+     * @var AlertContract
      */
     private $xDefaultAlert;
 
@@ -58,11 +61,11 @@ class Dialog
     /**
      * Set the javascript confirm function
      *
-     * @param Interfaces\Confirm         $xConfirm     The javascript confirm function
+     * @param ConfirmContract         $xConfirm     The javascript confirm function
      *
      * @return void
      */
-    public function setConfirm(Interfaces\Confirm $xConfirm)
+    public function setConfirm(ConfirmContract $xConfirm)
     {
         $this->xConfirm = $xConfirm;
     }
@@ -70,7 +73,7 @@ class Dialog
     /**
      * Get the javascript confirm function
      *
-     * @return Interfaces\Confirm
+     * @return ConfirmContract
      */
     public function getConfirm()
     {
@@ -80,7 +83,7 @@ class Dialog
     /**
      * Get the default javascript confirm function
      *
-     * @return Confirm
+     * @return ConfirmContract
      */
     public function getDefaultConfirm()
     {
@@ -90,11 +93,11 @@ class Dialog
     /**
      * Set the javascript alert function
      *
-     * @param Interfaces\Alert           $xAlert       The javascript alert function
+     * @param AlertContract           $xAlert       The javascript alert function
      *
      * @return void
      */
-    public function setAlert(Interfaces\Alert $xAlert)
+    public function setAlert(AlertContract $xAlert)
     {
         $this->xAlert = $xAlert;
     }
@@ -102,7 +105,7 @@ class Dialog
     /**
      * Get the javascript alert function
      *
-     * @return Interfaces\Alert
+     * @return AlertContract
      */
     public function getAlert()
     {
@@ -122,6 +125,8 @@ class Dialog
     /**
      * Get the script which makes a call only if the user answers yes to the given question
      *
+     * It is a function of the Confirm interface.
+     *
      * @return string
      */
     public function confirm($question, $yesScript, $noScript)
@@ -132,7 +137,7 @@ class Dialog
     /**
      * Print a success message.
      *
-     * It is a function of the Jaxon\Dialog\Interfaces\Alert interface.
+     * It is a function of the Alert interface.
      *
      * @param string              $message              The text of the message
      * @param string|null         $title                The title of the message
@@ -147,7 +152,7 @@ class Dialog
     /**
      * Print an information message.
      *
-     * It is a function of the Jaxon\Dialog\Interfaces\Alert interface.
+     * It is a function of the Alert interface.
      *
      * @param string              $message              The text of the message
      * @param string|null         $title                The title of the message
@@ -162,7 +167,7 @@ class Dialog
     /**
      * Print a warning message.
      *
-     * It is a function of the Jaxon\Dialog\Interfaces\Alert interface.
+     * It is a function of the Alert interface.
      *
      * @param string              $message              The text of the message
      * @param string|null         $title                The title of the message
@@ -177,7 +182,7 @@ class Dialog
     /**
      * Print an error message.
      *
-     * It is a function of the Jaxon\Dialog\Interfaces\Alert interface.
+     * It is a function of the Alert interface.
      *
      * @param string              $message              The text of the message
      * @param string|null         $title                The title of the message

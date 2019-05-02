@@ -15,7 +15,7 @@ namespace Jaxon\Request\Factory;
 
 use Jaxon\Jaxon;
 
-class Parameter implements Interfaces\Parameter
+class Parameter implements Contracts\Parameter
 {
     /**
      * The parameter type
@@ -84,7 +84,7 @@ class Parameter implements Interfaces\Parameter
      */
     public static function make($xValue)
     {
-        if($xValue instanceof Interfaces\Parameter)
+        if($xValue instanceof Contracts\Parameter)
         {
             return $xValue;
         }
@@ -139,6 +139,7 @@ class Parameter implements Interfaces\Parameter
      */
     public function getScript()
     {
+        error_log('Making parameter of type ' . $this->sType);
         $sJsCode = '';
         switch($this->sType)
         {
@@ -179,6 +180,7 @@ class Parameter implements Interfaces\Parameter
             }
             break;
         }
+        error_log('Parameter value id ' . $sJsCode);
         return $sJsCode;
     }
 

@@ -11,7 +11,7 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Request\Factory\Interfaces;
+namespace Jaxon\Request\Factory\Contracts;
 
 interface Parameter
 {

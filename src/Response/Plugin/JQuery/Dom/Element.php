@@ -9,7 +9,7 @@
  * Therefore, the Element class implements the JsonSerializable interface.
  *
  * When used as a parameter of a Jaxon call, the Element must be converted to Jaxon request parameter.
- * Therefore, the Element class also implements the Jaxon\Request\Interfaces\Parameter interface.
+ * Therefore, the Element class also implements the Jaxon\Request\Contracts\Parameter interface.
  *
  * @package jaxon-jquery
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
@@ -21,7 +21,7 @@
 namespace Jaxon\Response\Plugin\JQuery\Dom;
 
 use JsonSerializable;
-use Jaxon\Request\Factory\Interfaces\Parameter;
+use Jaxon\Request\Factory\Contracts\Parameter;
 
 use Jaxon\Response\Plugin\Call\Method;
 use Jaxon\Response\Plugin\Call\AttrSet;

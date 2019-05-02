@@ -11,7 +11,7 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Dialog\Interfaces;
+namespace Jaxon\Contracts\Dialogs;
 
 interface Confirm
 {
