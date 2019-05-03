@@ -40,6 +40,7 @@ return [
             'invalid-declaration' => "Declaración de objeto invalida.",
         ],
         'register' => [
+            'plugin' => "No plugin with name :name to register a callable class or function.",
             'method' => "Fallo al localizar metodo de registro con los siguientes argumentos: :args",
             'invalid' => "Intento de registrar plugin invalido: :name; " .
                 "debe derivarse de Jaxon\\Plugin\\Request o Jaxon\\Plugin\\Response.",
