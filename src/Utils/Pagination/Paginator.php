@@ -56,9 +56,9 @@ class Paginator
     protected $renderer = null;
 
     /**
-     * @param object $renderer
+     * @param Renderer $renderer
      */
-    public function __construct($renderer)
+    public function __construct(Renderer $renderer)
     {
         $this->renderer = $renderer;
     }
@@ -173,6 +173,8 @@ class Paginator
      * @param int $itemsPerPage
      * @param int $currentPage
      * @param \Jaxon\Request\Request $request
+     *
+     * @return Paginator
      */
     public function setup($totalItems, $itemsPerPage, $currentPage, $request)
     {
@@ -180,6 +182,8 @@ class Paginator
         $this->setItemsPerPage($itemsPerPage);
         $this->setCurrentPage($currentPage);
         $this->setRequest($request);
+
+        return $this;
     }
 
     /**
@@ -339,32 +343,6 @@ class Paginator
         );
     }
 
-    /**
-     * Render an HTML pagination control.
-     *
-     * @return string
-     */
-    public function toHtml()
-    {
-        if($this->getNumPages() <= 1)
-        {
-            return '';
-        }
-
-        $this->renderer->setPaginator($this);
-        return $this->renderer->render();
-    }
-
-    /**
-     * Render an HTML pagination control.
-     *
-     * @return string
-     */
-    public function __toString()
-    {
-        return $this->toHtml();
-    }
-
     public function getCurrentPageFirstItem()
     {
         $first = ($this->currentPage - 1) * $this->itemsPerPage + 1;
@@ -414,5 +392,29 @@ class Paginator
     public function getNextText()
     {
         return $this->nextText;
+    }
+
+    /**
+     * Render an HTML pagination control.
+     *
+     * @return string
+     */
+    public function render()
+    {
+        if($this->getNumPages() <= 1)
+        {
+            return '';
+        }
+        return $this->renderer->render($this);
+    }
+
+    /**
+     * Render an HTML pagination control.
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->render();
     }
 }

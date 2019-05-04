@@ -19,13 +19,6 @@ use Jaxon\Utils\Template\Template;
 class Renderer
 {
     /**
-     * Set the paginator to be rendered.
-     *
-     * @var Paginator
-     */
-    protected $xPaginator = null;
-
-    /**
      * The template manager.
      *
      * Will be used to render HTML code for links.
@@ -45,56 +38,50 @@ class Renderer
     }
 
     /**
-     * Set the paginator to be rendered.
+     * Render the previous link.
      *
      * @param Paginator         $xPaginator         The paginator to be rendered
      *
-     * @return void
-     */
-    public function setPaginator(\Jaxon\Utils\Pagination\Paginator $xPaginator)
-    {
-        $this->xPaginator = $xPaginator;
-    }
-
-    /**
-     * Render the previous link.
-     *
      * @return string
      */
-    protected function getPrevLink()
+    protected function getPrevLink($xPaginator)
     {
-        if(!($sCall = $this->xPaginator->getPrevCall()))
+        if(!($sCall = $xPaginator->getPrevCall()))
         {
             return '';
         }
         return $this->xTemplate->render('pagination::links/prev',
-            ['call' => $sCall, 'text' => $this->xPaginator->getPreviousText()]);
+            ['call' => $sCall, 'text' => $xPaginator->getPreviousText()]);
     }
 
     /**
      * Render the next link.
      *
+     * @param Paginator         $xPaginator         The paginator to be rendered
+     *
      * @return string
      */
-    protected function getNextLink()
+    protected function getNextLink($xPaginator)
     {
-        if(!($sCall = $this->xPaginator->getNextCall()))
+        if(!($sCall = $xPaginator->getNextCall()))
         {
             return '';
         }
         return $this->xTemplate->render('pagination::links/next',
-            ['call' => $sCall, 'text' => $this->xPaginator->getNextText()]);
+            ['call' => $sCall, 'text' => $xPaginator->getNextText()]);
     }
 
     /**
      * Render the pagination links.
      *
+     * @param Paginator         $xPaginator         The paginator to be rendered
+     *
      * @return string
      */
-    protected function getLinks()
+    protected function getLinks($xPaginator)
     {
         $sLinks = '';
-        foreach($this->xPaginator->getPages() as $page)
+        foreach($xPaginator->getPages() as $page)
         {
             if($page['call'])
             {
@@ -112,14 +99,17 @@ class Renderer
     /**
      * Render an HTML pagination control.
      *
+     * @param Paginator         $xPaginator         The paginator to be rendered
+     *
      * @return string
      */
-    public function render()
+    public function render(Paginator $xPaginator)
     {
+        $xPaginator = $xPaginator;
         return $this->xTemplate->render('pagination::wrapper', [
-            'links' => $this->getLinks(),
-            'prev' => $this->getPrevLink(),
-            'next' => $this->getNextLink(),
+            'links' => $this->getLinks($xPaginator),
+            'prev' => $this->getPrevLink($xPaginator),
+            'next' => $this->getNextLink($xPaginator),
         ]);
     }
 }

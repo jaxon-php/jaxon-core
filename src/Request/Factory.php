@@ -19,6 +19,7 @@ use Jaxon\Request\Factory\Request;
 use Jaxon\Request\Factory\Parameter;
 use Jaxon\Request\Support\CallableObject;
 use Jaxon\Request\Support\CallableRepository;
+use Jaxon\Utils\Paginator\Paginator;
 
 // Extends Parameter for compatibility with older versions (see function rq())
 class Factory
@@ -148,7 +149,7 @@ class Factory
      * @param integer       $nItemsPerPage          The number of items per page page
      * @param integer       $nCurrentPage           The current page
      *
-     * @return string the pagination links
+     * @return Paginator
      */
     public function paginate($nItemsTotal, $nItemsPerPage, $nCurrentPage)
     {
@@ -156,8 +157,9 @@ class Factory
         $aArgs = array_slice(func_get_args(), 3);
         // Make the request
         $request = call_user_func_array([$this, 'call'], $aArgs);
-        $paginator = jaxon()->paginator($nItemsTotal, $nItemsPerPage, $nCurrentPage, $request);
-        return $paginator->toHtml();
+
+        return jaxon()->di()->getPaginator()
+            ->setup($nItemsTotal, $nItemsPerPage, $nCurrentPage, $xRequest);
     }
 
     /**

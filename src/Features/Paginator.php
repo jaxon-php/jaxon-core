@@ -13,6 +13,7 @@
 namespace Jaxon\Features;
 
 use Jaxon\DI\Container;
+use Jaxon\Request\Request;
 
 trait Paginator
 {
@@ -26,23 +27,6 @@ trait Paginator
     public function setPaginationRenderer($xRenderer)
     {
         Container::getInstance()->setPaginationRenderer($xRenderer);
-    }
-
-    /**
-     * Get the pagination object for a Jaxon request
-     *
-     * @param integer                   $nItemsTotal        The total number of items
-     * @param integer                   $nItemsPerPage      The number of items per page page
-     * @param integer                   $nCurrentPage       The current page
-     * @param Jaxon\Request\Request     $xRequest           A request to a Jaxon function
-     *
-     * @return Jaxon\Utils\Paginator     The paginator instance
-     */
-    public function paginator($nItemsTotal, $nItemsPerPage, $nCurrentPage, $xRequest)
-    {
-        $paginator = Container::getInstance()->getPaginator();
-        $paginator->setup($nItemsTotal, $nItemsPerPage, $nCurrentPage, $xRequest);
-        return $paginator;
     }
 
     /**

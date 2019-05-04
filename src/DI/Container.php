@@ -178,13 +178,13 @@ class Container
         $this->libContainer[Validator::class] = function ($c) {
             return new Validator($c[Translator::class], $c[Config::class]);
         };
-        // Pagination Renderer
-        $this->libContainer[PaginationRenderer::class] = function ($c) {
-            return new PaginationRenderer($c[Template::class]);
-        };
         // Pagination Paginator
         $this->libContainer[Paginator::class] = function ($c) {
             return new Paginator($c[PaginationRenderer::class]);
+        };
+        // Pagination Renderer
+        $this->libContainer[PaginationRenderer::class] = function ($c) {
+            return new PaginationRenderer($c[Template::class]);
         };
         // Event Dispatcher
         $this->libContainer[EventDispatcher::class] = function () {
