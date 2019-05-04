@@ -183,7 +183,7 @@ class Jaxon
      */
     public function getResponse()
     {
-        return Container::getInstance()->getResponse();
+        return $this->di()->getResponse();
     }
 
     /**
@@ -193,7 +193,7 @@ class Jaxon
      */
     public function newResponse()
     {
-        return Container::getInstance()->newResponse();
+        return $this->di()->newResponse();
     }
 
     /**
@@ -204,11 +204,13 @@ class Jaxon
      *        - Jaxon::USER_FUNCTION: a function declared at global scope
      *        - Jaxon::CALLABLE_CLASS: a class who's methods are to be registered
      *        - Jaxon::CALLABLE_DIR: a directory containing classes to be registered
-     * @param string        $sCallable
+     *        - Jaxon::PROCESSING_EVENT:
+     * @param string        $sCallable| $sEvent
      *        When registering a function, this is the name of the function
      *        When registering a callable class, this is the class name
      *        When registering a callable directory, this is the full path to the directory
-     * @param array|string  $aOptions | $sIncludeFile | $sNamespace
+     *        When registering an event, this is the event name
+     * @param array|string|Closure  $aOptions | $sIncludeFile | $sNamespace
      *        When registering a function, this is an (optional) array
      *             of call options, or the (optional) include file
      *        When registering a callable class, this is an (optional) array
@@ -218,8 +220,31 @@ class Jaxon
      *
      * @return mixed
      */
-    public function register($sType, $sCallable, $aOptions = [])
+    public function register($sType, $sCallable, $xOptions = [])
     {
+        if($sType == Jaxon::PROCESSING_EVENT)
+        {
+            $sEvent = $sCallable;
+            $xCallback = $xOptions;
+            switch($sEvent)
+            {
+            case Jaxon::PROCESSING_EVENT_BEFORE:
+                $this->callback()->before($xCallback);
+                break;
+            case Jaxon::PROCESSING_EVENT_AFTER:
+                $this->callback()->after($xCallback);
+                break;
+            case Jaxon::PROCESSING_EVENT_INVALID:
+                $this->callback()->invalid($xCallback);
+                break;
+            case Jaxon::PROCESSING_EVENT_ERROR:
+                $this->callback()->error($xCallback);
+                break;
+            default:
+                break;
+            }
+            return;
+        }
         return $this->di()->getPluginManager()->register($sType, $sCallable, $aOptions);
     }
 
@@ -393,6 +418,6 @@ class Jaxon
      */
     public function dialog()
     {
-        return Container::getInstance()->getDialog();
+        return $this->di()->getDialog();
     }
 }
