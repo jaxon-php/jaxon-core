@@ -16,6 +16,7 @@ namespace Jaxon\DI;
 
 use Lemon\Event\EventDispatcher;
 use Jaxon\App\View\Renderer;
+use Jaxon\Contracts\Container as ContainerContract;
 
 use Jaxon\Jaxon;
 use Jaxon\Response\Response;
@@ -67,7 +68,7 @@ class Container
     /**
      * Get the container provided by the integrated framework
      *
-     * @return ContainerInterface
+     * @return ContainerContract
      */
     public function getAppContainer()
     {
@@ -77,11 +78,11 @@ class Container
     /**
      * Set the container provided by the integrated framework
      *
-     * @param ContainerInterface  $container     The container implementation
+     * @param ContainerContract  $container     The container implementation
      *
      * @return void
      */
-    public function setAppContainer(ContainerInterface $container)
+    public function setAppContainer(ContainerContract $container)
     {
         $this->appContainer = $container;
     }
@@ -424,7 +425,7 @@ class Container
      */
     public function getApp()
     {
-        return $this->libContainer['jaxon.app'];
+        return $this->libContainer[\Jaxon\App\App::class];
     }
 
     /**
@@ -436,7 +437,7 @@ class Container
      */
     public function setApp($xApp)
     {
-        $this->libContainer['jaxon.app'] = $xApp;
+        $this->libContainer[\Jaxon\App\App::class] = $xApp;
     }
 
     /**
@@ -521,7 +522,7 @@ class Container
      *
      * @param string                $sId                The unique identifier of the view renderer
      *
-     * @return \Jaxon\App\Contracts\View
+     * @return \Jaxon\Contracts\App\View
      */
     public function getViewRenderer($sId = '')
     {
@@ -537,7 +538,7 @@ class Container
     /**
      * Get the session object
      *
-     * @return \Jaxon\App\Contracts\Session
+     * @return \Jaxon\Contracts\App\Session
      */
     public function getSessionManager()
     {

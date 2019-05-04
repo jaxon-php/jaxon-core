@@ -1,7 +1,7 @@
 <?php
 
 /**
- * ContainerInterface.php - Interface for dependency injection
+ * Container.php - Trait for dependency injection
  *
  * @package jaxon-core
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
@@ -10,25 +10,19 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\DI;
+namespace Jaxon\Features;
 
-interface ContainerInterface
+trait Container
 {
-    /**
-     * Check if a given class is defined in the container
-     *
-     * @param string                $sClass             A full class name
-     *
-     * @return bool
-     */
-    public function has($sClass);
-
     /**
      * Get a class instance
      *
      * @param string                $sClass             A full class name
      *
-     * @return mixed                The class instance
+     * @return object               The class instance
      */
-    public function get($sClass);
+    public function diGet($sClass)
+    {
+        return Container::getInstance()->get($sClass);
+    }
 }
