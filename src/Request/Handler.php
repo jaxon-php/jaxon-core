@@ -93,13 +93,23 @@ class Handler
     /**
      * Return the method that was used to send the arguments from the client
      *
-     * The method is one of: Jaxon::METHOD_UNKNOWN, Jaxon::METHOD_GET, Jaxon::METHOD_POST.
+     * The method is one of: Handler\Argument::METHOD_UNKNOWN, Handler\Argument::METHOD_GET, Handler\Argument::METHOD_POST.
      *
      * @return integer
      */
     public function getRequestMethod()
     {
         return $this->xArgumentManager->getRequestMethod();
+    }
+
+    /**
+     * Return true if the current request method is GET
+     *
+     * @return bool
+     */
+    public function requestMethodIsGet()
+    {
+        return ($this->xArgumentManager->getRequestMethod() == Handler\Argument::METHOD_GET);
     }
 
     /**

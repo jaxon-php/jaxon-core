@@ -15,7 +15,6 @@
 
 namespace Jaxon\Request;
 
-use Jaxon\Jaxon;
 use Jaxon\Request\Factory\Request;
 use Jaxon\Request\Factory\Parameter;
 use Jaxon\Request\Support\CallableObject;
@@ -162,7 +161,7 @@ class Factory
     }
 
     /**
-     * Make a parameter of type Jaxon::FORM_VALUES
+     * Make a parameter of type Parameter::FORM_VALUES
      *
      * @param string        $sFormId                The id of the HTML form
      *
@@ -170,11 +169,11 @@ class Factory
      */
     public function form($sFormId)
     {
-        return new Parameter(Jaxon::FORM_VALUES, $sFormId);
+        return new Parameter(Parameter::FORM_VALUES, $sFormId);
     }
 
     /**
-     * Make a parameter of type Jaxon::INPUT_VALUE
+     * Make a parameter of type Parameter::INPUT_VALUE
      *
      * @param string $sInputId the id of the HTML input element
      *
@@ -182,11 +181,11 @@ class Factory
      */
     public function input($sInputId)
     {
-        return new Parameter(Jaxon::INPUT_VALUE, $sInputId);
+        return new Parameter(Parameter::INPUT_VALUE, $sInputId);
     }
 
     /**
-     * Make a parameter of type Jaxon::CHECKED_VALUE
+     * Make a parameter of type Parameter::CHECKED_VALUE
      *
      * @param string $sInputId the name of the HTML form element
      *
@@ -194,11 +193,11 @@ class Factory
      */
     public function checked($sInputId)
     {
-        return new Parameter(Jaxon::CHECKED_VALUE, $sInputId);
+        return new Parameter(Parameter::CHECKED_VALUE, $sInputId);
     }
 
     /**
-     * Make a parameter of type Jaxon::CHECKED_VALUE
+     * Make a parameter of type Parameter::CHECKED_VALUE
      *
      * @param string $sInputId the name of the HTML form element
      *
@@ -210,7 +209,7 @@ class Factory
     }
 
     /**
-     * Make a parameter of type Jaxon::ELEMENT_INNERHTML
+     * Make a parameter of type Parameter::ELEMENT_INNERHTML
      *
      * @param string $sElementId the id of the HTML element
      *
@@ -218,11 +217,11 @@ class Factory
      */
     public function html($sElementId)
     {
-        return new Parameter(Jaxon::ELEMENT_INNERHTML, $sElementId);
+        return new Parameter(Parameter::ELEMENT_INNERHTML, $sElementId);
     }
 
     /**
-     * Make a parameter of type Jaxon::QUOTED_VALUE
+     * Make a parameter of type Parameter::QUOTED_VALUE
      *
      * @param string $sValue the value of the parameter
      *
@@ -230,11 +229,11 @@ class Factory
      */
     public function string($sValue)
     {
-        return new Parameter(Jaxon::QUOTED_VALUE, $sValue);
+        return new Parameter(Parameter::QUOTED_VALUE, $sValue);
     }
 
     /**
-     * Make a parameter of type Jaxon::NUMERIC_VALUE
+     * Make a parameter of type Parameter::NUMERIC_VALUE
      *
      * @param numeric $nValue the value of the parameter
      *
@@ -242,11 +241,11 @@ class Factory
      */
     public function numeric($nValue)
     {
-        return new Parameter(Jaxon::NUMERIC_VALUE, intval($nValue));
+        return new Parameter(Parameter::NUMERIC_VALUE, intval($nValue));
     }
 
     /**
-     * Make a parameter of type Jaxon::NUMERIC_VALUE
+     * Make a parameter of type Parameter::NUMERIC_VALUE
      *
      * @param numeric $nValue the value of the parameter
      *
@@ -258,7 +257,7 @@ class Factory
     }
 
     /**
-     * Make a parameter of type Jaxon::JS_VALUE
+     * Make a parameter of type Parameter::JS_VALUE
      *
      * @param string $sValue the javascript code of the parameter
      *
@@ -266,11 +265,11 @@ class Factory
      */
     public function javascript($sValue)
     {
-        return new Parameter(Jaxon::JS_VALUE, $sValue);
+        return new Parameter(Parameter::JS_VALUE, $sValue);
     }
 
     /**
-     * Make a parameter of type Jaxon::JS_VALUE
+     * Make a parameter of type Parameter::JS_VALUE
      *
      * @param string $sValue the javascript code of the parameter
      *
@@ -282,13 +281,13 @@ class Factory
     }
 
     /**
-     * Make a parameter of type Jaxon::PAGE_NUMBER
+     * Make a parameter of type Parameter::PAGE_NUMBER
      *
      * @return Parameter
      */
     public function page()
     {
-        // By default, the value of a parameter of type Jaxon::PAGE_NUMBER is 0.
-        return new Parameter(Jaxon::PAGE_NUMBER, 0);
+        // By default, the value of a parameter of type Parameter::PAGE_NUMBER is 0.
+        return new Parameter(Parameter::PAGE_NUMBER, 0);
     }
 }

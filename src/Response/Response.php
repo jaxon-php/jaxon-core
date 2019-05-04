@@ -33,8 +33,6 @@
 
 namespace Jaxon\Response;
 
-use Jaxon\Jaxon;
-
 class Response
 {
     use \Jaxon\Features\Config;
@@ -1249,7 +1247,7 @@ class Response
      */
     public function sendHeaders()
     {
-        if($this->getRequesthandler()->getRequestMethod() == Jaxon::METHOD_GET)
+        if($this->getRequesthandler()->requestMethodIsGet())
         {
             header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
             header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");

@@ -22,11 +22,16 @@
 
 namespace Jaxon\Request\Handler;
 
-use Jaxon\Jaxon;
-
 class Argument
 {
     use \Jaxon\Features\Config;
+
+    /*
+     * Request methods
+     */
+    const METHOD_UNKNOWN = 0;
+    const METHOD_GET = 1;
+    const METHOD_POST = 2;
 
     /**
      * An array of arguments received via the GET or POST parameter jxnargs.
@@ -37,7 +42,7 @@ class Argument
 
     /**
      * Stores the method that was used to send the arguments from the client.
-     * Will be one of: Jaxon::METHOD_UNKNOWN, Jaxon::METHOD_GET, Jaxon::METHOD_POST.
+     * Will be one of: self::METHOD_UNKNOWN, self::METHOD_GET, self::METHOD_POST.
      *
      * @var integer
      */
@@ -51,16 +56,16 @@ class Argument
     public function __construct()
     {
         $this->aArgs = [];
-        $this->nMethod = Jaxon::METHOD_UNKNOWN;
+        $this->nMethod = self::METHOD_UNKNOWN;
 
         if(isset($_POST['jxnargs']))
         {
-            $this->nMethod = Jaxon::METHOD_POST;
+            $this->nMethod = self::METHOD_POST;
             $this->aArgs = $_POST['jxnargs'];
         }
         elseif(isset($_GET['jxnargs']))
         {
-            $this->nMethod = Jaxon::METHOD_GET;
+            $this->nMethod = self::METHOD_GET;
             $this->aArgs = $_GET['jxnargs'];
         }
         if(get_magic_quotes_gpc() == 1)
@@ -284,7 +289,7 @@ class Argument
     /**
      * Return the method that was used to send the arguments from the client
      *
-     * The method is one of: Jaxon::METHOD_UNKNOWN, Jaxon::METHOD_GET, Jaxon::METHOD_POST.
+     * The method is one of: self::METHOD_UNKNOWN, self::METHOD_GET, self::METHOD_POST.
      *
      * @return integer
      */

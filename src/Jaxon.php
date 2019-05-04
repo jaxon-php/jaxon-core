@@ -58,13 +58,6 @@ class Jaxon
     const PROCESSING_EVENT_ERROR = 'ProcessingError';
 
     /*
-     * Request methods
-     */
-    const METHOD_UNKNOWN = 0;
-    const METHOD_GET = 1;
-    const METHOD_POST = 2;
-
-    /*
      * Request plugins
      */
     // For objects who's methods will be callable from the browser.
@@ -75,29 +68,6 @@ class Jaxon
     const USER_FUNCTION = 'UserFunction';
     // For uploaded files.
     const FILE_UPLOAD = 'FileUpload';
-
-    /*
-     * Request parameters
-     */
-    // Specifies that the parameter will consist of an array of form values.
-    const FORM_VALUES = 'FormValues';
-    // Specifies that the parameter will contain the value of an input control.
-    const INPUT_VALUE = 'InputValue';
-    // Specifies that the parameter will consist of a boolean value of a checkbox.
-    const CHECKED_VALUE = 'CheckedValue';
-    // Specifies that the parameter value will be the innerHTML value of the element.
-    const ELEMENT_INNERHTML = 'ElementInnerHTML';
-    // Specifies that the parameter will be a quoted value (string).
-    const QUOTED_VALUE = 'QuotedValue';
-    // Specifies that the parameter will be a boolean value (true or false).
-    const BOOL_VALUE = 'BoolValue';
-    // Specifies that the parameter will be a numeric, non-quoted value.
-    const NUMERIC_VALUE = 'NumericValue';
-    // Specifies that the parameter will be a non-quoted value
-    // (evaluated by the browsers javascript engine at run time).
-    const JS_VALUE = 'UnquotedValue';
-    // Specifies that the parameter will be an integer used to generate pagination links.
-    const PAGE_NUMBER = 'PageNumber';
 
     /**
      * The constructor
@@ -245,7 +215,7 @@ class Jaxon
             }
             return;
         }
-        return $this->di()->getPluginManager()->register($sType, $sCallable, $aOptions);
+        return $this->di()->getPluginManager()->register($sType, $sCallable, $xOptions);
     }
 
     /**
