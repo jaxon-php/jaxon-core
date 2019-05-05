@@ -38,7 +38,6 @@ class Jaxon
     use Features\Plugin;
     use Features\Upload;
     use Features\Template;
-    use Features\View;
     use Features\App;
 
     /**

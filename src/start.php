@@ -126,3 +126,8 @@ jaxon()->registerRequestPlugins();
  * Load the Jaxon response plugins
  */
 jaxon()->registerResponsePlugins();
+
+/*
+ * Setup the view manager
+ */
+jaxon_di()->getViewManager()->setup();

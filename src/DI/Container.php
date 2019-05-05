@@ -28,6 +28,8 @@ use Jaxon\Request\Factory as RequestFactory;
 use Jaxon\Response\Manager as ResponseManager;
 use Jaxon\Plugin\Manager as PluginManager;
 use Jaxon\Plugin\CodeGenerator;
+use Jaxon\App\View\Manager as ViewManager;
+use Jaxon\App\View\Facade as ViewFacade;
 use Jaxon\App\Dialogs\Dialog;
 use Jaxon\Utils\Template\Minifier;
 use Jaxon\Utils\Translation\Translator;
@@ -35,6 +37,7 @@ use Jaxon\Utils\Template\Template;
 use Jaxon\Utils\Validation\Validator;
 use Jaxon\Utils\Pagination\Paginator;
 use Jaxon\Utils\Pagination\Renderer as PaginationRenderer;
+use Jaxon\Contracts\App\Session as SessionContract;
 
 class Container
 {
@@ -148,6 +151,14 @@ class Container
         $this->libContainer[CodeGenerator::class] = function ($c) {
             return new CodeGenerator($c[PluginManager::class]);
         };
+        // View Manager
+        $this->libContainer[ViewManager::class] = function () {
+            return new ViewManager();
+        };
+        // View Renderer Facade
+        $this->libContainer[ViewFacade::class] = function ($c) {
+            return new ViewFacade($c[ViewManager::class]);
+        };
 
         /*
          * Config
@@ -190,13 +201,6 @@ class Container
         $this->libContainer[EventDispatcher::class] = function () {
             return new EventDispatcher();
         };
-
-        // View Renderer Facade
-        // $this->libContainer[\Jaxon\App\View\Facade::class] = function ($c) {
-        //     $aRenderers = $c['jaxon.view.data.renderers'];
-        //     $sDefaultNamespace = $c['jaxon.view.data.namespace.default'];
-        //     return new \Jaxon\App\View\Facade($aRenderers, $sDefaultNamespace);
-        // };
     }
 
     /**
@@ -441,119 +445,44 @@ class Container
     }
 
     /**
-     * Get the Armada instance
+     * Get the view manager
      *
-     * @return \Jaxon\Armada\Armada
+     * @return ViewManager
      */
-    public function getArmada()
+    public function getViewManager()
     {
-        return $this->libContainer['jaxon.armada'];
+        return $this->libContainer[ViewManager::class];
     }
 
     /**
-     * Set the Armada instance
+     * Get the view facade
      *
-     * @param Jaxon\Armada\Armada     $xArmada            The Armada instance
-     *
-     * @return void
+     * @return ViewFacade
      */
-    public function setArmada($xArmada)
+    public function getViewFacade()
     {
-        $this->libContainer['jaxon.armada'] = $xArmada;
+        return $this->libContainer[ViewFacade::class];
     }
 
     /**
-     * Set the view renderers data
+     * Get the session manager
      *
-     * @param array                $aRenderers          Array of renderer names with namespace as key
-     *
-     * @return void
-     */
-    public function initViewRenderers($aRenderers)
-    {
-        $this->libContainer['jaxon.view.data.renderers'] = $aRenderers;
-    }
-
-    /**
-     * Set the view namespaces data
-     *
-     * @param array                $aNamespaces         Array of namespaces with renderer name as key
-     *
-     * @return void
-     */
-    public function initViewNamespaces($aNamespaces, $sDefaultNamespace)
-    {
-        $this->libContainer['jaxon.view.data.namespaces'] = $aNamespaces;
-        $this->libContainer['jaxon.view.data.namespace.default'] = $sDefaultNamespace;
-    }
-
-    /**
-     * Add a view renderer
-     *
-     * @param string                $sId                The unique identifier of the view renderer
-     * @param Closure               $xClosure           A closure to create the view instance
-     *
-     * @return void
-     */
-    public function addViewRenderer($sId, $xClosure)
-    {
-        // Return the non-initialiazed view renderer
-        $this->libContainer['jaxon.app.view.base.' . $sId] = $xClosure;
-
-        // Return the initialized view renderer
-        $this->libContainer['jaxon.app.view.' . $sId] = function ($c) use ($sId) {
-            // Get the defined renderer
-            $renderer = $c['jaxon.app.view.base.' . $sId];
-            // Init the renderer with the template namespaces
-            $aNamespaces = $this->libContainer['jaxon.view.data.namespaces'];
-            if(key_exists($sId, $aNamespaces))
-            {
-                foreach($aNamespaces[$sId] as $ns)
-                {
-                    $renderer->addNamespace($ns['namespace'], $ns['directory'], $ns['extension']);
-                }
-            }
-            return $renderer;
-        };
-    }
-
-    /**
-     * Get the view renderer
-     *
-     * @param string                $sId                The unique identifier of the view renderer
-     *
-     * @return \Jaxon\Contracts\App\View
-     */
-    public function getViewRenderer($sId = '')
-    {
-        if(!$sId)
-        {
-            // Return the view renderer facade
-            return $this->libContainer[\Jaxon\App\View\Facade::class];
-        }
-        // Return the view renderer with the given id
-        return $this->libContainer['jaxon.app.view.' . $sId];
-    }
-
-    /**
-     * Get the session object
-     *
-     * @return \Jaxon\Contracts\App\Session
+     * @return SessionContract
      */
     public function getSessionManager()
     {
-        return $this->libContainer['jaxon.armada.session'];
+        return $this->libContainer[SessionContract::class];
     }
 
     /**
-     * Set the session
+     * Set the session manager
      *
-     * @param Closure      $xClosure      A closure to create the session instance
+     * @param Closure      $xClosure      A closure to create the session manager instance
      *
      * @return void
      */
     public function setSessionManager($xClosure)
     {
-        $this->libContainer['jaxon.armada.session'] = $xClosure;
+        $this->libContainer[SessionContract::class] = $xClosure;
     }
 }
