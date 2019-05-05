@@ -17,13 +17,23 @@ use Jaxon\DI\Container;
  */
 
 /**
- * Return the only instance of the Jaxon/Jaxon class
+ * Return the singleton instance of the Jaxon/Jaxon class
  *
  * @return Jaxon\Jaxon
  */
 function jaxon()
 {
     return Container::getInstance()->getJaxon();
+}
+
+/**
+ * Return the singleton instance of the container
+ *
+ * @return Jaxon\DI\Container
+ */
+function jaxon_di()
+{
+    return Container::getInstance();
 }
 
 /**

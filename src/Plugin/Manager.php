@@ -178,7 +178,7 @@ class Manager
     public function registerPackage(string $sPackageClass, Closure $xClosure)
     {
         $this->aPackages[] = $sPackageClass;
-        jaxon()->di()->set($sPackageClass, $xClosure);
+        jaxon_di()->set($sPackageClass, $xClosure);
     }
 
     /**

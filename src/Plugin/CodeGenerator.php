@@ -200,7 +200,7 @@ class CodeGenerator
 
             foreach($this->xPluginManager->getPackages() as $sPackageClass)
             {
-                $xPackage = jaxon()->di()->get($sPackageClass);
+                $xPackage = jaxon_di()->get($sPackageClass);
                 if(($sCssCode = trim($xPackage->css())))
                 {
                     $this->sCssCode .= rtrim($sCssCode, " \n") . "\n";

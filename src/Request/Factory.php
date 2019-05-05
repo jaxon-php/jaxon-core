@@ -158,7 +158,7 @@ class Factory
         // Make the request
         $request = call_user_func_array([$this, 'call'], $aArgs);
 
-        return jaxon()->di()->getPaginator()
+        return jaxon_di()->getPaginator()
             ->setup($nItemsTotal, $nItemsPerPage, $nCurrentPage, $xRequest);
     }
 
