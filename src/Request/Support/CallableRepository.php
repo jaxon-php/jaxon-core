@@ -252,12 +252,12 @@ class CallableRepository
         $this->aCallableObjects[$sClassName] = $xCallableObject;
 
         // Register the request factory for this callable object
-        jaxon_di()->set($sClassName . '_Factory_Rq', function () use ($sClassName) {
+        jaxon()->di()->set($sClassName . '_Factory_Rq', function () use ($sClassName) {
             $xCallableObject = $this->aCallableObjects[$sClassName];
             return new \Jaxon\Factory\Request\Portable($xCallableObject);
         });
         // Register the paginator factory for this callable object
-        jaxon_di()->set($sClassName . '_Factory_Pg', function () use ($sClassName) {
+        jaxon()->di()->set($sClassName . '_Factory_Pg', function () use ($sClassName) {
             $xCallableObject = $this->aCallableObjects[$sClassName];
             return new \Jaxon\Factory\Request\Paginator($xCallableObject);
         });

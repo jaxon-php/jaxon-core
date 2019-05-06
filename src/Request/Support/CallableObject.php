@@ -180,7 +180,7 @@ class CallableObject
     {
         if($this->registeredObject == null)
         {
-            $di = jaxon_di();
+            $di = jaxon()->di();
             // Use the Reflection class to get the parameters of the constructor
             if(($constructor = $this->reflectionClass->getConstructor()) != null)
             {

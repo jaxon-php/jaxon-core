@@ -19,8 +19,6 @@
 
 namespace Jaxon\Features;
 
-use Jaxon\DI\Container;
-
 trait App
 {
     /**
@@ -30,7 +28,7 @@ trait App
      */
     public function app()
     {
-        return Container::getInstance()->getApp();
+        return jaxon()->di()->getApp();
     }
 
     /**
@@ -40,6 +38,6 @@ trait App
      */
     public function armada()
     {
-        return Container::getInstance()->getArmada();
+        return jaxon()->di()->getArmada();
     }
 }

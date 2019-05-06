@@ -12,8 +12,6 @@
 
 namespace Jaxon\Features;
 
-use Jaxon\DI\Container;
-
 trait Template
 {
     /**
@@ -26,6 +24,6 @@ trait Template
      */
     public function render($sTemplate, array $aVars = [])
     {
-        return Container::getInstance()->getTemplate()->render($sTemplate, $aVars);
+        return jaxon()->di()->getTemplate()->render($sTemplate, $aVars);
     }
 }

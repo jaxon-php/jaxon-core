@@ -14,8 +14,6 @@
 
 namespace Jaxon\Features;
 
-use Jaxon\DI\Container;
-
 trait Manager
 {
     /**
@@ -25,7 +23,7 @@ trait Manager
      */
     public function getPluginManager()
     {
-        return Container::getInstance()->getPluginManager();
+        return jaxon()->di()->getPluginManager();
     }
 
     /**
@@ -35,7 +33,7 @@ trait Manager
      */
     public function getRequestHandler()
     {
-        return Container::getInstance()->getRequestHandler();
+        return jaxon()->di()->getRequestHandler();
     }
 
     /**
@@ -45,6 +43,6 @@ trait Manager
      */
     public function getResponseManager()
     {
-        return Container::getInstance()->getResponseManager();
+        return jaxon()->di()->getResponseManager();
     }
 }

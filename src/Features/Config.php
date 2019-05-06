@@ -12,8 +12,6 @@
 
 namespace Jaxon\Features;
 
-use Jaxon\DI\Container;
-
 trait Config
 {
     /**
@@ -26,7 +24,7 @@ trait Config
      */
     public function setOption($sName, $sValue)
     {
-        return Container::getInstance()->getConfig()->setOption($sName, $sValue);
+        return jaxon()->di()->getConfig()->setOption($sName, $sValue);
     }
 
     /**
@@ -39,7 +37,7 @@ trait Config
      */
     public function getOption($sName, $xDefault = null)
     {
-        return Container::getInstance()->getConfig()->getOption($sName, $xDefault);
+        return jaxon()->di()->getConfig()->getOption($sName, $xDefault);
     }
 
     /**
@@ -51,7 +49,7 @@ trait Config
      */
     public function hasOption($sName)
     {
-        return Container::getInstance()->getConfig()->hasOption($sName);
+        return jaxon()->di()->getConfig()->hasOption($sName);
     }
 
     /**
@@ -63,7 +61,7 @@ trait Config
      */
     public function getOptionNames($sPrefix)
     {
-        return Container::getInstance()->getConfig()->getOptionNames($sPrefix);
+        return jaxon()->di()->getConfig()->getOptionNames($sPrefix);
     }
 
     /**
@@ -73,6 +71,6 @@ trait Config
      */
     public function newConfig()
     {
-        return Container::getInstance()->newConfig();
+        return jaxon()->di()->newConfig();
     }
 }

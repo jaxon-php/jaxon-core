@@ -12,23 +12,8 @@
 
 namespace Jaxon\Features;
 
-use Jaxon\DI\Container;
-use Jaxon\Request\Request;
-
 trait Paginator
 {
-    /**
-     * Set the pagination renderer
-     *
-     * @param object        $xRenderer              The pagination renderer
-     *
-     * @return void
-     */
-    public function setPaginationRenderer($xRenderer)
-    {
-        Container::getInstance()->setPaginationRenderer($xRenderer);
-    }
-
     /**
      * Set a new directory for pagination templates
      *
@@ -38,6 +23,6 @@ trait Paginator
      */
     public function setPaginationDir($sDirectory)
     {
-        return Container::getInstance()->getTemplate()->setPaginationDir($sDirectory);
+        return jaxon()->di()->getTemplate()->setPaginationDir($sDirectory);
     }
 }

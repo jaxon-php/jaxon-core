@@ -26,6 +26,7 @@
 namespace Jaxon;
 
 use Jaxon\Config\Reader as ConfigReader;
+use Jaxon\Plugin\Plugin;
 use Jaxon\DI\Container;
 use Jaxon\Utils\URI;
 
@@ -35,7 +36,6 @@ class Jaxon
     use Features\Translator;
     use Features\Paginator;
     use Features\Autoload;
-    use Features\Plugin;
     use Features\Upload;
     use Features\Template;
     use Features\App;
@@ -69,11 +69,50 @@ class Jaxon
     const FILE_UPLOAD = 'FileUpload';
 
     /**
+     * A static instance on this class
+     *
+     * @var Jaxon
+     */
+    private static $xInstance = null;
+
+    /**
+     * The DI container
+     *
+     * @var DI\Container
+     */
+    private $xContainer = null;
+
+    /**
+     * Get the static instance
+     *
+     * @return Jaxon
+     */
+    public static function getInstance()
+    {
+        if(self::$xInstance == null)
+        {
+            self::$xInstance = new Jaxon();
+        }
+        return self::$xInstance;
+    }
+
+    /**
      * The constructor
      */
     public function __construct()
     {
+        $this->xContainer = new Container();
         $this->setDefaultOptions();
+    }
+
+    /**
+     * Get the DI container
+     *
+     * @return Jaxon\DI\Container
+     */
+    public function di()
+    {
+        return $this->xContainer;
     }
 
     /**
@@ -136,16 +175,6 @@ class Jaxon
     }
 
     /**
-     * Get the DI container
-     *
-     * @return Jaxon\DI\Container
-     */
-    public function di()
-    {
-        return Container::getInstance();
-    }
-
-    /**
      * Get the Global Response object
      *
      * @return Jaxon\Response\Response
@@ -163,6 +192,23 @@ class Jaxon
     public function newResponse()
     {
         return $this->di()->newResponse();
+    }
+    /**
+     * Register a plugin
+     *
+     * Below is a table for priorities and their description:
+     * - 0 thru 999: Plugins that are part of or extensions to the jaxon core
+     * - 1000 thru 8999: User created plugins, typically, these plugins don't care about order
+     * - 9000 thru 9999: Plugins that generally need to be last or near the end of the plugin list
+     *
+     * @param Plugin    $xPlugin        An instance of a plugin
+     * @param integer   $nPriority      The plugin priority, used to order the plugins
+     *
+     * @return void
+     */
+    public function registerPlugin(Plugin $xPlugin, $nPriority = 1000)
+    {
+        $this->di()->getPluginManager()->registerPlugin($xPlugin, $nPriority);
     }
 
     /**

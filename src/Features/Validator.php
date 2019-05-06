@@ -12,8 +12,6 @@
 
 namespace Jaxon\Features;
 
-use Jaxon\DI\Container;
-
 trait Validator
 {
     /**
@@ -23,7 +21,7 @@ trait Validator
      */
     public function getValidatorMessage()
     {
-        return Container::getInstance()->getValidator()->getErrorMessage();
+        return jaxon()->di()->getValidator()->getErrorMessage();
     }
 
     /**
@@ -35,7 +33,7 @@ trait Validator
      */
     public function validateFunction($sName)
     {
-        return Container::getInstance()->getValidator()->validateFunction($sName);
+        return jaxon()->di()->getValidator()->validateFunction($sName);
     }
 
     /**
@@ -47,7 +45,7 @@ trait Validator
      */
     public function validateEvent($sName)
     {
-        return Container::getInstance()->getValidator()->validateEvent($sName);
+        return jaxon()->di()->getValidator()->validateEvent($sName);
     }
 
     /**
@@ -59,7 +57,7 @@ trait Validator
      */
     public function validateClass($sName)
     {
-        return Container::getInstance()->getValidator()->validateClass($sName);
+        return jaxon()->di()->getValidator()->validateClass($sName);
     }
 
     /**
@@ -71,7 +69,7 @@ trait Validator
      */
     public function validateMethod($sName)
     {
-        return Container::getInstance()->getValidator()->validateMethod($sName);
+        return jaxon()->di()->getValidator()->validateMethod($sName);
     }
 
     /**
@@ -84,6 +82,6 @@ trait Validator
      */
     public function validateUploadedFile($sName, array $aUploadedFile)
     {
-        return Container::getInstance()->getValidator()->validateUploadedFile($sName, $aUploadedFile);
+        return jaxon()->di()->getValidator()->validateUploadedFile($sName, $aUploadedFile);
     }
 }

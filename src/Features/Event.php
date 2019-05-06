@@ -12,7 +12,6 @@
 
 namespace Jaxon\Features;
 
-use Jaxon\DI\Container;
 use Jaxon\Contracts\Event\Listener as EventListener;
 
 trait Event
@@ -24,7 +23,7 @@ trait Event
      */
     public function addEventListener(EventListener $xEventListener)
     {
-        Container::getInstance()->getEventDispatcher()->addSubscriber($xEventListener);
+        jaxon()->di()->getEventDispatcher()->addSubscriber($xEventListener);
     }
 
     /**
@@ -36,7 +35,7 @@ trait Event
      */
     public function triggerEvent($sEvent)
     {
-        Container::getInstance()->getEventDispatcher()->dispatch($sEvent);
+        jaxon()->di()->getEventDispatcher()->dispatch($sEvent);
     }
 
     /**

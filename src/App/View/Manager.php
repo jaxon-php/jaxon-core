@@ -145,10 +145,10 @@ class Manager
         if(!$sId)
         {
             // Return the view renderer facade
-            return jaxon_di()->get(\Jaxon\App\View\Facade::class);
+            return jaxon()->di()->get(\Jaxon\App\View\Facade::class);
         }
         // Return the view renderer with the given id
-        return jaxon_di()->get('jaxon.app.view.' . $sId);
+        return jaxon()->di()->get('jaxon.app.view.' . $sId);
     }
 
     /**
@@ -162,10 +162,10 @@ class Manager
     public function addViewRenderer($sId, $xClosure)
     {
         // Return the non-initialiazed view renderer
-        jaxon_di()->set('jaxon.app.view.base.' . $sId, $xClosure);
+        jaxon()->di()->set('jaxon.app.view.base.' . $sId, $xClosure);
 
         // Return the initialized view renderer
-        jaxon_di()->set('jaxon.app.view.' . $sId, function ($c) use ($sId) {
+        jaxon()->di()->set('jaxon.app.view.' . $sId, function ($c) use ($sId) {
             // Get the defined renderer
             $renderer = $c['jaxon.app.view.base.' . $sId];
 

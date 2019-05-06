@@ -14,8 +14,6 @@
 
 namespace Jaxon\Features;
 
-use Jaxon\DI\Container;
-
 trait Translator
 {
     /**
@@ -29,6 +27,6 @@ trait Translator
      */
     public function trans($sText, array $aPlaceHolders = [], $sLanguage = null)
     {
-        return Container::getInstance()->getTranslator()->trans($sText, $aPlaceHolders, $sLanguage);
+        return jaxon()->di()->getTranslator()->trans($sText, $aPlaceHolders, $sLanguage);
     }
 }

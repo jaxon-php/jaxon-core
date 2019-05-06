@@ -12,8 +12,6 @@
 
 namespace Jaxon\Features;
 
-use Jaxon\DI\Container;
-
 trait Minifier
 {
     /**
@@ -26,6 +24,6 @@ trait Minifier
      */
     public function minify($sJsFile, $sMinFile)
     {
-        return Container::getInstance()->getMinifier()->minify($sJsFile, $sMinFile);
+        return jaxon()->di()->getMinifier()->minify($sJsFile, $sMinFile);
     }
 }

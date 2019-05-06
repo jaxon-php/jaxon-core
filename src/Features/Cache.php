@@ -14,8 +14,6 @@
 
 namespace Jaxon\Features;
 
-use Jaxon\DI\Container;
-
 trait Cache
 {
     /**
@@ -27,6 +25,6 @@ trait Cache
      */
     public function setCacheDir($sCacheDir)
     {
-        return Container::getInstance()->getTemplate()->setCacheDir($sCacheDir);
+        return jaxon()->di()->getTemplate()->setCacheDir($sCacheDir);
     }
 }

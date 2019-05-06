@@ -192,7 +192,7 @@ class CallableClass extends RequestPlugin
         }
 
         // Call the requested method
-        $di = jaxon_di();
+        $di = jaxon()->di();
         $aArgs = $di->getRequestHandler()->processArguments();
         $xResponse = $xCallableObject->call($this->sRequestedMethod, $aArgs);
         if(($xResponse))

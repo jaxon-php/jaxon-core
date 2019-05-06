@@ -19,14 +19,12 @@
 
 namespace Jaxon\Features;
 
-use Jaxon\DI\Container;
-
 trait Autoload
 {
     /**
-     * Get the plugin manager
+     * Get the DI container
      *
-     * @return Jaxon\Plugin\Manager
+     * @return \Jaxon\DI\Container
      */
     abstract public function di();
 

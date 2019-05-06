@@ -15,10 +15,7 @@
 namespace Jaxon\DI;
 
 use Lemon\Event\EventDispatcher;
-use Jaxon\App\View\Renderer;
-use Jaxon\Contracts\Container as ContainerContract;
 
-use Jaxon\Jaxon;
 use Jaxon\Response\Response;
 use Jaxon\Config\Config;
 use Jaxon\Config\Reader as ConfigReader;
@@ -31,6 +28,7 @@ use Jaxon\Plugin\CodeGenerator;
 use Jaxon\App\View\Manager as ViewManager;
 use Jaxon\App\View\Facade as ViewFacade;
 use Jaxon\App\Dialogs\Dialog;
+use Jaxon\App\View\Renderer;
 use Jaxon\Utils\Template\Minifier;
 use Jaxon\Utils\Translation\Translator;
 use Jaxon\Utils\Template\Template;
@@ -38,28 +36,28 @@ use Jaxon\Utils\Validation\Validator;
 use Jaxon\Utils\Pagination\Paginator;
 use Jaxon\Utils\Pagination\Renderer as PaginationRenderer;
 use Jaxon\Contracts\App\Session as SessionContract;
+use Jaxon\Contracts\Container as ContainerContract;
 
 class Container
 {
-    // The Dependency Injection Container
+    /**
+     * The Dependency Injection Container
+     *
+     * @var \Pimple\Container
+     */
     private $libContainer = null;
 
-    // The Dependency Injection Container
+    /**
+     * The Dependency Injection Container
+     *
+     * @var \Jaxon\Contracts\Container
+     */
     private $appContainer = null;
 
-    // The only instance of the Container (Singleton)
-    private static $xInstance = null;
-
-    public static function getInstance()
-    {
-        if(!self::$xInstance)
-        {
-            self::$xInstance = new Container();
-        }
-        return self::$xInstance;
-    }
-
-    private function __construct()
+    /**
+     * The class constructor
+     */
+    public function __construct()
     {
         $this->libContainer = new \Pimple\Container();
 
@@ -111,10 +109,6 @@ class Container
         /*
          * Core library objects
          */
-        // Jaxon Core
-        $this->libContainer[Jaxon::class] = function () {
-            return new Jaxon();
-        };
         // Global Response
         $this->libContainer[Response::class] = function () {
             return new Response();
@@ -122,6 +116,10 @@ class Container
         // Dialog
         $this->libContainer[Dialog::class] = function () {
             return new Dialog();
+        };
+        // Jaxon App
+        $this->libContainer[\Jaxon\App\App::class] = function () {
+            return new \Jaxon\App\App();
         };
 
         /*
@@ -361,18 +359,6 @@ class Container
     }
 
     /**
-     * Set the pagination renderer
-     *
-     * @param Jaxon\Utils\Pagination\Renderer  $xRenderer    The pagination renderer
-     *
-     * @return void
-     */
-    public function setPaginationRenderer(PaginationRenderer $xRenderer)
-    {
-        $this->libContainer[PaginationRenderer::class] = $xRenderer;
-    }
-
-    /**
      * Get the event dispatcher
      *
      * @return Lemon\Event\EventDispatcher
@@ -403,26 +389,6 @@ class Container
     }
 
     /**
-     * Get the main Jaxon object
-     *
-     * @return \Jaxon\Jaxon
-     */
-    public function getJaxon()
-    {
-        return $this->libContainer[Jaxon::class];
-    }
-
-    /**
-     * Get the Jaxon library version number
-     *
-     * @return string
-     */
-    public function getVersion()
-    {
-        return $this->getJaxon()->getVersion();
-    }
-
-    /**
      * Get the App instance
      *
      * @return \Jaxon\App\App
@@ -430,18 +396,6 @@ class Container
     public function getApp()
     {
         return $this->libContainer[\Jaxon\App\App::class];
-    }
-
-    /**
-     * Set the App instance
-     *
-     * @param Jaxon\App\App     $xApp            The App instance
-     *
-     * @return void
-     */
-    public function setApp($xApp)
-    {
-        $this->libContainer[\Jaxon\App\App::class] = $xApp;
     }
 
     /**

@@ -24,6 +24,12 @@ namespace Jaxon\Plugin;
 use Jaxon\Jaxon;
 use Jaxon\Plugin\Package;
 use Jaxon\Config\Config;
+use Jaxon\Request\Support\CallableRepository;
+use Jaxon\Request\Plugin\CallableClass;
+use Jaxon\Request\Plugin\CallableDir;
+use Jaxon\Request\Plugin\UserFunction;
+use Jaxon\Request\Plugin\FileUpload;
+use Jaxon\Response\Plugin\JQuery as JQueryPlugin;
 
 use Closure;
 
@@ -178,7 +184,7 @@ class Manager
     public function registerPackage(string $sPackageClass, Closure $xClosure)
     {
         $this->aPackages[] = $sPackageClass;
-        jaxon_di()->set($sPackageClass, $xClosure);
+        jaxon()->di()->set($sPackageClass, $xClosure);
     }
 
     /**
@@ -322,5 +328,30 @@ class Manager
             return $this->aRequestPlugins[$sName];
         }
         return null;
+    }
+
+    /**
+     * Register the Jaxon request plugins
+     *
+     * @return void
+     */
+    public function registerRequestPlugins()
+    {
+        $callableRepository = jaxon()->di()->get(CallableRepository::class);
+        $this->registerPlugin(new CallableClass($callableRepository), 101);
+        $this->registerPlugin(new CallableDir($callableRepository), 102);
+        $this->registerPlugin(new UserFunction(), 103);
+        $this->registerPlugin(new FileUpload(), 104);
+    }
+
+    /**
+     * Register the Jaxon response plugins
+     *
+     * @return void
+     */
+    public function registerResponsePlugins()
+    {
+        // Register an instance of the JQuery plugin
+        $this->registerPlugin(new JQueryPlugin(), 700);
     }
 }
