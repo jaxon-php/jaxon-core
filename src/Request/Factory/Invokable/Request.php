@@ -12,7 +12,7 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Request\Factory\CallableObject;
+namespace Jaxon\Request\Factory\Invokable;
 
 use Jaxon\Request\Support\CallableObject;
 

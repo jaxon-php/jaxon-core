@@ -14,7 +14,8 @@
 
 namespace Jaxon\Request\Support;
 
-use Jaxon\Request\Request;
+use Jaxon\Request\Factory\Invokable\Request as RequestFactory;
+use Jaxon\Request\Factory\Invokable\Paginator as PaginatorFactory;
 
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -206,7 +207,7 @@ class CallableRepository
 
         // Get the class options
         $aOptions = $this->aNamespaceOptions[$sNamespace];
-        $aDefaultOptions = []; // ['namespace' => $aOptions['namespace']];
+        $aDefaultOptions = ['namespace' => $sNamespace];
         if(key_exists('separator', $aOptions))
         {
             $aDefaultOptions['separator'] = $aOptions['separator'];
@@ -235,11 +236,11 @@ class CallableRepository
         }
 
         // Create the callable object
-        $xCallableObject = new \Jaxon\Request\Support\CallableObject($sClassName);
+        $xCallableObject = new CallableObject($sClassName);
         $this->aCallableOptions[$sClassName] = [];
         foreach($aOptions as $sName => $xValue)
         {
-            if($sName == 'separator' || $sName == 'protected')
+            if(in_array($sName, ['separator', 'namespace', 'protected']))
             {
                 $xCallableObject->configure($sName, $xValue);
             }
@@ -252,14 +253,14 @@ class CallableRepository
         $this->aCallableObjects[$sClassName] = $xCallableObject;
 
         // Register the request factory for this callable object
-        jaxon()->di()->set($sClassName . '_Factory_Rq', function () use ($sClassName) {
+        jaxon()->di()->set($sClassName . '_RequestFactory', function () use ($sClassName) {
             $xCallableObject = $this->aCallableObjects[$sClassName];
-            return new \Jaxon\Factory\Request\Portable($xCallableObject);
+            return new RequestFactory($xCallableObject);
         });
         // Register the paginator factory for this callable object
-        jaxon()->di()->set($sClassName . '_Factory_Pg', function () use ($sClassName) {
+        jaxon()->di()->set($sClassName . '_PaginatorFactory', function () use ($sClassName) {
             $xCallableObject = $this->aCallableObjects[$sClassName];
-            return new \Jaxon\Factory\Request\Paginator($xCallableObject);
+            return new PaginatorFactory($xCallableObject);
         });
 
         return $xCallableObject;
