@@ -35,7 +35,7 @@ use Jaxon\Utils\Template\Template;
 use Jaxon\Utils\Validation\Validator;
 use Jaxon\Utils\Pagination\Paginator;
 use Jaxon\Utils\Pagination\Renderer as PaginationRenderer;
-use Jaxon\Contracts\App\Session as SessionContract;
+use Jaxon\App\Contracts\Session as SessionContract;
 use Jaxon\Contracts\Container as ContainerContract;
 
 class Container
@@ -413,7 +413,7 @@ class Container
      *
      * @return ViewFacade
      */
-    public function getViewFacade()
+    public function getViewRenderer()
     {
         return $this->libContainer[ViewFacade::class];
     }

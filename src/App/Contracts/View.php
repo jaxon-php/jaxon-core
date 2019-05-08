@@ -1,6 +1,6 @@
 <?php
 
-namespace Jaxon\Contracts\App;
+namespace Jaxon\App\Contracts;
 
 use Jaxon\App\View\Store;
 
