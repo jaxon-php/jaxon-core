@@ -266,6 +266,19 @@ class Jaxon
     }
 
     /**
+     * Get an instance of a registered class
+     *
+     * @param string        $sClass             The class name
+     *
+     * @return mixed
+     */
+    public function instance($sClassName)
+    {
+        $xCallable = $this->di()->getCallableRepository()->getCallableObject($sClassName);
+        return ($xCallable) ? $xCallable->getRegisteredObject() : null;
+    }
+
+    /**
      * Read config options from a config file and setup the library
      *
      * @param string        $sConfigFile        The full path to the config file
