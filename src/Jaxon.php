@@ -38,7 +38,6 @@ class Jaxon
     use Features\Autoload;
     use Features\Upload;
     use Features\Template;
-    use Features\App;
 
     /**
      * Package version number
@@ -80,7 +79,7 @@ class Jaxon
      *
      * @var DI\Container
      */
-    private $xContainer = null;
+    private static $xContainer = null;
 
     /**
      * Get the static instance
@@ -101,18 +100,21 @@ class Jaxon
      */
     public function __construct()
     {
-        $this->xContainer = new Container();
+        if(self::$xContainer == null)
+        {
+            self::$xContainer = new Container();
+        }
         $this->setDefaultOptions();
     }
 
     /**
      * Get the DI container
      *
-     * @return Jaxon\DI\Container
+     * @return DI\Container
      */
     public function di()
     {
-        return $this->xContainer;
+        return self::$xContainer;
     }
 
     /**
@@ -128,7 +130,7 @@ class Jaxon
     /**
      * Get the config reader
      *
-     * @return Jaxon\Config\Reader
+     * @return \Jaxon\Config\Reader
      */
     public function config()
     {
@@ -177,7 +179,7 @@ class Jaxon
     /**
      * Get the Global Response object
      *
-     * @return Jaxon\Response\Response
+     * @return \Jaxon\Response\Response
      */
     public function getResponse()
     {
@@ -187,7 +189,7 @@ class Jaxon
     /**
      * Create a new Jaxon response object
      *
-     * @return Jaxon\Response\Response
+     * @return \Jaxon\Response\Response
      */
     public function newResponse()
     {
@@ -409,7 +411,7 @@ class Jaxon
      *
      * @param string        $sName                The name of the plugin
      *
-     * @return Jaxon\Plugin\Response
+     * @return \Jaxon\Plugin\Response
      */
     public function plugin($sName)
     {
@@ -419,7 +421,7 @@ class Jaxon
     /**
      * Get the request callback manager
      *
-     * @return Jaxon\Request\Handler\Callback
+     * @return \Jaxon\Request\Handler\Callback
      */
     public function callback()
     {
@@ -429,10 +431,20 @@ class Jaxon
     /**
      * Get the dialog wrapper
      *
-     * @return Jaxon\Dialog\Config
+     * @return \Jaxon\Dialog\Config
      */
     public function dialog()
     {
         return $this->di()->getDialog();
+    }
+
+    /**
+     * Get the App instance
+     *
+     * @return \Jaxon\App\App
+     */
+    public function app()
+    {
+        return $this->di()->getApp();
     }
 }

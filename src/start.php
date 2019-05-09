@@ -58,9 +58,9 @@ function jaxon_register_plugin(\Jaxon\Plugin\Plugin $xPlugin, $nPriority = 1000)
  *
  * @return Jaxon\Request\Factory
  */
-function rq($classname = null)
+function rq($sClassName = null)
 {
-    return Jaxon::getInstance()->di()->getRequestFactory()->setClassName($classname);
+    return Jaxon::getInstance()->di()->getRequestFactory()->setClassName($sClassName);
 }
 
 /**
