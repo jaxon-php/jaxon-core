@@ -16,7 +16,28 @@ namespace Jaxon\Config;
 
 class Config
 {
+    /**
+     * The config options
+     *
+     * @var array
+     */
     protected $aOptions = [];
+
+    /**
+     * The constructor
+     *
+     * @param array             $aOptions           The options array
+     * @param string            $sKeys              The keys of the options in the array
+     *
+     * @param array
+     */
+    public function __construct(array $aOptions = [], $sKeys = '')
+    {
+        if(count($aOptions) > 0)
+        {
+            $this->setOptions($aOptions, $sKeys);
+        }
+    }
 
     /**
      * Set the value of a config option
@@ -76,7 +97,7 @@ class Config
      * @param array             $aOptions           The options array
      * @param string            $sKeys              The keys of the options in the array
      *
-     * @return void
+     * @return Config
      */
     public function setOptions(array $aOptions, $sKeys = '')
     {
@@ -94,6 +115,8 @@ class Config
             }
         }
         $this->_setOptions($aOptions);
+
+        return $this;
     }
 
     /**
