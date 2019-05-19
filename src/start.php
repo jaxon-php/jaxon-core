@@ -112,8 +112,3 @@ function jQuery($sSelector = '', $sContext = '')
  */
 jaxon()->di()->getPluginManager()->registerRequestPlugins();
 jaxon()->di()->getPluginManager()->registerResponsePlugins();
-
-/*
- * Setup the view manager
- */
-jaxon()->di()->getViewManager()->setup();
