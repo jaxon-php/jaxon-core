@@ -22,14 +22,14 @@ class Manager
      *
      * @var array
      */
-    protected $aViewRenderers = [];
+    protected $aRenderers = [];
 
     /**
      * The view namespaces
      *
      * @var array
      */
-    protected $aViewNamespaces = [];
+    protected $aNamespaces = [];
 
     /**
      * Get the default namespace
@@ -48,7 +48,7 @@ class Manager
      */
     public function getRenderers()
     {
-        return $this->aViewRenderers;
+        return $this->aRenderers;
     }
 
     /**
@@ -58,23 +58,7 @@ class Manager
      */
     public function getNamespaces()
     {
-        return $this->aViewNamespaces;
-    }
-
-    /**
-     * Setup the library.
-     *
-     * @return void
-     */
-    public function setup()
-    {
-        // Add the view renderer
-        $this->addViewRenderer('jaxon', function ($c) {
-            return new \Jaxon\App\View\View($c[Template::class]);
-        });
-
-        // Set the pagination view namespace
-        $this->addViewNamespace('pagination', '', '', 'jaxon');
+        return $this->aNamespaces;
     }
 
     /**
@@ -87,22 +71,22 @@ class Manager
      *
      * @return void
      */
-    public function addViewNamespace($sNamespace, $sDirectory, $sExtension, $sRenderer)
+    public function addNamespace($sNamespace, $sDirectory, $sExtension, $sRenderer)
     {
         $aNamespace = array(
             'namespace' => $sNamespace,
             'directory' => $sDirectory,
             'extension' => $sExtension,
         );
-        if(key_exists($sRenderer, $this->aViewNamespaces))
+        if(key_exists($sRenderer, $this->aNamespaces))
         {
-            $this->aViewNamespaces[$sRenderer][] = $aNamespace;
+            $this->aNamespaces[$sRenderer][] = $aNamespace;
         }
         else
         {
-            $this->aViewNamespaces[$sRenderer] = array($aNamespace);
+            $this->aNamespaces[$sRenderer] = [$aNamespace];
         }
-        $this->aViewRenderers[$sNamespace] = $sRenderer;
+        $this->aRenderers[$sNamespace] = $sRenderer;
     }
 
     /**
@@ -112,7 +96,7 @@ class Manager
      *
      * @return void
      */
-    public function addViewNamespaces($xAppConfig)
+    public function addNamespaces($xAppConfig)
     {
         $this->sDefaultNamespace = $xAppConfig->getOption('options.views.default', false);
         if(is_array($namespaces = $xAppConfig->getOptionNames('views')))
@@ -128,7 +112,7 @@ class Manager
                 $directory = $xAppConfig->getOption($option . '.directory');
                 $extension = $xAppConfig->getOption($option . '.extension', '');
                 $renderer = $xAppConfig->getOption($option . '.renderer', 'jaxon');
-                $this->addViewNamespace($namespace, $directory, $extension, $renderer);
+                $this->addNamespace($namespace, $directory, $extension, $renderer);
             }
         }
     }
@@ -140,7 +124,7 @@ class Manager
      *
      * @return object        The view renderer
      */
-    public function getViewRenderer($sId = '')
+    public function getRenderer($sId = '')
     {
         if(!$sId)
         {
@@ -159,7 +143,7 @@ class Manager
      *
      * @return void
      */
-    public function addViewRenderer($sId, $xClosure)
+    public function addRenderer($sId, $xClosure)
     {
         // Return the non-initialiazed view renderer
         jaxon()->di()->set('jaxon.app.view.base.' . $sId, $xClosure);

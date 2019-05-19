@@ -3,21 +3,23 @@
 namespace Jaxon\App\View;
 
 use Jaxon\App\Contracts\View as ViewContract;
-use Jaxon\Utils\Template\Template;
+use Jaxon\Utils\Template\Engine as TemplateEngine;
 
 class View implements ViewContract
 {
     /**
-     * @var Template        The Jaxon template renderer
+     * The Jaxon template engine
+     *
+     * @var TemplateEngine
      */
-    protected $xTemplate;
+    protected $xEngine;
 
     /**
      * The class constructor
      */
-    public function __construct(Template $xTemplate)
+    public function __construct(TemplateEngine $xEngine)
     {
-        $this->xTemplate = $xTemplate;
+        $this->xEngine = $xEngine;
     }
 
     /**
@@ -31,7 +33,7 @@ class View implements ViewContract
      */
     public function addNamespace($sNamespace, $sDirectory, $sExtension = '')
     {
-        $this->xTemplate->addNamespace($sNamespace, $sDirectory, $sExtension);
+        $this->xEngine->addNamespace($sNamespace, $sDirectory, $sExtension);
     }
 
     /**
@@ -51,6 +53,6 @@ class View implements ViewContract
             $sViewName = $sNamespace . '::' . $sViewName;
         }
         // Render the template
-        return trim($this->xTemplate->render($sViewName, $store->getViewData()), " \t\n");
+        return trim($this->xEngine->render($sViewName, $store->getViewData()), " \t\n");
     }
 }

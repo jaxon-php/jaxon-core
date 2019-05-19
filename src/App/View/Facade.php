@@ -2,7 +2,7 @@
 
 namespace Jaxon\App\View;
 
-class Facade
+class Facade implements  \Jaxon\Contracts\Template\Renderer
 {
     /**
      * The view data store
