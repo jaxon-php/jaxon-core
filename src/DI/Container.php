@@ -31,10 +31,11 @@ use Jaxon\App\Dialogs\Dialog;
 use Jaxon\App\View\Renderer;
 use Jaxon\Utils\Template\Minifier;
 use Jaxon\Utils\Translation\Translator;
-use Jaxon\Utils\Template\Template;
+use Jaxon\Utils\Template\Engine as TemplateEngine;
 use Jaxon\Utils\Validation\Validator;
 use Jaxon\Utils\Pagination\Paginator;
 use Jaxon\Utils\Pagination\Renderer as PaginationRenderer;
+use Jaxon\Contracts\Template\Renderer as TemplateRenderer;
 use Jaxon\App\Contracts\Session as SessionContract;
 use Jaxon\Contracts\Container as ContainerContract;
 
@@ -147,7 +148,7 @@ class Container
         };
         // Code Generator
         $this->libContainer[CodeGenerator::class] = function ($c) {
-            return new CodeGenerator($c[PluginManager::class]);
+            return new CodeGenerator($c[PluginManager::class], $c[TemplateEngine::class]);
         };
         // View Manager
         $this->libContainer[ViewManager::class] = function () {
@@ -180,8 +181,12 @@ class Container
             return new Translator($c['jaxon.core.translation_dir'], $c[Config::class]);
         };
         // Template engine
-        $this->libContainer[Template::class] = function ($c) {
-            return new Template($c['jaxon.core.template_dir']);
+        $this->libContainer[TemplateEngine::class] = function ($c) {
+            return new TemplateEngine($c['jaxon.core.template_dir']);
+        };
+        // Template Renderer
+        $this->libContainer[TemplateRenderer::class] = function ($c) {
+            return $c[TemplateEngine::class];
         };
         // Validator
         $this->libContainer[Validator::class] = function ($c) {
@@ -193,7 +198,7 @@ class Container
         };
         // Pagination Renderer
         $this->libContainer[PaginationRenderer::class] = function ($c) {
-            return new PaginationRenderer($c[Template::class]);
+            return new PaginationRenderer($c[TemplateRenderer::class]);
         };
         // Event Dispatcher
         $this->libContainer[EventDispatcher::class] = function () {
@@ -226,6 +231,21 @@ class Container
     public function set($sClass, $xClosure)
     {
         $this->libContainer[$sClass] = $xClosure;
+    }
+
+    /**
+     * Set an alias
+     *
+     * @param string                $sClass             The class name
+     * @param string                $sAlias             The alias name
+     *
+     * @return void
+     */
+    public function alias($sClass, $sAlias)
+    {
+        $this->libContainer[$sClass] = function ($c) use ($sAlias) {
+            return $c[$sAlias];
+        };
     }
 
     /**
@@ -331,11 +351,21 @@ class Container
     /**
      * Get the template engine
      *
-     * @return \Jaxon\Utils\Template\Template
+     * @return \Jaxon\Utils\Template\Engine
      */
-    public function getTemplate()
+    public function getTemplateEngine()
     {
-        return $this->libContainer[Template::class];
+        return $this->libContainer[TemplateEngine::class];
+    }
+
+    /**
+     * Get the template renderer
+     *
+     * @return \Jaxon\Contracts\Template\Renderer
+     */
+    public function getTemplateRenderer()
+    {
+        return $this->libContainer[TemplateRenderer::class];
     }
 
     /**

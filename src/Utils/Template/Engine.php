@@ -14,7 +14,7 @@
 
 namespace Jaxon\Utils\Template;
 
-class Template
+class Engine implements  \Jaxon\Contracts\Template\Renderer
 {
     protected $aNamespaces;
 
@@ -63,7 +63,7 @@ class Template
      *
      * @return void
      */
-    public function setPaginationDir($sDirectory)
+    public function pagination($sDirectory)
     {
         $this->addNamespace('pagination', $sDirectory, '.php');
     }
@@ -75,7 +75,7 @@ class Template
      *
      * @return void
      */
-    public function setCacheDir($sCacheDir)
+    public function cache($sCacheDir)
     {
         // Nothing to do
     }

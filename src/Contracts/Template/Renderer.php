@@ -1,18 +1,18 @@
 <?php
 
 /**
- * Template.php - Trait for template functions
+ * Renderer.php - Template renderer interface
  *
  * @package jaxon-core
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
- * @copyright 2016 Thierry Feuzeu <thierry.feuzeu@gmail.com>
+ * @copyright 2019 Thierry Feuzeu <thierry.feuzeu@gmail.com>
  * @license https://opensource.org/licenses/BSD-3-Clause BSD 3-Clause License
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Features;
+namespace Jaxon\Contracts\Template;
 
-trait Template
+interface Renderer
 {
     /**
      * Render a template
@@ -20,10 +20,7 @@ trait Template
      * @param string        $sTemplate            The name of template to be rendered
      * @param string        $aVars                The template vars
      *
-     * @return string        The template content
+     * @return string
      */
-    public function render($sTemplate, array $aVars = [])
-    {
-        return jaxon()->di()->getTemplateRenderer()->render($sTemplate, $aVars);
-    }
+    public function render($sTemplate, array $aVars = []);
 }

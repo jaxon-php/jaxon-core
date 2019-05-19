@@ -37,7 +37,6 @@ class Manager
 {
     use \Jaxon\Features\Manager;
     use \Jaxon\Features\Config;
-    use \Jaxon\Features\Cache;
     use \Jaxon\Features\Event;
     use \Jaxon\Features\Translator;
 

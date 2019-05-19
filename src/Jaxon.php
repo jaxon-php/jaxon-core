@@ -34,7 +34,6 @@ class Jaxon
 {
     use Features\Config;
     use Features\Translator;
-    use Features\Paginator;
     use Features\Autoload;
     use Features\Upload;
     use Features\Template;
@@ -449,6 +448,16 @@ class Jaxon
     public function dialog()
     {
         return $this->di()->getDialog();
+    }
+
+    /**
+     * Get the template engine
+     *
+     * @return \Jaxon\Utils\Template\Engine
+     */
+    public function template()
+    {
+        return jaxon()->di()->getTemplateEngine();
     }
 
     /**
