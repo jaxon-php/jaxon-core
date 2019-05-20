@@ -27,8 +27,8 @@ use Jaxon\Plugin\Manager as PluginManager;
 use Jaxon\Plugin\CodeGenerator;
 use Jaxon\App\View\Manager as ViewManager;
 use Jaxon\App\View\Facade as ViewFacade;
-use Jaxon\App\Dialogs\Dialog;
 use Jaxon\App\View\Renderer;
+use Jaxon\Utils\Dialogs\Dialog;
 use Jaxon\Utils\Template\Minifier;
 use Jaxon\Utils\Translation\Translator;
 use Jaxon\Utils\Template\Engine as TemplateEngine;
@@ -321,7 +321,7 @@ class Container
     /**
      * Get the dialog wrapper
      *
-     * @return \Jaxon\App\Dialogs\Dialog
+     * @return \Jaxon\Utils\Dialogs\Dialog
      */
     public function getDialog()
     {
