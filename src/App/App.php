@@ -1,5 +1,15 @@
 <?php
 
+/**
+ * Boot.php - Jaxon application
+ *
+ * @package jaxon-core
+ * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
+ * @copyright 2019 Thierry Feuzeu <thierry.feuzeu@gmail.com>
+ * @license https://opensource.org/licenses/BSD-3-Clause BSD 3-Clause License
+ * @link https://github.com/jaxon-php/jaxon-core
+ */
+
 namespace Jaxon\App;
 
 use Jaxon\Config\Config;
@@ -37,9 +47,8 @@ class App
             throw new Exception("Unable to find config file at $sConfigFile");
         }
 
+        // Read the config options.
         $aOptions = jaxon()->config()->read($sConfigFile);
-
-        // Setup the config options.
         $aLibOptions = key_exists('lib', $aOptions) ? $aOptions['lib'] : [];
         $aAppOptions = key_exists('app', $aOptions) ? $aOptions['app'] : [];
 
@@ -53,11 +62,32 @@ class App
         //     return new Session\Manager();
         // });
 
-        $xOptions = new Options\Options();
-        $xOptions->lib($aLibOptions)->app($aAppOptions);
-        // $xOptions->uri($sUri);
-        // $xOptions->js()->export($bExtern)->minify($bMinify)->uri($sJsUri)->dir($sJsDir);
-        $this->_bootstrap($xOptions);
+        $this->jaxon()
+            ->lib($aLibOptions)
+            ->app($aAppOptions)
+            // ->uri($sUri)
+            // ->js(!$isDebug, $sJsUrl, $sJsDir, !$isDebug)
+            ->bootstrap();
+    }
+
+    /**
+     * Get the view renderer
+     *
+     * @return Jaxon\App\View\Facade
+     */
+    public function view()
+    {
+        return jaxon()->di()->getViewRenderer();
+    }
+
+    /**
+     * Get the session manager
+     *
+     * @return Jaxon\App\Contracts\Session
+     */
+    public function session()
+    {
+        return jaxon()->di()->getSessionManager();
     }
 
     /**
