@@ -27,7 +27,6 @@ namespace Jaxon;
 
 use Jaxon\Config\Reader as ConfigReader;
 use Jaxon\Plugin\Plugin;
-use Jaxon\DI\Container;
 use Jaxon\Utils\URI;
 use Jaxon\Contracts\Response\Sender as ResponseSender;
 
@@ -77,7 +76,7 @@ class Jaxon
     /**
      * The DI container
      *
-     * @var DI\Container
+     * @var Container
      */
     private static $xContainer = null;
 
@@ -110,7 +109,7 @@ class Jaxon
     /**
      * Get the DI container
      *
-     * @return DI\Container
+     * @return Container
      */
     public function di()
     {

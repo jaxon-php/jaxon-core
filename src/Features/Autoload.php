@@ -24,7 +24,7 @@ trait Autoload
     /**
      * Get the DI container
      *
-     * @return \Jaxon\DI\Container
+     * @return \Jaxon\Container
      */
     abstract public function di();
 

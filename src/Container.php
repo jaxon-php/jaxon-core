@@ -12,7 +12,7 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\DI;
+namespace Jaxon;
 
 use Lemon\Event\EventDispatcher;
 
@@ -64,8 +64,8 @@ class Container
     {
         $this->libContainer = new \Pimple\Container();
 
-        $sTranslationDir = realpath(__DIR__ . '/../../translations');
-        $sTemplateDir = realpath(__DIR__ . '/../../templates');
+        $sTranslationDir = realpath(__DIR__ . '/../translations');
+        $sTemplateDir = realpath(__DIR__ . '/../templates');
         $this->init($sTranslationDir, $sTemplateDir);
     }
 
