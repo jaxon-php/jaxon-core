@@ -28,21 +28,6 @@ class App
     use Features\App;
 
     /**
-     * The bootstrapper
-     *
-     * @var Boot
-     */
-    protected $xBoot;
-
-    /**
-     * The constructor
-     */
-    public function __construct()
-    {
-        $this->xBoot = new Boot();
-    }
-
-    /**
      * Read config options from a config file and setup the library
      *
      * @param string        $sConfigFile        The full path to the config file
@@ -71,7 +56,7 @@ class App
         //     return new Session\Manager();
         // });
 
-        $this->xBoot
+        $this->jaxon()
             ->lib($aLibOptions)
             ->app($aAppOptions)
             // ->uri($sUri)

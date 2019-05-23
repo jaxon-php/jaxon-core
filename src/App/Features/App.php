@@ -16,7 +16,7 @@ trait App
      */
     private function jaxon()
     {
-        return jaxon()->di()->getBootstrapper();
+        return jaxon()->di()->getBootstrap();
     }
 
     /**

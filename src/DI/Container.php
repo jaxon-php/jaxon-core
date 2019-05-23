@@ -25,6 +25,8 @@ use Jaxon\Request\Factory as RequestFactory;
 use Jaxon\Response\Manager as ResponseManager;
 use Jaxon\Plugin\Manager as PluginManager;
 use Jaxon\Plugin\CodeGenerator;
+use Jaxon\App\App;
+use Jaxon\App\Bootstrap;
 use Jaxon\App\View\Manager as ViewManager;
 use Jaxon\App\View\Facade as ViewFacade;
 use Jaxon\App\View\Renderer;
@@ -119,8 +121,12 @@ class Container
             return new Dialog();
         };
         // Jaxon App
-        $this->libContainer[\Jaxon\App\App::class] = function () {
-            return new \Jaxon\App\App();
+        $this->libContainer[App::class] = function () {
+            return new App();
+        };
+        // Jaxon App bootstrap
+        $this->libContainer[Bootstrap::class] = function () {
+            return new Bootstrap();
         };
 
         /*
@@ -424,11 +430,21 @@ class Container
     /**
      * Get the App instance
      *
-     * @return \Jaxon\App\App
+     * @return App
      */
     public function getApp()
     {
-        return $this->libContainer[\Jaxon\App\App::class];
+        return $this->libContainer[App::class];
+    }
+
+    /**
+     * Get the App bootstrap
+     *
+     * @return Bootstrap
+     */
+    public function getBootstrap()
+    {
+        return $this->libContainer[Bootstrap::class];
     }
 
     /**

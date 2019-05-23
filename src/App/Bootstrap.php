@@ -14,7 +14,7 @@ namespace Jaxon\App;
 
 use Jaxon\Config\Config;
 
-class Boot
+class Bootstrap
 {
     /**
      * The library options
@@ -127,7 +127,7 @@ class Boot
      *
      * @return void
      */
-    private function _setupApp($xAppConfig)
+    private function setupApp($xAppConfig)
     {
         $di = jaxon()->di();
         // Register user functions and classes
@@ -171,7 +171,7 @@ class Boot
         $xAppConfig = $di->newConfig($this->aAppOptions);
         $xAppConfig->setOption('options.views.default', 'default');
         // Setup the app.
-        $this->_setupApp($xAppConfig);
+        $this->setupApp($xAppConfig);
 
         // Event after the module has read the config
         $app->triggerEvent('post.config');
