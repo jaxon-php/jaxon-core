@@ -29,6 +29,7 @@ use Jaxon\Config\Reader as ConfigReader;
 use Jaxon\Plugin\Plugin;
 use Jaxon\DI\Container;
 use Jaxon\Utils\URI;
+use Jaxon\Contracts\Response\Sender as ResponseSender;
 
 class Jaxon
 {
@@ -173,6 +174,8 @@ class Jaxon
             'js.app.minify'                     => true,
             'js.app.options'                    => '',
         ]);
+        // Set the default response sender
+        $this->setResponseSender($this->di()->getResponseManager());
     }
 
     /**
@@ -278,32 +281,6 @@ class Jaxon
     }
 
     /**
-     * Read config options from a config file and setup the library
-     *
-     * @param string        $sConfigFile        The full path to the config file
-     *
-     * @return Jaxon
-     */
-    public function setup($sConfigFile)
-    {
-        $aConfigOptions = $this->config()->read($sConfigFile);
-
-        // Setup the config options into the library.
-        $sLibKey = 'lib';
-        $xLibConfig = $this->di()->getConfig();
-        $xLibConfig->setOptions($aConfigOptions, $sLibKey);
-
-        $sAppKey = 'app';
-        $xAppConfig = new \Jaxon\Config\Config();
-        $xAppConfig->setOptions($aConfigOptions, $sAppKey);
-
-        // Register user functions and classes
-        $this->di()->getPluginManager()->registerFromConfig($xAppConfig);
-
-        return $this;
-    }
-
-    /**
      * Returns the Jaxon Javascript header and wrapper code to be printed into the page
      *
      * The javascript code returned by this function is dependent on the plugins
@@ -389,33 +366,13 @@ class Jaxon
     }
 
     /**
-     * Send the response output back to the browser
+     * Set the response sender
      *
-     * @return void
+     * @param ResponseSender        $xResponseSender
      */
-    public function sendResponse()
+    public function setResponseSender(ResponseSender $xResponseSender)
     {
-        $this->di()->getResponseManager()->sendOutput();
-    }
-
-    /**
-     * Send the HTTP headers back to the browser
-     *
-     * @return void
-     */
-    public function sendHeaders()
-    {
-        $this->di()->getResponseManager()->sendHeaders();
-    }
-
-    /**
-     * Get the response output
-     *
-     * @return string
-     */
-    public function getOutput()
-    {
-        return $this->di()->getResponseManager()->getOutput();
+        $this->di()->getRequestHandler()->setResponseSender($xResponseSender);
     }
 
     /**

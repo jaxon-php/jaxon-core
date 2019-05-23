@@ -24,14 +24,23 @@ use Closure;
 
 class App
 {
+    use \Jaxon\Features\Event;
     use Features\App;
 
     /**
-     * The path to the config file
+     * The bootstrapper
      *
-     * @var string
+     * @var Boot
      */
-    // protected $sConfigFile;
+    protected $xBoot;
+
+    /**
+     * The constructor
+     */
+    public function __construct()
+    {
+        $this->xBoot = new Boot();
+    }
 
     /**
      * Read config options from a config file and setup the library
@@ -62,7 +71,7 @@ class App
         //     return new Session\Manager();
         // });
 
-        $this->jaxon()
+        $this->xBoot
             ->lib($aLibOptions)
             ->app($aAppOptions)
             // ->uri($sUri)
@@ -88,18 +97,5 @@ class App
     public function session()
     {
         return jaxon()->di()->getSessionManager();
-    }
-
-    /**
-     * Wrap the Jaxon response into an HTTP response.
-     *
-     * @param  $code        The HTTP Response code
-     *
-     * @return HTTP Response
-     */
-    public function httpResponse($code = '200')
-    {
-        // Send HTTP Headers
-        jaxon()->sendResponse();
     }
 }

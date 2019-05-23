@@ -311,11 +311,14 @@ class Container
     /**
      * Create a new the config manager
      *
+     * @param array             $aOptions           The options array
+     * @param string            $sKeys              The keys of the options in the array
+     *
      * @return \Jaxon\Config\Config            The config manager
      */
-    public function newConfig()
+    public function newConfig(array $aOptions = [], $sKeys = '')
     {
-        return new \Jaxon\Config\Config();
+        return new \Jaxon\Config\Config($aOptions, $sKeys);
     }
 
     /**
