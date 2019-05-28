@@ -28,7 +28,6 @@ namespace Jaxon;
 use Jaxon\Config\Reader as ConfigReader;
 use Jaxon\Plugin\Plugin;
 use Jaxon\Utils\URI;
-use Jaxon\Contracts\Response\Sender as ResponseSender;
 
 class Jaxon
 {
@@ -154,6 +153,7 @@ class Jaxon
             // 'core.request.uri'               => '',
             'core.request.mode'                 => 'asynchronous',
             'core.request.method'               => 'POST',    // W3C: Method is case sensitive
+            'core.response.send'                => true,
             'core.response.merge.ap'            => true,
             'core.response.merge.js'            => true,
             'core.debug.on'                     => false,
@@ -173,8 +173,6 @@ class Jaxon
             'js.app.minify'                     => true,
             'js.app.options'                    => '',
         ]);
-        // Set the default response sender
-        $this->setResponseSender($this->di()->getResponseManager());
     }
 
     /**
@@ -365,16 +363,6 @@ class Jaxon
     }
 
     /**
-     * Set the response sender
-     *
-     * @param ResponseSender        $xResponseSender
-     */
-    public function setResponseSender(ResponseSender $xResponseSender)
-    {
-        $this->di()->getRequestHandler()->setResponseSender($xResponseSender);
-    }
-
-    /**
      * Get a registered response plugin
      *
      * @param string        $sName                The name of the plugin
@@ -399,7 +387,7 @@ class Jaxon
     /**
      * Get the dialog wrapper
      *
-     * @return \Jaxon\Dialog\Config
+     * @return \Jaxon\Utils\Dialogs\Dialog
      */
     public function dialog()
     {
@@ -413,7 +401,7 @@ class Jaxon
      */
     public function template()
     {
-        return jaxon()->di()->getTemplateEngine();
+        return $this->di()->getTemplateEngine();
     }
 
     /**

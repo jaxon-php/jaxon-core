@@ -21,9 +21,7 @@
 
 namespace Jaxon\Response;
 
-use Jaxon\Contracts\Response\Sender as ResponseSender;
-
-class Manager implements ResponseSender
+class Manager
 {
     use \Jaxon\Features\Translator;
 
@@ -42,6 +40,9 @@ class Manager implements ResponseSender
      */
     private $aDebugMessages;
 
+    /**
+     * The class constructor
+     */
     public function __construct()
     {
         $this->xResponse = null;
@@ -185,17 +186,5 @@ class Manager implements ResponseSender
             $this->xResponse->sendHeaders();
             $this->xResponse->printOutput();
         }
-    }
-
-    /**
-     * Send the Jaxon response back to the browser.
-     *
-     * @param  $sCode        The HTTP Response code
-     *
-     * @return mixed
-     */
-    public function sendResponse($code = '200')
-    {
-        $this->sendOutput();
     }
 }

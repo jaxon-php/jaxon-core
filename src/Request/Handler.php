@@ -25,7 +25,6 @@ namespace Jaxon\Request;
 use Jaxon\Jaxon;
 use Jaxon\Plugin\Manager as PluginManager;
 use Jaxon\Response\Manager as ResponseManager;
-use Jaxon\Contracts\Response\Sender as ResponseSender;
 
 class Handler
 {
@@ -45,13 +44,6 @@ class Handler
      * @var ResponseManager
      */
     private $xResponseManager;
-
-    /**
-     * The response sender.
-     *
-     * @var ResponseSender
-     */
-    private $xResponseSender;
 
     /**
      * Processing event handlers that have been assigned during this run of the script
@@ -96,16 +88,6 @@ class Handler
 
         $this->xArgumentManager = new Handler\Argument();
         $this->xCallbackManager = new Handler\Callback();
-    }
-
-    /**
-     * Set the response sender
-     *
-     * @param ResponseSender        $xResponseSender
-     */
-    public function setResponseSender(ResponseSender $xResponseSender)
-    {
-        $this->xResponseSender = $xResponseSender;
     }
 
     /**
@@ -353,7 +335,10 @@ class Handler
 
         $this->xResponseManager->printDebug();
 
-        $this->xResponseSender->sendResponse();
+        if(($this->getOption('core.response.send')))
+        {
+            $this->xResponseManager->sendOutput();
+        }
 
         if(($this->getOption('core.process.exit')))
         {
