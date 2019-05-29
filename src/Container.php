@@ -257,7 +257,7 @@ class Container
     /**
      * Get the plugin manager
      *
-     * @return \Jaxon\Plugin\Manager
+     * @return PluginManager
      */
     public function getPluginManager()
     {
@@ -267,7 +267,7 @@ class Container
     /**
      * Get the request handler
      *
-     * @return \Jaxon\Request\Handler
+     * @return RequestHandler
      */
     public function getRequestHandler()
     {
@@ -277,7 +277,7 @@ class Container
     /**
      * Get the request factory
      *
-     * @return \Jaxon\Factory\Request
+     * @return RequestFactory
      */
     public function getRequestFactory()
     {
@@ -287,7 +287,7 @@ class Container
     /**
      * Get the response manager
      *
-     * @return \Jaxon\Response\Manager
+     * @return ResponseManager
      */
     public function getResponseManager()
     {
@@ -297,7 +297,7 @@ class Container
     /**
      * Get the code generator
      *
-     * @return \Jaxon\Code\Generator
+     * @return CodeGenerator
      */
     public function getCodeGenerator()
     {
@@ -305,9 +305,19 @@ class Container
     }
 
     /**
+     * Get the callable repository
+     *
+     * @return CallableRepository
+     */
+    public function getCallableRepository()
+    {
+        return $this->libContainer[CallableRepository::class];
+    }
+
+    /**
      * Get the config manager
      *
-     * @return \Jaxon\Config\Config
+     * @return Config
      */
     public function getConfig()
     {
@@ -320,17 +330,17 @@ class Container
      * @param array             $aOptions           The options array
      * @param string            $sKeys              The keys of the options in the array
      *
-     * @return \Jaxon\Config\Config            The config manager
+     * @return Config            The config manager
      */
     public function newConfig(array $aOptions = [], $sKeys = '')
     {
-        return new \Jaxon\Config\Config($aOptions, $sKeys);
+        return new Config($aOptions, $sKeys);
     }
 
     /**
      * Get the dialog wrapper
      *
-     * @return \Jaxon\Utils\Dialogs\Dialog
+     * @return Dialog
      */
     public function getDialog()
     {
@@ -340,7 +350,7 @@ class Container
     /**
      * Get the minifier
      *
-     * @return \Jaxon\Utils\Template\Minifier
+     * @return Minifier
      */
     public function getMinifier()
     {
@@ -350,7 +360,7 @@ class Container
     /**
      * Get the translator
      *
-     * @return \Jaxon\Utils\Translation\Translator
+     * @return Translator
      */
     public function getTranslator()
     {
@@ -360,7 +370,7 @@ class Container
     /**
      * Get the template engine
      *
-     * @return \Jaxon\Utils\Template\Engine
+     * @return Engine
      */
     public function getTemplateEngine()
     {
@@ -370,7 +380,7 @@ class Container
     /**
      * Get the template renderer
      *
-     * @return \Jaxon\Contracts\Template\Renderer
+     * @return TemplateRenderer
      */
     public function getTemplateRenderer()
     {
@@ -380,7 +390,7 @@ class Container
     /**
      * Get the validator
      *
-     * @return \Jaxon\Utils\Validation\Validator
+     * @return Validator
      */
     public function getValidator()
     {
@@ -390,7 +400,7 @@ class Container
     /**
      * Get the paginator
      *
-     * @return \Jaxon\Utils\Pagination\Paginator
+     * @return Paginator
      */
     public function getPaginator()
     {
@@ -400,7 +410,7 @@ class Container
     /**
      * Get the event dispatcher
      *
-     * @return Lemon\Event\EventDispatcher
+     * @return EventDispatcher
      */
     public function getEventDispatcher()
     {
@@ -410,7 +420,7 @@ class Container
     /**
      * Get the global Response object
      *
-     * @return \Jaxon\Response\Response
+     * @return Response
      */
     public function getResponse()
     {
@@ -420,7 +430,7 @@ class Container
     /**
      * Create a new Jaxon response object
      *
-     * @return \Jaxon\Response\Response
+     * @return Response
      */
     public function newResponse()
     {
