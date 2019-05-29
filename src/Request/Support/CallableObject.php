@@ -224,7 +224,7 @@ class CallableObject
             }
 
             // Initialize the object
-            if($this->registeredObject instanceof \Jaxon\CallableObject)
+            if($this->registeredObject instanceof \Jaxon\Invokable)
             {
                 $this->registeredObject->xSupport = $this;
                 $this->registeredObject->response = jaxon()->getResponse();
