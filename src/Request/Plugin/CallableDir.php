@@ -37,13 +37,6 @@ class CallableDir extends RequestPlugin
     protected $xRepository = null;
 
     /**
-     * True if the Composer autoload is enabled
-     *
-     * @var boolean
-     */
-    private $bAutoloadEnabled = true;
-
-    /**
      * The Composer autoloader
      *
      * @var Autoloader
@@ -58,6 +51,13 @@ class CallableDir extends RequestPlugin
     public function __construct(CallableRepository $xRepository)
     {
         $this->xRepository = $xRepository;
+
+        // Set the composer autoloader
+        $sAutoloadFile = __DIR__ . '/../../../../../autoload.php';
+        if(file_exists($sAutoloadFile))
+        {
+            $this->xAutoloader = require($sAutoloadFile);
+        }
     }
 
     /**
@@ -68,30 +68,6 @@ class CallableDir extends RequestPlugin
     public function getName()
     {
         return Jaxon::CALLABLE_DIR;
-    }
-
-    /**
-     * Use the Composer autoloader
-     *
-     * @return void
-     */
-    public function useComposerAutoloader()
-    {
-        $this->bAutoloadEnabled = true;
-        $this->xAutoloader = require(__DIR__ . '/../../../../../autoload.php');
-    }
-
-    /**
-     * Disable the autoloader in the library
-     *
-     * The user shall provide an alternative autoload system.
-     *
-     * @return void
-     */
-    public function disableAutoload()
-    {
-        $this->bAutoloadEnabled = false;
-        $this->xAutoloader = null;
     }
 
     /**
@@ -143,6 +119,12 @@ class CallableDir extends RequestPlugin
         //     $sSeparator = '.';
         // }
 
+        // Set the autoload option default value
+        if(!key_exists('autoload', $aOptions))
+        {
+            $aOptions['autoload'] = false;
+        }
+
         // Change the keys in $aOptions to have "\" as separator
         $_aOptions = [];
         foreach($aOptions as $sName => $aOption)
@@ -155,7 +137,7 @@ class CallableDir extends RequestPlugin
         if(($sNamespace))
         {
             // Register the dir with PSR4 autoloading
-            if(($this->xAutoloader))
+            if(($aOptions['autoload']))
             {
                 $this->xAutoloader->setPsr4($sNamespace . '\\', $sDirectory);
             }
@@ -167,7 +149,6 @@ class CallableDir extends RequestPlugin
              // Use underscore as separator, so there's no need to deal with namespace
             // when generating javascript code.
             $aOptions['separator'] = '_';
-            $aOptions['autoload'] = $this->bAutoloadEnabled;
 
             $this->xRepository->addDirectory($sDirectory, $aOptions);
         }

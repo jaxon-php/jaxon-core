@@ -33,7 +33,6 @@ class Jaxon
 {
     use Features\Config;
     use Features\Translator;
-    use Features\Autoload;
     use Features\Upload;
     use Features\Template;
 

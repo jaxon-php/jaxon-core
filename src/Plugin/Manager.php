@@ -285,6 +285,10 @@ class Manager
                 {
                     $aOptions['separator'] = $xValue['separator'];
                 }
+                if(key_exists('autoload', $xValue))
+                {
+                    $aOptions['autoload'] = $xValue['autoload'];
+                }
                 // Register a class without options
                 $this->register(Jaxon::CALLABLE_DIR, $sDirectory, $aOptions);
             }
