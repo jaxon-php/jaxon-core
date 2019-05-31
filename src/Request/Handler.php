@@ -129,7 +129,7 @@ class Handler
      */
     public function getCallbackManager()
     {
-        return $this->xCallbackManager();
+        return $this->xCallbackManager;
     }
 
     /**
