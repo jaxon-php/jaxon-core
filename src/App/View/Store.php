@@ -2,19 +2,14 @@
 
 namespace Jaxon\App\View;
 
+use Jaxon\App\Contracts\View as ViewContract;
+
 class Store
 {
-    protected $xFacade;
-    protected $sRenderer;
+    protected $xRenderer;
     protected $sNamespace;
     protected $sViewName;
-    protected $aViewData;
-
-    public function __construct(Facade $xFacade)
-    {
-        $this->xFacade = $xFacade;
-        $this->aViewData = [];
-    }
+    protected $aViewData = [];
 
     /**
      * Make a piece of data available for the rendered view
@@ -33,16 +28,16 @@ class Store
     /**
      * Set the view to be rendered, with optional data
      *
-     * @param string        $sRenderer        The view renderer
+     * @param ViewContract  $xRenderer        The view renderer
      * @param string        $sNamespace       The view namespace
      * @param string        $sViewName        The view name
-     * @param string        $aViewData        The view data
+     * @param array         $aViewData        The view data
      *
      * @return void
      */
-    public function setView($sRenderer, $sNamespace, $sViewName, array $aViewData = [])
+    public function setView(ViewContract $xRenderer, $sNamespace, $sViewName, array $aViewData = [])
     {
-        $this->sRenderer = trim($sRenderer);
+        $this->xRenderer = $xRenderer;
         $this->sNamespace = trim($sNamespace);
         $this->sViewName = trim($sViewName);
         $this->aViewData = array_merge($this->aViewData, $aViewData);
@@ -85,7 +80,6 @@ class Store
      */
     public function __toString()
     {
-        $xRenderer = $this->xFacade->getViewRenderer($this->sRenderer);
-        return ($xRenderer) ? $xRenderer->render($this) : '';
+        return ($this->xRenderer) ? $this->xRenderer->render($this) : '';
     }
 }

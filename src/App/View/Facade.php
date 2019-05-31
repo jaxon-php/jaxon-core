@@ -9,21 +9,21 @@ class Facade implements  \Jaxon\Contracts\Template\Renderer
      *
      * @var Store
      */
-    protected $xStore;
+    protected $xStore = null;
 
     /**
      * The view global data
      *
      * @var array
      */
-    protected $aViewData;
+    protected $aViewData = [];
 
     /**
-     * The view renderers
+     * The view manager
      *
-     * @var array
+     * @var Manager
      */
-    protected $aRenderers;
+    protected $xManager;
 
     /**
      * The default view namespace
@@ -37,10 +37,7 @@ class Facade implements  \Jaxon\Contracts\Template\Renderer
      */
     public function __construct(Manager $xManager)
     {
-        $this->xStore = null;
-        $this->aViewData = [];
-        $this->aRenderers = $xManager->getRenderers();
-        $this->sNamespace = $xManager->getDefaultNamespace(); // The default view namespace
+        $this->xManager = $xManager;
     }
 
     /**
@@ -52,7 +49,7 @@ class Facade implements  \Jaxon\Contracts\Template\Renderer
     {
         if(!$this->xStore)
         {
-            $this->xStore = new Store($this);
+            $this->xStore = new Store();
         }
         return $this->xStore;
     }
@@ -100,20 +97,21 @@ class Facade implements  \Jaxon\Contracts\Template\Renderer
         // Get the store
         $xStore = $this->store();
         // Get the default view namespace
-        $sNamespace = $this->sNamespace;
+        $sNamespace = $this->xManager->getDefaultNamespace();
         // Get the namespace from the view name
         $iSeparatorPosition = strrpos($sViewName, '::');
         if($iSeparatorPosition !== false)
         {
             $sNamespace = substr($sViewName, 0, $iSeparatorPosition);
         }
-        if(!key_exists($sNamespace, $this->aRenderers))
+        $aRenderers = $this->xManager->getRenderers();
+        if(!key_exists($sNamespace, $aRenderers))
         {
             // Cannot render a view if there's no renderer corresponding to the namespace.
             return null;
         }
-        $sRenderer = $this->aRenderers[$sNamespace];
-        $xStore->setView($sRenderer, $sNamespace, $sViewName, array_merge($this->aViewData, $aViewData));
+        $xRenderer = $this->xManager->getRenderer($aRenderers[$sNamespace]);
+        $xStore->setView($xRenderer, $sNamespace, $sViewName, array_merge($this->aViewData, $aViewData));
         // Set the store to null so a new store will be created for the next view.
         $this->xStore = null;
         // Return the store
