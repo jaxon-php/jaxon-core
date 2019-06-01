@@ -30,6 +30,60 @@ trait App
     }
 
     /**
+     * Get an instance of a registered class
+     *
+     * @param string        $sClass             The class name
+     *
+     * @return mixed
+     */
+    public function instance($sClassName)
+    {
+        return jaxon()->instance($sClassName);
+    }
+
+    /**
+     * Get a request to a registered class
+     *
+     * @param string        $sClass             The class name
+     *
+     * @return \Jaxon\Request\Factory\Invokable\Request
+     */
+    public function request($sClassName)
+    {
+        return jaxon()->request($sClassName);
+    }
+
+    /**
+     * Get the request callback manager
+     *
+     * @return \Jaxon\Request\Handler\Callback
+     */
+    public function callback()
+    {
+        return jaxon()->callback();
+    }
+
+    /**
+     * Determine if a call is a Jaxon request.
+     *
+     * @return boolean
+     */
+    public function canProcessRequest()
+    {
+        return jaxon()->canProcessRequest();
+    }
+
+    /**
+     * Process an incoming Jaxon request.
+     *
+     * @return void
+     */
+    public function processRequest()
+    {
+        return jaxon()->processRequest();
+    }
+
+    /**
      * Get the javascript code to be sent to the browser.
      *
      * @return string  the javascript code

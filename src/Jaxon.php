@@ -277,6 +277,19 @@ class Jaxon
     }
 
     /**
+     * Get a request to a registered class
+     *
+     * @param string        $sClass             The class name
+     *
+     * @return \Jaxon\Request\Factory\Invokable\Request
+     */
+    public function request($sClassName)
+    {
+        $xInstance = $this->instance($sClassName);
+        return ($xInstance) ? $xInstance->rq() : null;
+    }
+
+    /**
      * Returns the Jaxon Javascript header and wrapper code to be printed into the page
      *
      * The javascript code returned by this function is dependent on the plugins
