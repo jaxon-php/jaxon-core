@@ -22,9 +22,6 @@ use RecursiveIteratorIterator;
 
 class CallableRepository
 {
-    use \Jaxon\Features\Config;
-    use \Jaxon\Features\Template;
-
     /**
      * The registered namespaces
      *
@@ -302,7 +299,7 @@ class CallableRepository
      *
      * @return void
      */
-    private function createCallableObjects()
+    public function createCallableObjects()
     {
         // Create callable objects for registered classes
         foreach($this->aClassOptions as $sClassName => $aClassOptions)
@@ -375,82 +372,32 @@ class CallableRepository
     }
 
     /**
-     * Generate a hash for the registered callable objects
+     * Get all registered namespaces
      *
-     * @return string
+     * @return array
      */
-    public function generateHash()
+    public function getNamespaces()
     {
-        $this->createCallableObjects();
-
-        $sHash = '';
-        foreach($this->aNamespaces as $sNamespace => $aOptions)
-        {
-            $sHash .= $sNamespace . $aOptions['separator'];
-        }
-        foreach($this->aCallableObjects as $sClassName => $xCallableObject)
-        {
-            $sHash .= $sClassName . implode('|', $xCallableObject->getMethods());
-        }
-
-        return md5($sHash);
+        return $this->aNamespaces;
     }
 
     /**
-     * Generate client side javascript code for the registered callable objects
+     * Get all registered callable objects
      *
-     * @return string
+     * @return array
      */
-    public function getScript()
+    public function getCallableObjects()
     {
-        $this->createCallableObjects();
+        return $this->aCallableObjects;
+    }
 
-        $sPrefix = $this->getOption('core.prefix.class');
-
-        $aJsClasses = [];
-        $sCode = '';
-        foreach(array_keys($this->aNamespaces) as $sNamespace)
-        {
-            $offset = 0;
-            $sJsNamespace = str_replace('\\', '.', $sNamespace);
-            $sJsNamespace .= '.Null'; // This is a sentinel. The last token is not processed in the while loop.
-            while(($dotPosition = strpos($sJsNamespace, '.', $offset)) !== false)
-            {
-                $sJsClass = substr($sJsNamespace, 0, $dotPosition);
-                // Generate code for this object
-                if(!key_exists($sJsClass, $aJsClasses))
-                {
-                    $sCode .= "$sPrefix$sJsClass = {};\n";
-                    $aJsClasses[$sJsClass] = $sJsClass;
-                }
-                $offset = $dotPosition + 1;
-            }
-        }
-
-        foreach($this->aCallableObjects as $sClassName => $xCallableObject)
-        {
-            $aConfig = $this->aCallableOptions[$sClassName];
-            $aCommonConfig = key_exists('*', $aConfig) ? $aConfig['*'] : [];
-
-            $aMethods = [];
-            foreach($xCallableObject->getMethods() as $sMethodName)
-            {
-                // Specific options for this method
-                $aMethodConfig = key_exists($sMethodName, $aConfig) ?
-                    array_merge($aCommonConfig, $aConfig[$sMethodName]) : $aCommonConfig;
-                $aMethods[] = [
-                    'name' => $sMethodName,
-                    'config' => $aMethodConfig,
-                ];
-            }
-
-            $sCode .= $this->render('jaxon::support/object.js', [
-                'sPrefix' => $sPrefix,
-                'sClass' => $xCallableObject->getJsName(),
-                'aMethods' => $aMethods,
-            ]);
-        }
-
-        return $sCode;
+    /**
+     * Get all registered callable objects options
+     *
+     * @return array
+     */
+    public function getCallableOptions()
+    {
+        return $this->aCallableOptions;
     }
 }

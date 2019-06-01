@@ -22,11 +22,14 @@
 namespace Jaxon\Request\Plugin;
 
 use Jaxon\Jaxon;
+use Jaxon\Invokable;
 use Jaxon\Plugin\Request as RequestPlugin;
 use Jaxon\Request\Support\CallableRepository;
 
 class CallableClass extends RequestPlugin
 {
+    use \Jaxon\Features\Config;
+    use \Jaxon\Features\Template;
     use \Jaxon\Features\Validator;
     use \Jaxon\Features\Translator;
 
@@ -140,7 +143,21 @@ class CallableClass extends RequestPlugin
      */
     public function generateHash()
     {
-        return $this->xRepository->generateHash();
+        $this->xRepository->createCallableObjects();
+        $aNamespaces = $this->xRepository->getNamespaces();
+        $aCallableObjects = $this->xRepository->getCallableObjects();
+        $sHash = '';
+
+        foreach($aNamespaces as $sNamespace => $aOptions)
+        {
+            $sHash .= $sNamespace . $aOptions['separator'];
+        }
+        foreach($aCallableObjects as $sClassName => $xCallableObject)
+        {
+            $sHash .= $sClassName . implode('|', $xCallableObject->getMethods());
+        }
+
+        return md5($sHash);
     }
 
     /**
@@ -150,7 +167,70 @@ class CallableClass extends RequestPlugin
      */
     public function getScript()
     {
-        return $this->xRepository->getScript();
+        $this->xRepository->createCallableObjects();
+        $aNamespaces = $this->xRepository->getNamespaces();
+        $aCallableObjects = $this->xRepository->getCallableObjects();
+        $aCallableOptions = $this->xRepository->getCallableOptions();
+        $sPrefix = $this->getOption('core.prefix.class');
+        $aJsClasses = [];
+        $sCode = '';
+
+        $xInvokableClass = new \ReflectionClass(Invokable::class);
+        $aInvokableMethods = [];
+        foreach($xInvokableClass->getMethods(\ReflectionMethod::IS_PUBLIC) as $xMethod)
+        {
+            $aInvokableMethods[] = $xMethod->getName();
+        }
+
+        foreach(array_keys($aNamespaces) as $sNamespace)
+        {
+            $offset = 0;
+            $sJsNamespace = str_replace('\\', '.', $sNamespace);
+            $sJsNamespace .= '.Null'; // This is a sentinel. The last token is not processed in the while loop.
+            while(($dotPosition = strpos($sJsNamespace, '.', $offset)) !== false)
+            {
+                $sJsClass = substr($sJsNamespace, 0, $dotPosition);
+                // Generate code for this object
+                if(!key_exists($sJsClass, $aJsClasses))
+                {
+                    $sCode .= "$sPrefix$sJsClass = {};\n";
+                    $aJsClasses[$sJsClass] = $sJsClass;
+                }
+                $offset = $dotPosition + 1;
+            }
+        }
+
+        foreach($aCallableObjects as $sClassName => $xCallableObject)
+        {
+            $aConfig = $aCallableOptions[$sClassName];
+            $aCommonConfig = key_exists('*', $aConfig) ? $aConfig['*'] : [];
+
+            $aProtectedMethods = is_subclass_of($sClassName, Invokable::class) ? $aInvokableMethods : [];
+            $aMethods = [];
+            foreach($xCallableObject->getMethods() as $sMethodName)
+            {
+                // Don't export methods of the Invokable class
+                if(in_array($sMethodName, $aProtectedMethods))
+                {
+                    continue;
+                }
+                // Specific options for this method
+                $aMethodConfig = key_exists($sMethodName, $aConfig) ?
+                    array_merge($aCommonConfig, $aConfig[$sMethodName]) : $aCommonConfig;
+                $aMethods[] = [
+                    'name' => $sMethodName,
+                    'config' => $aMethodConfig,
+                ];
+            }
+
+            $sCode .= $this->render('jaxon::support/object.js', [
+                'sPrefix' => $sPrefix,
+                'sClass' => $xCallableObject->getJsName(),
+                'aMethods' => $aMethods,
+            ]);
+        }
+
+        return $sCode;
     }
 
     /**
