@@ -44,9 +44,9 @@ class App
         }
 
         // Set the session manager
-        // jaxon()->di()->setSessionManager(function () {
-        //     return new Session\Manager();
-        // });
+        jaxon()->di()->setSessionManager(function () {
+            return new Session\Manager();
+        });
 
         $this->jaxon()
             ->lib($aLibOptions)
