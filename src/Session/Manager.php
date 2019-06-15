@@ -2,7 +2,7 @@
 
 namespace Jaxon\Session;
 
-use Jaxon\Contracts\App\Session as SessionContract;
+use Jaxon\Contracts\Session as SessionContract;
 
 class Manager implements SessionContract
 {

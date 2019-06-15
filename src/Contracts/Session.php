@@ -1,6 +1,6 @@
 <?php
 
-namespace Jaxon\Contracts\App;
+namespace Jaxon\Contracts;
 
 interface Session
 {

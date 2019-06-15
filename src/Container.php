@@ -38,7 +38,7 @@ use Jaxon\Ui\Pagination\Renderer as PaginationRenderer;
 use Jaxon\Str\Validation\Validator;
 use Jaxon\Str\Translation\Translator;
 use Jaxon\Contracts\Template\Renderer as TemplateRenderer;
-use Jaxon\Contracts\App\Session as SessionContract;
+use Jaxon\Contracts\Session as SessionContract;
 use Jaxon\Contracts\Container as ContainerContract;
 
 class Container

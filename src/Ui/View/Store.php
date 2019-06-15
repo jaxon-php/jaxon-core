@@ -2,7 +2,7 @@
 
 namespace Jaxon\Ui\View;
 
-use Jaxon\Contracts\App\View as ViewContract;
+use Jaxon\Contracts\View as ViewContract;
 
 class Store
 {

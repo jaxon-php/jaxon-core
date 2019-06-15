@@ -2,7 +2,7 @@
 
 namespace Jaxon\Ui\View;
 
-use Jaxon\Contracts\App\View as ViewContract;
+use Jaxon\Contracts\View as ViewContract;
 use Jaxon\Ui\Template\Engine as TemplateEngine;
 
 class View implements ViewContract

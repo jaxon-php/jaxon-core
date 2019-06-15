@@ -31,7 +31,7 @@ class Invokable
     /**
      * Get the session manager
      *
-     * @return \Jaxon\Contracts\App\Session
+     * @return \Jaxon\Contracts\Session
      */
     public function session()
     {
