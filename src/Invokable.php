@@ -21,7 +21,7 @@ class Invokable
     /**
      * Get the view renderer
      *
-     * @return \Jaxon\App\View\Facade
+     * @return \Jaxon\Ui\View\Facade
      */
     public function view()
     {
@@ -31,7 +31,7 @@ class Invokable
     /**
      * Get the session manager
      *
-     * @return \Jaxon\App\Contracts\Session
+     * @return \Jaxon\Contracts\App\Session
      */
     public function session()
     {

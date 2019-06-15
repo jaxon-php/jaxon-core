@@ -21,7 +21,8 @@
 namespace Jaxon\Request\Factory;
 
 use JsonSerializable;
-use Jaxon\Jaxon;
+use Jaxon\Request\Factory\Parameter;
+use Jaxon\Response\Plugin\JQuery\Dom\Element as DomElement;
 
 class Request extends JsCall
 {
@@ -45,7 +46,7 @@ class Request extends JsCall
     }
 
     /**
-     * Check if the request has a parameter of type Jaxon::PAGE_NUMBER
+     * Check if the request has a parameter of type Parameter::PAGE_NUMBER
      *
      * @return boolean
      */
@@ -53,7 +54,7 @@ class Request extends JsCall
     {
         foreach($this->aParameters as $xParameter)
         {
-            if($xParameter->getType() == Jaxon::PAGE_NUMBER)
+            if($xParameter->getType() == Parameter::PAGE_NUMBER)
             {
                 return true;
             }
@@ -62,7 +63,7 @@ class Request extends JsCall
     }
 
     /**
-     * Set a value to the Jaxon::PAGE_NUMBER parameter
+     * Set a value to the Parameter::PAGE_NUMBER parameter
      *
      * @param integer        $nPageNumber        The current page number
      *
@@ -70,10 +71,10 @@ class Request extends JsCall
      */
     public function setPageNumber($nPageNumber)
     {
-        // Set the value of the Jaxon::PAGE_NUMBER parameter
+        // Set the value of the Parameter::PAGE_NUMBER parameter
         foreach($this->aParameters as $xParameter)
         {
-            if($xParameter->getType() == Jaxon::PAGE_NUMBER)
+            if($xParameter->getType() == Parameter::PAGE_NUMBER)
             {
                 $xParameter->setValue(intval($nPageNumber));
                 break;
@@ -149,7 +150,7 @@ class Request extends JsCall
         foreach($this->aParameters as &$xParameter)
         {
             $sParameterStr = $xParameter->getScript();
-            if($xParameter instanceof \Jaxon\Response\Plugin\JQuery\Dom\Element)
+            if($xParameter instanceof DomElement)
             {
                 if(!array_key_exists($sParameterStr, $aVariables))
                 {
@@ -164,7 +165,7 @@ class Request extends JsCall
                     // The value is already defined. The corresponding variable is assigned.
                     $sVarName = $aVariables[$sParameterStr];
                 }
-                $xParameter = new Parameter(Jaxon::JS_VALUE, $sVarName);
+                $xParameter = new Parameter(Parameter::JS_VALUE, $sVarName);
             }
         }
 
@@ -179,7 +180,7 @@ class Request extends JsCall
                 foreach($this->aMessageArgs as &$xParameter)
                 {
                     $sParameterStr = $xParameter->getScript();
-                    if($xParameter instanceof \Jaxon\Response\Plugin\JQuery\Dom\Element)
+                    if($xParameter instanceof DomElement)
                     {
                         if(!array_key_exists($sParameterStr, $aVariables))
                         {
@@ -194,7 +195,7 @@ class Request extends JsCall
                             // The value is already defined. The corresponding variable is assigned.
                             $sVarName = $aVariables[$sParameterStr];
                         }
-                        $xParameter = new Parameter(Jaxon::JS_VALUE, $sVarName);
+                        $xParameter = new Parameter(Parameter::JS_VALUE, $sVarName);
                     }
                     $xParameter = "'$nParamId':" . $xParameter->getScript();
                     $nParamId++;

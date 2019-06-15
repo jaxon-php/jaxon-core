@@ -1,6 +1,6 @@
 <?php
 
-namespace Jaxon\App\View;
+namespace Jaxon\Ui\View;
 
 use Jaxon\Config\Config;
 
@@ -129,7 +129,7 @@ class Manager
         if(!$sId)
         {
             // Return the view renderer facade
-            return jaxon()->di()->get(\Jaxon\App\View\Facade::class);
+            return jaxon()->di()->get(\Jaxon\Ui\View\Facade::class);
         }
         // Return the view renderer with the given id
         return jaxon()->di()->get('jaxon.app.view.' . $sId);

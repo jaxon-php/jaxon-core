@@ -12,7 +12,7 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Utils\Translation;
+namespace Jaxon\Str\Translation;
 
 class Translator
 {

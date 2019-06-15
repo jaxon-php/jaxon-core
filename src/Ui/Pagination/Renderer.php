@@ -12,7 +12,7 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Utils\Pagination;
+namespace Jaxon\Ui\Pagination;
 
 use Jaxon\Contracts\Template\Renderer as TemplateRenderer;
 

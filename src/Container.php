@@ -16,6 +16,7 @@ namespace Jaxon;
 
 use Lemon\Event\EventDispatcher;
 
+use Jaxon\App;
 use Jaxon\Response\Response;
 use Jaxon\Config\Config;
 use Jaxon\Config\Reader as ConfigReader;
@@ -25,20 +26,19 @@ use Jaxon\Request\Factory as RequestFactory;
 use Jaxon\Response\Manager as ResponseManager;
 use Jaxon\Plugin\Manager as PluginManager;
 use Jaxon\Plugin\CodeGenerator;
-use Jaxon\App\App;
-use Jaxon\App\Bootstrap;
-use Jaxon\App\View\Manager as ViewManager;
-use Jaxon\App\View\Facade as ViewFacade;
-use Jaxon\App\View\Renderer;
-use Jaxon\Utils\Dialogs\Dialog;
-use Jaxon\Utils\Template\Minifier;
-use Jaxon\Utils\Translation\Translator;
-use Jaxon\Utils\Template\Engine as TemplateEngine;
-use Jaxon\Utils\Validation\Validator;
-use Jaxon\Utils\Pagination\Paginator;
-use Jaxon\Utils\Pagination\Renderer as PaginationRenderer;
+use Jaxon\Plugin\Bootstrap;
+use Jaxon\Ui\View\Manager as ViewManager;
+use Jaxon\Ui\View\Facade as ViewFacade;
+use Jaxon\Ui\View\Renderer;
+use Jaxon\Ui\Dialogs\Dialog;
+use Jaxon\Ui\Template\Minifier;
+use Jaxon\Ui\Template\Engine as TemplateEngine;
+use Jaxon\Ui\Pagination\Paginator;
+use Jaxon\Ui\Pagination\Renderer as PaginationRenderer;
+use Jaxon\Str\Validation\Validator;
+use Jaxon\Str\Translation\Translator;
 use Jaxon\Contracts\Template\Renderer as TemplateRenderer;
-use Jaxon\App\Contracts\Session as SessionContract;
+use Jaxon\Contracts\App\Session as SessionContract;
 use Jaxon\Contracts\Container as ContainerContract;
 
 class Container

@@ -1,8 +1,8 @@
 <?php
 
-namespace Jaxon\App\Contracts;
+namespace Jaxon\Contracts\App;
 
-use Jaxon\App\View\Store;
+use Jaxon\Ui\View\Store;
 
 interface View
 {

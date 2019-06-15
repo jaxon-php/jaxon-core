@@ -38,10 +38,10 @@ SOFTWARE.
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Utils\Pagination;
+namespace Jaxon\Ui\Pagination;
 
-use Jaxon\Jaxon;
 use Jaxon\Request\Request;
+use Jaxon\Request\Factory\Parameter;
 
 class Paginator
 {
@@ -156,7 +156,7 @@ class Paginator
         // Append the page number to the parameter list, if not yet given.
         if(($this->request) && !$this->request->hasPageNumber())
         {
-            $this->request->addParameter(Jaxon::PAGE_NUMBER, 0);
+            $this->request->addParameter(Parameter::PAGE_NUMBER, 0);
         }
     }
 

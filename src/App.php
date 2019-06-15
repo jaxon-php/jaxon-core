@@ -10,21 +10,13 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\App;
+namespace Jaxon;
 
-use Jaxon\Config\Config;
-
-use Jaxon\Features\Manager;
-use Jaxon\Features\Event;
-use Jaxon\Features\Validator;
-
-use stdClass;
 use Exception;
-use Closure;
 
 class App
 {
-    use \Jaxon\Features\Event;
+    use Features\Event;
     use Features\App;
 
     /**
@@ -61,13 +53,13 @@ class App
             ->app($aAppOptions)
             // ->uri($sUri)
             // ->js(!$isDebug, $sJsUrl, $sJsDir, !$isDebug)
-            ->bootstrap();
+            ->bootstrap(true);
     }
 
     /**
      * Get the view renderer
      *
-     * @return Jaxon\App\View\Facade
+     * @return Jaxon\Ui\View\Facade
      */
     public function view()
     {
@@ -77,7 +69,7 @@ class App
     /**
      * Get the session manager
      *
-     * @return Jaxon\App\Contracts\Session
+     * @return Jaxon\Contracts\App\Session
      */
     public function session()
     {

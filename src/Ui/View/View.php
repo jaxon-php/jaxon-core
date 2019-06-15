@@ -1,9 +1,9 @@
 <?php
 
-namespace Jaxon\App\View;
+namespace Jaxon\Ui\View;
 
-use Jaxon\App\Contracts\View as ViewContract;
-use Jaxon\Utils\Template\Engine as TemplateEngine;
+use Jaxon\Contracts\App\View as ViewContract;
+use Jaxon\Ui\Template\Engine as TemplateEngine;
 
 class View implements ViewContract
 {

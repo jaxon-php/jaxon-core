@@ -1,9 +1,6 @@
 <?php
 
-namespace Jaxon\App\Features;
-
-use Jaxon\Contracts\Template\Renderer as TemplateRenderer;
-use Jaxon\App\View\Facade as ViewFacade;
+namespace Jaxon\Features;
 
 trait App
 {

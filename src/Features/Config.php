@@ -67,7 +67,7 @@ trait Config
     /**
      * Create a new the config manager
      *
-     * @return Jaxon\Utils\Config\Config            The config manager
+     * @return Jaxon\Config\Config            The config manager
      */
     public function newConfig()
     {

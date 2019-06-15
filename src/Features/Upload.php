@@ -23,7 +23,6 @@ use Jaxon\Plugin\Manager as PluginManager;
 use Jaxon\Request\Manager as RequestManager;
 use Jaxon\Response\Manager as ResponseManager;
 
-use Jaxon\Utils\URI;
 use Exception;
 use Closure;
 

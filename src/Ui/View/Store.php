@@ -1,8 +1,8 @@
 <?php
 
-namespace Jaxon\App\View;
+namespace Jaxon\Ui\View;
 
-use Jaxon\App\Contracts\View as ViewContract;
+use Jaxon\Contracts\App\View as ViewContract;
 
 class Store
 {

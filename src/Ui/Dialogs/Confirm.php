@@ -11,7 +11,7 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Utils\Dialogs;
+namespace Jaxon\Ui\Dialogs;
 
 class Confirm implements \Jaxon\Contracts\Dialogs\Confirm
 {
