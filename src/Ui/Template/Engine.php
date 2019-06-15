@@ -14,7 +14,7 @@
 
 namespace Jaxon\Ui\Template;
 
-class Engine implements  \Jaxon\Contracts\Template\Renderer
+class Engine implements \Jaxon\Contracts\Template\Renderer
 {
     protected $aNamespaces;
 
