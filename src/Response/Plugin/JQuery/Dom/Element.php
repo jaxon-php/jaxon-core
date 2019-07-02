@@ -23,9 +23,9 @@ namespace Jaxon\Response\Plugin\JQuery\Dom;
 use JsonSerializable;
 use Jaxon\Request\Factory\Contracts\Parameter;
 
-use Jaxon\Response\Plugin\Call\Method;
-use Jaxon\Response\Plugin\Call\AttrSet;
-use Jaxon\Response\Plugin\Call\AttrGet;
+use Jaxon\Response\Plugin\JQuery\Call\Method;
+use Jaxon\Response\Plugin\JQuery\Call\AttrSet;
+use Jaxon\Response\Plugin\JQuery\Call\AttrGet;
 
 class Element implements JsonSerializable, Parameter
 {
