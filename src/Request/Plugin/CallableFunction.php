@@ -1,7 +1,7 @@
 <?php
 
 /**
- * UserFunction.php - Jaxon user function plugin
+ * CallableFunction.php - Jaxon user function plugin
  *
  * This class registers user defined functions, generates client side javascript code,
  * and calls them on user request
@@ -24,7 +24,7 @@ namespace Jaxon\Request\Plugin;
 use Jaxon\Jaxon;
 use Jaxon\Plugin\Request as RequestPlugin;
 
-class UserFunction extends RequestPlugin
+class CallableFunction extends RequestPlugin
 {
     use \Jaxon\Features\Validator;
     use \Jaxon\Features\Translator;
@@ -79,19 +79,19 @@ class UserFunction extends RequestPlugin
      * Register a user defined function
      *
      * @param string        $sType          The type of request handler being registered
-     * @param string        $sUserFunction  The name of the function being registered
+     * @param string        $sCallableFunction  The name of the function being registered
      * @param array|string  $aOptions       The associated options
      *
      * @return \Jaxon\Request\Request
      */
-    public function register($sType, $sUserFunction, $aOptions)
+    public function register($sType, $sCallableFunction, $aOptions)
     {
         if($sType != $this->getName())
         {
             return false;
         }
 
-        if(!is_string($sUserFunction))
+        if(!is_string($sCallableFunction))
         {
             throw new \Jaxon\Exception\Error($this->trans('errors.functions.invalid-declaration'));
         }
@@ -106,7 +106,7 @@ class UserFunction extends RequestPlugin
         }
 
         // Check if an alias is defined
-        $sFunctionName = $sUserFunction;
+        $sFunctionName = $sCallableFunction;
         foreach($aOptions as $sName => $sValue)
         {
             if($sName == 'alias')
@@ -117,16 +117,16 @@ class UserFunction extends RequestPlugin
         }
 
         $this->aFunctions[$sFunctionName] = $aOptions;
-        jaxon()->di()->set($sFunctionName, function () use ($sFunctionName, $sUserFunction) {
-            $xUserFunction = new \Jaxon\Request\Support\UserFunction($sUserFunction);
+        jaxon()->di()->set($sFunctionName, function () use ($sFunctionName, $sCallableFunction) {
+            $xCallableFunction = new \Jaxon\Request\Support\CallableFunction($sCallableFunction);
 
             $aOptions = $this->aFunctions[$sFunctionName];
             foreach($aOptions as $sName => $sValue)
             {
-                $xUserFunction->configure($sName, $sValue);
+                $xCallableFunction->configure($sName, $sValue);
             }
 
-            return $xUserFunction;
+            return $xCallableFunction;
         });
 
         return true;

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * UserFunction.php - Jaxon user function
+ * CallableFunction.php - Jaxon user function
  *
  * This class stores a reference to a user defined function which can be called from the client via an Jaxon request
  *
@@ -23,7 +23,7 @@ namespace Jaxon\Request\Support;
 use Jaxon\Jaxon;
 use Jaxon\Request\Request;
 
-class UserFunction
+class CallableFunction
 {
     use \Jaxon\Features\Config;
     use \Jaxon\Features\Template;
@@ -40,7 +40,7 @@ class UserFunction
      *
      * @var string|array
      */
-    private $xUserFunction;
+    private $xCallableFunction;
 
     /**
      * The path and file name of the include file where the function is defined
@@ -57,11 +57,11 @@ class UserFunction
      */
     private $aConfiguration;
 
-    public function __construct($sUserFunction)
+    public function __construct($sCallableFunction)
     {
         $this->aConfiguration = [];
-        $this->sJsFunction = $sUserFunction;
-        $this->xUserFunction = $sUserFunction;
+        $this->sJsFunction = $sCallableFunction;
+        $this->xCallableFunction = $sCallableFunction;
     }
 
     /**
@@ -87,7 +87,7 @@ class UserFunction
         switch($sName)
         {
         case 'class': // The user function is a method in the given class
-            $this->xUserFunction = [$sValue, $this->xUserFunction];
+            $this->xCallableFunction = [$sValue, $this->xCallableFunction];
             break;
         case 'alias':
             $this->sJsFunction = $sValue;
@@ -145,12 +145,12 @@ class UserFunction
         }
 
         // If the function is an alias for a class method, then instanciate the class
-        if(is_array($this->xUserFunction) && is_string($this->xUserFunction[0]))
+        if(is_array($this->xCallableFunction) && is_string($this->xCallableFunction[0]))
         {
-            $sClassName = $this->xUserFunction[0];
-            $this->xUserFunction[0] = new $sClassName;
+            $sClassName = $this->xCallableFunction[0];
+            $this->xCallableFunction[0] = new $sClassName;
         }
 
-        return call_user_func_array($this->xUserFunction, $aArgs);
+        return call_user_func_array($this->xCallableFunction, $aArgs);
     }
 }

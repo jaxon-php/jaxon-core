@@ -55,14 +55,14 @@ class Jaxon
     /*
      * Request plugins
      */
-    // For objects who's methods will be callable from the browser.
     const CALLABLE_CLASS = 'CallableClass';
     const CALLABLE_DIR = 'CallableDir';
-    const CALLABLE_OBJECT = 'CallableClass'; // Same as CALLABLE_CLASS
-    // For functions available at global scope, or from an instance of an object.
-    const USER_FUNCTION = 'UserFunction';
+    const CALLABLE_FUNCTION = 'CallableFunction';
     // For uploaded files.
     const FILE_UPLOAD = 'FileUpload';
+    // For compatibility with previous versions
+    const CALLABLE_OBJECT = 'CallableClass'; // Same as CALLABLE_CLASS
+    const USER_FUNCTION = 'CallableFunction'; // Same as CALLABLE_FUNCTION
 
     /**
      * A static instance on this class

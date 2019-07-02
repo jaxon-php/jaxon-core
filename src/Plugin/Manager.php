@@ -27,7 +27,7 @@ use Jaxon\Config\Config;
 use Jaxon\Request\Support\CallableRepository;
 use Jaxon\Request\Plugin\CallableClass;
 use Jaxon\Request\Plugin\CallableDir;
-use Jaxon\Request\Plugin\UserFunction;
+use Jaxon\Request\Plugin\CallableFunction;
 use Jaxon\Request\Plugin\FileUpload;
 use Jaxon\Response\Plugin\JQuery as JQueryPlugin;
 
@@ -343,7 +343,7 @@ class Manager
         $callableRepository = jaxon()->di()->get(CallableRepository::class);
         $this->registerPlugin(new CallableClass($callableRepository), 101);
         $this->registerPlugin(new CallableDir($callableRepository), 102);
-        $this->registerPlugin(new UserFunction(), 103);
+        $this->registerPlugin(new CallableFunction(), 103);
         $this->registerPlugin(new FileUpload(), 104);
     }
 
