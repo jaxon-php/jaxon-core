@@ -21,6 +21,11 @@ use Jaxon\Response\Response;
 use Jaxon\Config\Config;
 use Jaxon\Config\Reader as ConfigReader;
 use Jaxon\Request\Support\CallableRepository;
+use Jaxon\Request\Plugin\CallableClass;
+use Jaxon\Request\Plugin\CallableDir;
+use Jaxon\Request\Plugin\CallableFunction;
+use Jaxon\Request\Plugin\FileUpload;
+use Jaxon\Response\Plugin\JQuery as JQueryPlugin;
 use Jaxon\Request\Handler as RequestHandler;
 use Jaxon\Request\Factory as RequestFactory;
 use Jaxon\Response\Manager as ResponseManager;
@@ -130,12 +135,36 @@ class Container
         };
 
         /*
-         * Managers
+         * Plugins
          */
         // Callable objects repository
         $this->libContainer[CallableRepository::class] = function () {
             return new CallableRepository();
         };
+        // Callable class plugin
+        $this->libContainer[CallableClass::class] = function ($c) {
+            return new CallableClass($c[CallableRepository::class]);
+        };
+        // Callable dir plugin
+        $this->libContainer[CallableDir::class] = function ($c) {
+            return new CallableDir($c[CallableRepository::class]);
+        };
+        // Callable function plugin
+        $this->libContainer[CallableFunction::class] = function () {
+            return new CallableFunction();
+        };
+        // File upload plugin
+        $this->libContainer[FileUpload::class] = function () {
+            return new FileUpload();
+        };
+        // JQuery response plugin
+        $this->libContainer[JQueryPlugin::class] = function () {
+            return new JQueryPlugin();
+        };
+
+        /*
+         * Managers
+         */
         // Plugin Manager
         $this->libContainer[PluginManager::class] = function () {
             return new PluginManager();

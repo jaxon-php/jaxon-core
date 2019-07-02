@@ -340,11 +340,11 @@ class Manager
      */
     public function registerRequestPlugins()
     {
-        $callableRepository = jaxon()->di()->get(CallableRepository::class);
-        $this->registerPlugin(new CallableClass($callableRepository), 101);
-        $this->registerPlugin(new CallableDir($callableRepository), 102);
-        $this->registerPlugin(new CallableFunction(), 103);
-        $this->registerPlugin(new FileUpload(), 104);
+        $di = jaxon()->di();
+        $this->registerPlugin($di->get(CallableClass::class), 101);
+        $this->registerPlugin($di->get(CallableDir::class), 102);
+        $this->registerPlugin($di->get(CallableFunction::class), 103);
+        $this->registerPlugin($di->get(FileUpload::class), 104);
     }
 
     /**
@@ -354,7 +354,8 @@ class Manager
      */
     public function registerResponsePlugins()
     {
+        $di = jaxon()->di();
         // Register an instance of the JQuery plugin
-        $this->registerPlugin(new JQueryPlugin(), 700);
+        $this->registerPlugin($di->get(JQueryPlugin::class), 700);
     }
 }
