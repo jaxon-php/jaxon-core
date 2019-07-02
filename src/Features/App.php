@@ -43,7 +43,7 @@ trait App
      *
      * @param string        $sClass             The class name
      *
-     * @return \Jaxon\Request\Factory\Invokable\Request
+     * @return \Jaxon\Request\Factory\CallableClass\Request
      */
     public function request($sClassName)
     {

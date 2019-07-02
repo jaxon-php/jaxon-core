@@ -14,8 +14,8 @@
 
 namespace Jaxon\Request\Support;
 
-use Jaxon\Request\Factory\Invokable\Request as RequestFactory;
-use Jaxon\Request\Factory\Invokable\Paginator as PaginatorFactory;
+use Jaxon\Request\Factory\CallableClass\Request as RequestFactory;
+use Jaxon\Request\Factory\CallableClass\Paginator as PaginatorFactory;
 
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;

@@ -22,7 +22,7 @@
 namespace Jaxon\Request\Plugin;
 
 use Jaxon\Jaxon;
-use Jaxon\Invokable;
+use Jaxon\CallableClass as UserCallableClass;
 use Jaxon\Plugin\Request as RequestPlugin;
 use Jaxon\Request\Support\CallableRepository;
 
@@ -175,11 +175,11 @@ class CallableClass extends RequestPlugin
         $aJsClasses = [];
         $sCode = '';
 
-        $xInvokableClass = new \ReflectionClass(Invokable::class);
-        $aInvokableMethods = [];
-        foreach($xInvokableClass->getMethods(\ReflectionMethod::IS_PUBLIC) as $xMethod)
+        $xCallableClass = new \ReflectionClass(UserCallableClass::class);
+        $aCallableMethods = [];
+        foreach($xCallableClass->getMethods(\ReflectionMethod::IS_PUBLIC) as $xMethod)
         {
-            $aInvokableMethods[] = $xMethod->getName();
+            $aCallableMethods[] = $xMethod->getName();
         }
 
         foreach(array_keys($aNamespaces) as $sNamespace)
@@ -205,11 +205,11 @@ class CallableClass extends RequestPlugin
             $aConfig = $aCallableOptions[$sClassName];
             $aCommonConfig = key_exists('*', $aConfig) ? $aConfig['*'] : [];
 
-            $aProtectedMethods = is_subclass_of($sClassName, Invokable::class) ? $aInvokableMethods : [];
+            $aProtectedMethods = is_subclass_of($sClassName, UserCallableClass::class) ? $aCallableMethods : [];
             $aMethods = [];
             foreach($xCallableObject->getMethods() as $sMethodName)
             {
-                // Don't export methods of the Invokable class
+                // Don't export methods of the CallableClass class
                 if(in_array($sMethodName, $aProtectedMethods))
                 {
                     continue;

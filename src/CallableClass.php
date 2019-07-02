@@ -2,7 +2,7 @@
 
 namespace Jaxon;
 
-class Invokable
+class CallableClass
 {
     /**
      * The Jaxon response returned by all classes methods
@@ -41,7 +41,7 @@ class Invokable
     /**
      * Get the request factory.
      *
-     * @return \Jaxon\Request\Factory\Invokable\Request
+     * @return \Jaxon\Request\Factory\CallableClass\Request
      */
     public function rq()
     {
@@ -51,7 +51,7 @@ class Invokable
     /**
      * Get the request factory.
      *
-     * @return \Jaxon\Request\Factory\Invokable\Request
+     * @return \Jaxon\Request\Factory\CallableClass\Request
      */
     public function request()
     {
@@ -65,7 +65,7 @@ class Invokable
      * @param integer $nItemsPerPage the number of items per page
      * @param integer $nCurrentPage the current page
      *
-     * @return \Jaxon\Request\Factory\Invokable\Paginator
+     * @return \Jaxon\Request\Factory\CallableClass\Paginator
      */
     public function pg($nItemsTotal, $nItemsPerPage, $nCurrentPage)
     {
@@ -79,7 +79,7 @@ class Invokable
      * @param integer $nItemsPerPage the number of items per page
      * @param integer $nCurrentPage the current page
      *
-     * @return \Jaxon\Request\Factory\Invokable\Paginator
+     * @return \Jaxon\Request\Factory\CallableClass\Paginator
      */
     public function paginator($nItemsTotal, $nItemsPerPage, $nCurrentPage)
     {

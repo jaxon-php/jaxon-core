@@ -12,7 +12,7 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Request\Factory\Invokable;
+namespace Jaxon\Request\Factory\CallableClass;
 
 use Jaxon\Request\Support\CallableObject;
 
@@ -36,7 +36,7 @@ class Request
     }
 
     /**
-     * Generate the corresponding javascript code for a call to any method
+     * Generate the javascript code for a call to a given method
      *
      * @return string
      */

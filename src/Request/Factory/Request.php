@@ -3,7 +3,7 @@
 /**
  * Request.php - The Jaxon Request
  *
- * This class is used to create client side requests to the Jaxon functions and callable objects.
+ * This class is used to create client side requests to callable classes and functions.
  *
  * @package jaxon-core
  * @author Jared White

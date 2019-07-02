@@ -224,7 +224,7 @@ class CallableObject
             }
 
             // Initialize the object
-            if($this->registeredObject instanceof \Jaxon\Invokable)
+            if($this->registeredObject instanceof \Jaxon\CallableClass)
             {
                 $this->registeredObject->xSupport = $this;
                 $this->registeredObject->response = jaxon()->getResponse();
@@ -236,7 +236,7 @@ class CallableObject
     /**
      * Get the request factory.
      *
-     * @return \Jaxon\Request\Factory\Invokable\Request
+     * @return \Jaxon\Request\Factory\CallableClass\Request
      */
     public function getRequestFactory()
     {
@@ -250,7 +250,7 @@ class CallableObject
      * @param integer $nItemsPerPage the number of items per page
      * @param integer $nCurrentPage the current page
      *
-     * @return \Jaxon\Request\Factory\Invokable\Paginator
+     * @return \Jaxon\Request\Factory\CallableClass\Paginator
      */
     public function getPaginatorFactory($nItemsTotal, $nItemsPerPage, $nCurrentPage)
     {
