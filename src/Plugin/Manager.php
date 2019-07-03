@@ -206,14 +206,6 @@ class Manager
 
         $xPlugin = $this->aRequestPlugins[$sType];
         return $xPlugin->register($sType, $sCallable, $aOptions);
-        // foreach($this->aRequestPlugins as $xPlugin)
-        // {
-        //     if($mResult instanceof \Jaxon\Request\Request || is_array($mResult) || $mResult === true)
-        //     {
-        //         return $mResult;
-        //     }
-        // }
-        // throw new \Jaxon\Exception\Error($this->trans('errors.register.method', ['args' => print_r($aArgs, true)]));
     }
 
     /**

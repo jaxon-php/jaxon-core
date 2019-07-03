@@ -117,7 +117,7 @@ class CallableClass
      *
      * @param string $name the class name
      *
-     * @return Jaxon\App\Armada|null the Jaxon class instance, or null
+     * @return CallableClass|null the Jaxon class instance, or null
      */
     public function instance($name)
     {
@@ -129,7 +129,7 @@ class CallableClass
      *
      * @param string $name the class name
      *
-     * @return Jaxon\App\Callee|null the Jaxon class instance, or null
+     * @return CallableClass|null the Jaxon class instance, or null
      */
     public function cl($name)
     {
