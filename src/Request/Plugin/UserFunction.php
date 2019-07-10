@@ -50,7 +50,7 @@ class UserFunction extends RequestPlugin
         $this->aFunctions = array();
 
         $this->sRequestedFunction = null;
-        
+
         if(isset($_GET['jxnfun']))
         {
             $this->sRequestedFunction = $_GET['jxnfun'];
@@ -82,11 +82,11 @@ class UserFunction extends RequestPlugin
     {
         if(count($aArgs) > 1)
         {
-            $sType = $aArgs[0];
+            $sType = trim($aArgs[0]);
 
             if($sType == Jaxon::USER_FUNCTION)
             {
-                $xUserFunction = $aArgs[1];
+                $xUserFunction = trim($aArgs[1]);
 
                 if(!($xUserFunction instanceof \Jaxon\Request\Support\UserFunction))
                     $xUserFunction = new \Jaxon\Request\Support\UserFunction($xUserFunction);
