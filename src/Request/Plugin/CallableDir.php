@@ -81,6 +81,7 @@ class CallableDir extends RequestPlugin
      */
     public function register($sType, $sDirectory, $aOptions)
     {
+        $sType = trim($sType);
         if($sType != $this->getName())
         {
             return false;

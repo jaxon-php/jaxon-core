@@ -86,6 +86,7 @@ class CallableFunction extends RequestPlugin
      */
     public function register($sType, $sCallableFunction, $aOptions)
     {
+        $sType = trim($sType);
         if($sType != $this->getName())
         {
             return false;
@@ -105,6 +106,7 @@ class CallableFunction extends RequestPlugin
             throw new \Jaxon\Exception\Error($this->trans('errors.functions.invalid-declaration'));
         }
 
+        $sCallableFunction = trim($sCallableFunction);
         // Check if an alias is defined
         $sFunctionName = $sCallableFunction;
         foreach($aOptions as $sName => $sValue)

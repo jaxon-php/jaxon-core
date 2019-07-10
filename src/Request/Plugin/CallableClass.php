@@ -113,6 +113,7 @@ class CallableClass extends RequestPlugin
      */
     public function register($sType, $sClassName, $aOptions)
     {
+        $sType = trim($sType);
         if($sType != $this->getName())
         {
             return false;
@@ -131,6 +132,7 @@ class CallableClass extends RequestPlugin
             throw new \Jaxon\Exception\Error($this->trans('errors.objects.invalid-declaration'));
         }
 
+        $sClassName = trim($sClassName);
         $this->xRepository->addClass($sClassName, $aOptions);
 
         return true;
