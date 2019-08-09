@@ -86,11 +86,7 @@ class UserFunction extends RequestPlugin
 
             if($sType == Jaxon::USER_FUNCTION)
             {
-                if(is_string($aArgs[1]))
-                {
-                    $xUserFunction = trim($aArgs[1]);
-                }
-
+                $xUserFunction = is_string($aArgs[1]) ? trim($aArgs[1]) : $aArgs[1];
                 if(!($xUserFunction instanceof \Jaxon\Request\Support\UserFunction))
                 {
                     $xUserFunction = new \Jaxon\Request\Support\UserFunction($xUserFunction);
