@@ -156,7 +156,7 @@ class Factory
         // Get the args list starting from the $sMethod
         $aArgs = array_slice(func_get_args(), 3);
         // Make the request
-        $request = call_user_func_array([$this, 'call'], $aArgs);
+        $xRequest = call_user_func_array([$this, 'call'], $aArgs);
 
         return jaxon()->di()->getPaginator()
             ->setup($nItemsTotal, $nItemsPerPage, $nCurrentPage, $xRequest);
