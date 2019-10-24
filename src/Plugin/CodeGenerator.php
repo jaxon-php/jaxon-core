@@ -64,6 +64,13 @@ class CodeGenerator
     protected $sJsReady = null;
 
     /**
+     * Default library URL
+     *
+     * @var string
+     */
+    protected $sJsLibraryUrl = 'https://cdn.jsdelivr.net/gh/jaxon-php/jaxon-js@3.0/dist';
+
+    /**
      * The constructor
      *
      * @param Manager    $xPluginManager
@@ -95,13 +102,7 @@ class CodeGenerator
      */
     private function getJsLibUri()
     {
-        if(!$this->hasOption('js.lib.uri'))
-        {
-            // return 'https://cdn.jsdelivr.net/jaxon/1.2.0/';
-            return 'https://cdn.jsdelivr.net/gh/jaxon-php/jaxon-js@2.0/dist/';
-        }
-        // Todo: check the validity of the URI
-        return rtrim($this->getOption('js.lib.uri'), '/') . '/';
+        return rtrim($this->getOption('js.lib.uri', $this->sJsLibraryUrl), '/') . '/';
     }
 
     /**
