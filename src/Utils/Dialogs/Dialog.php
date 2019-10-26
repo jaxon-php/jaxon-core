@@ -9,7 +9,7 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Ui\Dialogs;
+namespace Jaxon\Utils\Dialogs;
 
 use Jaxon\Contracts\Dialogs\Alert as AlertContract;
 use Jaxon\Contracts\Dialogs\Confirm as ConfirmContract;

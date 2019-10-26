@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Boot.php - Jaxon application
+ * App.php - Jaxon application
  *
  * @package jaxon-core
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
@@ -10,14 +10,15 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon;
+namespace Jaxon\App;
 
+use Jaxon\Utils\Session\Manager as SessionManager;
 use Exception;
 
 class App
 {
-    use Features\Event;
-    use Features\App;
+    use \Jaxon\Features\Event;
+    use \Jaxon\Features\App;
 
     /**
      * Read config options from a config file and setup the library
@@ -45,7 +46,7 @@ class App
 
         // Set the session manager
         jaxon()->di()->setSessionManager(function () {
-            return new Session\Manager();
+            return new SessionManager();
         });
 
         $this->jaxon()
@@ -59,7 +60,7 @@ class App
     /**
      * Get the view renderer
      *
-     * @return Jaxon\Ui\View\Facade
+     * @return Jaxon\Utils\View\Facade
      */
     public function view()
     {

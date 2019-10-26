@@ -10,7 +10,7 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Ui\Dialogs;
+namespace Jaxon\Utils\Dialogs;
 
 class Alert implements \Jaxon\Contracts\Dialogs\Alert
 {

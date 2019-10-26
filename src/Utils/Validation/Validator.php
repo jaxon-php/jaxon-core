@@ -12,7 +12,7 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Str\Validation;
+namespace Jaxon\Utils\Validation;
 
 /*
  * See the following links to get explanations about the regexp.
@@ -26,7 +26,7 @@ class Validator
     /**
      * The translator
      *
-     * @var \Jaxon\Str\Translation\Translator
+     * @var \Jaxon\Utils\Translation\Translator
      */
     protected $xTranslator;
 

@@ -224,12 +224,12 @@ class Manager
             if(is_integer($xKey) && is_string($xValue))
             {
                 // Register a function without options
-                $this->register(Jaxon::USER_FUNCTION, $xValue);
+                $this->register(Jaxon::CALLABLE_FUNCTION, $xValue);
             }
             elseif(is_string($xKey) && is_array($xValue))
             {
                 // Register a function with options
-                $this->register(Jaxon::USER_FUNCTION, $xKey, $xValue);
+                $this->register(Jaxon::CALLABLE_FUNCTION, $xKey, $xValue);
             }
             else
             {

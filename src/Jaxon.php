@@ -28,6 +28,7 @@ namespace Jaxon;
 use Jaxon\Config\Reader as ConfigReader;
 use Jaxon\Plugin\Plugin;
 use Jaxon\Request\URI;
+use Jaxon\Utils\Container;
 
 class Jaxon
 {
@@ -399,7 +400,7 @@ class Jaxon
     /**
      * Get the dialog wrapper
      *
-     * @return \Jaxon\Ui\Dialogs\Dialog
+     * @return \Jaxon\Utils\Dialogs\Dialog
      */
     public function dialog()
     {
@@ -409,7 +410,7 @@ class Jaxon
     /**
      * Get the template engine
      *
-     * @return \Jaxon\Ui\Template\Engine
+     * @return \Jaxon\Utils\Template\Engine
      */
     public function template()
     {
@@ -419,7 +420,7 @@ class Jaxon
     /**
      * Get the App instance
      *
-     * @return \Jaxon\App
+     * @return \Jaxon\App\App
      */
     public function app()
     {

@@ -12,7 +12,7 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Ui\Template;
+namespace Jaxon\Utils\Template;
 
 class Engine implements \Jaxon\Contracts\Template\Renderer
 {

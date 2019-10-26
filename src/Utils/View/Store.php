@@ -1,6 +1,6 @@
 <?php
 
-namespace Jaxon\Ui\View;
+namespace Jaxon\Utils\View;
 
 use Jaxon\Contracts\View as ViewContract;
 

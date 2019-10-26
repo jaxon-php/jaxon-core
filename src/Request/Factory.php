@@ -19,7 +19,7 @@ use Jaxon\Request\Factory\Request;
 use Jaxon\Request\Factory\Parameter;
 use Jaxon\Request\Support\CallableObject;
 use Jaxon\Request\Support\CallableRepository;
-use Jaxon\Ui\Pagination\Paginator;
+use Jaxon\Utils\Pagination\Paginator;
 
 // Extends Parameter for compatibility with older versions (see function rq())
 class Factory

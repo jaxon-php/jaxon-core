@@ -38,7 +38,7 @@ SOFTWARE.
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Ui\Pagination;
+namespace Jaxon\Utils\Pagination;
 
 use Jaxon\Request\Request;
 use Jaxon\Request\Factory\Parameter;

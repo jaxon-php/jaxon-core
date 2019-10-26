@@ -10,7 +10,7 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Plugin;
+namespace Jaxon\App;
 
 use Jaxon\Config\Config;
 

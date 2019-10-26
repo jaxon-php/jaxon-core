@@ -14,7 +14,7 @@
 
 namespace Jaxon\Plugin;
 
-use Jaxon\Ui\Template\Engine as TemplateEngine;
+use Jaxon\Utils\Template\Engine as TemplateEngine;
 
 class CodeGenerator
 {

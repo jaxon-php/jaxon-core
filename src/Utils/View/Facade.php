@@ -1,6 +1,6 @@
 <?php
 
-namespace Jaxon\Ui\View;
+namespace Jaxon\Utils\View;
 
 class Facade implements \Jaxon\Contracts\Template\Renderer
 {

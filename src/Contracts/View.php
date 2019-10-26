@@ -2,7 +2,7 @@
 
 namespace Jaxon\Contracts;
 
-use Jaxon\Ui\View\Store;
+use Jaxon\Utils\View\Store;
 
 interface View
 {
