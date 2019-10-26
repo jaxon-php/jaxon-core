@@ -62,7 +62,7 @@ class CallableFunction extends RequestPlugin
      */
     public function getName()
     {
-        return Jaxon::USER_FUNCTION;
+        return Jaxon::CALLABLE_FUNCTION;
     }
 
     /**

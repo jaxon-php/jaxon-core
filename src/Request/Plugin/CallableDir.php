@@ -74,7 +74,7 @@ class CallableDir extends RequestPlugin
      * Register a callable class
      *
      * @param string        $sType          The type of request handler being registered
-     * @param string        $sDirectory     The name of the class being registered
+     * @param string        $sDirectory     The path of teh directory being registered
      * @param array|string  $aOptions       The associated options
      *
      * @return boolean
@@ -147,10 +147,6 @@ class CallableDir extends RequestPlugin
         }
         else
         {
-             // Use underscore as separator, so there's no need to deal with namespace
-            // when generating javascript code.
-            $aOptions['separator'] = '_';
-
             $this->xRepository->addDirectory($sDirectory, $aOptions);
         }
 

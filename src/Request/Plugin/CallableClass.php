@@ -98,8 +98,7 @@ class CallableClass extends RequestPlugin
      */
     public function getTarget()
     {
-        $sRequestedClass = str_replace(['.', '_'], ['\\', '\\'], $this->sRequestedClass);
-        return trim($sRequestedClass, '\\') . '::' . $this->sRequestedMethod;
+        return ['class' => $this->sRequestedClass, 'method' => $this->sRequestedMethod];
     }
 
     /**

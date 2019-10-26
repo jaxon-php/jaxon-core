@@ -26,6 +26,8 @@ use Jaxon\Jaxon;
 use Jaxon\Plugin\Manager as PluginManager;
 use Jaxon\Response\Manager as ResponseManager;
 
+use Exception;
+
 class Handler
 {
     use \Jaxon\Features\Config;
@@ -141,27 +143,6 @@ class Handler
      */
     public function onBefore(&$bEndRequest)
     {
-        // // Validate the inputs
-        // $class = $_POST['jxncls'];
-        // $method = $_POST['jxnmthd'];
-        // if(!$this->validateClass($class) || !$this->validateMethod($method))
-        // {
-        //     // End the request processing if the input data are not valid.
-        //     // Todo: write an error message in the response
-        //     $bEndRequest = true;
-        //     return $this->xResponse;
-        // }
-        // // Instanciate the class. This will include the required file.
-        // $this->xRequestObject = $this->instance($class);
-        // $this->sRequestMethod = $method;
-        // if(!$this->xRequestObject)
-        // {
-        //     // End the request processing if the class cannot be found.
-        //     // Todo: write an error message in the response
-        //     $bEndRequest = true;
-        //     return $this->xResponse;
-        // }
-
         // Call the user defined callback
         if(($xCallback = $this->xCallbackManager->before()))
         {

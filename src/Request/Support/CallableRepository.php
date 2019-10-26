@@ -64,6 +64,13 @@ class CallableRepository
     protected $aCallableOptions = [];
 
     /**
+     * If the underscore is used as separator in js class names
+     *
+     * @var boolean
+     */
+    protected $bUsingUnderscore = false;
+
+    /**
      *
      * @param string        $sClassName     The name of the class being registered
      * @param array|string  $aOptions       The associated options
@@ -155,6 +162,15 @@ class CallableRepository
         if(!key_exists('separator', $aOptions))
         {
             $aOptions['separator'] = '.';
+        }
+        $aOptions['separator'] = trim($aOptions['separator']);
+        if(!in_array($aOptions['separator'], ['.', '_']))
+        {
+            $aOptions['separator'] = '.';
+        }
+        if($aOptions['separator'] == '_')
+        {
+            $this->bUsingUnderscore = true;
         }
         $this->aNamespaceOptions[$sNamespace] = $aOptions;
     }
@@ -274,7 +290,12 @@ class CallableRepository
     {
         // Replace all separators ('.' and '_') with antislashes, and remove the antislashes
         // at the beginning and the end of the class name.
-        $sClassName = trim(str_replace(['.', '_'], ['\\', '\\'], (string)$sClassName), '\\');
+        $sClassName = (string)$sClassName;
+        $sClassName = trim(str_replace('.', '\\', $sClassName), '\\');
+        if($this->bUsingUnderscore)
+        {
+            $sClassName = trim(str_replace('_', '\\', $sClassName), '\\');
+        }
 
         if(key_exists($sClassName, $this->aCallableObjects))
         {
