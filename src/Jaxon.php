@@ -261,7 +261,7 @@ class Jaxon
             }
             return;
         }
-        return $this->di()->getPluginManager()->register($sType, $sCallable, $xOptions);
+        return $this->di()->getPluginManager()->registerCallable($sType, $sCallable, $xOptions);
     }
 
     /**

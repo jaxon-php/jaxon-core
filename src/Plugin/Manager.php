@@ -187,7 +187,7 @@ class Manager
     }
 
     /**
-     * Register a function, event or callable object
+     * Register a function, event or callable class
      *
      * Call the request plugin with the $sType defined as name.
      *
@@ -197,7 +197,7 @@ class Manager
      *
      * @return mixed
      */
-    public function register($sType, $sCallable, $aOptions = [])
+    public function registerCallable($sType, $sCallable, $aOptions = [])
     {
         if(!key_exists($sType, $this->aRequestPlugins))
         {
@@ -224,12 +224,12 @@ class Manager
             if(is_integer($xKey) && is_string($xValue))
             {
                 // Register a function without options
-                $this->register(Jaxon::CALLABLE_FUNCTION, $xValue);
+                $this->registerCallable(Jaxon::CALLABLE_FUNCTION, $xValue);
             }
-            elseif(is_string($xKey) && is_array($xValue))
+            elseif(is_string($xKey) && (is_array($xValue) || is_string($xValue)))
             {
                 // Register a function with options
-                $this->register(Jaxon::CALLABLE_FUNCTION, $xKey, $xValue);
+                $this->registerCallable(Jaxon::CALLABLE_FUNCTION, $xKey, $xValue);
             }
             else
             {
@@ -245,12 +245,12 @@ class Manager
             if(is_integer($xKey) && is_string($xValue))
             {
                 // Register a class without options
-                $this->register(Jaxon::CALLABLE_CLASS, $xValue);
+                $this->registerCallable(Jaxon::CALLABLE_CLASS, $xValue);
             }
-            elseif(is_string($xKey) && is_array($xValue))
+            elseif(is_string($xKey) && (is_array($xValue) || is_string($xValue)))
             {
                 // Register a class with options
-                $this->register(Jaxon::CALLABLE_CLASS, $xKey, $xValue);
+                $this->registerCallable(Jaxon::CALLABLE_CLASS, $xKey, $xValue);
             }
             elseif(is_integer($xKey) && is_array($xValue))
             {
@@ -282,7 +282,7 @@ class Manager
                     $aOptions['autoload'] = $xValue['autoload'];
                 }
                 // Register a class without options
-                $this->register(Jaxon::CALLABLE_DIR, $sDirectory, $aOptions);
+                $this->registerCallable(Jaxon::CALLABLE_DIR, $sDirectory, $aOptions);
             }
             else
             {
