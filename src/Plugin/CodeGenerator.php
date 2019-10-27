@@ -351,12 +351,13 @@ class CodeGenerator
         {
             $sJsAppURI = rtrim($this->getOption('js.app.uri'), '/') . '/';
             $sJsAppDir = rtrim($this->getOption('js.app.dir'), '/') . '/';
-            $sFinalFile = $this->getOption('js.app.file') . $this->getJsLibExt();
+            $sFinalFile = $this->getOption('js.app.file');
+            $sExtension = $this->getJsLibExt();
 
             // Check if the final file already exists
-            if(($sFinalFile) && is_file($sJsAppDir . $sFinalFile))
+            if(($sFinalFile) && is_file($sJsAppDir . $sFinalFile . $sExtension))
             {
-                $sOutFile = $sFinalFile;
+                $sOutFile = $sFinalFile . $sExtension;
             }
             else
             {
@@ -384,7 +385,7 @@ class CodeGenerator
                 {
                     if(copy($sJsAppDir . $sOutFile, $sJsAppDir . $sFinalFile))
                     {
-                        $sOutFile = $sFinalFile;
+                        $sOutFile = $sFinalFile . $sExtension;
                     }
                 }
             }
