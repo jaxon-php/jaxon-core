@@ -181,9 +181,9 @@ class Bootstrap
         // Use the Composer autoloader. It's important to call this before triggers and callbacks.
         // $jaxon->useComposerAutoloader();
         // Jaxon library settings
-        if(!$jaxon->hasOption('js.app.extern'))
+        if(!$jaxon->hasOption('js.app.export'))
         {
-            $jaxon->setOption('js.app.extern', $this->bExportJs);
+            $jaxon->setOption('js.app.export', $this->bExportJs);
         }
         if(!$jaxon->hasOption('js.app.minify'))
         {

@@ -129,9 +129,9 @@ class CodeGenerator
     public function canExportJavascript()
     {
         // Check config options
-        // - The js.app.extern option must be set to true
+        // - The js.app.export option must be set to true
         // - The js.app.uri and js.app.dir options must be set to non null values
-        if(!$this->getOption('js.app.extern') ||
+        if(!$this->getOption('js.app.export') ||
             !$this->getOption('js.app.uri') ||
             !$this->getOption('js.app.dir'))
         {
@@ -254,7 +254,7 @@ class CodeGenerator
         $this->makePluginsCode();
 
         return $this->xTemplate->render('jaxon::plugins/includes.js', [
-            'sJsOptions' => $this->getOption('js.app.options'),
+            'sJsOptions' => $this->getOption('js.app.options', ''),
             'aUrls' => $aJsFiles,
         ]) . $this->sJsCode;
     }
@@ -297,7 +297,7 @@ class CodeGenerator
             'nResponseQueueSize'        => $this->getOption('js.lib.queue_size'),
             'sStatusMessages'           => $this->getOption('js.lib.show_status') ? 'true' : 'false',
             'sWaitCursor'               => $this->getOption('js.lib.show_cursor') ? 'true' : 'false',
-            'sDefer'                    => $this->getOption('js.app.options'),
+            'sDefer'                    => $this->getOption('js.app.options', ''),
         ];
     }
 
@@ -391,7 +391,7 @@ class CodeGenerator
 
             // The returned code loads the generated javascript file
             $sScript .= $this->xTemplate->render('jaxon::plugins/include.js', [
-                'sJsOptions' => $this->getOption('js.app.options'),
+                'sJsOptions' => $this->getOption('js.app.options', ''),
                 'sUrl' => $sJsAppURI . $sOutFile,
             ]);
         }
@@ -399,7 +399,7 @@ class CodeGenerator
         {
             // The plugins scripts are wrapped with javascript tags
             $sScript .= $this->xTemplate->render('jaxon::plugins/wrapper.js', [
-                'sJsOptions' => $this->getOption('js.app.options'),
+                'sJsOptions' => $this->getOption('js.app.options', ''),
                 'sScript' => $this->_getScript(),
             ]);
         }
