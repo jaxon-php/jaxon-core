@@ -355,7 +355,8 @@ class CodeGenerator
             $sExtension = $this->getJsLibExt();
 
             // Check if the final file already exists
-            if(($sFinalFile) && is_file($sJsAppDir . $sFinalFile . $sExtension))
+            if(($this->getOption('js.app.export')) && ($sFinalFile) &&
+                is_file($sJsAppDir . $sFinalFile . $sExtension))
             {
                 $sOutFile = $sFinalFile . $sExtension;
             }
