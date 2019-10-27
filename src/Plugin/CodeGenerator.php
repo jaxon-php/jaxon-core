@@ -114,11 +114,6 @@ class CodeGenerator
      */
     private function getJsLibExt()
     {
-        // $jsDelivrUri = 'https://cdn.jsdelivr.net';
-        // $nLen = strlen($jsDelivrUri);
-        // The jsDelivr CDN only hosts minified files
-        // if(($this->getOption('js.app.minify')) || substr($this->getJsLibUri(), 0, $nLen) == $jsDelivrUri)
-        // Starting from version 2.0.0 of the js lib, the jsDelivr CDN also hosts non minified files.
         if(($this->getOption('js.app.minify')))
         {
             return '.min.js';
@@ -356,20 +351,41 @@ class CodeGenerator
         {
             $sJsAppURI = rtrim($this->getOption('js.app.uri'), '/') . '/';
             $sJsAppDir = rtrim($this->getOption('js.app.dir'), '/') . '/';
+            $sFinalFile = $this->getOption('js.app.file') . $this->getJsLibExt();
 
-            // The plugins scripts are written into the javascript app dir
-            $sHash = $this->generateHash();
-            $sOutFile = $sHash . '.js';
-            $sMinFile = $sHash . '.min.js';
-            if(!is_file($sJsAppDir . $sOutFile))
+            // Check if the final file already exists
+            if(($sFinalFile) && is_file($sJsAppDir . $sFinalFile))
             {
-                file_put_contents($sJsAppDir . $sOutFile, $this->_getScript());
+                $sOutFile = $sFinalFile;
             }
-            if(($this->getOption('js.app.minify')) && !is_file($sJsAppDir . $sMinFile))
+            else
             {
-                if(($this->minify($sJsAppDir . $sOutFile, $sJsAppDir . $sMinFile)))
+                // The plugins scripts are written into the javascript app dir
+                $sHash = $this->generateHash();
+                $sOutFile = $sHash . '.js';
+                $sMinFile = $sHash . '.min.js';
+                if(!is_file($sJsAppDir . $sOutFile))
                 {
-                    $sOutFile = $sMinFile;
+                    file_put_contents($sJsAppDir . $sOutFile, $this->_getScript());
+                }
+                if(($this->getOption('js.app.minify')))
+                {
+                    if(is_file($sJsAppDir . $sMinFile))
+                    {
+                        $sOutFile = $sMinFile; // The file was already minified
+                    }
+                    elseif(($this->minify($sJsAppDir . $sOutFile, $sJsAppDir . $sMinFile)))
+                    {
+                        $sOutFile = $sMinFile;
+                    }
+                }
+                // Copy the file to its final location
+                if(($sFinalFile))
+                {
+                    if(copy($sJsAppDir . $sOutFile, $sJsAppDir . $sFinalFile))
+                    {
+                        $sOutFile = $sFinalFile;
+                    }
                 }
             }
 
