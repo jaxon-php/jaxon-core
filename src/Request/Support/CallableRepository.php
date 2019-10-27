@@ -372,7 +372,7 @@ class CallableRepository
                 continue;
             }
 
-            $this->aNamespaces[$sNamespace] = $sNamespace;
+            $this->aNamespaces[$sNamespace] = ['separator' => $aOptions['separator']];
 
             // Iterate on dir content
             $sDirectory = $aOptions['directory'];
