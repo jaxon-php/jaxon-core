@@ -383,7 +383,7 @@ class CodeGenerator
                 // Copy the file to its final location
                 if(($sFinalFile))
                 {
-                    if(copy($sJsAppDir . $sOutFile, $sJsAppDir . $sFinalFile))
+                    if(copy($sJsAppDir . $sOutFile, $sJsAppDir . $sFinalFile . $sExtension))
                     {
                         $sOutFile = $sFinalFile . $sExtension;
                     }
