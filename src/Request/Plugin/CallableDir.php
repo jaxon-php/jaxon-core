@@ -37,13 +37,6 @@ class CallableDir extends RequestPlugin
     protected $xRepository = null;
 
     /**
-     * The Composer autoloader
-     *
-     * @var Autoloader
-     */
-    private $xAutoloader = null;
-
-    /**
      * The class constructor
      *
      * @param CallableRepository        $xRepository
@@ -51,13 +44,6 @@ class CallableDir extends RequestPlugin
     public function __construct(CallableRepository $xRepository)
     {
         $this->xRepository = $xRepository;
-
-        // Set the composer autoloader
-        $sAutoloadFile = __DIR__ . '/../../../../../autoload.php';
-        if(file_exists($sAutoloadFile))
-        {
-            $this->xAutoloader = require($sAutoloadFile);
-        }
     }
 
     /**
@@ -113,19 +99,6 @@ class CallableDir extends RequestPlugin
             $sNamespace = '';
         }
 
-        // $sSeparator = key_exists('separator', $aOptions) ? $aOptions['separator'] : '.';
-        // // Only '.' and '_' are allowed to be used as separator. Any other value is ignored and '.' is used instead.
-        // if(($sSeparator = trim($sSeparator)) != '_')
-        // {
-        //     $sSeparator = '.';
-        // }
-
-        // Set the autoload option default value
-        if(!key_exists('autoload', $aOptions))
-        {
-            $aOptions['autoload'] = false;
-        }
-
         // Change the keys in $aOptions to have "\" as separator
         $_aOptions = [];
         foreach($aOptions as $sName => $aOption)
@@ -137,12 +110,6 @@ class CallableDir extends RequestPlugin
 
         if(($sNamespace))
         {
-            // Register the dir with PSR4 autoloading
-            if(($aOptions['autoload']))
-            {
-                $this->xAutoloader->setPsr4($sNamespace . '\\', $sDirectory);
-            }
-
             $this->xRepository->addNamespace($sNamespace, $aOptions);
         }
         else

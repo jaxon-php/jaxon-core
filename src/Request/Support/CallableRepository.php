@@ -71,6 +71,26 @@ class CallableRepository
     protected $bUsingUnderscore = false;
 
     /**
+     * The Composer autoloader
+     *
+     * @var Autoloader
+     */
+    private $xAutoloader = null;
+
+    /**
+     * The class constructor
+     */
+    public function __construct()
+    {
+        // Set the composer autoloader
+        $sAutoloadFile = __DIR__ . '/../../../../../autoload.php';
+        if(file_exists($sAutoloadFile))
+        {
+            $this->xAutoloader = require($sAutoloadFile);
+        }
+    }
+
+    /**
      *
      * @param string        $sClassName     The name of the class being registered
      * @param array|string  $aOptions       The associated options
@@ -171,6 +191,17 @@ class CallableRepository
         {
             $this->bUsingUnderscore = true;
         }
+        // Set the autoload option default value
+        if(!key_exists('autoload', $aOptions))
+        {
+            $aOptions['autoload'] = true;
+        }
+        // Register the dir with PSR4 autoloading
+        if(($aOptions['autoload']) && $this->xAutoloader != null)
+        {
+            $this->xAutoloader->setPsr4($sNamespace . '\\', $aOptions['directory']);
+        }
+
         $this->aNamespaceOptions[$sNamespace] = $aOptions;
     }
 
