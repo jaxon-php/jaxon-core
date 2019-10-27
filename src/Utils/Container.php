@@ -540,7 +540,7 @@ class Container
      *
      * @return void
      */
-    public function setCallableClassRequestFactory(string $sClassName, CallableObject $xCallableObject)
+    public function setCallableClassRequestFactory($sClassName, CallableObject $xCallableObject)
     {
         $this->libContainer[$sClassName . '_RequestFactory'] = function () use ($xCallableObject) {
             // $xCallableObject = $c[CallableRepository::class]->getCallableObject($sClassName);
@@ -555,7 +555,7 @@ class Container
      *
      * @return CallableClassRequestFactory
      */
-    public function getCallableClassRequestFactory(string $sClassName)
+    public function getCallableClassRequestFactory($sClassName)
     {
         return $this->libContainer[$sClassName . '_RequestFactory'];
     }
@@ -568,7 +568,7 @@ class Container
      *
      * @return void
      */
-    public function setCallableClassPaginatorFactory(string $sClassName, CallableObject $xCallableObject)
+    public function setCallableClassPaginatorFactory($sClassName, CallableObject $xCallableObject)
     {
         $this->libContainer[$sClassName . '_PaginatorFactory'] = function () use ($xCallableObject) {
             // $xCallableObject = $c[CallableRepository::class]->getCallableObject($sClassName);
@@ -583,7 +583,7 @@ class Container
      *
      * @return CallableClassPaginatorFactory
      */
-    public function getCallableClassPaginatorFactory(string $sClassName)
+    public function getCallableClassPaginatorFactory($sClassName)
     {
         return $this->libContainer[$sClassName . '_PaginatorFactory'];
     }
