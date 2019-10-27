@@ -12,13 +12,6 @@ class CallableClass
     public $response = null;
 
     /**
-     * The callable object
-     *
-     * @var \Jaxon\Request\Support\CallableObject
-     */
-    public $xSupport = null;
-
-    /**
      * Get the view renderer
      *
      * @return \Jaxon\Utils\View\Facade
@@ -45,7 +38,7 @@ class CallableClass
      */
     public function rq()
     {
-        return $this->xSupport->getRequestFactory();
+        return jaxon()->di()->getCallableClassRequestFactory(get_class($this));
     }
 
     /**
@@ -59,7 +52,8 @@ class CallableClass
      */
     public function pg($nItemsTotal, $nItemsPerPage, $nCurrentPage)
     {
-        return $this->xSupport->getPaginatorFactory($nItemsTotal, $nItemsPerPage, $nCurrentPage);
+        return jaxon()->di()->getCallableClassPaginatorFactory(get_class($this))
+            ->setProperties($nItemsTotal, $nItemsPerPage, $nCurrentPage);
     }
 
     /**
@@ -84,16 +78,17 @@ class CallableClass
      */
     public function cl($name)
     {
+        $xCallableObject = jaxon()->di()->getCallableRepository()->getCallableObject(get_class($this));
         $cFirstChar = substr($name, 0, 1);
         // If the class name starts with a dot, then find the class in the same full namespace as the caller
         if($cFirstChar == ':')
         {
-            $name = $this->xSupport->getRootNamespace() . '\\' . str_replace('.', '\\', substr($name, 1));
+            $name = $xCallableObject->getRootNamespace() . '\\' . str_replace('.', '\\', substr($name, 1));
         }
         // If the class name starts with a dot, then find the class in the same base namespace as the caller
         elseif($cFirstChar == '.')
         {
-            $name = $this->xSupport->getNamespace() . '\\' . str_replace('.', '\\', substr($name, 1));
+            $name = $xCallableObject->getNamespace() . '\\' . str_replace('.', '\\', substr($name, 1));
         }
         // Find the class instance
         return jaxon()->instance($name);

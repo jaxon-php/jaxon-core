@@ -226,36 +226,10 @@ class CallableObject
             // Initialize the object
             if($this->registeredObject instanceof \Jaxon\CallableClass)
             {
-                $this->registeredObject->xSupport = $this;
                 $this->registeredObject->response = jaxon()->getResponse();
             }
         }
         return $this->registeredObject;
-    }
-
-    /**
-     * Get the request factory.
-     *
-     * @return \Jaxon\Request\Factory\CallableClass\Request
-     */
-    public function getRequestFactory()
-    {
-        return jaxon()->di()->get(trim($this->getName(), '\\') . "_RequestFactory");
-    }
-
-    /**
-     * Get the paginator factory.
-     *
-     * @param integer $nItemsTotal the total number of items
-     * @param integer $nItemsPerPage the number of items per page
-     * @param integer $nCurrentPage the current page
-     *
-     * @return \Jaxon\Request\Factory\CallableClass\Paginator
-     */
-    public function getPaginatorFactory($nItemsTotal, $nItemsPerPage, $nCurrentPage)
-    {
-        return jaxon()->di()->get(trim($this->getName(), '\\') . "_PaginatorFactory")
-            ->setProperties($nItemsTotal, $nItemsPerPage, $nCurrentPage);
     }
 
     /**

@@ -79,7 +79,6 @@ class CallableRepository
      */
     public function addClass($sClassName, $aOptions)
     {
-        // Todo: if there's a namespace, register with '_' as separator
         $sClassName = trim($sClassName, '\\');
         $this->aClassOptions[$sClassName] = $aOptions;
     }
@@ -266,15 +265,17 @@ class CallableRepository
         $this->aCallableObjects[$sClassName] = $xCallableObject;
 
         // Register the request factory for this callable object
-        jaxon()->di()->set($sClassName . '_RequestFactory', function () use ($sClassName) {
-            $xCallableObject = $this->aCallableObjects[$sClassName];
-            return new RequestFactory($xCallableObject);
-        });
+        jaxon()->di()->setCallableClassRequestFactory($sClassName, $xCallableObject);
+        // jaxon()->di()->set($sClassName . '_RequestFactory', function () use ($sClassName) {
+        //     $xCallableObject = $this->aCallableObjects[$sClassName];
+        //     return new CallableClassRequestFactory($xCallableObject);
+        // });
         // Register the paginator factory for this callable object
-        jaxon()->di()->set($sClassName . '_PaginatorFactory', function () use ($sClassName) {
-            $xCallableObject = $this->aCallableObjects[$sClassName];
-            return new PaginatorFactory($xCallableObject);
-        });
+        jaxon()->di()->setCallableClassPaginatorFactory($sClassName, $xCallableObject);
+        // jaxon()->di()->set($sClassName . '_PaginatorFactory', function () use ($sClassName) {
+        //     $xCallableObject = $this->aCallableObjects[$sClassName];
+        //     return new CallableClassPaginatorFactory($xCallableObject);
+        // });
 
         return $xCallableObject;
     }

@@ -25,12 +25,16 @@ use Jaxon\Request\Plugin\CallableClass;
 use Jaxon\Request\Plugin\CallableDir;
 use Jaxon\Request\Plugin\CallableFunction;
 use Jaxon\Request\Plugin\FileUpload;
-use Jaxon\Response\Plugin\JQuery as JQueryPlugin;
 use Jaxon\Request\Handler as RequestHandler;
 use Jaxon\Request\Factory as RequestFactory;
+use Jaxon\Request\Factory\CallableClass\Request as CallableClassRequestFactory;
+use Jaxon\Request\Factory\CallableClass\Paginator as CallableClassPaginatorFactory;
+use Jaxon\Request\Support\CallableObject;
 use Jaxon\Response\Manager as ResponseManager;
+use Jaxon\Response\Plugin\JQuery as JQueryPlugin;
 use Jaxon\Plugin\Manager as PluginManager;
 use Jaxon\Plugin\CodeGenerator;
+
 use Jaxon\App\Bootstrap;
 use Jaxon\Utils\View\Manager as ViewManager;
 use Jaxon\Utils\View\Facade as ViewFacade;
@@ -526,5 +530,61 @@ class Container
     public function setSessionManager($xClosure)
     {
         $this->libContainer[SessionContract::class] = $xClosure;
+    }
+
+    /**
+     * Set the callable class request factory
+     *
+     * @param string            $sClassName         The callable class name
+     * @param CallableObject    $xCallableObject    The corresponding callable object
+     *
+     * @return void
+     */
+    public function setCallableClassRequestFactory(string $sClassName, CallableObject $xCallableObject)
+    {
+        $this->libContainer[$sClassName . '_RequestFactory'] = function () use ($xCallableObject) {
+            // $xCallableObject = $c[CallableRepository::class]->getCallableObject($sClassName);
+            return new CallableClassRequestFactory($xCallableObject);
+        };
+    }
+
+    /**
+     * Get the callable class request factory
+     *
+     * @param string        $sClassName             The callable class name
+     *
+     * @return CallableClassRequestFactory
+     */
+    public function getCallableClassRequestFactory(string $sClassName)
+    {
+        return $this->libContainer[$sClassName . '_RequestFactory'];
+    }
+
+    /**
+     * Set the callable class paginator factory
+     *
+     * @param string            $sClassName         The callable class name
+     * @param CallableObject    $xCallableObject    The corresponding callable object
+     *
+     * @return void
+     */
+    public function setCallableClassPaginatorFactory(string $sClassName, CallableObject $xCallableObject)
+    {
+        $this->libContainer[$sClassName . '_PaginatorFactory'] = function () use ($xCallableObject) {
+            // $xCallableObject = $c[CallableRepository::class]->getCallableObject($sClassName);
+            return new CallableClassPaginatorFactory($xCallableObject);
+        };
+    }
+
+    /**
+     * Get the callable class paginator factory
+     *
+     * @param string        $sClassName             The callable class name
+     *
+     * @return CallableClassPaginatorFactory
+     */
+    public function getCallableClassPaginatorFactory(string $sClassName)
+    {
+        return $this->libContainer[$sClassName . '_PaginatorFactory'];
     }
 }
