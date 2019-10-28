@@ -27,7 +27,7 @@ class URI
         // Try to get the request URL
         if(!empty($_SERVER['REQUEST_URI']))
         {
-            $_SERVER['REQUEST_URI'] = str_replace(array('"',"'",'<','>'), array('%22','%27','%3C','%3E'), $_SERVER['REQUEST_URI']);
+            $_SERVER['REQUEST_URI'] = str_replace(['"',"'",'<','>'], ['%22','%27','%3C','%3E'], $_SERVER['REQUEST_URI']);
             $aURL = parse_url($_SERVER['REQUEST_URI']);
         }
 
@@ -100,7 +100,7 @@ class URI
             }
             if(isset($sPath['path']))
             {
-                $aURL['path'] = str_replace(array('"',"'",'<','>'), array('%22','%27','%3C','%3E'), $sPath['path']);
+                $aURL['path'] = str_replace(['"',"'",'<','>'], ['%22','%27','%3C','%3E'], $sPath['path']);
             }
             unset($sPath);
         }

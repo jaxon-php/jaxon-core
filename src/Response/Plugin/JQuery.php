@@ -60,7 +60,7 @@ jaxon.command.handler.register("jquery", function(args) {
     public function element($sSelector = '', $sContext = '')
     {
         $xElement = new Element($sSelector, $sContext);
-        $this->addCommand(array('cmd' => 'jquery'), $xElement);
+        $this->addCommand(['cmd' => 'jquery'], $xElement);
         return $xElement;
     }
 }

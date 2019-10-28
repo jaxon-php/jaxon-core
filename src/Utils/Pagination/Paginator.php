@@ -242,7 +242,7 @@ class Paginator
      * Get an array of paginated page data.
      *
      * Example:
-     * array(
+     * [
      *     array ('num' => 1,     'call' => '/example/page/1',  'isCurrent' => false),
      *     array ('num' => '...', 'call' => NULL,               'isCurrent' => false),
      *     array ('num' => 3,     'call' => '/example/page/3',  'isCurrent' => false),
@@ -250,7 +250,7 @@ class Paginator
      *     array ('num' => 5,     'call' => '/example/page/5',  'isCurrent' => false),
      *     array ('num' => '...', 'call' => NULL,               'isCurrent' => false),
      *     array ('num' => 10,    'call' => '/example/page/10', 'isCurrent' => false),
-     * )
+     * ]
      *
      * @return array
      */
@@ -324,11 +324,11 @@ class Paginator
      */
     protected function createPage($pageNum, $isCurrent = false)
     {
-        return array(
+        return [
             'num' => $pageNum,
             'call' => $this->getPageCall($pageNum),
             'isCurrent' => $isCurrent,
-        );
+        ];
     }
 
     /**
@@ -336,11 +336,11 @@ class Paginator
      */
     protected function createPageEllipsis()
     {
-        return array(
+        return [
             'num' => '...',
             'call' => null,
             'isCurrent' => false,
-        );
+        ];
     }
 
     public function getCurrentPageFirstItem()

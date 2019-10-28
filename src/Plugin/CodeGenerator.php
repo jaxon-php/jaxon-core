@@ -239,7 +239,7 @@ class CodeGenerator
         $sJsLanguageUrl = $sJsLibUri . 'lang/jaxon.' . $this->getOption('core.language') . $sJsLibExt;
 
         // Add component files to the javascript file array;
-        $aJsFiles = array($sJsCoreUrl);
+        $aJsFiles = [$sJsCoreUrl];
         if($this->getOption('core.debug.on'))
         {
             $aJsFiles[] = $sJsDebugUrl;

@@ -69,7 +69,7 @@ class Config
         if($nDepth < 0 || $nDepth > 9)
         {
             throw new \Jaxon\Config\Exception\Data(jaxon_trans('config.errors.data.depth',
-                array('key' => $sPrefix, 'depth' => $nDepth)));
+                ['key' => $sPrefix, 'depth' => $nDepth]));
         }
         foreach($aOptions as $sName => $xOption)
         {

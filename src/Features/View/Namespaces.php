@@ -46,7 +46,7 @@ trait Namespaces
      */
     public function addNamespace($sNamespace, $sDirectory, $sExtension = '')
     {
-        $this->aDirectories[$sNamespace] = array('path' => $sDirectory, 'ext' => $sExtension);
+        $this->aDirectories[$sNamespace] = ['path' => $sDirectory, 'ext' => $sExtension];
     }
 
     /**

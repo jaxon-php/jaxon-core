@@ -73,11 +73,11 @@ class Manager
      */
     public function addNamespace($sNamespace, $sDirectory, $sExtension, $sRenderer)
     {
-        $aNamespace = array(
+        $aNamespace = [
             'namespace' => $sNamespace,
             'directory' => $sDirectory,
             'extension' => $sExtension,
-        );
+        ];
         if(key_exists($sRenderer, $this->aNamespaces))
         {
             $this->aNamespaces[$sRenderer][] = $aNamespace;

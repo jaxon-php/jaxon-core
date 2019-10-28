@@ -70,9 +70,9 @@ class Argument
         }
         if(get_magic_quotes_gpc() == 1)
         {
-            array_walk($this->aArgs, array(&$this, '__argumentStripSlashes'));
+            array_walk($this->aArgs, [&$this, '__argumentStripSlashes']);
         }
-        array_walk($this->aArgs, array(&$this, '__argumentDecode'));
+        array_walk($this->aArgs, [&$this, '__argumentDecode']);
     }
 
     /**
@@ -326,7 +326,7 @@ class Argument
                 throw new \Jaxon\Exception\Error($this->trans('errors.request.conversion'));
             }
 
-            $mFunction = array(&$this, '__argumentDecodeUTF8_' . $sFunction);
+            $mFunction = [&$this, '__argumentDecodeUTF8_' . $sFunction];
             array_walk($this->aArgs, $mFunction);
             $this->setOption('core.decode_utf8', false);
         }

@@ -28,13 +28,13 @@ class Json
         $sConfigFile = realpath($sConfigFile);
         if(!is_readable($sConfigFile))
         {
-            throw new \Jaxon\Config\Exception\File(jaxon_trans('config.errors.file.access', array('path' => $sConfigFile)));
+            throw new \Jaxon\Config\Exception\File(jaxon_trans('config.errors.file.access', ['path' => $sConfigFile]));
         }
         $sFileContent = file_get_contents($sConfigFile);
         $aConfigOptions = json_decode($sFileContent, true);
         if(!is_array($aConfigOptions))
         {
-            throw new \Jaxon\Config\Exception\File(jaxon_trans('config.errors.file.content', array('path' => $sConfigFile)));
+            throw new \Jaxon\Config\Exception\File(jaxon_trans('config.errors.file.content', ['path' => $sConfigFile]));
         }
 
         return $aConfigOptions;

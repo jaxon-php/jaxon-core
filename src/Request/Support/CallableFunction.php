@@ -121,12 +121,12 @@ class CallableFunction
         $sPrefix = $this->getOption('core.prefix.function');
         $sJsFunction = $this->getName();
 
-        return $this->render('jaxon::support/function.js', array(
+        return $this->render('jaxon::support/function.js', [
             'sPrefix' => $sPrefix,
             'sAlias' => $sJsFunction,
             'sFunction' => $sJsFunction, // sAlias is the same as sFunction
             'aConfig' => $this->aConfiguration,
-        ));
+        ]);
     }
 
     /**
