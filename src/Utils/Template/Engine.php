@@ -16,11 +16,21 @@ namespace Jaxon\Utils\Template;
 
 class Engine implements \Jaxon\Contracts\Template\Renderer
 {
+    /**
+     * The namespaces
+     *
+     * @var array   $aNamespaces
+     */
     protected $aNamespaces;
 
+    /**
+     * The constructor
+     *
+     * @param   string      $sTemplateDir       The template directory
+     */
     public function __construct($sTemplateDir)
     {
-        $sTemplateDir = rtrim(trim($sTemplateDir), "/\\");
+        $sTemplateDir = rtrim(trim($sTemplateDir), '/\\');
         $this->aNamespaces = [
             'jaxon' => [
                 'directory' => $sTemplateDir . DIRECTORY_SEPARATOR,
@@ -66,18 +76,6 @@ class Engine implements \Jaxon\Contracts\Template\Renderer
     public function pagination($sDirectory)
     {
         $this->addNamespace('pagination', $sDirectory, '.php');
-    }
-
-    /**
-     * Set a cache directory for the template engine
-     *
-     * @param string        $sCacheDir            The cache directory
-     *
-     * @return void
-     */
-    public function cache($sCacheDir)
-    {
-        // Nothing to do
     }
 
     /**

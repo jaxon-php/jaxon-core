@@ -86,7 +86,7 @@ class CallableDir extends RequestPlugin
             throw new \Jaxon\Exception\Error($this->trans('errors.objects.invalid-declaration'));
         }
 
-        $sDirectory = rtrim(trim($sDirectory), DIRECTORY_SEPARATOR);
+        $sDirectory = rtrim(trim($sDirectory), '/\\');
         if(!is_dir($sDirectory))
         {
             return false;

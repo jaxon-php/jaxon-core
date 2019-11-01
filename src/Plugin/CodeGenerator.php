@@ -79,20 +79,6 @@ class CodeGenerator
     {
         $this->xPluginManager = $xPluginManager;
         $this->xTemplate = $xTemplate;
-        $this->setTemplateCacheDir();
-    }
-
-    /**
-     * Set the cache directory for the template engine
-     *
-     * @return void
-     */
-    private function setTemplateCacheDir()
-    {
-        if($this->hasOption('core.template.cache_dir'))
-        {
-            $this->xTemplate->cache($this->getOption('core.template.cache_dir'));
-        }
     }
 
     /**

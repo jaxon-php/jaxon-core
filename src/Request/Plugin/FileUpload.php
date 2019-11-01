@@ -112,7 +112,7 @@ class FileUpload extends RequestPlugin
         // Default upload dir
         $sDefaultUploadDir = $this->getOption('upload.default.dir');
         $sUploadDir = $this->getOption('upload.files.' . $sFieldId . '.dir', $sDefaultUploadDir);
-        $sUploadDir = rtrim(trim($sUploadDir), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+        $sUploadDir = rtrim(trim($sUploadDir), '/\\') . DIRECTORY_SEPARATOR;
         // Verify that the upload dir exists and is writable
         if(!is_writable($sUploadDir))
         {
@@ -135,7 +135,7 @@ class FileUpload extends RequestPlugin
     {
         // Default upload dir
         $sUploadDir = $this->getOption('upload.default.dir');
-        $sUploadDir = rtrim(trim($sUploadDir), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+        $sUploadDir = rtrim(trim($sUploadDir), '/\\') . DIRECTORY_SEPARATOR;
         // Verify that the upload dir exists and is writable
         if(!is_writable($sUploadDir))
         {
@@ -157,7 +157,7 @@ class FileUpload extends RequestPlugin
     protected function getUploadTempFile()
     {
         $sUploadDir = $this->getOption('upload.default.dir');
-        $sUploadDir = rtrim(trim($sUploadDir), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+        $sUploadDir = rtrim(trim($sUploadDir), '/\\') . DIRECTORY_SEPARATOR;
         $sUploadDir .= 'tmp' . DIRECTORY_SEPARATOR;
         $sUploadTempFile = $sUploadDir . $this->sTempFile . '.json';
         if(!is_readable($sUploadTempFile))
