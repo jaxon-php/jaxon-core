@@ -16,10 +16,12 @@ use Jaxon\Jaxon;
 use Jaxon\Plugin\Request as RequestPlugin;
 use Jaxon\Request\Support\UploadedFile;
 
+use Exception;
 use Closure;
 
 class FileUpload extends RequestPlugin
 {
+    use \Jaxon\Features\Config;
     use \Jaxon\Features\Validator;
     use \Jaxon\Features\Translator;
 
@@ -320,13 +322,67 @@ class FileUpload extends RequestPlugin
     }
 
     /**
+     * Filter uploaded file name
+     *
+     * @param Closure       $fFileFilter            The closure which filters filenames
+     *
+     * @return void
+     */
+    public function filter(Closure $fFileFilter)
+    {
+        $this->setFileFilter($fFileFilter);
+    }
+
+    /**
      * Get the uploaded files
      *
      * @return array
      */
-    public function getUploadedFiles()
+    public function files()
     {
         return $this->aUserFiles;
+    }
+
+    /**
+     * Check if uploaded files are available
+     *
+     * @return boolean
+     */
+    public function hasFiles()
+    {
+        return (count($_FILES) > 0 || ($this->sTempFile));
+    }
+
+    /**
+     * Check uploaded files validity and move them to the user dir
+     *
+     * @return boolean
+     */
+    public function saveFiles()
+    {
+        try
+        {
+            if(!$this->hasFiles())
+            {
+                throw new Exception($this->trans('errors.upload.request'));
+            }
+            // Save upload data in a temp file
+            $this->saveToTempFile();
+            $sResponse = '{"code": "success", "upl": "' . $this->sTempFile . '"}';
+            $return = true;
+        }
+        catch(Exception $e)
+        {
+            $sResponse = '{"code": "error", "msg": "' . addslashes($e->getMessage()) . '"}';
+            $return = false;
+        }
+        // Send the response back to the browser
+        echo '<script>var res = ', $sResponse, '; </script>';
+        if(($this->getOption('core.process.exit')))
+        {
+            exit();
+        }
+        return $return;
     }
 
     /**
@@ -356,7 +412,7 @@ class FileUpload extends RequestPlugin
      */
     public function canProcessRequest()
     {
-        return (count($_FILES) > 0 || ($this->sTempFile));
+        return $this->hasFiles();
     }
 
     /**
@@ -379,22 +435,5 @@ class FileUpload extends RequestPlugin
             $this->readFromTempFile();
         }
         return true;
-    }
-
-    /**
-     * Check uploaded files validity and move them to the user dir
-     *
-     * @return boolean
-     */
-    public function saveUploadedFiles()
-    {
-        // Process uploaded files
-        if(!$this->processRequest())
-        {
-            return '';
-        }
-        // Save upload data in a temp file
-        $this->saveToTempFile();
-        return $this->sTempFile;
     }
 }

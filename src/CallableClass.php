@@ -101,6 +101,6 @@ class CallableClass
      */
     public function files()
     {
-        return jaxon()->getUploadedFiles();
+        return jaxon()->upload()->files();
     }
 }

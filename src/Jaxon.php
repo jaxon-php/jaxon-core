@@ -34,7 +34,6 @@ class Jaxon
 {
     use Features\Config;
     use Features\Translator;
-    use Features\Upload;
     use Features\Template;
 
     /**
@@ -385,6 +384,16 @@ class Jaxon
     public function plugin($sName)
     {
         return $this->di()->getPluginManager()->getResponsePlugin($sName);
+    }
+
+    /**
+     * Get the upload plugin
+     *
+     * @return \Jaxon\Request\Plugin\FileUpload
+     */
+    public function upload()
+    {
+        return $this->di()->getPluginManager()->getRequestPlugin(self::FILE_UPLOAD);
     }
 
     /**
