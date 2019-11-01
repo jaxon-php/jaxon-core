@@ -91,7 +91,7 @@ class CodeGenerator
     {
         if($this->hasOption('core.template.cache_dir'))
         {
-            jaxon()->template()->cache($this->getOption('core.template.cache_dir'));
+            $this->xTemplate->cache($this->getOption('core.template.cache_dir'));
         }
     }
 
@@ -355,8 +355,7 @@ class CodeGenerator
             $sExtension = $this->getJsLibExt();
 
             // Check if the final file already exists
-            if(($this->getOption('js.app.export')) && ($sFinalFile) &&
-                is_file($sJsAppDir . $sFinalFile . $sExtension))
+            if(($sFinalFile) && is_file($sJsAppDir . $sFinalFile . $sExtension))
             {
                 $sOutFile = $sFinalFile . $sExtension;
             }
