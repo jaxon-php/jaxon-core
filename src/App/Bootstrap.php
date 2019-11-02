@@ -143,7 +143,7 @@ class Bootstrap
      *
      * @return void
      */
-    public function bootstrap($bSendResponse = true)
+    public function run($bSendResponse = true)
     {
         $jaxon = jaxon();
         $di = $jaxon->di();
