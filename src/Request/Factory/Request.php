@@ -231,4 +231,33 @@ class Request extends JsCall
     {
         print $this->getScript();
     }
+
+    /**
+     * Make the pagination links for this request
+     *
+     * @param integer       $nCurrentPage           The current page
+     * @param integer       $nItemsPerPage          The number of items per page page
+     * @param integer       $nItemsTotal            The total number of items
+     *
+     * @return Paginator
+     */
+    public function pg($nCurrentPage, $nItemsPerPage, $nItemsTotal)
+    {
+        return jaxon()->di()->getPaginator()
+            ->setup($nItemsTotal, $nItemsPerPage, $nCurrentPage, $this);
+    }
+
+    /**
+     * Make the pagination links for this request
+     *
+     * @param integer       $nCurrentPage           The current page
+     * @param integer       $nItemsPerPage          The number of items per page page
+     * @param integer       $nItemsTotal            The total number of items
+     *
+     * @return Paginator
+     */
+    public function paginate($nCurrentPage, $nItemsPerPage, $nItemsTotal)
+    {
+        return $this->pg($nItemsTotal, $nItemsPerPage, $nCurrentPage);
+    }
 }

@@ -40,7 +40,7 @@ SOFTWARE.
 
 namespace Jaxon\Utils\Pagination;
 
-use Jaxon\Request\Request;
+use Jaxon\Request\Factory\Request;
 use Jaxon\Request\Factory\Parameter;
 
 class Paginator
@@ -148,7 +148,7 @@ class Paginator
     }
 
     /**
-     * @param \Jaxon\Request\Request $request
+     * @param Request $request
      */
     public function setRequest($request)
     {
@@ -172,7 +172,7 @@ class Paginator
      * @param int $totalItems
      * @param int $itemsPerPage
      * @param int $currentPage
-     * @param \Jaxon\Request\Request $request
+     * @param Request $request
      *
      * @return Paginator
      */
