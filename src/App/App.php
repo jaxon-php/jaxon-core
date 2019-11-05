@@ -55,24 +55,4 @@ class App
             // ->js(!$isDebug, $sJsUrl, $sJsDir, !$isDebug)
             ->run(true);
     }
-
-    /**
-     * Get the view renderer
-     *
-     * @return Jaxon\Utils\View\Facade
-     */
-    public function view()
-    {
-        return jaxon()->di()->getViewRenderer();
-    }
-
-    /**
-     * Get the session manager
-     *
-     * @return Jaxon\Contracts\Session
-     */
-    public function session()
-    {
-        return jaxon()->di()->getSessionManager();
-    }
 }
