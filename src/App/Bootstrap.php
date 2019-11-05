@@ -164,7 +164,7 @@ class Bootstrap
         $view->addNamespace('pagination', '', '', 'jaxon');
 
         // Set the the view facade as template renderer
-        $di->alias(TemplateRenderer::class, ViewFacade::class);
+        $di->alias(TemplateRenderer::class, ViewRenderer::class);
         // Setup the lib config options.
         $di->getConfig()->setOptions($this->aLibOptions);
 

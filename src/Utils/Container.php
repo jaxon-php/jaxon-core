@@ -37,7 +37,7 @@ use Jaxon\Plugin\CodeGenerator;
 
 use Jaxon\App\Bootstrap;
 use Jaxon\Utils\View\Manager as ViewManager;
-use Jaxon\Utils\View\Facade as ViewFacade;
+use Jaxon\Utils\View\Renderer as ViewRenderer;
 use Jaxon\Utils\View\Renderer;
 use Jaxon\Utils\Dialogs\Dialog;
 use Jaxon\Utils\Template\Minifier;
@@ -193,9 +193,9 @@ class Container
         $this->libContainer[ViewManager::class] = function () {
             return new ViewManager();
         };
-        // View Renderer Facade
-        $this->libContainer[ViewFacade::class] = function ($c) {
-            return new ViewFacade($c[ViewManager::class]);
+        // View Renderer
+        $this->libContainer[ViewRenderer::class] = function ($c) {
+            return new ViewRenderer($c[ViewManager::class]);
         };
 
         /*
@@ -503,11 +503,11 @@ class Container
     /**
      * Get the view facade
      *
-     * @return ViewFacade
+     * @return ViewRenderer
      */
     public function getViewRenderer()
     {
-        return $this->libContainer[ViewFacade::class];
+        return $this->libContainer[ViewRenderer::class];
     }
 
     /**

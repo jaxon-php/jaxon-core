@@ -2,7 +2,7 @@
 
 namespace Jaxon\Utils\View;
 
-class Facade implements \Jaxon\Contracts\Template\Renderer
+class Renderer implements \Jaxon\Contracts\Template\Renderer
 {
     /**
      * The view data store
@@ -24,13 +24,6 @@ class Facade implements \Jaxon\Contracts\Template\Renderer
      * @var Manager
      */
     protected $xManager;
-
-    /**
-     * The default view namespace
-     *
-     * @var string
-     */
-    protected $sNamespace;
 
     /**
      * The constructor
@@ -60,7 +53,7 @@ class Facade implements \Jaxon\Contracts\Template\Renderer
      * @param string        $name            The data name
      * @param string        $value           The data value
      *
-     * @return Facade
+     * @return Renderer
      */
     public function set($name, $value)
     {
@@ -74,7 +67,7 @@ class Facade implements \Jaxon\Contracts\Template\Renderer
      * @param string        $name            The data name
      * @param string        $value           The data value
      *
-     * @return Facade
+     * @return Renderer
      */
     public function share($name, $value)
     {

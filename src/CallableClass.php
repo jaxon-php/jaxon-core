@@ -14,7 +14,7 @@ class CallableClass
     /**
      * Get the view renderer
      *
-     * @return \Jaxon\Utils\View\Facade
+     * @return \Jaxon\Utils\View\Renderer
      */
     public function view()
     {

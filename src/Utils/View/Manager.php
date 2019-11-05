@@ -129,7 +129,7 @@ class Manager
         if(!$sId)
         {
             // Return the view renderer facade
-            return jaxon()->di()->get(\Jaxon\Utils\View\Facade::class);
+            return jaxon()->di()->get(\Jaxon\Utils\View\Renderer::class);
         }
         // Return the view renderer with the given id
         return jaxon()->di()->get('jaxon.app.view.' . $sId);
