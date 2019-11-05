@@ -48,7 +48,7 @@ class Renderer
     {
         if(!($sCall = $xPaginator->getPrevCall()))
         {
-            return '';
+            return $this->xRenderer->render('pagination::links/disabled', ['text' => $xPaginator->getPreviousText()]);
         }
         return $this->xRenderer->render('pagination::links/prev',
             ['call' => $sCall, 'text' => $xPaginator->getPreviousText()]);
@@ -65,7 +65,7 @@ class Renderer
     {
         if(!($sCall = $xPaginator->getNextCall()))
         {
-            return '';
+            return $this->xRenderer->render('pagination::links/disabled', ['text' => $xPaginator->getNextText()]);
         }
         return $this->xRenderer->render('pagination::links/next',
             ['call' => $sCall, 'text' => $xPaginator->getNextText()]);

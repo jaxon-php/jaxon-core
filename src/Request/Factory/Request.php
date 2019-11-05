@@ -258,6 +258,6 @@ class Request extends JsCall
      */
     public function paginate($nCurrentPage, $nItemsPerPage, $nItemsTotal)
     {
-        return $this->pg($nItemsTotal, $nItemsPerPage, $nCurrentPage);
+        return $this->pg($nCurrentPage, $nItemsPerPage, $nItemsTotal);
     }
 }
