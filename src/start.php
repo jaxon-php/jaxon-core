@@ -56,7 +56,7 @@ function jaxon_register_plugin(\Jaxon\Plugin\Plugin $xPlugin, $nPriority = 1000)
 /**
  * Get the single instance of the request factory, and set the class to call.
  *
- * @return Jaxon\Request\Factory
+ * @return Jaxon\Request\Factory\RequestFactory
  */
 function rq($sClassName = null)
 {
@@ -64,15 +64,13 @@ function rq($sClassName = null)
 }
 
 /**
- * Get the single instance of the request factory
+ * Get the single instance of the parameter factory
  *
- * Since no class is set, this function shall be used when setting request parameters.
- *
- * @return Jaxon\Request\Factory
+ * @return Jaxon\Request\Factory\ParameterFactory
  */
 function pr()
 {
-    return Jaxon::getInstance()->di()->getRequestFactory();
+    return Jaxon::getInstance()->di()->getParameterFactory();
 }
 
 /**

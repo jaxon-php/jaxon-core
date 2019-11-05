@@ -24,17 +24,6 @@ trait Factory
     public function call()
     {
         // Make the request
-        return call_user_func_array([rq(get_class()), 'call'], func_get_args());
-    }
-
-    /**
-     * Make the pagination links for a registered Jaxon class method
-     *
-     * @return string the pagination links
-     */
-    public function paginate()
-    {
-        // Make the request
-        return call_user_func_array([rq(get_class()), 'paginate'], func_get_args());
+        return call_user_func_array([rq(get_class($this)), 'call'], func_get_args());
     }
 }

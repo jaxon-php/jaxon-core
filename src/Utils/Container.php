@@ -26,7 +26,8 @@ use Jaxon\Request\Plugin\CallableDir;
 use Jaxon\Request\Plugin\CallableFunction;
 use Jaxon\Request\Plugin\FileUpload;
 use Jaxon\Request\Handler as RequestHandler;
-use Jaxon\Request\Factory as RequestFactory;
+use Jaxon\Request\Factory\RequestFactory;
+use Jaxon\Request\Factory\ParameterFactory;
 use Jaxon\Request\Factory\CallableClass\Request as CallableClassRequestFactory;
 use Jaxon\Request\Factory\CallableClass\Paginator as CallableClassPaginatorFactory;
 use Jaxon\Request\Support\CallableObject;
@@ -181,6 +182,10 @@ class Container
         $this->libContainer[RequestFactory::class] = function ($c) {
             return new RequestFactory($c[CallableRepository::class]);
         };
+        // Parameter Factory
+        $this->libContainer[ParameterFactory::class] = function () {
+            return new ParameterFactory();
+        };
         // Response Manager
         $this->libContainer[ResponseManager::class] = function () {
             return new ResponseManager();
@@ -315,6 +320,16 @@ class Container
     public function getRequestFactory()
     {
         return $this->libContainer[RequestFactory::class];
+    }
+
+    /**
+     * Get the parameter factory
+     *
+     * @return ParameterFactory
+     */
+    public function getParameterFactory()
+    {
+        return $this->libContainer[ParameterFactory::class];
     }
 
     /**
