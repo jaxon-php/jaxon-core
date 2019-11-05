@@ -16,6 +16,8 @@ use Jaxon\Config\Config;
 
 class Bootstrap
 {
+    use \Jaxon\Features\Event;
+
     /**
      * The library options
      *
@@ -151,7 +153,7 @@ class Bootstrap
         $view = $di->getViewManager();
 
         // Event before setting up the module
-        $app->triggerEvent('pre.setup');
+        $this->triggerEvent('pre.setup');
 
         // Add the view renderer
         $view->addRenderer('jaxon', function () {
@@ -167,7 +169,7 @@ class Bootstrap
         $di->getConfig()->setOptions($this->aLibOptions);
 
         // Event before the module has set the config
-        $app->triggerEvent('pre.config');
+        $this->triggerEvent('pre.config');
 
         // Get the app config options.
         $xAppConfig = $di->newConfig($this->aAppOptions);
@@ -176,7 +178,7 @@ class Bootstrap
         $this->setupApp($xAppConfig);
 
         // Event after the module has read the config
-        $app->triggerEvent('post.config');
+        $this->triggerEvent('post.config');
 
         // Use the Composer autoloader. It's important to call this before triggers and callbacks.
         // $jaxon->useComposerAutoloader();
@@ -207,6 +209,6 @@ class Bootstrap
         $jaxon->setOption('core.response.send', $bSendResponse);
 
         // Event after setting up the module
-        $app->triggerEvent('post.setup');
+        $this->triggerEvent('post.setup');
     }
 }

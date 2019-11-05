@@ -17,7 +17,6 @@ use Exception;
 
 class App
 {
-    use \Jaxon\Features\Event;
     use \Jaxon\Features\App;
 
     /**
@@ -49,12 +48,12 @@ class App
             return new SessionManager();
         });
 
-        $this->jaxon()
+        $this->bootstrap()
             ->lib($aLibOptions)
             ->app($aAppOptions)
             // ->uri($sUri)
             // ->js(!$isDebug, $sJsUrl, $sJsDir, !$isDebug)
-            ->bootstrap(true);
+            ->run(true);
     }
 
     /**
