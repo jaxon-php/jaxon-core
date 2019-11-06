@@ -27,7 +27,7 @@ namespace Jaxon;
 
 use Jaxon\Config\Reader as ConfigReader;
 use Jaxon\Plugin\Plugin;
-use Jaxon\Utils\Container;
+use Jaxon\Utils\DI\Container;
 
 class Jaxon
 {
