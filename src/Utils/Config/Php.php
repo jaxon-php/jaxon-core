@@ -1,9 +1,9 @@
 <?php
 
 /**
- * Yaml.php - Jaxon config reader
+ * Php.php - Jaxon config reader
  *
- * Read the config data from a YAML formatted config file.
+ * Read the config data from a PHP config file.
  *
  * @package jaxon-core
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
@@ -12,12 +12,12 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Config;
+namespace Jaxon\Utils\Config;
 
-class Yaml
+class Php
 {
     /**
-     * Read options from a YAML formatted config file
+     * Read options from a PHP config file
      *
      * @param string        $sConfigFile        The full path to the config file
      *
@@ -26,18 +26,14 @@ class Yaml
     public static function read($sConfigFile)
     {
         $sConfigFile = realpath($sConfigFile);
-        if(!extension_loaded('yaml'))
-        {
-            throw new \Jaxon\Config\Exception\Yaml(jaxon_trans('config.errors.yaml.install'));
-        }
         if(!is_readable($sConfigFile))
         {
-            throw new \Jaxon\Config\Exception\File(jaxon_trans('config.errors.file.access', ['path' => $sConfigFile]));
+            throw new \Jaxon\Utils\Config\Exception\File(jaxon_trans('config.errors.file.access', ['path' => $sConfigFile]));
         }
-        $aConfigOptions = yaml_parse_file($sConfigFile);
+        $aConfigOptions = include($sConfigFile);
         if(!is_array($aConfigOptions))
         {
-            throw new \Jaxon\Config\Exception\File(jaxon_trans('config.errors.file.content', ['path' => $sConfigFile]));
+            throw new \Jaxon\Utils\Config\Exception\File(jaxon_trans('config.errors.file.content', ['path' => $sConfigFile]));
         }
 
         return $aConfigOptions;

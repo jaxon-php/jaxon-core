@@ -33,7 +33,7 @@ class Validator
     /**
      * The config manager
      *
-     * @var \Jaxon\Config\Config
+     * @var \Jaxon\Utils\Config\Config
      */
     protected $xConfig;
 

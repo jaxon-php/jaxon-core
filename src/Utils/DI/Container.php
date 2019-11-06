@@ -14,12 +14,7 @@
 
 namespace Jaxon\Utils\DI;
 
-use Lemon\Event\EventDispatcher;
-
-use Jaxon\App\App;
 use Jaxon\Response\Response;
-use Jaxon\Config\Config;
-use Jaxon\Config\Reader as ConfigReader;
 use Jaxon\Request\Support\CallableRepository;
 use Jaxon\Request\Plugin\CallableClass;
 use Jaxon\Request\Plugin\CallableDir;
@@ -35,8 +30,15 @@ use Jaxon\Response\Manager as ResponseManager;
 use Jaxon\Response\Plugin\JQuery as JQueryPlugin;
 use Jaxon\Plugin\Manager as PluginManager;
 use Jaxon\Plugin\CodeGenerator;
+use Jaxon\Contracts\Template\Renderer as TemplateRenderer;
+use Jaxon\Contracts\Session as SessionContract;
+use Jaxon\Contracts\Container as ContainerContract;
 
+use Jaxon\App\App;
 use Jaxon\App\Bootstrap;
+
+use Jaxon\Utils\Config\Config;
+use Jaxon\Utils\Config\Reader as ConfigReader;
 use Jaxon\Utils\View\Manager as ViewManager;
 use Jaxon\Utils\View\Renderer as ViewRenderer;
 use Jaxon\Utils\View\Renderer;
@@ -47,9 +49,8 @@ use Jaxon\Utils\Pagination\Paginator;
 use Jaxon\Utils\Pagination\Renderer as PaginationRenderer;
 use Jaxon\Utils\Validation\Validator;
 use Jaxon\Utils\Translation\Translator;
-use Jaxon\Contracts\Template\Renderer as TemplateRenderer;
-use Jaxon\Contracts\Session as SessionContract;
-use Jaxon\Contracts\Container as ContainerContract;
+
+use Lemon\Event\EventDispatcher;
 
 class Container
 {

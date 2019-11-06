@@ -23,13 +23,13 @@ namespace Jaxon\Plugin;
 
 use Jaxon\Jaxon;
 use Jaxon\Plugin\Package;
-use Jaxon\Config\Config;
 use Jaxon\Request\Support\CallableRepository;
 use Jaxon\Request\Plugin\CallableClass;
 use Jaxon\Request\Plugin\CallableDir;
 use Jaxon\Request\Plugin\CallableFunction;
 use Jaxon\Request\Plugin\FileUpload;
 use Jaxon\Response\Plugin\JQuery as JQueryPlugin;
+use Jaxon\Utils\Config\Config;
 
 use Closure;
 

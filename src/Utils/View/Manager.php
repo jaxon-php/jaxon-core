@@ -2,7 +2,7 @@
 
 namespace Jaxon\Utils\View;
 
-use Jaxon\Config\Config;
+use Jaxon\Utils\Config\Config;
 
 use stdClass;
 use Exception;

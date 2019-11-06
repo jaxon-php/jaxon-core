@@ -12,7 +12,7 @@
 
 namespace Jaxon\App;
 
-use Jaxon\Config\Config;
+use Jaxon\Utils\Config\Config;
 
 class Bootstrap
 {

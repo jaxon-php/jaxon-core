@@ -12,7 +12,7 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Config;
+namespace Jaxon\Utils\Config;
 
 class Config
 {
@@ -68,7 +68,7 @@ class Config
         // Check the max depth
         if($nDepth < 0 || $nDepth > 9)
         {
-            throw new \Jaxon\Config\Exception\Data(jaxon_trans('config.errors.data.depth',
+            throw new \Jaxon\Utils\Config\Exception\Data(jaxon_trans('config.errors.data.depth',
                 ['key' => $sPrefix, 'depth' => $nDepth]));
         }
         foreach($aOptions as $sName => $xOption)

@@ -10,7 +10,7 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Config;
+namespace Jaxon\Utils\Config;
 
 class Reader
 {
@@ -38,7 +38,7 @@ class Reader
             break;
         default:
             $sErrorMsg = jaxon_trans('config.errors.file.extension', ['path' => $sConfigFile]);
-            throw new \Jaxon\Config\Exception\File($sErrorMsg);
+            throw new \Jaxon\Utils\Config\Exception\File($sErrorMsg);
         }
         return $aConfigOptions;
     }
