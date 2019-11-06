@@ -15,6 +15,7 @@
 namespace Jaxon\Plugin;
 
 use Jaxon\Utils\Template\Engine as TemplateEngine;
+use Jaxon\Request\URI;
 
 class CodeGenerator
 {
@@ -320,6 +321,11 @@ class CodeGenerator
      */
     public function getScript($bIncludeJs = false, $bIncludeCss = false)
     {
+        if(!$this->getOption('core.request.uri'))
+        {
+            $this->setOption('core.request.uri', URI::detect());
+        }
+
         // Set the template engine cache dir
         $this->makePluginsCode();
 

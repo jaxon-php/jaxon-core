@@ -27,14 +27,11 @@ namespace Jaxon;
 
 use Jaxon\Config\Reader as ConfigReader;
 use Jaxon\Plugin\Plugin;
-use Jaxon\Request\URI;
 use Jaxon\Utils\Container;
 
 class Jaxon
 {
     use Features\Config;
-    use Features\Translator;
-    use Features\Template;
 
     /**
      * Package version number
@@ -127,7 +124,7 @@ class Jaxon
     /**
      * Get the config reader
      *
-     * @return \Jaxon\Config\Reader
+     * @return ConfigReader
      */
     public function config()
     {
@@ -302,10 +299,6 @@ class Jaxon
      */
     public function getScript($bIncludeJs = false, $bIncludeCss = false)
     {
-        if(!$this->getOption('core.request.uri'))
-        {
-            $this->setOption('core.request.uri', URI::detect());
-        }
         return $this->di()->getCodeGenerator()->getScript($bIncludeJs, $bIncludeCss);
     }
 
