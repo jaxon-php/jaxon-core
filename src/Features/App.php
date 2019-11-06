@@ -117,7 +117,7 @@ trait App
      */
     public function view()
     {
-        return jaxon()->di()->getViewRenderer();
+        return jaxon()->view();
     }
 
     /**
@@ -127,6 +127,6 @@ trait App
      */
     public function session()
     {
-        return jaxon()->di()->getSessionManager();
+        return jaxon()->session();
     }
 }

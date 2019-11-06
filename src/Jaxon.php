@@ -428,4 +428,24 @@ class Jaxon
     {
         return $this->di()->getApp();
     }
+
+    /**
+     * Get the view renderer
+     *
+     * @return Jaxon\Utils\View\Renderer
+     */
+    public function view()
+    {
+        return $this->di()->getViewRenderer();
+    }
+
+    /**
+     * Get the session manager
+     *
+     * @return Jaxon\Contracts\Session
+     */
+    public function session()
+    {
+        return $this->di()->getSessionManager();
+    }
 }

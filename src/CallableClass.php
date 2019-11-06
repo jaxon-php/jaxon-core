@@ -18,7 +18,7 @@ class CallableClass
      */
     public function view()
     {
-        return jaxon()->di()->getViewRenderer();
+        return jaxon()->view();
     }
 
     /**
@@ -28,7 +28,7 @@ class CallableClass
      */
     public function session()
     {
-        return jaxon()->di()->getSessionManager();
+        return jaxon()->session();
     }
 
     /**
