@@ -15,7 +15,7 @@
 namespace Jaxon\Plugin;
 
 use Jaxon\Utils\Template\Engine as TemplateEngine;
-use Jaxon\Request\URI;
+use Jaxon\Utils\Http\URI;
 
 class CodeGenerator
 {

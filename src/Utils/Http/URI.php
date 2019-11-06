@@ -12,7 +12,7 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Request;
+namespace Jaxon\Utils\Http;
 
 class URI
 {
