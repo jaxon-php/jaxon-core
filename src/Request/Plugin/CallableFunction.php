@@ -23,6 +23,7 @@ namespace Jaxon\Request\Plugin;
 
 use Jaxon\Jaxon;
 use Jaxon\Plugin\Request as RequestPlugin;
+use Jaxon\Request\Target;
 
 class CallableFunction extends RequestPlugin
 {
@@ -43,6 +44,9 @@ class CallableFunction extends RequestPlugin
      */
     protected $sRequestedFunction = null;
 
+    /**
+     * The constructor
+     */
     public function __construct()
     {
         if(isset($_GET['jxnfun']))
@@ -66,13 +70,17 @@ class CallableFunction extends RequestPlugin
     }
 
     /**
-     * Return the name of target function
+     * Return the target function
      *
-     * @return string
+     * @return Target|null
      */
     public function getTarget()
     {
-        return $this->sRequestedFunction;
+        if(!$this->sRequestedFunction)
+        {
+            return null;
+        }
+        return Target::makeFunction($this->sRequestedFunction);
     }
 
     /**

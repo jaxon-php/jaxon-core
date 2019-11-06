@@ -26,6 +26,8 @@
 
 namespace Jaxon\Plugin;
 
+use Jaxon\Request\Target;
+
 abstract class Request extends Plugin
 {
     /**
@@ -57,13 +59,13 @@ abstract class Request extends Plugin
     }
 
     /**
-     * Return the name of target function
+     * Return the target function or class and method
      *
-     * @return string
+     * @return Target|null
      */
     public function getTarget()
     {
-        return '';
+        return null;
     }
 
     /**

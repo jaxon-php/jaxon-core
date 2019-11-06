@@ -25,6 +25,7 @@ use Jaxon\Jaxon;
 use Jaxon\CallableClass as UserCallableClass;
 use Jaxon\Plugin\Request as RequestPlugin;
 use Jaxon\Request\Support\CallableRepository;
+use Jaxon\Request\Target;
 
 class CallableClass extends RequestPlugin
 {
@@ -92,13 +93,17 @@ class CallableClass extends RequestPlugin
     }
 
     /**
-     * Return the name of target function
+     * Return the target class and method
      *
-     * @return string
+     * @return Target|null
      */
     public function getTarget()
     {
-        return ['class' => $this->sRequestedClass, 'method' => $this->sRequestedMethod];
+        if(!$this->sRequestedClass || !$this->sRequestedMethod)
+        {
+            return null;
+        }
+        return Target::makeClass($this->sRequestedClass, $this->sRequestedMethod);
     }
 
     /**

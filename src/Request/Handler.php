@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Manager.php - Jaxon Request Manager
+ * Handler.php - Jaxon Request Handler
  *
  * This class processes the input arguments from the GET or POST data of the request.
  * If this is a request for the initial page load, no arguments will be processed.
