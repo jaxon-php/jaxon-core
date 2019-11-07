@@ -209,6 +209,38 @@ class Manager
     }
 
     /**
+     * Register callable from a section of the config
+     *
+     * @param Config        $xAppConfig        The config options
+     * @param string        $sSection          The config section name
+     * @param string        $sCallableType     The type of callable to register
+     *
+     * @return void
+     */
+    private function registerCallablesFromConfig($xAppConfig, $sSection, $sCallableType)
+    {
+        $aConfig = $xAppConfig->getOption($sSection, []);
+        foreach($aConfig as $xKey => $xValue)
+        {
+            if(is_integer($xKey) && is_string($xValue))
+            {
+                // Register a function without options
+                $this->registerCallable($sCallableType, $xValue);
+            }
+            elseif(is_string($xKey) && (is_array($xValue) || is_string($xValue)))
+            {
+                // Register a function with options
+                $this->registerCallable($sCallableType, $xKey, $xValue);
+            }
+            else
+            {
+                continue;
+                // Todo: throw an exception
+            }
+        }
+    }
+
+    /**
      * Read and set Jaxon options from a JSON config file
      *
      * @param Config        $xAppConfig        The config options
@@ -217,79 +249,14 @@ class Manager
      */
     public function registerFromConfig($xAppConfig)
     {
-        // Register user functions
-        $aFunctionsConfig = $xAppConfig->getOption('functions', []);
-        foreach($aFunctionsConfig as $xKey => $xValue)
-        {
-            if(is_integer($xKey) && is_string($xValue))
-            {
-                // Register a function without options
-                $this->registerCallable(Jaxon::CALLABLE_FUNCTION, $xValue);
-            }
-            elseif(is_string($xKey) && (is_array($xValue) || is_string($xValue)))
-            {
-                // Register a function with options
-                $this->registerCallable(Jaxon::CALLABLE_FUNCTION, $xKey, $xValue);
-            }
-            else
-            {
-                continue;
-                // Todo: throw an exception
-            }
-        }
+        // Register functions
+        $this->registerCallablesFromConfig($xAppConfig, 'functions', Jaxon::CALLABLE_FUNCTION);
 
-        // Register classes and directories
-        $aClassesConfig = $xAppConfig->getOption('classes', []);
-        foreach($aClassesConfig as $xKey => $xValue)
-        {
-            if(is_integer($xKey) && is_string($xValue))
-            {
-                // Register a class without options
-                $this->registerCallable(Jaxon::CALLABLE_CLASS, $xValue);
-            }
-            elseif(is_string($xKey) && (is_array($xValue) || is_string($xValue)))
-            {
-                // Register a class with options
-                $this->registerCallable(Jaxon::CALLABLE_CLASS, $xKey, $xValue);
-            }
-            elseif(is_integer($xKey) && is_array($xValue))
-            {
-                // The directory path is required
-                if(!key_exists('directory', $xValue))
-                {
-                    continue;
-                    // Todo: throw an exception
-                }
-                // Registering a directory
-                $sDirectory = $xValue['directory'];
-                $aOptions = [];
-                if(key_exists('options', $xValue) &&
-                    (is_array($xValue['options']) || is_string($xValue['options'])))
-                {
-                    $aOptions = $xValue['options'];
-                }
-                // Setup directory options
-                if(key_exists('namespace', $xValue))
-                {
-                    $aOptions['namespace'] = $xValue['namespace'];
-                }
-                if(key_exists('separator', $xValue))
-                {
-                    $aOptions['separator'] = $xValue['separator'];
-                }
-                if(key_exists('autoload', $xValue))
-                {
-                    $aOptions['autoload'] = $xValue['autoload'];
-                }
-                // Register a class without options
-                $this->registerCallable(Jaxon::CALLABLE_DIR, $sDirectory, $aOptions);
-            }
-            else
-            {
-                continue;
-                // Todo: throw an exception
-            }
-        }
+        // Register classes
+        $this->registerCallablesFromConfig($xAppConfig, 'classes', Jaxon::CALLABLE_CLASS);
+
+        // Register directories
+        $this->registerCallablesFromConfig($xAppConfig, 'directories', Jaxon::CALLABLE_DIR);
     }
 
 
