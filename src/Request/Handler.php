@@ -3,9 +3,7 @@
 /**
  * Handler.php - Jaxon Request Handler
  *
- * This class processes the input arguments from the GET or POST data of the request.
- * If this is a request for the initial page load, no arguments will be processed.
- * During a jaxon request, any arguments found in the GET or POST will be converted to a PHP array.
+ * This class processes an incoming jaxon request.
  *
  * @package jaxon-core
  * @author Jared White

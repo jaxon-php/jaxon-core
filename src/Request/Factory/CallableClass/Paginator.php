@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Paginator.php - Jaxon Request Factory
+ * Paginator.php - Jaxon Pagination Factory
  *
  * Create pagination links to a given class.
  *

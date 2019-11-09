@@ -33,7 +33,7 @@ class CallableObject
      *
      * @var object
      */
-    private $registeredObject = null;
+    private $xRegisteredObject = null;
 
     /**
      * The reflection class of the user registered callable object
@@ -203,7 +203,7 @@ class CallableObject
      */
     public function getRegisteredObject()
     {
-        if($this->registeredObject == null)
+        if($this->xRegisteredObject == null)
         {
             $di = jaxon()->di();
             // Use the Reflection class to get the parameters of the constructor
@@ -216,20 +216,20 @@ class CallableObject
                     // Get the parameter instance from the DI
                     $parameterInstances[] = $di->get($parameter->getClass()->getName());
                 }
-                $this->registeredObject = $this->xReflectionClass->newInstanceArgs($parameterInstances);
+                $this->xRegisteredObject = $this->xReflectionClass->newInstanceArgs($parameterInstances);
             }
             else
             {
-                $this->registeredObject = $this->xReflectionClass->newInstance();
+                $this->xRegisteredObject = $this->xReflectionClass->newInstance();
             }
 
             // Initialize the object
-            if($this->registeredObject instanceof \Jaxon\CallableClass)
+            if($this->xRegisteredObject instanceof \Jaxon\CallableClass)
             {
-                $this->registeredObject->response = jaxon()->getResponse();
+                $this->xRegisteredObject->response = jaxon()->getResponse();
             }
         }
-        return $this->registeredObject;
+        return $this->xRegisteredObject;
     }
 
     /**
@@ -259,7 +259,7 @@ class CallableObject
             return;
         }
         $reflectionMethod = $this->xReflectionClass->getMethod($sMethod);
-        $registeredObject = $this->getRegisteredObject();
-        return $reflectionMethod->invokeArgs($registeredObject, $aArgs);
+        $xRegisteredObject = $this->getRegisteredObject();
+        return $reflectionMethod->invokeArgs($xRegisteredObject, $aArgs);
     }
 }

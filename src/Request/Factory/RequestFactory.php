@@ -72,8 +72,7 @@ class RequestFactory
             return $this;
         }
 
-        $this->sPrefix = $this->getOption('core.prefix.class') . $xCallable->getJsName() . '.';
-        return $this;
+        return $this->setCallable($xCallable);
     }
 
     /**

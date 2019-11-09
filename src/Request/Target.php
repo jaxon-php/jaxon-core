@@ -1,11 +1,9 @@
 <?php
 
 /**
- * Manager.php - Jaxon Request Manager
+ * Target.php - Jaxon Request Target
  *
- * This class processes the input arguments from the GET or POST data of the request.
- * If this is a request for the initial page load, no arguments will be processed.
- * During a jaxon request, any arguments found in the GET or POST will be converted to a PHP array.
+ * This class contains the name of the function or class and method targetted by a Jaxon request.
  *
  * @package jaxon-core
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
