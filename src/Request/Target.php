@@ -147,6 +147,6 @@ class Target
      */
     public function getMethodName()
     {
-        return $this->getMethodName;
+        return $this->sMethodName;
     }
 }
