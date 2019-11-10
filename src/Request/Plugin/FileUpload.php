@@ -354,38 +354,6 @@ class FileUpload extends RequestPlugin
     }
 
     /**
-     * Check uploaded files validity and move them to the user dir
-     *
-     * @return boolean
-     */
-    public function saveFiles()
-    {
-        try
-        {
-            if(!$this->hasFiles())
-            {
-                throw new Exception($this->trans('errors.upload.request'));
-            }
-            // Save upload data in a temp file
-            $this->saveToTempFile();
-            $sResponse = '{"code": "success", "upl": "' . $this->sTempFile . '"}';
-            $return = true;
-        }
-        catch(Exception $e)
-        {
-            $sResponse = '{"code": "error", "msg": "' . addslashes($e->getMessage()) . '"}';
-            $return = false;
-        }
-        // Send the response back to the browser
-        echo '<script>var res = ', $sResponse, '; </script>';
-        if(($this->getOption('core.process.exit')))
-        {
-            exit();
-        }
-        return $return;
-    }
-
-    /**
      * Generate a hash for the registered browser events
      *
      * @return string
@@ -435,5 +403,45 @@ class FileUpload extends RequestPlugin
             $this->readFromTempFile();
         }
         return true;
+    }
+
+    /**
+     * Check uploaded files validity and move them to the user dir
+     *
+     * @return array
+     */
+    public function saveFiles()
+    {
+        try
+        {
+            if(!$this->hasFiles())
+            {
+                throw new Exception($this->trans('errors.upload.request'));
+            }
+            // Save upload data in a temp file
+            $this->saveToTempFile();
+            return ["code" => "success", "upl" => $this->sTempFile];
+        }
+        catch(Exception $e)
+        {
+            return ["code" => "error", "msg" => $e->getMessage()];
+        }
+    }
+
+    /**
+     * Process HTTP upload
+     *
+     * @return boolean
+     */
+    public function processHttpRequest()
+    {
+        $sResponse = $this->saveFiles();
+        // Send the response back to the browser
+        echo '<script>var res = ', json_encode($sResponse), '; </script>';
+        if(($this->getOption('core.process.exit')))
+        {
+            exit();
+        }
+        return ($sResponse['code'] == 'success');
     }
 }
