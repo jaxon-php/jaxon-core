@@ -33,7 +33,9 @@
 
 namespace Jaxon\Response;
 
-class Response
+use Jaxon\Contracts\Response as ResponseContract;
+
+class Response implements ResponseContract
 {
     use \Jaxon\Features\Config;
     use \Jaxon\Features\Manager;
@@ -44,14 +46,14 @@ class Response
      *
      * @var string
      */
-    public $sContentType = 'application/json';
+    private $sContentType = 'application/json';
 
     /**
      * The commands that will be sent to the browser in the response
      *
      * @var array
      */
-    public $aCommands = [];
+    private $aCommands = [];
 
     /**
      * A string, array or integer value to be returned to the caller when using 'synchronous' mode requests.
