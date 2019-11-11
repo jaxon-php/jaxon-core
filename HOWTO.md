@@ -24,14 +24,14 @@ jaxon()->register(Jaxon::CALLABLE_DIR, '/full/path/to/dir', [
 **Register a function**
 
 ```php
-jaxon()->register(Jaxon::USER_FUNCTION, 'sayHello');
+jaxon()->register(Jaxon::CALLABLE_FUNCTION, 'sayHello');
 ```
 
 **Register a method as a function**
 
 ```php
 // The corresponding javascript function name is 'setColor'
-jaxon()->register(Jaxon::USER_FUNCTION, 'setColor', [
+jaxon()->register(Jaxon::CALLABLE_FUNCTION, 'setColor', [
     'class' => 'HelloWorld',
 ]);
 ```
@@ -40,7 +40,7 @@ jaxon()->register(Jaxon::USER_FUNCTION, 'setColor', [
 
 ```php
 // The corresponding javascript function name is 'helloWorld'
-jaxon()->register(Jaxon::USER_FUNCTION, 'sayHello', [
+jaxon()->register(Jaxon::CALLABLE_FUNCTION, 'sayHello', [
     'class' => 'HelloWorld',
     'alias' => 'helloWorld',
 ]);
