@@ -105,7 +105,7 @@ class Engine implements \Jaxon\Contracts\Template\Renderer
         // Check if the namespace is defined
         if(!key_exists($sNamespace, $this->aNamespaces))
         {
-            return false;
+            return '';
         }
         $aNamespace = $this->aNamespaces[$sNamespace];
         // Get the template path

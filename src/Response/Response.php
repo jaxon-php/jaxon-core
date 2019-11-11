@@ -154,7 +154,7 @@ class Response implements ResponseContract
      * @param array         $aAttributes        Associative array of attributes that will describe the command
      * @param mixed            $mData                The data to be associated with this command
      *
-     * @return \Jaxon\Plugin\Response
+     * @return \Jaxon\Contracts\Response
      */
     public function addCommand($aAttributes, $mData)
     {
@@ -225,12 +225,12 @@ class Response implements ResponseContract
      * Merge the response commands from the specified <Response> object with
      * the response commands in this <Response> object
      *
-     * @param Response        $mCommands            The <Response> object
-     * @param boolean        $bBefore            Add the new commands to the beginning of the list
+     * @param ResponseContract  $mCommands          The <Response> object
+     * @param boolean           $bBefore            Add the new commands to the beginning of the list
      *
      * @return void
      */
-    public function appendResponse($mCommands, $bBefore = false)
+    public function appendResponse(ResponseContract $mCommands, $bBefore = false)
     {
         $aCommands = [];
         if($mCommands instanceof Response)

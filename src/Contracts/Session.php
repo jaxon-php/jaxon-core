@@ -55,7 +55,7 @@ interface Session
      * @param string        $sKey                The session key
      * @param string        $xDefault            The default value
      *
-     * @return mixed|$xDefault             The data under the session key, or the $xDefault parameter
+     * @return mixed             The data under the session key, or the $xDefault parameter
      */
     public function get($sKey, $xDefault = null);
 

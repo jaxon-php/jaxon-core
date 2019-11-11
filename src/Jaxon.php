@@ -217,12 +217,12 @@ class Jaxon
      *        - Jaxon::CALLABLE_CLASS: a class who's methods are to be registered
      *        - Jaxon::CALLABLE_DIR: a directory containing classes to be registered
      *        - Jaxon::PROCESSING_EVENT:
-     * @param string        $sCallable| $sEvent
+     * @param string        $sCallable
      *        When registering a function, this is the name of the function
      *        When registering a callable class, this is the class name
      *        When registering a callable directory, this is the full path to the directory
      *        When registering an event, this is the event name
-     * @param array|string|Closure  $aOptions | $sIncludeFile | $sNamespace
+     * @param array|string  $xOptions
      *        When registering a function, this is an (optional) array
      *             of call options, or the (optional) include file
      *        When registering a callable class, this is an (optional) array
@@ -263,7 +263,7 @@ class Jaxon
     /**
      * Get an instance of a registered class
      *
-     * @param string        $sClass             The class name
+     * @param string        $sClassName         The class name
      *
      * @return mixed
      */
@@ -276,7 +276,7 @@ class Jaxon
     /**
      * Get a request to a registered class
      *
-     * @param string        $sClass             The class name
+     * @param string        $sClassName         The class name
      *
      * @return \Jaxon\Request\Factory\CallableClass\Request
      */

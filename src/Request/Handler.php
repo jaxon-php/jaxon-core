@@ -70,7 +70,7 @@ class Handler
     /**
      * The file upload request plugin
      *
-     * @var \Jaxon\Request\Plugin\Upload
+     * @var FileUpload
      */
     private $xUploadRequestPlugin = null;
 

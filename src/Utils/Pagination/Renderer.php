@@ -105,7 +105,6 @@ class Renderer
      */
     public function render(Paginator $xPaginator)
     {
-        $xPaginator = $xPaginator;
         return $this->xRenderer->render('pagination::wrapper', [
             'links' => $this->getLinks($xPaginator),
             'prev' => $this->getPrevLink($xPaginator),

@@ -5,11 +5,9 @@ namespace Jaxon\Features;
 trait App
 {
     /**
-     * Set the Jaxon application options.
+     * Get the Jaxon application bootstrapper.
      *
-     * @param Config        $xAppConfig        The config options
-     *
-     * @return void
+     * @return \Jaxon\App\Bootstrap
      */
     protected function bootstrap()
     {
@@ -29,7 +27,7 @@ trait App
     /**
      * Get an instance of a registered class
      *
-     * @param string        $sClass             The class name
+     * @param string        $sClassName         The class name
      *
      * @return mixed
      */

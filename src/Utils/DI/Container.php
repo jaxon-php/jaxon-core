@@ -51,6 +51,7 @@ use Jaxon\Utils\Validation\Validator;
 use Jaxon\Utils\Translation\Translator;
 
 use Lemon\Event\EventDispatcher;
+use Closure;
 
 class Container
 {
@@ -273,7 +274,7 @@ class Container
      *
      * @return void
      */
-    public function set($sClass, $xClosure)
+    public function set($sClass, Closure $xClosure)
     {
         $this->libContainer[$sClass] = $xClosure;
     }
@@ -543,7 +544,7 @@ class Container
      *
      * @return void
      */
-    public function setSessionManager($xClosure)
+    public function setSessionManager(Closure $xClosure)
     {
         $this->libContainer[SessionContract::class] = $xClosure;
     }

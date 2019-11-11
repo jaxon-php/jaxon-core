@@ -44,7 +44,18 @@ interface Response
      *
      * @param string        $sMessage            The message to be displayed
      *
-     * @return \Jaxon\Plugin\Response
+     * @return \Jaxon\Contracts\Response
      */
     public function debug($sMessage);
+
+    /**
+     * Merge the response commands from the specified <Response> object with
+     * the response commands in this <Response> object
+     *
+     * @param Response          $mCommands          The <Response> object
+     * @param boolean           $bBefore            Add the new commands to the beginning of the list
+     *
+     * @return void
+     */
+    public function appendResponse(Response $mCommands, $bBefore = false);
 }

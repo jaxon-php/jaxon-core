@@ -53,7 +53,7 @@ class App
             ->app($aAppOptions)
             // ->uri($sUri)
             // ->js(!$isDebug, $sJsUrl, $sJsDir, !$isDebug)
-            ->run(true);
+            ->run();
     }
 
     /**

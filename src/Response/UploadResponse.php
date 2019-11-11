@@ -70,11 +70,12 @@ class UploadResponse implements ResponseContract
      *
      * @param string        $sMessage            The message to be displayed
      *
-     * @return \Jaxon\Plugin\Response
+     * @return \Jaxon\Contracts\Response
      */
     public function debug($sMessage)
     {
         // Todo: send this message to the console log.
+        return $this;
     }
 
     /**
@@ -115,5 +116,19 @@ class UploadResponse implements ResponseContract
     public function printOutput()
     {
         print $this->getOutput();
+    }
+
+    /**
+     * Merge the response commands from the specified <Response> object with
+     * the response commands in this <Response> object
+     *
+     * @param ResponseContract  $mCommands          The <Response> object
+     * @param boolean           $bBefore            Add the new commands to the beginning of the list
+     *
+     * @return void
+     */
+    public function appendResponse(ResponseContract $mCommands, $bBefore = false)
+    {
+        // Nothing to do
     }
 }

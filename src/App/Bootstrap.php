@@ -147,7 +147,6 @@ class Bootstrap
     {
         $jaxon = jaxon();
         $di = $jaxon->di();
-        $app = $jaxon->app();
         $view = $di->getViewManager();
 
         // Event before setting up the module

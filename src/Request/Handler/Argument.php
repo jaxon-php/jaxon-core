@@ -25,6 +25,7 @@ namespace Jaxon\Request\Handler;
 class Argument
 {
     use \Jaxon\Features\Config;
+    use \Jaxon\Features\Translator;
 
     /*
      * Request methods
