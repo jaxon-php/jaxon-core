@@ -17,6 +17,16 @@ trait App
     }
 
     /**
+     * Get the Jaxon response.
+     *
+     * @return Response
+     */
+    public function ajaxResponse()
+    {
+        return jaxon()->getResponse();
+    }
+
+    /**
      * Get an instance of a registered class
      *
      * @param string        $sClass             The class name
