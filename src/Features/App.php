@@ -39,7 +39,7 @@ trait App
     /**
      * Get a request to a registered class
      *
-     * @param string        $sClass             The class name
+     * @param string        $sClassName         The class name
      *
      * @return \Jaxon\Request\Factory\CallableClass\Request
      */
