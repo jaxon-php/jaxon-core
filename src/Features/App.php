@@ -17,16 +17,6 @@ trait App
     }
 
     /**
-     * Get the Jaxon response.
-     *
-     * @return Response
-     */
-    public function ajaxResponse()
-    {
-        return jaxon()->getResponse();
-    }
-
-    /**
      * Get an instance of a registered class
      *
      * @param string        $sClass             The class name
@@ -71,14 +61,11 @@ trait App
     }
 
     /**
-     * Process an incoming Jaxon request.
+     * Process an incoming Jaxon request, and return the response.
      *
-     * @return void
+     * @return mixed
      */
-    public function processRequest()
-    {
-        return jaxon()->processRequest();
-    }
+    abstract public function processRequest();
 
     /**
      * Get the javascript code to be sent to the browser.

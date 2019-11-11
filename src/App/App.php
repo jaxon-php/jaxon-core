@@ -55,4 +55,14 @@ class App
             // ->js(!$isDebug, $sJsUrl, $sJsDir, !$isDebug)
             ->run(true);
     }
+
+    /**
+     * Process an incoming Jaxon request, and return the response.
+     *
+     * @return void
+     */
+    public function processRequest()
+    {
+        return jaxon()->processRequest();
+    }
 }

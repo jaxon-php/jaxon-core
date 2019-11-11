@@ -141,11 +141,9 @@ class Bootstrap
     /**
      * Wraps the module/package/bundle setup method.
      *
-     * @param boolean        $bSendResponse     Send back a response to the browser after processing the request
-     *
      * @return void
      */
-    public function run($bSendResponse = true)
+    public function run()
     {
         $jaxon = jaxon();
         $di = $jaxon->di();
@@ -204,9 +202,6 @@ class Bootstrap
         {
             $jaxon->setOption('core.request.uri', $this->sUri);
         }
-
-        // Whether to send back a response to the browser after processing the request.
-        $jaxon->setOption('core.response.send', $bSendResponse);
 
         // Event after setting up the module
         $this->triggerEvent('post.setup');
