@@ -177,7 +177,7 @@ class Container
         };
         // Request Handler
         $this->libContainer[RequestHandler::class] = function ($c) {
-            return new RequestHandler($c[PluginManager::class], $c[ResponseManager::class]);
+            return new RequestHandler($c[PluginManager::class], $c[ResponseManager::class], $c[FileUpload::class]);
         };
         // Request Factory
         $this->libContainer[RequestFactory::class] = function ($c) {

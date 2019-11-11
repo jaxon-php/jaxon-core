@@ -23,6 +23,7 @@ namespace Jaxon\Request;
 use Jaxon\Jaxon;
 use Jaxon\Plugin\Manager as PluginManager;
 use Jaxon\Response\Manager as ResponseManager;
+use Jaxon\Request\Plugin\FileUpload;
 
 use Exception;
 
@@ -46,13 +47,6 @@ class Handler
     private $xResponseManager;
 
     /**
-     * Processing event handlers that have been assigned during this run of the script
-     *
-     * @var array
-     */
-    private $aProcessingEvents = [];
-
-    /**
      * The arguments handler.
      *
      * @var Handler\Argument
@@ -71,7 +65,14 @@ class Handler
      *
      * @var \Jaxon\Plugin\Request
      */
-    private $xTargetRequestPlugin;
+    private $xTargetRequestPlugin = null;
+
+    /**
+     * The file upload request plugin
+     *
+     * @var \Jaxon\Request\Plugin\Upload
+     */
+    private $xUploadRequestPlugin = null;
 
     /**
      * The constructor
@@ -80,11 +81,14 @@ class Handler
      *
      * @param PluginManager         $xPluginManager
      * @param ResponseManager       $xResponseManager
+     * @param FileUpload            $xUploadRequestPlugin
      */
-    public function __construct(PluginManager $xPluginManager, ResponseManager $xResponseManager)
+    public function __construct(PluginManager $xPluginManager,
+        ResponseManager $xResponseManager, FileUpload $xUploadRequestPlugin)
     {
         $this->xPluginManager = $xPluginManager;
         $this->xResponseManager = $xResponseManager;
+        $this->xUploadRequestPlugin = $xUploadRequestPlugin;
 
         $this->xArgumentManager = new Handler\Argument();
         $this->xCallbackManager = new Handler\Callback();
@@ -160,12 +164,6 @@ class Handler
         {
             call_user_func_array($xCallback, [$this->xTargetRequestPlugin->getTarget(), $bEndRequest]);
         }
-
-        // If the called function returned no response, give the the global response instead
-        if($this->xResponseManager->hasNoResponse())
-        {
-            $this->xResponseManager->append(jaxon()->getResponse());
-        }
         // return $this->xResponse;
     }
 
@@ -205,12 +203,18 @@ class Handler
      * Check if the current request can be processed
      *
      * Calls each of the request plugins and determines if the current request can be processed by one of them.
-     * If no processor identifies the current request, then the request must be for the initial page load.
      *
      * @return boolean
      */
     public function canProcessRequest()
     {
+        // Return true if the request plugin was already found
+        if(($this->xTargetRequestPlugin))
+        {
+            return true;
+        }
+
+        // Find a plugin to process the request
         foreach($this->xPluginManager->getRequestPlugins() as $xPlugin)
         {
             if($xPlugin->getName() != Jaxon::FILE_UPLOAD && $xPlugin->canProcessRequest())
@@ -219,7 +223,11 @@ class Handler
                 return true;
             }
         }
-        return false;
+
+        // If no other plugin than the upload plugin can process the request,
+        // then it is a HTTP (not ajax) upload request
+        $this->xUploadRequestPlugin->noRequestPluginFound();
+        return $this->xUploadRequestPlugin->canProcessRequest();
     }
 
     /**
@@ -235,9 +243,9 @@ class Handler
         // Check to see if headers have already been sent out, in which case we can't do our job
         if(headers_sent($filename, $linenumber))
         {
-            echo $this->trans('errors.output.already-sent', array(
+            echo $this->trans('errors.output.already-sent', [
                 'location' => $filename . ':' . $linenumber
-            )), "\n", $this->trans('errors.output.advice');
+            ]), "\n", $this->trans('errors.output.advice');
             exit();
         }
 
@@ -248,42 +256,33 @@ class Handler
         }
 
         $bEndRequest = false;
-        $mResult = true;
 
         // Handle before processing event
-        $this->onBefore($bEndRequest);
+        if(($this->xTargetRequestPlugin))
+        {
+            $this->onBefore($bEndRequest);
+        }
 
         if(!$bEndRequest)
         {
             try
             {
-                foreach($this->xPluginManager->getRequestPlugins() as $xPlugin)
+                // Process uploaded files
+                $this->xUploadRequestPlugin->processRequest();
+
+                // Process the request
+                if(($this->xTargetRequestPlugin))
                 {
-                    if($xPlugin->getName() != Jaxon::FILE_UPLOAD && $xPlugin->canProcessRequest())
-                    {
-                        $xUploadPlugin = $this->xPluginManager->getRequestPlugin(Jaxon::FILE_UPLOAD);
-                        // Process uploaded files
-                        if($xUploadPlugin != null)
-                        {
-                            $xUploadPlugin->processRequest();
-                        }
-                        // Process the request
-                        $mResult = $xPlugin->processRequest();
-                        break;
-                    }
+                    $this->xTargetRequestPlugin->processRequest();
                 }
-                // Todo: throw an exception
-                $mResult = false;
             }
             catch(Exception $e)
             {
                 // An exception was thrown while processing the request.
                 // The request missed the corresponding handler function,
                 // or an error occurred while attempting to execute the handler.
-                // Replace the response, if one has been started and send a debug message.
 
                 $this->xResponseManager->error($e->getMessage());
-                $mResult = false;
 
                 if($e instanceof \Jaxon\Exception\Error)
                 {
@@ -295,6 +294,7 @@ class Handler
                 }
             }
         }
+
         // Clean the processing buffer
         if(($this->getOption('core.process.clean')))
         {
@@ -306,10 +306,16 @@ class Handler
             error_reporting($er);
         }
 
-        if($mResult === true)
+        if(($this->xTargetRequestPlugin))
         {
             // Handle after processing event
             $this->onAfter($bEndRequest);
+        }
+
+        // If the called function returned no response, take the the global response
+        if(!$this->xResponseManager->getResponse())
+        {
+            $this->xResponseManager->append(jaxon()->getResponse());
         }
 
         $this->xResponseManager->printDebug();

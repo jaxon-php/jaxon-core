@@ -15,6 +15,7 @@ namespace Jaxon\Request\Plugin;
 use Jaxon\Jaxon;
 use Jaxon\Plugin\Request as RequestPlugin;
 use Jaxon\Request\Support\UploadedFile;
+use Jaxon\Response\UploadResponse;
 
 use Exception;
 use Closure;
@@ -51,7 +52,14 @@ class FileUpload extends RequestPlugin
      *
      * @var Closure
      */
-    protected $fFileFilter = null;
+    protected $cFileFilter = null;
+
+    /**
+     * Is the current request an HTTP upload
+     *
+     * @var boolean
+     */
+    protected $bRequestIsHttpUpload = false;
 
     /**
      * Read uploaded files info from the $_FILES global var
@@ -73,13 +81,13 @@ class FileUpload extends RequestPlugin
     /**
      * Filter uploaded file name
      *
-     * @param Closure       $fFileFilter            The closure which filters filenames
+     * @param Closure       $cFileFilter            The closure which filters filenames
      *
      * @return void
      */
-    public function setFileFilter(Closure $fFileFilter)
+    public function setFileFilter(Closure $cFileFilter)
     {
-        $this->fFileFilter = $fFileFilter;
+        $this->cFileFilter = $cFileFilter;
     }
 
     /**
@@ -92,10 +100,10 @@ class FileUpload extends RequestPlugin
      */
     protected function filterFilename($sFilename, $sVarName)
     {
-        if(($this->fFileFilter))
+        if(($this->cFileFilter))
         {
-            $fFileFilter = $this->fFileFilter;
-            $sFilename = (string)$fFileFilter($sFilename, $sVarName);
+            $cFileFilter = $this->cFileFilter;
+            $sFilename = (string)$cFileFilter($sFilename, $sVarName);
         }
         return $sFilename;
     }
@@ -119,7 +127,7 @@ class FileUpload extends RequestPlugin
             throw new \Jaxon\Exception\Error($this->trans('errors.upload.access'));
         }
         $sUploadDir .= $this->sUploadSubdir;
-        if(!@mkdir($sUploadDir))
+        if(!file_exists($sUploadDir) && !@mkdir($sUploadDir))
         {
             throw new \Jaxon\Exception\Error($this->trans('errors.upload.access'));
         }
@@ -142,7 +150,7 @@ class FileUpload extends RequestPlugin
             throw new \Jaxon\Exception\Error($this->trans('errors.upload.access'));
         }
         $sUploadDir .= 'tmp' . DIRECTORY_SEPARATOR;
-        if(!@mkdir($sUploadDir))
+        if(!file_exists($sUploadDir) && !@mkdir($sUploadDir))
         {
             throw new \Jaxon\Exception\Error($this->trans('errors.upload.access'));
         }
@@ -251,10 +259,10 @@ class FileUpload extends RequestPlugin
         }
 
         // Copy the uploaded files from the temp dir to the user dir
-        foreach($aTempFiles as $sVarName => $aTempFiles)
+        foreach($aTempFiles as $sVarName => $_aTempFiles)
         {
             $this->aUserFiles[$sVarName] = [];
-            foreach($aTempFiles as $aFile)
+            foreach($_aTempFiles as $aFile)
             {
                 // Get the path to the upload dir
                 $sUploadDir = $this->getUploadDir($sVarName);
@@ -308,7 +316,7 @@ class FileUpload extends RequestPlugin
                 $this->aUserFiles[$sVarName][] = UploadedFile::fromTempData($aUserFile);
             }
         }
-        unlink($sUploadTempFile);
+        // unlink($sUploadTempFile);
     }
 
     /**
@@ -324,13 +332,13 @@ class FileUpload extends RequestPlugin
     /**
      * Filter uploaded file name
      *
-     * @param Closure       $fFileFilter            The closure which filters filenames
+     * @param Closure       $cFileFilter            The closure which filters filenames
      *
      * @return void
      */
-    public function filter(Closure $fFileFilter)
+    public function filter(Closure $cFileFilter)
     {
-        $this->setFileFilter($fFileFilter);
+        $this->setFileFilter($cFileFilter);
     }
 
     /**
@@ -341,16 +349,6 @@ class FileUpload extends RequestPlugin
     public function files()
     {
         return $this->aUserFiles;
-    }
-
-    /**
-     * Check if uploaded files are available
-     *
-     * @return boolean
-     */
-    public function hasFiles()
-    {
-        return (count($_FILES) > 0 || ($this->sTempFile));
     }
 
     /**
@@ -374,13 +372,26 @@ class FileUpload extends RequestPlugin
     }
 
     /**
+     * Inform this plugin that other plugin can process the current request
+     *
+     * @return void
+     */
+    public function noRequestPluginFound()
+    {
+        if(count($_FILES) > 0)
+        {
+            $this->bRequestIsHttpUpload = true;
+        }
+    }
+
+    /**
      * Check if this plugin can process the incoming Jaxon request
      *
      * @return boolean
      */
     public function canProcessRequest()
     {
-        return $this->hasFiles();
+        return (count($_FILES) > 0 || ($this->sTempFile));
     }
 
     /**
@@ -394,54 +405,35 @@ class FileUpload extends RequestPlugin
         {
             return false;
         }
+
         if(count($_FILES) > 0)
         {
+            // Ajax request with upload
             $this->readFromHttpData();
+
+            if($this->bRequestIsHttpUpload)
+            {
+                // Process an HTTP upload request
+                // This requires to set the response to be returned.
+                $xResponse = new UploadResponse();
+                try
+                {
+                    $this->saveToTempFile();
+                    $xResponse->setUploadedFile($this->sTempFile);
+                }
+                catch(Exception $e)
+                {
+                    $xResponse->setErrorMessage($e->getMessage());
+                }
+                jaxon()->di()->getResponseManager()->append($xResponse);
+            }
         }
         elseif(($this->sTempFile))
         {
+            // Ajax request following and HTTP upload
             $this->readFromTempFile();
         }
+
         return true;
-    }
-
-    /**
-     * Check uploaded files validity and move them to the user dir
-     *
-     * @return array
-     */
-    public function saveFiles()
-    {
-        try
-        {
-            if(!$this->hasFiles())
-            {
-                throw new Exception($this->trans('errors.upload.request'));
-            }
-            // Save upload data in a temp file
-            $this->saveToTempFile();
-            return ["code" => "success", "upl" => $this->sTempFile];
-        }
-        catch(Exception $e)
-        {
-            return ["code" => "error", "msg" => $e->getMessage()];
-        }
-    }
-
-    /**
-     * Process HTTP upload
-     *
-     * @return boolean
-     */
-    public function processHttpRequest()
-    {
-        $sResponse = $this->saveFiles();
-        // Send the response back to the browser
-        echo '<script>var res = ', json_encode($sResponse), '; </script>';
-        if(($this->getOption('core.process.exit')))
-        {
-            exit();
-        }
-        return ($sResponse['code'] == 'success');
     }
 }
