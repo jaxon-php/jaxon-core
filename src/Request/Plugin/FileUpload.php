@@ -243,10 +243,10 @@ class FileUpload extends RequestPlugin
         }
 
         // Copy the uploaded files from the temp dir to the user dir
-        foreach($aTempFiles as $sVarName => $aTempFiles)
+        foreach($aTempFiles as $sVarName => $_aTempFiles)
         {
             $this->aUserFiles[$sVarName] = [];
-            foreach($aTempFiles as $aFile)
+            foreach($_aTempFiles as $aFile)
             {
                 // Get the path to the upload dir
                 $sUploadDir = $this->getUploadDir($sVarName);
