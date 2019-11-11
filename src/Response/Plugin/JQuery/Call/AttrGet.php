@@ -1,6 +1,6 @@
 <?php
 
-namespace Jaxon\Response\Plugin\Call;
+namespace Jaxon\Response\Plugin\JQuery\Call;
 
 use JsonSerializable;
 

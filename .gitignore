@@ -2,3 +2,5 @@
 .project
 .settings/*
 /jaxon-core.komodoproject
+vendor
+.idea

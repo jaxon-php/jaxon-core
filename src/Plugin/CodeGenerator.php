@@ -14,12 +14,13 @@
 
 namespace Jaxon\Plugin;
 
+use Jaxon\Utils\Template\Engine as TemplateEngine;
+use Jaxon\Utils\Http\URI;
+
 class CodeGenerator
 {
-    use \Jaxon\Utils\Traits\Config;
-    use \Jaxon\Utils\Traits\Cache;
-    use \Jaxon\Utils\Traits\Minifier;
-    use \Jaxon\Utils\Traits\Template;
+    use \Jaxon\Features\Config;
+    use \Jaxon\Features\Minifier;
 
     /**
      * The response type.
@@ -34,6 +35,13 @@ class CodeGenerator
      * @var Manager
      */
     protected $xPluginManager;
+
+    /**
+     * The Jaxon template engine
+     *
+     * @var TemplateEngine
+     */
+    protected $xTemplate;
 
     /**
      * Generated CSS code
@@ -57,13 +65,21 @@ class CodeGenerator
     protected $sJsReady = null;
 
     /**
+     * Default library URL
+     *
+     * @var string
+     */
+    protected $sJsLibraryUrl = 'https://cdn.jsdelivr.net/gh/jaxon-php/jaxon-js@3.0/dist';
+
+    /**
      * The constructor
      *
      * @param Manager    $xPluginManager
      */
-    public function __construct(Manager $xPluginManager)
+    public function __construct(Manager $xPluginManager, TemplateEngine $xTemplate)
     {
         $this->xPluginManager = $xPluginManager;
+        $this->xTemplate = $xTemplate;
     }
 
     /**
@@ -73,13 +89,7 @@ class CodeGenerator
      */
     private function getJsLibUri()
     {
-        if(!$this->hasOption('js.lib.uri'))
-        {
-            // return 'https://cdn.jsdelivr.net/jaxon/1.2.0/';
-            return 'https://cdn.jsdelivr.net/gh/jaxon-php/jaxon-js@2.0/dist/';
-        }
-        // Todo: check the validity of the URI
-        return rtrim($this->getOption('js.lib.uri'), '/') . '/';
+        return rtrim($this->getOption('js.lib.uri', $this->sJsLibraryUrl), '/') . '/';
     }
 
     /**
@@ -91,11 +101,6 @@ class CodeGenerator
      */
     private function getJsLibExt()
     {
-        // $jsDelivrUri = 'https://cdn.jsdelivr.net';
-        // $nLen = strlen($jsDelivrUri);
-        // The jsDelivr CDN only hosts minified files
-        // if(($this->getOption('js.app.minify')) || substr($this->getJsLibUri(), 0, $nLen) == $jsDelivrUri)
-        // Starting from version 2.0.0 of the js lib, the jsDelivr CDN also hosts non minified files.
         if(($this->getOption('js.app.minify')))
         {
             return '.min.js';
@@ -111,9 +116,9 @@ class CodeGenerator
     public function canExportJavascript()
     {
         // Check config options
-        // - The js.app.extern option must be set to true
+        // - The js.app.export option must be set to true
         // - The js.app.uri and js.app.dir options must be set to non null values
-        if(!$this->getOption('js.app.extern') ||
+        if(!$this->getOption('js.app.export') ||
             !$this->getOption('js.app.uri') ||
             !$this->getOption('js.app.dir'))
         {
@@ -127,19 +132,6 @@ class CodeGenerator
             return false;
         }
         return true;
-    }
-
-    /**
-     * Set the cache directory for the template engine
-     *
-     * @return void
-     */
-    private function setTemplateCacheDir()
-    {
-        if($this->hasOption('core.template.cache_dir'))
-        {
-            $this->setCacheDir($this->getOption('core.template.cache_dir'));
-        }
     }
 
     /**
@@ -189,7 +181,9 @@ class CodeGenerator
                 }
             }
 
-            $this->sJsReady = $this->render('jaxon::plugins/ready.js', ['sPluginScript' => $this->sJsReady]);
+            $this->sJsReady = $this->xTemplate->render('jaxon::plugins/ready.js', [
+                'sPluginScript' => $this->sJsReady,
+            ]);
             foreach($this->xPluginManager->getRequestPlugins() as $xRequestPlugin)
             {
                 if(($sJsReady = trim($xRequestPlugin->getScript())))
@@ -232,7 +226,7 @@ class CodeGenerator
         $sJsLanguageUrl = $sJsLibUri . 'lang/jaxon.' . $this->getOption('core.language') . $sJsLibExt;
 
         // Add component files to the javascript file array;
-        $aJsFiles = array($sJsCoreUrl);
+        $aJsFiles = [$sJsCoreUrl];
         if($this->getOption('core.debug.on'))
         {
             $aJsFiles[] = $sJsDebugUrl;
@@ -244,11 +238,10 @@ class CodeGenerator
         }
 
         // Set the template engine cache dir
-        $this->setTemplateCacheDir();
         $this->makePluginsCode();
 
-        return $this->render('jaxon::plugins/includes.js', [
-            'sJsOptions' => $this->getOption('js.app.options'),
+        return $this->xTemplate->render('jaxon::plugins/includes.js', [
+            'sJsOptions' => $this->getOption('js.app.options', ''),
             'aUrls' => $aJsFiles,
         ]) . $this->sJsCode;
     }
@@ -261,7 +254,6 @@ class CodeGenerator
     public function getCss()
     {
         // Set the template engine cache dir
-        $this->setTemplateCacheDir();
         $this->makePluginsCode();
 
         return $this->sCssCode;
@@ -292,7 +284,7 @@ class CodeGenerator
             'nResponseQueueSize'        => $this->getOption('js.lib.queue_size'),
             'sStatusMessages'           => $this->getOption('js.lib.show_status') ? 'true' : 'false',
             'sWaitCursor'               => $this->getOption('js.lib.show_cursor') ? 'true' : 'false',
-            'sDefer'                    => $this->getOption('js.app.options'),
+            'sDefer'                    => $this->getOption('js.app.options', ''),
         ];
     }
 
@@ -307,9 +299,11 @@ class CodeGenerator
         $sYesScript = 'jaxon.ajax.response.process(command.response)';
         $sNoScript = 'jaxon.confirm.skip(command);jaxon.ajax.response.process(command.response)';
         $sConfirmScript = jaxon()->dialog()->confirm('msg', $sYesScript, $sNoScript);
-        $aVars['sConfirmScript'] = $this->render('jaxon::plugins/confirm.js', ['sConfirmScript' => $sConfirmScript]);
+        $aVars['sConfirmScript'] = $this->xTemplate->render('jaxon::plugins/confirm.js', [
+            'sConfirmScript' => $sConfirmScript,
+        ]);
 
-        return $this->render('jaxon::plugins/config.js', $aVars) . "\n" . $this->sJsReady . "\n";
+        return $this->xTemplate->render('jaxon::plugins/config.js', $aVars) . "\n" . $this->sJsReady . "\n";
     }
 
     /**
@@ -320,48 +314,87 @@ class CodeGenerator
      * This is called only when the page is being loaded initially.
      * This is not called when processing a request.
      *
+     * @param boolean        $bIncludeJs            Also get the JS files
+     * @param boolean        $bIncludeCss        Also get the CSS files
+     *
      * @return string
      */
-    public function getScript()
+    public function getScript($bIncludeJs = false, $bIncludeCss = false)
     {
+        if(!$this->getOption('core.request.uri'))
+        {
+            $this->setOption('core.request.uri', URI::detect());
+        }
+
         // Set the template engine cache dir
-        $this->setTemplateCacheDir();
         $this->makePluginsCode();
+
+        $sScript = '';
+        if(($bIncludeCss))
+        {
+            $sScript .= $this->getCss() . "\n";
+        }
+        if(($bIncludeJs))
+        {
+            $sScript .= $this->getJs() . "\n";
+        }
 
         if($this->canExportJavascript())
         {
             $sJsAppURI = rtrim($this->getOption('js.app.uri'), '/') . '/';
             $sJsAppDir = rtrim($this->getOption('js.app.dir'), '/') . '/';
+            $sFinalFile = $this->getOption('js.app.file');
+            $sExtension = $this->getJsLibExt();
 
-            // The plugins scripts are written into the javascript app dir
-            $sHash = $this->generateHash();
-            $sOutFile = $sHash . '.js';
-            $sMinFile = $sHash . '.min.js';
-            if(!is_file($sJsAppDir . $sOutFile))
+            // Check if the final file already exists
+            if(($sFinalFile) && is_file($sJsAppDir . $sFinalFile . $sExtension))
             {
-                file_put_contents($sJsAppDir . $sOutFile, $this->_getScript());
+                $sOutFile = $sFinalFile . $sExtension;
             }
-            if(($this->getOption('js.app.minify')) && !is_file($sJsAppDir . $sMinFile))
+            else
             {
-                if(($this->minify($sJsAppDir . $sOutFile, $sJsAppDir . $sMinFile)))
+                // The plugins scripts are written into the javascript app dir
+                $sHash = $this->generateHash();
+                $sOutFile = $sHash . '.js';
+                $sMinFile = $sHash . '.min.js';
+                if(!is_file($sJsAppDir . $sOutFile))
                 {
-                    $sOutFile = $sMinFile;
+                    file_put_contents($sJsAppDir . $sOutFile, $this->_getScript());
+                }
+                if(($this->getOption('js.app.minify')))
+                {
+                    if(is_file($sJsAppDir . $sMinFile))
+                    {
+                        $sOutFile = $sMinFile; // The file was already minified
+                    }
+                    elseif(($this->minify($sJsAppDir . $sOutFile, $sJsAppDir . $sMinFile)))
+                    {
+                        $sOutFile = $sMinFile;
+                    }
+                }
+                // Copy the file to its final location
+                if(($sFinalFile))
+                {
+                    if(copy($sJsAppDir . $sOutFile, $sJsAppDir . $sFinalFile . $sExtension))
+                    {
+                        $sOutFile = $sFinalFile . $sExtension;
+                    }
                 }
             }
 
             // The returned code loads the generated javascript file
-            $sScript = $this->render('jaxon::plugins/include.js', array(
-                'sJsOptions' => $this->getOption('js.app.options'),
+            $sScript .= $this->xTemplate->render('jaxon::plugins/include.js', [
+                'sJsOptions' => $this->getOption('js.app.options', ''),
                 'sUrl' => $sJsAppURI . $sOutFile,
-            ));
+            ]);
         }
         else
         {
             // The plugins scripts are wrapped with javascript tags
-            $sScript = $this->render('jaxon::plugins/wrapper.js', array(
-                'sJsOptions' => $this->getOption('js.app.options'),
+            $sScript .= $this->xTemplate->render('jaxon::plugins/wrapper.js', [
+                'sJsOptions' => $this->getOption('js.app.options', ''),
                 'sScript' => $this->_getScript(),
-            ));
+            ]);
         }
 
         return $sScript;

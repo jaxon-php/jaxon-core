@@ -14,96 +14,83 @@
 
 namespace Jaxon\Utils\Pagination;
 
-use Jaxon\Utils\Template\Template;
+use Jaxon\Contracts\Template\Renderer as TemplateRenderer;
 
 class Renderer
 {
     /**
-     * Set the paginator to be rendered.
-     *
-     * @var Paginator
-     */
-    protected $xPaginator = null;
-
-    /**
-     * The template manager.
+     * The template renderer.
      *
      * Will be used to render HTML code for links.
      *
-     * @var Template
+     * @var TemplateRenderer
      */
-    protected $xTemplate = null;
+    protected $xRenderer = null;
 
     /**
      * The class contructor
      *
-     * @param Template          $xTemplate
+     * @param TemplateRenderer          $xRenderer
      */
-    public function __construct(Template $xTemplate)
+    public function __construct(TemplateRenderer $xRenderer)
     {
-        $this->xTemplate = $xTemplate;
-    }
-
-    /**
-     * Set the paginator to be rendered.
-     *
-     * @param Paginator         $xPaginator         The paginator to be rendered
-     *
-     * @return void
-     */
-    public function setPaginator(\Jaxon\Utils\Pagination\Paginator $xPaginator)
-    {
-        $this->xPaginator = $xPaginator;
+        $this->xRenderer = $xRenderer;
     }
 
     /**
      * Render the previous link.
      *
+     * @param Paginator         $xPaginator         The paginator to be rendered
+     *
      * @return string
      */
-    protected function getPrevLink()
+    protected function getPrevLink($xPaginator)
     {
-        if(!($sCall = $this->xPaginator->getPrevCall()))
+        if(!($sCall = $xPaginator->getPrevCall()))
         {
-            return '';
+            return $this->xRenderer->render('pagination::links/disabled', ['text' => $xPaginator->getPreviousText()]);
         }
-        return $this->xTemplate->render('pagination::links/prev',
-            ['call' => $sCall, 'text' => $this->xPaginator->getPreviousText()]);
+        return $this->xRenderer->render('pagination::links/prev',
+            ['call' => $sCall, 'text' => $xPaginator->getPreviousText()]);
     }
 
     /**
      * Render the next link.
      *
+     * @param Paginator         $xPaginator         The paginator to be rendered
+     *
      * @return string
      */
-    protected function getNextLink()
+    protected function getNextLink($xPaginator)
     {
-        if(!($sCall = $this->xPaginator->getNextCall()))
+        if(!($sCall = $xPaginator->getNextCall()))
         {
-            return '';
+            return $this->xRenderer->render('pagination::links/disabled', ['text' => $xPaginator->getNextText()]);
         }
-        return $this->xTemplate->render('pagination::links/next',
-            ['call' => $sCall, 'text' => $this->xPaginator->getNextText()]);
+        return $this->xRenderer->render('pagination::links/next',
+            ['call' => $sCall, 'text' => $xPaginator->getNextText()]);
     }
 
     /**
      * Render the pagination links.
      *
+     * @param Paginator         $xPaginator         The paginator to be rendered
+     *
      * @return string
      */
-    protected function getLinks()
+    protected function getLinks($xPaginator)
     {
         $sLinks = '';
-        foreach($this->xPaginator->getPages() as $page)
+        foreach($xPaginator->getPages() as $page)
         {
             if($page['call'])
             {
                 $sTemplate = ($page['isCurrent'] ? 'pagination::links/current' : 'pagination::links/enabled');
-                $sLinks .= $this->xTemplate->render($sTemplate, ['call' => $page['call'], 'text' => $page['num']]);
+                $sLinks .= $this->xRenderer->render($sTemplate, ['call' => $page['call'], 'text' => $page['num']]);
             }
             else
             {
-                $sLinks .= $this->xTemplate->render('pagination::links/disabled', ['text' => $page['num']]);
+                $sLinks .= $this->xRenderer->render('pagination::links/disabled', ['text' => $page['num']]);
             }
         }
         return $sLinks;
@@ -112,14 +99,17 @@ class Renderer
     /**
      * Render an HTML pagination control.
      *
+     * @param Paginator         $xPaginator         The paginator to be rendered
+     *
      * @return string
      */
-    public function render()
+    public function render(Paginator $xPaginator)
     {
-        return $this->xTemplate->render('pagination::wrapper', [
-            'links' => $this->getLinks(),
-            'prev' => $this->getPrevLink(),
-            'next' => $this->getNextLink(),
+        $xPaginator = $xPaginator;
+        return $this->xRenderer->render('pagination::wrapper', [
+            'links' => $this->getLinks($xPaginator),
+            'prev' => $this->getPrevLink($xPaginator),
+            'next' => $this->getNextLink($xPaginator),
         ]);
     }
 }

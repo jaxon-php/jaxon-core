@@ -26,6 +26,8 @@
 
 namespace Jaxon\Plugin;
 
+use Jaxon\Request\Target;
+
 abstract class Request extends Plugin
 {
     /**
@@ -54,6 +56,16 @@ abstract class Request extends Plugin
     public function isRequest()
     {
         return true;
+    }
+
+    /**
+     * Return the target function or class and method
+     *
+     * @return Target|null
+     */
+    public function getTarget()
+    {
+        return null;
     }
 
     /**

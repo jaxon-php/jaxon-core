@@ -40,6 +40,7 @@ return [
             'invalid-declaration' => "La déclaration d'objet est invalide.",
         ],
         'register' => [
+            'plugin' => "Aucun plugin nommé :name pour enregistrer une classs ou une fonction.",
             'method' => "Une fonction d'enregistrement n'a pas pu être trouvée pour cet élément: :args",
             'invalid' => "Tentative d'enregistrer un plugin invalide: :name; " .
                 "le plugin doit dériver de Jaxon\\Plugin\\Request ou Jaxon\\Plugin\\Response.",

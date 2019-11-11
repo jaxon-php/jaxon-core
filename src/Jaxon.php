@@ -25,29 +25,13 @@
 
 namespace Jaxon;
 
-use Jaxon\Plugin\Manager as PluginManager;
-use Jaxon\Request\Manager as RequestManager;
-use Jaxon\Response\Manager as ResponseManager;
-
-use Jaxon\Config\Reader as ConfigReader;
-use Jaxon\DI\Container;
-use Jaxon\Utils\URI;
-
-use Exception;
-use Closure;
+use Jaxon\Plugin\Plugin;
+use Jaxon\Utils\DI\Container;
+use Jaxon\Utils\Config\Reader as ConfigReader;
 
 class Jaxon
 {
-    use \Jaxon\Utils\Traits\Config;
-    use \Jaxon\Utils\Traits\Manager;
-    use \Jaxon\Utils\Traits\Translator;
-    use \Jaxon\Utils\Traits\Paginator;
-
-    use Traits\Autoload;
-    use Traits\Plugin;
-    use Traits\Upload;
-    use Traits\Sentry;
-    use Traits\Template;
+    use Features\Config;
 
     /**
      * Package version number
@@ -66,57 +50,65 @@ class Jaxon
     const PROCESSING_EVENT_ERROR = 'ProcessingError';
 
     /*
-     * Request methods
-     */
-    const METHOD_UNKNOWN = 0;
-    const METHOD_GET = 1;
-    const METHOD_POST = 2;
-
-    /*
      * Request plugins
      */
-    // For objects who's methods will be callable from the browser.
     const CALLABLE_CLASS = 'CallableClass';
     const CALLABLE_DIR = 'CallableDir';
-    const CALLABLE_OBJECT = 'CallableClass'; // Same as CALLABLE_CLASS
-    // For functions available at global scope, or from an instance of an object.
-    const USER_FUNCTION = 'UserFunction';
+    const CALLABLE_FUNCTION = 'CallableFunction';
     // For uploaded files.
     const FILE_UPLOAD = 'FileUpload';
-
-    /*
-     * Request parameters
-     */
-    // Specifies that the parameter will consist of an array of form values.
-    const FORM_VALUES = 'FormValues';
-    // Specifies that the parameter will contain the value of an input control.
-    const INPUT_VALUE = 'InputValue';
-    // Specifies that the parameter will consist of a boolean value of a checkbox.
-    const CHECKED_VALUE = 'CheckedValue';
-    // Specifies that the parameter value will be the innerHTML value of the element.
-    const ELEMENT_INNERHTML = 'ElementInnerHTML';
-    // Specifies that the parameter will be a quoted value (string).
-    const QUOTED_VALUE = 'QuotedValue';
-    // Specifies that the parameter will be a boolean value (true or false).
-    const BOOL_VALUE = 'BoolValue';
-    // Specifies that the parameter will be a numeric, non-quoted value.
-    const NUMERIC_VALUE = 'NumericValue';
-    // Specifies that the parameter will be a non-quoted value
-    // (evaluated by the browsers javascript engine at run time).
-    const JS_VALUE = 'UnquotedValue';
-    // Specifies that the parameter will be an integer used to generate pagination links.
-    const PAGE_NUMBER = 'PageNumber';
+    // For compatibility with previous versions
+    const CALLABLE_OBJECT = 'CallableClass'; // Same as CALLABLE_CLASS
+    const USER_FUNCTION = 'CallableFunction'; // Same as CALLABLE_FUNCTION
 
     /**
-     * Processing event handlers that have been assigned during this run of the script
+     * A static instance on this class
      *
-     * @var array
+     * @var Jaxon
      */
-    private $aProcessingEvents = [];
+    private static $xInstance = null;
 
+    /**
+     * The DI container
+     *
+     * @var Container
+     */
+    private static $xContainer = null;
+
+    /**
+     * Get the static instance
+     *
+     * @return Jaxon
+     */
+    public static function getInstance()
+    {
+        if(self::$xInstance == null)
+        {
+            self::$xInstance = new Jaxon();
+        }
+        return self::$xInstance;
+    }
+
+    /**
+     * The constructor
+     */
     public function __construct()
     {
+        if(self::$xContainer == null)
+        {
+            self::$xContainer = new Container();
+        }
         $this->setDefaultOptions();
+    }
+
+    /**
+     * Get the DI container
+     *
+     * @return Container
+     */
+    public function di()
+    {
+        return self::$xContainer;
     }
 
     /**
@@ -132,7 +124,7 @@ class Jaxon
     /**
      * Get the config reader
      *
-     * @return Jaxon\Config\Reader
+     * @return ConfigReader
      */
     public function config()
     {
@@ -157,6 +149,7 @@ class Jaxon
             // 'core.request.uri'               => '',
             'core.request.mode'                 => 'asynchronous',
             'core.request.method'               => 'POST',    // W3C: Method is case sensitive
+            'core.response.send'                => true,
             'core.response.merge.ap'            => true,
             'core.response.merge.js'            => true,
             'core.debug.on'                     => false,
@@ -179,6 +172,43 @@ class Jaxon
     }
 
     /**
+     * Get the Global Response object
+     *
+     * @return \Jaxon\Response\Response
+     */
+    public function getResponse()
+    {
+        return $this->di()->getResponse();
+    }
+
+    /**
+     * Create a new Jaxon response object
+     *
+     * @return \Jaxon\Response\Response
+     */
+    public function newResponse()
+    {
+        return $this->di()->newResponse();
+    }
+    /**
+     * Register a plugin
+     *
+     * Below is a table for priorities and their description:
+     * - 0 thru 999: Plugins that are part of or extensions to the jaxon core
+     * - 1000 thru 8999: User created plugins, typically, these plugins don't care about order
+     * - 9000 thru 9999: Plugins that generally need to be last or near the end of the plugin list
+     *
+     * @param Plugin    $xPlugin        An instance of a plugin
+     * @param integer   $nPriority      The plugin priority, used to order the plugins
+     *
+     * @return void
+     */
+    public function registerPlugin(Plugin $xPlugin, $nPriority = 1000)
+    {
+        $this->di()->getPluginManager()->registerPlugin($xPlugin, $nPriority);
+    }
+
+    /**
      * Register request handlers, including functions, callable classes and directories.
      *
      * @param string        $sType            The type of request handler being registered
@@ -186,11 +216,13 @@ class Jaxon
      *        - Jaxon::USER_FUNCTION: a function declared at global scope
      *        - Jaxon::CALLABLE_CLASS: a class who's methods are to be registered
      *        - Jaxon::CALLABLE_DIR: a directory containing classes to be registered
-     * @param string        $sCallable
+     *        - Jaxon::PROCESSING_EVENT:
+     * @param string        $sCallable| $sEvent
      *        When registering a function, this is the name of the function
      *        When registering a callable class, this is the class name
      *        When registering a callable directory, this is the full path to the directory
-     * @param array|string  $aOptions | $sIncludeFile | $sNamespace
+     *        When registering an event, this is the event name
+     * @param array|string|Closure  $aOptions | $sIncludeFile | $sNamespace
      *        When registering a function, this is an (optional) array
      *             of call options, or the (optional) include file
      *        When registering a callable class, this is an (optional) array
@@ -200,35 +232,58 @@ class Jaxon
      *
      * @return mixed
      */
-    public function register($sType, $sCallable, $aOptions = [])
+    public function register($sType, $sCallable, $xOptions = [])
     {
-        return $this->getPluginManager()->register($sType, $sCallable, $aOptions);
+        if($sType == Jaxon::PROCESSING_EVENT)
+        {
+            $sEvent = $sCallable;
+            $xCallback = $xOptions;
+            switch($sEvent)
+            {
+            case Jaxon::PROCESSING_EVENT_BEFORE:
+                $this->callback()->before($xCallback);
+                break;
+            case Jaxon::PROCESSING_EVENT_AFTER:
+                $this->callback()->after($xCallback);
+                break;
+            case Jaxon::PROCESSING_EVENT_INVALID:
+                $this->callback()->invalid($xCallback);
+                break;
+            case Jaxon::PROCESSING_EVENT_ERROR:
+                $this->callback()->error($xCallback);
+                break;
+            default:
+                break;
+            }
+            return;
+        }
+        return $this->di()->getPluginManager()->registerCallable($sType, $sCallable, $xOptions);
     }
 
     /**
-     * Read config options from a config file and setup the library
+     * Get an instance of a registered class
      *
-     * @param string        $sConfigFile        The full path to the config file
+     * @param string        $sClass             The class name
      *
-     * @return Jaxon
+     * @return mixed
      */
-    public function setup($sConfigFile)
+    public function instance($sClassName)
     {
-        $aConfigOptions = $this->config()->read($sConfigFile);
+        $xCallable = $this->di()->getCallableRepository()->getCallableObject($sClassName);
+        return ($xCallable) ? $xCallable->getRegisteredObject() : null;
+    }
 
-        // Setup the config options into the library.
-        $sLibKey = 'lib';
-        $xLibConfig = $this->di()->getConfig();
-        $xLibConfig->setOptions($aConfigOptions, $sLibKey);
-
-        $sAppKey = 'app';
-        $xAppConfig = new \Jaxon\Config\Config();
-        $xAppConfig->setOptions($aConfigOptions, $sAppKey);
-
-        // Register user functions and classes
-        $this->getPluginManager()->registerFromConfig($xAppConfig);
-
-        return $this;
+    /**
+     * Get a request to a registered class
+     *
+     * @param string        $sClass             The class name
+     *
+     * @return \Jaxon\Request\Factory\CallableClass\Request
+     */
+    public function request($sClassName)
+    {
+        $xInstance = $this->instance($sClassName);
+        return ($xInstance) ? $xInstance->rq() : null;
     }
 
     /**
@@ -244,22 +299,7 @@ class Jaxon
      */
     public function getScript($bIncludeJs = false, $bIncludeCss = false)
     {
-        if(!$this->getOption('core.request.uri'))
-        {
-            $this->setOption('core.request.uri', URI::detect());
-        }
-        $sCode = '';
-        $xCodeGenerator = $this->di()->getCodeGenerator();
-        if(($bIncludeCss))
-        {
-            $sCode .= $xCodeGenerator->getCss() . "\n";
-        }
-        if(($bIncludeJs))
-        {
-            $sCode .= $xCodeGenerator->getJs() . "\n";
-        }
-        $sCode .= $xCodeGenerator->getScript();
-        return $sCode;
+        return $this->di()->getCodeGenerator()->getScript($bIncludeJs, $bIncludeCss);
     }
 
     /**
@@ -305,7 +345,7 @@ class Jaxon
      */
     public function canProcessRequest()
     {
-        return $this->getRequestHandler()->canProcessRequest();
+        return $this->di()->getRequestHandler()->canProcessRequest();
     }
 
     /**
@@ -324,144 +364,88 @@ class Jaxon
      */
     public function processRequest()
     {
-        // Check to see if headers have already been sent out, in which case we can't do our job
-        if(headers_sent($filename, $linenumber))
-        {
-            echo $this->trans('errors.output.already-sent', array(
-                'location' => $filename . ':' . $linenumber
-            )), "\n", $this->trans('errors.output.advice');
-            exit();
-        }
-
-        // Check if there is a plugin to process this request
-        if(!$this->canProcessRequest())
-        {
-            return;
-        }
-
-        $bEndRequest = false;
-        $mResult = true;
-        $xResponseManager = $this->getResponseManager();
-
-        // Handle before processing event
-        if(isset($this->aProcessingEvents[self::PROCESSING_EVENT_BEFORE]))
-        {
-            $this->aProcessingEvents[self::PROCESSING_EVENT_BEFORE]->call(array(&$bEndRequest));
-        }
-
-        if(!$bEndRequest)
-        {
-            try
-            {
-                $mResult = $this->getRequestHandler()->processRequest();
-            }
-            catch(Exception $e)
-            {
-                // An exception was thrown while processing the request.
-                // The request missed the corresponding handler function,
-                // or an error occurred while attempting to execute the handler.
-                // Replace the response, if one has been started and send a debug message.
-
-                $xResponseManager->clear();
-                $xResponseManager->append(new Response\Response());
-                $xResponseManager->debug($e->getMessage());
-                $mResult = false;
-
-                if($e instanceof \Jaxon\Exception\Error)
-                {
-                    $sEvent = self::PROCESSING_EVENT_INVALID;
-                    $aParams = array($e->getMessage());
-                }
-                else
-                {
-                    $sEvent = self::PROCESSING_EVENT_ERROR;
-                    $aParams = array($e);
-                }
-
-                if(isset($this->aProcessingEvents[$sEvent]))
-                {
-                    // Call the processing event
-                    $this->aProcessingEvents[$sEvent]->call($aParams);
-                }
-                else
-                {
-                    // The exception is not to be processed here.
-                    throw $e;
-                }
-            }
-        }
-        // Clean the processing buffer
-        if(($this->getOption('core.process.clean')))
-        {
-            $er = error_reporting(0);
-            while (ob_get_level() > 0)
-            {
-                ob_end_clean();
-            }
-            error_reporting($er);
-        }
-
-        if($mResult === true)
-        {
-            // Handle after processing event
-            if(isset($this->aProcessingEvents[self::PROCESSING_EVENT_AFTER]))
-            {
-                $bEndRequest = false;
-                $this->aProcessingEvents[self::PROCESSING_EVENT_AFTER]->call(array($bEndRequest));
-            }
-            // If the called function returned no response, give the the global response instead
-            if($xResponseManager->hasNoResponse())
-            {
-                $xResponseManager->append($this->getResponse());
-            }
-        }
-
-        $xResponseManager->printDebug();
-
-        if(($this->getOption('core.process.exit')))
-        {
-            $xResponseManager->sendOutput();
-            exit();
-        }
+        return $this->di()->getRequestHandler()->processRequest();
     }
 
     /**
-     * Send the response output back to the browser
+     * Get a registered response plugin
      *
-     * @return void
+     * @param string        $sName                The name of the plugin
+     *
+     * @return \Jaxon\Plugin\Response
      */
-    public function sendResponse()
+    public function plugin($sName)
     {
-        $this->getResponseManager()->sendOutput();
+        return $this->di()->getPluginManager()->getResponsePlugin($sName);
     }
 
     /**
-     * Send the HTTP headers back to the browser
+     * Get the upload plugin
      *
-     * @return void
+     * @return \Jaxon\Request\Plugin\FileUpload
      */
-    public function sendHeaders()
+    public function upload()
     {
-        $this->getResponseManager()->sendHeaders();
+        return $this->di()->getPluginManager()->getRequestPlugin(self::FILE_UPLOAD);
     }
 
     /**
-     * Get the response output
+     * Get the request callback manager
      *
-     * @return string
+     * @return \Jaxon\Request\Handler\Callback
      */
-    public function getOutput()
+    public function callback()
     {
-        return $this->getResponseManager()->getOutput();
+        return $this->di()->getRequestHandler()->getCallbackManager();
     }
 
     /**
-     * Get the DI container
+     * Get the dialog wrapper
      *
-     * @return Jaxon\DI\Container
+     * @return \Jaxon\Utils\Dialogs\Dialog
      */
-    public function di()
+    public function dialog()
     {
-        return Container::getInstance();
+        return $this->di()->getDialog();
+    }
+
+    /**
+     * Get the template engine
+     *
+     * @return \Jaxon\Utils\Template\Engine
+     */
+    public function template()
+    {
+        return $this->di()->getTemplateEngine();
+    }
+
+    /**
+     * Get the App instance
+     *
+     * @return \Jaxon\App\App
+     */
+    public function app()
+    {
+        return $this->di()->getApp();
+    }
+
+    /**
+     * Get the view renderer
+     *
+     * @return Jaxon\Utils\View\Renderer
+     */
+    public function view()
+    {
+        return $this->di()->getViewRenderer();
+    }
+
+    /**
+     * Get the session manager
+     *
+     * @return Jaxon\Contracts\Session
+     */
+    public function session()
+    {
+        return $this->di()->getSessionManager();
     }
 }

@@ -1,0 +1,106 @@
+<?php
+
+namespace Jaxon;
+
+class CallableClass
+{
+    /**
+     * The Jaxon response returned by all classes methods
+     *
+     * @var \Jaxon\Response\Response
+     */
+    public $response = null;
+
+    /**
+     * Get the view renderer
+     *
+     * @return \Jaxon\Utils\View\Renderer
+     */
+    public function view()
+    {
+        return jaxon()->view();
+    }
+
+    /**
+     * Get the session manager
+     *
+     * @return \Jaxon\Contracts\Session
+     */
+    public function session()
+    {
+        return jaxon()->session();
+    }
+
+    /**
+     * Get the request factory.
+     *
+     * @return \Jaxon\Request\Factory\CallableClass\Request
+     */
+    public function rq()
+    {
+        return jaxon()->di()->getCallableClassRequestFactory(get_class($this));
+    }
+
+    /**
+     * Get the paginator factory.
+     *
+     * @param integer $nItemsTotal the total number of items
+     * @param integer $nItemsPerPage the number of items per page
+     * @param integer $nCurrentPage the current page
+     *
+     * @return \Jaxon\Request\Factory\CallableClass\Paginator
+     */
+    public function pg($nItemsTotal, $nItemsPerPage, $nCurrentPage)
+    {
+        return jaxon()->di()->getCallableClassPaginatorFactory(get_class($this))
+            ->setProperties($nItemsTotal, $nItemsPerPage, $nCurrentPage);
+    }
+
+    /**
+     * Create a JQuery Element with a given selector, and link it to the response attribute.
+     *
+     * @param string        $sSelector            The jQuery selector
+     * @param string        $sContext             A context associated to the selector
+     *
+     * @return \Jaxon\Response\Plugin\JQuery\Dom\Element
+     */
+    public function jq($sSelector = '', $sContext = '')
+    {
+        return $this->response->plugin('jquery')->element($sSelector, $sContext);
+    }
+
+    /**
+     * Get an instance of a Jaxon class by name
+     *
+     * @param string $name the class name
+     *
+     * @return CallableClass|null the Jaxon class instance, or null
+     */
+    public function cl($name)
+    {
+        $xCallableObject = jaxon()->di()->getCallableRepository()->getCallableObject(get_class($this));
+        $cFirstChar = substr($name, 0, 1);
+        // If the class name starts with a dot, then find the class in the same full namespace as the caller
+        if($cFirstChar == ':')
+        {
+            $name = $xCallableObject->getRootNamespace() . '\\' . str_replace('.', '\\', substr($name, 1));
+        }
+        // If the class name starts with a dot, then find the class in the same base namespace as the caller
+        elseif($cFirstChar == '.')
+        {
+            $name = $xCallableObject->getNamespace() . '\\' . str_replace('.', '\\', substr($name, 1));
+        }
+        // Find the class instance
+        return jaxon()->instance($name);
+    }
+
+   /**
+     * Get the uploaded files
+     *
+     * @return array
+     */
+    public function files()
+    {
+        return jaxon()->upload()->files();
+    }
+}

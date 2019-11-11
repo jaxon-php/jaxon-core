@@ -40,8 +40,8 @@ SOFTWARE.
 
 namespace Jaxon\Utils\Pagination;
 
-use Jaxon\Jaxon;
-use Jaxon\Request\Request;
+use Jaxon\Request\Factory\Request;
+use Jaxon\Request\Factory\Parameter;
 
 class Paginator
 {
@@ -50,15 +50,15 @@ class Paginator
     protected $itemsPerPage = 0;
     protected $currentPage = 0;
     protected $maxPagesToShow = 10;
-    protected $previousText = '';
-    protected $nextText = '';
+    protected $previousText = '&laquo;';
+    protected $nextText = '&raquo;';
     protected $request = null;
     protected $renderer = null;
 
     /**
-     * @param object $renderer
+     * @param Renderer $renderer
      */
-    public function __construct($renderer)
+    public function __construct(Renderer $renderer)
     {
         $this->renderer = $renderer;
     }
@@ -74,9 +74,9 @@ class Paginator
      */
     public function setMaxPagesToShow($maxPagesToShow)
     {
-        if($maxPagesToShow < 3)
+        if($maxPagesToShow < 4)
         {
-            throw new \InvalidArgumentException('maxPagesToShow cannot be less than 3.');
+            throw new \InvalidArgumentException('maxPagesToShow cannot be less than 4.');
         }
         $this->maxPagesToShow = $maxPagesToShow;
     }
@@ -148,7 +148,7 @@ class Paginator
     }
 
     /**
-     * @param \Jaxon\Request\Request $request
+     * @param Request $request
      */
     public function setRequest($request)
     {
@@ -156,7 +156,7 @@ class Paginator
         // Append the page number to the parameter list, if not yet given.
         if(($this->request) && !$this->request->hasPageNumber())
         {
-            $this->request->addParameter(Jaxon::PAGE_NUMBER, 0);
+            $this->request->addParameter(Parameter::PAGE_NUMBER, 0);
         }
     }
 
@@ -172,7 +172,9 @@ class Paginator
      * @param int $totalItems
      * @param int $itemsPerPage
      * @param int $currentPage
-     * @param \Jaxon\Request\Request $request
+     * @param Request $request
+     *
+     * @return Paginator
      */
     public function setup($totalItems, $itemsPerPage, $currentPage, $request)
     {
@@ -180,6 +182,8 @@ class Paginator
         $this->setItemsPerPage($itemsPerPage);
         $this->setCurrentPage($currentPage);
         $this->setRequest($request);
+
+        return $this;
     }
 
     /**
@@ -238,7 +242,7 @@ class Paginator
      * Get an array of paginated page data.
      *
      * Example:
-     * array(
+     * [
      *     array ('num' => 1,     'call' => '/example/page/1',  'isCurrent' => false),
      *     array ('num' => '...', 'call' => NULL,               'isCurrent' => false),
      *     array ('num' => 3,     'call' => '/example/page/3',  'isCurrent' => false),
@@ -246,7 +250,7 @@ class Paginator
      *     array ('num' => 5,     'call' => '/example/page/5',  'isCurrent' => false),
      *     array ('num' => '...', 'call' => NULL,               'isCurrent' => false),
      *     array ('num' => 10,    'call' => '/example/page/10', 'isCurrent' => false),
-     * )
+     * ]
      *
      * @return array
      */
@@ -263,48 +267,45 @@ class Paginator
         {
             for($i = 1; $i <= $this->numPages; $i++)
             {
-                $pages[] = $this->createPage($i, $i == $this->currentPage);
+                $pages[] = $this->createPage($i);
             }
         }
         else
         {
             // Determine the sliding range, centered around the current page.
-            $numAdjacents = (int) floor(($this->maxPagesToShow - 3) / 2);
+            $numAdjacents = (int) floor(($this->maxPagesToShow - 4) / 2);
 
-            if($this->currentPage + $numAdjacents > $this->numPages)
-            {
-                $slidingStart = $this->numPages - $this->maxPagesToShow + 2;
-            }
-            else
+            $slidingStart = 1;
+            $slidingEndOffset = $numAdjacents + 3 - $this->currentPage;
+            if($slidingEndOffset < 0)
             {
                 $slidingStart = $this->currentPage - $numAdjacents;
-            }
-            if($slidingStart < 2)
-            {
-                $slidingStart = 2;
+                $slidingEndOffset = 0;
             }
 
-            $slidingEnd = $slidingStart + $this->maxPagesToShow - 3;
-            if($slidingEnd >= $this->numPages)
+            $slidingEnd = $this->numPages;
+            $slidingStartOffset = $this->currentPage + $numAdjacents + 2 - $this->numPages;
+            if($slidingStartOffset < 0)
             {
-                $slidingEnd = $this->numPages - 1;
+                $slidingEnd = $this->currentPage + $numAdjacents;
+                $slidingStartOffset = 0;
             }
 
             // Build the list of pages.
-            $pages[] = $this->createPage(1, $this->currentPage == 1);
-            if($slidingStart > 2)
+            if($slidingStart > 1)
             {
+                $pages[] = $this->createPage(1);
                 $pages[] = $this->createPageEllipsis();
             }
-            for($i = $slidingStart; $i <= $slidingEnd; $i++)
+            for($i = $slidingStart - $slidingStartOffset; $i <= $slidingEnd + $slidingEndOffset; $i++)
             {
-                $pages[] = $this->createPage($i, $i == $this->currentPage);
+                $pages[] = $this->createPage($i);
             }
-            if($slidingEnd < $this->numPages - 1)
+            if($slidingEnd < $this->numPages)
             {
                 $pages[] = $this->createPageEllipsis();
+                $pages[] = $this->createPage($this->numPages);
             }
-            $pages[] = $this->createPage($this->numPages, $this->currentPage == $this->numPages);
         }
 
         return $pages;
@@ -315,16 +316,16 @@ class Paginator
      * Create a page data structure.
      *
      * @param int $pageNum
-     * @param bool $isCurrent
+     *
      * @return Array
      */
-    protected function createPage($pageNum, $isCurrent = false)
+    protected function createPage($pageNum)
     {
-        return array(
+        return [
             'num' => $pageNum,
             'call' => $this->getPageCall($pageNum),
-            'isCurrent' => $isCurrent,
-        );
+            'isCurrent' => ($this->currentPage == $pageNum),
+        ];
     }
 
     /**
@@ -332,37 +333,11 @@ class Paginator
      */
     protected function createPageEllipsis()
     {
-        return array(
+        return [
             'num' => '...',
             'call' => null,
             'isCurrent' => false,
-        );
-    }
-
-    /**
-     * Render an HTML pagination control.
-     *
-     * @return string
-     */
-    public function toHtml()
-    {
-        if($this->getNumPages() <= 1)
-        {
-            return '';
-        }
-
-        $this->renderer->setPaginator($this);
-        return $this->renderer->render();
-    }
-
-    /**
-     * Render an HTML pagination control.
-     *
-     * @return string
-     */
-    public function __toString()
-    {
-        return $this->toHtml();
+        ];
     }
 
     public function getCurrentPageFirstItem()
@@ -414,5 +389,29 @@ class Paginator
     public function getNextText()
     {
         return $this->nextText;
+    }
+
+    /**
+     * Render an HTML pagination control.
+     *
+     * @return string
+     */
+    public function render()
+    {
+        if($this->getNumPages() <= 1)
+        {
+            return '';
+        }
+        return $this->renderer->render($this);
+    }
+
+    /**
+     * Render an HTML pagination control.
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->render();
     }
 }

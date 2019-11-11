@@ -114,11 +114,11 @@ class JsCall implements JsonSerializable
     /**
      * Set the value of the parameter at the given position
      *
-     * @param Interfaces\Parameter      $xParameter             The value to be used
+     * @param Contracts\Parameter      $xParameter             The value to be used
      *
      * @return void
      */
-    public function pushParameter(Interfaces\Parameter $xParameter)
+    public function pushParameter(Contracts\Parameter $xParameter)
     {
         $this->aParameters[] = $xParameter;
     }
@@ -129,12 +129,12 @@ class JsCall implements JsonSerializable
      * @param string            $sType              The type of the value to be used
      * @param string            $sValue             The value to be used
      *
-     * Types should be one of the following <Jaxon::FORM_VALUES>, <Jaxon::QUOTED_VALUE>, <Jaxon::NUMERIC_VALUE>,
-     * <Jaxon::JS_VALUE>, <Jaxon::INPUT_VALUE>, <Jaxon::CHECKED_VALUE>, <Jaxon::PAGE_NUMBER>.
+     * Types should be one of the following <Parameter::FORM_VALUES>, <Parameter::QUOTED_VALUE>, <Parameter::NUMERIC_VALUE>,
+     * <Parameter::JS_VALUE>, <Parameter::INPUT_VALUE>, <Parameter::CHECKED_VALUE>, <Parameter::PAGE_NUMBER>.
      * The value should be as follows:
-     * - <Jaxon::FORM_VALUES> - Use the ID of the form you want to process.
-     * - <Jaxon::QUOTED_VALUE> - The string data to be passed.
-     * - <Jaxon::JS_VALUE> - A string containing valid javascript
+     * - <Parameter::FORM_VALUES> - Use the ID of the form you want to process.
+     * - <Parameter::QUOTED_VALUE> - The string data to be passed.
+     * - <Parameter::JS_VALUE> - A string containing valid javascript
      *   (either a javascript variable name that will be in scope at the time of the call or
      *   a javascript function call whose return value will become the parameter).
      *
@@ -158,7 +158,7 @@ class JsCall implements JsonSerializable
         {
             if($xParameter instanceof JsCall)
             {
-                $this->addParameter(Jaxon::JS_VALUE, 'function(){' . $xParameter->getScript() . ';}');
+                $this->addParameter(Parameter::JS_VALUE, 'function(){' . $xParameter->getScript() . ';}');
             }
             else
             {

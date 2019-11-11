@@ -27,7 +27,7 @@ use Jaxon\Request\Support\CallableRepository;
 
 class CallableDir extends RequestPlugin
 {
-    use \Jaxon\Utils\Traits\Translator;
+    use \Jaxon\Features\Translator;
 
     /**
      * The callable repository
@@ -35,20 +35,6 @@ class CallableDir extends RequestPlugin
      * @var CallableRepository
      */
     protected $xRepository = null;
-
-    /**
-     * True if the Composer autoload is enabled
-     *
-     * @var boolean
-     */
-    private $bAutoloadEnabled = true;
-
-    /**
-     * The Composer autoloader
-     *
-     * @var Autoloader
-     */
-    private $xAutoloader = null;
 
     /**
      * The class constructor
@@ -71,40 +57,17 @@ class CallableDir extends RequestPlugin
     }
 
     /**
-     * Use the Composer autoloader
-     *
-     * @return void
-     */
-    public function useComposerAutoloader()
-    {
-        $this->bAutoloadEnabled = true;
-        $this->xAutoloader = require(__DIR__ . '/../../../../../autoload.php');
-    }
-
-    /**
-     * Disable the autoloader in the library
-     *
-     * The user shall provide an alternative autoload system.
-     *
-     * @return void
-     */
-    public function disableAutoload()
-    {
-        $this->bAutoloadEnabled = false;
-        $this->xAutoloader = null;
-    }
-
-    /**
      * Register a callable class
      *
      * @param string        $sType          The type of request handler being registered
-     * @param string        $sDirectory     The name of the class being registered
+     * @param string        $sDirectory     The path of teh directory being registered
      * @param array|string  $aOptions       The associated options
      *
      * @return boolean
      */
     public function register($sType, $sDirectory, $aOptions)
     {
+        $sType = trim($sType);
         if($sType != $this->getName())
         {
             return false;
@@ -123,7 +86,7 @@ class CallableDir extends RequestPlugin
             throw new \Jaxon\Exception\Error($this->trans('errors.objects.invalid-declaration'));
         }
 
-        $sDirectory = rtrim(trim($sDirectory), DIRECTORY_SEPARATOR);
+        $sDirectory = rtrim(trim($sDirectory), '/\\');
         if(!is_dir($sDirectory))
         {
             return false;
@@ -136,13 +99,6 @@ class CallableDir extends RequestPlugin
             $sNamespace = '';
         }
 
-        // $sSeparator = key_exists('separator', $aOptions) ? $aOptions['separator'] : '.';
-        // // Only '.' and '_' are allowed to be used as separator. Any other value is ignored and '.' is used instead.
-        // if(($sSeparator = trim($sSeparator)) != '_')
-        // {
-        //     $sSeparator = '.';
-        // }
-
         // Change the keys in $aOptions to have "\" as separator
         $_aOptions = [];
         foreach($aOptions as $sName => $aOption)
@@ -154,21 +110,10 @@ class CallableDir extends RequestPlugin
 
         if(($sNamespace))
         {
-            // Register the dir with PSR4 autoloading
-            if(($this->xAutoloader))
-            {
-                $this->xAutoloader->setPsr4($sNamespace . '\\', $sDirectory);
-            }
-
             $this->xRepository->addNamespace($sNamespace, $aOptions);
         }
         else
         {
-             // Use underscore as separator, so there's no need to deal with namespace
-            // when generating javascript code.
-            $aOptions['separator'] = '_';
-            $aOptions['autoload'] = $this->bAutoloadEnabled;
-
             $this->xRepository->addDirectory($sDirectory, $aOptions);
         }
 

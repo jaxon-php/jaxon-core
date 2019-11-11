@@ -13,10 +13,31 @@
 
 namespace Jaxon\Request\Factory;
 
-use Jaxon\Jaxon;
-
-class Parameter implements Interfaces\Parameter
+class Parameter implements Contracts\Parameter
 {
+    /*
+     * Request parameters
+     */
+    // Specifies that the parameter will consist of an array of form values.
+    const FORM_VALUES = 'FormValues';
+    // Specifies that the parameter will contain the value of an input control.
+    const INPUT_VALUE = 'InputValue';
+    // Specifies that the parameter will consist of a boolean value of a checkbox.
+    const CHECKED_VALUE = 'CheckedValue';
+    // Specifies that the parameter value will be the innerHTML value of the element.
+    const ELEMENT_INNERHTML = 'ElementInnerHTML';
+    // Specifies that the parameter will be a quoted value (string).
+    const QUOTED_VALUE = 'QuotedValue';
+    // Specifies that the parameter will be a boolean value (true or false).
+    const BOOL_VALUE = 'BoolValue';
+    // Specifies that the parameter will be a numeric, non-quoted value.
+    const NUMERIC_VALUE = 'NumericValue';
+    // Specifies that the parameter will be a non-quoted value
+    // (evaluated by the browsers javascript engine at run time).
+    const JS_VALUE = 'UnquotedValue';
+    // Specifies that the parameter will be an integer used to generate pagination links.
+    const PAGE_NUMBER = 'PageNumber';
+
     /**
      * The parameter type
      *
@@ -84,25 +105,25 @@ class Parameter implements Interfaces\Parameter
      */
     public static function make($xValue)
     {
-        if($xValue instanceof Interfaces\Parameter)
+        if($xValue instanceof Contracts\Parameter)
         {
             return $xValue;
         }
         elseif(is_numeric($xValue))
         {
-            return new Parameter(Jaxon::NUMERIC_VALUE, $xValue);
+            return new Parameter(self::NUMERIC_VALUE, $xValue);
         }
         elseif(is_string($xValue))
         {
-            return new Parameter(Jaxon::QUOTED_VALUE, $xValue);
+            return new Parameter(self::QUOTED_VALUE, $xValue);
         }
         elseif(is_bool($xValue))
         {
-            return new Parameter(Jaxon::BOOL_VALUE, $xValue);
+            return new Parameter(self::BOOL_VALUE, $xValue);
         }
         else // if(is_array($xValue) || is_object($xValue))
         {
-            return new Parameter(Jaxon::JS_VALUE, $xValue);
+            return new Parameter(self::JS_VALUE, $xValue);
         }
     }
 
@@ -142,31 +163,31 @@ class Parameter implements Interfaces\Parameter
         $sJsCode = '';
         switch($this->sType)
         {
-        case Jaxon::FORM_VALUES:
+        case self::FORM_VALUES:
             $sJsCode = $this->getJsCall('getFormValues', $this->xValue);
             break;
-        case Jaxon::INPUT_VALUE:
+        case self::INPUT_VALUE:
             $sJsCode = $this->getJsCall('$', $this->xValue) . '.value';
             break;
-        case Jaxon::CHECKED_VALUE:
+        case self::CHECKED_VALUE:
             $sJsCode = $this->getJsCall('$', $this->xValue) . '.checked';
             break;
-        case Jaxon::ELEMENT_INNERHTML:
+        case self::ELEMENT_INNERHTML:
             $sJsCode = $this->getJsCall('$', $this->xValue) . '.innerHTML';
             break;
-        case Jaxon::QUOTED_VALUE:
+        case self::QUOTED_VALUE:
             $sJsCode = $this->getQuotedValue(addslashes($this->xValue));
             break;
-        case Jaxon::BOOL_VALUE:
+        case self::BOOL_VALUE:
             $sJsCode = ($this->xValue) ? 'true' : 'false';
             break;
-        case Jaxon::PAGE_NUMBER:
+        case self::PAGE_NUMBER:
             $sJsCode = (string)$this->xValue;
             break;
-        case Jaxon::NUMERIC_VALUE:
+        case self::NUMERIC_VALUE:
             $sJsCode = (string)$this->xValue;
             break;
-        case Jaxon::JS_VALUE:
+        case self::JS_VALUE:
             if(is_array($this->xValue) || is_object($this->xValue))
             {
                 // Unable to use double quotes here because they cannot be handled on client side.

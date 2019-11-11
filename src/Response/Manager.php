@@ -21,15 +21,17 @@
 
 namespace Jaxon\Response;
 
+use Jaxon\Contracts\Response as ResponseContract;
+
 class Manager
 {
-    use \Jaxon\Utils\Traits\Translator;
+    use \Jaxon\Features\Translator;
 
     /**
      * The current response object that will be sent back to the browser
      * once the request processing phase is complete
      *
-     * @var \Jaxon\Response\Response
+     * @var ResponseContract
      */
     private $xResponse;
 
@@ -40,6 +42,9 @@ class Manager
      */
     private $aDebugMessages;
 
+    /**
+     * The class constructor
+     */
     public function __construct()
     {
         $this->xResponse = null;
@@ -59,13 +64,13 @@ class Manager
     }
 
     /**
-     * Check if there is currently no response
+     * Get the reponse to the Jaxon request
      *
-     * @return boolean
+     * @return ResponseContract
      */
-    public function hasNoResponse()
+    public function getResponse()
     {
-        return ($this->xResponse == null);
+        return $this->xResponse;
     }
 
     /**
@@ -75,11 +80,11 @@ class Manager
      * If no prior response has been appended, this response becomes the main response
      * object to which other response objects will be appended.
      *
-     * @param Response        $xResponse            The response object to be appended
+     * @param ResponseContract  $xResponse            The response object to be appended
      *
      * @return void
      */
-    public function append(Response $xResponse)
+    public function append(ResponseContract $xResponse)
     {
         if(!$this->xResponse)
         {
@@ -94,7 +99,7 @@ class Manager
         }
         else
         {
-            $this->debug($this->trans('errors.mismatch.types', array('class' => get_class($xResponse))));
+            $this->debug($this->trans('errors.mismatch.types', ['class' => get_class($xResponse)]));
         }
     }
 
@@ -111,6 +116,20 @@ class Manager
     public function debug($sMessage)
     {
         $this->aDebugMessages[] = $sMessage;
+    }
+
+    /**
+     * Clear the response and appends a debug message on the end of the debug message queue
+     *
+     * @param string        $sMessage            The debug message
+     *
+     * @return void
+     */
+    public function error($sMessage)
+    {
+        $this->clear();
+        $this->append(jaxon()->newResponse());
+        $this->debug($sMessage);
     }
 
     /**

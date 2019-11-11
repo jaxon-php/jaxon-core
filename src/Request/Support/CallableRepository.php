@@ -14,16 +14,14 @@
 
 namespace Jaxon\Request\Support;
 
-use Jaxon\Request\Request;
+use Jaxon\Request\Factory\CallableClass\Request as RequestFactory;
+use Jaxon\Request\Factory\CallableClass\Paginator as PaginatorFactory;
 
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 
 class CallableRepository
 {
-    use \Jaxon\Utils\Traits\Config;
-    use \Jaxon\Utils\Traits\Template;
-
     /**
      * The registered namespaces
      *
@@ -66,6 +64,33 @@ class CallableRepository
     protected $aCallableOptions = [];
 
     /**
+     * If the underscore is used as separator in js class names
+     *
+     * @var boolean
+     */
+    protected $bUsingUnderscore = false;
+
+    /**
+     * The Composer autoloader
+     *
+     * @var Autoloader
+     */
+    private $xAutoloader = null;
+
+    /**
+     * The class constructor
+     */
+    public function __construct()
+    {
+        // Set the composer autoloader
+        $sAutoloadFile = __DIR__ . '/../../../../../autoload.php';
+        if(file_exists($sAutoloadFile))
+        {
+            $this->xAutoloader = require($sAutoloadFile);
+        }
+    }
+
+    /**
      *
      * @param string        $sClassName     The name of the class being registered
      * @param array|string  $aOptions       The associated options
@@ -74,7 +99,6 @@ class CallableRepository
      */
     public function addClass($sClassName, $aOptions)
     {
-        // Todo: if there's a namespace, register with '_' as separator
         $sClassName = trim($sClassName, '\\');
         $this->aClassOptions[$sClassName] = $aOptions;
     }
@@ -158,6 +182,26 @@ class CallableRepository
         {
             $aOptions['separator'] = '.';
         }
+        $aOptions['separator'] = trim($aOptions['separator']);
+        if(!in_array($aOptions['separator'], ['.', '_']))
+        {
+            $aOptions['separator'] = '.';
+        }
+        if($aOptions['separator'] == '_')
+        {
+            $this->bUsingUnderscore = true;
+        }
+        // Set the autoload option default value
+        if(!key_exists('autoload', $aOptions))
+        {
+            $aOptions['autoload'] = true;
+        }
+        // Register the dir with PSR4 autoloading
+        if(($aOptions['autoload']) && $this->xAutoloader != null)
+        {
+            $this->xAutoloader->setPsr4($sNamespace . '\\', $aOptions['directory']);
+        }
+
         $this->aNamespaceOptions[$sNamespace] = $aOptions;
     }
 
@@ -206,7 +250,7 @@ class CallableRepository
 
         // Get the class options
         $aOptions = $this->aNamespaceOptions[$sNamespace];
-        $aDefaultOptions = []; // ['namespace' => $aOptions['namespace']];
+        $aDefaultOptions = ['namespace' => $sNamespace];
         if(key_exists('separator', $aOptions))
         {
             $aDefaultOptions['separator'] = $aOptions['separator'];
@@ -235,11 +279,11 @@ class CallableRepository
         }
 
         // Create the callable object
-        $xCallableObject = new \Jaxon\Request\Support\CallableObject($sClassName);
+        $xCallableObject = new CallableObject($sClassName);
         $this->aCallableOptions[$sClassName] = [];
         foreach($aOptions as $sName => $xValue)
         {
-            if($sName == 'separator' || $sName == 'protected')
+            if(in_array($sName, ['separator', 'namespace', 'protected']))
             {
                 $xCallableObject->configure($sName, $xValue);
             }
@@ -252,15 +296,17 @@ class CallableRepository
         $this->aCallableObjects[$sClassName] = $xCallableObject;
 
         // Register the request factory for this callable object
-        jaxon()->di()->set($sClassName . '_Factory_Rq', function () use ($sClassName) {
-            $xCallableObject = $this->aCallableObjects[$sClassName];
-            return new \Jaxon\Factory\Request\Portable($xCallableObject);
-        });
+        jaxon()->di()->setCallableClassRequestFactory($sClassName, $xCallableObject);
+        // jaxon()->di()->set($sClassName . '_RequestFactory', function () use ($sClassName) {
+        //     $xCallableObject = $this->aCallableObjects[$sClassName];
+        //     return new CallableClassRequestFactory($xCallableObject);
+        // });
         // Register the paginator factory for this callable object
-        jaxon()->di()->set($sClassName . '_Factory_Pg', function () use ($sClassName) {
-            $xCallableObject = $this->aCallableObjects[$sClassName];
-            return new \Jaxon\Factory\Request\Paginator($xCallableObject);
-        });
+        jaxon()->di()->setCallableClassPaginatorFactory($sClassName, $xCallableObject);
+        // jaxon()->di()->set($sClassName . '_PaginatorFactory', function () use ($sClassName) {
+        //     $xCallableObject = $this->aCallableObjects[$sClassName];
+        //     return new CallableClassPaginatorFactory($xCallableObject);
+        // });
 
         return $xCallableObject;
     }
@@ -276,7 +322,12 @@ class CallableRepository
     {
         // Replace all separators ('.' and '_') with antislashes, and remove the antislashes
         // at the beginning and the end of the class name.
-        $sClassName = trim(str_replace(['.', '_'], ['\\', '\\'], (string)$sClassName), '\\');
+        $sClassName = (string)$sClassName;
+        $sClassName = trim(str_replace('.', '\\', $sClassName), '\\');
+        if($this->bUsingUnderscore)
+        {
+            $sClassName = trim(str_replace('_', '\\', $sClassName), '\\');
+        }
 
         if(key_exists($sClassName, $this->aCallableObjects))
         {
@@ -301,7 +352,7 @@ class CallableRepository
      *
      * @return void
      */
-    private function createCallableObjects()
+    public function createCallableObjects()
     {
         // Create callable objects for registered classes
         foreach($this->aClassOptions as $sClassName => $aClassOptions)
@@ -321,7 +372,7 @@ class CallableRepository
                 continue;
             }
 
-            $this->aNamespaces[$sNamespace] = $sNamespace;
+            $this->aNamespaces[$sNamespace] = ['separator' => $aOptions['separator']];
 
             // Iterate on dir content
             $sDirectory = $aOptions['directory'];
@@ -374,82 +425,32 @@ class CallableRepository
     }
 
     /**
-     * Generate a hash for the registered callable objects
+     * Get all registered namespaces
      *
-     * @return string
+     * @return array
      */
-    public function generateHash()
+    public function getNamespaces()
     {
-        $this->createCallableObjects();
-
-        $sHash = '';
-        foreach($this->aNamespaces as $sNamespace => $aOptions)
-        {
-            $sHash .= $sNamespace . $aOptions['separator'];
-        }
-        foreach($this->aCallableObjects as $sClassName => $xCallableObject)
-        {
-            $sHash .= $sClassName . implode('|', $xCallableObject->getMethods());
-        }
-
-        return md5($sHash);
+        return $this->aNamespaces;
     }
 
     /**
-     * Generate client side javascript code for the registered callable objects
+     * Get all registered callable objects
      *
-     * @return string
+     * @return array
      */
-    public function getScript()
+    public function getCallableObjects()
     {
-        $this->createCallableObjects();
+        return $this->aCallableObjects;
+    }
 
-        $sPrefix = $this->getOption('core.prefix.class');
-
-        $aJsClasses = [];
-        $sCode = '';
-        foreach(array_keys($this->aNamespaces) as $sNamespace)
-        {
-            $offset = 0;
-            $sJsNamespace = str_replace('\\', '.', $sNamespace);
-            $sJsNamespace .= '.Null'; // This is a sentinel. The last token is not processed in the while loop.
-            while(($dotPosition = strpos($sJsNamespace, '.', $offset)) !== false)
-            {
-                $sJsClass = substr($sJsNamespace, 0, $dotPosition);
-                // Generate code for this object
-                if(!key_exists($sJsClass, $aJsClasses))
-                {
-                    $sCode .= "$sPrefix$sJsClass = {};\n";
-                    $aJsClasses[$sJsClass] = $sJsClass;
-                }
-                $offset = $dotPosition + 1;
-            }
-        }
-
-        foreach($this->aCallableObjects as $sClassName => $xCallableObject)
-        {
-            $aConfig = $this->aCallableOptions[$sClassName];
-            $aCommonConfig = key_exists('*', $aConfig) ? $aConfig['*'] : [];
-
-            $aMethods = [];
-            foreach($xCallableObject->getMethods() as $sMethodName)
-            {
-                // Specific options for this method
-                $aMethodConfig = key_exists($sMethodName, $aConfig) ?
-                    array_merge($aCommonConfig, $aConfig[$sMethodName]) : $aCommonConfig;
-                $aMethods[] = [
-                    'name' => $sMethodName,
-                    'config' => $aMethodConfig,
-                ];
-            }
-
-            $sCode .= $this->render('jaxon::support/object.js', [
-                'sPrefix' => $sPrefix,
-                'sClass' => $xCallableObject->getJsName(),
-                'aMethods' => $aMethods,
-            ]);
-        }
-
-        return $sCode;
+    /**
+     * Get all registered callable objects options
+     *
+     * @return array
+     */
+    public function getCallableOptions()
+    {
+        return $this->aCallableOptions;
     }
 }

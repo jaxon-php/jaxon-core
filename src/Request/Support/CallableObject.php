@@ -33,14 +33,14 @@ class CallableObject
      *
      * @var object
      */
-    private $registeredObject = null;
+    private $xRegisteredObject = null;
 
     /**
      * The reflection class of the user registered callable object
      *
      * @var \ReflectionClass
      */
-    private $reflectionClass;
+    private $xReflectionClass;
 
     /**
      * A list of methods of the user registered callable object the library must not export to javascript
@@ -50,11 +50,18 @@ class CallableObject
     private $aProtectedMethods = [];
 
     /**
+     * The namespace the callable class was registered from
+     *
+     * @var string
+     */
+    private $sNamespace = '';
+
+    /**
      * The character to use as separator in javascript class names
      *
      * @var string
      */
-    private $separator = '.';
+    private $sSeparator = '.';
 
     /**
      * The class constructor
@@ -64,7 +71,7 @@ class CallableObject
      */
     public function __construct($sCallable)
     {
-        $this->reflectionClass = new \ReflectionClass($sCallable);
+        $this->xReflectionClass = new \ReflectionClass($sCallable);
     }
 
     /**
@@ -75,7 +82,7 @@ class CallableObject
     public function getClassName()
     {
         // Get the class name without the namespace.
-        return $this->reflectionClass->getShortName();
+        return $this->xReflectionClass->getShortName();
     }
 
     /**
@@ -86,7 +93,7 @@ class CallableObject
     public function getName()
     {
         // Get the class name with the namespace.
-        return $this->reflectionClass->getName();
+        return $this->xReflectionClass->getName();
     }
 
     /**
@@ -96,7 +103,7 @@ class CallableObject
      */
     public function getJsName()
     {
-        return str_replace('\\', $this->separator, $this->getName());
+        return str_replace('\\', $this->sSeparator, $this->getName());
     }
 
     /**
@@ -106,8 +113,19 @@ class CallableObject
      */
     public function getNamespace()
     {
-        // The namespace the class was registered with.
-        return $this->reflectionClass->getNamespaceName();
+        // The namespace of the registered class.
+        return $this->xReflectionClass->getNamespaceName();
+    }
+
+    /**
+     * Return the namespace the callable class was registered from
+     *
+     * @return string
+     */
+    public function getRootNamespace()
+    {
+        // The namespace the callable class was registered from.
+        return $this->sNamespace;
     }
 
     /**
@@ -126,7 +144,14 @@ class CallableObject
         case 'separator':
             if($sValue == '_' || $sValue == '.')
             {
-                $this->separator = $sValue;
+                $this->sSeparator = $sValue;
+            }
+            break;
+        // Set the namespace
+        case 'namespace':
+            if(is_string($sValue))
+            {
+                $this->sNamespace = $sValue;
             }
             break;
         // Set the protected methods
@@ -153,7 +178,7 @@ class CallableObject
     public function getMethods()
     {
         $aMethods = [];
-        foreach($this->reflectionClass->getMethods(\ReflectionMethod::IS_PUBLIC) as $xMethod)
+        foreach($this->xReflectionClass->getMethods(\ReflectionMethod::IS_PUBLIC) as $xMethod)
         {
             $sMethodName = $xMethod->getShortName();
             // Don't take magic __call, __construct, __destruct methods
@@ -178,11 +203,11 @@ class CallableObject
      */
     public function getRegisteredObject()
     {
-        if($this->registeredObject == null)
+        if($this->xRegisteredObject == null)
         {
             $di = jaxon()->di();
             // Use the Reflection class to get the parameters of the constructor
-            if(($constructor = $this->reflectionClass->getConstructor()) != null)
+            if(($constructor = $this->xReflectionClass->getConstructor()) != null)
             {
                 $parameters = $constructor->getParameters();
                 $parameterInstances = [];
@@ -191,14 +216,20 @@ class CallableObject
                     // Get the parameter instance from the DI
                     $parameterInstances[] = $di->get($parameter->getClass()->getName());
                 }
-                $this->registeredObject = $this->reflectionClass->newInstanceArgs($parameterInstances);
+                $this->xRegisteredObject = $this->xReflectionClass->newInstanceArgs($parameterInstances);
             }
             else
             {
-                $this->registeredObject = $this->reflectionClass->newInstance();
+                $this->xRegisteredObject = $this->xReflectionClass->newInstance();
+            }
+
+            // Initialize the object
+            if($this->xRegisteredObject instanceof \Jaxon\CallableClass)
+            {
+                $this->xRegisteredObject->response = jaxon()->getResponse();
             }
         }
-        return $this->registeredObject;
+        return $this->xRegisteredObject;
     }
 
     /**
@@ -210,7 +241,7 @@ class CallableObject
      */
     public function hasMethod($sMethod)
     {
-        return $this->reflectionClass->hasMethod($sMethod)/* || $this->reflectionClass->hasMethod('__call')*/;
+        return $this->xReflectionClass->hasMethod($sMethod)/* || $this->xReflectionClass->hasMethod('__call')*/;
     }
 
     /**
@@ -227,8 +258,8 @@ class CallableObject
         {
             return;
         }
-        $reflectionMethod = $this->reflectionClass->getMethod($sMethod);
-        $registeredObject = $this->getRegisteredObject();
-        return $reflectionMethod->invokeArgs($registeredObject, $aArgs);
+        $reflectionMethod = $this->xReflectionClass->getMethod($sMethod);
+        $xRegisteredObject = $this->getRegisteredObject();
+        return $reflectionMethod->invokeArgs($xRegisteredObject, $aArgs);
     }
 }

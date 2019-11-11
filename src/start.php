@@ -1,6 +1,6 @@
 <?php
 
-use Jaxon\DI\Container;
+use Jaxon\Jaxon;
 
 /**
  * start.php -
@@ -17,13 +17,13 @@ use Jaxon\DI\Container;
  */
 
 /**
- * Return the only instance of the Jaxon/Jaxon class
+ * Return the singleton instance of the Jaxon/Jaxon class
  *
  * @return Jaxon\Jaxon
  */
 function jaxon()
 {
-    return Container::getInstance()->getJaxon();
+    return Jaxon::getInstance();
 }
 
 /**
@@ -37,7 +37,7 @@ function jaxon()
  */
 function jaxon_trans($sText, array $aPlaceHolders = [], $sLanguage = null)
 {
-    return Container::getInstance()->getTranslator()->trans($sText, $aPlaceHolders, $sLanguage);
+    return Jaxon::getInstance()->di()->getTranslator()->trans($sText, $aPlaceHolders, $sLanguage);
 }
 
 /**
@@ -50,29 +50,27 @@ function jaxon_trans($sText, array $aPlaceHolders = [], $sLanguage = null)
  */
 function jaxon_register_plugin(\Jaxon\Plugin\Plugin $xPlugin, $nPriority = 1000)
 {
-    Container::getInstance()->getJaxon()->registerPlugin($xPlugin, $nPriority);
+    Jaxon::getInstance()->registerPlugin($xPlugin, $nPriority);
 }
 
 /**
  * Get the single instance of the request factory, and set the class to call.
  *
- * @return Jaxon\Request\Factory
+ * @return Jaxon\Request\Factory\RequestFactory
  */
-function rq($classname = null)
+function rq($sClassName = null)
 {
-    return Container::getInstance()->getRequestFactory()->setClassName($classname);
+    return Jaxon::getInstance()->di()->getRequestFactory()->setClassName($sClassName);
 }
 
 /**
- * Get the single instance of the request factory
+ * Get the single instance of the parameter factory
  *
- * Since no class is set, this function shall be used when setting request parameters.
- *
- * @return Jaxon\Request\Factory
+ * @return Jaxon\Request\Factory\ParameterFactory
  */
 function pr()
 {
-    return Container::getInstance()->getRequestFactory();
+    return Jaxon::getInstance()->di()->getParameterFactory();
 }
 
 /**
@@ -108,11 +106,7 @@ function jQuery($sSelector = '', $sContext = '')
 }
 
 /*
- * Load the Jaxon request plugins
+ * Register the Jaxon request and response plugins
  */
-jaxon()->registerRequestPlugins();
-
-/*
- * Load the Jaxon response plugins
- */
-jaxon()->registerResponsePlugins();
+jaxon()->di()->getPluginManager()->registerRequestPlugins();
+jaxon()->di()->getPluginManager()->registerResponsePlugins();

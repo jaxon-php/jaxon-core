@@ -23,17 +23,22 @@ namespace Jaxon\Plugin;
 
 use Jaxon\Jaxon;
 use Jaxon\Plugin\Package;
-use Jaxon\Config\Config;
+use Jaxon\Request\Support\CallableRepository;
+use Jaxon\Request\Plugin\CallableClass;
+use Jaxon\Request\Plugin\CallableDir;
+use Jaxon\Request\Plugin\CallableFunction;
+use Jaxon\Request\Plugin\FileUpload;
+use Jaxon\Response\Plugin\JQuery as JQueryPlugin;
+use Jaxon\Utils\Config\Config;
 
 use Closure;
 
 class Manager
 {
-    use \Jaxon\Utils\Traits\Manager;
-    use \Jaxon\Utils\Traits\Config;
-    use \Jaxon\Utils\Traits\Cache;
-    use \Jaxon\Utils\Traits\Event;
-    use \Jaxon\Utils\Traits\Translator;
+    use \Jaxon\Features\Manager;
+    use \Jaxon\Features\Config;
+    use \Jaxon\Features\Event;
+    use \Jaxon\Features\Translator;
 
     /**
      * All plugins, indexed by priority
@@ -130,8 +135,9 @@ class Manager
      */
     public function registerPlugin(Plugin $xPlugin, $nPriority = 1000)
     {
-        $bIsAlert = ($xPlugin instanceof \Jaxon\Dialog\Interfaces\Alert);
-        $bIsConfirm = ($xPlugin instanceof \Jaxon\Dialog\Interfaces\Confirm);
+        $bIsAlert = ($xPlugin instanceof \Jaxon\Contracts\Dialogs\Alert);
+        $bIsConfirm = ($xPlugin instanceof \Jaxon\Contracts\Dialogs\Confirm);
+        $bIsListener = ($xPlugin instanceof \Jaxon\Contracts\Event\Listener);
         if($xPlugin instanceof Request)
         {
             // The name of a request plugin is used as key in the plugin table
@@ -142,9 +148,10 @@ class Manager
             // The name of a response plugin is used as key in the plugin table
             $this->aResponsePlugins[$xPlugin->getName()] = $xPlugin;
         }
-        elseif(!$bIsConfirm && !$bIsAlert)
+        elseif(!$bIsConfirm && !$bIsAlert && !$bIsListener)
         {
-            throw new \Jaxon\Exception\Error($this->trans('errors.register.invalid', ['name' => get_class($xPlugin)]));
+            $sErrorMessage = $this->trans('errors.register.invalid', ['name' => get_class($xPlugin)]);
+            throw new \Jaxon\Exception\Error($sErrorMessage);
         }
         // This plugin implements the Alert interface
         if($bIsAlert)
@@ -157,7 +164,7 @@ class Manager
             jaxon()->dialog()->setConfirm($xPlugin);
         }
         // Register the plugin as an event listener
-        if($xPlugin instanceof \Jaxon\Utils\Interfaces\EventListener)
+        if($bIsListener)
         {
             $this->addEventListener($xPlugin);
         }
@@ -180,7 +187,7 @@ class Manager
     }
 
     /**
-     * Register a function, event or callable object
+     * Register a function, event or callable class
      *
      * Call the request plugin with the $sType defined as name.
      *
@@ -190,7 +197,7 @@ class Manager
      *
      * @return mixed
      */
-    public function register($sType, $sCallable, $aOptions = [])
+    public function registerCallable($sType, $sCallable, $aOptions = [])
     {
         if(!key_exists($sType, $this->aRequestPlugins))
         {
@@ -199,14 +206,38 @@ class Manager
 
         $xPlugin = $this->aRequestPlugins[$sType];
         return $xPlugin->register($sType, $sCallable, $aOptions);
-        // foreach($this->aRequestPlugins as $xPlugin)
-        // {
-        //     if($mResult instanceof \Jaxon\Request\Request || is_array($mResult) || $mResult === true)
-        //     {
-        //         return $mResult;
-        //     }
-        // }
-        // throw new \Jaxon\Exception\Error($this->trans('errors.register.method', ['args' => print_r($aArgs, true)]));
+    }
+
+    /**
+     * Register callable from a section of the config
+     *
+     * @param Config        $xAppConfig        The config options
+     * @param string        $sSection          The config section name
+     * @param string        $sCallableType     The type of callable to register
+     *
+     * @return void
+     */
+    private function registerCallablesFromConfig($xAppConfig, $sSection, $sCallableType)
+    {
+        $aConfig = $xAppConfig->getOption($sSection, []);
+        foreach($aConfig as $xKey => $xValue)
+        {
+            if(is_integer($xKey) && is_string($xValue))
+            {
+                // Register a function without options
+                $this->registerCallable($sCallableType, $xValue);
+            }
+            elseif(is_string($xKey) && (is_array($xValue) || is_string($xValue)))
+            {
+                // Register a function with options
+                $this->registerCallable($sCallableType, $xKey, $xValue);
+            }
+            else
+            {
+                continue;
+                // Todo: throw an exception
+            }
+        }
     }
 
     /**
@@ -218,75 +249,14 @@ class Manager
      */
     public function registerFromConfig($xAppConfig)
     {
-        // Register user functions
-        $aFunctionsConfig = $xAppConfig->getOption('functions', []);
-        foreach($aFunctionsConfig as $xKey => $xValue)
-        {
-            if(is_integer($xKey) && is_string($xValue))
-            {
-                // Register a function without options
-                $this->register(Jaxon::USER_FUNCTION, $xValue);
-            }
-            elseif(is_string($xKey) && is_array($xValue))
-            {
-                // Register a function with options
-                $this->register(Jaxon::USER_FUNCTION, $xKey, $xValue);
-            }
-            else
-            {
-                continue;
-                // Todo: throw an exception
-            }
-        }
+        // Register functions
+        $this->registerCallablesFromConfig($xAppConfig, 'functions', Jaxon::CALLABLE_FUNCTION);
 
-        // Register classes and directories
-        $aClassesConfig = $xAppConfig->getOption('classes', []);
-        foreach($aClassesConfig as $xKey => $xValue)
-        {
-            if(is_integer($xKey) && is_string($xValue))
-            {
-                // Register a class without options
-                $this->register(Jaxon::CALLABLE_CLASS, $xValue);
-            }
-            elseif(is_string($xKey) && is_array($xValue))
-            {
-                // Register a class with options
-                $this->register(Jaxon::CALLABLE_CLASS, $xKey, $xValue);
-            }
-            elseif(is_integer($xKey) && is_array($xValue))
-            {
-                // The directory path is required
-                if(!key_exists('directory', $xValue))
-                {
-                    continue;
-                    // Todo: throw an exception
-                }
-                // Registering a directory
-                $sDirectory = $xValue['directory'];
-                $aOptions = [];
-                if(key_exists('options', $xValue) &&
-                    (is_array($xValue['options']) || is_string($xValue['options'])))
-                {
-                    $aOptions = $xValue['options'];
-                }
-                // Setup directory options
-                if(key_exists('namespace', $xValue))
-                {
-                    $aOptions['namespace'] = $xValue['namespace'];
-                }
-                if(key_exists('separator', $xValue))
-                {
-                    $aOptions['separator'] = $xValue['separator'];
-                }
-                // Register a class without options
-                $this->register(Jaxon::CALLABLE_DIR, $sDirectory, $aOptions);
-            }
-            else
-            {
-                continue;
-                // Todo: throw an exception
-            }
-        }
+        // Register classes
+        $this->registerCallablesFromConfig($xAppConfig, 'classes', Jaxon::CALLABLE_CLASS);
+
+        // Register directories
+        $this->registerCallablesFromConfig($xAppConfig, 'directories', Jaxon::CALLABLE_DIR);
     }
 
 
@@ -320,5 +290,31 @@ class Manager
             return $this->aRequestPlugins[$sName];
         }
         return null;
+    }
+
+    /**
+     * Register the Jaxon request plugins
+     *
+     * @return void
+     */
+    public function registerRequestPlugins()
+    {
+        $di = jaxon()->di();
+        $this->registerPlugin($di->get(CallableClass::class), 101);
+        $this->registerPlugin($di->get(CallableDir::class), 102);
+        $this->registerPlugin($di->get(CallableFunction::class), 103);
+        $this->registerPlugin($di->get(FileUpload::class), 104);
+    }
+
+    /**
+     * Register the Jaxon response plugins
+     *
+     * @return void
+     */
+    public function registerResponsePlugins()
+    {
+        $di = jaxon()->di();
+        // Register an instance of the JQuery plugin
+        $this->registerPlugin($di->get(JQueryPlugin::class), 700);
     }
 }
