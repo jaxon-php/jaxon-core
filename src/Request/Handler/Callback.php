@@ -43,6 +43,13 @@ class Callback
     protected $xErrorCallback = null;
 
     /**
+     * The callback to run when a class is instanciated
+     *
+     * @var Callable
+     */
+    protected $xInitCallback = null;
+
+    /**
      * Get or set the pre-request processing callback.
      *
      * @param Callable|null  $xCallable               The callback function
@@ -104,5 +111,21 @@ class Callback
             return $this->xErrorCallback;
         }
         $this->xErrorCallback = $xCallable;
+    }
+
+    /**
+     * Get or set the class initialisation callback.
+     *
+     * @param Callable|null  $xCallable               The callback function
+     *
+     * @return void
+     */
+    public function init($xCallable = null)
+    {
+        if($xCallable === null)
+        {
+            return $this->xInitCallback;
+        }
+        $this->xInitCallback = $xCallable;
     }
 }

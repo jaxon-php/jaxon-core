@@ -132,7 +132,7 @@ class CallableObject
      * Set configuration options / call options for each method
      *
      * @param string        $sName              The name of the configuration option
-     * @param string        $sValue             The value of the configuration option
+     * @param string|array  $sValue             The value of the configuration option
      *
      * @return void
      */
@@ -227,6 +227,12 @@ class CallableObject
             if($this->xRegisteredObject instanceof \Jaxon\CallableClass)
             {
                 $this->xRegisteredObject->response = jaxon()->getResponse();
+            }
+
+            // Run the callback for class initialisation
+            if(($xCallback = $di->getRequestHandler()->getCallbackManager()->init()))
+            {
+                call_user_func_array($xCallback, [$this->xRegisteredObject]);
             }
         }
         return $this->xRegisteredObject;
