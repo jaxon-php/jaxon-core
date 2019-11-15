@@ -20,9 +20,6 @@
 
 namespace Jaxon\Request\Support;
 
-use Jaxon\Jaxon;
-use Jaxon\Request\Request;
-
 class CallableFunction
 {
     use \Jaxon\Features\Config;
@@ -99,16 +96,6 @@ class CallableFunction
             $this->aConfiguration[$sName] = $sValue;
             break;
         }
-    }
-
-    /**
-     * Constructs and returns a <Jaxon\Request\Request> object which is capable of generating the javascript call to invoke this jaxon enabled function
-     *
-     * @return Jaxon\Request\Request
-     */
-    public function generateRequest()
-    {
-        return new Request($this->getName());
     }
 
     /**

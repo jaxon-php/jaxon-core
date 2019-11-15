@@ -77,8 +77,6 @@ class Handler
     /**
      * The constructor
      *
-     * Get and decode the arguments of the HTTP request
-     *
      * @param PluginManager         $xPluginManager
      * @param ResponseManager       $xResponseManager
      * @param FileUpload            $xUploadRequestPlugin
@@ -150,7 +148,6 @@ class Handler
         {
             call_user_func_array($xCallback, [$this->xTargetRequestPlugin->getTarget(), &$bEndRequest]);
         }
-        // return $this->xResponse;
     }
 
     /**
@@ -164,7 +161,6 @@ class Handler
         {
             call_user_func_array($xCallback, [$this->xTargetRequestPlugin->getTarget(), $bEndRequest]);
         }
-        // return $this->xResponse;
     }
 
     /**
@@ -178,7 +174,6 @@ class Handler
         {
             call_user_func_array($xCallback, [$sMessage]);
         }
-        // return $this->xResponse;
     }
 
     /**
@@ -196,7 +191,6 @@ class Handler
         {
             throw $xException;
         }
-        // return $this->xResponse;
     }
 
     /**
