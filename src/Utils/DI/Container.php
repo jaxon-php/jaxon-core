@@ -576,32 +576,4 @@ class Container
     {
         return $this->libContainer[$sClassName . '_RequestFactory'];
     }
-
-    /**
-     * Set the callable class paginator factory
-     *
-     * @param string            $sClassName         The callable class name
-     * @param CallableObject    $xCallableObject    The corresponding callable object
-     *
-     * @return void
-     */
-    public function setCallableClassPaginatorFactory($sClassName, CallableObject $xCallableObject)
-    {
-        $this->libContainer[$sClassName . '_PaginatorFactory'] = function () use ($xCallableObject) {
-            // $xCallableObject = $c[CallableRepository::class]->getCallableObject($sClassName);
-            return new CallableClassPaginatorFactory($xCallableObject);
-        };
-    }
-
-    /**
-     * Get the callable class paginator factory
-     *
-     * @param string        $sClassName             The callable class name
-     *
-     * @return CallableClassPaginatorFactory
-     */
-    public function getCallableClassPaginatorFactory($sClassName)
-    {
-        return $this->libContainer[$sClassName . '_PaginatorFactory'];
-    }
 }

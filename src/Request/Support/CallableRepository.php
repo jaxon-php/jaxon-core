@@ -297,16 +297,6 @@ class CallableRepository
 
         // Register the request factory for this callable object
         jaxon()->di()->setCallableClassRequestFactory($sClassName, $xCallableObject);
-        // jaxon()->di()->set($sClassName . '_RequestFactory', function () use ($sClassName) {
-        //     $xCallableObject = $this->aCallableObjects[$sClassName];
-        //     return new CallableClassRequestFactory($xCallableObject);
-        // });
-        // Register the paginator factory for this callable object
-        jaxon()->di()->setCallableClassPaginatorFactory($sClassName, $xCallableObject);
-        // jaxon()->di()->set($sClassName . '_PaginatorFactory', function () use ($sClassName) {
-        //     $xCallableObject = $this->aCallableObjects[$sClassName];
-        //     return new CallableClassPaginatorFactory($xCallableObject);
-        // });
 
         return $xCallableObject;
     }

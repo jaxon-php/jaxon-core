@@ -42,21 +42,6 @@ class CallableClass
     }
 
     /**
-     * Get the paginator factory.
-     *
-     * @param integer $nItemsTotal the total number of items
-     * @param integer $nItemsPerPage the number of items per page
-     * @param integer $nCurrentPage the current page
-     *
-     * @return \Jaxon\Request\Factory\CallableClass\Paginator
-     */
-    public function pg($nItemsTotal, $nItemsPerPage, $nCurrentPage)
-    {
-        return jaxon()->di()->getCallableClassPaginatorFactory(get_class($this))
-            ->setProperties($nItemsTotal, $nItemsPerPage, $nCurrentPage);
-    }
-
-    /**
      * Create a JQuery Element with a given selector, and link it to the response attribute.
      *
      * @param string        $sSelector            The jQuery selector
