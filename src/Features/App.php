@@ -69,6 +69,15 @@ trait App
     }
 
     /**
+     * Get the HTTP response
+     *
+     * @param string    $code       The HTTP response code
+     *
+     * @return mixed
+     */
+    abstract public function httpResponse($code = '200');
+
+    /**
      * Process an incoming Jaxon request, and return the response.
      *
      * @return mixed

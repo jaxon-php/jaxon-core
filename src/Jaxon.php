@@ -97,8 +97,14 @@ class Jaxon
         if(self::$xContainer == null)
         {
             self::$xContainer = new Container();
+            $this->setDefaultOptions();
+
+            /*
+            * Register the Jaxon request and response plugins
+            */
+            self::$xContainer->getPluginManager()->registerRequestPlugins();
+            self::$xContainer->getPluginManager()->registerResponsePlugins();
         }
-        $this->setDefaultOptions();
     }
 
     /**

@@ -104,9 +104,3 @@ function jQuery($sSelector = '', $sContext = '')
 {
     return jq($sSelector, $sContext);
 }
-
-/*
- * Register the Jaxon request and response plugins
- */
-jaxon()->di()->getPluginManager()->registerRequestPlugins();
-jaxon()->di()->getPluginManager()->registerResponsePlugins();
