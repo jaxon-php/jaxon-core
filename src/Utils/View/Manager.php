@@ -106,7 +106,7 @@ class Manager
                 // If no default namespace is defined, use the first one as default.
                 if($this->sDefaultNamespace == false)
                 {
-                    $this->sDefaultNamespace = $namespace;
+                    $this->sDefaultNamespace = (string)$namespace;
                 }
                 // Save the namespace
                 $directory = $xAppConfig->getOption($option . '.directory');
