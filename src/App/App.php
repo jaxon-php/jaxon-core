@@ -57,6 +57,18 @@ class App
     }
 
     /**
+     * Get the HTTP response
+     *
+     * @param string    $code       The HTTP response code
+     *
+     * @return mixed
+     */
+    public function httpResponse($code = '200')
+    {
+        // Nothing to do
+    }
+
+    /**
      * Process an incoming Jaxon request, and return the response.
      *
      * @return void
