@@ -21,8 +21,10 @@ class URI
      *
      * @var array       &$aURL      The URL data
      * @var string      $sKey       The key in the $_SERVER array
+     *
+     * @return void
      */
-    private static function getHostFromServer(array &$aURL, $sKey)
+    private function getHostFromServer(array &$aURL, $sKey)
     {
         if(empty($aURL['host']) && !empty($_SERVER[$sKey]))
         {
@@ -42,7 +44,7 @@ class URI
      *
      * @return string        The URI
      */
-    public static function detect()
+    public function detect()
     {
         $aURL = [];
         // Try to get the request URL
@@ -69,9 +71,9 @@ class URI
             }
         }
 
-        self::getHostFromServer($aURL, 'HTTP_X_FORWARDED_HOST');
-        self::getHostFromServer($aURL, 'HTTP_HOST');
-        self::getHostFromServer($aURL, 'SERVER_NAME');
+        $this->getHostFromServer($aURL, 'HTTP_X_FORWARDED_HOST');
+        $this->getHostFromServer($aURL, 'HTTP_HOST');
+        $this->getHostFromServer($aURL, 'SERVER_NAME');
         if(empty($aURL['host']))
         {
             throw new \Jaxon\Exception\URI();
@@ -130,9 +132,9 @@ class URI
         $sURL.= $aURL['host'];
 
         // Add the port if needed
-        if(!empty($aURL['port'])
-                && (($aURL['scheme'] == 'http' && $aURL['port'] != 80)
-                        || ($aURL['scheme'] == 'https' && $aURL['port'] != 443)))
+        if(!empty($aURL['port']) &&
+            (($aURL['scheme'] == 'http' && $aURL['port'] != 80) ||
+            ($aURL['scheme'] == 'https' && $aURL['port'] != 443)))
         {
             $sURL.= ':'.$aURL['port'];
         }

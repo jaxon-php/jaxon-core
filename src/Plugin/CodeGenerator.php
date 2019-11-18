@@ -319,7 +319,7 @@ jaxon.dom.ready(function() {
     {
         if(!$this->getOption('core.request.uri'))
         {
-            $this->setOption('core.request.uri', URI::detect());
+            $this->setOption('core.request.uri', jaxon()->di()->get(URI::class)->detect());
         }
 
         // Set the template engine cache dir

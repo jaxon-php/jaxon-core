@@ -49,6 +49,7 @@ use Jaxon\Utils\Pagination\Paginator;
 use Jaxon\Utils\Pagination\Renderer as PaginationRenderer;
 use Jaxon\Utils\Validation\Validator;
 use Jaxon\Utils\Translation\Translator;
+use Jaxon\Utils\Http\URI;
 
 use Lemon\Event\EventDispatcher;
 use Closure;
@@ -249,6 +250,10 @@ class Container
         // Event Dispatcher
         $this->libContainer[EventDispatcher::class] = function () {
             return new EventDispatcher();
+        };
+        // URI decoder
+        $this->libContainer[URI::class] = function () {
+            return new URI();
         };
     }
 
