@@ -116,6 +116,51 @@ class Validator
     }
 
     /**
+     * Validate a property of an uploaded file
+     *
+     * @param string        $sName          The uploaded file variable name
+     * @param string        $sValue         The value of the property
+     * @param string        $sProperty      The property name in config options
+     * @param string        $sField         The field name in file data
+     *
+     * @return bool            True if the property valid, and false if not
+     */
+    private function validateFileProperty($sName, $sValue, $sProperty, $sField)
+    {
+        $xDefault = $this->xConfig->getOption('upload.default.' . $sProperty);
+        $aAllowed = $this->xConfig->getOption('upload.files.' . $sName . '.' . $sProperty, $xDefault);
+        if(is_array($aAllowed) && !in_array($sValue, $aAllowed))
+        {
+            $this->sErrorMessage = $this->xTranslator->trans('errors.upload.' . $sField, $aUploadedFile);
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Validate the size of an uploaded file
+     *
+     * @param string        $sName          The uploaded file variable name
+     * @param integer       $iFileSize      The uploaded file size
+     * @param string        $sProperty      The property name in config options
+     *
+     * @return bool            True if the property valid, and false if not
+     */
+    private function validateFileSize($sName, $iFileSize, $sProperty)
+    {
+        $xDefault = $this->xConfig->getOption('upload.default.' . $sProperty, 0);
+        $iSize = $this->xConfig->getOption('upload.files.' . $sName . '.' . $sProperty, $xDefault);
+        if($iSize > 0 && (
+            ($sProperty == 'max-size' && $iFileSize > $iSize) ||
+            ($sProperty == 'min-size' && $iFileSize < $iSize)))
+        {
+            $this->sErrorMessage = $this->xTranslator->trans('errors.upload.' . $sProperty, $aUploadedFile);
+            return false;
+        }
+        return true;
+    }
+
+    /**
      * Validate an uploaded file
      *
      * @param string        $sName            The uploaded file variable name
@@ -127,37 +172,29 @@ class Validator
     {
         $this->sErrorMessage = '';
         // Verify the file extension
-        $xDefault = $this->xConfig->getOption('upload.default.types');
-        $aAllowed = $this->xConfig->getOption('upload.files.' . $sName . '.types', $xDefault);
-        if(is_array($aAllowed) && !in_array($aUploadedFile['type'], $aAllowed))
+        if(!$this->validateFileProperty($sName, $aUploadedFile['type'], 'types', 'type'))
         {
-            $this->sErrorMessage = $this->xTranslator->trans('errors.upload.type', $aUploadedFile);
             return false;
         }
+
         // Verify the file extension
-        $xDefault = $this->xConfig->getOption('upload.default.extensions');
-        $aAllowed = $this->xConfig->getOption('upload.files.' . $sName . '.extensions', $xDefault);
-        if(is_array($aAllowed) && !in_array($aUploadedFile['extension'], $aAllowed))
+        if(!$this->validateFileProperty($sName, $aUploadedFile['extension'], 'extensions', 'extension'))
         {
-            $this->sErrorMessage = $this->xTranslator->trans('errors.upload.extension', $aUploadedFile);
             return false;
         }
+
         // Verify the max size
-        $xDefault = $this->xConfig->getOption('upload.default.max-size', 0);
-        $iSize = $this->xConfig->getOption('upload.files.' . $sName . '.max-size', $xDefault);
-        if($iSize > 0 && $aUploadedFile['size'] > $iSize)
+        if(!$this->validateFileSize($sName, $aUploadedFile['size'], 'max-size'))
         {
-            $this->sErrorMessage = $this->xTranslator->trans('errors.upload.max-size', $aUploadedFile);
             return false;
         }
+
         // Verify the min size
-        $xDefault = $this->xConfig->getOption('upload.default.min-size', 0);
-        $iSize = $this->xConfig->getOption('upload.files.' . $sName . '.min-size', $xDefault);
-        if($iSize > 0 && $aUploadedFile['size'] < $iSize)
+        if(!$this->validateFileSize($sName, $aUploadedFile['size'], 'min-size'))
         {
-            $this->sErrorMessage = $this->xTranslator->trans('errors.upload.min-size', $aUploadedFile);
             return false;
         }
+
         return true;
     }
 }
