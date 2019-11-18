@@ -109,6 +109,30 @@ class FileUpload extends RequestPlugin
     }
 
     /**
+     * Verify that the upload dir exists and is writable
+     *
+     * @param string        $sUploadDir             The filename
+     * @param string        $sUploadSubDir          The filename
+     *
+     * @return string
+     */
+    private function _makeUploadDir($sUploadDir, $sUploadSubDir)
+    {
+        $sUploadDir = rtrim(trim($sUploadDir), '/\\') . DIRECTORY_SEPARATOR;
+        // Verify that the upload dir exists and is writable
+        if(!is_writable($sUploadDir))
+        {
+            throw new \Jaxon\Exception\Error($this->trans('errors.upload.access'));
+        }
+        $sUploadDir .= $sUploadSubDir;
+        if(!file_exists($sUploadDir) && !@mkdir($sUploadDir))
+        {
+            throw new \Jaxon\Exception\Error($this->trans('errors.upload.access'));
+        }
+        return $sUploadDir;
+    }
+
+    /**
      * Get the path to the upload dir
      *
      * @param string        $sFieldId               The filename
@@ -120,18 +144,8 @@ class FileUpload extends RequestPlugin
         // Default upload dir
         $sDefaultUploadDir = $this->getOption('upload.default.dir');
         $sUploadDir = $this->getOption('upload.files.' . $sFieldId . '.dir', $sDefaultUploadDir);
-        $sUploadDir = rtrim(trim($sUploadDir), '/\\') . DIRECTORY_SEPARATOR;
-        // Verify that the upload dir exists and is writable
-        if(!is_writable($sUploadDir))
-        {
-            throw new \Jaxon\Exception\Error($this->trans('errors.upload.access'));
-        }
-        $sUploadDir .= $this->sUploadSubdir;
-        if(!file_exists($sUploadDir) && !@mkdir($sUploadDir))
-        {
-            throw new \Jaxon\Exception\Error($this->trans('errors.upload.access'));
-        }
-        return $sUploadDir;
+
+        return $this->_makeUploadDir($sUploadDir, $this->sUploadSubdir);
     }
 
     /**
@@ -143,18 +157,8 @@ class FileUpload extends RequestPlugin
     {
         // Default upload dir
         $sUploadDir = $this->getOption('upload.default.dir');
-        $sUploadDir = rtrim(trim($sUploadDir), '/\\') . DIRECTORY_SEPARATOR;
-        // Verify that the upload dir exists and is writable
-        if(!is_writable($sUploadDir))
-        {
-            throw new \Jaxon\Exception\Error($this->trans('errors.upload.access'));
-        }
-        $sUploadDir .= 'tmp' . DIRECTORY_SEPARATOR;
-        if(!file_exists($sUploadDir) && !@mkdir($sUploadDir))
-        {
-            throw new \Jaxon\Exception\Error($this->trans('errors.upload.access'));
-        }
-        return $sUploadDir;
+
+        return $this->_makeUploadDir($sUploadDir, 'tmp' . DIRECTORY_SEPARATOR);
     }
 
     /**
