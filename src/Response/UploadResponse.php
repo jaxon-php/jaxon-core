@@ -2,9 +2,7 @@
 
 namespace Jaxon\Response;
 
-use Jaxon\Contracts\Response as ResponseContract;
-
-class UploadResponse implements ResponseContract
+class UploadResponse extends AbstractResponse
 {
     use \Jaxon\Features\Config;
 
@@ -70,29 +68,12 @@ class UploadResponse implements ResponseContract
      *
      * @param string        $sMessage            The message to be displayed
      *
-     * @return \Jaxon\Contracts\Response
+     * @return AbstractResponse
      */
     public function debug($sMessage)
     {
         // Todo: send this message to the console log.
         return $this;
-    }
-
-    /**
-     * Used internally to generate the response headers
-     *
-     * @return void
-     */
-    public function sendHeaders()
-    {
-        $sCharacterSet = '';
-        $sCharacterEncoding = trim($this->getOption('core.encoding'));
-        if(($sCharacterEncoding) && strlen($sCharacterEncoding) > 0)
-        {
-            $sCharacterSet = '; charset="' . trim($sCharacterEncoding) . '"';
-        }
-
-        header('content-type: ' . $this->sContentType . ' ' . $sCharacterSet);
     }
 
     /**
@@ -106,29 +87,5 @@ class UploadResponse implements ResponseContract
             ['code' => 'success', 'upl' => $this->sUploadedFile] :
             ['code' => 'error', 'msg' => $this->sErrorMessage];
         return '<script>var res = ' . json_encode($aResponse) . '; </script>';
-    }
-
-    /**
-     * Print the output, generated from the commands added to the response, that will be sent to the browser
-     *
-     * @return void
-     */
-    public function printOutput()
-    {
-        print $this->getOutput();
-    }
-
-    /**
-     * Merge the response commands from the specified <Response> object with
-     * the response commands in this <Response> object
-     *
-     * @param ResponseContract  $mCommands          The <Response> object
-     * @param boolean           $bBefore            Add the new commands to the beginning of the list
-     *
-     * @return void
-     */
-    public function appendResponse(ResponseContract $mCommands, $bBefore = false)
-    {
-        // Nothing to do
     }
 }

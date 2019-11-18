@@ -33,9 +33,7 @@
 
 namespace Jaxon\Response;
 
-use Jaxon\Contracts\Response as ResponseContract;
-
-class Response implements ResponseContract
+class Response extends AbstractResponse
 {
     use \Jaxon\Features\Config;
     use \Jaxon\Features\Manager;
@@ -154,7 +152,7 @@ class Response implements ResponseContract
      * @param array         $aAttributes        Associative array of attributes that will describe the command
      * @param mixed            $mData                The data to be associated with this command
      *
-     * @return \Jaxon\Contracts\Response
+     * @return AbstractResponse
      */
     public function addCommand($aAttributes, $mData)
     {
@@ -225,12 +223,12 @@ class Response implements ResponseContract
      * Merge the response commands from the specified <Response> object with
      * the response commands in this <Response> object
      *
-     * @param ResponseContract  $mCommands          The <Response> object
+     * @param AbstractResponse  $mCommands          The <Response> object
      * @param boolean           $bBefore            Add the new commands to the beginning of the list
      *
      * @return void
      */
-    public function appendResponse(ResponseContract $mCommands, $bBefore = false)
+    public function appendResponse(AbstractResponse $mCommands, $bBefore = false)
     {
         $aCommands = [];
         if($mCommands instanceof Response)
@@ -1243,31 +1241,6 @@ class Response implements ResponseContract
     }
 
     /**
-     * Used internally to generate the response headers
-     *
-     * @return void
-     */
-    public function sendHeaders()
-    {
-        if($this->getRequesthandler()->requestMethodIsGet())
-        {
-            header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
-            header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
-            header("Cache-Control: no-cache, must-revalidate");
-            header("Pragma: no-cache");
-        }
-
-        $sCharacterSet = '';
-        $sCharacterEncoding = trim($this->getOption('core.encoding'));
-        if(($sCharacterEncoding) && strlen($sCharacterEncoding) > 0)
-        {
-            $sCharacterSet = '; charset="' . trim($sCharacterEncoding) . '"';
-        }
-
-        header('content-type: ' . $this->sContentType . ' ' . $sCharacterSet);
-    }
-
-    /**
      * Return the output, generated from the commands added to the response, that will be sent to the browser
      *
      * @return string
@@ -1288,15 +1261,5 @@ class Response implements ResponseContract
         }
 
         return json_encode($response);
-    }
-
-    /**
-     * Print the output, generated from the commands added to the response, that will be sent to the browser
-     *
-     * @return void
-     */
-    public function printOutput()
-    {
-        print $this->getOutput();
     }
 }
