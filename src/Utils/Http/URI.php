@@ -50,7 +50,7 @@ class URI
         // Try to get the request URL
         if(!empty($_SERVER['REQUEST_URI']))
         {
-            $_SERVER['REQUEST_URI'] = str_replace(['"',"'",'<','>'], ['%22','%27','%3C','%3E'], $_SERVER['REQUEST_URI']);
+            $_SERVER['REQUEST_URI'] = str_replace(['"', "'", '<', '>'], ['%22', '%27', '%3C', '%3E'], $_SERVER['REQUEST_URI']);
             $aURL = parse_url($_SERVER['REQUEST_URI']);
             if(!is_array($aURL))
             {
@@ -101,7 +101,7 @@ class URI
             }
             if(isset($sPath['path']))
             {
-                $aURL['path'] = str_replace(['"',"'",'<','>'], ['%22','%27','%3C','%3E'], $sPath['path']);
+                $aURL['path'] = str_replace(['"', "'", '<', '>'], ['%22', '%27', '%3C', '%3E'], $sPath['path']);
             }
             unset($sPath);
         }
@@ -113,34 +113,34 @@ class URI
 
         if(!empty($aURL['query']))
         {
-            $aURL['query'] = '?'.$aURL['query'];
+            $aURL['query'] = '?' . $aURL['query'];
         }
 
         // Build the URL: Start with scheme, user and pass
-        $sURL = $aURL['scheme'].'://';
+        $sURL = $aURL['scheme'] . '://';
         if(!empty($aURL['user']))
         {
-            $sURL.= $aURL['user'];
+            $sURL .= $aURL['user'];
             if(!empty($aURL['pass']))
             {
-                $sURL.= ':'.$aURL['pass'];
+                $sURL .= ':' . $aURL['pass'];
             }
-            $sURL.= '@';
+            $sURL .= '@';
         }
 
         // Add the host
-        $sURL.= $aURL['host'];
+        $sURL .= $aURL['host'];
 
         // Add the port if needed
         if(!empty($aURL['port']) &&
             (($aURL['scheme'] == 'http' && $aURL['port'] != 80) ||
             ($aURL['scheme'] == 'https' && $aURL['port'] != 443)))
         {
-            $sURL.= ':'.$aURL['port'];
+            $sURL .= ':' . $aURL['port'];
         }
 
         // Add the path and the query string
-        $sURL.= $aURL['path'].@$aURL['query'];
+        $sURL .= $aURL['path'] . @$aURL['query'];
 
         // Clean up
         unset($aURL);
@@ -154,7 +154,9 @@ class URI
             foreach($aQueries as $sKey => $sQuery)
             {
                 if("jxnGenerate" == substr($sQuery, 0, 11))
-                    unset($aQueries[$sKey]);
+                {
+                                    unset($aQueries[$sKey]);
+                }
             }
 
             $sQueries = implode("&", $aQueries);
