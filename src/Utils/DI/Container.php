@@ -126,19 +126,19 @@ class Container
          * Core library objects
          */
         // Global Response
-        $this->libContainer[Response::class] = function () {
+        $this->libContainer[Response::class] = function() {
             return new Response();
         };
         // Dialog
-        $this->libContainer[Dialog::class] = function () {
+        $this->libContainer[Dialog::class] = function() {
             return new Dialog();
         };
         // Jaxon App
-        $this->libContainer[App::class] = function () {
+        $this->libContainer[App::class] = function() {
             return new App();
         };
         // Jaxon App bootstrap
-        $this->libContainer[Bootstrap::class] = function () {
+        $this->libContainer[Bootstrap::class] = function() {
             return new Bootstrap();
         };
 
@@ -146,27 +146,27 @@ class Container
          * Plugins
          */
         // Callable objects repository
-        $this->libContainer[CallableRepository::class] = function () {
+        $this->libContainer[CallableRepository::class] = function() {
             return new CallableRepository();
         };
         // Callable class plugin
-        $this->libContainer[CallableClass::class] = function ($c) {
+        $this->libContainer[CallableClass::class] = function($c) {
             return new CallableClass($c[CallableRepository::class]);
         };
         // Callable dir plugin
-        $this->libContainer[CallableDir::class] = function ($c) {
+        $this->libContainer[CallableDir::class] = function($c) {
             return new CallableDir($c[CallableRepository::class]);
         };
         // Callable function plugin
-        $this->libContainer[CallableFunction::class] = function () {
+        $this->libContainer[CallableFunction::class] = function() {
             return new CallableFunction();
         };
         // File upload plugin
-        $this->libContainer[FileUpload::class] = function () {
+        $this->libContainer[FileUpload::class] = function() {
             return new FileUpload();
         };
         // JQuery response plugin
-        $this->libContainer[JQueryPlugin::class] = function () {
+        $this->libContainer[JQueryPlugin::class] = function() {
             return new JQueryPlugin();
         };
 
@@ -174,45 +174,45 @@ class Container
          * Managers
          */
         // Plugin Manager
-        $this->libContainer[PluginManager::class] = function () {
+        $this->libContainer[PluginManager::class] = function() {
             return new PluginManager();
         };
         // Request Handler
-        $this->libContainer[RequestHandler::class] = function ($c) {
+        $this->libContainer[RequestHandler::class] = function($c) {
             return new RequestHandler($c[PluginManager::class], $c[ResponseManager::class], $c[FileUpload::class]);
         };
         // Request Factory
-        $this->libContainer[RequestFactory::class] = function ($c) {
+        $this->libContainer[RequestFactory::class] = function($c) {
             return new RequestFactory($c[CallableRepository::class]);
         };
         // Parameter Factory
-        $this->libContainer[ParameterFactory::class] = function () {
+        $this->libContainer[ParameterFactory::class] = function() {
             return new ParameterFactory();
         };
         // Response Manager
-        $this->libContainer[ResponseManager::class] = function () {
+        $this->libContainer[ResponseManager::class] = function() {
             return new ResponseManager();
         };
         // Code Generator
-        $this->libContainer[CodeGenerator::class] = function ($c) {
+        $this->libContainer[CodeGenerator::class] = function($c) {
             return new CodeGenerator($c[PluginManager::class], $c[TemplateEngine::class]);
         };
         // View Manager
-        $this->libContainer[ViewManager::class] = function () {
+        $this->libContainer[ViewManager::class] = function() {
             return new ViewManager();
         };
         // View Renderer
-        $this->libContainer[ViewRenderer::class] = function ($c) {
+        $this->libContainer[ViewRenderer::class] = function($c) {
             return new ViewRenderer($c[ViewManager::class]);
         };
 
         /*
          * Config
          */
-        $this->libContainer[Config::class] = function () {
+        $this->libContainer[Config::class] = function() {
             return new Config();
         };
-        $this->libContainer[ConfigReader::class] = function () {
+        $this->libContainer[ConfigReader::class] = function() {
             return new ConfigReader();
         };
 
@@ -220,39 +220,39 @@ class Container
          * Services
          */
         // Minifier
-        $this->libContainer[Minifier::class] = function () {
+        $this->libContainer[Minifier::class] = function() {
             return new Minifier();
         };
         // Translator
-        $this->libContainer[Translator::class] = function ($c) {
+        $this->libContainer[Translator::class] = function($c) {
             return new Translator($c['jaxon.core.translation_dir'], $c[Config::class]);
         };
         // Template engine
-        $this->libContainer[TemplateEngine::class] = function ($c) {
+        $this->libContainer[TemplateEngine::class] = function($c) {
             return new TemplateEngine($c['jaxon.core.template_dir']);
         };
         // Template Renderer
-        $this->libContainer[TemplateRenderer::class] = function ($c) {
+        $this->libContainer[TemplateRenderer::class] = function($c) {
             return $c[TemplateEngine::class];
         };
         // Validator
-        $this->libContainer[Validator::class] = function ($c) {
+        $this->libContainer[Validator::class] = function($c) {
             return new Validator($c[Translator::class], $c[Config::class]);
         };
         // Pagination Paginator
-        $this->libContainer[Paginator::class] = function ($c) {
+        $this->libContainer[Paginator::class] = function($c) {
             return new Paginator($c[PaginationRenderer::class]);
         };
         // Pagination Renderer
-        $this->libContainer[PaginationRenderer::class] = function ($c) {
+        $this->libContainer[PaginationRenderer::class] = function($c) {
             return new PaginationRenderer($c[TemplateRenderer::class]);
         };
         // Event Dispatcher
-        $this->libContainer[EventDispatcher::class] = function () {
+        $this->libContainer[EventDispatcher::class] = function() {
             return new EventDispatcher();
         };
         // URI decoder
-        $this->libContainer[URI::class] = function () {
+        $this->libContainer[URI::class] = function() {
             return new URI();
         };
     }
@@ -294,7 +294,7 @@ class Container
      */
     public function alias($sClass, $sAlias)
     {
-        $this->libContainer[$sClass] = function ($c) use ($sAlias) {
+        $this->libContainer[$sClass] = function($c) use ($sAlias) {
             return $c[$sAlias];
         };
     }
@@ -564,7 +564,7 @@ class Container
      */
     public function setCallableClassRequestFactory($sClassName, CallableObject $xCallableObject)
     {
-        $this->libContainer[$sClassName . '_RequestFactory'] = function () use ($xCallableObject) {
+        $this->libContainer[$sClassName . '_RequestFactory'] = function() use ($xCallableObject) {
             // $xCallableObject = $c[CallableRepository::class]->getCallableObject($sClassName);
             return new CallableClassRequestFactory($xCallableObject);
         };
