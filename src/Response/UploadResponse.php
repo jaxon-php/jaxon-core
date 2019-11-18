@@ -4,15 +4,6 @@ namespace Jaxon\Response;
 
 class UploadResponse extends AbstractResponse
 {
-    use \Jaxon\Features\Config;
-
-    /**
-     * The response type
-     *
-     * @var string
-     */
-    private $sContentType = 'text/html';
-
     /**
      * The path to the uploaded file
      *
@@ -28,13 +19,20 @@ class UploadResponse extends AbstractResponse
     private $sErrorMessage = '';
 
     /**
+     * The debug messages
+     *
+     * @var array
+     */
+    private $aDebugMessages = [];
+
+    /**
      * Get the content type, which is always set to 'text/json'
      *
      * @return string
      */
     public function getContentType()
     {
-        return $this->sContentType;
+        return 'text/html';
     }
 
     /**
@@ -54,16 +52,6 @@ class UploadResponse extends AbstractResponse
     }
 
     /**
-     * Get the configured character encoding
-     *
-     * @return string
-     */
-    public function getCharacterEncoding()
-    {
-        return $this->getOption('core.encoding');
-    }
-
-    /**
      * Add a command to display a debug message to the user
      *
      * @param string        $sMessage            The message to be displayed
@@ -72,7 +60,7 @@ class UploadResponse extends AbstractResponse
      */
     public function debug($sMessage)
     {
-        // Todo: send this message to the console log.
+        $this->aDebugMessages[] = $sMessage;
         return $this;
     }
 
@@ -86,6 +74,17 @@ class UploadResponse extends AbstractResponse
         $aResponse = ($this->sUploadedFile) ?
             ['code' => 'success', 'upl' => $this->sUploadedFile] :
             ['code' => 'error', 'msg' => $this->sErrorMessage];
-        return '<script>var res = ' . json_encode($aResponse) . '; </script>';
+
+        $sConsoleLog = '';
+        array_walk($this->aDebugMessages, function ($sMessage) use (&$sConsoleLog) {
+            $sConsoleLog .= '
+    console.log("' . addslashes($sMessage) . '");';
+        });
+
+        return '
+<script>
+    var res = ' . json_encode($aResponse) . ';' . $sConsoleLog . '
+</script>
+';
     }
 }

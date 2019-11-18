@@ -35,16 +35,7 @@ namespace Jaxon\Response;
 
 class Response extends AbstractResponse
 {
-    use \Jaxon\Features\Config;
-    use \Jaxon\Features\Manager;
     use \Jaxon\Features\Translator;
-
-    /**
-     * The response type
-     *
-     * @var string
-     */
-    private $sContentType = 'application/json';
 
     /**
      * The commands that will be sent to the browser in the response
@@ -68,17 +59,7 @@ class Response extends AbstractResponse
      */
     public function getContentType()
     {
-        return $this->sContentType;
-    }
-
-    /**
-     * Get the configured character encoding
-     *
-     * @return string
-     */
-    public function getCharacterEncoding()
-    {
-        return $this->getOption('core.encoding');
+        return 'application/json';
     }
 
     /**

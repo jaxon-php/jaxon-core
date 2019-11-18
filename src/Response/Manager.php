@@ -21,8 +21,6 @@
 
 namespace Jaxon\Response;
 
-use Jaxon\Contracts\Response as ResponseContract;
-
 class Manager
 {
     use \Jaxon\Features\Translator;
@@ -31,7 +29,7 @@ class Manager
      * The current response object that will be sent back to the browser
      * once the request processing phase is complete
      *
-     * @var ResponseContract
+     * @var AbstractResponse
      */
     private $xResponse;
 
@@ -66,7 +64,7 @@ class Manager
     /**
      * Get the reponse to the Jaxon request
      *
-     * @return ResponseContract
+     * @return AbstractResponse
      */
     public function getResponse()
     {
@@ -80,11 +78,11 @@ class Manager
      * If no prior response has been appended, this response becomes the main response
      * object to which other response objects will be appended.
      *
-     * @param ResponseContract  $xResponse            The response object to be appended
+     * @param AbstractResponse  $xResponse            The response object to be appended
      *
      * @return void
      */
-    public function append(ResponseContract $xResponse)
+    public function append(AbstractResponse $xResponse)
     {
         if(!$this->xResponse)
         {

@@ -4,6 +4,9 @@ namespace Jaxon\Response;
 
 abstract class AbstractResponse
 {
+    use \Jaxon\Features\Config;
+    use \Jaxon\Features\Manager;
+
     /**
      * Get the content type, which is always set to 'text/json'
      *
@@ -16,7 +19,10 @@ abstract class AbstractResponse
      *
      * @return string
      */
-    abstract public function getCharacterEncoding();
+    public function getCharacterEncoding()
+    {
+        return trim($this->getOption('core.encoding'));
+    }
 
     /**
      * Used internally to generate the response headers
@@ -34,13 +40,13 @@ abstract class AbstractResponse
         }
 
         $sCharacterSet = '';
-        $sCharacterEncoding = trim($this->getOption('core.encoding'));
-        if(($sCharacterEncoding) && strlen($sCharacterEncoding) > 0)
+        $sCharacterEncoding = $this->getCharacterEncoding();
+        if(is_string($sCharacterEncoding) && strlen($sCharacterEncoding) > 0)
         {
-            $sCharacterSet = '; charset="' . trim($sCharacterEncoding) . '"';
+            $sCharacterSet = '; charset="' . $sCharacterEncoding . '"';
         }
 
-        header('content-type: ' . $this->sContentType . ' ' . $sCharacterSet);
+        header('content-type: ' . $this->getContentType() . ' ' . $sCharacterSet);
     }
 
     /**
