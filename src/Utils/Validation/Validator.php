@@ -131,7 +131,7 @@ class Validator
         $aAllowed = $this->xConfig->getOption('upload.files.' . $sName . '.' . $sProperty, $xDefault);
         if(is_array($aAllowed) && !in_array($sValue, $aAllowed))
         {
-            $this->sErrorMessage = $this->xTranslator->trans('errors.upload.' . $sField, $aUploadedFile);
+            $this->sErrorMessage = $this->xTranslator->trans('errors.upload.' . $sField, [$sField = $sValue]);
             return false;
         }
         return true;
@@ -154,7 +154,7 @@ class Validator
             ($sProperty == 'max-size' && $iFileSize > $iSize) ||
             ($sProperty == 'min-size' && $iFileSize < $iSize)))
         {
-            $this->sErrorMessage = $this->xTranslator->trans('errors.upload.' . $sProperty, $aUploadedFile);
+            $this->sErrorMessage = $this->xTranslator->trans('errors.upload.' . $sProperty, ['size' => $iFileSize]);
             return false;
         }
         return true;
