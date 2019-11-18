@@ -317,11 +317,11 @@ class Handler
         if(($this->getOption('core.response.send')))
         {
             $this->xResponseManager->sendOutput();
-        }
 
-        if(($this->getOption('core.process.exit')))
-        {
-            exit();
+            if(($this->getOption('core.process.exit')))
+            {
+                exit();
+            }
         }
     }
 }

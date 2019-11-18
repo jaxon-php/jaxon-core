@@ -65,7 +65,21 @@ class App
      */
     public function httpResponse($code = '200')
     {
-        // Nothing to do
+        $jaxon = jaxon();
+        // Only if the response is not yet sent
+        if(!$jaxon->getOption('core.response.send'))
+        {
+            // Set the HTTP response code
+            http_response_code(intval($code));
+
+            // Send the response
+            $jaxon->di()->getResponseManager()->sendOutput();
+
+            if(($jaxon->getOption('core.process.exit')))
+            {
+                exit();
+            }
+        }
     }
 
     /**
