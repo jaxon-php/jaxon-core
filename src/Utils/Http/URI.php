@@ -17,6 +17,27 @@ namespace Jaxon\Utils\Http;
 class URI
 {
     /**
+     * Get the URL from the $_SERVER var
+     *
+     * @var array       &$aURL      The URL data
+     * @var string      $sKey       The key in the $_SERVER array
+     */
+    private static function getHostFromServer(array &$aURL, $sKey)
+    {
+        if(empty($aURL['host']) && !empty($_SERVER[$sKey]))
+        {
+            if(strpos($_SERVER[$sKey], ':') > 0)
+            {
+                list($aURL['host'], $aURL['port']) = explode(':', $_SERVER[$sKey]);
+            }
+            else
+            {
+                $aURL['host'] = $_SERVER[$sKey];
+            }
+        }
+    }
+
+    /**
      * Detect the URI of the current request
      *
      * @return string        The URI
@@ -44,38 +65,12 @@ class URI
             }
         }
 
+        self::getHostFromServer($aURL, 'HTTP_X_FORWARDED_HOST');
+        self::getHostFromServer($aURL, 'HTTP_HOST');
+        self::getHostFromServer($aURL, 'SERVER_NAME');
         if(empty($aURL['host']))
         {
-            if(!empty($_SERVER['HTTP_X_FORWARDED_HOST']))
-            {
-                if(strpos($_SERVER['HTTP_X_FORWARDED_HOST'], ':') > 0)
-                {
-                    list($aURL['host'], $aURL['port']) = explode(':', $_SERVER['HTTP_X_FORWARDED_HOST']);
-                }
-                else
-                {
-                    $aURL['host'] = $_SERVER['HTTP_X_FORWARDED_HOST'];
-                }
-            }
-            elseif(!empty($_SERVER['HTTP_HOST']))
-            {
-                if(strpos($_SERVER['HTTP_HOST'], ':') > 0)
-                {
-                    list($aURL['host'], $aURL['port']) = explode(':', $_SERVER['HTTP_HOST']);
-                }
-                else
-                {
-                    $aURL['host'] = $_SERVER['HTTP_HOST'];
-                }
-            }
-            elseif(!empty($_SERVER['SERVER_NAME']))
-            {
-                $aURL['host'] = $_SERVER['SERVER_NAME'];
-            }
-            else
-            {
-                throw new \Jaxon\Exception\URI();
-            }
+            throw new \Jaxon\Exception\URI();
         }
 
         if(empty($aURL['port']) && !empty($_SERVER['SERVER_PORT']))
