@@ -62,7 +62,7 @@ class CodeGenerator
      *
      * @var string|null
      */
-    protected $sJsReady = null;
+    protected $sJsScript = null;
 
     /**
      * Default library URL
@@ -160,54 +160,46 @@ class CodeGenerator
      */
     private function makePluginsCode()
     {
-        if($this->sCssCode === null || $this->sJsCode === null || $this->sJsReady === null)
+        if($this->sCssCode === null || $this->sJsCode === null || $this->sJsScript === null)
         {
             $this->sCssCode = '';
             $this->sJsCode = '';
-            $this->sJsReady = '';
-            foreach($this->xPluginManager->getResponsePlugins() as $xResponsePlugin)
+            $this->sJsScript = '';
+            foreach($this->xPluginManager->getPlugins() as $xPlugin)
             {
-                if(($sCssCode = trim($xResponsePlugin->getCss())))
+                if($xPlugin instanceof Response)
                 {
-                    $this->sCssCode .= rtrim($sCssCode, " \n") . "\n";
+                    if(($sCssCode = trim($xPlugin->getCss())))
+                    {
+                        $this->sCssCode .= rtrim($sCssCode, " \n") . "\n";
+                    }
+                    if(($sJsCode = trim($xPlugin->getJs())))
+                    {
+                        $this->sJsCode .= rtrim($sJsCode, " \n") . "\n";
+                    }
                 }
-                if(($sJsCode = trim($xResponsePlugin->getJs())))
+                if(($sJsScript = trim($xPlugin->getScript())))
                 {
-                    $this->sJsCode .= rtrim($sJsCode, " \n") . "\n";
-                }
-                if(($sJsReady = trim($xResponsePlugin->getScript())))
-                {
-                    $this->sJsReady .= trim($sJsReady, " \n") . "\n";
+                    $this->sJsScript .= trim($sJsScript, " \n") . "\n";
                 }
             }
 
-            $this->sJsReady = $this->xTemplate->render('jaxon::plugins/ready.js', [
-                'sPluginScript' => $this->sJsReady,
-            ]);
-            foreach($this->xPluginManager->getRequestPlugins() as $xRequestPlugin)
-            {
-                if(($sJsReady = trim($xRequestPlugin->getScript())))
-                {
-                    $this->sJsReady .= trim($sJsReady, " \n") . "\n";
-                }
-            }
-
-            foreach($this->xPluginManager->getPackages() as $sPackageClass)
-            {
-                $xPackage = jaxon()->di()->get($sPackageClass);
-                if(($sCssCode = trim($xPackage->css())))
-                {
-                    $this->sCssCode .= rtrim($sCssCode, " \n") . "\n";
-                }
-                if(($sJsCode = trim($xPackage->js())))
-                {
-                    $this->sJsCode .= rtrim($sJsCode, " \n") . "\n";
-                }
-                if(($sJsReady = trim($xPackage->ready())))
-                {
-                    $this->sJsReady .= trim($sJsReady, " \n") . "\n";
-                }
-            }
+            // foreach($this->xPluginManager->getPackages() as $sPackageClass)
+            // {
+            //     $xPackage = jaxon()->di()->get($sPackageClass);
+            //     if(($sCssCode = trim($xPackage->css())))
+            //     {
+            //         $this->sCssCode .= rtrim($sCssCode, " \n") . "\n";
+            //     }
+            //     if(($sJsCode = trim($xPackage->js())))
+            //     {
+            //         $this->sJsCode .= rtrim($sJsCode, " \n") . "\n";
+            //     }
+            //     if(($sJsScript = trim($xPackage->ready())))
+            //     {
+            //         $this->sJsScript .= trim($sJsScript, " \n") . "\n";
+            //     }
+            // }
         }
     }
 
@@ -303,7 +295,11 @@ class CodeGenerator
             'sConfirmScript' => $sConfirmScript,
         ]);
 
-        return $this->xTemplate->render('jaxon::plugins/config.js', $aVars) . "\n" . $this->sJsReady . "\n";
+        return $this->xTemplate->render('jaxon::plugins/config.js', $aVars) . "\n" . $this->sJsScript . '
+jaxon.dom.ready(function() {
+    jaxon.command.handler.register("cc", jaxon.confirm.commands);
+});
+';
     }
 
     /**

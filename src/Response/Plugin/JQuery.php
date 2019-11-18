@@ -40,8 +40,10 @@ class JQuery extends \Jaxon\Plugin\Response
     public function getScript()
     {
         return '
-jaxon.command.handler.register("jquery", function(args) {
-    jaxon.cmd.script.execute(args);
+jaxon.dom.ready(function() {
+    jaxon.command.handler.register("jquery", function(args) {
+        jaxon.cmd.script.execute(args);
+    });
 });
 ';
     }

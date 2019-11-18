@@ -69,6 +69,16 @@ class Manager
     private $aPackages = [];
 
     /**
+     * Get the request and response plugins
+     *
+     * @return array
+     */
+    public function getPlugins()
+    {
+        return $this->aPlugins;
+    }
+
+    /**
      * Get the request plugins
      *
      * @return array
