@@ -50,6 +50,10 @@ class URI
         {
             $_SERVER['REQUEST_URI'] = str_replace(['"',"'",'<','>'], ['%22','%27','%3C','%3E'], $_SERVER['REQUEST_URI']);
             $aURL = parse_url($_SERVER['REQUEST_URI']);
+            if(!is_array($aURL))
+            {
+                $aURL = [];
+            }
         }
 
         // Fill in the empty values
