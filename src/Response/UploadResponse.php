@@ -72,11 +72,10 @@ class UploadResponse extends AbstractResponse
     public function getOutput()
     {
         $aResponse = ($this->sUploadedFile) ?
-            ['code' => 'success', 'upl' => $this->sUploadedFile] :
-            ['code' => 'error', 'msg' => $this->sErrorMessage];
+            ['code' => 'success', 'upl' => $this->sUploadedFile] : ['code' => 'error', 'msg' => $this->sErrorMessage];
 
         $sConsoleLog = '';
-        array_walk($this->aDebugMessages, function ($sMessage) use (&$sConsoleLog) {
+        array_walk($this->aDebugMessages, function($sMessage) use (&$sConsoleLog) {
             $sConsoleLog .= '
     console.log("' . addslashes($sMessage) . '");';
         });

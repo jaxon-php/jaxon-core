@@ -133,21 +133,21 @@ class Argument
     {
         $cType = substr($sValue, 0, 1);
         $sValue = substr($sValue, 1);
-        switch ($cType)
+        switch($cType)
         {
-            case 'S':
-                $value = ($sValue === false ? '' : $sValue);
-                break;
-            case 'B':
-                $value = $this->__convertStringToBool($sValue);
-                break;
-            case 'N':
-                $value = ($sValue == floor($sValue) ? (int)$sValue : (float)$sValue);
-                break;
-            case '*':
-            default:
-                $value = null;
-                break;
+        case 'S':
+            $value = ($sValue === false ? '' : $sValue);
+            break;
+        case 'B':
+            $value = $this->__convertStringToBool($sValue);
+            break;
+        case 'N':
+            $value = ($sValue == floor($sValue) ? (int)$sValue : (float)$sValue);
+            break;
+        case '*':
+        default:
+            $value = null;
+            break;
         }
         return $value;
     }
@@ -157,7 +157,7 @@ class Argument
      *
      * @param string        $sArg                The Jaxon request argument
      *
-     * @return mixed
+     * @return string|null
      */
     private function __argumentDecode(&$sArg)
     {

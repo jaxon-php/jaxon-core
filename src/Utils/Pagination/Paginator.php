@@ -65,7 +65,7 @@ class Paginator
 
     protected function updateNumPages()
     {
-        $this->numPages = ($this->itemsPerPage == 0 ? 0 : (int) ceil($this->totalItems/$this->itemsPerPage));
+        $this->numPages = ($this->itemsPerPage == 0 ? 0 : (int)ceil($this->totalItems / $this->itemsPerPage));
     }
 
     /**
@@ -161,7 +161,7 @@ class Paginator
     }
 
     /**
-     * @return string
+     * @return Request
      */
     public function getRequest()
     {
@@ -273,7 +273,7 @@ class Paginator
         else
         {
             // Determine the sliding range, centered around the current page.
-            $numAdjacents = (int) floor(($this->maxPagesToShow - 4) / 2);
+            $numAdjacents = (int)floor(($this->maxPagesToShow - 4) / 2);
 
             $slidingStart = 1;
             $slidingEndOffset = $numAdjacents + 3 - $this->currentPage;

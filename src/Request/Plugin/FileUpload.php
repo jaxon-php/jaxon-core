@@ -16,7 +16,6 @@ use Jaxon\Jaxon;
 use Jaxon\Plugin\Request as RequestPlugin;
 use Jaxon\Request\Support\UploadedFile;
 use Jaxon\Response\UploadResponse;
-
 use Exception;
 use Closure;
 
@@ -293,7 +292,7 @@ class FileUpload extends RequestPlugin
             $aFiles[$sVarName] = [];
             foreach($aUserFiles as $aUserFile)
             {
-                 $aFiles[$sVarName][] = $aUserFile->toTempData();
+                    $aFiles[$sVarName][] = $aUserFile->toTempData();
             }
         }
         // Save upload data in a temp file

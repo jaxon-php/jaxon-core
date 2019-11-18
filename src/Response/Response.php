@@ -147,14 +147,14 @@ class Response extends AbstractResponse
                     if($this->getOption('core.response.merge.js') &&
                             $aLastCommand['cmd'] == 'js')
                     {
-                        $mData = $aLastCommand['data'].'; '.$mData;
+                        $mData = $aLastCommand['data'] . '; ' . $mData;
                     }
                     elseif($this->getOption('core.response.merge.ap') &&
                             $aLastCommand['cmd'] == 'ap' &&
                             $aLastCommand['id'] == $aAttributes['id'] &&
                             $aLastCommand['prop'] == $aAttributes['prop'])
                     {
-                        $mData = $aLastCommand['data'].' '.$mData;
+                        $mData = $aLastCommand['data'] . ' ' . $mData;
                     }
                     else
                     {
@@ -176,7 +176,7 @@ class Response extends AbstractResponse
     /**
      * Clear all the commands already added to the response
      *
-     * @return \Jaxon\Plugin\Response
+     * @return Response
      */
     public function clearCommands()
     {
@@ -190,9 +190,9 @@ class Response extends AbstractResponse
      *
      * @param \Jaxon\Plugin\Plugin  $xPlugin            The plugin object
      * @param array                 $aAttributes        The attributes for this response command
-     * @param mixed                 $mData              The data to be sent with this command
+     * @param string                 $mData              The data to be sent with this command
      *
-     * @return \Jaxon\Plugin\Response
+     * @return Response
      */
     public function addPluginCommand($xPlugin, $aAttributes, $mData)
     {
@@ -251,7 +251,7 @@ class Response extends AbstractResponse
      * @param integer        $iCmdNumber            The number of commands to skip upon cancel
      * @param string        $sMessage            The message to display to the user
      *
-     * @return \Jaxon\Plugin\Response
+     * @return Response
      */
     public function confirmCommands($iCmdNumber, $sMessage)
     {
@@ -271,7 +271,7 @@ class Response extends AbstractResponse
      * @param string        $sAttribute           The attribute to be assigned
      * @param string        $sData                The value to be assigned to the attribute
      *
-     * @return \Jaxon\Plugin\Response
+     * @return Response
      */
     public function assign($sTarget, $sAttribute, $sData)
     {
@@ -293,7 +293,7 @@ class Response extends AbstractResponse
      * @param string        $sTarget              The id of the html element on the browser
      * @param string        $sData                The value to be assigned to the attribute
      *
-     * @return \Jaxon\Plugin\Response
+     * @return Response
      */
     public function html($sTarget, $sData)
     {
@@ -307,7 +307,7 @@ class Response extends AbstractResponse
      * @param string        $sAttribute            The name of the attribute to be appended to
      * @param string        $sData                The data to be appended to the attribute
      *
-     * @return \Jaxon\Plugin\Response
+     * @return Response
      */
     public function append($sTarget, $sAttribute, $sData)
     {
@@ -328,7 +328,7 @@ class Response extends AbstractResponse
      * @param string        $sAttribute            The name of the attribute to be prepended to
      * @param string        $sData                The value to be prepended to the attribute
      *
-     * @return \Jaxon\Plugin\Response
+     * @return Response
      */
     public function prepend($sTarget, $sAttribute, $sData)
     {
@@ -350,7 +350,7 @@ class Response extends AbstractResponse
      * @param string        $sSearch            The needle to search for
      * @param string        $sData                The data to use in place of the needle
      *
-     * @return \Jaxon\Plugin\Response
+     * @return Response
      */
     public function replace($sTarget, $sAttribute, $sSearch, $sData)
     {
@@ -373,7 +373,7 @@ class Response extends AbstractResponse
      * @param string        $sTarget            The id of the element to be updated.
      * @param string        $sAttribute            The attribute to be cleared
      *
-     * @return \Jaxon\Plugin\Response
+     * @return Response
      */
     public function clear($sTarget, $sAttribute)
     {
@@ -389,7 +389,7 @@ class Response extends AbstractResponse
      * @param string        $sAttribute            The attribute to be updated
      * @param string        $sData                The value to assign
      *
-     * @return \Jaxon\Plugin\Response
+     * @return Response
      */
     public function contextAssign($sAttribute, $sData)
     {
@@ -411,7 +411,7 @@ class Response extends AbstractResponse
      * @param string        $sAttribute            The attribute to be appended to
      * @param string        $sData                The value to append
      *
-     * @return \Jaxon\Plugin\Response
+     * @return Response
      */
     public function contextAppend($sAttribute, $sData)
     {
@@ -433,7 +433,7 @@ class Response extends AbstractResponse
      * @param string        $sAttribute            The attribute to be updated
      * @param string        $sData                The value to be prepended
      *
-     * @return \Jaxon\Plugin\Response
+     * @return Response
      */
     public function contextPrepend($sAttribute, $sData)
     {
@@ -454,7 +454,7 @@ class Response extends AbstractResponse
      *
      * @param string        $sAttribute            The attribute to be cleared
      *
-     * @return \Jaxon\Plugin\Response
+     * @return Response
      */
     public function contextClear($sAttribute)
     {
@@ -466,7 +466,7 @@ class Response extends AbstractResponse
      *
      * @param string        $sMessage            The message to be displayed
      *
-     * @return \Jaxon\Plugin\Response
+     * @return Response
      */
     public function alert($sMessage)
     {
@@ -483,7 +483,7 @@ class Response extends AbstractResponse
      *
      * @param string        $sMessage            The message to be displayed
      *
-     * @return \Jaxon\Plugin\Response
+     * @return Response
      */
     public function debug($sMessage)
     {
@@ -501,9 +501,9 @@ class Response extends AbstractResponse
      * @param string        $sURL                The relative or fully qualified URL
      * @param integer        $iDelay                Number of seconds to delay before the redirect occurs
      *
-     * @return \Jaxon\Plugin\Response
+     * @return Response
      */
-    public function redirect($sURL, $iDelay=0)
+    public function redirect($sURL, $iDelay = 0)
     {
         // we need to parse the query part so that the values are rawurlencode()'ed
         // can't just use parse_url() cos we could be dealing with a relative URL which
@@ -515,7 +515,7 @@ class Response extends AbstractResponse
             $queryEnd = strpos($sURL, '#', $queryStart);
             if($queryEnd === false)
                 $queryEnd = strlen($sURL);
-            $queryPart = substr($sURL, $queryStart, $queryEnd-$queryStart);
+            $queryPart = substr($sURL, $queryStart, $queryEnd - $queryStart);
             parse_str($queryPart, $queryParts);
             $newQueryPart = "";
             if($queryParts)
@@ -527,7 +527,7 @@ class Response extends AbstractResponse
                         $first = false;
                     else
                         $newQueryPart .= '&';
-                    $newQueryPart .= rawurlencode($key).'='.rawurlencode($value);
+                    $newQueryPart .= rawurlencode($key) . '=' . rawurlencode($value);
                 }
             } elseif($_SERVER['QUERY_STRING']) {
                     //couldn't break up the query, but there's one there
@@ -538,7 +538,7 @@ class Response extends AbstractResponse
             $sURL = str_replace($queryPart, $newQueryPart, $sURL);
         }
         if($iDelay)
-            $this->script('window.setTimeout("window.location = \'' . $sURL . '\';",' . ($iDelay*1000) . ');');
+            $this->script('window.setTimeout("window.location = \'' . $sURL . '\';",' . ($iDelay * 1000) . ');');
         else
             $this->script('window.location = "' . $sURL . '";');
         return $this;
@@ -554,7 +554,7 @@ class Response extends AbstractResponse
      *
      * @param string        $sJS                The script to execute
      *
-     * @return \Jaxon\Plugin\Response
+     * @return Response
      */
     public function script($sJS)
     {
@@ -571,7 +571,7 @@ class Response extends AbstractResponse
      *
      * @param string        $sFunc                The name of the function to call
      *
-     * @return \Jaxon\Plugin\Response
+     * @return Response
      */
     public function call($sFunc)
     {
@@ -591,7 +591,7 @@ class Response extends AbstractResponse
      *
      * @param string        $sTarget            The id of the element to be removed
      *
-     * @return \Jaxon\Plugin\Response
+     * @return Response
      */
     public function remove($sTarget)
     {
@@ -611,7 +611,7 @@ class Response extends AbstractResponse
      * @param string        $sTag                The tag name to be used for the new element
      * @param string        $sId                The id to assign to the new element
      *
-     * @return \Jaxon\Plugin\Response
+     * @return Response
      */
     public function create($sParent, $sTag, $sId)
     {
@@ -632,7 +632,7 @@ class Response extends AbstractResponse
      * @param string        $sTag               The tag name to be used for the new element
      * @param string        $sId                The id to assign to the new element
      *
-     * @return \Jaxon\Plugin\Response
+     * @return Response
      */
     public function insert($sBefore, $sTag, $sId)
     {
@@ -653,7 +653,7 @@ class Response extends AbstractResponse
      * @param string        $sTag               The tag name to be used for the new element
      * @param string        $sId                The id to assign to the new element
      *
-     * @return \Jaxon\Plugin\Response
+     * @return Response
      */
     public function insertAfter($sAfter, $sTag, $sId)
     {
@@ -675,7 +675,7 @@ class Response extends AbstractResponse
      * @param string        $sName                The name of the new input element
      * @param string        $sId                The id of the new element
      *
-     * @return \Jaxon\Plugin\Response
+     * @return Response
      */
     public function createInput($sParent, $sType, $sName, $sId)
     {
@@ -698,7 +698,7 @@ class Response extends AbstractResponse
      * @param string        $sName                The name of the new input element
      * @param string        $sId                The id of the new element
      *
-     * @return \Jaxon\Plugin\Response
+     * @return Response
      */
     public function insertInput($sBefore, $sType, $sName, $sId)
     {
@@ -721,7 +721,7 @@ class Response extends AbstractResponse
      * @param string        $sName                The name of the new input element
      * @param string        $sId                The id of the new element
      *
-     * @return \Jaxon\Plugin\Response
+     * @return Response
      */
     public function insertInputAfter($sAfter, $sType, $sName, $sId)
     {
@@ -743,7 +743,7 @@ class Response extends AbstractResponse
      * @param string        $sEvent                The name of the event
      * @param string        $sScript            The javascript to execute when the event is fired
      *
-     * @return \Jaxon\Plugin\Response
+     * @return Response
      */
     public function setEvent($sTarget, $sEvent, $sScript)
     {
@@ -763,7 +763,7 @@ class Response extends AbstractResponse
      * @param string        $sTarget            The id of the element that contains the event
      * @param string        $sScript            The javascript to execute when the event is fired
      *
-     * @return \Jaxon\Plugin\Response
+     * @return Response
      */
     public function onClick($sTarget, $sScript)
     {
@@ -779,7 +779,7 @@ class Response extends AbstractResponse
      * @param string        $sEvent              The name of the event
      * @param string        $sHandler            The name of the javascript function to call when the event is fired
      *
-     * @return \Jaxon\Plugin\Response
+     * @return Response
      */
     public function addHandler($sTarget, $sEvent, $sHandler)
     {
@@ -800,7 +800,7 @@ class Response extends AbstractResponse
      * @param string        $sEvent              The name of the event
      * @param string        $sHandler            The name of the javascript function called when the event is fired
      *
-     * @return \Jaxon\Plugin\Response
+     * @return Response
      */
     public function removeHandler($sTarget, $sEvent, $sHandler)
     {
@@ -821,7 +821,7 @@ class Response extends AbstractResponse
      * @param string        $sArgs                Comma separated list of parameter names
      * @param string        $sScript            The javascript code that will become the body of the function
      *
-     * @return \Jaxon\Plugin\Response
+     * @return Response
      */
     public function setFunction($sFunction, $sArgs, $sScript)
     {
@@ -848,7 +848,7 @@ class Response extends AbstractResponse
      * @param string        $sReturnValueVar    The name of the variable that will retain the return value
      *                                             from the call to the original function
      *
-     * @return \Jaxon\Plugin\Response
+     * @return Response
      */
     public function wrapFunction($sFunction, $sArgs, $aScripts, $sReturnValueVar)
     {
@@ -869,17 +869,21 @@ class Response extends AbstractResponse
      * @param string        $sFileName            The relative or fully qualified URI of the javascript file
      * @param string        $sType                Determines the script type. Defaults to 'text/javascript'
      *
-     * @return \Jaxon\Plugin\Response
+     * @return Response
      */
     public function includeScript($sFileName, $sType = null, $sId = null)
     {
         $command = ['cmd'  =>  'in'];
 
         if(($sType))
-            $command['type'] = trim((string)$sType, " \t");
+        {
+                    $command['type'] = trim((string)$sType, " \t");
+        }
 
         if(($sId))
-            $command['elm_id'] = trim((string)$sId, " \t");
+        {
+                    $command['elm_id'] = trim((string)$sId, " \t");
+        }
 
         return $this->addCommand($command, trim((string)$sFileName, " \t"));
     }
@@ -890,17 +894,21 @@ class Response extends AbstractResponse
      * @param string        $sFileName            The relative or fully qualified URI of the javascript file
      * @param string        $sType                Determines the script type. Defaults to 'text/javascript'
      *
-     * @return \Jaxon\Plugin\Response
+     * @return Response
      */
     public function includeScriptOnce($sFileName, $sType = null, $sId = null)
     {
         $command = ['cmd' => 'ino'];
 
         if(($sType))
-            $command['type'] = trim((string)$sType, " \t");
+        {
+                    $command['type'] = trim((string)$sType, " \t");
+        }
 
         if(($sId))
-            $command['elm_id'] = trim((string)$sId, " \t");
+        {
+                    $command['elm_id'] = trim((string)$sId, " \t");
+        }
 
         return $this->addCommand($command, trim((string)$sFileName, " \t"));
     }
@@ -913,7 +921,7 @@ class Response extends AbstractResponse
      * @param string        $sFileName            The relative or fully qualified URI of the javascript file
      * @param string        $sUnload            Name of a javascript function to call prior to unlaoding the file
      *
-     * @return \Jaxon\Plugin\Response
+     * @return Response
      */
     public function removeScript($sFileName, $sUnload = '')
     {
@@ -934,14 +942,16 @@ class Response extends AbstractResponse
      * @param string        $sFileName            The relative or fully qualified URI of the css file
      * @param string        $sMedia                The media type of the CSS file. Defaults to 'screen'
      *
-     * @return \Jaxon\Plugin\Response
+     * @return Response
      */
     public function includeCSS($sFileName, $sMedia = null)
     {
         $command = ['cmd' => 'css'];
 
         if(($sMedia))
-            $command['media'] = trim((string)$sMedia, " \t");
+        {
+                    $command['media'] = trim((string)$sMedia, " \t");
+        }
 
         return $this->addCommand($command, trim((string)$sFileName, " \t"));
     }
@@ -953,14 +963,16 @@ class Response extends AbstractResponse
      *
      * @param string        $sFileName            The relative or fully qualified URI of the css file
      *
-     * @return \Jaxon\Plugin\Response
+     * @return Response
      */
     public function removeCSS($sFileName, $sMedia = null)
     {
         $command = ['cmd' => 'rcss'];
 
         if(($sMedia))
-            $command['media'] = trim((string)$sMedia, " \t");
+        {
+                    $command['media'] = trim((string)$sMedia, " \t");
+        }
 
         return $this->addCommand($command, trim((string)$sFileName, " \t"));
     }
@@ -978,7 +990,7 @@ class Response extends AbstractResponse
      * @param integer        $iTimeout            The number of 1/10ths of a second to pause before timing out
      *                                             and continuing with the execution of the response commands
      *
-     * @return \Jaxon\Plugin\Response
+     * @return Response
      */
     public function waitForCSS($iTimeout = 600)
     {
@@ -1003,7 +1015,7 @@ class Response extends AbstractResponse
      * @param integer        $tenths                The number of 1/10ths of a second to wait before timing out
      *                                             and continuing with the execution of the response commands.
      *
-     * @return \Jaxon\Plugin\Response
+     * @return Response
      */
     public function waitFor($script, $tenths)
     {
@@ -1024,7 +1036,7 @@ class Response extends AbstractResponse
      *
      * @param integer        $tenths                The number of 1/10ths of a second to sleep
      *
-     * @return \Jaxon\Plugin\Response
+     * @return Response
      */
     public function sleep($tenths)
     {
@@ -1053,7 +1065,7 @@ class Response extends AbstractResponse
      * @param string        $variable            The DOM element name (id or class)
      * @param string        $tag                The HTML tag of the new DOM element
      *
-     * @return \Jaxon\Plugin\Response
+     * @return Response
      */
     public function domCreateElement($variable, $tag)
     {
@@ -1073,7 +1085,7 @@ class Response extends AbstractResponse
      * @param string        $key                The name of the attribute
      * @param string        $value                The value of the attribute
      *
-     * @return \Jaxon\Plugin\Response
+     * @return Response
      */
     public function domSetAttribute($variable, $key, $value)
     {
@@ -1094,17 +1106,21 @@ class Response extends AbstractResponse
      * @param string        $skip                The ??
      * @param string        $remove                The ??
      *
-     * @return \Jaxon\Plugin\Response
+     * @return Response
      */
     public function domRemoveChildren($parent, $skip = null, $remove = null)
     {
         $command = ['cmd' => 'DRC'];
 
         if(($skip))
-            $command['skip'] = $skip;
+        {
+                    $command['skip'] = $skip;
+        }
 
         if(($remove))
-            $command['remove'] = $remove;
+        {
+                    $command['remove'] = $remove;
+        }
 
         return $this->addCommand($command, $parent);
     }
@@ -1115,7 +1131,7 @@ class Response extends AbstractResponse
      * @param string        $parent                The DOM parent element
      * @param string        $variable            The DOM element name (id or class)
      *
-     * @return \Jaxon\Plugin\Response
+     * @return Response
      */
     public function domAppendChild($parent, $variable)
     {
@@ -1134,7 +1150,7 @@ class Response extends AbstractResponse
      * @param string        $target                The DOM target element
      * @param string        $variable            The DOM element name (id or class)
      *
-     * @return \Jaxon\Plugin\Response
+     * @return Response
      */
     public function domInsertBefore($target, $variable)
     {
@@ -1153,7 +1169,7 @@ class Response extends AbstractResponse
      * @param string        $target                The DOM target element
      * @param string        $variable            The DOM element name (id or class)
      *
-     * @return \Jaxon\Plugin\Response
+     * @return Response
      */
     public function domInsertAfter($target, $variable)
     {
@@ -1172,7 +1188,7 @@ class Response extends AbstractResponse
      * @param string        $parent                The DOM parent element
      * @param string        $text                The HTML text to append
      *
-     * @return \Jaxon\Plugin\Response
+     * @return Response
      */
     public function domAppendText($parent, $text)
     {
@@ -1213,7 +1229,7 @@ class Response extends AbstractResponse
      *
      * @param mixed        $value                Any value
      *
-     * @return \Jaxon\Plugin\Response
+     * @return Response
      */
     public function setReturnValue($value)
     {

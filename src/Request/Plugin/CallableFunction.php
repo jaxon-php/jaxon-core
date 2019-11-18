@@ -90,7 +90,7 @@ class CallableFunction extends RequestPlugin
      * @param string        $sCallableFunction  The name of the function being registered
      * @param array|string  $aOptions       The associated options
      *
-     * @return \Jaxon\Request\Request
+     * @return boolean
      */
     public function register($sType, $sCallableFunction, $aOptions)
     {
@@ -127,7 +127,7 @@ class CallableFunction extends RequestPlugin
         }
 
         $this->aFunctions[$sFunctionName] = $aOptions;
-        jaxon()->di()->set($sFunctionName, function () use ($sFunctionName, $sCallableFunction) {
+        jaxon()->di()->set($sFunctionName, function() use ($sFunctionName, $sCallableFunction) {
             $xCallableFunction = new \Jaxon\Request\Support\CallableFunction($sCallableFunction);
 
             $aOptions = $this->aFunctions[$sFunctionName];

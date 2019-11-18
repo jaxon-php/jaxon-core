@@ -154,7 +154,7 @@ class Jaxon
             'core.prefix.class'                 => 'Jaxon',
             // 'core.request.uri'               => '',
             'core.request.mode'                 => 'asynchronous',
-            'core.request.method'               => 'POST',    // W3C: Method is case sensitive
+            'core.request.method'               => 'POST', // W3C: Method is case sensitive
             'core.response.send'                => true,
             'core.response.merge.ap'            => true,
             'core.response.merge.js'            => true,
