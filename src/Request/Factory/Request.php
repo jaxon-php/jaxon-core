@@ -22,6 +22,7 @@ namespace Jaxon\Request\Factory;
 
 use JsonSerializable;
 use Jaxon\Request\Factory\Parameter;
+use Jaxon\Request\Factory\Contracts\Parameter as ParameterContract;
 use Jaxon\Response\Plugin\JQuery\Dom\Element as DomElement;
 
 class Request extends JsCall
@@ -129,6 +130,39 @@ class Request extends JsCall
     }
 
     /**
+     * Make unique js vars for parameters of type DomElement
+     *
+     * @var ParameterContract   $xParameter
+     * @var array               &$aVariables
+     * @var string              &$sVars
+     * @var integer             &$nVarId
+     *
+     * @return ParameterContract
+     */
+    private function _makeUniqueJsVar(ParameterContract $xParameter, array &$aVariables, &$sVars, &$nVarId)
+    {
+        if($xParameter instanceof DomElement)
+        {
+            $sParameterStr = $xParameter->getScript();
+            if(!array_key_exists($sParameterStr, $aVariables))
+            {
+                // The value is not yet defined. A new variable is created.
+                $sVarName = "jxnVar$nVarId";
+                $aVariables[$sParameterStr] = $sVarName;
+                $sVars .= "$sVarName=$xParameter;";
+                $nVarId++;
+            }
+            else
+            {
+                // The value is already defined. The corresponding variable is assigned.
+                $sVarName = $aVariables[$sParameterStr];
+            }
+            $xParameter = new Parameter(Parameter::JS_VALUE, $sVarName);
+        }
+        return $xParameter;
+    }
+
+    /**
      * Returns a string representation of the script output (javascript) from this request object
      *
      * @return string
@@ -149,24 +183,7 @@ class Request extends JsCall
         $aVariables = []; // Array of local variables.
         foreach($this->aParameters as &$xParameter)
         {
-            $sParameterStr = $xParameter->getScript();
-            if($xParameter instanceof DomElement)
-            {
-                if(!array_key_exists($sParameterStr, $aVariables))
-                {
-                    // The value is not yet defined. A new variable is created.
-                    $sVarName = "jxnVar$nVarId";
-                    $aVariables[$sParameterStr] = $sVarName;
-                    $sVars .= "$sVarName=$xParameter;";
-                    $nVarId++;
-                }
-                else
-                {
-                    // The value is already defined. The corresponding variable is assigned.
-                    $sVarName = $aVariables[$sParameterStr];
-                }
-                $xParameter = new Parameter(Parameter::JS_VALUE, $sVarName);
-            }
+            $xParameter = $this->_makeUniqueJsVar($xParameter, $aVariables, $sVars, $nVarId);
         }
 
         $sPhrase = '';
@@ -179,24 +196,7 @@ class Request extends JsCall
                 $nParamId = 1;
                 foreach($this->aMessageArgs as &$xParameter)
                 {
-                    $sParameterStr = $xParameter->getScript();
-                    if($xParameter instanceof DomElement)
-                    {
-                        if(!array_key_exists($sParameterStr, $aVariables))
-                        {
-                            // The value is not yet defined. A new variable is created.
-                            $sVarName = "jxnVar$nVarId";
-                            $aVariables[$sParameterStr] = $sVarName;
-                            $sVars .= "$sVarName=$xParameter;";
-                            $nVarId++;
-                        }
-                        else
-                        {
-                            // The value is already defined. The corresponding variable is assigned.
-                            $sVarName = $aVariables[$sParameterStr];
-                        }
-                        $xParameter = new Parameter(Parameter::JS_VALUE, $sVarName);
-                    }
+                    $xParameter = $this->_makeUniqueJsVar($xParameter, $aVariables, $sVars, $nVarId);
                     $xParameter = "'$nParamId':" . $xParameter->getScript();
                     $nParamId++;
                 }
