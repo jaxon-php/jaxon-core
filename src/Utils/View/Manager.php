@@ -149,7 +149,7 @@ class Manager
         jaxon()->di()->set('jaxon.app.view.base.' . $sId, $xClosure);
 
         // Return the initialized view renderer
-        jaxon()->di()->set('jaxon.app.view.' . $sId, function ($c) use ($sId) {
+        jaxon()->di()->set('jaxon.app.view.' . $sId, function($c) use ($sId) {
             // Get the defined renderer
             $renderer = $c['jaxon.app.view.base.' . $sId];
 

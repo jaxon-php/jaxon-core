@@ -121,7 +121,7 @@ class Manager
      */
     private function setPluginPriority(Plugin $xPlugin, $nPriority)
     {
-        while (isset($this->aPlugins[$nPriority]))
+        while(isset($this->aPlugins[$nPriority]))
         {
             $nPriority++;
         }

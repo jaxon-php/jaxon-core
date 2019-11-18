@@ -153,7 +153,7 @@ class Bootstrap
         $this->triggerEvent('pre.setup');
 
         // Add the view renderer
-        $view->addRenderer('jaxon', function () {
+        $view->addRenderer('jaxon', function() {
             return new View\View();
         });
 

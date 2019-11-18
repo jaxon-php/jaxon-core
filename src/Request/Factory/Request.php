@@ -20,7 +20,6 @@
 
 namespace Jaxon\Request\Factory;
 
-use JsonSerializable;
 use Jaxon\Request\Factory\Parameter;
 use Jaxon\Request\Factory\Contracts\Parameter as ParameterContract;
 use Jaxon\Response\Plugin\JQuery\Dom\Element as DomElement;
@@ -93,7 +92,7 @@ class Request extends JsCall
      */
     private function setMessageArgs(array $aArgs)
     {
-        array_walk($aArgs, function (&$xParameter) {
+        array_walk($aArgs, function(&$xParameter) {
             $xParameter = Parameter::make($xParameter);
         });
         $this->aMessageArgs = $aArgs;
@@ -239,7 +238,7 @@ class Request extends JsCall
      * @param integer       $nItemsPerPage          The number of items per page page
      * @param integer       $nItemsTotal            The total number of items
      *
-     * @return Paginator
+     * @return \Jaxon\Utils\Pagination\Paginator
      */
     public function pg($nCurrentPage, $nItemsPerPage, $nItemsTotal)
     {
@@ -254,7 +253,7 @@ class Request extends JsCall
      * @param integer       $nItemsPerPage          The number of items per page page
      * @param integer       $nItemsTotal            The total number of items
      *
-     * @return Paginator
+     * @return \Jaxon\Utils\Pagination\Paginator
      */
     public function paginate($nCurrentPage, $nItemsPerPage, $nItemsTotal)
     {

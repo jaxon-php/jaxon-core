@@ -121,7 +121,7 @@ class Translator
         }
         if(!array_key_exists($sLanguage, $this->aTranslations) || !array_key_exists($sText, $this->aTranslations[$sLanguage]))
         {
-           return $sText;
+            return $sText;
         }
         $message = $this->aTranslations[$sLanguage][$sText];
         foreach($aPlaceHolders as $name => $value)

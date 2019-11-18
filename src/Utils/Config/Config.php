@@ -103,7 +103,7 @@ class Config
     {
         // Find the config array in the input data
         $aKeys = explode('.', (string)$sKeys);
-        foreach ($aKeys as $sKey)
+        foreach($aKeys as $sKey)
         {
             if(($sKey))
             {
@@ -162,8 +162,7 @@ class Config
             if(substr($sName, 0, $sPrefixLen) == $sPrefix)
             {
                 $iNextDotPos = strpos($sName, '.', $sPrefixLen);
-                $sOptionName = $iNextDotPos === false ? substr($sName, $sPrefixLen) :
-                    substr($sName, $sPrefixLen, $iNextDotPos - $sPrefixLen);
+                $sOptionName = $iNextDotPos === false ? substr($sName, $sPrefixLen) : substr($sName, $sPrefixLen, $iNextDotPos - $sPrefixLen);
                 $aOptions[$sOptionName] = $sPrefix . $sOptionName;
             }
         }

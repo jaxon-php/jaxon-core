@@ -79,7 +79,7 @@ class CallableClass
         return jaxon()->instance($name);
     }
 
-   /**
+    /**
      * Get the uploaded files
      *
      * @return array

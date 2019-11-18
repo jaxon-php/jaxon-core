@@ -17,7 +17,6 @@ namespace Jaxon\Request\Factory;
 
 use Jaxon\Request\Support\CallableObject;
 use Jaxon\Request\Support\CallableRepository;
-use Jaxon\Utils\Pagination\Paginator;
 
 // Extends Parameter for compatibility with older versions (see function rq())
 class RequestFactory
@@ -53,7 +52,7 @@ class RequestFactory
      *
      * @param string|null       $sClass              The callable class
      *
-     * @return Factory
+     * @return RequestFactory
      */
     public function setClassName($sClass)
     {
@@ -80,7 +79,7 @@ class RequestFactory
      *
      * @param CallableObject    $xCallable              The callable object
      *
-     * @return Factory
+     * @return RequestFactory
      */
     public function setCallable(CallableObject $xCallable)
     {
@@ -93,7 +92,6 @@ class RequestFactory
      * Return the javascript call to a Jaxon function or object method
      *
      * @param string            $sFunction          The function or method (without class) name
-     * @param ...               $xParams            The parameters of the function or method
      *
      * @return Request
      */
@@ -122,7 +120,6 @@ class RequestFactory
      * Return the javascript call to a generic function
      *
      * @param string            $sFunction          The function or method (with class) name
-     * @param ...               $xParams            The parameters of the function or method
      *
      * @return Request
      */
