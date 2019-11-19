@@ -818,18 +818,34 @@ class Response extends AbstractResponse
     /**
      * Add a command to load a javascript file on the browser
      *
+     * @param boolean       $bIncludeOnce         Include once or not
      * @param string        $sFileName            The relative or fully qualified URI of the javascript file
      * @param string        $sType                Determines the script type. Defaults to 'text/javascript'
+     * @param string        $sId                  The wrapper id
+     *
+     * @return Response
+     */
+    private function _includeScript($bIncludeOnce, $sFileName, $sType, $sId)
+    {
+        $aAttributes = [
+            'type' => $sType,
+            'elm_id' => $sId
+        ];
+        return $this->_addCommand(($bIncludeOnce ? 'ino' : 'in'), $aAttributes, $sFileName, true);
+    }
+
+    /**
+     * Add a command to load a javascript file on the browser
+     *
+     * @param string        $sFileName            The relative or fully qualified URI of the javascript file
+     * @param string        $sType                Determines the script type. Defaults to 'text/javascript'
+     * @param string        $sId                  The wrapper id
      *
      * @return Response
      */
     public function includeScript($sFileName, $sType = '', $sId = '')
     {
-        $command = [
-            'type' => $sType,
-            'elm_id' => $sId
-        ];
-        return $this->_addCommand('in', $command, $sFileName, true);
+        return $this->_includeScript(false, $sFileName, $sType, $sId);
     }
 
     /**
@@ -837,16 +853,13 @@ class Response extends AbstractResponse
      *
      * @param string        $sFileName            The relative or fully qualified URI of the javascript file
      * @param string        $sType                Determines the script type. Defaults to 'text/javascript'
+     * @param string        $sId                  The wrapper id
      *
      * @return Response
      */
     public function includeScriptOnce($sFileName, $sType = '', $sId = '')
     {
-        $command = [
-            'type' => $sType,
-            'elm_id' => $sId
-        ];
-        return $this->_addCommand('ino', $command, $sFileName, true);
+        return $this->_includeScript(true, $sFileName, $sType, $sId);
     }
 
     /**
@@ -877,8 +890,8 @@ class Response extends AbstractResponse
      */
     public function includeCSS($sFileName, $sMedia = '')
     {
-        $command = ['media' => $sMedia];
-        return $this->_addCommand('css', $command, $sFileName, true);
+        $aAttributes = ['media' => $sMedia];
+        return $this->_addCommand('css', $aAttributes, $sFileName, true);
     }
 
     /**
@@ -892,8 +905,8 @@ class Response extends AbstractResponse
      */
     public function removeCSS($sFileName, $sMedia = '')
     {
-        $command = ['media' => $sMedia];
-        return $this->_addCommand('rcss', $command, $sFileName, true);
+        $aAttributes = ['media' => $sMedia];
+        return $this->_addCommand('rcss', $aAttributes, $sFileName, true);
     }
 
     /**
@@ -1005,11 +1018,11 @@ class Response extends AbstractResponse
      */
     public function domRemoveChildren($parent, $skip = '', $remove = '')
     {
-        $command = [
+        $aAttributes = [
             'skip' => $skip,
             'remove' => $remove
         ];
-        return $this->_addCommand('DRC', $command, $parent, true);
+        return $this->_addCommand('DRC', $aAttributes, $parent, true);
     }
 
     /**
