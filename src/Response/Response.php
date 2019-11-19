@@ -811,14 +811,14 @@ class Response extends AbstractResponse
      *
      * @return Response
      */
-    public function includeScript($sFileName, $sType = null, $sId = null)
+    public function includeScript($sFileName, $sType = '', $sId = '')
     {
         $command = [];
-        if(($sType))
+        if(($sType = trim($sType)))
         {
             $command['type'] = $sType;
         }
-        if(($sId))
+        if(($sId = trim($sId)))
         {
             $command['elm_id'] = $sId;
         }
@@ -834,19 +834,19 @@ class Response extends AbstractResponse
      *
      * @return Response
      */
-    public function includeScriptOnce($sFileName, $sType = null, $sId = null)
+    public function includeScriptOnce($sFileName, $sType = '', $sId = '')
     {
         $command = [];
-        if(($sType))
+        if(($sType = trim($sType)))
         {
             $command['type'] = $sType;
         }
-        if(($sId))
+        if(($sId = trim($sId)))
         {
             $command['elm_id'] = $sId;
         }
 
-        return $this->addCommand('ino', $command, $sFileName);
+        return $this->_addCommand('ino', $command, $sFileName);
     }
 
     /**
@@ -875,15 +875,15 @@ class Response extends AbstractResponse
      *
      * @return Response
      */
-    public function includeCSS($sFileName, $sMedia = null)
+    public function includeCSS($sFileName, $sMedia = '')
     {
         $command = [];
-        if(($sMedia))
+        if(($sMedia = trim($sMedia)))
         {
             $command['media'] = $sMedia;
         }
 
-        return $this->addCommand('css', $command, $sFileName);
+        return $this->_addCommand('css', $command, $sFileName);
     }
 
     /**
@@ -895,15 +895,15 @@ class Response extends AbstractResponse
      *
      * @return Response
      */
-    public function removeCSS($sFileName, $sMedia = null)
+    public function removeCSS($sFileName, $sMedia = '')
     {
         $command = [];
-        if(($sMedia))
+        if(($sMedia = trim($sMedia)))
         {
             $command['media'] = $sMedia;
         }
 
-        return $this->addCommand('rcss', $command, $sFileName);
+        return $this->_addCommand('rcss', $command, $sFileName);
     }
 
     /**
@@ -1013,20 +1013,19 @@ class Response extends AbstractResponse
      *
      * @return Response
      */
-    public function domRemoveChildren($parent, $skip = null, $remove = null)
+    public function domRemoveChildren($parent, $skip = '', $remove = '')
     {
-        $command = ['cmd' => 'DRC'];
-
-        if(($skip))
+        $command = [];
+        if(($skip = trim($skip)))
         {
             $command['skip'] = $skip;
         }
-        if(($remove))
+        if(($remove = trim($remove)))
         {
             $command['remove'] = $remove;
         }
 
-        return $this->addCommand($command, $parent);
+        return $this->_addCommand('DRC', $command, $parent);
     }
 
     /**
