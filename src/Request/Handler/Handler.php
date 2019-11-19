@@ -18,7 +18,7 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Request;
+namespace Jaxon\Request\Handler;
 
 use Jaxon\Jaxon;
 use Jaxon\Plugin\Manager as PluginManager;
@@ -49,14 +49,14 @@ class Handler
     /**
      * The arguments handler.
      *
-     * @var Handler\Argument
+     * @var Argument
      */
     private $xArgumentManager;
 
     /**
      * The callbacks to run while processing the request
      *
-     * @var Handler\Callback
+     * @var Callback
      */
     private $xCallbackManager;
 
@@ -88,14 +88,14 @@ class Handler
         $this->xResponseManager = $xResponseManager;
         $this->xUploadRequestPlugin = $xUploadRequestPlugin;
 
-        $this->xArgumentManager = new Handler\Argument();
-        $this->xCallbackManager = new Handler\Callback();
+        $this->xArgumentManager = new Argument();
+        $this->xCallbackManager = new Callback();
     }
 
     /**
      * Return the method that was used to send the arguments from the client
      *
-     * The method is one of: Handler\Argument::METHOD_UNKNOWN, Handler\Argument::METHOD_GET, Handler\Argument::METHOD_POST.
+     * The method is one of: Argument::METHOD_UNKNOWN, Argument::METHOD_GET, Argument::METHOD_POST.
      *
      * @return integer
      */
@@ -111,7 +111,7 @@ class Handler
      */
     public function requestMethodIsGet()
     {
-        return ($this->xArgumentManager->getRequestMethod() == Handler\Argument::METHOD_GET);
+        return ($this->xArgumentManager->getRequestMethod() == Argument::METHOD_GET);
     }
 
     /**
@@ -127,7 +127,7 @@ class Handler
     /**
      * Get the callback handler
      *
-     * @return Handler\Callback
+     * @return Callback
      */
     public function getCallbackManager()
     {
