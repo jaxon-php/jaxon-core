@@ -2,10 +2,13 @@ preset: psr2
 
 risky: false
 
-php:
-  braces:
-    - allow_single_line_closure: false
-    - position_after_functions_and_oop_constructs: "next"
+enabled:
+  - elseif
+  - new_with_braces
+
+disabled:
+  - braces
+  - cast_spaces
 
 finder:
   exclude:
