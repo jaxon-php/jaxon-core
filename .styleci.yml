@@ -1,13 +1,6 @@
-preset: recommended
+preset: psr1
 
 risky: false
-
-enabled:
-  - no_spaces_after_function_name
-  - single_blank_line_before_namespace
-
-disabled:
-  - braces
 
 finder:
   exclude:
