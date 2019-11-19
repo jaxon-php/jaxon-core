@@ -3,9 +3,6 @@ preset: recommended
 risky: false
 
 enabled:
-  - no_alias_functions
-  - no_closing_tag
-  - no_leading_import_slash
   - no_spaces_after_function_name
   - single_blank_line_before_namespace
 
