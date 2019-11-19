@@ -5,7 +5,6 @@ namespace Jaxon\Response;
 abstract class AbstractResponse
 {
     use \Jaxon\Features\Config;
-    use \Jaxon\Features\Manager;
 
     /**
      * Get the content type, which is always set to 'text/json'
@@ -31,7 +30,7 @@ abstract class AbstractResponse
      */
     public function sendHeaders()
     {
-        if($this->getRequesthandler()->requestMethodIsGet())
+        if(jaxon()->di()->getRequestHandler()->requestMethodIsGet())
         {
             header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
             header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");

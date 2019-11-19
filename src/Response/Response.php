@@ -74,7 +74,7 @@ class Response extends AbstractResponse
      */
     public function plugin($sName)
     {
-        $xPlugin = $this->getPluginManager()->getResponsePlugin($sName);
+        $xPlugin = jaxon()->di()->getPluginManager()->getResponsePlugin($sName);
         if(!$xPlugin)
         {
             return null;
