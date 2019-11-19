@@ -20,7 +20,7 @@ use Jaxon\Request\Plugin\CallableClass;
 use Jaxon\Request\Plugin\CallableDir;
 use Jaxon\Request\Plugin\CallableFunction;
 use Jaxon\Request\Plugin\FileUpload;
-use Jaxon\Request\Handler as RequestHandler;
+use Jaxon\Request\Handler\Handler as RequestHandler;
 use Jaxon\Request\Factory\RequestFactory;
 use Jaxon\Request\Factory\ParameterFactory;
 use Jaxon\Request\Factory\CallableClass\Request as CallableClassRequestFactory;

@@ -27,16 +27,6 @@ trait Manager
     }
 
     /**
-     * Get the request manager
-     *
-     * @return Jaxon\Request\Handler
-     */
-    public function getRequestHandler()
-    {
-        return jaxon()->di()->getRequestHandler();
-    }
-
-    /**
      * Get the response manager
      *
      * @return Jaxon\Response\Manager
