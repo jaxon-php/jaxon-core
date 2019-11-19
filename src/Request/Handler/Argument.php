@@ -50,6 +50,13 @@ class Argument
     private $nMethod;
 
     /**
+     * The function which decodes utf8 string.
+     *
+     * @var Callable
+     */
+    private $cUtf8Decoder;
+
+    /**
      * The constructor
      *
      * Get and decode the arguments of the HTTP request
@@ -74,6 +81,23 @@ class Argument
             array_walk($this->aArgs, [&$this, '__argumentStripSlashes']);
         }
         array_walk($this->aArgs, [&$this, '__argumentDecode']);
+
+        // By default, no decoding
+        $this->cUtf8Decoder = function($sStr) {
+            return $sStr;
+        };
+    }
+
+    /**
+     * Return the method that was used to send the arguments from the client
+     *
+     * The method is one of: self::METHOD_UNKNOWN, self::METHOD_GET, self::METHOD_POST.
+     *
+     * @return integer
+     */
+    public function getRequestMethod()
+    {
+        return $this->nMethod;
     }
 
     /**
@@ -196,107 +220,39 @@ class Argument
     }
 
     /**
-     * Decode an Jaxon request argument and convert to UTF8 with iconv
-     *
-     * @param string|array        $mArg                The Jaxon request argument
-     *
-     * @return void
-     */
-    private function __argumentDecodeUTF8_iconv(&$mArg)
-    {
-        if(is_array($mArg))
-        {
-            foreach($mArg as $sKey => &$xArg)
-            {
-                $sNewKey = $sKey;
-                $this->__argumentDecodeUTF8_iconv($sNewKey);
-                if($sNewKey != $sKey)
-                {
-                    $mArg[$sNewKey] = $xArg;
-                    unset($mArg[$sKey]);
-                    $sKey = $sNewKey;
-                }
-                $this->__argumentDecodeUTF8_iconv($xArg);
-            }
-        }
-        elseif(is_string($mArg))
-        {
-            $mArg = iconv("UTF-8", $this->getOption('core.encoding') . '//TRANSLIT', $mArg);
-        }
-    }
-
-    /**
-     * Decode an Jaxon request argument and convert to UTF8 with mb_convert_encoding
-     *
-     * @param string|array        $mArg                The Jaxon request argument
-     *
-     * @return void
-     */
-    private function __argumentDecodeUTF8_mb_convert_encoding(&$mArg)
-    {
-        if(is_array($mArg))
-        {
-            foreach($mArg as $sKey => &$xArg)
-            {
-                $sNewKey = $sKey;
-                $this->__argumentDecodeUTF8_mb_convert_encoding($sNewKey);
-                if($sNewKey != $sKey)
-                {
-                    $mArg[$sNewKey] = $xArg;
-                    unset($mArg[$sKey]);
-                    $sKey = $sNewKey;
-                }
-                $this->__argumentDecodeUTF8_mb_convert_encoding($xArg);
-            }
-        }
-        elseif(is_string($mArg))
-        {
-            $mArg = mb_convert_encoding($mArg, $this->getOption('core.encoding'), "UTF-8");
-        }
-    }
-
-    /**
      * Decode an Jaxon request argument from UTF8
      *
-     * @param string|array        $mArg                The Jaxon request argument
+     * @param array             &$aDst          An array to store the decoded arguments
+     * @param string            $sKey           The key of the argument being decoded
+     * @param string|array      $mValue         The value of the argument being decoded
      *
      * @return void
      */
-    private function __argumentDecodeUTF8_utf8_decode(&$mArg)
+    private function _decode_utf8_argument(array &$aDst, $sKey, $mValue)
     {
-        if(is_array($mArg))
+        $sDestKey = $sKey;
+        // Decode the key
+        if(is_string($sDestKey))
         {
-            foreach($mArg as $sKey => &$xArg)
+            $sDestKey = call_user_func($this->cUtf8Decoder, $sDestKey);
+        }
+
+        if(is_array($mValue))
+        {
+            $aDst[$sDestKey] = [];
+            foreach($mValue as $_sKey => &$_mValue)
             {
-                $sNewKey = $sKey;
-                $this->__argumentDecodeUTF8_utf8_decode($sNewKey);
-
-                if($sNewKey != $sKey)
-                {
-                    $mArg[$sNewKey] = $xArg;
-                    unset($mArg[$sKey]);
-                    $sKey = $sNewKey;
-                }
-
-                $this->__argumentDecodeUTF8_utf8_decode($xArg);
+                $this->_decode_utf8_argument($aDst[$sDestKey], $_sKey, $_mValue);
             }
         }
-        elseif(is_string($mArg))
+        elseif(is_string($mValue))
         {
-            $mArg = utf8_decode($mArg);
+            $aDst[$sDestKey] = call_user_func($this->cUtf8Decoder, $mValue);
         }
-    }
-
-    /**
-     * Return the method that was used to send the arguments from the client
-     *
-     * The method is one of: self::METHOD_UNKNOWN, self::METHOD_GET, self::METHOD_POST.
-     *
-     * @return integer
-     */
-    public function getRequestMethod()
-    {
-        return $this->nMethod;
+        elseif(is_numeric($mValue))
+        {
+            $aDst[$sDestKey] = $mValue;
+        }
     }
 
     /**
@@ -308,27 +264,36 @@ class Argument
     {
         if(($this->getOption('core.decode_utf8')))
         {
-            $sFunction = '';
-
             if(function_exists('iconv'))
             {
-                $sFunction = "iconv";
+                $this->cUtf8Decoder = function($sStr) {
+                    return iconv("UTF-8", $this->getOption('core.encoding') . '//TRANSLIT', $sStr);
+                };
             }
             elseif(function_exists('mb_convert_encoding'))
             {
-                $sFunction = "mb_convert_encoding";
+                $this->cUtf8Decoder = function($sStr) {
+                    return mb_convert_encoding($sStr, $this->getOption('core.encoding'), "UTF-8");
+                };
             }
             elseif($this->getOption('core.encoding') == "ISO-8859-1")
             {
-                $sFunction = "utf8_decode";
+                $this->cUtf8Decoder = function($sStr) {
+                    return utf8_decode($sStr);
+                };
             }
             else
             {
                 throw new \Jaxon\Exception\Error($this->trans('errors.request.conversion'));
             }
 
-            $mFunction = [&$this, '__argumentDecodeUTF8_' . $sFunction];
-            array_walk($this->aArgs, $mFunction);
+            $aDst = [];
+            foreach($this->aArgs as $sKey => &$mValue)
+            {
+                $this->_decode_utf8_argument($aDst, $sKey, $mValue);
+            };
+            $this->aArgs = $aDst;
+
             $this->setOption('core.decode_utf8', false);
         }
 
