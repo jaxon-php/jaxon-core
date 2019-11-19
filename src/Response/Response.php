@@ -178,8 +178,23 @@ class Response extends AbstractResponse
      *
      * @return AbstractResponse
      */
-    private function _addCommand($sName, $aAttributes, $mData)
+    private function _addCommand($sName, array $aAttributes, $mData)
     {
+        if(is_string($mData))
+        {
+            $mData = trim($mData, " \t\n");
+        }
+        elseif(is_array($mData))
+        {
+            array_walk($mData, function(&$sData) {
+                $sData = trim($sData, " \t\n");
+            });
+        }
+
+        array_walk($aAttributes, function(&$sAttribute) {
+            $sAttribute = trim($sAttribute, " \t");
+        });
+
         $aAttributes['cmd'] = $sName;
         $this->addCommand($aAttributes, $mData);
     }
@@ -266,10 +281,8 @@ class Response extends AbstractResponse
      */
     public function confirmCommands($iCmdNumber, $sMessage)
     {
-        $aAttributes = [
-            'id' => $iCmdNumber
-        ];
-        return $this->_addCommand('cc', $aAttributes, trim((string)$sMessage, " \t\n"));
+        $aAttributes = ['id' => $iCmdNumber];
+        return $this->_addCommand('cc', $aAttributes, (string)$sMessage);
     }
 
     /**
@@ -284,10 +297,10 @@ class Response extends AbstractResponse
     public function assign($sTarget, $sAttribute, $sData)
     {
         $aAttributes = [
-            'id' => trim((string)$sTarget, " \t"),
-            'prop' => trim((string)$sAttribute, " \t")
+            'id' => (string)$sTarget,
+            'prop' => (string)$sAttribute
         ];
-        return $this->_addCommand('as', $aAttributes, trim((string)$sData, " \t\n"));
+        return $this->_addCommand('as', $aAttributes, (string)$sData);
     }
 
     /**
@@ -317,10 +330,10 @@ class Response extends AbstractResponse
     public function append($sTarget, $sAttribute, $sData)
     {
         $aAttributes = [
-            'id' => trim((string)$sTarget, " \t"),
-            'prop' => trim((string)$sAttribute, " \t")
+            'id' => (string)$sTarget,
+            'prop' => (string)$sAttribute
         ];
-        return $this->_addCommand('ap', $aAttributes, trim((string)$sData, " \t\n"));
+        return $this->_addCommand('ap', $aAttributes, (string)$sData);
     }
 
     /**
@@ -335,10 +348,10 @@ class Response extends AbstractResponse
     public function prepend($sTarget, $sAttribute, $sData)
     {
         $aAttributes = [
-            'id' => trim((string)$sTarget, " \t"),
-            'prop' => trim((string)$sAttribute, " \t")
+            'id' => (string)$sTarget,
+            'prop' => (string)$sAttribute
         ];
-        return $this->_addCommand('pp', $aAttributes, trim((string)$sData, " \t\n"));
+        return $this->_addCommand('pp', $aAttributes, (string)$sData);
     }
 
     /**
@@ -354,12 +367,12 @@ class Response extends AbstractResponse
     public function replace($sTarget, $sAttribute, $sSearch, $sData)
     {
         $aAttributes = [
-            'id' => trim((string)$sTarget, " \t"),
-            'prop' => trim((string)$sAttribute, " \t")
+            'id' => (string)$sTarget,
+            'prop' => (string)$sAttribute
         ];
         $aData = [
-            's' => trim((string)$sSearch, " \t\n"),
-            'r' => trim((string)$sData, " \t\n")
+            's' => (string)$sSearch,
+            'r' => (string)$sData
         ];
         return $this->_addCommand('rp', $aAttributes, $aData);
     }
@@ -374,7 +387,7 @@ class Response extends AbstractResponse
      */
     public function clear($sTarget, $sAttribute)
     {
-        return $this->assign(trim((string)$sTarget, " \t"), trim((string)$sAttribute, " \t"), '');
+        return $this->assign((string)$sTarget, (string)$sAttribute, '');
     }
 
     /**
@@ -390,10 +403,8 @@ class Response extends AbstractResponse
      */
     public function contextAssign($sAttribute, $sData)
     {
-        $aAttributes = [
-            'prop' => trim((string)$sAttribute, " \t")
-        ];
-        return $this->_addCommand('c:as', $aAttributes, trim((string)$sData, " \t\n"));
+        $aAttributes = ['prop' => (string)$sAttribute];
+        return $this->_addCommand('c:as', $aAttributes, (string)$sData);
     }
 
     /**
@@ -409,10 +420,8 @@ class Response extends AbstractResponse
      */
     public function contextAppend($sAttribute, $sData)
     {
-        $aAttributes = [
-            'prop' => trim((string)$sAttribute, " \t")
-        ];
-        return $this->_addCommand('c:ap', $aAttributes, trim((string)$sData, " \t\n"));
+        $aAttributes = ['prop' => (string)$sAttribute];
+        return $this->_addCommand('c:ap', $aAttributes, (string)$sData);
     }
 
     /**
@@ -428,10 +437,8 @@ class Response extends AbstractResponse
      */
     public function contextPrepend($sAttribute, $sData)
     {
-        $aAttributes = [
-            'prop' => trim((string)$sAttribute, " \t")
-        ];
-        return $this->_addCommand('c:pp', $aAttributes, trim((string)$sData, " \t\n"));
+        $aAttributes = ['prop' => (string)$sAttribute];
+        return $this->_addCommand('c:pp', $aAttributes, (string)$sData);
     }
 
     /**
@@ -446,7 +453,7 @@ class Response extends AbstractResponse
      */
     public function contextClear($sAttribute)
     {
-        return $this->contextAssign(trim((string)$sAttribute, " \t"), '');
+        return $this->contextAssign((string)$sAttribute, '');
     }
 
     /**
@@ -458,7 +465,7 @@ class Response extends AbstractResponse
      */
     public function alert($sMessage)
     {
-        return $this->_addCommand('al', [], trim((string)$sMessage, " \t\n"));
+        return $this->_addCommand('al', [], (string)$sMessage);
     }
 
     /**
@@ -470,7 +477,7 @@ class Response extends AbstractResponse
      */
     public function debug($sMessage)
     {
-        return $this->_addCommand('dbg', [], trim((string)$sMessage, " \t\n"));
+        return $this->_addCommand('dbg', [], (string)$sMessage);
     }
 
     /**
@@ -536,7 +543,7 @@ class Response extends AbstractResponse
      */
     public function script($sJS)
     {
-        return $this->_addCommand('js', [], trim((string)$sJS, " \t\n"));
+        return $this->_addCommand('js', [], (string)$sJS);
     }
 
     /**
@@ -550,9 +557,7 @@ class Response extends AbstractResponse
     {
         $aArgs = func_get_args();
         array_shift($aArgs);
-        $aAttributes = [
-            'func' => $sFunc
-        ];
+        $aAttributes = ['func' => $sFunc];
         return $this->_addCommand('jc', $aAttributes, $aArgs);
     }
 
@@ -565,9 +570,7 @@ class Response extends AbstractResponse
      */
     public function remove($sTarget)
     {
-        $aAttributes = [
-            'id' => trim((string)$sTarget, " \t")
-        ];
+        $aAttributes = ['id' => (string)$sTarget];
         return $this->_addCommand('rm', $aAttributes, '');
     }
 
@@ -583,10 +586,10 @@ class Response extends AbstractResponse
     public function create($sParent, $sTag, $sId)
     {
         $aAttributes = [
-            'id' => trim((string)$sParent, " \t"),
-            'prop' => trim((string)$sId, " \t")
+            'id' => (string)$sParent,
+            'prop' => (string)$sId
         ];
-        return $this->_addCommand('ce', $aAttributes, trim((string)$sTag, " \t\n"));
+        return $this->_addCommand('ce', $aAttributes, (string)$sTag);
     }
 
     /**
@@ -601,10 +604,10 @@ class Response extends AbstractResponse
     public function insert($sBefore, $sTag, $sId)
     {
         $aAttributes = [
-            'id' => trim((string)$sBefore, " \t"),
-            'prop' => trim((string)$sId, " \t")
+            'id' => (string)$sBefore,
+            'prop' => (string)$sId
         ];
-        return $this->_addCommand('ie', $aAttributes, trim((string)$sTag, " \t\n"));
+        return $this->_addCommand('ie', $aAttributes, (string)$sTag);
     }
 
     /**
@@ -619,10 +622,10 @@ class Response extends AbstractResponse
     public function insertAfter($sAfter, $sTag, $sId)
     {
         $aAttributes = [
-            'id' => trim((string)$sAfter, " \t"),
-            'prop' => trim((string)$sId, " \t")
+            'id' => (string)$sAfter,
+            'prop' => (string)$sId
         ];
-        return $this->_addCommand('ia', $aAttributes, trim((string)$sTag, " \t\n"));
+        return $this->_addCommand('ia', $aAttributes, (string)$sTag);
     }
 
     /**
@@ -638,11 +641,11 @@ class Response extends AbstractResponse
     public function createInput($sParent, $sType, $sName, $sId)
     {
         $aAttributes = [
-            'id' => trim((string)$sParent, " \t"),
-            'prop' => trim((string)$sId, " \t"),
-            'type' => trim((string)$sType, " \t")
+            'id' => (string)$sParent,
+            'prop' => (string)$sId,
+            'type' => (string)$sType
         ];
-        return $this->_addCommand('ci', $aAttributes, trim((string)$sName, " \t\n"));
+        return $this->_addCommand('ci', $aAttributes, (string)$sName);
     }
 
     /**
@@ -658,11 +661,11 @@ class Response extends AbstractResponse
     public function insertInput($sBefore, $sType, $sName, $sId)
     {
         $aAttributes = [
-            'id' => trim((string)$sBefore, " \t"),
-            'prop' => trim((string)$sId, " \t"),
-            'type' => trim((string)$sType, " \t")
+            'id' => (string)$sBefore,
+            'prop' => (string)$sId,
+            'type' => (string)$sType
         ];
-        return $this->_addCommand('ii', $aAttributes, trim((string)$sName, " \t\n"));
+        return $this->_addCommand('ii', $aAttributes, (string)$sName);
     }
 
     /**
@@ -678,11 +681,11 @@ class Response extends AbstractResponse
     public function insertInputAfter($sAfter, $sType, $sName, $sId)
     {
         $aAttributes = [
-            'id' => trim((string)$sAfter, " \t"),
-            'prop' => trim((string)$sId, " \t"),
-            'type' => trim((string)$sType, " \t")
+            'id' => (string)$sAfter,
+            'prop' => (string)$sId,
+            'type' => (string)$sType
         ];
-        return $this->_addCommand('iia', $aAttributes, trim((string)$sName, " \t\n"));
+        return $this->_addCommand('iia', $aAttributes, (string)$sName);
     }
 
     /**
@@ -697,10 +700,10 @@ class Response extends AbstractResponse
     public function setEvent($sTarget, $sEvent, $sScript)
     {
         $aAttributes = [
-            'id' => trim((string)$sTarget, " \t"),
-            'prop' => trim((string)$sEvent, " \t")
+            'id' => (string)$sTarget,
+            'prop' => (string)$sEvent
         ];
-        return $this->_addCommand('ev', $aAttributes, trim((string)$sScript, " \t\n"));
+        return $this->_addCommand('ev', $aAttributes, (string)$sScript);
     }
 
     /**
@@ -730,10 +733,10 @@ class Response extends AbstractResponse
     public function addHandler($sTarget, $sEvent, $sHandler)
     {
         $aAttributes = [
-            'id' => trim((string)$sTarget, " \t"),
-            'prop' => trim((string)$sEvent, " \t")
+            'id' => (string)$sTarget,
+            'prop' => (string)$sEvent
         ];
-        return $this->_addCommand('ah', $aAttributes, trim((string)$sHandler, " \t\n"));
+        return $this->_addCommand('ah', $aAttributes, (string)$sHandler);
     }
 
     /**
@@ -748,10 +751,10 @@ class Response extends AbstractResponse
     public function removeHandler($sTarget, $sEvent, $sHandler)
     {
         $aAttributes = [
-            'id' => trim((string)$sTarget, " \t"),
-            'prop' => trim((string)$sEvent, " \t")
+            'id' => (string)$sTarget,
+            'prop' => (string)$sEvent
         ];
-        return $this->_addCommand('rh', $aAttributes, trim((string)$sHandler, " \t\n"));
+        return $this->_addCommand('rh', $aAttributes, (string)$sHandler);
     }
 
     /**
@@ -766,10 +769,10 @@ class Response extends AbstractResponse
     public function setFunction($sFunction, $sArgs, $sScript)
     {
         $aAttributes = [
-            'func' => trim((string)$sFunction, " \t"),
-            'prop' => trim((string)$sArgs, " \t")
+            'func' => (string)$sFunction,
+            'prop' => (string)$sArgs
         ];
-        return $this->_addCommand('sf', $aAttributes, trim((string)$sScript, " \t\n"));
+        return $this->_addCommand('sf', $aAttributes, (string)$sScript);
     }
 
     /**
@@ -790,9 +793,9 @@ class Response extends AbstractResponse
     public function wrapFunction($sFunction, $sArgs, $aScripts, $sReturnValueVar)
     {
         $aAttributes = [
-            'func' => trim((string)$sFunction, " \t"),
-            'prop' => trim((string)$sArgs, " \t"),
-            'type' => trim((string)$sReturnValueVar, " \t")
+            'func' => (string)$sFunction,
+            'prop' => (string)$sArgs,
+            'type' => (string)$sReturnValueVar
         ];
         return $this->_addCommand('wpf', $aAttributes, $aScripts);
     }
@@ -811,14 +814,14 @@ class Response extends AbstractResponse
 
         if(($sType))
         {
-            $command['type'] = trim((string)$sType, " \t");
+            $command['type'] = (string)$sType;
         }
         if(($sId))
         {
-            $command['elm_id'] = trim((string)$sId, " \t");
+            $command['elm_id'] = (string)$sId;
         }
 
-        return $this->addCommand($command, trim((string)$sFileName, " \t"));
+        return $this->addCommand($command, (string)$sFileName);
     }
 
     /**
@@ -835,14 +838,14 @@ class Response extends AbstractResponse
 
         if(($sType))
         {
-            $command['type'] = trim((string)$sType, " \t");
+            $command['type'] = (string)$sType;
         }
         if(($sId))
         {
-            $command['elm_id'] = trim((string)$sId, " \t");
+            $command['elm_id'] = (string)$sId;
         }
 
-        return $this->addCommand($command, trim((string)$sFileName, " \t"));
+        return $this->addCommand($command, (string)$sFileName);
     }
 
     /**
@@ -857,10 +860,8 @@ class Response extends AbstractResponse
      */
     public function removeScript($sFileName, $sUnload = '')
     {
-        $aAttributes = [
-            'unld' => trim((string)$sUnload, " \t")
-        ];
-        return $this->_addCommand('rjs', $aAttributes, trim((string)$sFileName, " \t"));
+        $aAttributes = ['unld' => (string)$sUnload];
+        return $this->_addCommand('rjs', $aAttributes, (string)$sFileName);
     }
 
     /**
@@ -879,10 +880,10 @@ class Response extends AbstractResponse
 
         if(($sMedia))
         {
-            $command['media'] = trim((string)$sMedia, " \t");
+            $command['media'] = (string)$sMedia;
         }
 
-        return $this->addCommand($command, trim((string)$sFileName, " \t"));
+        return $this->addCommand($command, (string)$sFileName);
     }
 
     /**
@@ -900,10 +901,10 @@ class Response extends AbstractResponse
 
         if(($sMedia))
         {
-            $command['media'] = trim((string)$sMedia, " \t");
+            $command['media'] = (string)$sMedia;
         }
 
-        return $this->addCommand($command, trim((string)$sFileName, " \t"));
+        return $this->addCommand($command, (string)$sFileName);
     }
 
     /**
@@ -923,9 +924,7 @@ class Response extends AbstractResponse
      */
     public function waitForCSS($iTimeout = 600)
     {
-        $aAttributes = [
-            'prop' => $iTimeout
-        ];
+        $aAttributes = ['prop' => $iTimeout];
         return $this->_addCommand('wcss', $aAttributes, '');
     }
 
@@ -944,10 +943,8 @@ class Response extends AbstractResponse
      */
     public function waitFor($script, $tenths)
     {
-        $aAttributes = [
-            'prop' => $tenths
-        ];
-        return $this->_addCommand('wf', $aAttributes, trim((string)$script, " \t\n"));
+        $aAttributes = ['prop' => $tenths];
+        return $this->_addCommand('wf', $aAttributes, (string)$script);
     }
 
     /**
@@ -962,9 +959,7 @@ class Response extends AbstractResponse
      */
     public function sleep($tenths)
     {
-        $aAttributes = [
-            'prop' => $tenths
-        ];
+        $aAttributes = ['prop' => $tenths];
         return $this->_addCommand('s', $aAttributes, '');
     }
 
@@ -988,9 +983,7 @@ class Response extends AbstractResponse
      */
     public function domCreateElement($variable, $tag)
     {
-        $aAttributes = [
-            'tgt' => $variable
-        ];
+        $aAttributes = ['tgt' => $variable];
         return $this->_addCommand('DCE', $aAttributes, $tag);
     }
 
@@ -1047,9 +1040,7 @@ class Response extends AbstractResponse
      */
     public function domAppendChild($parent, $variable)
     {
-        $aAttributes = [
-            'par' => $parent
-        ];
+        $aAttributes = ['par' => $parent];
         return $this->_addCommand('DAC', $aAttributes, $variable);
     }
 
@@ -1063,9 +1054,7 @@ class Response extends AbstractResponse
      */
     public function domInsertBefore($target, $variable)
     {
-        $aAttributes = [
-            'tgt' => $target
-        ];
+        $aAttributes = ['tgt' => $target];
         return $this->_addCommand('DIB', $aAttributes, $variable);
     }
 
@@ -1079,9 +1068,7 @@ class Response extends AbstractResponse
      */
     public function domInsertAfter($target, $variable)
     {
-        $aAttributes = [
-            'tgt' => $target
-        ];
+        $aAttributes = ['tgt' => $target];
         return $this->_addCommand('DIA', $aAttributes, $variable);
     }
 
@@ -1095,9 +1082,7 @@ class Response extends AbstractResponse
      */
     public function domAppendText($parent, $text)
     {
-        $aAttributes = [
-            'par' => $parent
-        ];
+        $aAttributes = ['par' => $parent];
         return $this->_addCommand('DAT', $aAttributes, $text);
     }
 
