@@ -3,7 +3,6 @@ preset: recommended
 risky: false
 
 enabled:
-  - native_function_invocation
   - no_alias_functions
   - no_closing_tag
   - no_leading_import_slash
