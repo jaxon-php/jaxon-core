@@ -1,14 +1,6 @@
-preset: psr2
+preset: recommended
 
 risky: false
-
-enabled:
-  - elseif
-  - new_with_braces
-
-disabled:
-  - braces
-  - cast_spaces
 
 finder:
   exclude:
