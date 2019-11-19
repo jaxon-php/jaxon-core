@@ -4,9 +4,12 @@ risky: false
 
 disabled:
   - braces
+  - parenthesis
 
 finder:
   exclude:
     - "tests"
+    - "templates"
+    - "translations"
   name:
     - "*.php"
