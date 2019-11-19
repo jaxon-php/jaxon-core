@@ -49,14 +49,14 @@ class Handler
     /**
      * The arguments handler.
      *
-     * @var Argument
+     * @var \Jaxon\Request\Handler\Argument
      */
     private $xArgumentManager;
 
     /**
      * The callbacks to run while processing the request
      *
-     * @var Callback
+     * @var \Jaxon\Request\Handler\Callback
      */
     private $xCallbackManager;
 
