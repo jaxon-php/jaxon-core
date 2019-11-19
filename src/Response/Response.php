@@ -168,17 +168,17 @@ class Response extends AbstractResponse
 
         return $this;
     }
-
     /**
      * Add a response command to the array of commands that will be sent to the browser
      *
      * @param string        $sName              The command name
      * @param array         $aAttributes        Associative array of attributes that will describe the command
      * @param mixed         $mData              The data to be associated with this command
+     * @param boolean       $bRemoveEmpty       Remove empty attributes
      *
      * @return AbstractResponse
      */
-    private function _addCommand($sName, array $aAttributes, $mData)
+    private function _addCommand($sName, array $aAttributes, $mData, $bRemoveEmpty = false)
     {
         array_walk($aAttributes, function(&$sAttribute) {
             if(!is_integer($sAttribute))
@@ -187,18 +187,29 @@ class Response extends AbstractResponse
             }
         });
 
-        if(is_string($mData))
-        {
-            $mData = trim((string)$mData, " \t\n");
-        }
-        elseif(is_array($mData))
+        if(is_array($mData))
         {
             array_walk($mData, function(&$sData) {
                 $sData = trim((string)$sData, " \t\n");
             });
         }
+        else
+        {
+            $mData = trim((string)$mData, " \t\n");
+        }
 
-        $aAttributes['cmd'] = (string)$sName;
+        if($bRemoveEmpty)
+        {
+            foreach(array_keys($aAttributes) as $sAttr)
+            {
+                if($aAttributes[$sAttr] === '')
+                {
+                    unset($aAttributes[$sAttr]);
+                }
+            }
+        }
+
+        $aAttributes['cmd'] = $sName;
         $this->addCommand($aAttributes, $mData);
     }
 
@@ -796,11 +807,12 @@ class Response extends AbstractResponse
     public function wrapFunction($sFunction, $sArgs, $aScripts, $sReturnValueVar)
     {
         $aAttributes = [
+            'cmd' => 'wpf',
             'func' => $sFunction,
             'prop' => $sArgs,
             'type' => $sReturnValueVar
         ];
-        return $this->_addCommand('wpf', $aAttributes, $aScripts);
+        return $this->addCommand($aAttributes, $aScripts);
     }
 
     /**
@@ -813,17 +825,11 @@ class Response extends AbstractResponse
      */
     public function includeScript($sFileName, $sType = '', $sId = '')
     {
-        $command = [];
-        if(($sType = trim($sType)))
-        {
-            $command['type'] = $sType;
-        }
-        if(($sId = trim($sId)))
-        {
-            $command['elm_id'] = $sId;
-        }
-
-        return $this->_addCommand('in', $command, $sFileName);
+        $command = [
+            'type' => $sType,
+            'elm_id' => $sId
+        ];
+        return $this->_addCommand('in', $command, $sFileName, true);
     }
 
     /**
@@ -836,17 +842,11 @@ class Response extends AbstractResponse
      */
     public function includeScriptOnce($sFileName, $sType = '', $sId = '')
     {
-        $command = [];
-        if(($sType = trim($sType)))
-        {
-            $command['type'] = $sType;
-        }
-        if(($sId = trim($sId)))
-        {
-            $command['elm_id'] = $sId;
-        }
-
-        return $this->_addCommand('ino', $command, $sFileName);
+        $command = [
+            'type' => $sType,
+            'elm_id' => $sId
+        ];
+        return $this->_addCommand('ino', $command, $sFileName, true);
     }
 
     /**
@@ -862,7 +862,7 @@ class Response extends AbstractResponse
     public function removeScript($sFileName, $sUnload = '')
     {
         $aAttributes = ['unld' => $sUnload];
-        return $this->_addCommand('rjs', $aAttributes, $sFileName);
+        return $this->_addCommand('rjs', $aAttributes, $sFileName, true);
     }
 
     /**
@@ -877,13 +877,8 @@ class Response extends AbstractResponse
      */
     public function includeCSS($sFileName, $sMedia = '')
     {
-        $command = [];
-        if(($sMedia = trim($sMedia)))
-        {
-            $command['media'] = $sMedia;
-        }
-
-        return $this->_addCommand('css', $command, $sFileName);
+        $command = ['media' => $sMedia];
+        return $this->_addCommand('css', $command, $sFileName, true);
     }
 
     /**
@@ -897,13 +892,8 @@ class Response extends AbstractResponse
      */
     public function removeCSS($sFileName, $sMedia = '')
     {
-        $command = [];
-        if(($sMedia = trim($sMedia)))
-        {
-            $command['media'] = $sMedia;
-        }
-
-        return $this->_addCommand('rcss', $command, $sFileName);
+        $command = ['media' => $sMedia];
+        return $this->_addCommand('rcss', $command, $sFileName, true);
     }
 
     /**
@@ -923,8 +913,8 @@ class Response extends AbstractResponse
      */
     public function waitForCSS($iTimeout = 600)
     {
-        $aAttributes = ['prop' => $iTimeout];
-        return $this->_addCommand('wcss', $aAttributes, '');
+        $aAttributes = ['cmd' => 'wcss', 'prop' => $iTimeout];
+        return $this->addCommand($aAttributes, '');
     }
 
     /**
@@ -942,8 +932,8 @@ class Response extends AbstractResponse
      */
     public function waitFor($script, $tenths)
     {
-        $aAttributes = ['prop' => $tenths];
-        return $this->_addCommand('wf', $aAttributes, $script);
+        $aAttributes = ['cmd' => 'wf', 'prop' => $tenths];
+        return $this->addCommand($aAttributes, $script);
     }
 
     /**
@@ -958,14 +948,14 @@ class Response extends AbstractResponse
      */
     public function sleep($tenths)
     {
-        $aAttributes = ['prop' => $tenths];
-        return $this->_addCommand('s', $aAttributes, '');
+        $aAttributes = ['cmd' =>'s', 'prop' => $tenths];
+        return $this->addCommand($aAttributes, '');
     }
 
     /**
      * Add a command to start a DOM response
      *
-     * @return \Jaxon\Plugin\Response
+     * @return Response
      */
     public function domStartResponse()
     {
@@ -1015,17 +1005,11 @@ class Response extends AbstractResponse
      */
     public function domRemoveChildren($parent, $skip = '', $remove = '')
     {
-        $command = [];
-        if(($skip = trim($skip)))
-        {
-            $command['skip'] = $skip;
-        }
-        if(($remove = trim($remove)))
-        {
-            $command['remove'] = $remove;
-        }
-
-        return $this->_addCommand('DRC', $command, $parent);
+        $command = [
+            'skip' => $skip,
+            'remove' => $remove
+        ];
+        return $this->_addCommand('DRC', $command, $parent, true);
     }
 
     /**
@@ -1087,7 +1071,7 @@ class Response extends AbstractResponse
     /**
      * Add a command to end a DOM response
      *
-     * @return \Jaxon\Plugin\Response
+     * @return Response
      */
     public function domEndResponse()
     {
