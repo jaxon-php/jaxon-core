@@ -32,7 +32,9 @@ namespace Jaxon\Response;
 
 class Response extends AbstractResponse
 {
-    use \Jaxon\Features\Translator;
+    use Features\DomCommands;
+    use Features\JsCommands;
+    use Features\DomTreeCommands;
 
     /**
      * The commands that will be sent to the browser in the response
@@ -80,36 +82,6 @@ class Response extends AbstractResponse
     }
 
     /**
-     * Create a JQuery Element with a given selector, and link it to the current response.
-     *
-     * This is a shortcut to the JQuery plugin.
-     *
-     * @param string        $sSelector            The jQuery selector
-     * @param string        $sContext             A context associated to the selector
-     *
-     * @return Jaxon\Response\Plugin\JQuery\Dom\Element
-     */
-    public function jq($sSelector = '', $sContext = '')
-    {
-        return $this->plugin('jquery')->element($sSelector, $sContext);
-    }
-
-    /**
-     * Create a JQuery Element with a given selector, and link it to the current response.
-     *
-     * This is a shortcut to the JQuery plugin.
-     *
-     * @param string        $sSelector            The jQuery selector
-     * @param string        $sContext             A context associated to the selector
-     *
-     * @return Jaxon\Response\Plugin\JQuery\Dom\Element
-     */
-    public function jQuery($sSelector = '', $sContext = '')
-    {
-        return $this->jq($sSelector, $sContext);
-    }
-
-    /**
      * Magic PHP function
      *
      * Used to permit plugins to be called as if they where native members of the Response instance.
@@ -124,15 +96,52 @@ class Response extends AbstractResponse
     }
 
     /**
+     * Create a JQuery Element with a given selector, and link it to the current response.
+     *
+     * This is a shortcut to the JQuery plugin.
+     *
+     * @param string        $sSelector            The jQuery selector
+     * @param string        $sContext             A context associated to the selector
+     *
+     * @return \Jaxon\Response\Plugin\JQuery\Dom\Element
+     */
+    public function jq($sSelector = '', $sContext = '')
+    {
+        return $this->plugin('jquery')->element($sSelector, $sContext);
+    }
+
+    /**
+     * Create a JQuery Element with a given selector, and link it to the current response.
+     *
+     * This is a shortcut to the JQuery plugin.
+     *
+     * @param string        $sSelector            The jQuery selector
+     * @param string        $sContext             A context associated to the selector
+     *
+     * @return \Jaxon\Response\Plugin\JQuery\Dom\Element
+     */
+    public function jQuery($sSelector = '', $sContext = '')
+    {
+        return $this->jq($sSelector, $sContext);
+    }
+
+    /**
      * Add a response command to the array of commands that will be sent to the browser
      *
-     * @param array         $aAttributes        Associative array of attributes that will describe the command
-     * @param mixed            $mData                The data to be associated with this command
+     * @param array             $aAttributes        Associative array of attributes that will describe the command
+     * @param mixed             $mData              The data to be associated with this command
      *
-     * @return AbstractResponse
+     * @return Response
      */
-    public function addCommand($aAttributes, $mData)
+    public function addCommand(array $aAttributes, $mData)
     {
+        array_walk($aAttributes, function(&$sAttribute) {
+            if(!is_integer($sAttribute))
+            {
+                $sAttribute = trim((string)$sAttribute, " \t");
+            }
+        });
+
         /* merge commands if possible */
         if(in_array($aAttributes['cmd'], ['js', 'ap']))
         {
@@ -140,15 +149,14 @@ class Response extends AbstractResponse
             {
                 if($aLastCommand['cmd'] == $aAttributes['cmd'])
                 {
-                    if($this->getOption('core.response.merge.js') &&
-                            $aLastCommand['cmd'] == 'js')
+                    if($this->getOption('core.response.merge.js') && $aLastCommand['cmd'] == 'js')
                     {
                         $mData = $aLastCommand['data'] . '; ' . $mData;
                     }
                     elseif($this->getOption('core.response.merge.ap') &&
-                            $aLastCommand['cmd'] == 'ap' &&
-                            $aLastCommand['id'] == $aAttributes['id'] &&
-                            $aLastCommand['prop'] == $aAttributes['prop'])
+                        $aLastCommand['cmd'] == 'ap' &&
+                        $aLastCommand['id'] == $aAttributes['id'] &&
+                        $aLastCommand['prop'] == $aAttributes['prop'])
                     {
                         $mData = $aLastCommand['data'] . ' ' . $mData;
                     }
@@ -168,25 +176,19 @@ class Response extends AbstractResponse
 
         return $this;
     }
+
     /**
      * Add a response command to the array of commands that will be sent to the browser
      *
      * @param string        $sName              The command name
      * @param array         $aAttributes        Associative array of attributes that will describe the command
      * @param mixed         $mData              The data to be associated with this command
-     * @param boolean       $bRemoveEmpty       Remove empty attributes
+     * @param boolean       $bRemoveEmpty       If true, remove empty attributes
      *
-     * @return AbstractResponse
+     * @return Response
      */
-    private function _addCommand($sName, array $aAttributes, $mData, $bRemoveEmpty = false)
+    protected function _addCommand($sName, array $aAttributes, $mData, $bRemoveEmpty = false)
     {
-        array_walk($aAttributes, function(&$sAttribute) {
-            if(!is_integer($sAttribute))
-            {
-                $sAttribute = trim((string)$sAttribute, " \t");
-            }
-        });
-
         if(is_array($mData))
         {
             array_walk($mData, function(&$sData) {
@@ -228,9 +230,9 @@ class Response extends AbstractResponse
     /**
      * Add a response command that is generated by a plugin
      *
-     * @param \Jaxon\Plugin\Plugin  $xPlugin            The plugin object
-     * @param array                 $aAttributes        The attributes for this response command
-     * @param string                 $mData              The data to be sent with this command
+     * @param \Jaxon\Plugin\Response    $xPlugin            The plugin object
+     * @param array                     $aAttributes        The attributes for this response command
+     * @param string                    $mData              The data to be sent with this command
      *
      * @return Response
      */
@@ -265,7 +267,7 @@ class Response extends AbstractResponse
         {
             if(!empty($mCommands))
             {
-                throw new \Jaxon\Exception\Error($this->trans('errors.response.data.invalid'));
+                throw new \Jaxon\Exception\Error(jaxon_trans('errors.response.data.invalid'));
             }
         }
 
@@ -280,815 +282,6 @@ class Response extends AbstractResponse
                 $this->aCommands = array_merge($this->aCommands, $aCommands);
             }
         }
-    }
-
-    /**
-     * Response command that prompts user with [ok] [cancel] style message box
-     *
-     * If the user clicks cancel, the specified number of response commands
-     * following this one, will be skipped.
-     *
-     * @param integer        $iCmdNumber            The number of commands to skip upon cancel
-     * @param string        $sMessage            The message to display to the user
-     *
-     * @return Response
-     */
-    public function confirmCommands($iCmdNumber, $sMessage)
-    {
-        $aAttributes = ['id' => $iCmdNumber];
-        return $this->_addCommand('cc', $aAttributes, $sMessage);
-    }
-
-    /**
-     * Add a command to assign the specified value to the given element's attribute
-     *
-     * @param string        $sTarget              The id of the html element on the browser
-     * @param string        $sAttribute           The attribute to be assigned
-     * @param string        $sData                The value to be assigned to the attribute
-     *
-     * @return Response
-     */
-    public function assign($sTarget, $sAttribute, $sData)
-    {
-        $aAttributes = [
-            'id' => $sTarget,
-            'prop' => $sAttribute
-        ];
-        return $this->_addCommand('as', $aAttributes, $sData);
-    }
-
-    /**
-     * Add a command to assign the specified HTML content to the given element
-     *
-     * This is a shortcut for assign() on the innerHTML attribute.
-     *
-     * @param string        $sTarget              The id of the html element on the browser
-     * @param string        $sData                The value to be assigned to the attribute
-     *
-     * @return Response
-     */
-    public function html($sTarget, $sData)
-    {
-        return $this->assign($sTarget, 'innerHTML', $sData);
-    }
-
-    /**
-     * Add a command to append the specified data to the given element's attribute
-     *
-     * @param string        $sTarget            The id of the element to be updated
-     * @param string        $sAttribute            The name of the attribute to be appended to
-     * @param string        $sData                The data to be appended to the attribute
-     *
-     * @return Response
-     */
-    public function append($sTarget, $sAttribute, $sData)
-    {
-        $aAttributes = [
-            'id' => $sTarget,
-            'prop' => $sAttribute
-        ];
-        return $this->_addCommand('ap', $aAttributes, $sData);
-    }
-
-    /**
-     * Add a command to prepend the specified data to the given element's attribute
-     *
-     * @param string        $sTarget            The id of the element to be updated
-     * @param string        $sAttribute            The name of the attribute to be prepended to
-     * @param string        $sData                The value to be prepended to the attribute
-     *
-     * @return Response
-     */
-    public function prepend($sTarget, $sAttribute, $sData)
-    {
-        $aAttributes = [
-            'id' => $sTarget,
-            'prop' => $sAttribute
-        ];
-        return $this->_addCommand('pp', $aAttributes, $sData);
-    }
-
-    /**
-     * Add a command to replace a specified value with another value within the given element's attribute
-     *
-     * @param string        $sTarget            The id of the element to update
-     * @param string        $sAttribute            The attribute to be updated
-     * @param string        $sSearch            The needle to search for
-     * @param string        $sData                The data to use in place of the needle
-     *
-     * @return Response
-     */
-    public function replace($sTarget, $sAttribute, $sSearch, $sData)
-    {
-        $aAttributes = [
-            'id' => $sTarget,
-            'prop' => $sAttribute
-        ];
-        $aData = [
-            's' => $sSearch,
-            'r' => $sData
-        ];
-        return $this->_addCommand('rp', $aAttributes, $aData);
-    }
-
-    /**
-     * Add a command to clear the specified attribute of the given element
-     *
-     * @param string        $sTarget            The id of the element to be updated.
-     * @param string        $sAttribute            The attribute to be cleared
-     *
-     * @return Response
-     */
-    public function clear($sTarget, $sAttribute)
-    {
-        return $this->assign($sTarget, $sAttribute, '');
-    }
-
-    /**
-     * Add a command to assign a value to a member of a javascript object (or element)
-     * that is specified by the context member of the request
-     *
-     * The object is referenced using the 'this' keyword in the sAttribute parameter.
-     *
-     * @param string        $sAttribute            The attribute to be updated
-     * @param string        $sData                The value to assign
-     *
-     * @return Response
-     */
-    public function contextAssign($sAttribute, $sData)
-    {
-        $aAttributes = ['prop' => $sAttribute];
-        return $this->_addCommand('c:as', $aAttributes, $sData);
-    }
-
-    /**
-     * Add a command to append a value onto the specified member of the javascript
-     * context object (or element) specified by the context member of the request
-     *
-     * The object is referenced using the 'this' keyword in the sAttribute parameter.
-     *
-     * @param string        $sAttribute            The attribute to be appended to
-     * @param string        $sData                The value to append
-     *
-     * @return Response
-     */
-    public function contextAppend($sAttribute, $sData)
-    {
-        $aAttributes = ['prop' => $sAttribute];
-        return $this->_addCommand('c:ap', $aAttributes, $sData);
-    }
-
-    /**
-     * Add a command to prepend the speicified data to the given member of the current
-     * javascript object specified by context in the current request
-     *
-     * The object is access via the 'this' keyword in the sAttribute parameter.
-     *
-     * @param string        $sAttribute            The attribute to be updated
-     * @param string        $sData                The value to be prepended
-     *
-     * @return Response
-     */
-    public function contextPrepend($sAttribute, $sData)
-    {
-        $aAttributes = ['prop' => $sAttribute];
-        return $this->_addCommand('c:pp', $aAttributes, $sData);
-    }
-
-    /**
-     * Add a command to to clear the value of the attribute specified in the sAttribute parameter
-     *
-     * The member is access via the 'this' keyword and can be used to update a javascript
-     * object specified by context in the request parameters.
-     *
-     * @param string        $sAttribute            The attribute to be cleared
-     *
-     * @return Response
-     */
-    public function contextClear($sAttribute)
-    {
-        return $this->contextAssign($sAttribute, '');
-    }
-
-    /**
-     * Add a command to display an alert message to the user
-     *
-     * @param string        $sMessage            The message to be displayed
-     *
-     * @return Response
-     */
-    public function alert($sMessage)
-    {
-        return $this->_addCommand('al', [], $sMessage);
-    }
-
-    /**
-     * Add a command to display a debug message to the user
-     *
-     * @param string        $sMessage            The message to be displayed
-     *
-     * @return Response
-     */
-    public function debug($sMessage)
-    {
-        return $this->_addCommand('dbg', [], $sMessage);
-    }
-
-    /**
-     * Add a command to ask the browser to navigate to the specified URL
-     *
-     * @param string        $sURL                The relative or fully qualified URL
-     * @param integer        $iDelay                Number of seconds to delay before the redirect occurs
-     *
-     * @return Response
-     */
-    public function redirect($sURL, $iDelay = 0)
-    {
-        // we need to parse the query part so that the values are rawurlencode()'ed
-        // can't just use parse_url() cos we could be dealing with a relative URL which
-        // parse_url() can't deal with.
-        $queryStart = strpos($sURL, '?', strrpos($sURL, '/'));
-        if($queryStart !== false)
-        {
-            $queryStart++;
-            $queryEnd = strpos($sURL, '#', $queryStart);
-            if($queryEnd === false)
-                $queryEnd = strlen($sURL);
-            $queryPart = substr($sURL, $queryStart, $queryEnd - $queryStart);
-            parse_str($queryPart, $queryParts);
-            $newQueryPart = "";
-            if($queryParts)
-            {
-                $first = true;
-                foreach($queryParts as $key => $value)
-                {
-                    if($first)
-                        $first = false;
-                    else
-                        $newQueryPart .= '&';
-                    $newQueryPart .= rawurlencode($key) . '=' . rawurlencode($value);
-                }
-            } elseif($_SERVER['QUERY_STRING']) {
-                    //couldn't break up the query, but there's one there
-                    //possibly "http://url/page.html?query1234" type of query?
-                    //just encode it and hope it works
-                    $newQueryPart = rawurlencode($_SERVER['QUERY_STRING']);
-                }
-            $sURL = str_replace($queryPart, $newQueryPart, $sURL);
-        }
-        if($iDelay)
-            $this->script('window.setTimeout("window.location = \'' . $sURL . '\';",' . ($iDelay * 1000) . ');');
-        else
-            $this->script('window.location = "' . $sURL . '";');
-        return $this;
-    }
-
-    /**
-     * Add a command to execute a portion of javascript on the browser
-     *
-     * The script runs in it's own context, so variables declared locally, using the 'var' keyword,
-     * will no longer be available after the call.
-     * To construct a variable that will be accessable globally, even after the script has executed,
-     * leave off the 'var' keyword.
-     *
-     * @param string        $sJS                The script to execute
-     *
-     * @return Response
-     */
-    public function script($sJS)
-    {
-        return $this->_addCommand('js', [], $sJS);
-    }
-
-    /**
-     * Add a command to call the specified javascript function with the given (optional) parameters
-     *
-     * @param string        $sFunc                The name of the function to call
-     *
-     * @return Response
-     */
-    public function call($sFunc)
-    {
-        $aArgs = func_get_args();
-        array_shift($aArgs);
-        $aAttributes = ['cmd' => 'jc', 'func' => $sFunc];
-        return $this->addCommand($aAttributes, $aArgs);
-    }
-
-    /**
-     * Add a command to remove an element from the document
-     *
-     * @param string        $sTarget            The id of the element to be removed
-     *
-     * @return Response
-     */
-    public function remove($sTarget)
-    {
-        $aAttributes = ['id' => $sTarget];
-        return $this->_addCommand('rm', $aAttributes, '');
-    }
-
-    /**
-     * Add a command to create a new element on the browser
-     *
-     * @param string        $sParent            The id of the parent element
-     * @param string        $sTag                The tag name to be used for the new element
-     * @param string        $sId                The id to assign to the new element
-     *
-     * @return Response
-     */
-    public function create($sParent, $sTag, $sId)
-    {
-        $aAttributes = [
-            'id' => $sParent,
-            'prop' => $sId
-        ];
-        return $this->_addCommand('ce', $aAttributes, $sTag);
-    }
-
-    /**
-     * Add a command to insert a new element just prior to the specified element
-     *
-     * @param string        $sBefore            The id of the element used as a reference point for the insertion
-     * @param string        $sTag               The tag name to be used for the new element
-     * @param string        $sId                The id to assign to the new element
-     *
-     * @return Response
-     */
-    public function insert($sBefore, $sTag, $sId)
-    {
-        $aAttributes = [
-            'id' => $sBefore,
-            'prop' => $sId
-        ];
-        return $this->_addCommand('ie', $aAttributes, $sTag);
-    }
-
-    /**
-     * Add a command to insert a new element after the specified
-     *
-     * @param string        $sAfter             The id of the element used as a reference point for the insertion
-     * @param string        $sTag               The tag name to be used for the new element
-     * @param string        $sId                The id to assign to the new element
-     *
-     * @return Response
-     */
-    public function insertAfter($sAfter, $sTag, $sId)
-    {
-        $aAttributes = [
-            'id' => $sAfter,
-            'prop' => $sId
-        ];
-        return $this->_addCommand('ia', $aAttributes, $sTag);
-    }
-
-    /**
-     * Add a command to create an input element on the browser
-     *
-     * @param string        $sParent            The id of the parent element
-     * @param string        $sType                The type of the new input element
-     * @param string        $sName                The name of the new input element
-     * @param string        $sId                The id of the new element
-     *
-     * @return Response
-     */
-    public function createInput($sParent, $sType, $sName, $sId)
-    {
-        $aAttributes = [
-            'id' => $sParent,
-            'prop' => $sId,
-            'type' => $sType
-        ];
-        return $this->_addCommand('ci', $aAttributes, $sName);
-    }
-
-    /**
-     * Add a command to insert a new input element preceding the specified element
-     *
-     * @param string        $sBefore            The id of the element to be used as the reference point for the insertion
-     * @param string        $sType                The type of the new input element
-     * @param string        $sName                The name of the new input element
-     * @param string        $sId                The id of the new element
-     *
-     * @return Response
-     */
-    public function insertInput($sBefore, $sType, $sName, $sId)
-    {
-        $aAttributes = [
-            'id' => $sBefore,
-            'prop' => $sId,
-            'type' => $sType
-        ];
-        return $this->_addCommand('ii', $aAttributes, $sName);
-    }
-
-    /**
-     * Add a command to insert a new input element after the specified element
-     *
-     * @param string        $sAfter                The id of the element to be used as the reference point for the insertion
-     * @param string        $sType                The type of the new input element
-     * @param string        $sName                The name of the new input element
-     * @param string        $sId                The id of the new element
-     *
-     * @return Response
-     */
-    public function insertInputAfter($sAfter, $sType, $sName, $sId)
-    {
-        $aAttributes = [
-            'id' => $sAfter,
-            'prop' => $sId,
-            'type' => $sType
-        ];
-        return $this->_addCommand('iia', $aAttributes, $sName);
-    }
-
-    /**
-     * Add a command to set an event handler on the browser
-     *
-     * @param string        $sTarget            The id of the element that contains the event
-     * @param string        $sEvent                The name of the event
-     * @param string        $sScript            The javascript to execute when the event is fired
-     *
-     * @return Response
-     */
-    public function setEvent($sTarget, $sEvent, $sScript)
-    {
-        $aAttributes = [
-            'id' => $sTarget,
-            'prop' => $sEvent
-        ];
-        return $this->_addCommand('ev', $aAttributes, $sScript);
-    }
-
-    /**
-     * Add a command to set a click handler on the browser
-     *
-     * @param string        $sTarget            The id of the element that contains the event
-     * @param string        $sScript            The javascript to execute when the event is fired
-     *
-     * @return Response
-     */
-    public function onClick($sTarget, $sScript)
-    {
-        return $this->setEvent($sTarget, 'onclick', $sScript);
-    }
-
-    /**
-     * Add a command to install an event handler on the specified element
-     *
-     * You can add more than one event handler to an element's event using this method.
-     *
-     * @param string        $sTarget             The id of the element
-     * @param string        $sEvent              The name of the event
-     * @param string        $sHandler            The name of the javascript function to call when the event is fired
-     *
-     * @return Response
-     */
-    public function addHandler($sTarget, $sEvent, $sHandler)
-    {
-        $aAttributes = [
-            'id' => $sTarget,
-            'prop' => $sEvent
-        ];
-        return $this->_addCommand('ah', $aAttributes, $sHandler);
-    }
-
-    /**
-     * Add a command to remove an event handler from an element
-     *
-     * @param string        $sTarget             The id of the element
-     * @param string        $sEvent              The name of the event
-     * @param string        $sHandler            The name of the javascript function called when the event is fired
-     *
-     * @return Response
-     */
-    public function removeHandler($sTarget, $sEvent, $sHandler)
-    {
-        $aAttributes = [
-            'id' => $sTarget,
-            'prop' => $sEvent
-        ];
-        return $this->_addCommand('rh', $aAttributes, $sHandler);
-    }
-
-    /**
-     * Add a command to construct a javascript function on the browser
-     *
-     * @param string        $sFunction            The name of the function to construct
-     * @param string        $sArgs                Comma separated list of parameter names
-     * @param string        $sScript            The javascript code that will become the body of the function
-     *
-     * @return Response
-     */
-    public function setFunction($sFunction, $sArgs, $sScript)
-    {
-        $aAttributes = [
-            'func' => $sFunction,
-            'prop' => $sArgs
-        ];
-        return $this->_addCommand('sf', $aAttributes, $sScript);
-    }
-
-    /**
-     * Add a command to construct a wrapper function around an existing javascript function on the browser
-     *
-     * @param string        $sFunction            The name of the existing function to wrap
-     * @param string        $sArgs                The comma separated list of parameters for the function
-     * @param array            $aScripts            An array of javascript code snippets that will be used to build
-     *                                             the body of the function
-     *                                             The first piece of code specified in the array will occur before
-     *                                             the call to the original function, the second will occur after
-     *                                             the original function is called.
-     * @param string        $sReturnValueVar    The name of the variable that will retain the return value
-     *                                             from the call to the original function
-     *
-     * @return Response
-     */
-    public function wrapFunction($sFunction, $sArgs, $aScripts, $sReturnValueVar)
-    {
-        $aAttributes = [
-            'cmd' => 'wpf',
-            'func' => $sFunction,
-            'prop' => $sArgs,
-            'type' => $sReturnValueVar
-        ];
-        return $this->addCommand($aAttributes, $aScripts);
-    }
-
-    /**
-     * Add a command to load a javascript file on the browser
-     *
-     * @param boolean       $bIncludeOnce         Include once or not
-     * @param string        $sFileName            The relative or fully qualified URI of the javascript file
-     * @param string        $sType                Determines the script type. Defaults to 'text/javascript'
-     * @param string        $sId                  The wrapper id
-     *
-     * @return Response
-     */
-    private function _includeScript($bIncludeOnce, $sFileName, $sType, $sId)
-    {
-        $aAttributes = [
-            'type' => $sType,
-            'elm_id' => $sId
-        ];
-        return $this->_addCommand(($bIncludeOnce ? 'ino' : 'in'), $aAttributes, $sFileName, true);
-    }
-
-    /**
-     * Add a command to load a javascript file on the browser
-     *
-     * @param string        $sFileName            The relative or fully qualified URI of the javascript file
-     * @param string        $sType                Determines the script type. Defaults to 'text/javascript'
-     * @param string        $sId                  The wrapper id
-     *
-     * @return Response
-     */
-    public function includeScript($sFileName, $sType = '', $sId = '')
-    {
-        return $this->_includeScript(false, $sFileName, $sType, $sId);
-    }
-
-    /**
-     * Add a command to include a javascript file on the browser if it has not already been loaded
-     *
-     * @param string        $sFileName            The relative or fully qualified URI of the javascript file
-     * @param string        $sType                Determines the script type. Defaults to 'text/javascript'
-     * @param string        $sId                  The wrapper id
-     *
-     * @return Response
-     */
-    public function includeScriptOnce($sFileName, $sType = '', $sId = '')
-    {
-        return $this->_includeScript(true, $sFileName, $sType, $sId);
-    }
-
-    /**
-     * Add a command to remove a SCRIPT reference to a javascript file on the browser
-     *
-     * Optionally, you can call a javascript function just prior to the file being unloaded (for cleanup).
-     *
-     * @param string        $sFileName            The relative or fully qualified URI of the javascript file
-     * @param string        $sUnload            Name of a javascript function to call prior to unlaoding the file
-     *
-     * @return Response
-     */
-    public function removeScript($sFileName, $sUnload = '')
-    {
-        $aAttributes = ['unld' => $sUnload];
-        return $this->_addCommand('rjs', $aAttributes, $sFileName, true);
-    }
-
-    /**
-     * Add a command to include a LINK reference to the specified CSS file on the browser.
-     *
-     * This will cause the browser to load and apply the style sheet.
-     *
-     * @param string        $sFileName            The relative or fully qualified URI of the css file
-     * @param string        $sMedia                The media type of the CSS file. Defaults to 'screen'
-     *
-     * @return Response
-     */
-    public function includeCSS($sFileName, $sMedia = '')
-    {
-        $aAttributes = ['media' => $sMedia];
-        return $this->_addCommand('css', $aAttributes, $sFileName, true);
-    }
-
-    /**
-     * Add a command to remove a LINK reference to a CSS file on the browser
-     *
-     * This causes the browser to unload the style sheet, effectively removing the style changes it caused.
-     *
-     * @param string        $sFileName            The relative or fully qualified URI of the css file
-     *
-     * @return Response
-     */
-    public function removeCSS($sFileName, $sMedia = '')
-    {
-        $aAttributes = ['media' => $sMedia];
-        return $this->_addCommand('rcss', $aAttributes, $sFileName, true);
-    }
-
-    /**
-     * Add a command to make Jaxon pause while the CSS files are loaded
-     *
-     * The browser is not typically a multi-threading application, with regards to javascript code.
-     * Therefore, the CSS files included or removed with <Response->includeCSS> and
-     * <Response->removeCSS> respectively, will not be loaded or removed until the browser regains
-     * control from the script.
-     * This command returns control back to the browser and pauses the execution of the response
-     * until the CSS files, included previously, are loaded.
-     *
-     * @param integer        $iTimeout            The number of 1/10ths of a second to pause before timing out
-     *                                             and continuing with the execution of the response commands
-     *
-     * @return Response
-     */
-    public function waitForCSS($iTimeout = 600)
-    {
-        $aAttributes = ['cmd' => 'wcss', 'prop' => $iTimeout];
-        return $this->addCommand($aAttributes, '');
-    }
-
-    /**
-     * Add a command to make Jaxon to delay execution of the response commands until a specified condition is met
-     *
-     * Note, this returns control to the browser, so that other script operations can execute.
-     * Jaxon will continue to monitor the specified condition and, when it evaulates to true,
-     * will continue processing response commands.
-     *
-     * @param string        $script                A piece of javascript code that evaulates to true or false
-     * @param integer        $tenths                The number of 1/10ths of a second to wait before timing out
-     *                                             and continuing with the execution of the response commands.
-     *
-     * @return Response
-     */
-    public function waitFor($script, $tenths)
-    {
-        $aAttributes = ['cmd' => 'wf', 'prop' => $tenths];
-        return $this->addCommand($aAttributes, $script);
-    }
-
-    /**
-     * Add a command to make Jaxon to pause execution of the response commands,
-     * returning control to the browser so it can perform other commands asynchronously.
-     *
-     * After the specified delay, Jaxon will continue execution of the response commands.
-     *
-     * @param integer        $tenths                The number of 1/10ths of a second to sleep
-     *
-     * @return Response
-     */
-    public function sleep($tenths)
-    {
-        $aAttributes = ['cmd' =>'s', 'prop' => $tenths];
-        return $this->addCommand($aAttributes, '');
-    }
-
-    /**
-     * Add a command to start a DOM response
-     *
-     * @return Response
-     */
-    public function domStartResponse()
-    {
-        $this->script('jxnElm = []');
-    }
-
-    /**
-     * Add a command to create a DOM element
-     *
-     * @param string        $variable            The DOM element name (id or class)
-     * @param string        $tag                The HTML tag of the new DOM element
-     *
-     * @return Response
-     */
-    public function domCreateElement($variable, $tag)
-    {
-        $aAttributes = ['tgt' => $variable];
-        return $this->_addCommand('DCE', $aAttributes, $tag);
-    }
-
-    /**
-     * Add a command to set an attribute on a DOM element
-     *
-     * @param string        $variable            The DOM element name (id or class)
-     * @param string        $key                The name of the attribute
-     * @param string        $value                The value of the attribute
-     *
-     * @return Response
-     */
-    public function domSetAttribute($variable, $key, $value)
-    {
-        $aAttributes = [
-            'tgt' => $variable,
-            'key' => $key
-        ];
-        return $this->_addCommand('DSA', $aAttributes, $value);
-    }
-
-    /**
-     * Add a command to remove children from a DOM element
-     *
-     * @param string        $parent                The DOM parent element
-     * @param string        $skip                The ??
-     * @param string        $remove                The ??
-     *
-     * @return Response
-     */
-    public function domRemoveChildren($parent, $skip = '', $remove = '')
-    {
-        $aAttributes = [
-            'skip' => $skip,
-            'remove' => $remove
-        ];
-        return $this->_addCommand('DRC', $aAttributes, $parent, true);
-    }
-
-    /**
-     * Add a command to append a child to a DOM element
-     *
-     * @param string        $parent                The DOM parent element
-     * @param string        $variable            The DOM element name (id or class)
-     *
-     * @return Response
-     */
-    public function domAppendChild($parent, $variable)
-    {
-        $aAttributes = ['par' => $parent];
-        return $this->_addCommand('DAC', $aAttributes, $variable);
-    }
-
-    /**
-     * Add a command to insert a DOM element before another
-     *
-     * @param string        $target                The DOM target element
-     * @param string        $variable            The DOM element name (id or class)
-     *
-     * @return Response
-     */
-    public function domInsertBefore($target, $variable)
-    {
-        $aAttributes = ['tgt' => $target];
-        return $this->_addCommand('DIB', $aAttributes, $variable);
-    }
-
-    /**
-     * Add a command to insert a DOM element after another
-     *
-     * @param string        $target                The DOM target element
-     * @param string        $variable            The DOM element name (id or class)
-     *
-     * @return Response
-     */
-    public function domInsertAfter($target, $variable)
-    {
-        $aAttributes = ['tgt' => $target];
-        return $this->_addCommand('DIA', $aAttributes, $variable);
-    }
-
-    /**
-     * Add a command to append a text to a DOM element
-     *
-     * @param string        $parent                The DOM parent element
-     * @param string        $text                The HTML text to append
-     *
-     * @return Response
-     */
-    public function domAppendText($parent, $text)
-    {
-        $aAttributes = ['par' => $parent];
-        return $this->_addCommand('DAT', $aAttributes, $text);
-    }
-
-    /**
-     * Add a command to end a DOM response
-     *
-     * @return Response
-     */
-    public function domEndResponse()
-    {
-        $this->script('jxnElm = []');
     }
 
     /**

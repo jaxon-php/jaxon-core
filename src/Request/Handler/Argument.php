@@ -52,7 +52,7 @@ class Argument
     /**
      * The function which decodes utf8 string.
      *
-     * @var Callable
+     * @var callable
      */
     private $cUtf8Decoder;
 

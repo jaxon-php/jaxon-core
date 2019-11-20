@@ -15,6 +15,7 @@ namespace Jaxon\Request\Plugin;
 use Jaxon\Jaxon;
 use Jaxon\Plugin\Request as RequestPlugin;
 use Jaxon\Request\Support\UploadedFile;
+use Jaxon\Request\Support\FileUpload as Support;
 use Jaxon\Response\UploadResponse;
 use Exception;
 use Closure;
@@ -47,13 +48,6 @@ class FileUpload extends RequestPlugin
     protected $sUploadSubdir = '';
 
     /**
-     * A user defined function to transform uploaded file names
-     *
-     * @var Closure
-     */
-    protected $cFileFilter = null;
-
-    /**
      * Is the current request an HTTP upload
      *
      * @var boolean
@@ -61,10 +55,20 @@ class FileUpload extends RequestPlugin
     protected $bRequestIsHttpUpload = false;
 
     /**
-     * Read uploaded files info from the $_FILES global var
+     * HTTP file upload support
+     *
+     * @var Support
      */
-    public function __construct()
+    protected $xSupport = null;
+
+    /**
+     * The constructor
+     *
+     * @param Support       $xSupport       HTTP file upload support
+     */
+    public function __construct(Support $xSupport)
     {
+        $this->xSupport = $xSupport;
         $this->sUploadSubdir = uniqid() . DIRECTORY_SEPARATOR;
 
         if(array_key_exists('jxnupl', $_POST))
@@ -78,37 +82,29 @@ class FileUpload extends RequestPlugin
     }
 
     /**
-     * Filter uploaded file name
+     * Set the uploaded file name sanitizer
      *
-     * @param Closure       $cFileFilter            The closure which filters filenames
+     * @param Closure       $cSanitizer            The closure
      *
      * @return void
      */
-    public function setFileFilter(Closure $cFileFilter)
+    public function sanitizer(Closure $cSanitizer)
     {
-        $this->cFileFilter = $cFileFilter;
+        $this->xSupport->setNameSanitizer($cSanitizer);
     }
 
     /**
-     * Filter uploaded file name
+     * Get the uploaded files
      *
-     * @param string        $sFilename              The filename
-     * @param string        $sVarName               The associated variable name
-     *
-     * @return string
+     * @return array
      */
-    protected function filterFilename($sFilename, $sVarName)
+    public function files()
     {
-        if(($this->cFileFilter))
-        {
-            $cFileFilter = $this->cFileFilter;
-            $sFilename = (string)$cFileFilter($sFilename, $sVarName);
-        }
-        return $sFilename;
+        return $this->aUserFiles;
     }
 
     /**
-     * Verify that the upload dir exists and is writable
+     * Make sure the upload dir exists and is writable
      *
      * @param string        $sUploadDir             The filename
      * @param string        $sUploadSubDir          The filename
@@ -186,89 +182,17 @@ class FileUpload extends RequestPlugin
     protected function readFromHttpData()
     {
         // Check validity of the uploaded files
-        $aTempFiles = [];
-        foreach($_FILES as $sVarName => $aFile)
-        {
-            if(is_array($aFile['name']))
-            {
-                $nFileCount = count($aFile['name']);
-                for($i = 0; $i < $nFileCount; $i++)
-                {
-                    if(!$aFile['name'][$i])
-                    {
-                        continue;
-                    }
-                    if(!array_key_exists($sVarName, $aTempFiles))
-                    {
-                        $aTempFiles[$sVarName] = [];
-                    }
-                    // Filename without the extension
-                    $sFilename = $this->filterFilename(pathinfo($aFile['name'][$i], PATHINFO_FILENAME), $sVarName);
-                    // Copy the file data into the local array
-                    $aTempFiles[$sVarName][] = [
-                        'name' => $aFile['name'][$i],
-                        'type' => $aFile['type'][$i],
-                        'tmp_name' => $aFile['tmp_name'][$i],
-                        'error' => $aFile['error'][$i],
-                        'size' => $aFile['size'][$i],
-                        'filename' => $sFilename,
-                        'extension' => pathinfo($aFile['name'][$i], PATHINFO_EXTENSION),
-                    ];
-                }
-            }
-            else
-            {
-                if(!$aFile['name'])
-                {
-                    continue;
-                }
-                if(!array_key_exists($sVarName, $aTempFiles))
-                {
-                    $aTempFiles[$sVarName] = [];
-                }
-                // Filename without the extension
-                $sFilename = $this->filterFilename(pathinfo($aFile['name'], PATHINFO_FILENAME), $sVarName);
-                // Copy the file data into the local array
-                $aTempFiles[$sVarName][] = [
-                    'name' => $aFile['name'],
-                    'type' => $aFile['type'],
-                    'tmp_name' => $aFile['tmp_name'],
-                    'error' => $aFile['error'],
-                    'size' => $aFile['size'],
-                    'filename' => $sFilename,
-                    'extension' => pathinfo($aFile['name'], PATHINFO_EXTENSION),
-                ];
-            }
-        }
-
-        // Check uploaded files validity
-        foreach($aTempFiles as $sVarName => $aFiles)
-        {
-            foreach($aFiles as $aFile)
-            {
-                // Verify upload result
-                if($aFile['error'] != 0)
-                {
-                    throw new \Jaxon\Exception\Error($this->trans('errors.upload.failed', $aFile));
-                }
-                // Verify file validity (format, size)
-                if(!$this->validateUploadedFile($sVarName, $aFile))
-                {
-                    throw new \Jaxon\Exception\Error($this->getValidatorMessage());
-                }
-                // Get the path to the upload dir
-                $this->getUploadDir($sVarName);
-            }
-        }
+        $aTempFiles = $this->xSupport->getUploadedFiles();
 
         // Copy the uploaded files from the temp dir to the user dir
-        foreach($aTempFiles as $sVarName => $_aTempFiles)
+        foreach($aTempFiles as $sVarName => $aFiles)
         {
             $this->aUserFiles[$sVarName] = [];
-            foreach($_aTempFiles as $aFile)
+            // Get the path to the upload dir
+            $sUploadDir = $this->getUploadDir($sVarName);
+
+            foreach($aFiles as $aFile)
             {
-                // Get the path to the upload dir
-                $sUploadDir = $this->getUploadDir($sVarName);
                 // Set the user file data
                 $xUploadedFile = UploadedFile::fromHttpData($sUploadDir, $aFile);
                 // All's right, move the file to the user dir.
@@ -292,7 +216,7 @@ class FileUpload extends RequestPlugin
             $aFiles[$sVarName] = [];
             foreach($aUserFiles as $aUserFile)
             {
-                    $aFiles[$sVarName][] = $aUserFile->toTempData();
+                $aFiles[$sVarName][] = $aUserFile->toTempData();
             }
         }
         // Save upload data in a temp file
@@ -319,7 +243,7 @@ class FileUpload extends RequestPlugin
                 $this->aUserFiles[$sVarName][] = UploadedFile::fromTempData($aUserFile);
             }
         }
-        // unlink($sUploadTempFile);
+        unlink($sUploadTempFile);
     }
 
     /**
@@ -330,28 +254,6 @@ class FileUpload extends RequestPlugin
     public function getName()
     {
         return Jaxon::FILE_UPLOAD;
-    }
-
-    /**
-     * Filter uploaded file name
-     *
-     * @param Closure       $cFileFilter            The closure which filters filenames
-     *
-     * @return void
-     */
-    public function filter(Closure $cFileFilter)
-    {
-        $this->setFileFilter($cFileFilter);
-    }
-
-    /**
-     * Get the uploaded files
-     *
-     * @return array
-     */
-    public function files()
-    {
-        return $this->aUserFiles;
     }
 
     /**
@@ -411,7 +313,7 @@ class FileUpload extends RequestPlugin
 
         if(count($_FILES) > 0)
         {
-            // Ajax request with upload
+            // Ajax or Http request with upload
             $this->readFromHttpData();
 
             if($this->bRequestIsHttpUpload)
