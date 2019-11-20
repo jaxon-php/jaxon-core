@@ -74,7 +74,7 @@ class FileUpload
                 $sFilename = pathinfo($aFile['name'][$i], PATHINFO_FILENAME);
                 if(($this->cNameSanitizer))
                 {
-                    $sFilename = (string)call_user_func_array($$this->cNameSanitizer, [$sFilename, $sVarName]);
+                    $sFilename = (string)call_user_func_array($this->cNameSanitizer, [$sFilename, $sVarName]);
                 }
                         // Copy the file data into the local array
                 $aTempFiles[$sVarName][] = [

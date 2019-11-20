@@ -30,7 +30,6 @@ use Exception;
 class Handler
 {
     use \Jaxon\Features\Config;
-    use \Jaxon\Features\Translator;
 
     /**
      * The plugin manager.
@@ -225,24 +224,67 @@ class Handler
     }
 
     /**
-     * Process the current request
+     * Process the current request and handle errors and exceptions.
+     *
+     * @return void
+     */
+    private function _processRequest()
+    {
+        try
+        {
+            // Process uploaded files
+            $this->xUploadRequestPlugin->processRequest();
+
+            // Process the request
+            if(($this->xTargetRequestPlugin))
+            {
+                $this->xTargetRequestPlugin->processRequest();
+            }
+        }
+        catch(Exception $e)
+        {
+            // An exception was thrown while processing the request.
+            // The request missed the corresponding handler function,
+            // or an error occurred while attempting to execute the handler.
+
+            $this->xResponseManager->error($e->getMessage());
+
+            if($e instanceof \Jaxon\Exception\Error)
+            {
+                $this->onInvalid($e->getMessage());
+            }
+            else
+            {
+                $this->onError($e);
+            }
+        }
+    }
+
+    /**
+     * Clean output buffers.
+     *
+     * @return void
+     */
+    private function _cleanOutputBuffers()
+    {
+        $er = error_reporting(0);
+        while(ob_get_level() > 0)
+        {
+            ob_end_clean();
+        }
+        error_reporting($er);
+    }
+
+    /**
+     * Process the current request.
      *
      * Calls each of the request plugins to request that they process the current request.
      * If any plugin processes the request, it will return true.
      *
-     * @return boolean
+     * @return void
      */
     public function processRequest()
     {
-        // Check to see if headers have already been sent out, in which case we can't do our job
-        if(headers_sent($filename, $linenumber))
-        {
-            echo $this->trans('errors.output.already-sent', [
-                'location' => $filename . ':' . $linenumber
-            ]), "\n", $this->trans('errors.output.advice');
-            exit();
-        }
-
         // Check if there is a plugin to process this request
         if(!$this->canProcessRequest())
         {
@@ -259,45 +301,13 @@ class Handler
 
         if(!$bEndRequest)
         {
-            try
-            {
-                // Process uploaded files
-                $this->xUploadRequestPlugin->processRequest();
-
-                // Process the request
-                if(($this->xTargetRequestPlugin))
-                {
-                    $this->xTargetRequestPlugin->processRequest();
-                }
-            }
-            catch(Exception $e)
-            {
-                // An exception was thrown while processing the request.
-                // The request missed the corresponding handler function,
-                // or an error occurred while attempting to execute the handler.
-
-                $this->xResponseManager->error($e->getMessage());
-
-                if($e instanceof \Jaxon\Exception\Error)
-                {
-                    $this->onInvalid($e->getMessage());
-                }
-                else
-                {
-                    $this->onError($e);
-                }
-            }
+            $this->_processRequest();
         }
 
         // Clean the processing buffer
         if(($this->getOption('core.process.clean')))
         {
-            $er = error_reporting(0);
-            while(ob_get_level() > 0)
-            {
-                ob_end_clean();
-            }
-            error_reporting($er);
+            $this->_cleanOutputBuffers();
         }
 
         if(($this->xTargetRequestPlugin))
@@ -313,15 +323,5 @@ class Handler
         }
 
         $this->xResponseManager->printDebug();
-
-        if(($this->getOption('core.response.send')))
-        {
-            $this->xResponseManager->sendOutput();
-
-            if(($this->getOption('core.process.exit')))
-            {
-                exit();
-            }
-        }
     }
 }

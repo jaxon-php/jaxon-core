@@ -32,6 +32,7 @@ use Jaxon\Utils\Config\Reader as ConfigReader;
 class Jaxon
 {
     use Features\Config;
+    use \Jaxon\Features\Translator;
 
     /**
      * Package version number
@@ -370,7 +371,26 @@ class Jaxon
      */
     public function processRequest()
     {
-        return $this->di()->getRequestHandler()->processRequest();
+        // Check to see if headers have already been sent out, in which case we can't do our job
+        if(headers_sent($filename, $linenumber))
+        {
+            echo $this->trans('errors.output.already-sent', [
+                'location' => $filename . ':' . $linenumber
+            ]), "\n", $this->trans('errors.output.advice');
+            exit();
+        }
+
+        $this->di()->getRequestHandler()->processRequest();
+
+        if(($this->getOption('core.response.send')))
+        {
+            $this->di()->getResponseManager()->sendOutput();
+
+            if(($this->getOption('core.process.exit')))
+            {
+                exit();
+            }
+        }
     }
 
     /**

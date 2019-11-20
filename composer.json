@@ -17,7 +17,7 @@
         "source": "https://github.com/jaxon-php/jaxon-core"
     },
     "require": {
-        "php": ">=5.4.0",
+        "php": ">=5.6.0",
         "pimple/pimple": "^3.0",
         "lemonphp/event": "^1.0",
         "matthiasmullie/minify": "^1.3"
