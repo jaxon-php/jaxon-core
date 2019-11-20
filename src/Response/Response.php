@@ -317,13 +317,14 @@ class Response extends AbstractResponse
      */
     public function getOutput()
     {
-        $response = [];
+        $response = [
+            'jxnobj' => [],
+        ];
 
         if(($this->returnValue))
         {
             $response['jxnrv'] = $this->returnValue;
         }
-        $response['jxnobj'] = [];
 
         foreach($this->aCommands as $xCommand)
         {
