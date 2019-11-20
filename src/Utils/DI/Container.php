@@ -20,6 +20,7 @@ use Jaxon\Request\Plugin\CallableClass;
 use Jaxon\Request\Plugin\CallableDir;
 use Jaxon\Request\Plugin\CallableFunction;
 use Jaxon\Request\Plugin\FileUpload;
+use Jaxon\Request\Support\FileUpload as FileUploadSupport;
 use Jaxon\Request\Handler\Handler as RequestHandler;
 use Jaxon\Request\Factory\RequestFactory;
 use Jaxon\Request\Factory\ParameterFactory;
@@ -161,9 +162,13 @@ class Container
         $this->libContainer[CallableFunction::class] = function() {
             return new CallableFunction();
         };
+        // File upload support
+        $this->libContainer[FileUploadSupport::class] = function() {
+            return new FileUploadSupport();
+        };
         // File upload plugin
-        $this->libContainer[FileUpload::class] = function() {
-            return new FileUpload();
+        $this->libContainer[FileUpload::class] = function($c) {
+            return new FileUpload($c[FileUploadSupport::class]);
         };
         // JQuery response plugin
         $this->libContainer[JQueryPlugin::class] = function() {
