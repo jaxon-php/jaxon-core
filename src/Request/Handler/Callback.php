@@ -17,42 +17,42 @@ class Callback
     /**
      * The callback to run before processing the request
      *
-     * @var Callable
+     * @var callable
      */
     protected $xBeforeCallback = null;
 
     /**
      * The callback to run afteer processing the request
      *
-     * @var Callable
+     * @var callable
      */
     protected $xAfterCallback = null;
 
     /**
      * The callback to run in case of invalid request
      *
-     * @var Callable
+     * @var callable
      */
     protected $xInvalidCallback = null;
 
     /**
      * The callback to run in case of error
      *
-     * @var Callable
+     * @var callable
      */
     protected $xErrorCallback = null;
 
     /**
      * The callback to run when a class is instanciated
      *
-     * @var Callable
+     * @var callable
      */
     protected $xInitCallback = null;
 
     /**
      * Get or set the pre-request processing callback.
      *
-     * @param Callable|null  $xCallable               The callback function
+     * @param callable|null  $xCallable               The callback function
      *
      * @return void
      */
@@ -68,7 +68,7 @@ class Callback
     /**
      * Get or set the post-request processing callback.
      *
-     * @param Callable|null  $xCallable               The callback function
+     * @param callable|null  $xCallable               The callback function
      *
      * @return void
      */
@@ -84,7 +84,7 @@ class Callback
     /**
      * Get or set the invalid request callback.
      *
-     * @param Callable|null  $xCallable               The callback function
+     * @param callable|null  $xCallable               The callback function
      *
      * @return void
      */
@@ -100,7 +100,7 @@ class Callback
     /**
      * Get or set the processing error callback.
      *
-     * @param Callable|null  $xCallable               The callback function
+     * @param callable|null  $xCallable               The callback function
      *
      * @return void
      */
@@ -116,7 +116,7 @@ class Callback
     /**
      * Get or set the class initialisation callback.
      *
-     * @param Callable|null  $xCallable               The callback function
+     * @param callable|null  $xCallable               The callback function
      *
      * @return void
      */
