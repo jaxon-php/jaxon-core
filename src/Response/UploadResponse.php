@@ -56,7 +56,7 @@ class UploadResponse extends AbstractResponse
      *
      * @param string        $sMessage            The message to be displayed
      *
-     * @return AbstractResponse
+     * @return UploadResponse
      */
     public function debug($sMessage)
     {

@@ -19,7 +19,7 @@ trait Manager
     /**
      * Get the plugin manager
      *
-     * @return Jaxon\Plugin\Manager
+     * @return \Jaxon\Plugin\Manager
      */
     public function getPluginManager()
     {
@@ -29,7 +29,7 @@ trait Manager
     /**
      * Get the response manager
      *
-     * @return Jaxon\Response\Manager
+     * @return \Jaxon\Response\Manager
      */
     public function getResponseManager()
     {

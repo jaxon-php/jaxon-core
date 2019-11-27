@@ -46,23 +46,30 @@ class CodeGenerator
     /**
      * Generated CSS code
      *
-     * @var string|null
+     * @var string
      */
-    protected $sCssCode = null;
+    protected $sCssCode = '';
 
     /**
      * Generated Javascript code
      *
-     * @var string|null
+     * @var string
      */
-    protected $sJsCode = null;
+    protected $sJsCode = '';
 
     /**
      * Generated Javascript ready script
      *
-     * @var string|null
+     * @var string
      */
-    protected $sJsScript = null;
+    protected $sJsScript = '';
+
+    /**
+     * Code already generated
+     *
+     * @var boolean
+     */
+    protected $sCodeGenerated = false;
 
     /**
      * Default library URL
@@ -160,11 +167,10 @@ class CodeGenerator
      */
     private function makePluginsCode()
     {
-        if($this->sCssCode === null || $this->sJsCode === null || $this->sJsScript === null)
+        if(!$this->sCodeGenerated)
         {
-            $this->sCssCode = '';
-            $this->sJsCode = '';
-            $this->sJsScript = '';
+            $this->sCodeGenerated = true;
+
             foreach($this->xPluginManager->getPlugins() as $xPlugin)
             {
                 if($xPlugin instanceof Response)

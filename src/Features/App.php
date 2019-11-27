@@ -17,7 +17,7 @@ trait App
     /**
      * Get the Jaxon response.
      *
-     * @return Response
+     * @return \Jaxon\Response\Response
      */
     public function ajaxResponse()
     {
@@ -117,7 +117,7 @@ trait App
     /**
      * Get the view renderer
      *
-     * @return Jaxon\Utils\View\Renderer
+     * @return \Jaxon\Utils\View\Renderer
      */
     public function view()
     {
@@ -127,7 +127,7 @@ trait App
     /**
      * Get the session manager
      *
-     * @return Jaxon\Contracts\Session
+     * @return \Jaxon\Contracts\Session
      */
     public function session()
     {

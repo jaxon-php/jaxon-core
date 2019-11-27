@@ -45,17 +45,58 @@ use Jaxon\Request\Factory\Parameter;
 
 class Paginator
 {
+    /**
+     * @var integer
+     */
     protected $totalItems = 0;
+
+    /**
+     * @var integer
+     */
     protected $numPages = 0;
+
+    /**
+     * @var integer
+     */
     protected $itemsPerPage = 0;
+
+    /**
+     * @var integer
+     */
     protected $currentPage = 0;
+
+    /**
+     * @var integer
+     */
     protected $maxPagesToShow = 10;
+
+    /**
+     * @var string
+     */
     protected $previousText = '&laquo;';
+
+    /**
+     * @var string
+     */
     protected $nextText = '&raquo;';
-    protected $request = null;
+
+    /**
+     * The pagination renderer
+     *
+     * @var Renderer
+     */
     protected $renderer = null;
 
     /**
+     * Tha Jaxon request to be paginated
+     *
+     * @var Request
+     */
+    protected $request = null;
+
+    /**
+     * The constructor
+     *
      * @param Renderer $renderer
      */
     public function __construct(Renderer $renderer)
@@ -150,7 +191,7 @@ class Paginator
     /**
      * @param Request $request
      */
-    public function setRequest($request)
+    public function setRequest(Request $request)
     {
         $this->request = $request;
         // Append the page number to the parameter list, if not yet given.
@@ -317,7 +358,7 @@ class Paginator
      *
      * @param int $pageNum
      *
-     * @return Array
+     * @return array
      */
     protected function createPage($pageNum)
     {

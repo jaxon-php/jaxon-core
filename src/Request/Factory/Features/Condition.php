@@ -30,7 +30,7 @@ trait Condition
      *
      * @param string        $sCondition               The condition to check
      *
-     * @return Request
+     * @return Condition
      */
     public function when($sCondition)
     {
@@ -45,7 +45,7 @@ trait Condition
      *
      * @param string        $sCondition               The condition to check
      *
-     * @return Request
+     * @return Condition
      */
     public function unless($sCondition)
     {
@@ -59,7 +59,7 @@ trait Condition
      * @param string        $sValue1                  The first value to compare
      * @param string        $sValue2                  The second value to compare
      *
-     * @return Request
+     * @return Condition
      */
     public function ifeq($sValue1, $sValue2)
     {
@@ -73,7 +73,7 @@ trait Condition
      * @param string        $sValue1                  The first value to compare
      * @param string        $sValue2                  The second value to compare
      *
-     * @return Request
+     * @return Condition
      */
     public function ifne($sValue1, $sValue2)
     {
@@ -87,7 +87,7 @@ trait Condition
      * @param string        $sValue1                  The first value to compare
      * @param string        $sValue2                  The second value to compare
      *
-     * @return Request
+     * @return Condition
      */
     public function ifgt($sValue1, $sValue2)
     {
@@ -101,7 +101,7 @@ trait Condition
      * @param string        $sValue1                  The first value to compare
      * @param string        $sValue2                  The second value to compare
      *
-     * @return Request
+     * @return Condition
      */
     public function ifge($sValue1, $sValue2)
     {
@@ -115,7 +115,7 @@ trait Condition
      * @param string        $sValue1                  The first value to compare
      * @param string        $sValue2                  The second value to compare
      *
-     * @return Request
+     * @return Condition
      */
     public function iflt($sValue1, $sValue2)
     {
@@ -129,7 +129,7 @@ trait Condition
      * @param string        $sValue1                  The first value to compare
      * @param string        $sValue2                  The second value to compare
      *
-     * @return Request
+     * @return Condition
      */
     public function ifle($sValue1, $sValue2)
     {

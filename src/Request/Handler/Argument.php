@@ -142,6 +142,7 @@ class Argument
             return '';
         }
         $sArg = stripslashes($sArg);
+        return $sArg;
     }
 
     /**
@@ -151,7 +152,7 @@ class Argument
      *
      * @param string        $sValue                The keys of the options in the file
      *
-     * @return mixed
+     * @return string|boolean|integer|double|null
      */
     private function __convertValue($sValue)
     {

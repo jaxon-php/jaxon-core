@@ -62,7 +62,7 @@ class JsCall implements JsonSerializable
     /**
      * Instruct the request to use single quotes when generating the javascript
      *
-     * @return void
+     * @return JsCall
      */
     public function useSingleQuote()
     {
@@ -73,7 +73,7 @@ class JsCall implements JsonSerializable
     /**
      * Instruct the request to use single quotes when generating the javascript
      *
-     * @return void
+     * @return JsCall
      */
     public function useSingleQuotes()
     {
@@ -84,31 +84,34 @@ class JsCall implements JsonSerializable
     /**
      * Instruct the request to use double quotes while generating the javascript
      *
-     * @return void
+     * @return JsCall
      */
     public function useDoubleQuote()
     {
         $this->sQuoteCharacter = '"';
+        return $this;
     }
 
     /**
      * Instruct the request to use double quotes while generating the javascript
      *
-     * @return void
+     * @return JsCall
      */
     public function useDoubleQuotes()
     {
         $this->sQuoteCharacter = '"';
+        return $this;
     }
 
     /**
      * Clear the parameter list associated with this request
      *
-     * @return void
+     * @return JsCall
      */
     public function clearParameters()
     {
         $this->aParameters = [];
+        return $this;
     }
 
     /**
@@ -116,11 +119,12 @@ class JsCall implements JsonSerializable
      *
      * @param Contracts\Parameter      $xParameter             The value to be used
      *
-     * @return void
+     * @return JsCall
      */
     public function pushParameter(Contracts\Parameter $xParameter)
     {
         $this->aParameters[] = $xParameter;
+        return $this;
     }
 
     /**
@@ -138,11 +142,12 @@ class JsCall implements JsonSerializable
      *   (either a javascript variable name that will be in scope at the time of the call or
      *   a javascript function call whose return value will become the parameter).
      *
-     * @return void
+     * @return JsCall
      */
     public function addParameter($sType, $sValue)
     {
         $this->pushParameter(new Parameter($sType, $sValue));
+        return $this;
     }
 
     /**
@@ -150,7 +155,7 @@ class JsCall implements JsonSerializable
      *
      * @param array             $aParameters             The parameters
      *
-     * @return void
+     * @return JsCall
      */
     public function addParameters(array $aParameters)
     {
@@ -165,6 +170,7 @@ class JsCall implements JsonSerializable
                 $this->pushParameter(Parameter::make($xParameter));
             }
         }
+        return $this;
     }
 
     /**

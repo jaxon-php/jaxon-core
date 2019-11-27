@@ -18,7 +18,7 @@ interface Renderer
      * Render a template
      *
      * @param string        $sTemplate            The name of template to be rendered
-     * @param string        $aVars                The template vars
+     * @param array         $aVars                The template vars
      *
      * @return string
      */

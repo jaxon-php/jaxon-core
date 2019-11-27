@@ -31,7 +31,7 @@ trait Config
      * Get the value of a config option
      *
      * @param string        $sName              The option name
-     * @param mixed         $xDefault           The default value, to be returned if the option is not defined
+     * @param mixed|null    $xDefault           The default value, to be returned if the option is not defined
      *
      * @return mixed        The option value, or null if the option is unknown
      */
@@ -67,7 +67,7 @@ trait Config
     /**
      * Create a new the config manager
      *
-     * @return Jaxon\Utils\Config\Config            The config manager
+     * @return \Jaxon\Utils\Config\Config            The config manager
      */
     public function newConfig()
     {

@@ -1,6 +1,7 @@
 <?php
 
 use Jaxon\Jaxon;
+use Jaxon\Plugin\Plugin;
 
 /**
  * start.php -
@@ -19,7 +20,7 @@ use Jaxon\Jaxon;
 /**
  * Return the singleton instance of the Jaxon/Jaxon class
  *
- * @return Jaxon\Jaxon
+ * @return Jaxon
  */
 function jaxon()
 {
@@ -31,7 +32,7 @@ function jaxon()
  *
  * @param string        $sText                  The text to translate
  * @param array         $aPlaceHolders          The placeholders in the text
- * @param string        $sLanguage              The language to translate to
+ * @param string|null   $sLanguage              The language to translate to
  *
  * @return string
  */
@@ -48,7 +49,7 @@ function jaxon_trans($sText, array $aPlaceHolders = [], $sLanguage = null)
  *
  * @return void
  */
-function jaxon_register_plugin(\Jaxon\Plugin\Plugin $xPlugin, $nPriority = 1000)
+function jaxon_register_plugin(Plugin $xPlugin, $nPriority = 1000)
 {
     Jaxon::getInstance()->registerPlugin($xPlugin, $nPriority);
 }
@@ -56,7 +57,7 @@ function jaxon_register_plugin(\Jaxon\Plugin\Plugin $xPlugin, $nPriority = 1000)
 /**
  * Get the single instance of the request factory, and set the class to call.
  *
- * @return Jaxon\Request\Factory\RequestFactory
+ * @return \Jaxon\Request\Factory\RequestFactory
  */
 function rq($sClassName = null)
 {
@@ -66,7 +67,7 @@ function rq($sClassName = null)
 /**
  * Get the single instance of the parameter factory
  *
- * @return Jaxon\Request\Factory\ParameterFactory
+ * @return \Jaxon\Request\Factory\ParameterFactory
  */
 function pr()
 {
@@ -82,7 +83,7 @@ function pr()
  * @param string        $sSelector            The jQuery selector
  * @param string        $sContext             A context associated to the selector
  *
- * @return Jaxon\Response\Plugin\JQuery\Dom\Element
+ * @return \Jaxon\Response\Plugin\JQuery\Dom\Element
  */
 function jq($sSelector = '', $sContext = '')
 {
@@ -98,7 +99,7 @@ function jq($sSelector = '', $sContext = '')
  * @param string        $sSelector            The jQuery selector
  * @param string        $sContext             A context associated to the selector
  *
- * @return Jaxon\Response\Plugin\JQuery\Dom\Element
+ * @return \Jaxon\Response\Plugin\JQuery\Dom\Element
  */
 function jQuery($sSelector = '', $sContext = '')
 {

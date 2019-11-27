@@ -40,7 +40,7 @@ class FileUpload
     /**
      * Read uploaded files info from HTTP request data
      *
-     * @return void
+     * @return array
      */
     public function getUploadedFiles()
     {

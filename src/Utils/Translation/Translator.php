@@ -14,18 +14,46 @@
 
 namespace Jaxon\Utils\Translation;
 
+use Jaxon\Utils\Config\Config;
+
 class Translator
 {
+    /**
+     * The current configuration
+     *
+     * @var Config
+     */
     protected $xConfig;
-    protected $sDefaultLocale = 'en';
-    protected $sResourceDir;
-    // Translations
-    protected $aTranslations;
 
-    public function __construct($sResourceDir, $xConfig)
+    /**
+     * The default locale
+     *
+     * @var string
+     */
+    protected $sDefaultLocale = 'en';
+
+    /**
+     * The directory containing the translations resources
+     *
+     * @var string
+     */
+    protected $sResourceDir;
+
+    /**
+     * The translations
+     *
+     * @var array
+     */
+    protected $aTranslations = [];
+
+    /**
+     * The constructor
+     *
+     * @param string    $sResourceDir
+     * @param Config    $xConfig
+     */
+    public function __construct($sResourceDir, Config $xConfig)
     {
-        // Translations
-        $this->aTranslations = [];
         // Set the translation resource directory
         $this->sResourceDir = trim($sResourceDir);
         // Set the config manager
@@ -103,8 +131,8 @@ class Translator
      * Get a translated string
      *
      * @param string        $sText                The key of the translated string
-     * @param string        $aPlaceHolders        The placeholders of the translated string
-     * @param string        $sLanguage            The language of the translated string
+     * @param array         $aPlaceHolders        The placeholders of the translated string
+     * @param string|null   $sLanguage            The language of the translated string
      *
      * @return string        The translated string
      */

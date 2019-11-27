@@ -458,7 +458,7 @@ class Jaxon
     /**
      * Get the view renderer
      *
-     * @return Jaxon\Utils\View\Renderer
+     * @return \Jaxon\Utils\View\Renderer
      */
     public function view()
     {
@@ -468,7 +468,7 @@ class Jaxon
     /**
      * Get the session manager
      *
-     * @return Jaxon\Contracts\Session
+     * @return \Jaxon\Contracts\Session
      */
     public function session()
     {

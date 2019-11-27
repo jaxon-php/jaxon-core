@@ -86,7 +86,7 @@ class Request extends JsCall
     /**
      * Create parameters for message arguments
      *
-     * @param   $aArgs          The arguments
+     * @param array     $aArgs          The arguments
      *
      * @return void
      */

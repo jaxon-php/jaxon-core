@@ -20,7 +20,7 @@ class Renderer
      * Render a template
      *
      * @param string        $sPath                The path to the template
-     * @param string        $aVars                The template vars
+     * @param array         $aVars                The template vars
      *
      * @return string        The template content
      */

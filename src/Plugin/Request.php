@@ -41,7 +41,7 @@ abstract class Request extends Plugin
      * @param string        $sCallable      The callable entity being registered
      * @param array|string  $aOptions       The associated options
      *
-     * @return mixed
+     * @return boolean
      */
     public function register($sType, $sCallable, $aOptions)
     {
