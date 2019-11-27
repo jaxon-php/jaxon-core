@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Alert.php - Interface for alert messages.
+ * Message.php - Interface for alert messages.
  *
  * @package jaxon-dialogs
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
@@ -10,25 +10,26 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Contracts\Dialogs;
+namespace Jaxon\Utils\Dialogs;
 
-interface Alert
+class Message implements \Jaxon\Contracts\Dialogs\Message
 {
-    /**
-     * Tells if the library should return the javascript code or run it in the browser.
-     *
-     * @param boolean             $return               Whether to return the code
-     *
-     * @return void
-     */
-    public function setReturn($return);
+    use \Jaxon\Features\Dialogs\Message;
 
     /**
-     * Tells if the library should return the js code or run it in the browser.
+     * Print an alert message.
      *
-     * @return void
+     * @param string              $message              The text of the message
+     *
+     * @return string|void
      */
-    public function getReturn();
+    private function alert($message)
+    {
+        if($this->getReturn())
+        {
+            return 'alert(' . $message . ')';
+        }
+    }
 
     /**
      * Print a success message.
@@ -36,9 +37,12 @@ interface Alert
      * @param string              $message              The text of the message
      * @param string|null         $title                The title of the message
      *
-     * @return void
+     * @return string|void
      */
-    public function success($message, $title = null);
+    public function success($message, $title = null)
+    {
+        return $this->alert($message);
+    }
 
     /**
      * Print an information message.
@@ -46,9 +50,12 @@ interface Alert
      * @param string              $message              The text of the message
      * @param string|null         $title                The title of the message
      *
-     * @return void
+     * @return string|void
      */
-    public function info($message, $title = null);
+    public function info($message, $title = null)
+    {
+        return $this->alert($message);
+    }
 
     /**
      * Print a warning message.
@@ -56,9 +63,12 @@ interface Alert
      * @param string              $message              The text of the message
      * @param string|null         $title                The title of the message
      *
-     * @return void
+     * @return string|void
      */
-    public function warning($message, $title = null);
+    public function warning($message, $title = null)
+    {
+        return $this->alert($message);
+    }
 
     /**
      * Print an error message.
@@ -66,7 +76,10 @@ interface Alert
      * @param string              $message              The text of the message
      * @param string|null         $title                The title of the message
      *
-     * @return void
+     * @return string|void
      */
-    public function error($message, $title = null);
+    public function error($message, $title = null)
+    {
+        return $this->alert($message);
+    }
 }

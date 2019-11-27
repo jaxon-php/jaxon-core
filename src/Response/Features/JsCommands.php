@@ -125,15 +125,12 @@ trait JsCommands
             }
             $sURL = str_replace($queryPart, $newQueryPart, $sURL);
         }
-        if($iDelay)
+
+        if($iDelay > 0)
         {
-            $this->script('window.setTimeout("window.location = \'' . $sURL . '\';",' . ($iDelay * 1000) . ');');
+            return $this->script('window.setTimeout("window.location = \'' . $sURL . '\';",' . ($iDelay * 1000) . ');');
         }
-        else
-        {
-            $this->script('window.location = "' . $sURL . '";');
-        }
-        return $this;
+        return $this->script('window.location = "' . $sURL . '";');
     }
 
     /**

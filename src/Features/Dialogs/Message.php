@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Alert.php - Interface for alert messages.
+ * Message.php - Trait for alert messages.
  *
  * @package jaxon-dialogs
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
@@ -12,7 +12,7 @@
 
 namespace Jaxon\Features\Dialogs;
 
-trait Alert
+trait Message
 {
     /**
      *

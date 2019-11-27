@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Confirm.php - A confirm question for a Jaxon request
+ * Question.php - A confirmation question for a Jaxon request
  *
  * Interface for adding a confirmation question which is asked before calling a Jaxon function.
  *
@@ -13,7 +13,7 @@
 
 namespace Jaxon\Contracts\Dialogs;
 
-interface Confirm
+interface Question
 {
     /**
      * Return a script which makes a call only if the user answers yes to the given question

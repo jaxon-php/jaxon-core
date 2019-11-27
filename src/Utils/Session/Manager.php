@@ -69,7 +69,7 @@ class Manager implements SessionContract
      * Get data from the session
      *
      * @param string        $sKey                The session key
-     * @param string        $xDefault            The default value
+     * @param string|null   $xDefault            The default value
      *
      * @return mixed            The data under the session key, or the $xDefault parameter
      */

@@ -54,7 +54,7 @@ class Callback
      *
      * @param callable|null  $xCallable               The callback function
      *
-     * @return void
+     * @return Callback|callable
      */
     public function before($xCallable = null)
     {
@@ -63,6 +63,7 @@ class Callback
             return $this->xBeforeCallback;
         }
         $this->xBeforeCallback = $xCallable;
+        return $this;
     }
 
     /**
@@ -70,7 +71,7 @@ class Callback
      *
      * @param callable|null  $xCallable               The callback function
      *
-     * @return void
+     * @return Callback|callable
      */
     public function after($xCallable = null)
     {
@@ -79,6 +80,7 @@ class Callback
             return $this->xAfterCallback;
         }
         $this->xAfterCallback = $xCallable;
+        return $this;
     }
 
     /**
@@ -86,7 +88,7 @@ class Callback
      *
      * @param callable|null  $xCallable               The callback function
      *
-     * @return void
+     * @return Callback|callable
      */
     public function invalid($xCallable = null)
     {
@@ -95,6 +97,7 @@ class Callback
             return $this->xInvalidCallback;
         }
         $this->xInvalidCallback = $xCallable;
+        return $this;
     }
 
     /**
@@ -102,7 +105,7 @@ class Callback
      *
      * @param callable|null  $xCallable               The callback function
      *
-     * @return void
+     * @return Callback|callable
      */
     public function error($xCallable = null)
     {
@@ -111,6 +114,7 @@ class Callback
             return $this->xErrorCallback;
         }
         $this->xErrorCallback = $xCallable;
+        return $this;
     }
 
     /**
@@ -118,7 +122,7 @@ class Callback
      *
      * @param callable|null  $xCallable               The callback function
      *
-     * @return void
+     * @return Callback|callable
      */
     public function init($xCallable = null)
     {
@@ -127,5 +131,6 @@ class Callback
             return $this->xInitCallback;
         }
         $this->xInitCallback = $xCallable;
+        return $this;
     }
 }

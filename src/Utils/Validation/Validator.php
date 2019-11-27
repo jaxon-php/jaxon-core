@@ -67,12 +67,12 @@ class Validator
      *
      * @param string        $sName            The function name
      *
-     * @return bool            True if the function name is valid, and false if not
+     * @return boolean            True if the function name is valid, and false if not
      */
     public function validateFunction($sName)
     {
         $this->sErrorMessage = '';
-        return preg_match('/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/', $sName);
+        return (preg_match('/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/', $sName) > 0);
     }
 
     /**
@@ -80,12 +80,12 @@ class Validator
      *
      * @param string        $sName            The event name
      *
-     * @return bool            True if the event name is valid, and false if not
+     * @return boolean            True if the event name is valid, and false if not
      */
     public function validateEvent($sName)
     {
         $this->sErrorMessage = '';
-        return preg_match('/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/', $sName);
+        return (preg_match('/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/', $sName) > 0);
     }
 
     /**
@@ -93,12 +93,12 @@ class Validator
      *
      * @param string        $sName            The class name
      *
-     * @return bool            True if the class name is valid, and false if not
+     * @return boolean            True if the class name is valid, and false if not
      */
     public function validateClass($sName)
     {
         $this->sErrorMessage = '';
-        return preg_match('/^([a-zA-Z][a-zA-Z0-9_]*)(\.[a-zA-Z][a-zA-Z0-9_]*)*$/', $sName);
+        return (preg_match('/^([a-zA-Z][a-zA-Z0-9_]*)(\.[a-zA-Z][a-zA-Z0-9_]*)*$/', $sName) > 0);
     }
 
     /**
@@ -106,13 +106,13 @@ class Validator
      *
      * @param string        $sName            The function name
      *
-     * @return bool            True if the method name is valid, and false if not
+     * @return boolean            True if the method name is valid, and false if not
      */
     public function validateMethod($sName)
     {
         $this->sErrorMessage = '';
-        // return preg_match('/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/', $sName);
-        return preg_match('/^[a-zA-Z][a-zA-Z0-9_]*$/', $sName);
+        // return (preg_match('/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/', $sName) > 0);
+        return (preg_match('/^[a-zA-Z][a-zA-Z0-9_]*$/', $sName) > 0);
     }
 
     /**
@@ -123,7 +123,7 @@ class Validator
      * @param string        $sProperty      The property name in config options
      * @param string        $sField         The field name in file data
      *
-     * @return bool            True if the property valid, and false if not
+     * @return boolean            True if the property valid, and false if not
      */
     private function validateFileProperty($sName, $sValue, $sProperty, $sField)
     {
@@ -144,7 +144,7 @@ class Validator
      * @param integer       $iFileSize      The uploaded file size
      * @param string        $sProperty      The property name in config options
      *
-     * @return bool            True if the property valid, and false if not
+     * @return boolean            True if the property valid, and false if not
      */
     private function validateFileSize($sName, $iFileSize, $sProperty)
     {
@@ -166,7 +166,7 @@ class Validator
      * @param string        $sName            The uploaded file variable name
      * @param array         $aUploadedFile    The file data received in the $_FILES array
      *
-     * @return bool            True if the file data are valid, and false if not
+     * @return boolean            True if the file data are valid, and false if not
      */
     public function validateUploadedFile($sName, array $aUploadedFile)
     {

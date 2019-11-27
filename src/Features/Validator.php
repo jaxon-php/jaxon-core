@@ -29,7 +29,7 @@ trait Validator
      *
      * @param string        $sName            The function name
      *
-     * @return bool            True if the function name is valid, and false if not
+     * @return boolean            True if the function name is valid, and false if not
      */
     public function validateFunction($sName)
     {
@@ -41,7 +41,7 @@ trait Validator
      *
      * @param string        $sName            The event name
      *
-     * @return bool            True if the event name is valid, and false if not
+     * @return boolean            True if the event name is valid, and false if not
      */
     public function validateEvent($sName)
     {
@@ -53,7 +53,7 @@ trait Validator
      *
      * @param string        $sName            The class name
      *
-     * @return bool            True if the class name is valid, and false if not
+     * @return boolean            True if the class name is valid, and false if not
      */
     public function validateClass($sName)
     {
@@ -65,7 +65,7 @@ trait Validator
      *
      * @param string        $sName            The function name
      *
-     * @return bool            True if the method name is valid, and false if not
+     * @return boolean            True if the method name is valid, and false if not
      */
     public function validateMethod($sName)
     {
@@ -78,7 +78,7 @@ trait Validator
      * @param string        $sName            The uploaded file variable name
      * @param array         $aUploadedFile    The file data received in the $_FILES array
      *
-     * @return bool            True if the file data are valid, and false if not
+     * @return boolean            True if the file data are valid, and false if not
      */
     public function validateUploadedFile($sName, array $aUploadedFile)
     {

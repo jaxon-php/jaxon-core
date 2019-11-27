@@ -136,9 +136,9 @@ class Handler
     /**
      * This is the pre-request processing callback passed to the Jaxon library.
      *
-     * @param  boolean  &$bEndRequest if set to true, the request processing is interrupted.
+     * @param  boolean  $bEndRequest   If set to true, the request processing is interrupted.
      *
-     * @return Jaxon\Response\Response  the Jaxon response
+     * @return void
      */
     public function onBefore(&$bEndRequest)
     {
@@ -152,7 +152,7 @@ class Handler
     /**
      * This is the post-request processing callback passed to the Jaxon library.
      *
-     * @return Jaxon\Response\Response  the Jaxon response
+     * @return void
      */
     public function onAfter($bEndRequest)
     {
@@ -165,7 +165,7 @@ class Handler
     /**
      * This callback is called whenever an invalid request is processed.
      *
-     * @return Jaxon\Response\Response  the Jaxon response
+     * @return void
      */
     public function onInvalid($sMessage)
     {
@@ -178,7 +178,8 @@ class Handler
     /**
      * This callback is called whenever an invalid request is processed.
      *
-     * @return Jaxon\Response\Response  the Jaxon response
+     * @return void
+     * @throws Exception
      */
     public function onError(Exception $xException)
     {

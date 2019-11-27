@@ -20,8 +20,8 @@ trait Translator
      * Get a translated string
      *
      * @param string        $sText                The key of the translated string
-     * @param string        $aPlaceHolders        The placeholders of the translated string
-     * @param string        $sLanguage            The language of the translated string
+     * @param array         $aPlaceHolders        The placeholders of the translated string
+     * @param string|null   $sLanguage            The language of the translated string
      *
      * @return string        The translated string
      */

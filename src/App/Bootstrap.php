@@ -72,7 +72,7 @@ class Bootstrap
      *
      * @var array       $aLibOptions    The library options
      *
-     * @return Boot
+     * @return Bootstrap
      */
     public function lib(array $aLibOptions)
     {
@@ -85,7 +85,7 @@ class Bootstrap
      *
      * @var array       $aAppOptions    The application options
      *
-     * @return Boot
+     * @return Bootstrap
      */
     public function app(array $aAppOptions)
     {
@@ -98,7 +98,7 @@ class Bootstrap
      *
      * @var string  $sUri   The ajax endpoint URI
      *
-     * @return Boot
+     * @return Bootstrap
      */
     public function uri($sUri)
     {
@@ -111,7 +111,7 @@ class Bootstrap
      *
      * @var
      *
-     * @return Boot
+     * @return Bootstrap
      */
     public function js($bExportJs, $sJsUri = '', $sJsDir = '', $bMinifyJs = false)
     {

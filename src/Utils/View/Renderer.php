@@ -83,7 +83,7 @@ class Renderer implements \Jaxon\Contracts\Template\Renderer
      * @param string        $sViewName        The view name
      * @param array         $aViewData        The view data
      *
-     * @return Store        A store populated with the view data
+     * @return null|Store   A store populated with the view data
      */
     public function render($sViewName, array $aViewData = [])
     {

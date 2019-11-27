@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Alert.php - Interface for alert messages.
+ * Message.php - Interface for alert messages.
  *
  * @package jaxon-dialogs
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
@@ -10,26 +10,25 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Utils\Dialogs;
+namespace Jaxon\Contracts\Dialogs;
 
-class Alert implements \Jaxon\Contracts\Dialogs\Alert
+interface Message
 {
-    use \Jaxon\Features\Dialogs\Alert;
+    /**
+     * Tells if the library should return the javascript code or run it in the browser.
+     *
+     * @param boolean             $return               Whether to return the code
+     *
+     * @return void
+     */
+    public function setReturn($return);
 
     /**
-     * Print an alert message.
+     * Tells if the library should return the js code or run it in the browser.
      *
-     * @param string              $message              The text of the message
-     *
-     * @return string|void
+     * @return void
      */
-    protected function alert($message)
-    {
-        if($this->getReturn())
-        {
-            return 'alert(' . $message . ')';
-        }
-    }
+    public function getReturn();
 
     /**
      * Print a success message.
@@ -37,12 +36,9 @@ class Alert implements \Jaxon\Contracts\Dialogs\Alert
      * @param string              $message              The text of the message
      * @param string|null         $title                The title of the message
      *
-     * @return string|void
+     * @return void
      */
-    public function success($message, $title = null)
-    {
-        return $this->alert($message);
-    }
+    public function success($message, $title = null);
 
     /**
      * Print an information message.
@@ -50,12 +46,9 @@ class Alert implements \Jaxon\Contracts\Dialogs\Alert
      * @param string              $message              The text of the message
      * @param string|null         $title                The title of the message
      *
-     * @return string|void
+     * @return void
      */
-    public function info($message, $title = null)
-    {
-        return $this->alert($message);
-    }
+    public function info($message, $title = null);
 
     /**
      * Print a warning message.
@@ -63,12 +56,9 @@ class Alert implements \Jaxon\Contracts\Dialogs\Alert
      * @param string              $message              The text of the message
      * @param string|null         $title                The title of the message
      *
-     * @return string|void
+     * @return void
      */
-    public function warning($message, $title = null)
-    {
-        return $this->alert($message);
-    }
+    public function warning($message, $title = null);
 
     /**
      * Print an error message.
@@ -76,10 +66,7 @@ class Alert implements \Jaxon\Contracts\Dialogs\Alert
      * @param string              $message              The text of the message
      * @param string|null         $title                The title of the message
      *
-     * @return string|void
+     * @return void
      */
-    public function error($message, $title = null)
-    {
-        return $this->alert($message);
-    }
+    public function error($message, $title = null);
 }

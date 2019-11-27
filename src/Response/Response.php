@@ -88,7 +88,7 @@ class Response extends AbstractResponse
      *
      * @param string        $sPluginName        The name of the plugin
      *
-     * @return \Jaxon\Plugin\Response
+     * @return null|\Jaxon\Plugin\Response
      */
     public function __get($sPluginName)
     {
@@ -212,7 +212,7 @@ class Response extends AbstractResponse
         }
 
         $aAttributes['cmd'] = $sName;
-        $this->addCommand($aAttributes, $mData);
+        return $this->addCommand($aAttributes, $mData);
     }
 
     /**

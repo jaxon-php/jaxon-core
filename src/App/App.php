@@ -24,7 +24,7 @@ class App
      *
      * @param string        $sConfigFile        The full path to the config file
      *
-     * @return Jaxon
+     * @return void
      */
     public function setup($sConfigFile)
     {

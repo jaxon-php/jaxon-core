@@ -264,7 +264,7 @@ class CallableRepository
      * @param string        $sClassName            The class name of the callable object
      * @param array         $aOptions              The callable object options
      *
-     * @return object
+     * @return CallableObject|null
      */
     protected function _getCallableObject($sClassName, array $aOptions)
     {
@@ -344,7 +344,7 @@ class CallableRepository
      */
     public function createCallableObjects()
     {
-        // Create callable objects for registered classes
+        // Create callable objects for registered directories
         foreach($this->aClassOptions as $sClassName => $aClassOptions)
         {
             if(!key_exists($sClassName, $this->aCallableObjects))

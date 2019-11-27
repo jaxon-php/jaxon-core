@@ -430,7 +430,7 @@ class Container
     /**
      * Get the template engine
      *
-     * @return Engine
+     * @return TemplateEngine
      */
     public function getTemplateEngine()
     {

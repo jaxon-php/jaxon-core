@@ -46,23 +46,30 @@ class CodeGenerator
     /**
      * Generated CSS code
      *
-     * @var string|null
+     * @var string
      */
-    protected $sCssCode = null;
+    protected $sCssCode = '';
 
     /**
      * Generated Javascript code
      *
-     * @var string|null
+     * @var string
      */
-    protected $sJsCode = null;
+    protected $sJsCode = '';
 
     /**
      * Generated Javascript ready script
      *
-     * @var string|null
+     * @var string
      */
-    protected $sJsScript = null;
+    protected $sJsScript = '';
+
+    /**
+     * Code already generated
+     *
+     * @var boolean
+     */
+    protected $sCodeGenerated = false;
 
     /**
      * Default library URL
@@ -156,15 +163,14 @@ class CodeGenerator
     /**
      * Get the HTML tags to include Jaxon javascript files into the page
      *
-     * @return string
+     * @return void
      */
     private function makePluginsCode()
     {
-        if($this->sCssCode === null || $this->sJsCode === null || $this->sJsScript === null)
+        if(!$this->sCodeGenerated)
         {
-            $this->sCssCode = '';
-            $this->sJsCode = '';
-            $this->sJsScript = '';
+            $this->sCodeGenerated = true;
+
             foreach($this->xPluginManager->getPlugins() as $xPlugin)
             {
                 if($xPlugin instanceof Response)
@@ -290,9 +296,9 @@ class CodeGenerator
         $aVars = $this->getOptionVars();
         $sYesScript = 'jaxon.ajax.response.process(command.response)';
         $sNoScript = 'jaxon.confirm.skip(command);jaxon.ajax.response.process(command.response)';
-        $sConfirmScript = jaxon()->dialog()->confirm('msg', $sYesScript, $sNoScript);
-        $aVars['sConfirmScript'] = $this->xTemplate->render('jaxon::plugins/confirm.js', [
-            'sConfirmScript' => $sConfirmScript,
+        $sQuestionScript = jaxon()->dialog()->confirm('msg', $sYesScript, $sNoScript);
+        $aVars['sQuestionScript'] = $this->xTemplate->render('jaxon::plugins/confirm.js', [
+            'sQuestionScript' => $sQuestionScript,
         ]);
 
         return $this->xTemplate->render('jaxon::plugins/config.js', $aVars) . "\n" . $this->sJsScript . '

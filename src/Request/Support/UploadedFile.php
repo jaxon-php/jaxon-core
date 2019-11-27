@@ -79,7 +79,7 @@ class UploadedFile
     /**
      * Convert the UploadedFile instance to array.
      *
-     * @return array
+     * @return array<string,string>
      */
     public function toTempData()
     {
@@ -172,7 +172,7 @@ class UploadedFile
     {
         return $this->sSize;
     }
-    
+
     /**
      * Get the uploaded file extension
      *

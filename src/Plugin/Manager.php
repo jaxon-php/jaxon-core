@@ -145,8 +145,8 @@ class Manager
      */
     public function registerPlugin(Plugin $xPlugin, $nPriority = 1000)
     {
-        $bIsAlert = ($xPlugin instanceof \Jaxon\Contracts\Dialogs\Alert);
-        $bIsConfirm = ($xPlugin instanceof \Jaxon\Contracts\Dialogs\Confirm);
+        $bIsMessage = ($xPlugin instanceof \Jaxon\Contracts\Dialogs\Message);
+        $bIsQuestion = ($xPlugin instanceof \Jaxon\Contracts\Dialogs\Question);
         $bIsListener = ($xPlugin instanceof \Jaxon\Contracts\Event\Listener);
         if($xPlugin instanceof Request)
         {
@@ -158,20 +158,20 @@ class Manager
             // The name of a response plugin is used as key in the plugin table
             $this->aResponsePlugins[$xPlugin->getName()] = $xPlugin;
         }
-        elseif(!$bIsConfirm && !$bIsAlert && !$bIsListener)
+        elseif(!$bIsQuestion && !$bIsMessage && !$bIsListener)
         {
             $sErrorMessage = $this->trans('errors.register.invalid', ['name' => get_class($xPlugin)]);
             throw new \Jaxon\Exception\Error($sErrorMessage);
         }
-        // This plugin implements the Alert interface
-        if($bIsAlert)
+        // This plugin implements the Message interface
+        if($bIsMessage)
         {
-            jaxon()->dialog()->setAlert($xPlugin);
+            jaxon()->dialog()->setMessage($xPlugin);
         }
-        // This plugin implements the Confirm interface
-        if($bIsConfirm)
+        // This plugin implements the Question interface
+        if($bIsQuestion)
         {
-            jaxon()->dialog()->setConfirm($xPlugin);
+            jaxon()->dialog()->setQuestion($xPlugin);
         }
         // Register the plugin as an event listener
         if($bIsListener)

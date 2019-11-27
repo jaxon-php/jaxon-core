@@ -6,9 +6,32 @@ use Jaxon\Contracts\View as ViewContract;
 
 class Store
 {
+    /**
+     * The view renderer
+     *
+     * @var ViewContract
+     */
     protected $xRenderer;
+
+    /**
+     * The view namespace
+     *
+     * @var string
+     */
     protected $sNamespace;
+
+    /**
+     * The view name
+     *
+     * @var string
+     */
     protected $sViewName;
+
+    /**
+     * The view data
+     *
+     * @var array
+     */
     protected $aViewData = [];
 
     /**
@@ -17,7 +40,7 @@ class Store
      * @param string        $name            The data name
      * @param string        $value           The data value
      *
-     * @return void
+     * @return Store
      */
     public function with($name, $value)
     {

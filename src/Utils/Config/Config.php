@@ -28,8 +28,6 @@ class Config
      *
      * @param array             $aOptions           The options array
      * @param string            $sKeys              The keys of the options in the array
-     *
-     * @param array
      */
     public function __construct(array $aOptions = [], $sKeys = '')
     {
@@ -109,7 +107,7 @@ class Config
             {
                 if(!array_key_exists($sKey, $aOptions) || !is_array($aOptions[$sKey]))
                 {
-                    return;
+                    return $this;
                 }
                 $aOptions = $aOptions[$sKey];
             }

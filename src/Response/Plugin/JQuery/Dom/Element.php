@@ -99,14 +99,14 @@ class Element implements JsonSerializable, Parameter
     /**
      * Set the value of an attribute on the first selected element
      *
-     * @return Element
+     * @return void
      */
     public function __set($sAttribute, $xValue)
     {
         // Push the action into the array
         $this->aCalls[] = new AttrSet($sAttribute, $xValue);
-        // Return null because no other call is allowed after a set
-        return null;
+        // No other call is allowed after a set
+        // return $this;
     }
 
     /**

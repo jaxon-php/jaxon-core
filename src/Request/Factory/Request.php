@@ -26,7 +26,12 @@ use Jaxon\Response\Plugin\JQuery\Dom\Element as DomElement;
 
 class Request extends JsCall
 {
-    use Features\Condition;
+    /**
+     * A condition to check before sending this request
+     *
+     * @var string
+     */
+    protected $sCondition = null;
 
     /**
      * The arguments of the confirm() call
@@ -46,47 +51,123 @@ class Request extends JsCall
     }
 
     /**
-     * Check if the request has a parameter of type Parameter::PAGE_NUMBER
+     * Add a condition to the request
      *
-     * @return boolean
-     */
-    public function hasPageNumber()
-    {
-        foreach($this->aParameters as $xParameter)
-        {
-            if($xParameter->getType() == Parameter::PAGE_NUMBER)
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Set a value to the Parameter::PAGE_NUMBER parameter
+     * The request is sent only if the condition is true.
      *
-     * @param integer        $nPageNumber        The current page number
+     * @param string        $sCondition               The condition to check
      *
      * @return Request
      */
-    public function setPageNumber($nPageNumber)
+    public function when($sCondition)
     {
-        // Set the value of the Parameter::PAGE_NUMBER parameter
-        foreach($this->aParameters as $xParameter)
-        {
-            if($xParameter->getType() == Parameter::PAGE_NUMBER)
-            {
-                $xParameter->setValue(intval($nPageNumber));
-                break;
-            }
-        }
+        $this->sCondition = Parameter::make($sCondition)->getScript();
+        return $this;
+    }
+
+    /**
+     * Add a condition to the request
+     *
+     * The request is sent only if the condition is false.
+     *
+     * @param string        $sCondition               The condition to check
+     *
+     * @return Request
+     */
+    public function unless($sCondition)
+    {
+        $this->sCondition = '!(' . Parameter::make($sCondition)->getScript() . ')';
+        return $this;
+    }
+
+    /**
+     * Check if a value is equal to another before sending the request
+     *
+     * @param string        $sValue1                  The first value to compare
+     * @param string        $sValue2                  The second value to compare
+     *
+     * @return Request
+     */
+    public function ifeq($sValue1, $sValue2)
+    {
+        $this->sCondition = '(' . Parameter::make($sValue1) . '==' . Parameter::make($sValue2) . ')';
+        return $this;
+    }
+
+    /**
+     * Check if a value is not equal to another before sending the request
+     *
+     * @param string        $sValue1                  The first value to compare
+     * @param string        $sValue2                  The second value to compare
+     *
+     * @return Request
+     */
+    public function ifne($sValue1, $sValue2)
+    {
+        $this->sCondition = '(' . Parameter::make($sValue1) . '!=' . Parameter::make($sValue2) . ')';
+        return $this;
+    }
+
+    /**
+     * Check if a value is greater than another before sending the request
+     *
+     * @param string        $sValue1                  The first value to compare
+     * @param string        $sValue2                  The second value to compare
+     *
+     * @return Request
+     */
+    public function ifgt($sValue1, $sValue2)
+    {
+        $this->sCondition = '(' . Parameter::make($sValue1) . '>' . Parameter::make($sValue2) . ')';
+        return $this;
+    }
+
+    /**
+     * Check if a value is greater or equal to another before sending the request
+     *
+     * @param string        $sValue1                  The first value to compare
+     * @param string        $sValue2                  The second value to compare
+     *
+     * @return Request
+     */
+    public function ifge($sValue1, $sValue2)
+    {
+        $this->sCondition = '(' . Parameter::make($sValue1) . '>=' . Parameter::make($sValue2) . ')';
+        return $this;
+    }
+
+    /**
+     * Check if a value is lower than another before sending the request
+     *
+     * @param string        $sValue1                  The first value to compare
+     * @param string        $sValue2                  The second value to compare
+     *
+     * @return Request
+     */
+    public function iflt($sValue1, $sValue2)
+    {
+        $this->sCondition = '(' . Parameter::make($sValue1) . '<' . Parameter::make($sValue2) . ')';
+        return $this;
+    }
+
+    /**
+     * Check if a value is lower or equal to another before sending the request
+     *
+     * @param string        $sValue1                  The first value to compare
+     * @param string        $sValue2                  The second value to compare
+     *
+     * @return Request
+     */
+    public function ifle($sValue1, $sValue2)
+    {
+        $this->sCondition = '(' . Parameter::make($sValue1) . '<=' . Parameter::make($sValue2) . ')';
         return $this;
     }
 
     /**
      * Create parameters for message arguments
      *
-     * @param   $aArgs          The arguments
+     * @param array     $aArgs          The arguments
      *
      * @return void
      */
@@ -214,7 +295,7 @@ class Request extends JsCall
             $sScript = 'if(' . $this->sCondition . '){' . $sScript . ';}';
             if(($sPhrase))
             {
-                $xDialog->getAlert()->setReturn(true);
+                $xDialog->getMessage()->setReturn(true);
                 $sScript .= 'else{' . $xDialog->warning($sPhrase) . ';}';
             }
         }
@@ -229,6 +310,44 @@ class Request extends JsCall
     public function printScript()
     {
         print $this->getScript();
+    }
+
+    /**
+     * Check if the request has a parameter of type Parameter::PAGE_NUMBER
+     *
+     * @return boolean
+     */
+    public function hasPageNumber()
+    {
+        foreach($this->aParameters as $xParameter)
+        {
+            if($xParameter->getType() == Parameter::PAGE_NUMBER)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Set a value to the Parameter::PAGE_NUMBER parameter
+     *
+     * @param integer        $nPageNumber        The current page number
+     *
+     * @return Request
+     */
+    public function setPageNumber($nPageNumber)
+    {
+        // Set the value of the Parameter::PAGE_NUMBER parameter
+        foreach($this->aParameters as $xParameter)
+        {
+            if($xParameter->getType() == Parameter::PAGE_NUMBER)
+            {
+                $xParameter->setValue(intval($nPageNumber));
+                break;
+            }
+        }
+        return $this;
     }
 
     /**

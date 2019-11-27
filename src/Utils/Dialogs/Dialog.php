@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Dialogs.php - Shows alert and confirm dialogs
+ * Dialog.php - Shows alert and confirm dialogs
  *
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
  * @copyright 2019 Thierry Feuzeu <thierry.feuzeu@gmail.com>
@@ -11,38 +11,38 @@
 
 namespace Jaxon\Utils\Dialogs;
 
-use Jaxon\Contracts\Dialogs\Alert as AlertContract;
-use Jaxon\Contracts\Dialogs\Confirm as ConfirmContract;
+use Jaxon\Contracts\Dialogs\Message as MessageContract;
+use Jaxon\Contracts\Dialogs\Question as QuestionContract;
 
 class Dialog
 {
     /**
      * Javascript confirm function
      *
-     * @var ConfirmContract
+     * @var QuestionContract
      */
-    private $xConfirm;
+    private $xQuestion;
 
     /**
      * Default javascript confirm function
      *
-     * @var ConfirmContract
+     * @var QuestionContract
      */
-    private $xDefaultConfirm;
+    private $xDefaultQuestion;
 
     /**
      * Javascript alert function
      *
-     * @var AlertContract
+     * @var MessageContract
      */
-    private $xAlert;
+    private $xMessage;
 
     /**
      * Default javascript alert function
      *
-     * @var AlertContract
+     * @var MessageContract
      */
-    private $xDefaultAlert;
+    private $xDefaultMessage;
 
     /**
      * The constructor
@@ -50,94 +50,94 @@ class Dialog
     public function __construct()
     {
         // Javascript confirm function
-        $this->xConfirm = null;
-        $this->xDefaultConfirm = new Confirm();
+        $this->xQuestion = null;
+        $this->xDefaultQuestion = new Question();
 
         // Javascript alert function
-        $this->xAlert = null;
-        $this->xDefaultAlert = new Alert();
+        $this->xMessage = null;
+        $this->xDefaultMessage = new Message();
     }
 
     /**
      * Set the javascript confirm function
      *
-     * @param ConfirmContract         $xConfirm     The javascript confirm function
+     * @param QuestionContract         $xQuestion     The javascript confirm function
      *
      * @return void
      */
-    public function setConfirm(ConfirmContract $xConfirm)
+    public function setQuestion(QuestionContract $xQuestion)
     {
-        $this->xConfirm = $xConfirm;
+        $this->xQuestion = $xQuestion;
     }
 
     /**
-     * Get the javascript confirm function
+     * Get the javascript question function
      *
-     * @return ConfirmContract
+     * @return QuestionContract
      */
-    public function getConfirm()
+    public function getQuestion()
     {
-        return (($this->xConfirm) ? $this->xConfirm : $this->xDefaultConfirm);
+        return (($this->xQuestion) ? $this->xQuestion : $this->xDefaultQuestion);
     }
 
     /**
      * Get the default javascript confirm function
      *
-     * @return ConfirmContract
+     * @return QuestionContract
      */
-    public function getDefaultConfirm()
+    public function getDefaultQuestion()
     {
-        return $this->xDefaultConfirm;
+        return $this->xDefaultQuestion;
     }
 
     /**
      * Set the javascript alert function
      *
-     * @param AlertContract           $xAlert       The javascript alert function
+     * @param MessageContract           $xMessage       The javascript alert function
      *
      * @return void
      */
-    public function setAlert(AlertContract $xAlert)
+    public function setMessage(MessageContract $xMessage)
     {
-        $this->xAlert = $xAlert;
+        $this->xMessage = $xMessage;
     }
 
     /**
      * Get the javascript alert function
      *
-     * @return AlertContract
+     * @return MessageContract
      */
-    public function getAlert()
+    public function getMessage()
     {
-        return (($this->xAlert) ? $this->xAlert : $this->xDefaultAlert);
+        return (($this->xMessage) ? $this->xMessage : $this->xDefaultMessage);
     }
 
     /**
      * Get the default javascript alert function
      *
-     * @return Alert
+     * @return Message
      */
-    public function getDefaultAlert()
+    public function getDefaultMessage()
     {
-        return $this->xDefaultAlert;
+        return $this->xDefaultMessage;
     }
 
     /**
      * Get the script which makes a call only if the user answers yes to the given question
      *
-     * It is a function of the Confirm interface.
+     * It is a function of the Question interface.
      *
      * @return string
      */
     public function confirm($question, $yesScript, $noScript)
     {
-        return $this->getConfirm()->confirm($question, $yesScript, $noScript);
+        return $this->getQuestion()->confirm($question, $yesScript, $noScript);
     }
 
     /**
      * Print a success message.
      *
-     * It is a function of the Alert interface.
+     * It is a function of the Message interface.
      *
      * @param string              $message              The text of the message
      * @param string|null         $title                The title of the message
@@ -146,13 +146,13 @@ class Dialog
      */
     public function success($message, $title = null)
     {
-        return $this->getAlert()->success($message, $title);
+        return $this->getMessage()->success($message, $title);
     }
 
     /**
      * Print an information message.
      *
-     * It is a function of the Alert interface.
+     * It is a function of the Message interface.
      *
      * @param string              $message              The text of the message
      * @param string|null         $title                The title of the message
@@ -161,13 +161,13 @@ class Dialog
      */
     public function info($message, $title = null)
     {
-        return $this->getAlert()->info($message, $title);
+        return $this->getMessage()->info($message, $title);
     }
 
     /**
      * Print a warning message.
      *
-     * It is a function of the Alert interface.
+     * It is a function of the Message interface.
      *
      * @param string              $message              The text of the message
      * @param string|null         $title                The title of the message
@@ -176,13 +176,13 @@ class Dialog
      */
     public function warning($message, $title = null)
     {
-        return $this->getAlert()->warning($message, $title);
+        return $this->getMessage()->warning($message, $title);
     }
 
     /**
      * Print an error message.
      *
-     * It is a function of the Alert interface.
+     * It is a function of the Message interface.
      *
      * @param string              $message              The text of the message
      * @param string|null         $title                The title of the message
@@ -191,6 +191,6 @@ class Dialog
      */
     public function error($message, $title = null)
     {
-        return $this->getAlert()->error($message, $title);
+        return $this->getMessage()->error($message, $title);
     }
 }
