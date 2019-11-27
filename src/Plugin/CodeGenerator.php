@@ -163,7 +163,7 @@ class CodeGenerator
     /**
      * Get the HTML tags to include Jaxon javascript files into the page
      *
-     * @return string
+     * @return void
      */
     private function makePluginsCode()
     {

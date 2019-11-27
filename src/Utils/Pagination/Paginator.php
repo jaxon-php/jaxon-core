@@ -358,7 +358,7 @@ class Paginator
      *
      * @param int $pageNum
      *
-     * @return array
+     * @return array<string,integer|string|boolean>
      */
     protected function createPage($pageNum)
     {
@@ -370,7 +370,7 @@ class Paginator
     }
 
     /**
-     * @return array
+     * @return array<string,string|null|false>
      */
     protected function createPageEllipsis()
     {
