@@ -296,9 +296,9 @@ class CodeGenerator
         $aVars = $this->getOptionVars();
         $sYesScript = 'jaxon.ajax.response.process(command.response)';
         $sNoScript = 'jaxon.confirm.skip(command);jaxon.ajax.response.process(command.response)';
-        $sConfirmScript = jaxon()->dialog()->confirm('msg', $sYesScript, $sNoScript);
-        $aVars['sConfirmScript'] = $this->xTemplate->render('jaxon::plugins/confirm.js', [
-            'sConfirmScript' => $sConfirmScript,
+        $sQuestionScript = jaxon()->dialog()->confirm('msg', $sYesScript, $sNoScript);
+        $aVars['sQuestionScript'] = $this->xTemplate->render('jaxon::plugins/confirm.js', [
+            'sQuestionScript' => $sQuestionScript,
         ]);
 
         return $this->xTemplate->render('jaxon::plugins/config.js', $aVars) . "\n" . $this->sJsScript . '

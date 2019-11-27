@@ -1,9 +1,9 @@
 <?php
 
 /**
- * Confirm.php - A confirm question for a Jaxon request
+ * Question.php - A confirmation question for a Jaxon request
  *
- * This class adds a confirm question which is asked before calling a Jaxon function.
+ * This class adds a confirmation question which is asked before calling a Jaxon function.
  *
  * @package jaxon-core
  * @copyright 2016 Thierry Feuzeu <thierry.feuzeu@gmail.com>
@@ -13,7 +13,7 @@
 
 namespace Jaxon\Utils\Dialogs;
 
-class Confirm implements \Jaxon\Contracts\Dialogs\Confirm
+class Question implements \Jaxon\Contracts\Dialogs\Question
 {
     /**
      * Get the script which makes a call only if the user answers yes to the given question

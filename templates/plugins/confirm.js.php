@@ -34,6 +34,6 @@ jaxon.confirm.commands = function(command) {
         jaxon.tools.queue.push(command.response, obj);
         delete obj;
     }
-    <?php echo $this->sConfirmScript ?>;
+    <?php echo $this->sQuestionScript ?>;
     return true;
 };

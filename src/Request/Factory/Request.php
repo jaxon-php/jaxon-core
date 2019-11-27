@@ -295,7 +295,7 @@ class Request extends JsCall
             $sScript = 'if(' . $this->sCondition . '){' . $sScript . ';}';
             if(($sPhrase))
             {
-                $xDialog->getAlert()->setReturn(true);
+                $xDialog->getMessage()->setReturn(true);
                 $sScript .= 'else{' . $xDialog->warning($sPhrase) . ';}';
             }
         }
