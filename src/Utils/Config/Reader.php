@@ -40,6 +40,22 @@ class Reader
             $sErrorMsg = jaxon_trans('config.errors.file.extension', ['path' => $sConfigFile]);
             throw new \Jaxon\Utils\Config\Exception\File($sErrorMsg);
         }
+
         return $aConfigOptions;
+    }
+
+    /**
+     * Read options from a config file and setup the library
+     *
+     * @param string        $sConfigFile        The full path to the config file
+     * @param string        $sConfigSection     The section of the config file to be loaded
+     *
+     * @return void
+     */
+    public function load($sConfigFile, $sConfigSection = '')
+    {
+        $aConfigOptions = $this->read($sConfigFile);
+        // Setup the lib config options.
+        jaxon()->di()->getConfig()->setOptions($aConfigOptions, $sConfigSection);
     }
 }
