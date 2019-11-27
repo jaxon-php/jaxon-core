@@ -6,4 +6,4 @@
         { parameters: arguments<?php foreach($aMethod['config'] as $sKey => $sValue): ?>, <?php echo $sKey ?>: <?php echo $sValue ?><?php endforeach ?> }
     );
 };
-<?php endforeach ?>
+<?php endforeach;

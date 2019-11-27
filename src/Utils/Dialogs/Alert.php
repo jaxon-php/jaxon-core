@@ -23,7 +23,7 @@ class Alert implements \Jaxon\Contracts\Dialogs\Alert
      *
      * @return string|void
      */
-    protected function alert($message)
+    private function _alert($message)
     {
         if($this->getReturn())
         {
@@ -41,7 +41,7 @@ class Alert implements \Jaxon\Contracts\Dialogs\Alert
      */
     public function success($message, $title = null)
     {
-        return $this->alert($message);
+        return $this->_alert($message);
     }
 
     /**
@@ -54,7 +54,7 @@ class Alert implements \Jaxon\Contracts\Dialogs\Alert
      */
     public function info($message, $title = null)
     {
-        return $this->alert($message);
+        return $this->_alert($message);
     }
 
     /**
@@ -67,7 +67,7 @@ class Alert implements \Jaxon\Contracts\Dialogs\Alert
      */
     public function warning($message, $title = null)
     {
-        return $this->alert($message);
+        return $this->_alert($message);
     }
 
     /**
@@ -80,6 +80,6 @@ class Alert implements \Jaxon\Contracts\Dialogs\Alert
      */
     public function error($message, $title = null)
     {
-        return $this->alert($message);
+        return $this->_alert($message);
     }
 }

@@ -136,7 +136,7 @@ class Handler
     /**
      * This is the pre-request processing callback passed to the Jaxon library.
      *
-     * @param  boolean  &$bEndRequest if set to true, the request processing is interrupted.
+     * @param  boolean  $bEndRequest   If set to true, the request processing is interrupted.
      *
      * @return void
      */

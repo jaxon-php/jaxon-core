@@ -223,7 +223,7 @@ class Argument
     /**
      * Decode an Jaxon request argument from UTF8
      *
-     * @param array             &$aDst          An array to store the decoded arguments
+     * @param array             $aDst           An array to store the decoded arguments
      * @param string            $sKey           The key of the argument being decoded
      * @param string|array      $mValue         The value of the argument being decoded
      *

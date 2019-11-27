@@ -40,4 +40,4 @@ for(i = 0; i < metaTags.length; i++)
 }
 <?php endif ?>
 
-<?php echo $this->sConfirmScript ?>
+<?php echo $this->sConfirmScript;
