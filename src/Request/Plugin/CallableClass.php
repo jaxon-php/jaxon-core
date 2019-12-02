@@ -147,7 +147,7 @@ class CallableClass extends RequestPlugin
         }
 
         $sClassName = trim($sClassName);
-        $this->xRegistry->addClass($sClassName, $aOptions);
+        $this->xRepository->addClass($sClassName, $aOptions);
 
         return true;
     }

@@ -54,15 +54,48 @@ class CallableRepository
     protected $aCallableOptions = [];
 
     /**
+     * Get a given class options from specified directory options
      *
-     * @param string        $sClassName     The class
-     * @param array|string  $aOptions       The associated options
+     * @param string        $sClassName         The class name
+     * @param array         $aClassOptions      The default class options
+     * @param array         $aDirectoryOptions  The directory options
+     *
+     * @return array
+     */
+    public function makeClassOptions($sClassName, array $aClassOptions, array $aDirectoryOptions)
+    {
+        $aOptions = $aClassOptions;
+        if(key_exists('separator', $aDirectoryOptions))
+        {
+            $aOptions['separator'] = $aDirectoryOptions['separator'];
+        }
+        if(key_exists('protected', $aDirectoryOptions))
+        {
+            $aOptions['protected'] = $aDirectoryOptions['protected'];
+        }
+        if(key_exists('*', $aDirectoryOptions))
+        {
+            $aOptions = array_merge($aOptions, $aDirectoryOptions['*']);
+        }
+        if(key_exists($sClassName, $aDirectoryOptions))
+        {
+            $aOptions = array_merge($aOptions, $aDirectoryOptions[$sClassName]);
+        }
+
+        return $aOptions;
+    }
+
+    /**
+     *
+     * @param string        $sClassName         The class name
+     * @param array         $aClassOptions      The default class options
+     * @param array         $aDirectoryOptions  The directory options
      *
      * @return void
      */
-    public function addClass($sClassName, $aOptions)
+    public function addClass($sClassName, array $aClassOptions, array $aDirectoryOptions = [])
     {
-        $this->aClasses[$sClassName] = $aOptions;
+        $this->aClasses[$sClassName] = $this->makeClassOptions($sClassName, $aClassOptions, $aDirectoryOptions);
     }
 
     /**

@@ -27,15 +27,6 @@ class CallableRegistry
     public $xRepository;
 
     /**
-     * The registered classes
-     *
-     * These are registered classes, and classes in directories registered without a namespace.
-     *
-     * @var array
-     */
-    protected $aClasses = [];
-
-    /**
      * The registered directories
      *
      * These are directories registered without a namespace.
@@ -100,19 +91,6 @@ class CallableRegistry
 
     /**
      *
-     * @param string        $sClassName     The name of the class being registered
-     * @param array|string  $aOptions       The associated options
-     *
-     * @return void
-     */
-    public function addClass($sClassName, $aOptions)
-    {
-        $sClassName = trim($sClassName, '\\ ');
-        $this->aClasses[$sClassName] = $aOptions;
-    }
-
-    /**
-     *
      * @param string        $sDirectory     The directory being registered
      * @param array         $aOptions       The associated options
      *
@@ -167,38 +145,6 @@ class CallableRegistry
     }
 
     /**
-     * Get a given class options from specified directory options
-     *
-     * @param string        $sClassName         The name of the class
-     * @param array         $aDirectoryOptions  The directory options
-     * @param array         $aDefaultOptions    The default options
-     *
-     * @return array
-     */
-    private function _makeClassOptions($sClassName, array $aDirectoryOptions, array $aDefaultOptions = [])
-    {
-        $aOptions = $aDefaultOptions;
-        if(key_exists('separator', $aDirectoryOptions))
-        {
-            $aOptions['separator'] = $aDirectoryOptions['separator'];
-        }
-        if(key_exists('protected', $aDirectoryOptions))
-        {
-            $aOptions['protected'] = $aDirectoryOptions['protected'];
-        }
-        if(key_exists('*', $aDirectoryOptions))
-        {
-            $aOptions = array_merge($aOptions, $aDirectoryOptions['*']);
-        }
-        if(key_exists($sClassName, $aDirectoryOptions))
-        {
-            $aOptions = array_merge($aOptions, $aDirectoryOptions[$sClassName]);
-        }
-
-        return $aOptions;
-    }
-
-    /**
      * Read classes from registered directories (without namespaces)
      *
      * @return void
@@ -213,15 +159,9 @@ class CallableRegistry
         }
         $this->bParsedDirectories = true;
 
-        foreach($this->aClasses as $sClassName => $aClassOptions)
-        {
-            $this->xRepository->addClass($sClassName, $aClassOptions);
-        }
-
         foreach($this->aDirectories as $sDirectory => $aOptions)
         {
-            $itDir = new RecursiveDirectoryIterator($sDirectory);
-            $itFile = new RecursiveIteratorIterator($itDir);
+            $itFile = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($sDirectory));
             // Iterate on dir content
             foreach($itFile as $xFile)
             {
@@ -238,8 +178,7 @@ class CallableRegistry
                 {
                     $aClassOptions['include'] = $xFile->getPathname();
                 }
-                $aClassOptions = $this->_makeClassOptions($sClassName, $aOptions, $aClassOptions);
-                $this->xRepository->addClass($sClassName, $aClassOptions);
+                $this->xRepository->addClass($sClassName, $aClassOptions, $aOptions);
             }
         }
     }
@@ -266,8 +205,7 @@ class CallableRegistry
 
             // Iterate on dir content
             $sDirectory = $aOptions['directory'];
-            $itDir = new RecursiveDirectoryIterator($sDirectory);
-            $itFile = new RecursiveIteratorIterator($itDir);
+            $itFile = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($sDirectory));
             foreach($itFile as $xFile)
             {
                 // skip everything except PHP files
@@ -289,8 +227,7 @@ class CallableRegistry
 
                 $sClassName = $sClassPath . '\\' . $xFile->getBasename('.php');
                 $aClassOptions = ['namespace' => $sNamespace];
-                $aClassOptions = $this->_makeClassOptions($sClassName, $aOptions, $aClassOptions);
-                $this->xRepository->addClass($sClassName, $aClassOptions);
+                $this->xRepository->addClass($sClassName, $aClassOptions, $aOptions);
             }
         }
     }
@@ -321,8 +258,8 @@ class CallableRegistry
 
         // Get the class options
         $aOptions = $this->aNamespaces[$sNamespace];
-        $aDefaultOptions = ['namespace' => $sNamespace];
-        return $this->_makeClassOptions($sClassName, $aOptions, $aDefaultOptions);
+        $aClassOptions = ['namespace' => $sNamespace];
+        return $this->xRepository->makeClassOptions($sClassName, $aClassOptions, $aOptions);
     }
 
     /**
@@ -344,7 +281,7 @@ class CallableRegistry
         // Without a namespace, we need to parse all classes to be able to find one.
         $this->parseDirectories();
 
-        // Find options for a class registered with namespace.
+        // Find options for a class registered without namespace.
         return $this->xRepository->getClassOptions($sClassName);
     }
 
