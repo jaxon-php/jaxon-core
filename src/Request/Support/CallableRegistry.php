@@ -47,7 +47,7 @@ class CallableRegistry
     /**
      * Indicate if the registered directories are already parsed
      *
-     * @var array
+     * @var boolean
      */
     protected $bParsedDirectories = false;
 
@@ -63,7 +63,7 @@ class CallableRegistry
     /**
      * Indicate if the registered namespaces are already parsed
      *
-     * @var array
+     * @var boolean
      */
     protected $bParsedNamespaces = false;
 

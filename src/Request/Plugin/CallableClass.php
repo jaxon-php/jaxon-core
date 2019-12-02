@@ -222,7 +222,7 @@ class CallableClass extends RequestPlugin
         // Create callable objects for registered directories
         foreach($this->xRepository->getClasses() as $sClassName => $aClassOptions)
         {
-            $this->getCallableObject($sClassName, $aClassOptions);
+            $this->xRepository->getCallableObject($sClassName, $aClassOptions);
         }
     }
 
