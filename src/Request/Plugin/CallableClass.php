@@ -24,6 +24,7 @@ namespace Jaxon\Request\Plugin;
 use Jaxon\Jaxon;
 use Jaxon\CallableClass as UserCallableClass;
 use Jaxon\Plugin\Request as RequestPlugin;
+use Jaxon\Request\Support\CallableRegistry;
 use Jaxon\Request\Support\CallableRepository;
 use Jaxon\Request\Target;
 
@@ -35,33 +36,42 @@ class CallableClass extends RequestPlugin
     use \Jaxon\Features\Translator;
 
     /**
+     * The callable registrar
+     *
+     * @var CallableRegistry
+     */
+    protected $xRegistry;
+
+    /**
      * The callable repository
      *
      * @var CallableRepository
      */
-    protected $xRepository = null;
+    protected $xRepository;
 
     /**
      * The value of the class parameter of the incoming Jaxon request
      *
      * @var string
      */
-    protected $sRequestedClass = null;
+    protected $sRequestedClass = '';
 
     /**
      * The value of the method parameter of the incoming Jaxon request
      *
      * @var string
      */
-    protected $sRequestedMethod = null;
+    protected $sRequestedMethod = '';
 
     /**
      * The class constructor
      *
+     * @param CallableRegistry        $xRegistry
      * @param CallableRepository        $xRepository
      */
-    public function __construct(CallableRepository $xRepository)
+    public function __construct(CallableRegistry $xRegistry, CallableRepository $xRepository)
     {
+        $this->xRegistry = $xRegistry;
         $this->xRepository = $xRepository;
 
         if(!empty($_GET['jxncls']))
@@ -143,13 +153,30 @@ class CallableClass extends RequestPlugin
     }
 
     /**
+     * Create callable objects for all registered namespaces
+     *
+     * @return void
+     */
+    protected function createCallableObjects()
+    {
+        $this->xRegistry->parseDirectories();
+        $this->xRegistry->parseNamespaces();
+
+        // Create callable objects for registered directories
+        foreach($this->xRepository->getClasses() as $sClassName => $aClassOptions)
+        {
+            $this->xRepository->createCallableObject($sClassName, $aClassOptions);
+        }
+    }
+
+    /**
      * Generate a hash for the registered callable objects
      *
      * @return string
      */
     public function generateHash()
     {
-        $this->xRepository->createCallableObjects();
+        $this->createCallableObjects();
         $aNamespaces = $this->xRepository->getNamespaces();
         $aCallableObjects = $this->xRepository->getCallableObjects();
         $sHash = '';
@@ -173,7 +200,7 @@ class CallableClass extends RequestPlugin
      */
     public function getScript()
     {
-        $this->xRepository->createCallableObjects();
+        $this->createCallableObjects();
         $aNamespaces = $this->xRepository->getNamespaces();
         $aCallableObjects = $this->xRepository->getCallableObjects();
         $aCallableOptions = $this->xRepository->getCallableOptions();
@@ -269,7 +296,7 @@ class CallableClass extends RequestPlugin
         }
 
         // Find the requested method
-        $xCallableObject = $this->xRepository->getCallableObject($this->sRequestedClass);
+        $xCallableObject = $this->xRegistry->getCallableObject($this->sRequestedClass);
         if(!$xCallableObject || !$xCallableObject->hasMethod($this->sRequestedMethod))
         {
             // Unable to find the requested object or method

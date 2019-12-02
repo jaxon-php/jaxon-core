@@ -15,6 +15,7 @@
 namespace Jaxon\Utils\DI;
 
 use Jaxon\Response\Response;
+use Jaxon\Request\Support\CallableRegistry;
 use Jaxon\Request\Support\CallableRepository;
 use Jaxon\Request\Plugin\CallableClass;
 use Jaxon\Request\Plugin\CallableDir;
@@ -150,13 +151,17 @@ class Container
         $this->libContainer[CallableRepository::class] = function() {
             return new CallableRepository();
         };
+        // Callable objects registry
+        $this->libContainer[CallableRegistry::class] = function($c) {
+            return new CallableRegistry($c[CallableRepository::class]);
+        };
         // Callable class plugin
         $this->libContainer[CallableClass::class] = function($c) {
-            return new CallableClass($c[CallableRepository::class]);
+            return new CallableClass($c[CallableRegistry::class], $c[CallableRepository::class]);
         };
         // Callable dir plugin
         $this->libContainer[CallableDir::class] = function($c) {
-            return new CallableDir($c[CallableRepository::class]);
+            return new CallableDir($c[CallableRegistry::class]);
         };
         // Callable function plugin
         $this->libContainer[CallableFunction::class] = function() {
@@ -188,7 +193,7 @@ class Container
         };
         // Request Factory
         $this->libContainer[RequestFactory::class] = function($c) {
-            return new RequestFactory($c[CallableRepository::class]);
+            return new RequestFactory($c[CallableRegistry::class]);
         };
         // Parameter Factory
         $this->libContainer[ParameterFactory::class] = function() {
@@ -365,13 +370,13 @@ class Container
     }
 
     /**
-     * Get the callable repository
+     * Get the callable registry
      *
-     * @return CallableRepository
+     * @return CallableRegistry
      */
-    public function getCallableRepository()
+    public function getCallableRegistry()
     {
-        return $this->libContainer[CallableRepository::class];
+        return $this->libContainer[CallableRegistry::class];
     }
 
     /**
@@ -570,7 +575,6 @@ class Container
     public function setCallableClassRequestFactory($sClassName, CallableObject $xCallableObject)
     {
         $this->libContainer[$sClassName . '_RequestFactory'] = function() use ($xCallableObject) {
-            // $xCallableObject = $c[CallableRepository::class]->getCallableObject($sClassName);
             return new CallableClassRequestFactory($xCallableObject);
         };
     }
