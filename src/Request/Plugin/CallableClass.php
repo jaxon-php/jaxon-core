@@ -193,9 +193,11 @@ class CallableClass extends RequestPlugin
             $sClassName = trim(str_replace('_', '\\', $sClassName), '\\');
         }
 
-        if(key_exists($sClassName, $this->aCallableObjects))
+        // Check if the callable object was already created.
+        $aCallableObjects = $this->xRepository->getCallableObjects();
+        if(key_exists($sClassName, $aCallableObjects))
         {
-            return $this->aCallableObjects[$sClassName];
+            return $aCallableObjects[$sClassName];
         }
 
         $aOptions = $this->getClassOptions($sClassName);
