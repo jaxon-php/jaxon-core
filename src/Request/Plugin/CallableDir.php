@@ -23,27 +23,27 @@ namespace Jaxon\Request\Plugin;
 
 use Jaxon\Jaxon;
 use Jaxon\Plugin\Request as RequestPlugin;
-use Jaxon\Request\Support\CallableRepository;
+use Jaxon\Request\Support\CallableRegistry;
 
 class CallableDir extends RequestPlugin
 {
     use \Jaxon\Features\Translator;
 
     /**
-     * The callable repository
+     * The callable registrar
      *
-     * @var CallableRepository
+     * @var CallableRegistry
      */
-    protected $xRepository = null;
+    protected $xRegistry;
 
     /**
      * The class constructor
      *
-     * @param CallableRepository        $xRepository
+     * @param CallableRegistry        $xRegistry
      */
-    public function __construct(CallableRepository $xRepository)
+    public function __construct(CallableRegistry $xRegistry)
     {
-        $this->xRepository = $xRepository;
+        $this->xRegistry = $xRegistry;
     }
 
     /**
@@ -110,11 +110,11 @@ class CallableDir extends RequestPlugin
 
         if(($sNamespace))
         {
-            $this->xRepository->addNamespace($sNamespace, $aOptions);
+            $this->xRegistry->addNamespace($sNamespace, $aOptions);
         }
         else
         {
-            $this->xRepository->addDirectory($sDirectory, $aOptions);
+            $this->xRegistry->addDirectory($sDirectory, $aOptions);
         }
 
         return true;

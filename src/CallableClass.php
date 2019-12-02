@@ -2,8 +2,17 @@
 
 namespace Jaxon;
 
+use Jaxon\Request\Support\CallableObject;
+
 class CallableClass
 {
+    /**
+     * The Jaxon response returned by all classes methods
+     *
+     * @var CallableObject
+     */
+    public $xCallableObject = null;
+
     /**
      * The Jaxon response returned by all classes methods
      *
@@ -63,17 +72,16 @@ class CallableClass
      */
     public function cl($name)
     {
-        $xCallableObject = jaxon()->di()->getCallableRepository()->getCallableObject(get_class($this));
         $cFirstChar = substr($name, 0, 1);
         // If the class name starts with a dot, then find the class in the same full namespace as the caller
         if($cFirstChar == ':')
         {
-            $name = $xCallableObject->getRootNamespace() . '\\' . str_replace('.', '\\', substr($name, 1));
+            $name = $this->xCallableObject->getRootNamespace() . '\\' . str_replace('.', '\\', substr($name, 1));
         }
         // If the class name starts with a dot, then find the class in the same base namespace as the caller
         elseif($cFirstChar == '.')
         {
-            $name = $xCallableObject->getNamespace() . '\\' . str_replace('.', '\\', substr($name, 1));
+            $name = $this->xCallableObject->getNamespace() . '\\' . str_replace('.', '\\', substr($name, 1));
         }
         // Find the class instance
         return jaxon()->instance($name);

@@ -226,6 +226,7 @@ class CallableObject
             // Initialize the object
             if($this->xRegisteredObject instanceof \Jaxon\CallableClass)
             {
+                $this->xRegisteredObject->xCallableObject = $this;
                 $this->xRegisteredObject->response = jaxon()->getResponse();
             }
 
