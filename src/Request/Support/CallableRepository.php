@@ -102,7 +102,7 @@ class CallableRepository
      *
      * @return CallableObject|null
      */
-    public function getCallableObject($sClassName, array $aOptions)
+    public function createCallableObject($sClassName, array $aOptions)
     {
         // Make sure the registered class exists
         if(key_exists('include', $aOptions))

@@ -153,63 +153,6 @@ class CallableClass extends RequestPlugin
     }
 
     /**
-     * Find the options associated with a registered class name
-     *
-     * @param string        $sClassName            The class name
-     *
-     * @return array|null
-     */
-    public function getClassOptions($sClassName)
-    {
-        // Find options for a class registered with namespace
-        $aOptions = $this->xRegistry->getClassOptions($sClassName);
-        if($aOptions !== null)
-        {
-            return $aOptions;
-        }
-
-        // Without namespace, we need to parse all classes to be able to find one.
-        $this->xRegistry->parseDirectories();
-
-        // Find options for a class registered with namespace
-        return $this->xRepository->getClassOptions($sClassName);
-    }
-
-    /**
-     * Find a callable object by class name
-     *
-     * @param string        $sClassName            The class name of the callable object
-     *
-     * @return object
-     */
-    public function getCallableObject($sClassName)
-    {
-        // Replace all separators ('.' and '_') with antislashes, and remove the antislashes
-        // at the beginning and the end of the class name.
-        $sClassName = (string)$sClassName;
-        $sClassName = trim(str_replace('.', '\\', $sClassName), '\\');
-        if($this->xRegistry->bUsingUnderscore)
-        {
-            $sClassName = trim(str_replace('_', '\\', $sClassName), '\\');
-        }
-
-        // Check if the callable object was already created.
-        $aCallableObjects = $this->xRepository->getCallableObjects();
-        if(key_exists($sClassName, $aCallableObjects))
-        {
-            return $aCallableObjects[$sClassName];
-        }
-
-        $aOptions = $this->getClassOptions($sClassName);
-        if($aOptions === null)
-        {
-            return null;
-        }
-
-        return $this->xRepository->getCallableObject($sClassName, $aOptions);
-    }
-
-    /**
      * Create callable objects for all registered namespaces
      *
      * @return void
@@ -222,7 +165,7 @@ class CallableClass extends RequestPlugin
         // Create callable objects for registered directories
         foreach($this->xRepository->getClasses() as $sClassName => $aClassOptions)
         {
-            $this->xRepository->getCallableObject($sClassName, $aClassOptions);
+            $this->xRepository->createCallableObject($sClassName, $aClassOptions);
         }
     }
 
@@ -353,7 +296,7 @@ class CallableClass extends RequestPlugin
         }
 
         // Find the requested method
-        $xCallableObject = $this->getCallableObject($this->sRequestedClass);
+        $xCallableObject = $this->xRegistry->getCallableObject($this->sRequestedClass);
         if(!$xCallableObject || !$xCallableObject->hasMethod($this->sRequestedMethod))
         {
             // Unable to find the requested object or method

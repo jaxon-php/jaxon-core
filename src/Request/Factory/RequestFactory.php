@@ -16,7 +16,7 @@
 namespace Jaxon\Request\Factory;
 
 use Jaxon\Request\Support\CallableObject;
-use Jaxon\Request\Plugin\CallableClass;
+use Jaxon\Request\Support\CallableRegistry;
 
 // Extends Parameter for compatibility with older versions (see function rq())
 class RequestFactory
@@ -33,18 +33,18 @@ class RequestFactory
     /**
      * The callable repository
      *
-     * @var CallableClass
+     * @var CallableRegistry
      */
-    protected $xClassPlugin = null;
+    protected $xCallableRegistry;
 
     /**
      * The class constructor
      *
-     * @param CallableClass    $xClassPlugin
+     * @param CallableRegistry    $xCallableRegistry
      */
-    public function __construct(CallableClass $xClassPlugin)
+    public function __construct(CallableRegistry $xCallableRegistry)
     {
-        $this->xClassPlugin = $xClassPlugin;
+        $this->xCallableRegistry = $xCallableRegistry;
     }
 
     /**
@@ -64,7 +64,7 @@ class RequestFactory
             return $this;
         }
 
-        if(!($xCallable = $this->xClassPlugin->getCallableObject($sClass)))
+        if(!($xCallable = $this->xCallableRegistry->getCallableObject($sClass)))
         {
             // Todo: decide which of these values to return
             // return null;

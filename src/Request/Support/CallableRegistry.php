@@ -72,7 +72,7 @@ class CallableRegistry
      *
      * @var boolean
      */
-    public $bUsingUnderscore = false;
+    protected $bUsingUnderscore = false;
 
     /**
      * The Composer autoloader
@@ -302,7 +302,7 @@ class CallableRegistry
      *
      * @return array|null
      */
-    public function getClassOptions($sClassName)
+    protected function getClassOptionsFromNamespaces($sClassName)
     {
         // Find the corresponding namespace
         $sNamespace = null;
@@ -323,5 +323,62 @@ class CallableRegistry
         $aOptions = $this->aNamespaces[$sNamespace];
         $aDefaultOptions = ['namespace' => $sNamespace];
         return $this->_makeClassOptions($sClassName, $aOptions, $aDefaultOptions);
+    }
+
+    /**
+     * Find the options associated with a registered class name
+     *
+     * @param string        $sClassName            The class name
+     *
+     * @return array|null
+     */
+    protected function getClassOptions($sClassName)
+    {
+        // Find options for a class registered with namespace.
+        $aOptions = $this->getClassOptionsFromNamespaces($sClassName);
+        if($aOptions !== null)
+        {
+            return $aOptions;
+        }
+
+        // Without a namespace, we need to parse all classes to be able to find one.
+        $this->parseDirectories();
+
+        // Find options for a class registered with namespace.
+        return $this->xRepository->getClassOptions($sClassName);
+    }
+
+    /**
+     * Find a callable object by class name
+     *
+     * @param string        $sClassName            The class name of the callable object
+     *
+     * @return object
+     */
+    public function getCallableObject($sClassName)
+    {
+        // Replace all separators ('.' and '_') with antislashes, and remove the antislashes
+        // at the beginning and the end of the class name.
+        $sClassName = (string)$sClassName;
+        $sClassName = trim(str_replace('.', '\\', $sClassName), '\\');
+        if($this->bUsingUnderscore)
+        {
+            $sClassName = trim(str_replace('_', '\\', $sClassName), '\\');
+        }
+
+        // Check if the callable object was already created.
+        $aCallableObjects = $this->xRepository->getCallableObjects();
+        if(key_exists($sClassName, $aCallableObjects))
+        {
+            return $aCallableObjects[$sClassName];
+        }
+
+        $aOptions = $this->getClassOptions($sClassName);
+        if($aOptions === null)
+        {
+            return null;
+        }
+
+        return $this->xRepository->createCallableObject($sClassName, $aOptions);
     }
 }

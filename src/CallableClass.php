@@ -7,7 +7,7 @@ use Jaxon\Request\Support\CallableObject;
 class CallableClass
 {
     /**
-     * The Jaxon response returned by all classes methods
+     * The Callable object associated to this class
      *
      * @var CallableObject
      */

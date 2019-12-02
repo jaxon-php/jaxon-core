@@ -28,12 +28,11 @@ namespace Jaxon;
 use Jaxon\Plugin\Plugin;
 use Jaxon\Utils\DI\Container;
 use Jaxon\Utils\Config\Reader as ConfigReader;
-use Jaxon\Request\Plugin\CallableClass as CallableClassPlugin;
 
 class Jaxon
 {
     use Features\Config;
-    use \Jaxon\Features\Translator;
+    use Features\Translator;
 
     /**
      * Package version number
@@ -277,7 +276,7 @@ class Jaxon
      */
     public function instance($sClassName)
     {
-        $xCallable = $this->di()->get(CallableClassPlugin::class)->getCallableObject($sClassName);
+        $xCallable = $this->di()->getCallableRegistry()->getCallableObject($sClassName);
         return ($xCallable) ? $xCallable->getRegisteredObject() : null;
     }
 

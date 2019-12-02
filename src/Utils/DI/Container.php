@@ -193,7 +193,7 @@ class Container
         };
         // Request Factory
         $this->libContainer[RequestFactory::class] = function($c) {
-            return new RequestFactory($c[CallableClass::class]);
+            return new RequestFactory($c[CallableRegistry::class]);
         };
         // Parameter Factory
         $this->libContainer[ParameterFactory::class] = function() {
@@ -370,13 +370,13 @@ class Container
     }
 
     /**
-     * Get the callable repository
+     * Get the callable registry
      *
-     * @return CallableRepository
+     * @return CallableRegistry
      */
-    public function getCallableRepository()
+    public function getCallableRegistry()
     {
-        return $this->libContainer[CallableRepository::class];
+        return $this->libContainer[CallableRegistry::class];
     }
 
     /**
