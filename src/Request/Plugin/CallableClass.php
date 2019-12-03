@@ -67,8 +67,8 @@ class CallableClass extends RequestPlugin
     /**
      * The class constructor
      *
-     * @param CallableRegistry        $xRegistry
-     * @param CallableRepository        $xRepository
+     * @param CallableRegistry      $xRegistry      The callable class registry
+     * @param CallableRepository    $xRepository    The callable object repository
      */
     public function __construct(CallableRegistry $xRegistry, CallableRepository $xRepository)
     {
@@ -201,6 +201,7 @@ class CallableClass extends RequestPlugin
     private function getNamespacesScript()
     {
         $sCode = '';
+        $sPrefix = $this->getOption('core.prefix.class');
         $aJsClasses = [];
         $aNamespaces = array_keys($this->xRepository->getNamespaces());
         foreach($aNamespaces as $sNamespace)
@@ -225,6 +226,10 @@ class CallableClass extends RequestPlugin
 
     /**
      * Generate client side javascript code for a callable class
+     *
+     * @param string            $sClassName         The class name
+     * @param CallableObject    $xCallableObject    The corresponding callable object
+     * @param array             $aProtectedMethods  The protected methods
      *
      * @return string
      */

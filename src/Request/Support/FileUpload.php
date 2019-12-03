@@ -72,7 +72,7 @@ class FileUpload
      * @param array     $aVarFiles      An entry in the PHP $_FILES array
      * @param integer   $nPosition      The postion of the file to be processed
      *
-     * @return array|null
+     * @return null|array
      */
     private function getUploadedFile($sVarName, array $aVarFiles, $nPosition)
     {
