@@ -38,61 +38,18 @@ class FileUpload
     }
 
     /**
-     * Read uploaded files info from HTTP request data
+     * Check uploaded files
      *
-     * @return array
+     * @param array     $aFiles     The uploaded files
+     *
+     * @return void
+     * @throws \Jaxon\Exception\Error
      */
-    public function getUploadedFiles()
+    private function checkFiles(array $aFiles)
     {
-        // Check validity of the uploaded files
-        $aTempFiles = [];
-        foreach($_FILES as $sVarName => $aFile)
+        foreach($aFiles as $sVarName => $aVarFiles)
         {
-            // If there is only one file, transform each entry into an array,
-            // so the same processing for multiple files can be applied.
-            if(!is_array($aFile['name']))
-            {
-                $aFile['name'] = [$aFile['name']];
-                $aFile['type'] = [$aFile['type']];
-                $aFile['tmp_name'] = [$aFile['tmp_name']];
-                $aFile['error'] = [$aFile['error']];
-                $aFile['size'] = [$aFile['size']];
-            }
-
-            $nFileCount = count($aFile['name']);
-            for($i = 0; $i < $nFileCount; $i++)
-            {
-                if(!$aFile['name'][$i])
-                {
-                    continue;
-                }
-                if(!array_key_exists($sVarName, $aTempFiles))
-                {
-                    $aTempFiles[$sVarName] = [];
-                }
-                // Filename without the extension
-                $sFilename = pathinfo($aFile['name'][$i], PATHINFO_FILENAME);
-                if(($this->cNameSanitizer))
-                {
-                    $sFilename = (string)call_user_func_array($this->cNameSanitizer, [$sFilename, $sVarName]);
-                }
-                        // Copy the file data into the local array
-                $aTempFiles[$sVarName][] = [
-                    'name' => $aFile['name'][$i],
-                    'type' => $aFile['type'][$i],
-                    'tmp_name' => $aFile['tmp_name'][$i],
-                    'error' => $aFile['error'][$i],
-                    'size' => $aFile['size'][$i],
-                    'filename' => $sFilename,
-                    'extension' => pathinfo($aFile['name'][$i], PATHINFO_EXTENSION),
-                ];
-            }
-        }
-
-        // Check uploaded files validity
-        foreach($aTempFiles as $sVarName => $aFiles)
-        {
-            foreach($aFiles as $aFile)
+            foreach($aVarFiles as $aFile)
             {
                 // Verify upload result
                 if($aFile['error'] != 0)
@@ -106,7 +63,82 @@ class FileUpload
                 }
            }
         }
+    }
 
-        return $aTempFiles;
+    /**
+     * Get a file from upload entry
+     *
+     * @param string    $sVarName       The corresponding variable
+     * @param array     $aVarFiles      An entry in the PHP $_FILES array
+     * @param integer   $nPosition      The postion of the file to be processed
+     *
+     * @return array|null
+     */
+    private function getUploadedFile($sVarName, array $aVarFiles, $nPosition)
+    {
+        if(!$aVarFiles['name'][$nPosition])
+        {
+            return null;
+        }
+
+        // Filename without the extension
+        $sFilename = pathinfo($aVarFiles['name'][$nPosition], PATHINFO_FILENAME);
+        if(($this->cNameSanitizer))
+        {
+            $sFilename = (string)call_user_func_array($this->cNameSanitizer, [$sFilename, $sVarName]);
+        }
+
+        return [
+            'name' => $aVarFiles['name'][$nPosition],
+            'type' => $aVarFiles['type'][$nPosition],
+            'tmp_name' => $aVarFiles['tmp_name'][$nPosition],
+            'error' => $aVarFiles['error'][$nPosition],
+            'size' => $aVarFiles['size'][$nPosition],
+            'filename' => $sFilename,
+            'extension' => pathinfo($aVarFiles['name'][$nPosition], PATHINFO_EXTENSION),
+        ];
+    }
+
+    /**
+     * Read uploaded files info from HTTP request data
+     *
+     * @return array
+     */
+    public function getUploadedFiles()
+    {
+        // Check validity of the uploaded files
+        $aUploadedFiles = [];
+        foreach($_FILES as $sVarName => $aVarFiles)
+        {
+            // If there is only one file, transform each entry into an array,
+            // so the same processing for multiple files can be applied.
+            if(!is_array($aVarFiles['name']))
+            {
+                $aVarFiles['name'] = [$aVarFiles['name']];
+                $aVarFiles['type'] = [$aVarFiles['type']];
+                $aVarFiles['tmp_name'] = [$aVarFiles['tmp_name']];
+                $aVarFiles['error'] = [$aVarFiles['error']];
+                $aVarFiles['size'] = [$aVarFiles['size']];
+            }
+
+            $nFileCount = count($aVarFiles['name']);
+            for($i = 0; $i < $nFileCount; $i++)
+            {
+                $aUploadedFile = $this->getUploadedFile($sVarName, $aVarFiles, $i);
+                if(is_array($aUploadedFile))
+                {
+                    if(!array_key_exists($sVarName, $aUploadedFiles))
+                    {
+                        $aUploadedFiles[$sVarName] = [];
+                    }
+                    $aUploadedFiles[$sVarName][] = $aUploadedFile;
+                }
+            }
+        }
+
+        // Check uploaded files validity
+        $this->checkFiles($aUploadedFiles);
+
+        return $aUploadedFiles;
     }
 }

@@ -57,6 +57,57 @@ class CallableDir extends RequestPlugin
     }
 
     /**
+     * Check the directory
+     *
+     * @param string        $sDirectory     The path of teh directory being registered
+     *
+     * @return string
+     * @throws \Jaxon\Exception\Error
+     */
+    private function checkDirectory($sDirectory)
+    {
+        if(!is_string($sDirectory))
+        {
+            throw new \Jaxon\Exception\Error($this->trans('errors.objects.invalid-declaration'));
+        }
+        $sDirectory = rtrim(trim($sDirectory), '/\\');
+        if(!is_dir($sDirectory))
+        {
+            throw new \Jaxon\Exception\Error($this->trans('errors.objects.invalid-declaration'));
+        }
+        return realpath($sDirectory);
+    }
+
+    /**
+     * Check the options
+     *
+     * @param array|string  $aOptions       The associated options
+     *
+     * @return array
+     * @throws \Jaxon\Exception\Error
+     */
+    private function checkOptions($aOptions)
+    {
+        if(is_string($aOptions))
+        {
+            $aOptions = ['namespace' => $aOptions];
+        }
+        if(!is_array($aOptions))
+        {
+            throw new \Jaxon\Exception\Error($this->trans('errors.objects.invalid-declaration'));
+        }
+
+        // Change the keys in $aOptions to have "\" as separator
+        $_aOptions = [];
+        foreach($aOptions as $sName => $aOption)
+        {
+            $sName = trim(str_replace('.', '\\', $sName), ' \\');
+            $_aOptions[$sName] = $aOption;
+        }
+        return $_aOptions;
+    }
+
+    /**
      * Register a callable class
      *
      * @param string        $sType          The type of request handler being registered
@@ -73,40 +124,16 @@ class CallableDir extends RequestPlugin
             return false;
         }
 
-        if(!is_string($sDirectory) || !is_dir($sDirectory))
-        {
-            throw new \Jaxon\Exception\Error($this->trans('errors.objects.invalid-declaration'));
-        }
-        if(is_string($aOptions))
-        {
-            $aOptions = ['namespace' => $aOptions];
-        }
-        if(!is_array($aOptions))
-        {
-            throw new \Jaxon\Exception\Error($this->trans('errors.objects.invalid-declaration'));
-        }
+        $sDirectory = $this->checkDirectory($sDirectory);
 
-        $sDirectory = rtrim(trim($sDirectory), '/\\');
-        if(!is_dir($sDirectory))
-        {
-            return false;
-        }
-        $aOptions['directory'] = realpath($sDirectory);
+        $aOptions = $this->checkOptions($aOptions);
+        $aOptions['directory'] = $sDirectory;
 
         $sNamespace = key_exists('namespace', $aOptions) ? $aOptions['namespace'] : '';
         if(!($sNamespace = trim($sNamespace, ' \\')))
         {
             $sNamespace = '';
         }
-
-        // Change the keys in $aOptions to have "\" as separator
-        $_aOptions = [];
-        foreach($aOptions as $sName => $aOption)
-        {
-            $sName = trim(str_replace('.', '\\', $sName), ' \\');
-            $_aOptions[$sName] = $aOption;
-        }
-        $aOptions = $_aOptions;
 
         if(($sNamespace))
         {
