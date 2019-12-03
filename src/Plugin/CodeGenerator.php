@@ -167,46 +167,47 @@ class CodeGenerator
      */
     private function makePluginsCode()
     {
-        if(!$this->sCodeGenerated)
+        if($this->sCodeGenerated)
         {
-            $this->sCodeGenerated = true;
+            return;
+        }
+        $this->sCodeGenerated = true;
 
-            foreach($this->xPluginManager->getPlugins() as $xPlugin)
+        foreach($this->xPluginManager->getPlugins() as $xPlugin)
+        {
+            if($xPlugin instanceof Response)
             {
-                if($xPlugin instanceof Response)
+                if(($sCssCode = trim($xPlugin->getCss())))
                 {
-                    if(($sCssCode = trim($xPlugin->getCss())))
-                    {
-                        $this->sCssCode .= rtrim($sCssCode, " \n") . "\n";
-                    }
-                    if(($sJsCode = trim($xPlugin->getJs())))
-                    {
-                        $this->sJsCode .= rtrim($sJsCode, " \n") . "\n";
-                    }
+                    $this->sCssCode .= rtrim($sCssCode, " \n") . "\n";
                 }
-                if(($sJsScript = trim($xPlugin->getScript())))
+                if(($sJsCode = trim($xPlugin->getJs())))
                 {
-                    $this->sJsScript .= trim($sJsScript, " \n") . "\n";
+                    $this->sJsCode .= rtrim($sJsCode, " \n") . "\n";
                 }
             }
-
-            // foreach($this->xPluginManager->getPackages() as $sPackageClass)
-            // {
-            //     $xPackage = jaxon()->di()->get($sPackageClass);
-            //     if(($sCssCode = trim($xPackage->css())))
-            //     {
-            //         $this->sCssCode .= rtrim($sCssCode, " \n") . "\n";
-            //     }
-            //     if(($sJsCode = trim($xPackage->js())))
-            //     {
-            //         $this->sJsCode .= rtrim($sJsCode, " \n") . "\n";
-            //     }
-            //     if(($sJsScript = trim($xPackage->ready())))
-            //     {
-            //         $this->sJsScript .= trim($sJsScript, " \n") . "\n";
-            //     }
-            // }
+            if(($sJsScript = trim($xPlugin->getScript())))
+            {
+                $this->sJsScript .= trim($sJsScript, " \n") . "\n";
+            }
         }
+
+        // foreach($this->xPluginManager->getPackages() as $sPackageClass)
+        // {
+        //     $xPackage = jaxon()->di()->get($sPackageClass);
+        //     if(($sCssCode = trim($xPackage->css())))
+        //     {
+        //         $this->sCssCode .= rtrim($sCssCode, " \n") . "\n";
+        //     }
+        //     if(($sJsCode = trim($xPackage->js())))
+        //     {
+        //         $this->sJsCode .= rtrim($sJsCode, " \n") . "\n";
+        //     }
+        //     if(($sJsScript = trim($xPackage->ready())))
+        //     {
+        //         $this->sJsScript .= trim($sJsScript, " \n") . "\n";
+        //     }
+        // }
     }
 
     /**
@@ -309,6 +310,55 @@ jaxon.dom.ready(function() {
     }
 
     /**
+     * Write javascript files and return the corresponding URI
+     *
+     * @return string
+     */
+    private function _writeFiles()
+    {
+        $sJsAppURI = rtrim($this->getOption('js.app.uri'), '/') . '/';
+        $sJsAppDir = rtrim($this->getOption('js.app.dir'), '/') . '/';
+        $sFinalFile = $this->getOption('js.app.file');
+        $sExtension = $this->getJsLibExt();
+
+        // Check if the final file already exists
+        if(($sFinalFile) && is_file($sJsAppDir . $sFinalFile . $sExtension))
+        {
+            return $sJsAppURI . $sFinalFile . $sExtension;
+        }
+
+        // The plugins scripts are written into the javascript app dir
+        $sHash = $this->generateHash();
+        $sOutFile = $sHash . '.js';
+        $sMinFile = $sHash . '.min.js';
+        if(!is_file($sJsAppDir . $sOutFile))
+        {
+            file_put_contents($sJsAppDir . $sOutFile, $this->_getScript());
+        }
+        if(($this->getOption('js.app.minify')))
+        {
+            if(is_file($sJsAppDir . $sMinFile))
+            {
+                $sOutFile = $sMinFile; // The file was already minified
+            }
+            elseif(($this->minify($sJsAppDir . $sOutFile, $sJsAppDir . $sMinFile)))
+            {
+                $sOutFile = $sMinFile;
+            }
+        }
+        // Copy the file to its final location
+        if(($sFinalFile))
+        {
+            if(copy($sJsAppDir . $sOutFile, $sJsAppDir . $sFinalFile . $sExtension))
+            {
+                $sOutFile = $sFinalFile . $sExtension;
+            }
+        }
+
+        return $sJsAppURI . $sOutFile;
+    }
+
+    /**
      * Get the javascript code to be sent to the browser
      *
      * Also call each of the request plugins giving them the opportunity
@@ -343,62 +393,17 @@ jaxon.dom.ready(function() {
 
         if($this->canExportJavascript())
         {
-            $sJsAppURI = rtrim($this->getOption('js.app.uri'), '/') . '/';
-            $sJsAppDir = rtrim($this->getOption('js.app.dir'), '/') . '/';
-            $sFinalFile = $this->getOption('js.app.file');
-            $sExtension = $this->getJsLibExt();
-
-            // Check if the final file already exists
-            if(($sFinalFile) && is_file($sJsAppDir . $sFinalFile . $sExtension))
-            {
-                $sOutFile = $sFinalFile . $sExtension;
-            }
-            else
-            {
-                // The plugins scripts are written into the javascript app dir
-                $sHash = $this->generateHash();
-                $sOutFile = $sHash . '.js';
-                $sMinFile = $sHash . '.min.js';
-                if(!is_file($sJsAppDir . $sOutFile))
-                {
-                    file_put_contents($sJsAppDir . $sOutFile, $this->_getScript());
-                }
-                if(($this->getOption('js.app.minify')))
-                {
-                    if(is_file($sJsAppDir . $sMinFile))
-                    {
-                        $sOutFile = $sMinFile; // The file was already minified
-                    }
-                    elseif(($this->minify($sJsAppDir . $sOutFile, $sJsAppDir . $sMinFile)))
-                    {
-                        $sOutFile = $sMinFile;
-                    }
-                }
-                // Copy the file to its final location
-                if(($sFinalFile))
-                {
-                    if(copy($sJsAppDir . $sOutFile, $sJsAppDir . $sFinalFile . $sExtension))
-                    {
-                        $sOutFile = $sFinalFile . $sExtension;
-                    }
-                }
-            }
-
             // The returned code loads the generated javascript file
-            $sScript .= $this->xTemplate->render('jaxon::plugins/include.js', [
+            return $sScript . $this->xTemplate->render('jaxon::plugins/include.js', [
                 'sJsOptions' => $this->getOption('js.app.options', ''),
-                'sUrl' => $sJsAppURI . $sOutFile,
-            ]);
-        }
-        else
-        {
-            // The plugins scripts are wrapped with javascript tags
-            $sScript .= $this->xTemplate->render('jaxon::plugins/wrapper.js', [
-                'sJsOptions' => $this->getOption('js.app.options', ''),
-                'sScript' => $this->_getScript(),
+                'sUrl' => $this->_writeFiles(),
             ]);
         }
 
-        return $sScript;
+        // The plugins scripts are wrapped with javascript tags
+        return $sScript . $this->xTemplate->render('jaxon::plugins/wrapper.js', [
+            'sJsOptions' => $this->getOption('js.app.options', ''),
+            'sScript' => $this->_getScript(),
+        ]);
     }
 }

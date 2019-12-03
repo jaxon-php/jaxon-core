@@ -4,7 +4,10 @@
     {
         echo $this->prev;
     }
-    echo $this->links;
+    foreach($this->links as $link)
+    {
+        echo $link;
+    }
     if(($this->next))
     {
         echo $this->next;

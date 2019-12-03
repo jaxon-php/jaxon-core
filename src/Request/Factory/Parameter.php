@@ -109,19 +109,19 @@ class Parameter implements Contracts\Parameter
         {
             return $xValue;
         }
-        elseif(is_numeric($xValue))
+        if(is_numeric($xValue))
         {
             return new Parameter(self::NUMERIC_VALUE, $xValue);
         }
-        elseif(is_string($xValue))
+        if(is_string($xValue))
         {
             return new Parameter(self::QUOTED_VALUE, $xValue);
         }
-        elseif(is_bool($xValue))
+        if(is_bool($xValue))
         {
             return new Parameter(self::BOOL_VALUE, $xValue);
         }
-        else // if(is_array($xValue) || is_object($xValue))
+        // if(is_array($xValue) || is_object($xValue))
         {
             return new Parameter(self::JS_VALUE, $xValue);
         }
@@ -154,53 +154,114 @@ class Parameter implements Contracts\Parameter
     }
 
     /**
+     * Get the script for an array of form values.
+     *
+     * @return string
+     */
+    protected function getFormValuesScript()
+    {
+        return $this->getJsCall('getFormValues', $this->xValue);
+    }
+
+    /**
+     * Get the script for an input control.
+     *
+     * @return string
+     */
+    protected function getInputValueScript()
+    {
+        return $this->getJsCall('$', $this->xValue) . '.value';
+    }
+
+    /**
+     * Get the script for a boolean value of a checkbox.
+     *
+     * @return string
+     */
+    protected function getCheckedValueScript()
+    {
+        return $this->getJsCall('$', $this->xValue) . '.checked';
+    }
+
+    /**
+     * Get the script for the innerHTML value of the element.
+     *
+     * @return string
+     */
+    protected function getElementInnerHTMLScript()
+    {
+        return $this->getJsCall('$', $this->xValue) . '.innerHTML';
+    }
+
+    /**
+     * Get the script for a quoted value (string).
+     *
+     * @return string
+     */
+    protected function getQuotedValueScript()
+    {
+        return $this->getQuotedValue(addslashes($this->xValue));
+    }
+
+    /**
+     * Get the script for a boolean value (true or false).
+     *
+     * @return string
+     */
+    protected function getBoolValueScript()
+    {
+        return ($this->xValue) ? 'true' : 'false';
+    }
+
+    /**
+     * Get the script for a numeric, non-quoted value.
+     *
+     * @return string
+     */
+    protected function getNumericValueScript()
+    {
+        return (string)$this->xValue;
+    }
+
+    /**
+     * Get the script for a non-quoted value (evaluated by the browsers javascript engine at run time).
+     *
+     * @return string
+     */
+    protected function getUnquotedValueScript()
+    {
+        if(is_array($this->xValue) || is_object($this->xValue))
+        {
+            // Unable to use double quotes here because they cannot be handled on client side.
+            // So we are using simple quotes even if the Json standard recommends double quotes.
+            return str_replace('"', "'", json_encode($this->xValue, JSON_HEX_APOS | JSON_HEX_QUOT));
+        }
+        return (string)$this->xValue;
+    }
+
+    /**
+     * Get the script for an integer used to generate pagination links.
+     *
+     * @return string
+     */
+    protected function getPageNumberScript()
+    {
+        return (string)$this->xValue;
+    }
+
+    /**
      * Generate the javascript code.
      *
      * @return string
      */
     public function getScript()
     {
-        $sJsCode = '';
-        switch($this->sType)
+        $sMethodName = 'get' . $this->sType . 'Script';
+        if(!\method_exists($this, $sMethodName))
         {
-        case self::FORM_VALUES:
-            $sJsCode = $this->getJsCall('getFormValues', $this->xValue);
-            break;
-        case self::INPUT_VALUE:
-            $sJsCode = $this->getJsCall('$', $this->xValue) . '.value';
-            break;
-        case self::CHECKED_VALUE:
-            $sJsCode = $this->getJsCall('$', $this->xValue) . '.checked';
-            break;
-        case self::ELEMENT_INNERHTML:
-            $sJsCode = $this->getJsCall('$', $this->xValue) . '.innerHTML';
-            break;
-        case self::QUOTED_VALUE:
-            $sJsCode = $this->getQuotedValue(addslashes($this->xValue));
-            break;
-        case self::BOOL_VALUE:
-            $sJsCode = ($this->xValue) ? 'true' : 'false';
-            break;
-        case self::PAGE_NUMBER:
-            $sJsCode = (string)$this->xValue;
-            break;
-        case self::NUMERIC_VALUE:
-            $sJsCode = (string)$this->xValue;
-            break;
-        case self::JS_VALUE:
-            if(is_array($this->xValue) || is_object($this->xValue))
-            {
-                // Unable to use double quotes here because they cannot be handled on client side.
-                // So we are using simple quotes even if the Json standard recommends double quotes.
-                $sJsCode = str_replace(['"'], ["'"], json_encode($this->xValue, JSON_HEX_APOS | JSON_HEX_QUOT));
-            }
-            else
-            {
-                $sJsCode = (string)$this->xValue;
-            }
-            break;
+            return '';
         }
-        return $sJsCode;
+        return $this->$sMethodName();
     }
 
     /**
