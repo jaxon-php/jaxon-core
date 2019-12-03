@@ -128,17 +128,34 @@ class Renderer
     /**
      * Render the previous link.
      *
+     * @param integer   $nNumber        The page number
+     * @param string    $sTemplate      The template for the call to the page
+     * @param string    $sEnabledText   The text of the link if it is enabled
+     * @param string    $sDisabledText  The text of the link if it is disabled
+     *
+     * @return string
+     */
+    protected function getLink($nNumber, $sTemplate, $sEnabledText, $sDisabledText)
+    {
+        if($nNumber > 0)
+        {
+            return $this->xRenderer->render('pagination::links/' . $sTemplate, [
+                'text' => $sEnabledText,
+                'call' => $this->getPageCall($nNumber),
+            ]);
+        }
+        return $this->xRenderer->render('pagination::links/disabled', ['text' => $sDisabledText]);
+    }
+
+    /**
+     * Render the previous link.
+     *
      * @return string
      */
     protected function getPrevLink()
     {
-        $aVars = ['text' => $this->previousText];
-        if($this->currentPage > 1)
-        {
-            $aVars['call'] = $this->getPageCall($this->currentPage - 1);
-            return $this->xRenderer->render('pagination::links/prev', $aVars);
-        }
-        return $this->xRenderer->render('pagination::links/disabled', $aVars);
+        $nNumber = ($this->currentPage > 1 ? $this->currentPage - 1 : 0);
+        return $this->getLink($nNumber, 'prev', $this->previousText, $this->previousText);
     }
 
     /**
@@ -148,13 +165,8 @@ class Renderer
      */
     protected function getNextLink()
     {
-        $aVars = ['text' => $this->nextText];
-        if($this->currentPage < $this->totalPages)
-        {
-            $aVars['call'] = $this->getPageCall($this->currentPage + 1);
-            return $this->xRenderer->render('pagination::links/next', $aVars);
-        }
-        return $this->xRenderer->render('pagination::links/disabled', $aVars);
+        $nNumber = ($this->currentPage < $this->totalPages ? $this->currentPage + 1 : 0);
+        return $this->getLink($nNumber, 'next', $this->nextText, $this->nextText);
     }
 
     /**
@@ -164,23 +176,10 @@ class Renderer
      *
      * @return string
      */
-    protected function getLink($nNumber)
+    protected function getPageLink($nNumber)
     {
-        if($nNumber <= 0)
-        {
-            // Disabled page
-            return $this->xRenderer->render('pagination::links/disabled', ['text' => $this->ellipsysText]);
-        }
-        if($nNumber == $this->currentPage)
-        {
-            // Current page
-            return $this->xRenderer->render('pagination::links/current', ['text' => $nNumber]);
-        }
-        // Enabled page
-        return $this->xRenderer->render('pagination::links/enabled',[
-            'text' => $nNumber,
-            'call' => $this->getPageCall($nNumber)
-        ]);
+        $sTemplate = ($nNumber == $this->currentPage ? 'current' : 'enabled');
+        return $this->getLink($nNumber, $sTemplate, $nNumber, $this->ellipsysText);
     }
 
     /**
@@ -197,14 +196,12 @@ class Renderer
         $this->currentPage = $currentPage;
         $this->totalPages = $totalPages;
 
-        $sLinks = '';
-        foreach($aPageNumbers as $nNumber)
-        {
-            $sLinks .= $this->getLink($nNumber);
-        }
+        $aLinks = array_map(function($nNumber) {
+            return $this->getPageLink($nNumber);
+        }, $aPageNumbers);
 
         return $this->xRenderer->render('pagination::wrapper', [
-            'links' => $sLinks,
+            'links' => $aLinks,
             'prev' => $this->getPrevLink(),
             'next' => $this->getNextLink(),
         ]);
