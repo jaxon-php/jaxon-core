@@ -318,4 +318,21 @@ class CallableRegistry
 
         return $this->xRepository->createCallableObject($sClassName, $aOptions);
     }
+
+    /**
+     * Create callable objects for all registered namespaces
+     *
+     * @return void
+     */
+    public function createCallableObjects()
+    {
+        $this->parseDirectories();
+        $this->parseNamespaces();
+
+        // Create callable objects for registered directories
+        foreach($this->xRepository->getClasses() as $sClassName => $aClassOptions)
+        {
+            $this->xRepository->createCallableObject($sClassName, $aClassOptions);
+        }
+    }
 }

@@ -153,30 +153,13 @@ class CallableClass extends RequestPlugin
     }
 
     /**
-     * Create callable objects for all registered namespaces
-     *
-     * @return void
-     */
-    protected function createCallableObjects()
-    {
-        $this->xRegistry->parseDirectories();
-        $this->xRegistry->parseNamespaces();
-
-        // Create callable objects for registered directories
-        foreach($this->xRepository->getClasses() as $sClassName => $aClassOptions)
-        {
-            $this->xRepository->createCallableObject($sClassName, $aClassOptions);
-        }
-    }
-
-    /**
      * Generate a hash for the registered callable objects
      *
      * @return string
      */
     public function generateHash()
     {
-        $this->createCallableObjects();
+        $this->xRegistry->createCallableObjects();
         $aNamespaces = $this->xRepository->getNamespaces();
         $aCallableObjects = $this->xRepository->getCallableObjects();
         $sHash = '';
@@ -272,7 +255,7 @@ class CallableClass extends RequestPlugin
      */
     public function getScript()
     {
-        $this->createCallableObjects();
+        $this->xRegistry->createCallableObjects();
 
         // The methods of the \Jaxon\CallableClass class must not be exported
         $xCallableClass = new \ReflectionClass(UserCallableClass::class);
