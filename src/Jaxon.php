@@ -26,6 +26,7 @@
 namespace Jaxon;
 
 use Jaxon\Plugin\Plugin;
+use Jaxon\Plugin\Package;
 use Jaxon\Utils\DI\Container;
 use Jaxon\Utils\Config\Reader as ConfigReader;
 
@@ -58,6 +59,8 @@ class Jaxon
     const CALLABLE_FUNCTION = 'CallableFunction';
     // For uploaded files.
     const FILE_UPLOAD = 'FileUpload';
+    // For packages.
+    const PACKAGE = 'Package';
     // For compatibility with previous versions
     const CALLABLE_OBJECT = 'CallableClass'; // Same as CALLABLE_CLASS
     const USER_FUNCTION = 'CallableFunction'; // Same as CALLABLE_FUNCTION
@@ -197,6 +200,7 @@ class Jaxon
     {
         return $this->di()->newResponse();
     }
+
     /**
      * Register a plugin
      *
@@ -213,6 +217,19 @@ class Jaxon
     public function registerPlugin(Plugin $xPlugin, $nPriority = 1000)
     {
         $this->di()->getPluginManager()->registerPlugin($xPlugin, $nPriority);
+    }
+
+    /**
+     * Register a package
+     *
+     * @param string        $sClassName         The package class name
+     * @param array         $aOptions           The package options
+     *
+     * @return void
+     */
+    public function registerPackage($sClassName, array $aOptions = [])
+    {
+        $this->di()->getPluginManager()->registerPackage($sClassName, $aOptions);
     }
 
     /**
@@ -403,6 +420,18 @@ class Jaxon
     public function plugin($sName)
     {
         return $this->di()->getPluginManager()->getResponsePlugin($sName);
+    }
+
+    /**
+     * Get a package instance
+     *
+     * @param string        $sClassName           The package class name
+     *
+     * @return \Jaxon\Plugin\Package
+     */
+    public function package($sClassName)
+    {
+        return $this->di()->getPluginManager()->getPackage($sClassName);
     }
 
     /**

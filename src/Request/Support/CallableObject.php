@@ -206,23 +206,7 @@ class CallableObject
         if($this->xRegisteredObject == null)
         {
             $di = jaxon()->di();
-            // Use the Reflection class to get the parameters of the constructor
-            if(($constructor = $this->xReflectionClass->getConstructor()) != null)
-            {
-                $parameters = $constructor->getParameters();
-                $parameterInstances = [];
-                foreach($parameters as $parameter)
-                {
-                    // Get the parameter instance from the DI
-                    $parameterInstances[] = $di->get($parameter->getClass()->getName());
-                }
-                $this->xRegisteredObject = $this->xReflectionClass->newInstanceArgs($parameterInstances);
-            }
-            else
-            {
-                $this->xRegisteredObject = $this->xReflectionClass->newInstance();
-            }
-
+            $this->xRegisteredObject = $di->make($this->xReflectionClass);
             // Initialize the object
             if($this->xRegisteredObject instanceof \Jaxon\CallableClass)
             {
@@ -233,7 +217,7 @@ class CallableObject
             // Run the callback for class initialisation
             if(($xCallback = $di->getRequestHandler()->getCallbackManager()->init()))
             {
-                call_user_func_array($xCallback, [$this->xRegisteredObject]);
+                call_user_func($xCallback, $this->xRegisteredObject);
             }
         }
         return $this->xRegisteredObject;

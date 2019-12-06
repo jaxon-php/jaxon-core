@@ -44,25 +44,32 @@ class CodeGenerator
     protected $xTemplate;
 
     /**
-     * Generated CSS code
+     * HTML tags to include CSS code and files into the page
      *
      * @var string
      */
     protected $sCssCode = '';
 
     /**
-     * Generated Javascript code
+     * HTML tags to include javascript code and files into the page
      *
      * @var string
      */
     protected $sJsCode = '';
 
     /**
-     * Generated Javascript ready script
+     * Javascript code to include into the page
      *
      * @var string
      */
     protected $sJsScript = '';
+
+    /**
+     * Javascript code to execute after page load
+     *
+     * @var string
+     */
+    protected $sJsReady = '';
 
     /**
      * Code already generated
@@ -192,22 +199,21 @@ class CodeGenerator
             }
         }
 
-        // foreach($this->xPluginManager->getPackages() as $sPackageClass)
-        // {
-        //     $xPackage = jaxon()->di()->get($sPackageClass);
-        //     if(($sCssCode = trim($xPackage->css())))
-        //     {
-        //         $this->sCssCode .= rtrim($sCssCode, " \n") . "\n";
-        //     }
-        //     if(($sJsCode = trim($xPackage->js())))
-        //     {
-        //         $this->sJsCode .= rtrim($sJsCode, " \n") . "\n";
-        //     }
-        //     if(($sJsScript = trim($xPackage->ready())))
-        //     {
-        //         $this->sJsScript .= trim($sJsScript, " \n") . "\n";
-        //     }
-        // }
+        foreach($this->xPluginManager->getPackages() as $xPackage)
+        {
+            if(($sCssCode = trim($xPackage->css())))
+            {
+                $this->sCssCode .= rtrim($sCssCode, " \n") . "\n";
+            }
+            if(($sJsCode = trim($xPackage->js())))
+            {
+                $this->sJsCode .= trim($sJsCode, " \n") . "\n";
+            }
+            if($xPackage->start() && ($sJsReady = trim($xPackage->ready())))
+            {
+                $this->sJsReady .= trim($sJsReady, " \n") . "\n";
+            }
+        }
     }
 
     /**
@@ -302,9 +308,12 @@ class CodeGenerator
             'sQuestionScript' => $sQuestionScript,
         ]);
 
-        return $this->xTemplate->render('jaxon::plugins/config.js', $aVars) . "\n" . $this->sJsScript . '
+        return $this->xTemplate->render('jaxon::plugins/config.js', $aVars) . '
+' . $this->sJsScript . '
 jaxon.dom.ready(function() {
     jaxon.command.handler.register("cc", jaxon.confirm.commands);
+
+' . $this->sJsReady . '
 });
 ';
     }

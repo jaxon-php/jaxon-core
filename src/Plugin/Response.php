@@ -33,7 +33,7 @@ abstract class Response extends Plugin
      * @var \Jaxon\Response\Response
      */
     protected $xResponse;
-    
+
     /**
      * Set the <Jaxon\Response\Response> object
      *
@@ -45,7 +45,7 @@ abstract class Response extends Plugin
     {
         $this->xResponse = $xResponse;
     }
-    
+
     /**
      * Get the <Jaxon\Response\Response> object
      *
@@ -55,7 +55,7 @@ abstract class Response extends Plugin
     {
         return $this->xResponse;
     }
-    
+
     /**
      * Add a client side plugin command to the response object
      *

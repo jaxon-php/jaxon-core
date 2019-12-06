@@ -43,7 +43,6 @@ use Jaxon\Utils\Config\Config;
 use Jaxon\Utils\Config\Reader as ConfigReader;
 use Jaxon\Utils\View\Manager as ViewManager;
 use Jaxon\Utils\View\Renderer as ViewRenderer;
-use Jaxon\Utils\View\Renderer;
 use Jaxon\Utils\Dialogs\Dialog;
 use Jaxon\Utils\Template\Minifier;
 use Jaxon\Utils\Template\Engine as TemplateEngine;
@@ -55,6 +54,7 @@ use Jaxon\Utils\Http\URI;
 
 use Lemon\Event\EventDispatcher;
 use Closure;
+use ReflectionClass;
 
 class Container
 {
@@ -78,6 +78,7 @@ class Container
     public function __construct()
     {
         $this->libContainer = new \Pimple\Container();
+        $this->libContainer[Container::class] = $this;
 
         $sTranslationDir = realpath(__DIR__ . '/../../../translations');
         $sTemplateDir = realpath(__DIR__ . '/../../../templates');
@@ -291,7 +292,9 @@ class Container
      */
     public function set($sClass, Closure $xClosure)
     {
-        $this->libContainer[$sClass] = $xClosure;
+        $this->libContainer[$sClass] = function() use($xClosure) {
+            return call_user_func($xClosure, $this);
+        };
     }
 
     /**
@@ -307,6 +310,39 @@ class Container
         $this->libContainer[$sClass] = function($c) use ($sAlias) {
             return $c[$sAlias];
         };
+    }
+
+    /**
+     * Set an alias
+     *
+     * @param string|ReflectionClass    $xClass         The class name or the reflection class
+     *
+     * @return mixed
+     */
+    public function make($xClass)
+    {
+        if(is_string($xClass))
+        {
+            // Create tye reflection class instance
+            $xClass = new ReflectionClass($xClass);
+        }
+        if(!($xClass instanceof ReflectionClass))
+        {
+            return null;
+        }
+        // Use the Reflection class to get the parameters of the constructor
+        if(($constructor = $xClass->getConstructor()) == null)
+        {
+            return $xClass->newInstance();
+        }
+        $parameters = $constructor->getParameters();
+        $parameterInstances = [];
+        foreach($parameters as $parameter)
+        {
+            // Get the parameter instance from the DI
+            $parameterInstances[] = $this->get($parameter->getClass()->getName());
+        }
+        return $xClass->newInstanceArgs($parameterInstances);
     }
 
     /**
