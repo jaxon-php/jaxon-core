@@ -210,8 +210,14 @@ class CallableObject
             // Initialize the object
             if($this->xRegisteredObject instanceof \Jaxon\CallableClass)
             {
-                $this->xRegisteredObject->xCallableObject = $this;
-                $this->xRegisteredObject->response = jaxon()->getResponse();
+                // Set the members of the object
+                $cSetter = function($xCallableObject, $xResponse) {
+                    $this->xCallableObject = $xCallableObject;
+                    $this->response = $xResponse;
+                };
+                $cSetter = $cSetter->bindTo($this->xRegisteredObject, $this->xRegisteredObject);
+                // Can now access protected attributes
+                \call_user_func($cSetter, $this, jaxon()->getResponse());
             }
 
             // Run the callback for class initialisation

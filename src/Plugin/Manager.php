@@ -230,7 +230,8 @@ class Manager
             $this->aOptions = $_aOptions;
         };
         $xPackage = $this->getPackage($sClassName);
-        $cSetter = $cSetter->bindTo($xPackage, $xPackage); // Can now access protected attributes
+        $cSetter = $cSetter->bindTo($xPackage, $xPackage);
+        // Can now access protected attributes
         \call_user_func($cSetter, $aOptions);
 
         $this->aPackages[] = $xPackage;

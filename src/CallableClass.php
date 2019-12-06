@@ -11,14 +11,14 @@ class CallableClass
      *
      * @var CallableObject
      */
-    public $xCallableObject = null;
+    private $xCallableObject = null;
 
     /**
      * The Jaxon response returned by all classes methods
      *
      * @var \Jaxon\Response\Response
      */
-    public $response = null;
+    protected $response = null;
 
     /**
      * Get the view renderer
