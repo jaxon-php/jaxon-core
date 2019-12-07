@@ -13,7 +13,7 @@ class CallableClass
      *
      * @var CallableObject
      */
-    private $xCallableObject = null;
+    protected $callable = null;
 
     /**
      * The Jaxon response returned by all classes methods
@@ -88,12 +88,12 @@ class CallableClass
         // If the class name starts with a dot, then find the class in the same full namespace as the caller
         if($cFirstChar == ':')
         {
-            $name = $this->xCallableObject->getRootNamespace() . '\\' . str_replace('.', '\\', substr($name, 1));
+            $name = $this->callable->getRootNamespace() . '\\' . str_replace('.', '\\', substr($name, 1));
         }
         // If the class name starts with a dot, then find the class in the same base namespace as the caller
         elseif($cFirstChar == '.')
         {
-            $name = $this->xCallableObject->getNamespace() . '\\' . str_replace('.', '\\', substr($name, 1));
+            $name = $this->callable->getNamespace() . '\\' . str_replace('.', '\\', substr($name, 1));
         }
         // Find the class instance
         return jaxon()->instance($name);
