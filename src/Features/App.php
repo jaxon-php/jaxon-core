@@ -2,6 +2,8 @@
 
 namespace Jaxon\Features;
 
+use Psr\Log\LoggerInterface;
+
 trait App
 {
     /**
@@ -162,5 +164,25 @@ trait App
     public function session()
     {
         return jaxon()->session();
+    }
+
+    /**
+     * Get the logger
+     *
+     * @return LoggerInterface
+     */
+    public function logger()
+    {
+        return jaxon()->logger();
+    }
+
+    /**
+     * Sets a logger.
+     *
+     * @param LoggerInterface $logger
+     */
+    public function setLogger(LoggerInterface $logger)
+    {
+        jaxon()->setLogger();
     }
 }

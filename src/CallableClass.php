@@ -4,6 +4,8 @@ namespace Jaxon;
 
 use Jaxon\Request\Support\CallableObject;
 
+use Psr\Log\LoggerInterface;
+
 class CallableClass
 {
     /**
@@ -38,6 +40,16 @@ class CallableClass
     public function session()
     {
         return jaxon()->session();
+    }
+
+    /**
+     * Get the logger
+     *
+     * @return LoggerInterface
+     */
+    public function logger()
+    {
+        return jaxon()->logger();
     }
 
     /**
