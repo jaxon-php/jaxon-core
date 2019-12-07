@@ -304,10 +304,9 @@ class CallableRegistry
         }
 
         // Check if the callable object was already created.
-        $aCallableObjects = $this->xRepository->getCallableObjects();
-        if(key_exists($sClassName, $aCallableObjects))
+        if(($xCallableObject = $this->xRepository->getCallableObject($sClassName)) != null)
         {
-            return $aCallableObjects[$sClassName];
+            return $xCallableObject;
         }
 
         $aOptions = $this->getClassOptions($sClassName);
@@ -320,7 +319,7 @@ class CallableRegistry
     }
 
     /**
-     * Create callable objects for all registered namespaces
+     * Create callable objects for all registered classes
      *
      * @return void
      */
@@ -329,10 +328,13 @@ class CallableRegistry
         $this->parseDirectories();
         $this->parseNamespaces();
 
-        // Create callable objects for registered directories
         foreach($this->xRepository->getClasses() as $sClassName => $aClassOptions)
         {
-            $this->xRepository->createCallableObject($sClassName, $aClassOptions);
+            // Make sure we create each callable object only once.
+            if(!$this->xRepository->getCallableObject($sClassName))
+            {
+                $this->xRepository->createCallableObject($sClassName, $aClassOptions);
+            }
         }
     }
 }

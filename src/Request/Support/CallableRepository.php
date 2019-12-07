@@ -131,6 +131,18 @@ class CallableRepository
      * Find a callable object by class name
      *
      * @param string        $sClassName            The class name of the callable object
+     *
+     * @return CallableObject|null
+     */
+    public function getCallableObject($sClassName, array $aOptions)
+    {
+        return isset($this->aCallableOptions[$sClassName]) ? $this->aCallableOptions[$sClassName] : null;
+    }
+
+    /**
+     * Create a new callable object
+     *
+     * @param string        $sClassName            The class name of the callable object
      * @param array         $aOptions              The callable object options
      *
      * @return CallableObject|null
