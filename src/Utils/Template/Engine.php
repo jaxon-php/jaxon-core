@@ -16,7 +16,7 @@ namespace Jaxon\Utils\Template;
 
 use stdClass;
 
-class Engine implements \Jaxon\Contracts\Template\Renderer
+class Engine
 {
     /**
      * The namespaces
@@ -57,7 +57,7 @@ class Engine implements \Jaxon\Contracts\Template\Renderer
     public function addNamespace($sNamespace, $sDirectory, $sExtension = '')
     {
         // The 'jaxon' key cannot be overriden
-        if($sNamespace == 'jaxon')
+        if($sNamespace == 'jaxon' || $sNamespace == 'pagination')
         {
             return;
         }
@@ -77,7 +77,7 @@ class Engine implements \Jaxon\Contracts\Template\Renderer
      */
     public function pagination($sDirectory)
     {
-        $this->addNamespace('pagination', $sDirectory, '.php');
+        $this->aNamespaces['pagination']['directory'] = $sDirectory;
     }
 
     /**

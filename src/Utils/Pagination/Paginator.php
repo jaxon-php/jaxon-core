@@ -281,6 +281,6 @@ class Paginator
      */
     public function __toString()
     {
-        return $this->render();
+        return $this->render()->__toString();
     }
 }

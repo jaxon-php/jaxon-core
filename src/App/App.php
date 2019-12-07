@@ -12,7 +12,6 @@
 
 namespace Jaxon\App;
 
-use Jaxon\Utils\Session\Manager as SessionManager;
 use Exception;
 
 class App
@@ -42,11 +41,6 @@ class App
         {
             throw new Exception("Unexpected content in config file at $sConfigFile");
         }
-
-        // Set the session manager
-        jaxon()->di()->setSessionManager(function() {
-            return new SessionManager();
-        });
 
         $this->bootstrap()
             ->lib($aLibOptions)

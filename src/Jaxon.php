@@ -29,6 +29,9 @@ use Jaxon\Plugin\Plugin;
 use Jaxon\Plugin\Package;
 use Jaxon\Utils\DI\Container;
 use Jaxon\Utils\Config\Reader as ConfigReader;
+use Jaxon\Utils\Template\View;
+use Jaxon\Utils\Template\Engine;
+use Jaxon\Utils\Session\Manager as SessionManager;
 
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
@@ -103,11 +106,23 @@ class Jaxon implements LoggerAwareInterface
             /*
             * Register the Jaxon request and response plugins
             */
-            self::$xContainer->getPluginManager()->registerRequestPlugins();
-            self::$xContainer->getPluginManager()->registerResponsePlugins();
+            $this->di()->getPluginManager()->registerRequestPlugins();
+            $this->di()->getPluginManager()->registerResponsePlugins();
 
             // Set the default logger
             $this->setLogger(new NullLogger());
+            $viewManager = $this->di()->getViewManager();
+            // Add the view renderer
+            $viewManager->addRenderer('jaxon', function() {
+                return new View($this->di()->get(Engine::class));
+            });
+            // By default, render pagination templates with Jaxon.
+            $viewManager->addNamespace('pagination', '', '.php', 'jaxon');
+
+            // Set the session manager
+            $this->di()->setSessionManager(function() {
+                return new SessionManager();
+            });
         }
     }
 

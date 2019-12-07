@@ -150,21 +150,10 @@ class Bootstrap
     {
         $jaxon = jaxon();
         $di = $jaxon->di();
-        $view = $di->getViewManager();
 
         // Event before setting up the module
         $this->triggerEvent('pre.setup');
 
-        // Add the view renderer
-        $view->addRenderer('jaxon', function() {
-            return new View\View();
-        });
-
-        // Set the pagination view namespace
-        $view->addNamespace('pagination', '', '', 'jaxon');
-
-        // Set the the view facade as template renderer
-        $di->alias(TemplateRenderer::class, ViewRenderer::class);
         // Setup the lib config options.
         $di->getConfig()->setOptions($this->aLibOptions);
 

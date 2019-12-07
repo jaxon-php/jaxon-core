@@ -2,7 +2,7 @@
 
 namespace Jaxon\Utils\View;
 
-class Renderer implements \Jaxon\Contracts\Template\Renderer
+class Renderer
 {
     /**
      * The view data store

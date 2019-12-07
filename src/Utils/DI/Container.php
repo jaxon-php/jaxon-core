@@ -32,7 +32,6 @@ use Jaxon\Response\Manager as ResponseManager;
 use Jaxon\Response\Plugin\JQuery as JQueryPlugin;
 use Jaxon\Plugin\Manager as PluginManager;
 use Jaxon\Plugin\Code\Generator as CodeGenerator;
-use Jaxon\Contracts\Template\Renderer as TemplateRenderer;
 use Jaxon\Contracts\Session as SessionContract;
 use Jaxon\Contracts\Container as ContainerContract;
 
@@ -242,10 +241,6 @@ class Container
         $this->libContainer[TemplateEngine::class] = function($c) {
             return new TemplateEngine($c['jaxon.core.template_dir']);
         };
-        // Template Renderer
-        $this->libContainer[TemplateRenderer::class] = function($c) {
-            return $c[TemplateEngine::class];
-        };
         // Validator
         $this->libContainer[Validator::class] = function($c) {
             return new Validator($c[Translator::class], $c[Config::class]);
@@ -256,7 +251,7 @@ class Container
         };
         // Pagination Renderer
         $this->libContainer[PaginationRenderer::class] = function($c) {
-            return new PaginationRenderer($c[TemplateRenderer::class]);
+            return new PaginationRenderer($c[ViewRenderer::class]);
         };
         // Event Dispatcher
         $this->libContainer[EventDispatcher::class] = function() {
@@ -476,16 +471,6 @@ class Container
     public function getTemplateEngine()
     {
         return $this->libContainer[TemplateEngine::class];
-    }
-
-    /**
-     * Get the template renderer
-     *
-     * @return TemplateRenderer
-     */
-    public function getTemplateRenderer()
-    {
-        return $this->libContainer[TemplateRenderer::class];
     }
 
     /**
