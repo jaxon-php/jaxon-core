@@ -199,7 +199,7 @@ class CallableObject
     /**
      * Return the registered callable object
      *
-     * @return object
+     * @return null|object
      */
     public function getRegisteredObject()
     {

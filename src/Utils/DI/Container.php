@@ -317,7 +317,7 @@ class Container
      *
      * @param string|ReflectionClass    $xClass         The class name or the reflection class
      *
-     * @return mixed
+     * @return null|object
      */
     public function make($xClass)
     {

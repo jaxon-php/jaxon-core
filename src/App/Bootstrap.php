@@ -70,7 +70,7 @@ class Bootstrap
     /**
      * Set the library options
      *
-     * @var array       $aLibOptions    The library options
+     * @param array       $aLibOptions    The library options
      *
      * @return Bootstrap
      */
@@ -83,7 +83,7 @@ class Bootstrap
     /**
      * Set the applications options
      *
-     * @var array       $aAppOptions    The application options
+     * @param array       $aAppOptions    The application options
      *
      * @return Bootstrap
      */
@@ -96,7 +96,7 @@ class Bootstrap
     /**
      * Set the ajax endpoint URI
      *
-     * @var string  $sUri   The ajax endpoint URI
+     * @param string  $sUri   The ajax endpoint URI
      *
      * @return Bootstrap
      */
@@ -109,7 +109,10 @@ class Bootstrap
     /**
      * Set the javascript code
      *
-     * @var
+     * @param boolean   $bExportJs      Whether to export the js code in a file
+     * @param string    $sJsUri         The URI to access the js file
+     * @param string    $sJsDir         The directory where to create the js file
+     * @param boolean   $bMinifyJs      Whether to minify the exported js file
      *
      * @return Bootstrap
      */

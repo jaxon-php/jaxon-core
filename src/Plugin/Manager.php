@@ -93,16 +93,6 @@ class Manager
     }
 
     /**
-     * Get the packages
-     *
-     * @return array<Package>
-     */
-    public function getPackages()
-    {
-        return $this->aPackages;
-    }
-
-    /**
      * Get a package instance
      *
      * @param string        $sClassName           The package class name

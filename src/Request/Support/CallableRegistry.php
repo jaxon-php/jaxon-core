@@ -290,7 +290,7 @@ class CallableRegistry
      *
      * @param string        $sClassName            The class name of the callable object
      *
-     * @return object
+     * @return CallableObject
      */
     public function getCallableObject($sClassName)
     {

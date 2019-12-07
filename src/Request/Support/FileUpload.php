@@ -61,7 +61,7 @@ class FileUpload
                 {
                     throw new \Jaxon\Exception\Error($this->getValidatorMessage());
                 }
-           }
+            }
         }
     }
 
