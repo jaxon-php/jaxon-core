@@ -25,6 +25,7 @@
 namespace Jaxon\Request\Support;
 
 use Jaxon\Request\Request;
+use Jaxon\Response\Response;
 
 class CallableObject
 {
@@ -247,13 +248,13 @@ class CallableObject
      * @param string        $sMethod            The name of the method to call
      * @param array         $aArgs              The arguments to pass to the method
      *
-     * @return void
+     * @return null|Response
      */
     public function call($sMethod, $aArgs)
     {
         if(!$this->hasMethod($sMethod))
         {
-            return;
+            return null;
         }
         $reflectionMethod = $this->xReflectionClass->getMethod($sMethod);
         $xRegisteredObject = $this->getRegisteredObject();
