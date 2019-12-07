@@ -134,9 +134,9 @@ class CallableRepository
      *
      * @return CallableObject|null
      */
-    public function getCallableObject($sClassName, array $aOptions)
+    public function getCallableObject($sClassName)
     {
-        return isset($this->aCallableOptions[$sClassName]) ? $this->aCallableOptions[$sClassName] : null;
+        return isset($this->aCallableObjects[$sClassName]) ? $this->aCallableObjects[$sClassName] : null;
     }
 
     /**

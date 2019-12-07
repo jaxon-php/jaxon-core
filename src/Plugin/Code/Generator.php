@@ -158,7 +158,7 @@ class Generator
             {
                 $this->sJsScript .= rtrim($sJsScript, " \n") . "\n";
             }
-            if(($sJsReadyScript = $xGenerator->getReadyScript()))
+            if($xGenerator->readyEnabled() && ($sJsReadyScript = $xGenerator->getReadyScript()))
             {
                 $this->sJsReadyScript .= rtrim($sJsReadyScript, " \n") . "\n";
             }

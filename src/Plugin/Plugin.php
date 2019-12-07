@@ -53,6 +53,15 @@ abstract class Plugin implements Code\Contracts\Generator
     /**
      * @inheritDoc
      */
+    public final function readyEnabled()
+    {
+        // For plugins, the getReadyScript() is always included in the generated code.
+        return true;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function getHash()
     {
         return '';

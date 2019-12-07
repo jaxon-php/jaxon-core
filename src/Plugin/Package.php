@@ -23,11 +23,11 @@ abstract class Package implements Code\Contracts\Generator
     protected $aOptions = [];
 
     /**
-     * Indicate if the plugin ready code shall be executed
+     * Whether to include the getReadyScript() in the generated code.
      *
      * @var boolean
      */
-    protected $bRunJsReady = false;
+    protected $bReadyEnabled = false;
 
     /**
      * Get package options.
@@ -37,22 +37,6 @@ abstract class Package implements Code\Contracts\Generator
     public function getOptions()
     {
         return $this->aOptions;
-    }
-
-    /**
-     * Get or set the $bRunJsReady property
-     *
-     * @param null|boolean  $bRunJsReady     If not null, the value to set
-     *
-     * @return boolean
-     */
-    public function start($bRunJsReady = null)
-    {
-        if($bRunJsReady !== null)
-        {
-            $this->bRunJsReady = $bRunJsReady;
-        }
-        return $this->bRunJsReady;
     }
 
     /**
@@ -71,6 +55,24 @@ abstract class Package implements Code\Contracts\Generator
      * @return string
      */
     abstract public static function getConfigFile();
+
+    /**
+     * Include the getReadyScript() in the generated code.
+     *
+     * @return void
+     */
+    public function ready()
+    {
+        $this->bReadyEnabled = true;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function readyEnabled()
+    {
+        return $this->bReadyEnabled;
+    }
 
     /**
      * @inheritDoc

@@ -57,4 +57,11 @@ interface Generator
      * @return string
      */
     public function getReadyScript();
+
+    /**
+     * Whether to include the getReadyScript() in the generated code.
+     *
+     * @return boolean
+     */
+    public function readyEnabled();
 }
