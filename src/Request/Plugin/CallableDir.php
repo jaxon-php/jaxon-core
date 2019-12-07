@@ -47,9 +47,7 @@ class CallableDir extends RequestPlugin
     }
 
     /**
-     * Return the name of this plugin
-     *
-     * @return string
+     * @inheritDoc
      */
     public function getName()
     {
@@ -111,7 +109,7 @@ class CallableDir extends RequestPlugin
      * Register a callable class
      *
      * @param string        $sType          The type of request handler being registered
-     * @param string        $sDirectory     The path of teh directory being registered
+     * @param string        $sDirectory     The path of the directory being registered
      * @param array|string  $aOptions       The associated options
      *
      * @return boolean
@@ -148,29 +146,7 @@ class CallableDir extends RequestPlugin
     }
 
     /**
-     * Generate a hash for the registered callable objects
-     *
-     * @return string
-     */
-    public function generateHash()
-    {
-        return '';
-    }
-
-    /**
-     * Generate client side javascript code for the registered callable objects
-     *
-     * @return string
-     */
-    public function getScript()
-    {
-        return '';
-    }
-
-    /**
-     * Check if this plugin can process the incoming Jaxon request
-     *
-     * @return boolean
+     * @inheritDoc
      */
     public function canProcessRequest()
     {

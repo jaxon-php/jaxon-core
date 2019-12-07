@@ -215,15 +215,15 @@ class CallableObject
                     $this->xCallableObject = $xCallableObject;
                     $this->response = $xResponse;
                 };
-                $cSetter = $cSetter->bindTo($this->xRegisteredObject, $this->xRegisteredObject);
                 // Can now access protected attributes
-                \call_user_func($cSetter, $this, jaxon()->getResponse());
+                \call_user_func($cSetter->bindTo($this->xRegisteredObject,
+                    $this->xRegisteredObject), $this, jaxon()->getResponse());
             }
 
             // Run the callback for class initialisation
             if(($xCallback = $di->getRequestHandler()->getCallbackManager()->init()))
             {
-                call_user_func($xCallback, $this->xRegisteredObject);
+                \call_user_func($xCallback, $this->xRegisteredObject);
             }
         }
         return $this->xRegisteredObject;

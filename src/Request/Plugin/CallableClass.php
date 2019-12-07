@@ -94,9 +94,7 @@ class CallableClass extends RequestPlugin
     }
 
     /**
-     * Return the name of this plugin
-     *
-     * @return string
+     * @inheritDoc
      */
     public function getName()
     {
@@ -104,9 +102,7 @@ class CallableClass extends RequestPlugin
     }
 
     /**
-     * Return the target class and method
-     *
-     * @return Target|null
+     * @inheritDoc
      */
     public function getTarget()
     {
@@ -153,11 +149,9 @@ class CallableClass extends RequestPlugin
     }
 
     /**
-     * Generate a hash for the registered callable objects
-     *
-     * @return string
+     * @inheritDoc
      */
-    public function generateHash()
+    public function getHash()
     {
         $this->xRegistry->createCallableObjects();
         $aNamespaces = $this->xRepository->getNamespaces();
@@ -277,9 +271,7 @@ class CallableClass extends RequestPlugin
     }
 
     /**
-     * Check if this plugin can process the incoming Jaxon request
-     *
-     * @return boolean
+     * @inheritDoc
      */
     public function canProcessRequest()
     {
@@ -294,9 +286,7 @@ class CallableClass extends RequestPlugin
     }
 
     /**
-     * Process the incoming Jaxon request
-     *
-     * @return boolean
+     * @inheritDoc
      */
     public function processRequest()
     {

@@ -23,6 +23,7 @@ namespace Jaxon\Plugin;
 
 use Jaxon\Jaxon;
 use Jaxon\Plugin\Package;
+use Jaxon\Plugin\Code\Generator as CodeGenerator;
 use Jaxon\Request\Support\CallableRepository;
 use Jaxon\Request\Plugin\CallableClass;
 use Jaxon\Request\Plugin\CallableDir;
@@ -41,13 +42,6 @@ class Manager
     use \Jaxon\Features\Translator;
 
     /**
-     * All plugins, indexed by priority
-     *
-     * @var array
-     */
-    private $aPlugins = [];
-
-    /**
      * Request plugins, indexed by name
      *
      * @var array
@@ -62,20 +56,20 @@ class Manager
     private $aResponsePlugins = [];
 
     /**
-     * An array of package names
+     * The code generator
      *
-     * @var array
+     * @var CodeGenerator
      */
-    private $aPackages = [];
+    private $xCodeGenerator;
 
     /**
-     * Get the request and response plugins
+     * The constructor
      *
-     * @return array
+     * @param CodeGenerator     $xCodeGenerator
      */
-    public function getPlugins()
+    public function __construct(CodeGenerator $xCodeGenerator)
     {
-        return $this->aPlugins;
+        $this->xCodeGenerator = $xCodeGenerator;
     }
 
     /**
@@ -122,28 +116,6 @@ class Manager
     }
 
     /**
-     * Inserts an entry into an array given the specified priority number
-     *
-     * If a plugin already exists with the given priority, the priority is automatically incremented until a free spot is found.
-     * The plugin is then inserted into the empty spot in the array.
-     *
-     * @param Plugin         $xPlugin               An instance of a plugin
-     * @param integer        $nPriority             The desired priority, used to order the plugins
-     *
-     * @return void
-     */
-    private function setPluginPriority(Plugin $xPlugin, $nPriority)
-    {
-        while(isset($this->aPlugins[$nPriority]))
-        {
-            $nPriority++;
-        }
-        $this->aPlugins[$nPriority] = $xPlugin;
-        // Sort the array by ascending keys
-        ksort($this->aPlugins);
-    }
-
-    /**
      * Register a plugin
      *
      * Below is a table for priorities and their description:
@@ -163,14 +135,14 @@ class Manager
         {
             // The name of a request plugin is used as key in the plugin table
             $this->aRequestPlugins[$xPlugin->getName()] = $xPlugin;
-            $this->setPluginPriority($xPlugin, $nPriority);
+            $this->xCodeGenerator->addGenerator($xPlugin, $nPriority);
             $bIsUsed = true;
         }
         elseif($xPlugin instanceof Response)
         {
             // The name of a response plugin is used as key in the plugin table
             $this->aResponsePlugins[$xPlugin->getName()] = $xPlugin;
-            $this->setPluginPriority($xPlugin, $nPriority);
+            $this->xCodeGenerator->addGenerator($xPlugin, $nPriority);
             $bIsUsed = true;
         }
 
@@ -219,7 +191,7 @@ class Manager
         });
 
         // Read and apply the package config.
-        $aPackageConfig = $jaxon->config()->read($sClassName::config());
+        $aPackageConfig = $jaxon->config()->read($sClassName::getConfigFile());
         $xPackageConfig = $di->newConfig($aPackageConfig);
         $this->_registerFromConfig($xPackageConfig);
         // Register the view namespaces
@@ -230,11 +202,10 @@ class Manager
             $this->aOptions = $_aOptions;
         };
         $xPackage = $this->getPackage($sClassName);
-        $cSetter = $cSetter->bindTo($xPackage, $xPackage);
         // Can now access protected attributes
-        \call_user_func($cSetter, $aOptions);
+        \call_user_func($cSetter->bindTo($xPackage, $xPackage), $aOptions);
 
-        $this->aPackages[] = $xPackage;
+        $this->xCodeGenerator->addGenerator($xPackage, 500);
     }
 
     /**

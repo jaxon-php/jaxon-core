@@ -82,6 +82,14 @@ class FileUpload extends RequestPlugin
     }
 
     /**
+     * @inheritDoc
+     */
+    public function getName()
+    {
+        return Jaxon::FILE_UPLOAD;
+    }
+
+    /**
      * Set the uploaded file name sanitizer
      *
      * @param Closure       $cSanitizer            The closure
@@ -247,36 +255,6 @@ class FileUpload extends RequestPlugin
     }
 
     /**
-     * Return the name of this plugin
-     *
-     * @return string
-     */
-    public function getName()
-    {
-        return Jaxon::FILE_UPLOAD;
-    }
-
-    /**
-     * Generate a hash for the registered browser events
-     *
-     * @return string
-     */
-    public function generateHash()
-    {
-        return '';
-    }
-
-    /**
-     * Generate client side javascript code for the registered browser events
-     *
-     * @return string
-     */
-    public function getScript()
-    {
-        return '';
-    }
-
-    /**
      * Inform this plugin that other plugin can process the current request
      *
      * @return void
@@ -290,9 +268,7 @@ class FileUpload extends RequestPlugin
     }
 
     /**
-     * Check if this plugin can process the incoming Jaxon request
-     *
-     * @return boolean
+     * @inheritDoc
      */
     public function canProcessRequest()
     {

@@ -31,7 +31,7 @@ use Jaxon\Request\Support\CallableObject;
 use Jaxon\Response\Manager as ResponseManager;
 use Jaxon\Response\Plugin\JQuery as JQueryPlugin;
 use Jaxon\Plugin\Manager as PluginManager;
-use Jaxon\Plugin\CodeGenerator;
+use Jaxon\Plugin\Code\Generator as CodeGenerator;
 use Jaxon\Contracts\Template\Renderer as TemplateRenderer;
 use Jaxon\Contracts\Session as SessionContract;
 use Jaxon\Contracts\Container as ContainerContract;
@@ -185,8 +185,8 @@ class Container
          * Managers
          */
         // Plugin Manager
-        $this->libContainer[PluginManager::class] = function() {
-            return new PluginManager();
+        $this->libContainer[PluginManager::class] = function($c) {
+            return new PluginManager($c[CodeGenerator::class]);
         };
         // Request Handler
         $this->libContainer[RequestHandler::class] = function($c) {
@@ -206,7 +206,7 @@ class Container
         };
         // Code Generator
         $this->libContainer[CodeGenerator::class] = function($c) {
-            return new CodeGenerator($c[PluginManager::class], $c[TemplateEngine::class]);
+            return new CodeGenerator($c[TemplateEngine::class]);
         };
         // View Manager
         $this->libContainer[ViewManager::class] = function() {

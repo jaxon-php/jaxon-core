@@ -85,13 +85,23 @@ trait App
     abstract public function processRequest();
 
     /**
-     * Get the javascript code to be sent to the browser.
+     * Get the HTML tags to include Jaxon CSS code and files into the page.
      *
      * @return string  the javascript code
      */
-    public function script($bIncludeJs = false, $bIncludeCss = false)
+    public function css()
     {
-        return jaxon()->getScript($bIncludeJs, $bIncludeCss);
+        return jaxon()->getCss();
+    }
+
+    /**
+     * Get the HTML tags to include Jaxon CSS code and files into the page.
+     *
+     * @return string  the javascript code
+     */
+    public function getCss()
+    {
+        return jaxon()->getCss();
     }
 
     /**
@@ -105,13 +115,33 @@ trait App
     }
 
     /**
-     * Get the HTML tags to include Jaxon CSS code and files into the page.
+     * Get the HTML tags to include Jaxon javascript files into the page.
      *
      * @return string  the javascript code
      */
-    public function css()
+    public function getJs()
     {
-        return jaxon()->getCss();
+        return jaxon()->getJs();
+    }
+
+    /**
+     * Get the javascript code to be sent to the browser.
+     *
+     * @return string  the javascript code
+     */
+    public function script($bIncludeJs = false, $bIncludeCss = false)
+    {
+        return jaxon()->getScript($bIncludeJs, $bIncludeCss);
+    }
+
+    /**
+     * Get the javascript code to be sent to the browser.
+     *
+     * @return string  the javascript code
+     */
+    public function getScript($bIncludeJs = false, $bIncludeCss = false)
+    {
+        return jaxon()->getScript($bIncludeJs, $bIncludeCss);
     }
 
     /**

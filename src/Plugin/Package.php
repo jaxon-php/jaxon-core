@@ -1,8 +1,19 @@
 <?php
 
+/**
+ * Generator.php - Code generator interface
+ *
+ * Any class generating css or js code must implement this interface.
+ *
+ * @package jaxon-core
+ * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
+ * @license https://opensource.org/licenses/BSD-3-Clause BSD 3-Clause License
+ * @link https://github.com/jaxon-php/jaxon-core
+ */
+
 namespace Jaxon\Plugin;
 
-abstract class Package
+abstract class Package implements Code\Contracts\Generator
 {
     /**
      * The configuration options of the package
@@ -59,41 +70,39 @@ abstract class Package
      *
      * @return string
      */
-    abstract public static function config();
+    abstract public static function getConfigFile();
 
     /**
-     * Get the HTML tags to include CSS code and files into the page
-     *
-     * The code must be enclosed in the appropriate HTML tags.
-     *
-     * @return string
+     * @inheritDoc
      */
-    public function css()
+    public final function getHash()
+    {
+        // Packages do not generate hash on their own. So we make this method final.
+        return '';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getCss()
     {
         return '';
     }
 
     /**
-     * Get the HTML tags to include javascript code and files into the page
-     *
-     * The code must be enclosed in the appropriate HTML tags.
-     *
-     * @return string
+     * @inheritDoc
      */
-    public function js()
+    public function getJs()
     {
         return '';
     }
 
     /**
-     * Get the javascript code to execute after page load
-     *
-     * The code must NOT be enclosed in HTML tags.
-     *
-     * @return string
+     * @inheritDoc
      */
-    public function ready()
+    public final function getScript()
     {
+        // Packages do not generate script. So we make this method final.
         return '';
     }
 
@@ -102,8 +111,5 @@ abstract class Package
      *
      * @return string
      */
-    public function html()
-    {
-        return '';
-    }
+    abstract public function getHtml();
 }

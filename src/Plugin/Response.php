@@ -72,38 +72,4 @@ abstract class Response extends Plugin
     {
         $this->xResponse->addPluginCommand($this, $aAttributes, $sData);
     }
-
-    /**
-     * Return true if the object is a response plugin. Always return true here.
-     *
-     * @return boolean
-     */
-    public function isResponse()
-    {
-        return true;
-    }
-
-    /**
-     * Get the HTML tags to include Jaxon javascript files into the page
-     *
-     * The code must be enclosed in the appropriate HTML tags.
-     *
-     * @return string
-     */
-    public function getJs()
-    {
-        return '';
-    }
-
-    /**
-     * Get the HTML tags to include Jaxon CSS code and files into the page
-     *
-     * The code must be enclosed in the appropriate HTML tags.
-     *
-     * @return string
-     */
-    public function getCss()
-    {
-        return '';
-    }
 }
