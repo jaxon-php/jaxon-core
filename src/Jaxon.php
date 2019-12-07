@@ -43,15 +43,6 @@ class Jaxon
     private $sVersion = 'Jaxon 3.0.4';
 
     /*
-     * Processing events
-     */
-    const PROCESSING_EVENT = 'ProcessingEvent';
-    const PROCESSING_EVENT_BEFORE = 'BeforeProcessing';
-    const PROCESSING_EVENT_AFTER = 'AfterProcessing';
-    const PROCESSING_EVENT_INVALID = 'InvalidRequest';
-    const PROCESSING_EVENT_ERROR = 'ProcessingError';
-
-    /*
      * Request plugins
      */
     const CALLABLE_CLASS = 'CallableClass';
@@ -258,29 +249,6 @@ class Jaxon
      */
     public function register($sType, $sCallable, $xOptions = [])
     {
-        if($sType == Jaxon::PROCESSING_EVENT)
-        {
-            $sEvent = $sCallable;
-            $xCallback = $xOptions;
-            switch($sEvent)
-            {
-            case Jaxon::PROCESSING_EVENT_BEFORE:
-                $this->callback()->before($xCallback);
-                break;
-            case Jaxon::PROCESSING_EVENT_AFTER:
-                $this->callback()->after($xCallback);
-                break;
-            case Jaxon::PROCESSING_EVENT_INVALID:
-                $this->callback()->invalid($xCallback);
-                break;
-            case Jaxon::PROCESSING_EVENT_ERROR:
-                $this->callback()->error($xCallback);
-                break;
-            default:
-                break;
-            }
-            return;
-        }
         return $this->di()->getPluginManager()->registerCallable($sType, $sCallable, $xOptions);
     }
 
