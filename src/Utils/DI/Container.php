@@ -31,8 +31,7 @@ use Jaxon\Request\Support\CallableObject;
 use Jaxon\Response\Manager as ResponseManager;
 use Jaxon\Response\Plugin\JQuery as JQueryPlugin;
 use Jaxon\Plugin\Manager as PluginManager;
-use Jaxon\Plugin\CodeGenerator;
-use Jaxon\Contracts\Template\Renderer as TemplateRenderer;
+use Jaxon\Plugin\Code\Generator as CodeGenerator;
 use Jaxon\Contracts\Session as SessionContract;
 use Jaxon\Contracts\Container as ContainerContract;
 
@@ -43,7 +42,6 @@ use Jaxon\Utils\Config\Config;
 use Jaxon\Utils\Config\Reader as ConfigReader;
 use Jaxon\Utils\View\Manager as ViewManager;
 use Jaxon\Utils\View\Renderer as ViewRenderer;
-use Jaxon\Utils\View\Renderer;
 use Jaxon\Utils\Dialogs\Dialog;
 use Jaxon\Utils\Template\Minifier;
 use Jaxon\Utils\Template\Engine as TemplateEngine;
@@ -55,6 +53,7 @@ use Jaxon\Utils\Http\URI;
 
 use Lemon\Event\EventDispatcher;
 use Closure;
+use ReflectionClass;
 
 class Container
 {
@@ -78,6 +77,7 @@ class Container
     public function __construct()
     {
         $this->libContainer = new \Pimple\Container();
+        $this->libContainer[Container::class] = $this;
 
         $sTranslationDir = realpath(__DIR__ . '/../../../translations');
         $sTemplateDir = realpath(__DIR__ . '/../../../templates');
@@ -184,8 +184,8 @@ class Container
          * Managers
          */
         // Plugin Manager
-        $this->libContainer[PluginManager::class] = function() {
-            return new PluginManager();
+        $this->libContainer[PluginManager::class] = function($c) {
+            return new PluginManager($c[CodeGenerator::class]);
         };
         // Request Handler
         $this->libContainer[RequestHandler::class] = function($c) {
@@ -205,7 +205,7 @@ class Container
         };
         // Code Generator
         $this->libContainer[CodeGenerator::class] = function($c) {
-            return new CodeGenerator($c[PluginManager::class], $c[TemplateEngine::class]);
+            return new CodeGenerator($c[TemplateEngine::class]);
         };
         // View Manager
         $this->libContainer[ViewManager::class] = function() {
@@ -241,10 +241,6 @@ class Container
         $this->libContainer[TemplateEngine::class] = function($c) {
             return new TemplateEngine($c['jaxon.core.template_dir']);
         };
-        // Template Renderer
-        $this->libContainer[TemplateRenderer::class] = function($c) {
-            return $c[TemplateEngine::class];
-        };
         // Validator
         $this->libContainer[Validator::class] = function($c) {
             return new Validator($c[Translator::class], $c[Config::class]);
@@ -255,7 +251,7 @@ class Container
         };
         // Pagination Renderer
         $this->libContainer[PaginationRenderer::class] = function($c) {
-            return new PaginationRenderer($c[TemplateRenderer::class]);
+            return new PaginationRenderer($c[ViewRenderer::class]);
         };
         // Event Dispatcher
         $this->libContainer[EventDispatcher::class] = function() {
@@ -291,7 +287,9 @@ class Container
      */
     public function set($sClass, Closure $xClosure)
     {
-        $this->libContainer[$sClass] = $xClosure;
+        $this->libContainer[$sClass] = function() use($xClosure) {
+            return call_user_func($xClosure, $this);
+        };
     }
 
     /**
@@ -307,6 +305,39 @@ class Container
         $this->libContainer[$sClass] = function($c) use ($sAlias) {
             return $c[$sAlias];
         };
+    }
+
+    /**
+     * Set an alias
+     *
+     * @param string|ReflectionClass    $xClass         The class name or the reflection class
+     *
+     * @return null|object
+     */
+    public function make($xClass)
+    {
+        if(is_string($xClass))
+        {
+            // Create tye reflection class instance
+            $xClass = new ReflectionClass($xClass);
+        }
+        if(!($xClass instanceof ReflectionClass))
+        {
+            return null;
+        }
+        // Use the Reflection class to get the parameters of the constructor
+        if(($constructor = $xClass->getConstructor()) == null)
+        {
+            return $xClass->newInstance();
+        }
+        $parameters = $constructor->getParameters();
+        $parameterInstances = [];
+        foreach($parameters as $parameter)
+        {
+            // Get the parameter instance from the DI
+            $parameterInstances[] = $this->get($parameter->getClass()->getName());
+        }
+        return $xClass->newInstanceArgs($parameterInstances);
     }
 
     /**
@@ -440,16 +471,6 @@ class Container
     public function getTemplateEngine()
     {
         return $this->libContainer[TemplateEngine::class];
-    }
-
-    /**
-     * Get the template renderer
-     *
-     * @return TemplateRenderer
-     */
-    public function getTemplateRenderer()
-    {
-        return $this->libContainer[TemplateRenderer::class];
     }
 
     /**

@@ -24,6 +24,6 @@ trait Template
      */
     public function render($sTemplate, array $aVars = [])
     {
-        return jaxon()->di()->getTemplateRenderer()->render($sTemplate, $aVars);
+        return jaxon()->di()->getTemplateEngine()->render($sTemplate, $aVars);
     }
 }

@@ -23,6 +23,7 @@ namespace Jaxon\Plugin;
 
 use Jaxon\Jaxon;
 use Jaxon\Plugin\Package;
+use Jaxon\Plugin\Code\Generator as CodeGenerator;
 use Jaxon\Request\Support\CallableRepository;
 use Jaxon\Request\Plugin\CallableClass;
 use Jaxon\Request\Plugin\CallableDir;
@@ -41,13 +42,6 @@ class Manager
     use \Jaxon\Features\Translator;
 
     /**
-     * All plugins, indexed by priority
-     *
-     * @var array
-     */
-    private $aPlugins = [];
-
-    /**
      * Request plugins, indexed by name
      *
      * @var array
@@ -62,20 +56,20 @@ class Manager
     private $aResponsePlugins = [];
 
     /**
-     * An array of package names
+     * The code generator
      *
-     * @var array
+     * @var CodeGenerator
      */
-    private $aPackages = [];
+    private $xCodeGenerator;
 
     /**
-     * Get the request and response plugins
+     * The constructor
      *
-     * @return array
+     * @param CodeGenerator     $xCodeGenerator
      */
-    public function getPlugins()
+    public function __construct(CodeGenerator $xCodeGenerator)
     {
-        return $this->aPlugins;
+        $this->xCodeGenerator = $xCodeGenerator;
     }
 
     /**
@@ -99,35 +93,16 @@ class Manager
     }
 
     /**
-     * Get the package plugins
+     * Get a package instance
      *
-     * @return array
+     * @param string        $sClassName           The package class name
+     *
+     * @return Package
      */
-    public function getPackages()
+    public function getPackage($sClassName)
     {
-        return $this->aPackages;
-    }
-
-    /**
-     * Inserts an entry into an array given the specified priority number
-     *
-     * If a plugin already exists with the given priority, the priority is automatically incremented until a free spot is found.
-     * The plugin is then inserted into the empty spot in the array.
-     *
-     * @param Plugin         $xPlugin               An instance of a plugin
-     * @param integer        $nPriority             The desired priority, used to order the plugins
-     *
-     * @return void
-     */
-    private function setPluginPriority(Plugin $xPlugin, $nPriority)
-    {
-        while(isset($this->aPlugins[$nPriority]))
-        {
-            $nPriority++;
-        }
-        $this->aPlugins[$nPriority] = $xPlugin;
-        // Sort the array by ascending keys
-        ksort($this->aPlugins);
+        $sClassName = trim($sClassName, '\\ ');
+        return jaxon()->di()->get($sClassName);
     }
 
     /**
@@ -145,55 +120,82 @@ class Manager
      */
     public function registerPlugin(Plugin $xPlugin, $nPriority = 1000)
     {
-        $bIsMessage = ($xPlugin instanceof \Jaxon\Contracts\Dialogs\Message);
-        $bIsQuestion = ($xPlugin instanceof \Jaxon\Contracts\Dialogs\Question);
-        $bIsListener = ($xPlugin instanceof \Jaxon\Contracts\Event\Listener);
+        $bIsUsed = false;
         if($xPlugin instanceof Request)
         {
             // The name of a request plugin is used as key in the plugin table
             $this->aRequestPlugins[$xPlugin->getName()] = $xPlugin;
+            $this->xCodeGenerator->addGenerator($xPlugin, $nPriority);
+            $bIsUsed = true;
         }
         elseif($xPlugin instanceof Response)
         {
             // The name of a response plugin is used as key in the plugin table
             $this->aResponsePlugins[$xPlugin->getName()] = $xPlugin;
+            $this->xCodeGenerator->addGenerator($xPlugin, $nPriority);
+            $bIsUsed = true;
         }
-        elseif(!$bIsQuestion && !$bIsMessage && !$bIsListener)
+
+        // This plugin implements the Message interface
+        if($xPlugin instanceof \Jaxon\Contracts\Dialogs\Message)
+        {
+            jaxon()->dialog()->setMessage($xPlugin);
+            $bIsUsed = true;
+        }
+        // This plugin implements the Question interface
+        if($xPlugin instanceof \Jaxon\Contracts\Dialogs\Question)
+        {
+            jaxon()->dialog()->setQuestion($xPlugin);
+            $bIsUsed = true;
+        }
+        // Register the plugin as an event listener
+        if($xPlugin instanceof \Jaxon\Contracts\Event\Listener)
+        {
+            $this->addEventListener($xPlugin);
+            $bIsUsed = true;
+        }
+
+        if(!$bIsUsed)
         {
             $sErrorMessage = $this->trans('errors.register.invalid', ['name' => get_class($xPlugin)]);
             throw new \Jaxon\Exception\Error($sErrorMessage);
         }
-        // This plugin implements the Message interface
-        if($bIsMessage)
-        {
-            jaxon()->dialog()->setMessage($xPlugin);
-        }
-        // This plugin implements the Question interface
-        if($bIsQuestion)
-        {
-            jaxon()->dialog()->setQuestion($xPlugin);
-        }
-        // Register the plugin as an event listener
-        if($bIsListener)
-        {
-            $this->addEventListener($xPlugin);
-        }
-
-        $this->setPluginPriority($xPlugin, $nPriority);
     }
 
     /**
      * Register a package
      *
-     * @param string         $sPackageClass         The package class name
-     * @param Closure        $xClosure              A closure to create package instance
+     * @param string        $sClassName           The package class name
+     * @param array         $aOptions           The package options
      *
      * @return void
      */
-    public function registerPackage(string $sPackageClass, Closure $xClosure)
+    public function registerPackage($sClassName, array $aOptions)
     {
-        $this->aPackages[] = $sPackageClass;
-        jaxon()->di()->set($sPackageClass, $xClosure);
+        $jaxon = jaxon();
+        $di = $jaxon->di();
+
+        $sClassName = trim($sClassName, '\\ ');
+        $di->set($sClassName, function() use($di, $sClassName, $aOptions) {
+            return $di->make($sClassName);
+        });
+
+        // Read and apply the package config.
+        $aPackageConfig = $jaxon->config()->read($sClassName::getConfigFile());
+        $xPackageConfig = $di->newConfig($aPackageConfig);
+        $this->_registerFromConfig($xPackageConfig);
+        // Register the view namespaces
+        $di->getViewManager()->addNamespaces($xPackageConfig);
+
+        // Set the package options
+        $cSetter = function($_aOptions) {
+            $this->aOptions = $_aOptions;
+        };
+        $xPackage = $this->getPackage($sClassName);
+        // Can now access protected attributes
+        \call_user_func($cSetter->bindTo($xPackage, $xPackage), $aOptions);
+
+        $this->xCodeGenerator->addGenerator($xPackage, 500);
     }
 
     /**
@@ -227,7 +229,7 @@ class Manager
      *
      * @return void
      */
-    private function registerCallablesFromConfig($xAppConfig, $sSection, $sCallableType)
+    private function registerCallablesFromConfig(Config $xAppConfig, $sSection, $sCallableType)
     {
         $aConfig = $xAppConfig->getOption($sSection, []);
         foreach($aConfig as $xKey => $xValue)
@@ -257,7 +259,7 @@ class Manager
      *
      * @return void
      */
-    public function registerFromConfig($xAppConfig)
+    private function _registerFromConfig(Config $xAppConfig)
     {
         // Register functions
         $this->registerCallablesFromConfig($xAppConfig, 'functions', Jaxon::CALLABLE_FUNCTION);
@@ -267,6 +269,33 @@ class Manager
 
         // Register directories
         $this->registerCallablesFromConfig($xAppConfig, 'directories', Jaxon::CALLABLE_DIR);
+
+        // Register classes in DI container
+        $di = jaxon()->di();
+        $aContainerConfig = $xAppConfig->getOption('container', []);
+        foreach($aContainerConfig as $sClassName => $xClosure)
+        {
+            $di->set($sClassName, $xClosure);
+        }
+    }
+
+    /**
+     * Read and set Jaxon options from a JSON config file
+     *
+     * @param Config        $xAppConfig        The config options
+     *
+     * @return void
+     */
+    public function registerFromConfig(Config $xAppConfig)
+    {
+        $this->_registerFromConfig($xAppConfig);
+
+        // Register packages
+        $aPackageConfig = $xAppConfig->getOption('packages', []);
+        foreach($aPackageConfig as $sClassName => $aOptions)
+        {
+            $this->registerPackage($sClassName, $aOptions);
+        }
     }
 
 

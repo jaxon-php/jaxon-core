@@ -26,13 +26,23 @@
 namespace Jaxon;
 
 use Jaxon\Plugin\Plugin;
+use Jaxon\Plugin\Package;
 use Jaxon\Utils\DI\Container;
 use Jaxon\Utils\Config\Reader as ConfigReader;
+use Jaxon\Utils\Template\View;
+use Jaxon\Utils\Template\Engine;
+use Jaxon\Utils\Session\Manager as SessionManager;
 
-class Jaxon
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
+use Psr\Log\LoggerAwareTrait;
+use Psr\Log\LoggerAwareInterface;
+
+class Jaxon implements LoggerAwareInterface
 {
     use Features\Config;
     use Features\Translator;
+    use LoggerAwareTrait;
 
     /**
      * Package version number
@@ -42,15 +52,6 @@ class Jaxon
     private $sVersion = 'Jaxon 3.0.4';
 
     /*
-     * Processing events
-     */
-    const PROCESSING_EVENT = 'ProcessingEvent';
-    const PROCESSING_EVENT_BEFORE = 'BeforeProcessing';
-    const PROCESSING_EVENT_AFTER = 'AfterProcessing';
-    const PROCESSING_EVENT_INVALID = 'InvalidRequest';
-    const PROCESSING_EVENT_ERROR = 'ProcessingError';
-
-    /*
      * Request plugins
      */
     const CALLABLE_CLASS = 'CallableClass';
@@ -58,6 +59,8 @@ class Jaxon
     const CALLABLE_FUNCTION = 'CallableFunction';
     // For uploaded files.
     const FILE_UPLOAD = 'FileUpload';
+    // For packages.
+    const PACKAGE = 'Package';
     // For compatibility with previous versions
     const CALLABLE_OBJECT = 'CallableClass'; // Same as CALLABLE_CLASS
     const USER_FUNCTION = 'CallableFunction'; // Same as CALLABLE_FUNCTION
@@ -103,8 +106,23 @@ class Jaxon
             /*
             * Register the Jaxon request and response plugins
             */
-            self::$xContainer->getPluginManager()->registerRequestPlugins();
-            self::$xContainer->getPluginManager()->registerResponsePlugins();
+            $this->di()->getPluginManager()->registerRequestPlugins();
+            $this->di()->getPluginManager()->registerResponsePlugins();
+
+            // Set the default logger
+            $this->setLogger(new NullLogger());
+            $viewManager = $this->di()->getViewManager();
+            // Add the view renderer
+            $viewManager->addRenderer('jaxon', function() {
+                return new View($this->di()->get(Engine::class));
+            });
+            // By default, render pagination templates with Jaxon.
+            $viewManager->addNamespace('pagination', '', '.php', 'jaxon');
+
+            // Set the session manager
+            $this->di()->setSessionManager(function() {
+                return new SessionManager();
+            });
         }
     }
 
@@ -126,6 +144,16 @@ class Jaxon
     public function getVersion()
     {
         return $this->sVersion;
+    }
+
+    /**
+     * Get the logger
+     *
+     * @return LoggerInterface
+     */
+    public function logger()
+    {
+        return $this->logger;
     }
 
     /**
@@ -197,6 +225,7 @@ class Jaxon
     {
         return $this->di()->newResponse();
     }
+
     /**
      * Register a plugin
      *
@@ -213,6 +242,19 @@ class Jaxon
     public function registerPlugin(Plugin $xPlugin, $nPriority = 1000)
     {
         $this->di()->getPluginManager()->registerPlugin($xPlugin, $nPriority);
+    }
+
+    /**
+     * Register a package
+     *
+     * @param string        $sClassName         The package class name
+     * @param array         $aOptions           The package options
+     *
+     * @return void
+     */
+    public function registerPackage($sClassName, array $aOptions = [])
+    {
+        $this->di()->getPluginManager()->registerPackage($sClassName, $aOptions);
     }
 
     /**
@@ -241,29 +283,6 @@ class Jaxon
      */
     public function register($sType, $sCallable, $xOptions = [])
     {
-        if($sType == Jaxon::PROCESSING_EVENT)
-        {
-            $sEvent = $sCallable;
-            $xCallback = $xOptions;
-            switch($sEvent)
-            {
-            case Jaxon::PROCESSING_EVENT_BEFORE:
-                $this->callback()->before($xCallback);
-                break;
-            case Jaxon::PROCESSING_EVENT_AFTER:
-                $this->callback()->after($xCallback);
-                break;
-            case Jaxon::PROCESSING_EVENT_INVALID:
-                $this->callback()->invalid($xCallback);
-                break;
-            case Jaxon::PROCESSING_EVENT_ERROR:
-                $this->callback()->error($xCallback);
-                break;
-            default:
-                break;
-            }
-            return;
-        }
         return $this->di()->getPluginManager()->registerCallable($sType, $sCallable, $xOptions);
     }
 
@@ -403,6 +422,18 @@ class Jaxon
     public function plugin($sName)
     {
         return $this->di()->getPluginManager()->getResponsePlugin($sName);
+    }
+
+    /**
+     * Get a package instance
+     *
+     * @param string        $sClassName           The package class name
+     *
+     * @return \Jaxon\Plugin\Package
+     */
+    public function package($sClassName)
+    {
+        return $this->di()->getPluginManager()->getPackage($sClassName);
     }
 
     /**

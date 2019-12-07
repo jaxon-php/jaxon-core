@@ -25,6 +25,7 @@
 namespace Jaxon\Request\Support;
 
 use Jaxon\Request\Request;
+use Jaxon\Response\Response;
 
 class CallableObject
 {
@@ -199,41 +200,31 @@ class CallableObject
     /**
      * Return the registered callable object
      *
-     * @return object
+     * @return null|object
      */
     public function getRegisteredObject()
     {
         if($this->xRegisteredObject == null)
         {
             $di = jaxon()->di();
-            // Use the Reflection class to get the parameters of the constructor
-            if(($constructor = $this->xReflectionClass->getConstructor()) != null)
-            {
-                $parameters = $constructor->getParameters();
-                $parameterInstances = [];
-                foreach($parameters as $parameter)
-                {
-                    // Get the parameter instance from the DI
-                    $parameterInstances[] = $di->get($parameter->getClass()->getName());
-                }
-                $this->xRegisteredObject = $this->xReflectionClass->newInstanceArgs($parameterInstances);
-            }
-            else
-            {
-                $this->xRegisteredObject = $this->xReflectionClass->newInstance();
-            }
-
+            $this->xRegisteredObject = $di->make($this->xReflectionClass);
             // Initialize the object
             if($this->xRegisteredObject instanceof \Jaxon\CallableClass)
             {
-                $this->xRegisteredObject->xCallableObject = $this;
-                $this->xRegisteredObject->response = jaxon()->getResponse();
+                // Set the members of the object
+                $cSetter = function($xCallableObject, $xResponse) {
+                    $this->xCallableObject = $xCallableObject;
+                    $this->response = $xResponse;
+                };
+                // Can now access protected attributes
+                \call_user_func($cSetter->bindTo($this->xRegisteredObject,
+                    $this->xRegisteredObject), $this, jaxon()->getResponse());
             }
 
             // Run the callback for class initialisation
             if(($xCallback = $di->getRequestHandler()->getCallbackManager()->init()))
             {
-                call_user_func_array($xCallback, [$this->xRegisteredObject]);
+                \call_user_func($xCallback, $this->xRegisteredObject);
             }
         }
         return $this->xRegisteredObject;
@@ -257,13 +248,13 @@ class CallableObject
      * @param string        $sMethod            The name of the method to call
      * @param array         $aArgs              The arguments to pass to the method
      *
-     * @return void
+     * @return null|Response
      */
     public function call($sMethod, $aArgs)
     {
         if(!$this->hasMethod($sMethod))
         {
-            return;
+            return null;
         }
         $reflectionMethod = $this->xReflectionClass->getMethod($sMethod);
         $xRegisteredObject = $this->getRegisteredObject();

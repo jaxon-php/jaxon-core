@@ -18,6 +18,7 @@
     },
     "require": {
         "php": ">=5.6.0",
+        "psr/log": "*",
         "pimple/pimple": "^3.0",
         "lemonphp/event": "^1.0",
         "matthiasmullie/minify": "^1.3"

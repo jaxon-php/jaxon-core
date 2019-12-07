@@ -60,9 +60,7 @@ class CallableFunction extends RequestPlugin
     }
 
     /**
-     * Return the name of this plugin
-     *
-     * @return string
+     * @inheritDoc
      */
     public function getName()
     {
@@ -70,9 +68,7 @@ class CallableFunction extends RequestPlugin
     }
 
     /**
-     * Return the target function
-     *
-     * @return Target|null
+     * @inheritDoc
      */
     public function getTarget()
     {
@@ -86,9 +82,9 @@ class CallableFunction extends RequestPlugin
     /**
      * Register a user defined function
      *
-     * @param string        $sType          The type of request handler being registered
+     * @param string        $sType              The type of request handler being registered
      * @param string        $sCallableFunction  The name of the function being registered
-     * @param array|string  $aOptions       The associated options
+     * @param array|string  $aOptions           The associated options
      *
      * @return boolean
      */
@@ -143,19 +139,15 @@ class CallableFunction extends RequestPlugin
     }
 
     /**
-     * Generate a hash for the registered user functions
-     *
-     * @return string
+     * @inheritDoc
      */
-    public function generateHash()
+    public function getHash()
     {
         return md5(implode('', $this->aFunctions));
     }
 
     /**
-     * Generate client side javascript code for the registered user functions
-     *
-     * @return string
+     * @inheritDoc
      */
     public function getScript()
     {
@@ -170,9 +162,7 @@ class CallableFunction extends RequestPlugin
     }
 
     /**
-     * Check if this plugin can process the incoming Jaxon request
-     *
-     * @return boolean
+     * @inheritDoc
      */
     public function canProcessRequest()
     {
@@ -185,9 +175,7 @@ class CallableFunction extends RequestPlugin
     }
 
     /**
-     * Process the incoming Jaxon request
-     *
-     * @return boolean
+     * @inheritDoc
      */
     public function processRequest()
     {

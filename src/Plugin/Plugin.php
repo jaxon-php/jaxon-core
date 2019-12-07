@@ -20,60 +20,12 @@
 
 namespace Jaxon\Plugin;
 
-abstract class Plugin
+abstract class Plugin implements Code\Contracts\Generator
 {
     use \Jaxon\Features\Config;
 
     /**
-     * Generate the javascript code for this plugin
-     *
-     * Called by <Jaxon\Plugin\Manager> when the page's HTML is being sent to the browser.
-     * This code is either inserted right into the HTML code, or exported in an external file
-     * which is then included in the page.
-     *
-     * @return string
-     */
-    abstract public function getScript();
-
-    /**
-     * Generate a unique hash for this plugin
-     *
-     * @return string
-     */
-    abstract public function generateHash();
-
-    /**
-     * Return true if the object is a request plugin. Always return false here.
-     *
-     * @return boolean
-     */
-    public function isRequest()
-    {
-        return false;
-    }
-
-    /**
-     * Return true if the object is a response plugin. Always return false here.
-     *
-     * @return boolean
-     */
-    public function isResponse()
-    {
-        return false;
-    }
-
-    /**
-     * Get the plugin name
-     *
-     * Called by the <Jaxon\Plugin\Manager> when the user script requests a plugin.
-     * This name must match the plugin name requested in the called to <Jaxon\Response\Response->plugin>.
-     *
-     * @return string
-     */
-    abstract public function getName();
-
-    /**
-     * Check if the assets of this plugin shall be included in Jaxon generated code
+     * Check if the assets of this plugin shall be included in Jaxon generated code.
      *
      * @return boolean
      */
@@ -89,5 +41,52 @@ abstract class Plugin
             return false;
         }
         return true;
+    }
+
+    /**
+     * Get a unique name to identify the plugin.
+     *
+     * @return string
+     */
+    abstract public function getName();
+
+    /**
+     * @inheritDoc
+     */
+    public function getHash()
+    {
+        return '';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getCss()
+    {
+        return '';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getJs()
+    {
+        return '';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getScript()
+    {
+        return '';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getReadyScript()
+    {
+        return '';
     }
 }

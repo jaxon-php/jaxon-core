@@ -1,23 +1,23 @@
 <?php
 
-namespace Jaxon\Utils\View;
+namespace Jaxon\Utils\Template;
 
 use Jaxon\Contracts\View as ViewContract;
-use Jaxon\Utils\Template\Engine as TemplateEngine;
+use Jaxon\Utils\View\Store;
 
 class View implements ViewContract
 {
     /**
      * The Jaxon template engine
      *
-     * @var TemplateEngine
+     * @var Engine
      */
     protected $xEngine;
 
     /**
      * The class constructor
      */
-    public function __construct(TemplateEngine $xEngine)
+    public function __construct(Engine $xEngine)
     {
         $this->xEngine = $xEngine;
     }

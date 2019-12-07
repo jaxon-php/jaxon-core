@@ -49,17 +49,7 @@ abstract class Request extends Plugin
     }
 
     /**
-     * Return true if the object is a request plugin. Always return true here.
-     *
-     * @return boolean
-     */
-    public function isRequest()
-    {
-        return true;
-    }
-
-    /**
-     * Return the target function or class and method
+     * Get the target function or class and method
      *
      * @return Target|null
      */

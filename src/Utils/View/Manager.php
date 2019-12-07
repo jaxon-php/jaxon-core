@@ -98,21 +98,21 @@ class Manager
      */
     public function addNamespaces($xAppConfig)
     {
-        $this->sDefaultNamespace = $xAppConfig->getOption('options.views.default', false);
-        if(is_array($namespaces = $xAppConfig->getOptionNames('views')))
+        $this->sDefaultNamespace = $xAppConfig->getOption('options.views.default', '');
+        if(is_array($aNamespaces = $xAppConfig->getOptionNames('views')))
         {
-            foreach($namespaces as $namespace => $option)
+            foreach($aNamespaces as $sNamespace => $sOption)
             {
                 // If no default namespace is defined, use the first one as default.
-                if($this->sDefaultNamespace == false)
+                if($this->sDefaultNamespace == '')
                 {
-                    $this->sDefaultNamespace = (string)$namespace;
+                    $this->sDefaultNamespace = (string)$sNamespace;
                 }
                 // Save the namespace
-                $directory = $xAppConfig->getOption($option . '.directory');
-                $extension = $xAppConfig->getOption($option . '.extension', '');
-                $renderer = $xAppConfig->getOption($option . '.renderer', 'jaxon');
-                $this->addNamespace($namespace, $directory, $extension, $renderer);
+                $sDirectory = $xAppConfig->getOption($sOption . '.directory');
+                $sExtension = $xAppConfig->getOption($sOption . '.extension', '');
+                $xRenderer = $xAppConfig->getOption($sOption . '.renderer', 'jaxon');
+                $this->addNamespace($sNamespace, $sDirectory, $sExtension, $xRenderer);
             }
         }
     }
@@ -120,17 +120,12 @@ class Manager
     /**
      * Get the view renderer facade
      *
-     * @param string                $sId                The unique identifier of the view renderer
+     * @param string        $sId        The unique identifier of the view renderer
      *
-     * @return object        The view renderer
+     * @return \Jaxon\Contracts\View
      */
-    public function getRenderer($sId = '')
+    public function getRenderer($sId)
     {
-        if(!$sId)
-        {
-            // Return the view renderer facade
-            return jaxon()->di()->get(\Jaxon\Utils\View\Renderer::class);
-        }
         // Return the view renderer with the given id
         return jaxon()->di()->get('jaxon.app.view.' . $sId);
     }
@@ -138,30 +133,27 @@ class Manager
     /**
      * Add a view renderer with an id
      *
-     * @param string                $sId                The unique identifier of the view renderer
-     * @param Closure               $xClosure           A closure to create the view instance
+     * @param string        $sId        The unique identifier of the view renderer
+     * @param Closure       $xClosure   A closure to create the view instance
      *
      * @return void
      */
-    public function addRenderer($sId, $xClosure)
+    public function addRenderer($sId, Closure $xClosure)
     {
-        // Return the non-initialiazed view renderer
-        jaxon()->di()->set('jaxon.app.view.base.' . $sId, $xClosure);
-
         // Return the initialized view renderer
-        jaxon()->di()->set('jaxon.app.view.' . $sId, function($c) use ($sId) {
+        jaxon()->di()->set('jaxon.app.view.' . $sId, function() use ($sId, $xClosure) {
             // Get the defined renderer
-            $renderer = $c['jaxon.app.view.base.' . $sId];
+            $xRenderer = call_user_func($xClosure);
 
             // Init the renderer with the template namespaces
             if(key_exists($sId, $this->aNamespaces))
             {
                 foreach($this->aNamespaces[$sId] as $ns)
                 {
-                    $renderer->addNamespace($ns['namespace'], $ns['directory'], $ns['extension']);
+                    $xRenderer->addNamespace($ns['namespace'], $ns['directory'], $ns['extension']);
                 }
             }
-            return $renderer;
+            return $xRenderer;
         });
     }
 }

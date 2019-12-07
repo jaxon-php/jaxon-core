@@ -14,7 +14,8 @@
 
 namespace Jaxon\Utils\Pagination;
 
-use Jaxon\Contracts\Template\Renderer as TemplateRenderer;
+use Jaxon\Utils\View\Renderer as ViewRenderer;
+use Jaxon\Utils\Template\Engine;
 
 use Jaxon\Request\Factory\Request;
 use Jaxon\Request\Factory\Parameter;
@@ -26,7 +27,7 @@ class Renderer
      *
      * Will be used to render HTML code for links.
      *
-     * @var TemplateRenderer
+     * @var ViewRenderer
      */
     protected $xRenderer = null;
 
@@ -65,9 +66,9 @@ class Renderer
     /**
      * The class contructor
      *
-     * @param TemplateRenderer          $xRenderer
+     * @param ViewRenderer          $xRenderer
      */
-    public function __construct(TemplateRenderer $xRenderer)
+    public function __construct(ViewRenderer $xRenderer)
     {
         $this->xRenderer = $xRenderer;
     }

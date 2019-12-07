@@ -3,6 +3,7 @@
 namespace Jaxon\Utils\View;
 
 use Jaxon\Contracts\View as ViewContract;
+use JsonSerializable;
 
 class Store
 {
@@ -104,5 +105,17 @@ class Store
     public function __toString()
     {
         return ($this->xRenderer) ? $this->xRenderer->render($this) : '';
+    }
+
+    /**
+     * Convert this object to string for json.
+     *
+     * This is a method of the JsonSerializable interface.
+     *
+     * @return string
+     */
+    public function jsonSerialize()
+    {
+        return $this->__toString();
     }
 }
