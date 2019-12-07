@@ -183,6 +183,6 @@ trait App
      */
     public function setLogger(LoggerInterface $logger)
     {
-        jaxon()->setLogger();
+        jaxon()->setLogger($logger);
     }
 }
