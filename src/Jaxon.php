@@ -30,10 +30,16 @@ use Jaxon\Plugin\Package;
 use Jaxon\Utils\DI\Container;
 use Jaxon\Utils\Config\Reader as ConfigReader;
 
-class Jaxon
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
+use Psr\Log\LoggerAwareTrait;
+use Psr\Log\LoggerAwareInterface;
+
+class Jaxon implements LoggerAwareInterface
 {
     use Features\Config;
     use Features\Translator;
+    use LoggerAwareTrait;
 
     /**
      * Package version number
@@ -99,6 +105,9 @@ class Jaxon
             */
             self::$xContainer->getPluginManager()->registerRequestPlugins();
             self::$xContainer->getPluginManager()->registerResponsePlugins();
+
+            // Set the default logger
+            $this->setLogger(new NullLogger());
         }
     }
 
@@ -120,6 +129,16 @@ class Jaxon
     public function getVersion()
     {
         return $this->sVersion;
+    }
+
+    /**
+     * Get the logger
+     *
+     * @return LoggerInterface
+     */
+    public function logger()
+    {
+        return $this->logger;
     }
 
     /**
