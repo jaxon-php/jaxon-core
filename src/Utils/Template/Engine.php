@@ -14,6 +14,8 @@
 
 namespace Jaxon\Utils\Template;
 
+use stdClass;
+
 class Engine implements \Jaxon\Contracts\Template\Renderer
 {
     /**
@@ -81,10 +83,38 @@ class Engine implements \Jaxon\Contracts\Template\Renderer
     /**
      * Render a template
      *
+     * @param string        $sPath                The path to the template
+     * @param array         $aVars                The template vars
+     *
+     * @return string
+     */
+    private function _render($sPath, array $aVars)
+    {
+        // Make the template vars available as attributes
+        $xData = new stdClass();
+        foreach($aVars as $sName => $xValue)
+        {
+            $sName = (string)$sName;
+            $xData->$sName = $xValue;
+        }
+        // Render the template
+        $cRenderer = function() use($sPath) {
+            ob_start();
+            include($sPath);
+            return ob_get_clean();
+        };
+        // Call the closure in the context of the $xData object.
+        // So the keyworg '$this' in the template will refer to the $xData object.
+        return \call_user_func($cRenderer->bindTo($xData));
+    }
+
+    /**
+     * Render a template
+     *
      * @param string        $sTemplate            The name of template to be rendered
      * @param array         $aVars                The template vars
      *
-     * @return string        The template content
+     * @return string
      */
     public function render($sTemplate, array $aVars = [])
     {
@@ -111,7 +141,6 @@ class Engine implements \Jaxon\Contracts\Template\Renderer
         // Get the template path
         $sTemplatePath = $aNamespace['directory'] . $sTemplate . $aNamespace['extension'];
         // Render the template
-        $xRenderer = new Renderer();
-        return $xRenderer->render($sTemplatePath, $aVars);
+        return $this->_render($sTemplatePath, $aVars);
     }
 }
