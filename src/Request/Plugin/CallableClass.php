@@ -153,18 +153,18 @@ class CallableClass extends RequestPlugin
      */
     public function getHash()
     {
-        $this->xRegistry->createCallableObjects();
+        $this->xRegistry->createCallableClasses();
         $aNamespaces = $this->xRepository->getNamespaces();
-        $aCallableObjects = $this->xRepository->getCallableObjects();
+        $aClasses = $this->xRepository->getClasses();
         $sHash = '';
 
         foreach($aNamespaces as $sNamespace => $aOptions)
         {
             $sHash .= $sNamespace . $aOptions['separator'];
         }
-        foreach($aCallableObjects as $sClassName => $xCallableObject)
+        foreach($aClasses as $sClassName => $aOptions)
         {
-            $sHash .= $sClassName . implode('|', $xCallableObject->getMethods());
+            $sHash .= $sClassName . $aOptions['timestamp'];
         }
 
         return md5($sHash);

@@ -149,7 +149,7 @@ class CallableRegistry
      *
      * @return void
      */
-    public function parseDirectories()
+    protected function parseDirectories()
     {
         // Browse directories without namespaces and read all the files.
         // This is to be done only once.
@@ -172,7 +172,7 @@ class CallableRegistry
                 }
 
                 $sClassName = $xFile->getBasename('.php');
-                $aClassOptions = [];
+                $aClassOptions = ['timestamp' => $xFile->getMTime()];
                 // No more classmap autoloading. The file will be included when needed.
                 if(($aOptions['autoload']))
                 {
@@ -188,7 +188,7 @@ class CallableRegistry
      *
      * @return void
      */
-    public function parseNamespaces()
+    protected function parseNamespaces()
     {
         // Browse directories with namespaces and read all the files.
         // This is to be done only once.
@@ -226,7 +226,7 @@ class CallableRegistry
                 $this->xRepository->addNamespace($sClassPath, ['separator' => $aOptions['separator']]);
 
                 $sClassName = $sClassPath . '\\' . $xFile->getBasename('.php');
-                $aClassOptions = ['namespace' => $sNamespace];
+                $aClassOptions = ['namespace' => $sNamespace, 'timestamp' => $xFile->getMTime()];
                 $this->xRepository->addClass($sClassName, $aClassOptions, $aOptions);
             }
         }
@@ -323,10 +323,20 @@ class CallableRegistry
      *
      * @return void
      */
-    public function createCallableObjects()
+    public function createCallableClasses()
     {
         $this->parseDirectories();
         $this->parseNamespaces();
+    }
+
+    /**
+     * Create callable objects for all registered classes
+     *
+     * @return void
+     */
+    public function createCallableObjects()
+    {
+        $this->createCallableClasses();
 
         foreach($this->xRepository->getClasses() as $sClassName => $aClassOptions)
         {

@@ -82,6 +82,12 @@ class CallableRepository
             $aOptions = array_merge($aOptions, $aDirectoryOptions[$sClassName]);
         }
 
+        // This value will be used to compute hash
+        if(!key_exists('timestamp', $aOptions))
+        {
+            $aOptions['timestamp'] = 0;
+        }
+
         return $aOptions;
     }
 
