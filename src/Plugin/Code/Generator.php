@@ -301,22 +301,18 @@ class Generator
      */
     private function _getScript()
     {
-        $aVars = $this->getOptionVars();
+        $aConfigVars = $this->getOptionVars();
         $sYesScript = 'jaxon.ajax.response.process(command.response)';
         $sNoScript = 'jaxon.confirm.skip(command);jaxon.ajax.response.process(command.response)';
         $sQuestionScript = jaxon()->dialog()->confirm('msg', $sYesScript, $sNoScript);
-        $aVars['sQuestionScript'] = $this->xTemplateEngine->render('jaxon::plugins/confirm.js', [
+
+        $aConfigVars['sQuestionScript'] = $this->xTemplateEngine->render('jaxon::plugins/confirm.js', [
             'sQuestionScript' => $sQuestionScript,
         ]);
+        $aScriptVars = ['sJsScript' => $this->sJsScript, 'sJsReadyScript' => $this->sJsReadyScript];
 
-        return $this->xTemplateEngine->render('jaxon::plugins/config.js', $aVars) . '
-' . $this->sJsScript . '
-jaxon.dom.ready(function() {
-    jaxon.command.handler.register("cc", jaxon.confirm.commands);
-
-' . $this->sJsReadyScript . '
-});
-';
+        return $this->xTemplateEngine->render('jaxon::plugins/config.js', $aConfigVars) . "\n" .
+            $this->xTemplateEngine->render('jaxon::plugins/script.js', $aScriptVars);
     }
 
     /**
