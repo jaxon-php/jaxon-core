@@ -16,7 +16,6 @@ namespace Jaxon\Utils\Pagination;
 
 use Jaxon\Utils\View\Renderer as ViewRenderer;
 use Jaxon\Utils\Template\Engine;
-
 use Jaxon\Request\Factory\Request;
 use Jaxon\Request\Factory\Parameter;
 
@@ -62,6 +61,11 @@ class Renderer
      * @var integer
      */
     protected $currentPage = 0;
+
+    /**
+     * @var integer
+     */
+    protected $maxPagesToShow = 10;
 
     /**
      * The class contructor
@@ -111,6 +115,34 @@ class Renderer
         if(($this->xRequest) && !$this->xRequest->hasPageNumber())
         {
             $this->xRequest->addParameter(Parameter::PAGE_NUMBER, 0);
+        }
+    }
+
+    /**
+     * Set the current page number
+     *
+     * @param int $currentPage The current page number
+     *
+     * @return void
+     */
+    public function setCurrentPage($currentPage)
+    {
+        $this->currentPage = intval($currentPage);
+    }
+
+    /**
+     * Set the max number of pages to show
+     *
+     * @param int $maxPagesToShow The max number of pages to show
+     *
+     * @return void
+     */
+    public function setMaxPagesToShow($maxPagesToShow)
+    {
+        $this->maxPagesToShow = intval($maxPagesToShow);
+        if($this->maxPagesToShow < 4)
+        {
+            $this->maxPagesToShow = 4;
         }
     }
 
@@ -184,22 +216,78 @@ class Renderer
     }
 
     /**
+     * Get the array of page numbers to be printed.
+     *
+     * Example: [1, 0, 4, 5, 6, 0, 10]
+     *
+     * @return array
+     */
+    protected function getPageNumbers()
+    {
+        $pageNumbers = [];
+
+        if($this->totalPages <= $this->maxPagesToShow)
+        {
+            for($i = 0; $i < $this->totalPages; $i++)
+            {
+                $pageNumbers[] = $i + 1;
+            }
+        }
+        else
+        {
+            // Determine the sliding range, centered around the current page.
+            $numAdjacents = (int)floor(($this->maxPagesToShow - 4) / 2);
+
+            $slidingStart = 1;
+            $slidingEndOffset = $numAdjacents + 3 - $this->currentPage;
+            if($slidingEndOffset < 0)
+            {
+                $slidingStart = $this->currentPage - $numAdjacents;
+                $slidingEndOffset = 0;
+            }
+
+            $slidingEnd = $this->totalPages;
+            $slidingStartOffset = $this->currentPage + $numAdjacents + 2 - $this->totalPages;
+            if($slidingStartOffset < 0)
+            {
+                $slidingEnd = $this->currentPage + $numAdjacents;
+                $slidingStartOffset = 0;
+            }
+
+            // Build the list of page numbers.
+            if($slidingStart > 1)
+            {
+                $pageNumbers[] = 1;
+                $pageNumbers[] = 0; // Ellipsys;
+            }
+            for($i = $slidingStart - $slidingStartOffset; $i <= $slidingEnd + $slidingEndOffset; $i++)
+            {
+                $pageNumbers[] = $i;
+            }
+            if($slidingEnd < $this->totalPages)
+            {
+                $pageNumbers[] = 0; // Ellipsys;
+                $pageNumbers[] = $this->totalPages;
+            }
+        }
+
+        return $pageNumbers;
+    }
+
+    /**
      * Render an HTML pagination control.
      *
-     * @param array     $aPageNumbers       The page numbers to be rendered
-     * @param integer   $currentPage        The current page number
      * @param integer   $totalPages         The total number of pages
      *
      * @return string
      */
-    public function render(array $aPageNumbers, $currentPage, $totalPages)
+    public function render($totalPages)
     {
-        $this->currentPage = $currentPage;
         $this->totalPages = $totalPages;
 
         $aLinks = array_map(function($nNumber) {
             return $this->getPageLink($nNumber);
-        }, $aPageNumbers);
+        }, $this->getPageNumbers());
 
         return $this->xRenderer->render('pagination::wrapper', [
             'links' => $aLinks,

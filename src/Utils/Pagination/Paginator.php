@@ -61,16 +61,6 @@ class Paginator
     protected $itemsPerPage = 0;
 
     /**
-     * @var integer
-     */
-    protected $currentPage = 0;
-
-    /**
-     * @var integer
-     */
-    protected $maxPagesToShow = 10;
-
-    /**
      * The pagination renderer
      *
      * @var Renderer
@@ -130,16 +120,10 @@ class Paginator
      * @param int $maxPagesToShow The max number of pages to show
      *
      * @return Paginator
-     * @throws \InvalidArgumentException if $maxPagesToShow is less than 3.
      */
     public function setMaxPagesToShow($maxPagesToShow)
     {
-        $this->maxPagesToShow = intval($maxPagesToShow);
-        if($this->maxPagesToShow < 4)
-        {
-            $this->maxPagesToShow = 10;
-            throw new \InvalidArgumentException('maxPagesToShow cannot be less than 4.');
-        }
+        $this->xRenderer->setMaxPagesToShow($maxPagesToShow);
         return $this;
     }
 
@@ -150,9 +134,9 @@ class Paginator
      *
      * @return Paginator
      */
-    public function setCurrentPage($currentPage)
+    protected function setCurrentPage($currentPage)
     {
-        $this->currentPage = intval($currentPage);
+        $this->xRenderer->setCurrentPage($currentPage);
         return $this;
     }
 
@@ -163,7 +147,7 @@ class Paginator
      *
      * @return Paginator
      */
-    public function setItemsPerPage($itemsPerPage)
+    protected function setItemsPerPage($itemsPerPage)
     {
         $this->itemsPerPage = intval($itemsPerPage);
         return $this->updateTotalPages();
@@ -176,7 +160,7 @@ class Paginator
      *
      * @return Paginator
      */
-    public function setTotalItems($totalItems)
+    protected function setTotalItems($totalItems)
     {
         $this->totalItems = intval($totalItems);
         return $this->updateTotalPages();
@@ -202,74 +186,15 @@ class Paginator
     }
 
     /**
-     * Get an array of paginated page data.
-     *
-     * Example: [1, 0, 4, 5, 6, 0, 10]
-     *
-     * @return array
-     */
-    protected function getPageNumbers()
-    {
-        $pageNumbers = [];
-
-        if($this->totalPages <= $this->maxPagesToShow)
-        {
-            for($i = 0; $i < $this->totalPages; $i++)
-            {
-                $pageNumbers[] = $i + 1;
-            }
-        }
-        else
-        {
-            // Determine the sliding range, centered around the current page.
-            $numAdjacents = (int)floor(($this->maxPagesToShow - 4) / 2);
-
-            $slidingStart = 1;
-            $slidingEndOffset = $numAdjacents + 3 - $this->currentPage;
-            if($slidingEndOffset < 0)
-            {
-                $slidingStart = $this->currentPage - $numAdjacents;
-                $slidingEndOffset = 0;
-            }
-
-            $slidingEnd = $this->totalPages;
-            $slidingStartOffset = $this->currentPage + $numAdjacents + 2 - $this->totalPages;
-            if($slidingStartOffset < 0)
-            {
-                $slidingEnd = $this->currentPage + $numAdjacents;
-                $slidingStartOffset = 0;
-            }
-
-            // Build the list of page numbers.
-            if($slidingStart > 1)
-            {
-                $pageNumbers[] = 1;
-                $pageNumbers[] = 0; // Ellipsys;
-            }
-            for($i = $slidingStart - $slidingStartOffset; $i <= $slidingEnd + $slidingEndOffset; $i++)
-            {
-                $pageNumbers[] = $i;
-            }
-            if($slidingEnd < $this->totalPages)
-            {
-                $pageNumbers[] = 0; // Ellipsys;
-                $pageNumbers[] = $this->totalPages;
-            }
-        }
-
-        return $pageNumbers;
-    }
-
-    /**
      * Render an HTML pagination control.
      *
      * @return string
      */
-    public function render()
+    protected function render()
     {
         if($this->totalPages > 1)
         {
-            return $this->xRenderer->render($this->getPageNumbers(), $this->currentPage, $this->totalPages);
+            return $this->xRenderer->render($this->totalPages)->__toString();
         }
         return '';
     }
@@ -281,6 +206,6 @@ class Paginator
      */
     public function __toString()
     {
-        return $this->render()->__toString();
+        return $this->render();
     }
 }
