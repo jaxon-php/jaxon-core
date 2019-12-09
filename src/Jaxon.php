@@ -49,7 +49,7 @@ class Jaxon implements LoggerAwareInterface
      *
      * @var string
      */
-    private $sVersion = 'Jaxon 3.1.2';
+    private $sVersion = 'Jaxon 3.1.3';
 
     /*
      * Request plugins

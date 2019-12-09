@@ -15,6 +15,7 @@
 namespace Jaxon\Utils\Pagination;
 
 use Jaxon\Utils\View\Renderer as ViewRenderer;
+use Jaxon\Utils\View\Store;
 use Jaxon\Utils\Template\Engine;
 use Jaxon\Request\Factory\Request;
 use Jaxon\Request\Factory\Parameter;
@@ -279,7 +280,7 @@ class Renderer
      *
      * @param integer   $totalPages         The total number of pages
      *
-     * @return string
+     * @return null|Store
      */
     public function render($totalPages)
     {
