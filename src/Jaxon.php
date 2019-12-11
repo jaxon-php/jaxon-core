@@ -52,6 +52,16 @@ class Jaxon implements LoggerAwareInterface
     private $sVersion = 'Jaxon 3.1.3';
 
     /*
+     * Plugin types
+     */
+    // Response plugin
+    const PLUGIN_RESPONSE = 'ResponsePlugin';
+    // Request plugin
+    const PLUGIN_REQUEST = 'RequestPlugin';
+    // Package plugin
+    const PLUGIN_PACKAGE = 'PackagePlugin';
+
+    /*
      * Request plugins
      */
     const CALLABLE_CLASS = 'CallableClass';
@@ -59,8 +69,6 @@ class Jaxon implements LoggerAwareInterface
     const CALLABLE_FUNCTION = 'CallableFunction';
     // For uploaded files.
     const FILE_UPLOAD = 'FileUpload';
-    // For packages.
-    const PACKAGE = 'Package';
     // For compatibility with previous versions
     const CALLABLE_OBJECT = 'CallableClass'; // Same as CALLABLE_CLASS
     const USER_FUNCTION = 'CallableFunction'; // Same as CALLABLE_FUNCTION
@@ -245,45 +253,42 @@ class Jaxon implements LoggerAwareInterface
     }
 
     /**
-     * Register a package
-     *
-     * @param string        $sClassName         The package class name
-     * @param array         $aOptions           The package options
-     *
-     * @return void
-     */
-    public function registerPackage($sClassName, array $aOptions = [])
-    {
-        $this->di()->getPluginManager()->registerPackage($sClassName, $aOptions);
-    }
-
-    /**
      * Register request handlers, including functions, callable classes and directories.
      *
      * @param string        $sType            The type of request handler being registered
      *        Options include:
-     *        - Jaxon::USER_FUNCTION: a function declared at global scope
+     *        - Jaxon::CALLABLE_FUNCTION: a function declared at global scope
      *        - Jaxon::CALLABLE_CLASS: a class who's methods are to be registered
      *        - Jaxon::CALLABLE_DIR: a directory containing classes to be registered
-     *        - Jaxon::PROCESSING_EVENT:
-     * @param string        $sCallable
+     *        - Jaxon::PACKAGE: a package
+     * @param string        $sName
      *        When registering a function, this is the name of the function
      *        When registering a callable class, this is the class name
      *        When registering a callable directory, this is the full path to the directory
-     *        When registering an event, this is the event name
-     * @param array|string  $xOptions
-     *        When registering a function, this is an (optional) array
-     *             of call options, or the (optional) include file
-     *        When registering a callable class, this is an (optional) array
-     *             of call options for the class methods
-     *        When registering a callable directory, this is an (optional) array
-     *             of call options for the class methods, or the (optional) namespace
+     *        When registering a package or a plugin, this is the corresponding class name
+     * @param array|string  $xOptions   The related options
      *
-     * @return mixed
+     * @return void
      */
-    public function register($sType, $sCallable, $xOptions = [])
+    public function register($sType, $sName, $xOptions = [])
     {
-        return $this->di()->getPluginManager()->registerCallable($sType, $sCallable, $xOptions);
+        switch($sType)
+        {
+        case self::CALLABLE_DIR:
+        case self::CALLABLE_CLASS:
+        case self::CALLABLE_FUNCTION:
+            $this->di()->getPluginManager()->registerCallable($sType, $sName, $xOptions);
+            break;
+        /*case self::PLUGIN_RESPONSE:
+            $this->di()->getPluginManager()->registerRequestPlugin($sName, $xOptions);
+            break;
+        case self::PLUGIN_REQUEST:
+            $this->di()->getPluginManager()->registerResponsePlugin($sName, $xOptions);
+            break;*/
+        case self::PLUGIN_PACKAGE:
+            $this->di()->getPluginManager()->registerPackage($sName, $xOptions);
+            break;
+        }
     }
 
     /**

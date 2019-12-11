@@ -172,34 +172,32 @@ class Manager
      */
     public function registerPackage($sClassName, array $aOptions)
     {
-        $jaxon = jaxon();
-        $di = $jaxon->di();
-
         $sClassName = trim($sClassName, '\\ ');
-        $di->set($sClassName, function() use($di, $sClassName, $aOptions) {
-            return $di->make($sClassName);
+        $jaxon = jaxon();
+        $jaxon->di()->set($sClassName, function($di) use($sClassName, $aOptions) {
+            $xPackage = $di->make($sClassName);
+            // Set the package options
+            $cSetter = function($_aOptions) {
+                $this->aOptions = $_aOptions;
+            };
+            // Can now access protected attributes
+            \call_user_func($cSetter->bindTo($xPackage, $xPackage), $aOptions);
+            return $xPackage;
         });
 
         // Read and apply the package config.
         $aPackageConfig = $jaxon->config()->read($sClassName::getConfigFile());
-        $xPackageConfig = $di->newConfig($aPackageConfig);
+        $xPackageConfig = $jaxon->di()->newConfig($aPackageConfig);
         $this->_registerFromConfig($xPackageConfig);
         // Register the view namespaces
-        $di->getViewManager()->addNamespaces($xPackageConfig);
-
-        // Set the package options
-        $cSetter = function($_aOptions) {
-            $this->aOptions = $_aOptions;
-        };
+        $jaxon->di()->getViewManager()->addNamespaces($xPackageConfig);
+        // Register the package as a code generator.
         $xPackage = $this->getPackage($sClassName);
-        // Can now access protected attributes
-        \call_user_func($cSetter->bindTo($xPackage, $xPackage), $aOptions);
-
         $this->xCodeGenerator->addGenerator($xPackage, 500);
     }
 
     /**
-     * Register a function, event or callable class
+     * Register a function or callable class
      *
      * Call the request plugin with the $sType defined as name.
      *
@@ -207,7 +205,7 @@ class Manager
      * @param string        $sCallable      The callable entity being registered
      * @param array|string  $aOptions       The associated options
      *
-     * @return mixed
+     * @return void
      */
     public function registerCallable($sType, $sCallable, $aOptions = [])
     {
@@ -217,11 +215,11 @@ class Manager
         }
 
         $xPlugin = $this->aRequestPlugins[$sType];
-        return $xPlugin->register($sType, $sCallable, $aOptions);
+        $xPlugin->register($sType, $sCallable, $aOptions);
     }
 
     /**
-     * Register callable from a section of the config
+     * Register callables from a section of the config
      *
      * @param Config        $xAppConfig        The config options
      * @param string        $sSection          The config section name
