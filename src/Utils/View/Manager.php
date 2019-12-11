@@ -141,9 +141,9 @@ class Manager
     public function addRenderer($sId, Closure $xClosure)
     {
         // Return the initialized view renderer
-        jaxon()->di()->set('jaxon.app.view.' . $sId, function() use ($sId, $xClosure) {
+        jaxon()->di()->set('jaxon.app.view.' . $sId, function($di) use ($sId, $xClosure) {
             // Get the defined renderer
-            $xRenderer = call_user_func($xClosure);
+            $xRenderer = call_user_func($xClosure, $di);
 
             // Init the renderer with the template namespaces
             if(key_exists($sId, $this->aNamespaces))

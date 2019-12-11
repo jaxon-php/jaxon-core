@@ -45,10 +45,12 @@ use Jaxon\Utils\View\Renderer as ViewRenderer;
 use Jaxon\Utils\Dialogs\Dialog;
 use Jaxon\Utils\Template\Minifier;
 use Jaxon\Utils\Template\Engine as TemplateEngine;
+use Jaxon\Utils\Template\View as TemplateView;
 use Jaxon\Utils\Pagination\Paginator;
 use Jaxon\Utils\Pagination\Renderer as PaginationRenderer;
 use Jaxon\Utils\Validation\Validator;
 use Jaxon\Utils\Translation\Translator;
+use Jaxon\Utils\Session\Manager as SessionManager;
 use Jaxon\Utils\Http\URI;
 
 use Lemon\Event\EventDispatcher;
@@ -73,8 +75,10 @@ class Container
 
     /**
      * The class constructor
+     *
+     * @param array     $aOptions       The default options
      */
-    public function __construct()
+    public function __construct(array $aOptions)
     {
         $this->libContainer = new \Pimple\Container();
         $this->libContainer[Container::class] = $this;
@@ -82,6 +86,7 @@ class Container
         $sTranslationDir = realpath(__DIR__ . '/../../../translations');
         $sTemplateDir = realpath(__DIR__ . '/../../../templates');
         $this->init($sTranslationDir, $sTemplateDir);
+        $this->getConfig()->setOptions($aOptions);
     }
 
     /**
@@ -208,12 +213,23 @@ class Container
             return new CodeGenerator($c[TemplateEngine::class]);
         };
         // View Manager
-        $this->libContainer[ViewManager::class] = function() {
-            return new ViewManager();
+        $this->libContainer[ViewManager::class] = function($c) {
+            $xViewManager = new ViewManager();
+            // Add the default view renderer
+            $xViewManager->addRenderer('jaxon', function($di) {
+                return new TemplateView($di->get(TemplateEngine::class));
+            });
+            // By default, render pagination templates with Jaxon.
+            $xViewManager->addNamespace('pagination', '', '.php', 'jaxon');
+            return $xViewManager;
         };
         // View Renderer
         $this->libContainer[ViewRenderer::class] = function($c) {
             return new ViewRenderer($c[ViewManager::class]);
+        };
+        // Set the default session manager
+        $this->libContainer[SessionContract::class] = function() {
+            return new SessionManager();
         };
 
         /*

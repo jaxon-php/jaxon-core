@@ -29,9 +29,6 @@ use Jaxon\Plugin\Plugin;
 use Jaxon\Plugin\Package;
 use Jaxon\Utils\DI\Container;
 use Jaxon\Utils\Config\Reader as ConfigReader;
-use Jaxon\Utils\Template\View;
-use Jaxon\Utils\Template\Engine;
-use Jaxon\Utils\Session\Manager as SessionManager;
 
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
@@ -106,31 +103,17 @@ class Jaxon implements LoggerAwareInterface
      */
     public function __construct()
     {
+        // Set the default logger
+        $this->setLogger(new NullLogger());
+
         if(self::$xContainer == null)
         {
-            self::$xContainer = new Container();
-            $this->setDefaultOptions();
-
+            self::$xContainer = new Container($this->getDefaultOptions());
             /*
             * Register the Jaxon request and response plugins
             */
             $this->di()->getPluginManager()->registerRequestPlugins();
             $this->di()->getPluginManager()->registerResponsePlugins();
-
-            // Set the default logger
-            $this->setLogger(new NullLogger());
-            $viewManager = $this->di()->getViewManager();
-            // Add the view renderer
-            $viewManager->addRenderer('jaxon', function() {
-                return new View($this->di()->get(Engine::class));
-            });
-            // By default, render pagination templates with Jaxon.
-            $viewManager->addNamespace('pagination', '', '.php', 'jaxon');
-
-            // Set the session manager
-            $this->di()->setSessionManager(function() {
-                return new SessionManager();
-            });
         }
     }
 
@@ -175,14 +158,14 @@ class Jaxon implements LoggerAwareInterface
     }
 
     /**
-     * Set the default options of all components of the library
+     * Get the default options of all components of the library
      *
-     * @return void
+     * @return array
      */
-    private function setDefaultOptions()
+    private function getDefaultOptions()
     {
         // The default configuration settings.
-        $this->di()->getConfig()->setOptions([
+        return [
             'core.version'                      => $this->getVersion(),
             'core.language'                     => 'en',
             'core.encoding'                     => 'utf-8',
@@ -211,7 +194,7 @@ class Jaxon implements LoggerAwareInterface
             'js.app.dir'                        => '',
             'js.app.minify'                     => true,
             'js.app.options'                    => '',
-        ]);
+        ];
     }
 
     /**
