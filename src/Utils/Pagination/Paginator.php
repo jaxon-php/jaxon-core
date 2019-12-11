@@ -40,8 +40,8 @@ SOFTWARE.
 
 namespace Jaxon\Utils\Pagination;
 
+use Jaxon\Utils\View\Store;
 use Jaxon\Request\Factory\Request;
-use Jaxon\Request\Factory\Parameter;
 
 class Paginator
 {
@@ -178,9 +178,7 @@ class Paginator
      */
     public function setup($totalItems, $itemsPerPage, $currentPage, $xRequest)
     {
-        $this->setTotalItems($totalItems)
-            ->setItemsPerPage($itemsPerPage)
-            ->setCurrentPage($currentPage);
+        $this->setTotalItems($totalItems)->setItemsPerPage($itemsPerPage)->setCurrentPage($currentPage);
         $this->xRenderer->setRequest($xRequest);
         return $this;
     }
@@ -188,15 +186,11 @@ class Paginator
     /**
      * Render an HTML pagination control.
      *
-     * @return string
+     * @return null|Store
      */
-    protected function render()
+    public function render()
     {
-        if($this->totalPages > 1)
-        {
-            return $this->xRenderer->render($this->totalPages)->__toString();
-        }
-        return '';
+        return $this->xRenderer->render($this->totalPages);
     }
 
     /**
@@ -206,6 +200,10 @@ class Paginator
      */
     public function __toString()
     {
-        return $this->render();
+        if($this->totalPages < 2)
+        {
+            return '';
+        }
+        return $this->render()->__toString();
     }
 }

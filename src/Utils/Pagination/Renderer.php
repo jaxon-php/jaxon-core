@@ -167,7 +167,7 @@ class Renderer
      * @param string    $sEnabledText   The text of the link if it is enabled
      * @param string    $sDisabledText  The text of the link if it is disabled
      *
-     * @return string
+     * @return null|Store
      */
     protected function getLink($nNumber, $sTemplate, $sEnabledText, $sDisabledText)
     {
@@ -184,7 +184,7 @@ class Renderer
     /**
      * Render the previous link.
      *
-     * @return string
+     * @return null|Store
      */
     protected function getPrevLink()
     {
@@ -195,7 +195,7 @@ class Renderer
     /**
      * Render the next link.
      *
-     * @return string
+     * @return null|Store
      */
     protected function getNextLink()
     {
@@ -208,7 +208,7 @@ class Renderer
      *
      * @param integer        $nNumber         The page number
      *
-     * @return string
+     * @return null|Store
      */
     protected function getPageLink($nNumber)
     {
@@ -233,43 +233,43 @@ class Renderer
             {
                 $pageNumbers[] = $i + 1;
             }
+
+            return $pageNumbers;
         }
-        else
+
+        // Determine the sliding range, centered around the current page.
+        $numAdjacents = (int)floor(($this->maxPagesToShow - 4) / 2);
+
+        $slidingStart = 1;
+        $slidingEndOffset = $numAdjacents + 3 - $this->currentPage;
+        if($slidingEndOffset < 0)
         {
-            // Determine the sliding range, centered around the current page.
-            $numAdjacents = (int)floor(($this->maxPagesToShow - 4) / 2);
+            $slidingStart = $this->currentPage - $numAdjacents;
+            $slidingEndOffset = 0;
+        }
 
-            $slidingStart = 1;
-            $slidingEndOffset = $numAdjacents + 3 - $this->currentPage;
-            if($slidingEndOffset < 0)
-            {
-                $slidingStart = $this->currentPage - $numAdjacents;
-                $slidingEndOffset = 0;
-            }
+        $slidingEnd = $this->totalPages;
+        $slidingStartOffset = $this->currentPage + $numAdjacents + 2 - $this->totalPages;
+        if($slidingStartOffset < 0)
+        {
+            $slidingEnd = $this->currentPage + $numAdjacents;
+            $slidingStartOffset = 0;
+        }
 
-            $slidingEnd = $this->totalPages;
-            $slidingStartOffset = $this->currentPage + $numAdjacents + 2 - $this->totalPages;
-            if($slidingStartOffset < 0)
-            {
-                $slidingEnd = $this->currentPage + $numAdjacents;
-                $slidingStartOffset = 0;
-            }
-
-            // Build the list of page numbers.
-            if($slidingStart > 1)
-            {
-                $pageNumbers[] = 1;
-                $pageNumbers[] = 0; // Ellipsys;
-            }
-            for($i = $slidingStart - $slidingStartOffset; $i <= $slidingEnd + $slidingEndOffset; $i++)
-            {
-                $pageNumbers[] = $i;
-            }
-            if($slidingEnd < $this->totalPages)
-            {
-                $pageNumbers[] = 0; // Ellipsys;
-                $pageNumbers[] = $this->totalPages;
-            }
+        // Build the list of page numbers.
+        if($slidingStart > 1)
+        {
+            $pageNumbers[] = 1;
+            $pageNumbers[] = 0; // Ellipsys;
+        }
+        for($i = $slidingStart - $slidingStartOffset; $i <= $slidingEnd + $slidingEndOffset; $i++)
+        {
+            $pageNumbers[] = $i;
+        }
+        if($slidingEnd < $this->totalPages)
+        {
+            $pageNumbers[] = 0; // Ellipsys;
+            $pageNumbers[] = $this->totalPages;
         }
 
         return $pageNumbers;
