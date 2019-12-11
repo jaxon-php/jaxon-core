@@ -102,9 +102,8 @@ abstract class Package implements Code\Contracts\Generator
     /**
      * @inheritDoc
      */
-    public final function getScript()
+    public function getScript()
     {
-        // Packages do not generate script. So we make this method final.
         return '';
     }
 
