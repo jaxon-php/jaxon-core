@@ -255,26 +255,31 @@ class Jaxon implements LoggerAwareInterface
      */
     public function register($sType, $sName, $xOptions = [])
     {
-        switch($sType)
+        if($sType == self::CALLABLE_DIR ||
+            $sType == self::CALLABLE_CLASS ||
+            $sType == self::CALLABLE_FUNCTION)
         {
-        case self::CALLABLE_DIR:
-        case self::CALLABLE_CLASS:
-        case self::CALLABLE_FUNCTION:
             $this->di()->getPluginManager()->registerCallable($sType, $sName, $xOptions);
-            break;
-        /*case self::PLUGIN_RESPONSE:
-            $this->di()->getPluginManager()->registerRequestPlugin($sName, $xOptions);
-            break;
-        case self::PLUGIN_REQUEST:
-            $this->di()->getPluginManager()->registerResponsePlugin($sName, $xOptions);
-            break;*/
-        case self::PLUGIN_PACKAGE:
-            if(is_array($xOptions))
-            {
-                $this->di()->getPluginManager()->registerPackage($sName, $xOptions);
-            }
-            break;
+            return;
         }
+        /*
+        if($sType == self::PLUGIN_RESPONSE)
+        {
+            $this->di()->getPluginManager()->registerRequestPlugin($sName, $xOptions);
+            return;
+        }
+        if($sType == self::PLUGIN_REQUEST)
+        {
+            $this->di()->getPluginManager()->registerResponsePlugin($sName, $xOptions);
+            return;
+        }
+        */
+        if($sType == self::PLUGIN_PACKAGE && is_array($xOptions))
+        {
+            $this->di()->getPluginManager()->registerPackage($sName, $xOptions);
+            return;
+        }
+        // Todo: throw an error
     }
 
     /**
