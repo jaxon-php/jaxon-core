@@ -160,7 +160,7 @@ class Jaxon implements LoggerAwareInterface
     /**
      * Get the default options of all components of the library
      *
-     * @return array
+     * @return array<string,string|boolean|integer>
      */
     private function getDefaultOptions()
     {
@@ -269,7 +269,10 @@ class Jaxon implements LoggerAwareInterface
             $this->di()->getPluginManager()->registerResponsePlugin($sName, $xOptions);
             break;*/
         case self::PLUGIN_PACKAGE:
-            $this->di()->getPluginManager()->registerPackage($sName, $xOptions);
+            if(is_array($xOptions))
+            {
+                $this->di()->getPluginManager()->registerPackage($sName, $xOptions);
+            }
             break;
         }
     }
