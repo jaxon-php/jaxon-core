@@ -37,3 +37,7 @@ jaxon.confirm.commands = function(command) {
     <?php echo $this->sQuestionScript ?>;
     return true;
 };
+
+jaxon.dom.ready(function() {
+    jaxon.command.handler.register("cc", jaxon.confirm.commands);
+});

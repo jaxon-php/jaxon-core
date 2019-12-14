@@ -74,6 +74,13 @@ class Generator
     protected $sJsReadyScript = '';
 
     /**
+     * Javascript code to include in HTML code and execute after page load
+     *
+     * @var string
+     */
+    protected $sJsInlineScript = '';
+
+    /**
      * Code already generated
      *
      * @var boolean
@@ -132,6 +139,20 @@ class Generator
     }
 
     /**
+     * Render a template in the 'plugins' subdir
+     *
+     * @param string    $sTemplate      The template filename
+     * @param array     $aVars          The template variables
+     *
+     * @return string
+     */
+    private function render($sTemplate, array $aVars = [])
+    {
+        $aVars['sJsOptions'] = $this->getOption('js.app.options', '');
+        return $this->xTemplateEngine->render("jaxon::plugins/$sTemplate", $aVars);
+    }
+
+    /**
      * Get the HTML tags to include Jaxon javascript files into the page
      *
      * @return void
@@ -158,10 +179,27 @@ class Generator
             {
                 $this->sJsScript .= rtrim($sJsScript, " \n") . "\n";
             }
-            if($xGenerator->readyEnabled() && ($sJsReadyScript = $xGenerator->getReadyScript()))
+            if(!$xGenerator->readyInlined() &&
+                ($sJsReadyScript = $xGenerator->getReadyScript()))
             {
                 $this->sJsReadyScript .= rtrim($sJsReadyScript, " \n") . "\n";
             }
+            if($xGenerator->readyInlined() &&
+                $xGenerator->readyEnabled() &&
+                ($sJsInlineScript = $xGenerator->getReadyScript()))
+            {
+                $this->sJsInlineScript .= rtrim($sJsInlineScript, " \n") . "\n";
+            }
+        }
+
+        if(($this->sJsInlineScript))
+        {
+            $this->sJsInlineScript = $this->render('ready.js', ['script' => $this->sJsInlineScript]);
+        }
+        if(($this->sJsReadyScript))
+        {
+            // These two parts are always rendered together
+            $this->sJsScript .= "\n" . $this->render('ready.js', ['script' => $this->sJsReadyScript]);
         }
     }
 
@@ -246,10 +284,7 @@ class Generator
         // Set the template engine cache dir
         $this->generateCode();
 
-        return $this->xTemplateEngine->render('jaxon::plugins/includes.js', [
-            'sJsOptions' => $this->getOption('js.app.options', ''),
-            'aUrls' => $aJsFiles,
-        ]) . $this->sJsCode;
+        return $this->render('includes.js', ['aUrls' => $aJsFiles]) . $this->sJsCode;
     }
 
     /**
@@ -306,13 +341,11 @@ class Generator
         $sNoScript = 'jaxon.confirm.skip(command);jaxon.ajax.response.process(command.response)';
         $sQuestionScript = jaxon()->dialog()->confirm('msg', $sYesScript, $sNoScript);
 
-        $aConfigVars['sQuestionScript'] = $this->xTemplateEngine->render('jaxon::plugins/confirm.js', [
+        $aConfigVars['sQuestionScript'] = $this->render('confirm.js', [
             'sQuestionScript' => $sQuestionScript,
         ]);
-        $aScriptVars = ['sJsScript' => $this->sJsScript, 'sJsReadyScript' => $this->sJsReadyScript];
 
-        return $this->xTemplateEngine->render('jaxon::plugins/config.js', $aConfigVars) . "\n" .
-            $this->xTemplateEngine->render('jaxon::plugins/script.js', $aScriptVars);
+        return $this->render('config.js', $aConfigVars) . "\n" . $this->sJsScript;
     }
 
     /**
@@ -399,17 +432,18 @@ class Generator
 
         if($this->canExportJavascript())
         {
+            $sJsInlineScript = '';
+            if(($this->sJsInlineScript))
+            {
+                $sJsInlineScript = $this->render('wrapper.js', ['sScript' => $this->sJsInlineScript]);
+            }
             // The returned code loads the generated javascript file
-            return $sScript . $this->xTemplateEngine->render('jaxon::plugins/include.js', [
-                'sJsOptions' => $this->getOption('js.app.options', ''),
-                'sUrl' => $this->_writeFiles(),
-            ]);
+            return $sScript . $this->render('include.js', ['sUrl' => $this->_writeFiles()]) . $sJsInlineScript;
         }
 
         // The plugins scripts are wrapped with javascript tags
-        return $sScript . $this->xTemplateEngine->render('jaxon::plugins/wrapper.js', [
-            'sJsOptions' => $this->getOption('js.app.options', ''),
-            'sScript' => $this->_getScript(),
+        return $sScript . $this->render('wrapper.js', [
+            'sScript' => $this->_getScript() . "\n" . $this->sJsInlineScript,
         ]);
     }
 }

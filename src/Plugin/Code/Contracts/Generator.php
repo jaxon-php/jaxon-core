@@ -64,4 +64,11 @@ interface Generator
      * @return boolean
      */
     public function readyEnabled();
+
+    /**
+     * Whether to export the getReadyScript() in external javascript files.
+     *
+     * @return boolean
+     */
+    public function readyInlined();
 }

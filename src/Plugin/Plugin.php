@@ -62,6 +62,15 @@ abstract class Plugin implements Code\Contracts\Generator
     /**
      * @inheritDoc
      */
+    public function readyInlined()
+    {
+        // For plugins, the getReadyScript() can be exported to external files.
+        return false;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function getHash()
     {
         return '';

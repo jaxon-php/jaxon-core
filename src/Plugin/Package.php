@@ -96,6 +96,15 @@ abstract class Package implements Code\Contracts\Generator
     /**
      * @inheritDoc
      */
+    public final function readyInlined()
+    {
+        // For packages, the getReadyScript() is never exported to external files.
+        return true;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public final function getHash()
     {
         // Packages do not generate hash on their own. So we make this method final.
