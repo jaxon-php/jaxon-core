@@ -51,6 +51,18 @@ trait App
     }
 
     /**
+     * Get a package instance
+     *
+     * @param string        $sClassName           The package class name
+     *
+     * @return \Jaxon\Plugin\Package
+     */
+    public function package($sClassName)
+    {
+        return jaxon()->package($sClassName);
+    }
+
+    /**
      * Get the request callback manager
      *
      * @return \Jaxon\Request\Handler\Callback
