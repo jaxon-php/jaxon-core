@@ -179,6 +179,7 @@ class Manager
             // Set the package options
             $cSetter = function($_aOptions) {
                 $this->aOptions = $_aOptions;
+                $this->xConfig = jaxon()->di()->newConfig($_aOptions);
             };
             // Can now access protected attributes
             \call_user_func($cSetter->bindTo($xPackage, $xPackage), $aOptions);

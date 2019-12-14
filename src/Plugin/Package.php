@@ -13,6 +13,8 @@
 
 namespace Jaxon\Plugin;
 
+use Jaxon\Utils\Config\Config;
+
 abstract class Package implements Code\Contracts\Generator
 {
     /**
@@ -23,6 +25,13 @@ abstract class Package implements Code\Contracts\Generator
     protected $aOptions = [];
 
     /**
+     * The configuration options of the package
+     *
+     * @var Config
+     */
+    protected $xConfig;
+
+    /**
      * Whether to include the getReadyScript() in the generated code.
      *
      * @var boolean
@@ -30,13 +39,23 @@ abstract class Package implements Code\Contracts\Generator
     protected $bReadyEnabled = false;
 
     /**
-     * Get package options.
+     * Get package options in an array.
      *
      * @return array
      */
     public function getOptions()
     {
         return $this->aOptions;
+    }
+
+    /**
+     * Get package options in a Config object.
+     *
+     * @return Config
+     */
+    public function getConfig()
+    {
+        return $this->xConfig;
     }
 
     /**
