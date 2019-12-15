@@ -213,7 +213,7 @@ class Container
             return new CodeGenerator($c[TemplateEngine::class]);
         };
         // View Manager
-        $this->libContainer[ViewManager::class] = function($c) {
+        $this->libContainer[ViewManager::class] = function() {
             $xViewManager = new ViewManager();
             // Add the default view renderer
             $xViewManager->addRenderer('jaxon', function($di) {
