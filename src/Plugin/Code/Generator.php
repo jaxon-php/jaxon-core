@@ -57,9 +57,6 @@ class Generator
     /**
      * Get the correspondances between previous and current config options
      *
-     * They are used to keep the deprecated config options working.
-     * They will be removed when the deprecated options will lot be supported anymore.
-     *
      * @return array
      */
     private function getOptionVars()
@@ -232,7 +229,7 @@ class Generator
     }
 
     /**
-     * Get the HTML tags to include Jaxon javascript files into the page
+     * Get the javascript file name
      *
      * @return void
      */
