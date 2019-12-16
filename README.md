@@ -28,14 +28,14 @@ Features
 - The generated javascript classes are named according to their namespace or the subdirectory where they are located.
 - All PHP packages install with `Composer`, are fully namespaced, and implement `PSR-4` autoloading.
 - The library natively implements Ajax file upload.
-- The library runs on PHP versions 5.4 to 7.0.
+- The library runs on PHP versions 5.4 to 7.X.
 
 Documentation
 -------------
 
 The project documentation is available in [English](http://www.jaxon-php.org/en/docs/) and [French](http://www.jaxon-php.org/fr/docs/).
 
-Some sample codes are provided in the [jaxon-php/jaxon-examples](https://github.com/jaxon-php/jaxon-examples) package, and demonstrated in [the website](http://www.jaxon-php.org/examples/).
+Some sample codes (only for version 2.x) are provided in the [jaxon-php/jaxon-examples](https://github.com/jaxon-php/jaxon-examples) package, and demonstrated in [the website](http://www.jaxon-php.org/examples/).
 
 Contribute
 ----------
