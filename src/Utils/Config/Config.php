@@ -66,7 +66,7 @@ class Config
         // Check the max depth
         if($nDepth < 0 || $nDepth > 9)
         {
-            throw new \Jaxon\Utils\Config\Exception\Data(jaxon_trans('config.errors.data.depth',
+            throw new \Jaxon\Utils\Config\Exception\Data(jaxon_trans('errors.data.depth',
                 ['key' => $sPrefix, 'depth' => $nDepth]));
         }
         foreach($aOptions as $sName => $xOption)
@@ -160,7 +160,9 @@ class Config
             if(substr($sName, 0, $sPrefixLen) == $sPrefix)
             {
                 $iNextDotPos = strpos($sName, '.', $sPrefixLen);
-                $sOptionName = $iNextDotPos === false ? substr($sName, $sPrefixLen) : substr($sName, $sPrefixLen, $iNextDotPos - $sPrefixLen);
+                $sOptionName = $iNextDotPos === false ?
+                    substr($sName, $sPrefixLen) :
+                    substr($sName, $sPrefixLen, $iNextDotPos - $sPrefixLen);
                 $aOptions[$sOptionName] = $sPrefix . $sOptionName;
             }
         }

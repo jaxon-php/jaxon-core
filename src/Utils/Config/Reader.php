@@ -42,7 +42,7 @@ class Reader
             $aConfigOptions = Json::read($sConfigFile);
             break;
         default:
-            $sErrorMsg = jaxon_trans('config.errors.file.extension', ['path' => $sConfigFile]);
+            $sErrorMsg = jaxon_trans('errors.file.extension', ['path' => $sConfigFile]);
             throw new \Jaxon\Utils\Config\Exception\File($sErrorMsg);
         }
 
