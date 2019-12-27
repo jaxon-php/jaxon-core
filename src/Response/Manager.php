@@ -43,7 +43,7 @@ class Manager
     public function __construct()
     {
         $this->xResponse = null;
-        $this->aDebugMessages = array();
+        $this->aDebugMessages = [];
     }
 
     /**
@@ -126,7 +126,7 @@ class Manager
             {
                 $this->xResponse->debug($sMessage);
             }
-            $this->aDebugMessages = array();
+            $this->aDebugMessages = [];
         }
     }
 
