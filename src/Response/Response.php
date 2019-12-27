@@ -246,15 +246,15 @@ class Response extends AbstractResponse
      * Merge the response commands from the specified <Response> object with
      * the response commands in this <Response> object
      *
-     * @param AbstractResponse  $mCommands          The <Response> object
-     * @param boolean           $bBefore            Add the new commands to the beginning of the list
+     * @param AbstractResponse|array    $mCommands          The <Response> object
+     * @param boolean                   $bBefore            Add the new commands to the beginning of the list
      *
      * @return void
      */
-    public function appendResponse(AbstractResponse $mCommands, $bBefore = false)
+    public function appendResponse($mCommands, $bBefore = false)
     {
         $aCommands = [];
-        if($mCommands instanceof Response)
+        if($mCommands instanceof AbstractResponse)
         {
             $this->returnValue = $mCommands->returnValue;
             $aCommands = $mCommands->aCommands;
@@ -265,10 +265,7 @@ class Response extends AbstractResponse
         }
         else
         {
-            if(!empty($mCommands))
-            {
-                throw new \Jaxon\Exception\Error(jaxon_trans('errors.response.data.invalid'));
-            }
+            throw new \Jaxon\Exception\Error(jaxon_trans('errors.response.data.invalid'));
         }
 
         if(count($aCommands) > 0)
@@ -282,6 +279,16 @@ class Response extends AbstractResponse
                 $this->aCommands = array_merge($this->aCommands, $aCommands);
             }
         }
+    }
+
+    /**
+     * Get the commands in the response
+     *
+     * @return array
+     */
+    public function getCommands()
+    {
+        return $this->aCommands;
     }
 
     /**
