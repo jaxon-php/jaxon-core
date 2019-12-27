@@ -23,6 +23,11 @@ class Reader
      */
     public function read($sConfigFile)
     {
+        if(!($sConfigFile = trim($sConfigFile)))
+        {
+            return [];
+        }
+
         $sExt = pathinfo($sConfigFile, PATHINFO_EXTENSION);
         switch($sExt)
         {
