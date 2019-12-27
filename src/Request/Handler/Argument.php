@@ -22,6 +22,8 @@
 
 namespace Jaxon\Request\Handler;
 
+use Jaxon\Exception\Error;
+
 class Argument
 {
     use \Jaxon\Features\Config;
@@ -76,16 +78,6 @@ class Argument
             $this->nMethod = self::METHOD_GET;
             $this->aArgs = $_GET['jxnargs'];
         }
-        // if(get_magic_quotes_gpc() == 1)
-        // {
-        //     array_walk($this->aArgs, [&$this, '__argumentStripSlashes']);
-        // }
-        array_walk($this->aArgs, [&$this, '__argumentDecode']);
-
-        // By default, no decoding
-        $this->cUtf8Decoder = function($sStr) {
-            return $sStr;
-        };
     }
 
     /**
@@ -109,15 +101,15 @@ class Argument
      */
     private function __convertStringToBool($sValue)
     {
-        if(strcasecmp($sValue, 'true') == 0)
+        if(\strcasecmp($sValue, 'true') == 0)
         {
             return true;
         }
-        if(strcasecmp($sValue, 'false') == 0)
+        if(\strcasecmp($sValue, 'false') == 0)
         {
             return false;
         }
-        if(is_numeric($sValue))
+        if(\is_numeric($sValue))
         {
             if($sValue == 0)
             {
@@ -156,8 +148,8 @@ class Argument
      */
     private function __convertValue($sValue)
     {
-        $cType = substr($sValue, 0, 1);
-        $sValue = substr($sValue, 1);
+        $cType = \substr($sValue, 0, 1);
+        $sValue = \substr($sValue, 1);
         switch($cType)
         {
         case 'S':
@@ -167,7 +159,7 @@ class Argument
             $value = $this->__convertStringToBool($sValue);
             break;
         case 'N':
-            $value = ($sValue == floor($sValue) ? (int)$sValue : (float)$sValue);
+            $value = ($sValue == \floor($sValue) ? (int)$sValue : (float)$sValue);
             break;
         case '*':
         default:
@@ -193,22 +185,22 @@ class Argument
 
         // Arguments are url encoded when uploading files
         $sType = 'multipart/form-data';
-        $iLen = strlen($sType);
+        $iLen = \strlen($sType);
         $sContentType = '';
-        if(key_exists('CONTENT_TYPE', $_SERVER))
+        if(\key_exists('CONTENT_TYPE', $_SERVER))
         {
-            $sContentType = substr($_SERVER['CONTENT_TYPE'], 0, $iLen);
+            $sContentType = \substr($_SERVER['CONTENT_TYPE'], 0, $iLen);
         }
-        elseif(key_exists('HTTP_CONTENT_TYPE', $_SERVER))
+        elseif(\key_exists('HTTP_CONTENT_TYPE', $_SERVER))
         {
-            $sContentType = substr($_SERVER['HTTP_CONTENT_TYPE'], 0, $iLen);
+            $sContentType = \substr($_SERVER['HTTP_CONTENT_TYPE'], 0, $iLen);
         }
         if($sContentType == $sType)
         {
-            $sArg = urldecode($sArg);
+            $sArg = \urldecode($sArg);
         }
 
-        $data = json_decode($sArg, true);
+        $data = \json_decode($sArg, true);
 
         if($data !== null && $sArg != $data)
         {
@@ -233,9 +225,9 @@ class Argument
     {
         $sDestKey = $sKey;
         // Decode the key
-        if(is_string($sDestKey))
+        if(\is_string($sDestKey))
         {
-            $sDestKey = call_user_func($this->cUtf8Decoder, $sDestKey);
+            $sDestKey = \call_user_func($this->cUtf8Decoder, $sDestKey);
         }
 
         if(is_array($mValue))
@@ -246,13 +238,13 @@ class Argument
                 $this->_decode_utf8_argument($aDst[$sDestKey], $_sKey, $_mValue);
             }
         }
-        elseif(is_string($mValue))
-        {
-            $aDst[$sDestKey] = call_user_func($this->cUtf8Decoder, $mValue);
-        }
-        elseif(is_numeric($mValue))
+        elseif(\is_numeric($mValue) || \is_bool($mValue))
         {
             $aDst[$sDestKey] = $mValue;
+        }
+        elseif(\is_string($mValue))
+        {
+            $aDst[$sDestKey] = \call_user_func($this->cUtf8Decoder, $mValue);
         }
     }
 
@@ -263,29 +255,39 @@ class Argument
      */
     public function process()
     {
+        // if(get_magic_quotes_gpc() == 1)
+        // {
+        //     \array_walk($this->aArgs, [$this, '__argumentStripSlashes']);
+        // }
+        \array_walk($this->aArgs, [$this, '__argumentDecode']);
+
         if(($this->getOption('core.decode_utf8')))
         {
-            if(function_exists('iconv'))
+            // By default, no decoding
+            $this->cUtf8Decoder = function($sStr) {
+                return $sStr;
+            };
+            if(\function_exists('iconv'))
             {
                 $this->cUtf8Decoder = function($sStr) {
-                    return iconv("UTF-8", $this->getOption('core.encoding') . '//TRANSLIT', $sStr);
+                    return \iconv("UTF-8", $this->getOption('core.encoding') . '//TRANSLIT', $sStr);
                 };
             }
-            elseif(function_exists('mb_convert_encoding'))
+            elseif(\function_exists('mb_convert_encoding'))
             {
                 $this->cUtf8Decoder = function($sStr) {
-                    return mb_convert_encoding($sStr, $this->getOption('core.encoding'), "UTF-8");
+                    return \mb_convert_encoding($sStr, $this->getOption('core.encoding'), "UTF-8");
                 };
             }
             elseif($this->getOption('core.encoding') == "ISO-8859-1")
             {
                 $this->cUtf8Decoder = function($sStr) {
-                    return utf8_decode($sStr);
+                    return \utf8_decode($sStr);
                 };
             }
             else
             {
-                throw new \Jaxon\Exception\Error($this->trans('errors.request.conversion'));
+                throw new Error($this->trans('errors.request.conversion'));
             }
 
             $aDst = [];
