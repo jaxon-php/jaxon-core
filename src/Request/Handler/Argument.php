@@ -76,10 +76,10 @@ class Argument
             $this->nMethod = self::METHOD_GET;
             $this->aArgs = $_GET['jxnargs'];
         }
-        if(get_magic_quotes_gpc() == 1)
-        {
-            array_walk($this->aArgs, [&$this, '__argumentStripSlashes']);
-        }
+        // if(get_magic_quotes_gpc() == 1)
+        // {
+        //     array_walk($this->aArgs, [&$this, '__argumentStripSlashes']);
+        // }
         array_walk($this->aArgs, [&$this, '__argumentDecode']);
 
         // By default, no decoding
@@ -135,15 +135,15 @@ class Argument
      *
      * @return string
      */
-    private function __argumentStripSlashes(&$sArg)
-    {
-        if(!is_string($sArg))
-        {
-            return '';
-        }
-        $sArg = stripslashes($sArg);
-        return $sArg;
-    }
+    // private function __argumentStripSlashes(&$sArg)
+    // {
+    //     if(!is_string($sArg))
+    //     {
+    //         return '';
+    //     }
+    //     $sArg = stripslashes($sArg);
+    //     return $sArg;
+    // }
 
     /**
      * Convert an Jaxon request argument to its value
