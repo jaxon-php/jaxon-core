@@ -222,7 +222,7 @@ class Response extends AbstractResponse
      */
     public function clearCommands()
     {
-        $this->aCommands[] = [];
+        $this->aCommands = [];
 
         return $this;
     }
