@@ -41,7 +41,7 @@ class Response extends AbstractResponse
      *
      * @var array
      */
-    private $aCommands = [];
+    protected $aCommands = [];
 
     /**
      * A string, array or integer value to be returned to the caller when using 'synchronous' mode requests.
@@ -49,7 +49,7 @@ class Response extends AbstractResponse
      *
      * @var mixed
      */
-    private $returnValue;
+    protected $returnValue;
 
     /**
      * Get the content type, which is always set to 'application/json'
