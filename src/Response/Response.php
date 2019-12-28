@@ -206,7 +206,7 @@ class Response
      */
     public function clearCommands()
     {
-        $this->aCommands[] = array();
+        $this->aCommands = [];
 
         return $this;
     }
@@ -240,7 +240,7 @@ class Response
         if($mCommands instanceof Response)
         {
             $this->returnValue = $mCommands->returnValue;
-            
+
             if($bBefore)
             {
                 $this->aCommands = array_merge($mCommands->aCommands, $this->aCommands);
@@ -902,10 +902,10 @@ class Response
     public function includeScript($sFileName, $sType = null, $sId = null)
     {
         $command = array('cmd'  =>  'in');
-        
+
         if(($sType))
             $command['type'] = trim((string)$sType, " \t");
-        
+
         if(($sId))
             $command['elm_id'] = trim((string)$sId, " \t");
 
@@ -923,13 +923,13 @@ class Response
     public function includeScriptOnce($sFileName, $sType = null, $sId = null)
     {
         $command = array('cmd' => 'ino');
-        
+
         if(($sType))
             $command['type'] = trim((string)$sType, " \t");
-        
+
         if(($sId))
             $command['elm_id'] = trim((string)$sId, " \t");
-            
+
         return $this->addCommand($command, trim((string)$sFileName, " \t"));
     }
 
@@ -967,10 +967,10 @@ class Response
     public function includeCSS($sFileName, $sMedia = null)
     {
         $command = array('cmd' => 'css');
-        
+
         if(($sMedia))
             $command['media'] = trim((string)$sMedia, " \t");
-        
+
         return $this->addCommand($command, trim((string)$sFileName, " \t"));
     }
 
@@ -986,10 +986,10 @@ class Response
     public function removeCSS($sFileName, $sMedia = null)
     {
         $command = array('cmd' => 'rcss');
-        
+
         if(($sMedia))
             $command['media'] = trim((string)$sMedia, " \t");
-        
+
         return $this->addCommand($command, trim((string)$sFileName, " \t"));
     }
 
@@ -1264,7 +1264,7 @@ class Response
             header("Cache-Control: no-cache, must-revalidate");
             header("Pragma: no-cache");
         }
-        
+
         $sCharacterSet = '';
         $sCharacterEncoding = trim($this->getOption('core.encoding'));
         if(($sCharacterEncoding) && strlen($sCharacterEncoding) > 0)
@@ -1283,7 +1283,7 @@ class Response
     public function getOutput()
     {
         $response = array();
-        
+
         if(($this->returnValue))
         {
             $response['jxnrv'] = $this->returnValue;
