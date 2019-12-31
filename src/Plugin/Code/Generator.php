@@ -183,15 +183,6 @@ class Generator
      */
     private function _getScript()
     {
-        $aConfigVars = $this->getOptionVars();
-        $sYesScript = 'jaxon.ajax.response.process(command.response)';
-        $sNoScript = 'jaxon.confirm.skip(command);jaxon.ajax.response.process(command.response)';
-        $sQuestionScript = jaxon()->dialog()->confirm('msg', $sYesScript, $sNoScript);
-
-        $aConfigVars['sQuestionScript'] = $this->_render('confirm.js', [
-            'sQuestionScript' => $sQuestionScript,
-        ]);
-
         $sScript = '';
         $sReadyScript = '';
         foreach($this->aGenerators as $xGenerator)
@@ -205,6 +196,7 @@ class Generator
         }
 
         // These three parts are always rendered together
+        $aConfigVars = $this->getOptionVars();
         return $this->_render('config.js', $aConfigVars) . "\n" . $sScript . "\n" .
             $this->_render('ready.js', ['sScript' => $sReadyScript]);
     }
