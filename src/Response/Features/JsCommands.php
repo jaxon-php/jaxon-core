@@ -10,6 +10,8 @@
 
 namespace Jaxon\Response\Features;
 
+use Jaxon\Response\Response;
+
 trait JsCommands
 {
     /**
