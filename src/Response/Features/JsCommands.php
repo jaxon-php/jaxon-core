@@ -35,19 +35,30 @@ trait JsCommands
     abstract protected function _addCommand($sName, array $aAttributes, $mData, $bRemoveEmpty = false);
 
     /**
+     * Merge the response commands from the specified <Response> object with
+     * the response commands in this <Response> object
+     *
+     * @param Response|array    $mCommands          The <Response> object
+     * @param boolean           $bBefore            Add the new commands to the beginning of the list
+     *
+     * @return void
+     */
+    abstract public function appendResponse($mCommands, $bBefore = false);
+
+    /**
      * Response command that prompts user with [ok] [cancel] style message box
      *
      * If the user clicks cancel, the specified number of response commands
      * following this one, will be skipped.
      *
-     * @param integer        $iCmdNumber            The number of commands to skip upon cancel
-     * @param string        $sMessage            The message to display to the user
+     * @param integer       $iCommandCount      The number of commands to skip upon cancel
+     * @param string        $sMessage           The message to display to the user
      *
      * @return Response
      */
-    public function confirmCommands($iCmdNumber, $sMessage)
+    public function confirmCommands($iCommandCount, $sMessage)
     {
-        $aAttributes = ['id' => $iCmdNumber];
+        $aAttributes = ['count' => $iCommandCount];
         return $this->_addCommand('cc', $aAttributes, $sMessage);
     }
 
