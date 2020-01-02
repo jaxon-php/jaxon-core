@@ -63,6 +63,30 @@ trait JsCommands
     }
 
     /**
+     * Response command that prompts user with [ok] [cancel] style message box
+     *
+     * If the user clicks cancel, the specified number of response commands
+     * following this one, will be skipped.
+     *
+     * @param string        $sMessage           The message to display to the user
+     * @param callable      $xCallable          The function
+     *
+     * @return Response
+     */
+    public function confirm($sMessage, $xCallable)
+    {
+        $xResponse = jaxon()->newResponse();
+        \call_user_func($xCallable, $xResponse);
+        $iCommandCount = $xResponse->getCommandCount();
+        if($iCommandCount > 0)
+        {
+            $this->confirmCommands($iCommandCount, $sMessage);
+            $this->appendResponse($xResponse);
+        }
+        return $this;
+    }
+
+    /**
      * Add a command to display an alert message to the user
      *
      * @param string        $sMessage            The message to be displayed

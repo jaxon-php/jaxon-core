@@ -39,5 +39,5 @@
         "psr-4": {
             "Jaxon\\Tests\\": "tests/"
         }
-  }
+    }
 }
