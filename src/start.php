@@ -72,11 +72,26 @@ function rq($sClassName = null)
  *
  * @return ParameterFactory
  */
-function pr()
+function pm()
 {
     return Jaxon::getInstance()->di()->getParameterFactory();
 }
 
+/**
+ * Get the single instance of the parameter factory
+ *
+ * The pr function is already defined in CakePHP, so it was renamed to pm.
+ * This function is therefore deprecated, and will be removed in a future version.
+ *
+ * @return ParameterFactory
+ */
+if(!function_exists('pr'))
+{
+    function pr()
+    {
+        return Jaxon::getInstance()->di()->getParameterFactory();
+    }
+}
 /**
  * Create a JQuery Element with a given selector
  *
