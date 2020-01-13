@@ -28,7 +28,7 @@ class Generator
      *
      * @var string
      */
-    const JS_LIB_URL = 'https://cdn.jsdelivr.net/gh/jaxon-php/jaxon-js@3.0/dist';
+    const JS_LIB_URL = 'https://cdn.jsdelivr.net/gh/jaxon-php/jaxon-js@3.2/dist';
 
     /**
      * The objects that generate code
@@ -183,15 +183,6 @@ class Generator
      */
     private function _getScript()
     {
-        $aConfigVars = $this->getOptionVars();
-        $sYesScript = 'jaxon.ajax.response.process(command.response)';
-        $sNoScript = 'jaxon.confirm.skip(command);jaxon.ajax.response.process(command.response)';
-        $sQuestionScript = jaxon()->dialog()->confirm('msg', $sYesScript, $sNoScript);
-
-        $aConfigVars['sQuestionScript'] = $this->_render('confirm.js', [
-            'sQuestionScript' => $sQuestionScript,
-        ]);
-
         $sScript = '';
         $sReadyScript = '';
         foreach($this->aGenerators as $xGenerator)
@@ -205,6 +196,7 @@ class Generator
         }
 
         // These three parts are always rendered together
+        $aConfigVars = $this->getOptionVars();
         return $this->_render('config.js', $aConfigVars) . "\n" . $sScript . "\n" .
             $this->_render('ready.js', ['sScript' => $sReadyScript]);
     }

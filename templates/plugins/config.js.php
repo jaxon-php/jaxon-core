@@ -39,5 +39,3 @@ for(i = 0; i < metaTags.length; i++)
     }
 }
 <?php endif ?>
-
-<?php echo $this->sQuestionScript;

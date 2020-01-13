@@ -2,6 +2,9 @@
 
 use Jaxon\Jaxon;
 use Jaxon\Plugin\Plugin;
+use Jaxon\Request\Factory\RequestFactory;
+use Jaxon\Request\Factory\ParameterFactory;
+use Jaxon\Response\Plugin\JQuery\Dom\Element as DomElement;
 
 /**
  * start.php -
@@ -57,7 +60,7 @@ function jaxon_register_plugin(Plugin $xPlugin, $nPriority = 1000)
 /**
  * Get the single instance of the request factory, and set the class to call.
  *
- * @return \Jaxon\Request\Factory\RequestFactory
+ * @return RequestFactory
  */
 function rq($sClassName = null)
 {
@@ -67,14 +70,29 @@ function rq($sClassName = null)
 /**
  * Get the single instance of the parameter factory
  *
- * @return \Jaxon\Request\Factory\ParameterFactory
+ * @return ParameterFactory
  */
-function pr()
+function pm()
 {
     return Jaxon::getInstance()->di()->getParameterFactory();
 }
 
 /**
+ * Get the single instance of the parameter factory
+ *
+ * The pr function is already defined in CakePHP, so it was renamed to pm.
+ * This function is therefore deprecated, and will be removed in a future version.
+ *
+ * @return ParameterFactory
+ */
+if(!function_exists('pr'))
+{
+    function pr()
+    {
+        return Jaxon::getInstance()->di()->getParameterFactory();
+    }
+}
+/**
  * Create a JQuery Element with a given selector
  *
  * The returned element is not linked to any Jaxon response, so this function shall be used
@@ -83,11 +101,11 @@ function pr()
  * @param string        $sSelector            The jQuery selector
  * @param string        $sContext             A context associated to the selector
  *
- * @return \Jaxon\Response\Plugin\JQuery\Dom\Element
+ * @return DomElement
  */
 function jq($sSelector = '', $sContext = '')
 {
-    return new \Jaxon\Response\Plugin\JQuery\Dom\Element($sSelector, $sContext);
+    return new DomElement($sSelector, $sContext);
 }
 
 /**
@@ -99,7 +117,7 @@ function jq($sSelector = '', $sContext = '')
  * @param string        $sSelector            The jQuery selector
  * @param string        $sContext             A context associated to the selector
  *
- * @return \Jaxon\Response\Plugin\JQuery\Dom\Element
+ * @return DomElement
  */
 function jQuery($sSelector = '', $sContext = '')
 {

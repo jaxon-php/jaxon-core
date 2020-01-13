@@ -33,7 +33,6 @@ use Jaxon\Response\Plugin\JQuery as JQueryPlugin;
 use Jaxon\Plugin\Manager as PluginManager;
 use Jaxon\Plugin\Code\Generator as CodeGenerator;
 use Jaxon\Contracts\Session as SessionContract;
-use Jaxon\Contracts\Container as ContainerContract;
 
 use Jaxon\App\App;
 use Jaxon\App\Bootstrap;
@@ -53,6 +52,8 @@ use Jaxon\Utils\Translation\Translator;
 use Jaxon\Utils\Session\Manager as SessionManager;
 use Jaxon\Utils\Http\URI;
 
+use Pimple\Container as PimpleContainer;
+use Psr\Container\ContainerInterface;
 use Lemon\Event\EventDispatcher;
 use Closure;
 use ReflectionClass;
@@ -62,14 +63,14 @@ class Container
     /**
      * The Dependency Injection Container
      *
-     * @var \Pimple\Container
+     * @var PimpleContainer
      */
     private $libContainer = null;
 
     /**
      * The Dependency Injection Container
      *
-     * @var \Jaxon\Contracts\Container
+     * @var ContainerInterface
      */
     private $appContainer = null;
 
@@ -80,7 +81,7 @@ class Container
      */
     public function __construct(array $aOptions)
     {
-        $this->libContainer = new \Pimple\Container();
+        $this->libContainer = new PimpleContainer();
         $this->libContainer[Container::class] = $this;
 
         $sTranslationDir = realpath(__DIR__ . '/../../../translations');
@@ -92,7 +93,7 @@ class Container
     /**
      * Get the container provided by the integrated framework
      *
-     * @return ContainerContract
+     * @return ContainerInterface
      */
     public function getAppContainer()
     {
@@ -102,11 +103,11 @@ class Container
     /**
      * Set the container provided by the integrated framework
      *
-     * @param ContainerContract  $container     The container implementation
+     * @param ContainerInterface  $container     The container implementation
      *
      * @return void
      */
-    public function setAppContainer(ContainerContract $container)
+    public function setAppContainer(ContainerInterface $container)
     {
         $this->appContainer = $container;
     }
