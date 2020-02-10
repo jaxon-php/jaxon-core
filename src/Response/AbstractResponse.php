@@ -52,12 +52,12 @@ abstract class AbstractResponse
      * Merge the response commands from the specified <Response> object with
      * the response commands in this <Response> object
      *
-     * @param AbstractResponse  $mCommands          The <Response> object
-     * @param boolean           $bBefore            Add the new commands to the beginning of the list
+     * @param AbstractResponse|array    $mCommands  The <Response> object
+     * @param boolean                   $bBefore    Add the new commands to the beginning of the list
      *
      * @return void
      */
-    public function appendResponse(AbstractResponse $mCommands, $bBefore = false)
+    public function appendResponse($mCommands, $bBefore = false)
     {
     }
 
