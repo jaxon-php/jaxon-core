@@ -100,11 +100,11 @@ class Target
         return new Target(self::TYPE_CLASS, '', $sClassName, $sMethodName);
     }
 
-        /**
-         * Check if the target type is Function.
-         *
-         * @return bool
-         */
+    /**
+     * Check if the target type is Function.
+     *
+     * @return bool
+     */
     public function isFunction()
     {
         return $this->sType == self::TYPE_FUNCTION;

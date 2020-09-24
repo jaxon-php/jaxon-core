@@ -143,7 +143,7 @@ class CallableFunction extends RequestPlugin
      */
     public function getHash()
     {
-        return md5(implode('', $this->aFunctions));
+        return md5(implode('', array_keys($this->aFunctions)));
     }
 
     /**
