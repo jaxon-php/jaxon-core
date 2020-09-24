@@ -106,9 +106,9 @@ class URI
             unset($sPath);
         }
         
-        if(empty($aURL['query']) && !empty($_SERVER['QUERY_STRING']))
+        if(empty($aURL['query']))
         {
-            $aURL['query'] = $_SERVER['QUERY_STRING'];
+            $aURL['query'] = empty($_SERVER['QUERY_STRING']) ? '' : $_SERVER['QUERY_STRING'];
         }
         
         if(!empty($aURL['query']))
@@ -140,7 +140,7 @@ class URI
         }
         
         // Add the path and the query string
-        $sURL.= $aURL['path'].@$aURL['query'];
+        $sURL.= $aURL['path'].$aURL['query'];
         
         // Clean up
         unset($aURL);
