@@ -218,6 +218,12 @@ class Handler
             }
         }
 
+        // Check if the upload plugin is enabled
+        if(!$this->getOption('core.upload.enabled'))
+        {
+            return false;
+        }
+
         // If no other plugin than the upload plugin can process the request,
         // then it is a HTTP (not ajax) upload request
         $this->xUploadRequestPlugin->noRequestPluginFound();
@@ -233,8 +239,11 @@ class Handler
     {
         try
         {
-            // Process uploaded files
-            $this->xUploadRequestPlugin->processRequest();
+            // Process uploaded files, if the upload plugin is enabled
+            if($this->getOption('core.upload.enabled'))
+            {
+                $this->xUploadRequestPlugin->processRequest();
+            }
 
             // Process the request
             if(($this->xTargetRequestPlugin))

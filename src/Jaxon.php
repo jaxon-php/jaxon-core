@@ -186,6 +186,7 @@ class Jaxon implements LoggerAwareInterface
             'core.error.handle'                 => false,
             'core.error.log_file'               => '',
             'core.jquery.no_conflict'           => false,
+            'core.upload.enabled'               => true,
             'js.lib.output_id'                  => 0,
             'js.lib.queue_size'                 => 0,
             'js.lib.load_timeout'               => 2000,
