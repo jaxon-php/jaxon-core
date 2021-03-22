@@ -120,11 +120,11 @@ trait DomCommands
      * Add a command to clear the specified attribute of the given element
      *
      * @param string        $sTarget            The id of the element to be updated.
-     * @param string        $sAttribute            The attribute to be cleared
+     * @param string        $sAttribute         The attribute to be cleared
      *
      * @return Response
      */
-    public function clear($sTarget, $sAttribute)
+    public function clear($sTarget, $sAttribute = 'innerHTML')
     {
         return $this->assign($sTarget, $sAttribute, '');
     }
