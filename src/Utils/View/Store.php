@@ -50,6 +50,19 @@ class Store
     }
 
     /**
+     * Set the data to be rendered
+     *
+     * @param array         $aViewData        The view data
+     *
+     * @return void
+     */
+    public function setData(array $aViewData)
+    {
+        $this->aViewData = array_merge($this->aViewData, $aViewData);
+        return $this;
+    }
+
+    /**
      * Set the view to be rendered, with optional data
      *
      * @param ViewContract  $xRenderer        The view renderer

@@ -165,33 +165,39 @@ class Manager
     /**
      * Register a package
      *
-     * @param string        $sClassName           The package class name
-     * @param array         $aOptions           The package options
+     * @param string    $sClassName     The package class name
+     * @param array     $aAppOptions    The package options defined in the app section of the config file
      *
      * @return void
      */
-    public function registerPackage($sClassName, array $aOptions)
+    public function registerPackage($sClassName, array $aAppOptions)
     {
         $sClassName = trim($sClassName, '\\ ');
         $jaxon = jaxon();
-        $jaxon->di()->set($sClassName, function($di) use($sClassName, $aOptions) {
+        $di = $jaxon->di();
+
+        $xAppConfig = $di->newConfig($aAppOptions);
+        $di->set($sClassName, function($di) use($sClassName, $aAppOptions, $xAppConfig) {
             $xPackage = $di->make($sClassName);
             // Set the package options
-            $cSetter = function($_aOptions) {
-                $this->aOptions = $_aOptions;
-                $this->xConfig = jaxon()->di()->newConfig($_aOptions);
+            $cSetter = function($aOptions, $xConfig) {
+                $this->aOptions = $aOptions;
+                $this->xConfig = $xConfig;
             };
             // Can now access protected attributes
-            \call_user_func($cSetter->bindTo($xPackage, $xPackage), $aOptions);
+            \call_user_func($cSetter->bindTo($xPackage, $xPackage), $aAppOptions, $xAppConfig);
             return $xPackage;
         });
 
         // Read and apply the package config.
         $aPackageConfig = $jaxon->config()->read($sClassName::getConfigFile());
-        $xPackageConfig = $jaxon->di()->newConfig($aPackageConfig);
+        // Add the package name to the config
+        $aPackageConfig['package'] = $sClassName;
+
+        $xPackageConfig = $di->newConfig($aPackageConfig);
         $this->_registerFromConfig($xPackageConfig);
         // Register the view namespaces
-        $jaxon->di()->getViewManager()->addNamespaces($xPackageConfig);
+        $di->getViewManager()->addNamespaces($xPackageConfig, $xAppConfig);
         // Register the package as a code generator.
         $xPackage = $this->getPackage($sClassName);
         $this->xCodeGenerator->addGenerator($xPackage, 500);

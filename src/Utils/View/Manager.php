@@ -18,13 +18,6 @@ class Manager
     protected $sDefaultNamespace = '';
 
     /**
-     * The view renderers
-     *
-     * @var array
-     */
-    protected $aRenderers = [];
-
-    /**
      * The view namespaces
      *
      * @var array
@@ -42,16 +35,6 @@ class Manager
     }
 
     /**
-     * Get the view renderers
-     *
-     * @return array
-     */
-    public function getRenderers()
-    {
-        return $this->aRenderers;
-    }
-
-    /**
      * Get the view namespaces
      *
      * @return array
@@ -59,6 +42,32 @@ class Manager
     public function getNamespaces()
     {
         return $this->aNamespaces;
+    }
+
+    /**
+     * Find a view namespace by its name.
+     *
+     * @param string        $sNamespace         The namespace name
+     *
+     * @return array|null
+     */
+    public function getNamespace($sNamespace)
+    {
+        return \array_key_exists($sNamespace, $this->aNamespaces) ?
+            $this->aNamespaces[$sNamespace] : null;
+    }
+
+    /**
+     * Add a view namespace, and set the corresponding renderer.
+     *
+     * @param string        $sNamespace         The corresponding renderer name
+     * @param array         $aNamespace         The namespace options
+     *
+     * @return void
+     */
+    private function _addNamespace($sNamespace, array $aNamespace)
+    {
+        $this->aNamespaces[$sNamespace] = $aNamespace;
     }
 
     /**
@@ -74,32 +83,28 @@ class Manager
     public function addNamespace($sNamespace, $sDirectory, $sExtension, $sRenderer)
     {
         $aNamespace = [
-            'namespace' => $sNamespace,
             'directory' => $sDirectory,
             'extension' => $sExtension,
+            'renderer' => $sRenderer,
         ];
-        if(key_exists($sRenderer, $this->aNamespaces))
-        {
-            $this->aNamespaces[$sRenderer][] = $aNamespace;
-        }
-        else
-        {
-            $this->aNamespaces[$sRenderer] = [$aNamespace];
-        }
-        $this->aRenderers[$sNamespace] = $sRenderer;
+        $this->_addNamespace($sNamespace, $aNamespace);
     }
 
     /**
      * Set the view namespaces.
      *
-     * @param Config            $xAppConfig             The application config options
+     * @param Config    $xLibConfig     The config options provided in the library
+     * @param Config    $xAppConfig     The config options provided in the app section of the global config file.
      *
      * @return void
      */
-    public function addNamespaces($xAppConfig)
+    public function addNamespaces($xLibConfig, $xAppConfig = null)
     {
-        $this->sDefaultNamespace = $xAppConfig->getOption('options.views.default', '');
-        if(is_array($aNamespaces = $xAppConfig->getOptionNames('views')))
+        $this->sDefaultNamespace = $xLibConfig->getOption('options.views.default', '');
+
+        $sPackage = $xLibConfig->getOption('package', '');
+
+        if(\is_array($aNamespaces = $xLibConfig->getOptionNames('views')))
         {
             foreach($aNamespaces as $sNamespace => $sOption)
             {
@@ -109,16 +114,30 @@ class Manager
                     $this->sDefaultNamespace = (string)$sNamespace;
                 }
                 // Save the namespace
-                $sDirectory = $xAppConfig->getOption($sOption . '.directory');
-                $sExtension = $xAppConfig->getOption($sOption . '.extension', '');
-                $xRenderer = $xAppConfig->getOption($sOption . '.renderer', 'jaxon');
-                $this->addNamespace($sNamespace, $sDirectory, $sExtension, $xRenderer);
+                $aNamespace = $xLibConfig->getOption($sOption);
+                $aNamespace['package'] = $sPackage;
+                if(!\array_key_exists('renderer', $aNamespace))
+                {
+                    $aNamespace['renderer'] = 'jaxon'; // 'jaxon' is the default renderer.
+                }
+
+                // If the lib config has defined a template option, then its value must be
+                // read from the app config.
+                if($xAppConfig !== null && \array_key_exists('template', $aNamespace))
+                {
+                    $sTemplateOption = $xLibConfig->getOption($sOption . '.template.option');
+                    $sTemplateDefault = $xLibConfig->getOption($sOption . '.template.default');
+                    $sTemplate = $xAppConfig->getOption($sTemplateOption, $sTemplateDefault);
+                    $aNamespace['directory'] = \rtrim($aNamespace['directory'], '/') . '/' . $sTemplate;
+                }
+
+                $this->_addNamespace($sNamespace, $aNamespace);
             }
         }
     }
 
     /**
-     * Get the view renderer facade
+     * Get the view renderer
      *
      * @param string        $sId        The unique identifier of the view renderer
      *
@@ -146,14 +165,32 @@ class Manager
             $xRenderer = call_user_func($xClosure, $di);
 
             // Init the renderer with the template namespaces
-            if(key_exists($sId, $this->aNamespaces))
+            $aNamespaces = \array_filter($this->aNamespaces, function($aNamespace) use($sId) {
+                return $aNamespace['renderer'] === $sId;
+            });
+            foreach($aNamespaces as $sNamespace => $aNamespace)
             {
-                foreach($this->aNamespaces[$sId] as $ns)
-                {
-                    $xRenderer->addNamespace($ns['namespace'], $ns['directory'], $ns['extension']);
-                }
+                $xRenderer->addNamespace($sNamespace, $aNamespace['directory'], $aNamespace['extension']);
             }
             return $xRenderer;
         });
+    }
+
+    /**
+     * Get the view renderer for a given namespace
+     *
+     * @param string        $sNamespace         The namespace name
+     *
+     * @return \Jaxon\Contracts\View|null
+     */
+    public function getNamespaceRenderer($sNamespace)
+    {
+        $aNamespace = $this->getNamespace($sNamespace);
+        if(!$aNamespace)
+        {
+            return null;
+        }
+        // Return the view renderer with the configured id
+        return $this->getRenderer($aNamespace['renderer']);
     }
 }

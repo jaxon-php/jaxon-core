@@ -89,6 +89,7 @@ class Renderer
     {
         // Get the store
         $xStore = $this->store();
+
         // Get the default view namespace
         $sNamespace = $this->xManager->getDefaultNamespace();
         // Get the namespace from the view name
@@ -97,14 +98,16 @@ class Renderer
         {
             $sNamespace = substr($sViewName, 0, $iSeparatorPosition);
         }
-        $aRenderers = $this->xManager->getRenderers();
-        if(!key_exists($sNamespace, $aRenderers))
+
+        $xRenderer = $this->xManager->getNamespaceRenderer($sNamespace);
+        if(!$xRenderer)
         {
             // Cannot render a view if there's no renderer corresponding to the namespace.
             return null;
         }
-        $xRenderer = $this->xManager->getRenderer($aRenderers[$sNamespace]);
-        $xStore->setView($xRenderer, $sNamespace, $sViewName, array_merge($this->aViewData, $aViewData));
+
+        $xStore->setData(\array_merge($this->aViewData, $aViewData))
+            ->setView($xRenderer, $sNamespace, $sViewName);
         // Set the store to null so a new store will be created for the next view.
         $this->xStore = null;
         // Return the store
