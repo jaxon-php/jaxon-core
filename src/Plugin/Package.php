@@ -141,4 +141,16 @@ abstract class Package implements Code\Contracts\Generator
      * @return string
      */
     abstract public function getHtml();
+
+    /**
+     * Get the HTML code of the package home page
+     *
+     * This method is an alias for getHtml().
+     *
+     * @return string
+     */
+    public function html()
+    {
+        return $this->getHtml();
+    }
 }
