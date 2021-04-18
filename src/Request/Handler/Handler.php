@@ -24,6 +24,7 @@ use Jaxon\Jaxon;
 use Jaxon\Plugin\Manager as PluginManager;
 use Jaxon\Response\Manager as ResponseManager;
 use Jaxon\Request\Plugin\FileUpload;
+use Jaxon\Response\AbstractResponse;
 
 use Exception;
 
@@ -143,9 +144,15 @@ class Handler
     public function onBefore(&$bEndRequest)
     {
         // Call the user defined callback
-        if(($xCallback = $this->xCallbackManager->before()))
+        if(!($xCallback = $this->xCallbackManager->before()))
         {
-            call_user_func_array($xCallback, [$this->xTargetRequestPlugin->getTarget(), &$bEndRequest]);
+            return;
+        }
+        $xReturn = call_user_func_array($xCallback,
+            [$this->xTargetRequestPlugin->getTarget(), &$bEndRequest]);
+        if($xReturn instanceof AbstractResponse)
+        {
+            $this->xResponseManager->append($xReturn);
         }
     }
 
@@ -156,9 +163,15 @@ class Handler
      */
     public function onAfter($bEndRequest)
     {
-        if(($xCallback = $this->xCallbackManager->after()))
+        if(!($xCallback = $this->xCallbackManager->after()))
         {
-            call_user_func_array($xCallback, [$this->xTargetRequestPlugin->getTarget(), $bEndRequest]);
+            return;
+        }
+        $xReturn = call_user_func_array($xCallback,
+            [$this->xTargetRequestPlugin->getTarget(), $bEndRequest]);
+        if($xReturn instanceof AbstractResponse)
+        {
+            $this->xResponseManager->append($xReturn);
         }
     }
 
@@ -169,9 +182,14 @@ class Handler
      */
     public function onInvalid($sMessage)
     {
-        if(($xCallback = $this->xCallbackManager->invalid()))
+        if(!($xCallback = $this->xCallbackManager->invalid()))
         {
-            call_user_func_array($xCallback, [$sMessage]);
+            return;
+        }
+        $xReturn = call_user_func_array($xCallback, [$sMessage]);
+        if($xReturn instanceof AbstractResponse)
+        {
+            $this->xResponseManager->append($xReturn);
         }
     }
 
@@ -183,13 +201,14 @@ class Handler
      */
     public function onError(Exception $xException)
     {
-        if(($xCallback = $this->xCallbackManager->error()))
-        {
-            call_user_func_array($xCallback, [$xException]);
-        }
-        else
+        if(!($xCallback = $this->xCallbackManager->error()))
         {
             throw $xException;
+        }
+        $xReturn = call_user_func_array($xCallback, [$xException]);
+        if($xReturn instanceof AbstractResponse)
+        {
+            $this->xResponseManager->append($xReturn);
         }
     }
 
