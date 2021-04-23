@@ -39,7 +39,7 @@ abstract class Package implements Code\Contracts\Generator
     protected $bReadyEnabled = false;
 
     /**
-     * Get package options in an array.
+     * Get the package options in an array.
      *
      * @return array
      */
@@ -49,13 +49,26 @@ abstract class Package implements Code\Contracts\Generator
     }
 
     /**
-     * Get package options in a Config object.
+     * Get the package options in a Config object.
      *
      * @return Config
      */
     public function getConfig()
     {
         return $this->xConfig;
+    }
+
+    /**
+     * Get the value of a given package option
+     *
+     * @param string $sOption   The option name
+     * @param mixed  $xDefault  The default value
+     *
+     * @return mixed
+     */
+    public function getOption($sOption, $xDefault = null)
+    {
+        return $this->getConfig()->getOption((string)$sOption, $xDefault);
     }
 
     /**
