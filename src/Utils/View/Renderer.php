@@ -76,6 +76,22 @@ class Renderer
     }
 
     /**
+     * Make an array of data available for all views
+     *
+     * @param array         $values          The data values
+     *
+     * @return Renderer
+     */
+    public function shareValues(array $values)
+    {
+        foreach($values as $name => $value)
+        {
+            $this->share($name, $value);
+        }
+        return $this;
+    }
+
+    /**
      * Render a view using a store
      *
      * The store returned by this function will later be used with the make() method to render the view.
