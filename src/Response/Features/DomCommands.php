@@ -235,13 +235,28 @@ trait DomCommands
      *
      * @return Response
      */
-    public function insert($sBefore, $sTag, $sId)
+    public function insertBefore($sBefore, $sTag, $sId)
     {
         $aAttributes = [
             'id' => $sBefore,
             'prop' => $sId
         ];
         return $this->_addCommand('ie', $aAttributes, $sTag);
+    }
+
+    /**
+     * Add a command to insert a new element just prior to the specified element
+     * This is an alias for insertBefore.
+     *
+     * @param string        $sBefore            The id of the element used as a reference point for the insertion
+     * @param string        $sTag               The tag name to be used for the new element
+     * @param string        $sId                The id to assign to the new element
+     *
+     * @return Response
+     */
+    public function insert($sBefore, $sTag, $sId)
+    {
+        return $this->insertBefore($sBefore, $sTag, $sId);
     }
 
     /**
@@ -266,8 +281,8 @@ trait DomCommands
      * Add a command to create an input element on the browser
      *
      * @param string        $sParent            The id of the parent element
-     * @param string        $sType                The type of the new input element
-     * @param string        $sName                The name of the new input element
+     * @param string        $sType              The type of the new input element
+     * @param string        $sName              The name of the new input element
      * @param string        $sId                The id of the new element
      *
      * @return Response
