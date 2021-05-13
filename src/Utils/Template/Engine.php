@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Template.php - Template engine
+ * Engine.php - Template engine
  *
  * Generate templates with template vars.
  *
@@ -13,8 +13,6 @@
  */
 
 namespace Jaxon\Utils\Template;
-
-use stdClass;
 
 class Engine
 {
@@ -90,22 +88,22 @@ class Engine
      */
     private function _render($sPath, array $aVars)
     {
-        // Make the template vars available as attributes
-        $xData = new stdClass();
+        // Make the template vars available, throught a Context object.
+        $xContext = new Context($this);
         foreach($aVars as $sName => $xValue)
         {
             $sName = (string)$sName;
-            $xData->$sName = $xValue;
+            $xContext->$sName = $xValue;
         }
         // Render the template
-        $cRenderer = function() use($sPath) {
+        $cRenderer = function($_sPath) {
             ob_start();
-            include($sPath);
+            include($_sPath);
             return ob_get_clean();
         };
-        // Call the closure in the context of the $xData object.
-        // So the keyworg '$this' in the template will refer to the $xData object.
-        return \call_user_func($cRenderer->bindTo($xData));
+        // Call the closure in the context of the $xContext object.
+        // So the keyword '$this' in the template will refer to the $xContext object.
+        return \call_user_func($cRenderer->bindTo($xContext), $sPath);
     }
 
     /**
