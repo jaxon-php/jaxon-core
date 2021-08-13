@@ -319,11 +319,11 @@ class CallableRegistry
     }
 
     /**
-     * Create callable objects for all registered classes
+     * Register all the callable classes
      *
      * @return void
      */
-    public function createCallableClasses()
+    public function registerCallableClasses()
     {
         $this->parseDirectories();
         $this->parseNamespaces();
@@ -336,7 +336,7 @@ class CallableRegistry
      */
     public function createCallableObjects()
     {
-        $this->createCallableClasses();
+        $this->registerCallableClasses();
 
         foreach($this->xRepository->getClasses() as $sClassName => $aClassOptions)
         {

@@ -153,7 +153,7 @@ class CallableClass extends RequestPlugin
      */
     public function getHash()
     {
-        $this->xRegistry->createCallableClasses();
+        $this->xRegistry->registerCallableClasses();
         $aNamespaces = $this->xRepository->getNamespaces();
         $aClasses = $this->xRepository->getClasses();
         $sHash = '';
