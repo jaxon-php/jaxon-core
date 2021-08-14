@@ -74,7 +74,7 @@ class CallableRepository
             }
         }
 
-        $aFunctionOptions = $aDirectoryOptions['classes'] ?? [];
+        $aFunctionOptions = key_exists('classes', $aDirectoryOptions) ? $aDirectoryOptions['classes'] : [];
         // Sort the options by asc key length
         uksort($aFunctionOptions, function($key1, $key2) {
             return strlen($key1) - strlen($key2);
