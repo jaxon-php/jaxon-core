@@ -325,7 +325,7 @@ class Container
     }
 
     /**
-     * Set an alias
+     * Create an instance of a class, getting the contructor parameters from the DI container
      *
      * @param string|ReflectionClass    $xClass         The class name or the reflection class
      *
@@ -335,7 +335,7 @@ class Container
     {
         if(is_string($xClass))
         {
-            // Create tye reflection class instance
+            // Create the reflection class instance
             $xClass = new ReflectionClass($xClass);
         }
         if(!($xClass instanceof ReflectionClass))

@@ -276,7 +276,7 @@ class FileUpload extends RequestPlugin
     }
 
     /**
-     * Process the uploaded files into the HTTP request
+     * Process the uploaded files in the HTTP request
      *
      * @return boolean
      */

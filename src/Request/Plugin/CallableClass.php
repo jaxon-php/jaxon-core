@@ -37,7 +37,7 @@ class CallableClass extends RequestPlugin
     use \Jaxon\Features\Translator;
 
     /**
-     * The callable registrar
+     * The callable registry
      *
      * @var CallableRegistry
      */
