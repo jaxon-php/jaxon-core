@@ -190,9 +190,21 @@ class CallableRepository
         {
             foreach($aOptions['functions'] as $sName => $xValue)
             {
-                // Todo: process options for PHP here
+                // Options for PHP classes. They start with "__"
+                $aPhpOptions = array_filter($xValue, function($sOptionName) {
+                    return substr($sOptionName, 0, 2) === '__';
+                }, ARRAY_FILTER_USE_KEY);
+                foreach($aPhpOptions as $sOptionName => $xOptionValue)
+                {
+                    $xCallableObject->configure($sOptionName, [$sName => $xOptionValue]);
+                    continue;
+                }
+
                 // Options for javascript code.
-                $this->aCallableOptions[$sClassName][$sName] = $xValue;
+                $aJsOptions = array_filter($xValue, function($sOptionName) {
+                    return substr($sOptionName, 0, 2) !== '__';
+                }, ARRAY_FILTER_USE_KEY);
+                $this->aCallableOptions[$sClassName][$sName] = $aJsOptions;
             }
         }
 
