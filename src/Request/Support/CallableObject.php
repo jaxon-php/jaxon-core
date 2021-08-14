@@ -51,6 +51,20 @@ class CallableObject
     private $aProtectedMethods = [];
 
     /**
+     * A list of methods to call before processing the request
+     *
+     * @var array
+     */
+    private $aBeforeMethods = [];
+
+    /**
+     * A list of methods to call after processing the request
+     *
+     * @var array
+     */
+    private $aAfterMethods = [];
+
+    /**
      * The namespace the callable class was registered from
      *
      * @var string
@@ -133,37 +147,65 @@ class CallableObject
      * Set configuration options / call options for each method
      *
      * @param string        $sName              The name of the configuration option
-     * @param string|array  $sValue             The value of the configuration option
+     * @param string|array  $xValue             The value of the configuration option
      *
      * @return void
      */
-    public function configure($sName, $sValue)
+    public function configure($sName, $xValue)
     {
         switch($sName)
         {
         // Set the separator
         case 'separator':
-            if($sValue == '_' || $sValue == '.')
+            if($xValue == '_' || $xValue == '.')
             {
-                $this->sSeparator = $sValue;
+                $this->sSeparator = $xValue;
             }
             break;
         // Set the namespace
         case 'namespace':
-            if(is_string($sValue))
+            if(is_string($xValue))
             {
-                $this->sNamespace = $sValue;
+                $this->sNamespace = $xValue;
             }
             break;
         // Set the protected methods
         case 'protected':
-            if(is_array($sValue))
+            if(is_array($xValue))
             {
-                $this->aProtectedMethods = array_merge($this->aProtectedMethods, $sValue);
+                $this->aProtectedMethods = array_merge($this->aProtectedMethods, $xValue);
             }
-            elseif(is_string($sValue))
+            elseif(is_string($xValue))
             {
-                $this->aProtectedMethods[] = $sValue;
+                $this->aProtectedMethods[] = $xValue;
+            }
+            break;
+        // Set the methods to call before processing the request
+        case '__before':
+            foreach($xValue as $sCalledMethod => $xMethodToCall)
+            {
+                if(is_array($xMethodToCall))
+                {
+                    $this->aBeforeMethods[$sCalledMethod] = $xMethodToCall;
+                }
+                elseif(is_string($xMethodToCall))
+                {
+                    $this->aBeforeMethods[$sCalledMethod] = [$xMethodToCall];
+                }
+            }
+            break;
+        // Set the methods to call after processing the request
+        case '__after':
+            foreach($xValue as $sCalledMethod => $xMethodToCall)
+            {
+                if(is_array($xMethodToCall))
+                {
+                    $this->aAfterMethods[$sCalledMethod] = $xMethodToCall;
+                }
+                elseif(is_string($xMethodToCall))
+                {
+                    $this->aAfterMethods[$sCalledMethod] = [$xMethodToCall];
+                }
             }
             break;
         default:
@@ -212,13 +254,12 @@ class CallableObject
             if($this->xRegisteredObject instanceof \Jaxon\CallableClass)
             {
                 // Set the members of the object
-                $cSetter = function($xCallable, $xResponse) {
+                $cSetter = (function($xCallable, $xResponse) {
                     $this->callable = $xCallable;
                     $this->response = $xResponse;
-                };
+                })->bindTo($this->xRegisteredObject, $this->xRegisteredObject);
                 // Can now access protected attributes
-                \call_user_func($cSetter->bindTo($this->xRegisteredObject,
-                    $this->xRegisteredObject), $this, jaxon()->getResponse());
+                \call_user_func($cSetter, $this, jaxon()->getResponse());
             }
 
             // Run the callback for class initialisation
@@ -245,6 +286,40 @@ class CallableObject
     /**
      * Call the specified method of the registered callable object using the specified array of arguments
      *
+     * @param array     $aClassMethods      The methods config options
+     * @param string    $sMethod            The method called by the request
+     * @param Response  $xResponse          The response returned by the method
+     *
+     * @return void
+     */
+    private function callMethods($aClassMethods, $sMethod, $xResponse = null)
+    {
+        $aMethods = [];
+        if(key_exists($sMethod, $aClassMethods))
+        {
+            $aMethods = $aClassMethods[$sMethod];
+        }
+        elseif(key_exists('*', $aClassMethods))
+        {
+            $aMethods = $aClassMethods['*'];
+        }
+        foreach(array_unique($aMethods) as $sMethodName)
+        {
+            if(!$this->xReflectionClass->hasMethod($sMethodName))
+            {
+                continue;
+            }
+            $reflectionMethod = $this->xReflectionClass->getMethod($sMethodName);
+            $reflectionMethod->setAccessible(true); // Make it possible to call protected methods
+            $xRegisteredObject = $this->getRegisteredObject();
+            (!$xResponse) ? $reflectionMethod->invoke($xRegisteredObject) :
+                $reflectionMethod->invoke($xRegisteredObject, $xResponse);
+        }
+    }
+
+    /**
+     * Call the specified method of the registered callable object using the specified array of arguments
+     *
      * @param string        $sMethod            The name of the method to call
      * @param array         $aArgs              The arguments to pass to the method
      *
@@ -256,8 +331,17 @@ class CallableObject
         {
             return null;
         }
+
+        // Methods to call before processing the request
+        $this->callMethods($this->aBeforeMethods, $sMethod);
+
         $reflectionMethod = $this->xReflectionClass->getMethod($sMethod);
         $xRegisteredObject = $this->getRegisteredObject();
-        return $reflectionMethod->invokeArgs($xRegisteredObject, $aArgs);
+        $xResponse = $reflectionMethod->invokeArgs($xRegisteredObject, $aArgs);
+
+        // Methods to call after processing the request
+        $this->callMethods($this->aAfterMethods, $sMethod, $xResponse);
+
+        return $xResponse;
     }
 }
