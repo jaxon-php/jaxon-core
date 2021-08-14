@@ -151,7 +151,7 @@ class CallableRepository
      */
     public function getCallableObject($sClassName)
     {
-        return $this->aCallableObjects[$sClassName] ?? null;
+        return key_exists($sClassName, $this->aCallableObjects) ? $this->aCallableObjects[$sClassName] : null;
     }
 
     /**
