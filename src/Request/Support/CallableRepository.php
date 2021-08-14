@@ -65,21 +65,30 @@ class CallableRepository
     public function makeClassOptions($sClassName, array $aClassOptions, array $aDirectoryOptions)
     {
         $aOptions = $aClassOptions;
-        if(key_exists('separator', $aDirectoryOptions))
+        $aOptions['functions'] = [];
+        foreach(['separator', 'protected'] as $sName)
         {
-            $aOptions['separator'] = $aDirectoryOptions['separator'];
+            if(key_exists($sName, $aDirectoryOptions))
+            {
+                $aOptions[$sName] = $aDirectoryOptions[$sName];
+            }
         }
-        if(key_exists('protected', $aDirectoryOptions))
+
+        $aFunctionOptions = $aDirectoryOptions['classes'] ?? [];
+        // Sort the options by asc key length
+        uksort($aFunctionOptions, function($key1, $key2) {
+            return strlen($key1) - strlen($key2);
+        });
+        foreach($aFunctionOptions as $sName => $xValue)
         {
-            $aOptions['protected'] = $aDirectoryOptions['protected'];
-        }
-        if(key_exists('*', $aDirectoryOptions))
-        {
-            $aOptions = array_merge($aOptions, $aDirectoryOptions['*']);
-        }
-        if(key_exists($sClassName, $aDirectoryOptions))
-        {
-            $aOptions = array_merge($aOptions, $aDirectoryOptions[$sClassName]);
+            if($sName === '*')
+            {
+                $aOptions['functions'] = array_merge($aOptions['functions'], $xValue);
+            }
+            elseif(strncmp($sClassName, $sName, strlen($sName)) === 0)
+            {
+                $aOptions['functions'] = array_merge($aOptions['functions'], $xValue);
+            }
         }
 
         // This value will be used to compute hash
@@ -168,18 +177,25 @@ class CallableRepository
         // Create the callable object
         $xCallableObject = new CallableObject($sClassName);
         $this->aCallableOptions[$sClassName] = [];
-        foreach($aOptions as $sName => $xValue)
+        foreach(['namespace', 'separator', 'protected'] as $sName)
         {
-            if(in_array($sName, ['separator', 'namespace', 'protected']))
+            if(key_exists($sName, $aOptions))
             {
-                $xCallableObject->configure($sName, $xValue);
+                $xCallableObject->configure($sName, $aOptions[$sName]);
             }
-            elseif(is_array($xValue) && $sName != 'include')
+        }
+
+        // Functions options
+        if(key_exists('functions', $aOptions))
+        {
+            foreach($aOptions['functions'] as $sName => $xValue)
             {
-                // These options are to be included in javascript code.
+                // Todo: process options for PHP here
+                // Options for javascript code.
                 $this->aCallableOptions[$sClassName][$sName] = $xValue;
             }
         }
+
         $this->aCallableObjects[$sClassName] = $xCallableObject;
 
         // Register the request factory for this callable object

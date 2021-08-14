@@ -243,11 +243,14 @@ class CallableRegistry
     {
         // Find the corresponding namespace
         $sNamespace = null;
-        foreach(array_keys($this->aNamespaces) as $_sNamespace)
+        $aOptions = null;
+        foreach($this->aNamespaces as $_sNamespace => $_aOptions)
         {
-            if(substr($sClassName, 0, strlen($_sNamespace) + 1) == $_sNamespace . '\\')
+            // Check if the namespace matches the class.
+            if(strncmp($sClassName, $_sNamespace . '\\', strlen($_sNamespace) + 1) === 0)
             {
                 $sNamespace = $_sNamespace;
+                $aOptions = $_aOptions;
                 break;
             }
         }
@@ -257,7 +260,6 @@ class CallableRegistry
         }
 
         // Get the class options
-        $aOptions = $this->aNamespaces[$sNamespace];
         $aClassOptions = ['namespace' => $sNamespace];
         return $this->xRepository->makeClassOptions($sClassName, $aClassOptions, $aOptions);
     }
