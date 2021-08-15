@@ -144,6 +144,36 @@ class CallableObject
     }
 
     /**
+     * Set hook methods
+     *
+     * @param array         &$aHookMethods      The array of hook methods
+     * @param string|array  $xValue             The value of the configuration option
+     *
+     * @return void
+     */
+    public function setHookMethods(&$aHookMethods, $xValue)
+    {
+        foreach($xValue as $sCalledMethods => $xMethodToCall)
+        {
+            $aCalledMethods = explode(',', $sCalledMethods);
+            if(is_array($xMethodToCall))
+            {
+                foreach($aCalledMethods as $sCalledMethod)
+                {
+                    $aHookMethods[$sCalledMethod] = $xMethodToCall;
+                }
+            }
+            elseif(is_string($xMethodToCall))
+            {
+                foreach($aCalledMethods as $sCalledMethod)
+                {
+                    $aHookMethods[$sCalledMethod] = [$xMethodToCall];
+                }
+            }
+        }
+    }
+
+    /**
      * Set configuration options / call options for each method
      *
      * @param string        $sName              The name of the configuration option
@@ -182,31 +212,11 @@ class CallableObject
             break;
         // Set the methods to call before processing the request
         case '__before':
-            foreach($xValue as $sCalledMethod => $xMethodToCall)
-            {
-                if(is_array($xMethodToCall))
-                {
-                    $this->aBeforeMethods[$sCalledMethod] = $xMethodToCall;
-                }
-                elseif(is_string($xMethodToCall))
-                {
-                    $this->aBeforeMethods[$sCalledMethod] = [$xMethodToCall];
-                }
-            }
+            $this->setHookMethods($this->aBeforeMethods, $xValue);
             break;
         // Set the methods to call after processing the request
         case '__after':
-            foreach($xValue as $sCalledMethod => $xMethodToCall)
-            {
-                if(is_array($xMethodToCall))
-                {
-                    $this->aAfterMethods[$sCalledMethod] = $xMethodToCall;
-                }
-                elseif(is_string($xMethodToCall))
-                {
-                    $this->aAfterMethods[$sCalledMethod] = [$xMethodToCall];
-                }
-            }
+            $this->setHookMethods($this->aAfterMethods, $xValue);
             break;
         default:
             break;
@@ -292,7 +302,7 @@ class CallableObject
      *
      * @return void
      */
-    private function callMethods($aClassMethods, $sMethod, $xResponse = null)
+    private function callHookMethods($aClassMethods, $sMethod)
     {
         $aMethods = [];
         if(key_exists($sMethod, $aClassMethods))
@@ -303,17 +313,22 @@ class CallableObject
         {
             $aMethods = $aClassMethods['*'];
         }
-        foreach(array_unique($aMethods) as $sMethodName)
+        foreach($aMethods as $xKey => $xValue)
         {
+            $sMethodName = $xValue;
+            $aMethodArgs = [];
+            if(is_string($xKey))
+            {
+                $sMethodName = $xKey;
+                $aMethodArgs = is_array($xValue) ? $xValue : [$xValue];
+            }
             if(!$this->xReflectionClass->hasMethod($sMethodName))
             {
                 continue;
             }
             $reflectionMethod = $this->xReflectionClass->getMethod($sMethodName);
             $reflectionMethod->setAccessible(true); // Make it possible to call protected methods
-            $xRegisteredObject = $this->getRegisteredObject();
-            (!$xResponse) ? $reflectionMethod->invoke($xRegisteredObject) :
-                $reflectionMethod->invoke($xRegisteredObject, $xResponse);
+            $reflectionMethod->invokeArgs($this->getRegisteredObject(), $aMethodArgs);
         }
     }
 
@@ -333,14 +348,13 @@ class CallableObject
         }
 
         // Methods to call before processing the request
-        $this->callMethods($this->aBeforeMethods, $sMethod);
+        $this->callHookMethods($this->aBeforeMethods, $sMethod);
 
         $reflectionMethod = $this->xReflectionClass->getMethod($sMethod);
-        $xRegisteredObject = $this->getRegisteredObject();
-        $xResponse = $reflectionMethod->invokeArgs($xRegisteredObject, $aArgs);
+        $xResponse = $reflectionMethod->invokeArgs($this->getRegisteredObject(), $aArgs);
 
         // Methods to call after processing the request
-        $this->callMethods($this->aAfterMethods, $sMethod, $xResponse);
+        $this->callHookMethods($this->aAfterMethods, $sMethod);
 
         return $xResponse;
     }
