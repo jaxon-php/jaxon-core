@@ -74,7 +74,7 @@ class CallableRepository
             }
         }
 
-        $aFunctionOptions = $aDirectoryOptions['classes'] ?? [];
+        $aFunctionOptions = key_exists('classes', $aDirectoryOptions) ? $aDirectoryOptions['classes'] : [];
         // Sort the options by asc key length
         uksort($aFunctionOptions, function($key1, $key2) {
             return strlen($key1) - strlen($key2);
@@ -151,7 +151,7 @@ class CallableRepository
      */
     public function getCallableObject($sClassName)
     {
-        return $this->aCallableObjects[$sClassName] ?? null;
+        return key_exists($sClassName, $this->aCallableObjects) ? $this->aCallableObjects[$sClassName] : null;
     }
 
     /**
