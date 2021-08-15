@@ -146,7 +146,7 @@ class CallableObject
     /**
      * Set hook methods
      *
-     * @param array         &$aHookMethods      The array of hook methods
+     * @param array         $aHookMethods      The array of hook methods
      * @param string|array  $xValue             The value of the configuration option
      *
      * @return void
