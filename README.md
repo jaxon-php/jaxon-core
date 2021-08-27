@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/jaxon-php/jaxon-core.svg?branch=master)](https://travis-ci.org/jaxon-php/jaxon-core)
+[![Build Status](https://api.travis-ci.com/jaxon-php/jaxon-core.svg?branch=master)](https://app.travis-ci.com/github/jaxon-php/jaxon-core)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/jaxon-php/jaxon-core/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/jaxon-php/jaxon-core/?branch=master)
 [![StyleCI](https://styleci.io/repos/60390067/shield?branch=master)](https://styleci.io/repos/60390067)
 
