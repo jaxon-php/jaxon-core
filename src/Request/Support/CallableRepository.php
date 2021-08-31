@@ -64,13 +64,15 @@ class CallableRepository
      */
     public function makeClassOptions($sClassName, array $aClassOptions, array $aDirectoryOptions)
     {
-        $aOptions = $aClassOptions;
-        $aOptions['functions'] = [];
+        if(!key_exists('functions', $aClassOptions))
+        {
+            $aClassOptions['functions'] = [];
+        }
         foreach(['separator', 'protected'] as $sName)
         {
             if(key_exists($sName, $aDirectoryOptions))
             {
-                $aOptions[$sName] = $aDirectoryOptions[$sName];
+                $aClassOptions[$sName] = $aDirectoryOptions[$sName];
             }
         }
 
@@ -81,23 +83,19 @@ class CallableRepository
         });
         foreach($aFunctionOptions as $sName => $xValue)
         {
-            if($sName === '*')
+            if($sName === '*' || strncmp($sClassName, $sName, strlen($sName)) === 0)
             {
-                $aOptions['functions'] = array_merge($aOptions['functions'], $xValue);
-            }
-            elseif(strncmp($sClassName, $sName, strlen($sName)) === 0)
-            {
-                $aOptions['functions'] = array_merge($aOptions['functions'], $xValue);
+                $aClassOptions['functions'] = array_merge($aClassOptions['functions'], $xValue);
             }
         }
 
         // This value will be used to compute hash
-        if(!key_exists('timestamp', $aOptions))
+        if(!key_exists('timestamp', $aClassOptions))
         {
-            $aOptions['timestamp'] = 0;
+            $aClassOptions['timestamp'] = 0;
         }
 
-        return $aOptions;
+        return $aClassOptions;
     }
 
     /**
