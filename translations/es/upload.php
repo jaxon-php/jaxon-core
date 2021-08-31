@@ -8,7 +8,7 @@ return [
             'type' => "Los archivos de tipo :type no están permitidos.",
             'extension' => "Los archivos con la extensión :extension no estan permitidos.",
             'max-size' => "No se pueden subir archivos con peso :size. Muy grande.",
-            'max-size' => "No se pueden subir archivos con peso :size. Muy pequeño.",
+            'min-size' => "No se pueden subir archivos con peso :size. Muy pequeño.",
             'plugin' => "No se ha encontrado el plugin upload.",
             'request' => "No hay datos de subida en la petición.",
         ],
