@@ -312,15 +312,15 @@ class Container
     /**
      * Set an alias
      *
-     * @param string                $sClass             The class name
      * @param string                $sAlias             The alias name
+     * @param string                $sClass             The class name
      *
      * @return void
      */
-    public function alias($sClass, $sAlias)
+    public function alias($sAlias, $sClass)
     {
-        $this->libContainer[$sClass] = function($c) use ($sAlias) {
-            return $c[$sAlias];
+        $this->libContainer[$sAlias] = function($c) use ($sClass) {
+            return $c[$sClass];
         };
     }
 
