@@ -295,7 +295,7 @@ class Container
     }
 
     /**
-     * Set a DI closure
+     * Save a closure in the container
      *
      * @param string                $sClass             The full class name
      * @param Closure               $xClosure           The closure
@@ -310,7 +310,20 @@ class Container
     }
 
     /**
-     * Set an alias
+     * Save a value in the container
+     *
+     * @param string                $sKey               The key
+     * @param mixed                 $xValue             The value
+     *
+     * @return void
+     */
+    public function val($sKey, $xValue)
+    {
+        $this->libContainer[$sKey] = $xValue;
+    }
+
+    /**
+     * Set an alias in the container
      *
      * @param string                $sAlias             The alias name
      * @param string                $sClass             The class name
@@ -329,7 +342,7 @@ class Container
      *
      * @param string|ReflectionClass    $xClass         The class name or the reflection class
      *
-     * @return null|object
+     * @return mixed
      */
     public function make($xClass)
     {
@@ -355,6 +368,20 @@ class Container
             $parameterInstances[] = $this->get($parameter->getClass()->getName());
         }
         return $xClass->newInstanceArgs($parameterInstances);
+    }
+
+    /**
+     * Create an instance of a class by automatically fetching the dependencies from the constructor.
+     *
+     * @param string                $sClass             The class name
+     *
+     * @return void
+     */
+    public function auto($sClass)
+    {
+        $this->libContainer[$sClass] = function($c) use ($sClass) {
+            return $this->make($sClass);
+        };
     }
 
     /**
