@@ -262,6 +262,10 @@ class CallableClass extends RequestPlugin
         $sCode = $this->getNamespacesScript();
 
         $aCallableObjects = $this->xRepository->getCallableObjects();
+        // Sort the options by key length asc
+        uksort($aCallableObjects, function($name1, $name2) {
+            return strlen($name1) - strlen($name2);
+        });
         foreach($aCallableObjects as $sClassName => $xCallableObject)
         {
             $sCode .= $this->getCallableScript($sClassName, $xCallableObject, $aProtectedMethods);
