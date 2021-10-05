@@ -118,7 +118,9 @@ class FileUpload extends RequestPlugin
             throw new \Jaxon\Exception\Error($this->trans('errors.upload.access'));
         }
         $sUploadDir .= $this->sUploadSubdir;
-        @mkdir($sUploadDir);
+        if(!file_exists($sUploadDir)) {
+            @mkdir($sUploadDir);
+        }
         return $sUploadDir;
     }
 
@@ -138,7 +140,9 @@ class FileUpload extends RequestPlugin
             throw new \Jaxon\Exception\Error($this->trans('errors.upload.access'));
         }
         $sUploadDir .= 'tmp' . DIRECTORY_SEPARATOR;
-        @mkdir($sUploadDir);
+        if (!file_exists($sUploadDir)) {
+            @mkdir($sUploadDir);
+        }
         return $sUploadDir;
     }
 
