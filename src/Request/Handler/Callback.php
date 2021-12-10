@@ -15,6 +15,13 @@ namespace Jaxon\Request\Handler;
 class Callback
 {
     /**
+     * The callbacks to run after booting the library
+     *
+     * @var callable[]
+     */
+    protected $xBootCallbacks = [];
+
+    /**
      * The callbacks to run before processing the request
      *
      * @var callable[]
@@ -48,6 +55,16 @@ class Callback
      * @var callable[]
      */
     protected $xInitCallbacks = [];
+
+    /**
+     * Get the library booting callbacks.
+     *
+     * @return callable[]
+     */
+    public function getBootCallbacks()
+    {
+        return $this->xBootCallbacks;
+    }
 
     /**
      * Get the pre-request processing callbacks.
@@ -97,6 +114,19 @@ class Callback
     public function getInitCallbacks()
     {
         return $this->xInitCallbacks;
+    }
+
+    /**
+     * Add a library booting callback.
+     *
+     * @param callable  $xCallable               The callback function
+     *
+     * @return Callback
+     */
+    public function boot($xCallable)
+    {
+        $this->xBootCallbacks[] = $xCallable;
+        return $this;
     }
 
     /**

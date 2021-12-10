@@ -124,6 +124,7 @@ class Handler
      */
     public function processArguments()
     {
+        $this->onBoot();
         return $this->xArgumentManager->process();
     }
 
@@ -135,6 +136,19 @@ class Handler
     public function getCallbackManager()
     {
         return $this->xCallbackManager;
+    }
+
+    /**
+     * These callbacks are called whenever an invalid request is processed.
+     *
+     * @return void
+     */
+    public function onBoot()
+    {
+        foreach($this->xCallbackManager->getBootCallbacks() as $xCallback)
+        {
+            call_user_func($xCallback);
+        }
     }
 
     /**
