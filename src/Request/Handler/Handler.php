@@ -20,8 +20,10 @@
 
 namespace Jaxon\Request\Handler;
 
+use Jaxon\Exception\Error;
 use Jaxon\Jaxon;
 use Jaxon\Plugin\Manager as PluginManager;
+use Jaxon\Plugin\Request;
 use Jaxon\Response\Manager as ResponseManager;
 use Jaxon\Request\Plugin\FileUpload;
 use Jaxon\Response\AbstractResponse;
@@ -49,21 +51,21 @@ class Handler
     /**
      * The arguments handler.
      *
-     * @var \Jaxon\Request\Handler\Argument
+     * @var Argument
      */
     private $xArgumentManager;
 
     /**
      * The callbacks to run while processing the request
      *
-     * @var \Jaxon\Request\Handler\Callback
+     * @var Callback
      */
     private $xCallbackManager;
 
     /**
      * The request plugin that is able to process the current request
      *
-     * @var \Jaxon\Plugin\Request
+     * @var Request
      */
     private $xTargetRequestPlugin = null;
 
@@ -118,6 +120,7 @@ class Handler
      * Return the array of arguments that were extracted and parsed from the GET or POST data
      *
      * @return array
+     * @throws Error
      */
     public function processArguments()
     {
@@ -135,7 +138,7 @@ class Handler
     }
 
     /**
-     * This is the pre-request processing callback passed to the Jaxon library.
+     * These are the pre-request processing callbacks passed to the Jaxon library.
      *
      * @param  boolean  $bEndRequest   If set to true, the request processing is interrupted.
      *
@@ -144,71 +147,67 @@ class Handler
     public function onBefore(&$bEndRequest)
     {
         // Call the user defined callback
-        if(!($xCallback = $this->xCallbackManager->before()))
+        foreach($this->xCallbackManager->getBeforeCallbacks() as $xCallback)
         {
-            return;
-        }
-        $xReturn = call_user_func_array($xCallback,
-            [$this->xTargetRequestPlugin->getTarget(), &$bEndRequest]);
-        if($xReturn instanceof AbstractResponse)
-        {
-            $this->xResponseManager->append($xReturn);
+            $xReturn = call_user_func($xCallback,
+                $this->xTargetRequestPlugin->getTarget(), $bEndRequest);
+            if($xReturn instanceof AbstractResponse)
+            {
+                $this->xResponseManager->append($xReturn);
+            }
         }
     }
 
     /**
-     * This is the post-request processing callback passed to the Jaxon library.
+     * These are the post-request processing callbacks passed to the Jaxon library.
      *
      * @return void
      */
     public function onAfter($bEndRequest)
     {
-        if(!($xCallback = $this->xCallbackManager->after()))
+        foreach($this->xCallbackManager->getAfterCallbacks() as $xCallback)
         {
-            return;
-        }
-        $xReturn = call_user_func_array($xCallback,
-            [$this->xTargetRequestPlugin->getTarget(), $bEndRequest]);
-        if($xReturn instanceof AbstractResponse)
-        {
-            $this->xResponseManager->append($xReturn);
+            $xReturn = call_user_func($xCallback,
+                $this->xTargetRequestPlugin->getTarget(), $bEndRequest);
+            if($xReturn instanceof AbstractResponse)
+            {
+                $this->xResponseManager->append($xReturn);
+            }
         }
     }
 
     /**
-     * This callback is called whenever an invalid request is processed.
+     * These callbacks are called whenever an invalid request is processed.
      *
      * @return void
      */
     public function onInvalid($sMessage)
     {
-        if(!($xCallback = $this->xCallbackManager->invalid()))
+        foreach($this->xCallbackManager->getInvalidCallbacks() as $xCallback)
         {
-            return;
-        }
-        $xReturn = call_user_func_array($xCallback, [$sMessage]);
-        if($xReturn instanceof AbstractResponse)
-        {
-            $this->xResponseManager->append($xReturn);
+            $xReturn = call_user_func($xCallback, $sMessage);
+            if($xReturn instanceof AbstractResponse)
+            {
+                $this->xResponseManager->append($xReturn);
+            }
         }
     }
 
     /**
-     * This callback is called whenever an invalid request is processed.
+     * These callbacks are called whenever an invalid request is processed.
      *
      * @return void
      * @throws Exception
      */
     public function onError(Exception $xException)
     {
-        if(!($xCallback = $this->xCallbackManager->error()))
+        foreach($this->xCallbackManager->getErrorCallbacks() as $xCallback)
         {
-            throw $xException;
-        }
-        $xReturn = call_user_func_array($xCallback, [$xException]);
-        if($xReturn instanceof AbstractResponse)
-        {
-            $this->xResponseManager->append($xReturn);
+            $xReturn = call_user_func($xCallback, $xException);
+            if($xReturn instanceof AbstractResponse)
+            {
+                $this->xResponseManager->append($xReturn);
+            }
         }
     }
 
@@ -278,7 +277,7 @@ class Handler
 
             $this->xResponseManager->error($e->getMessage());
 
-            if($e instanceof \Jaxon\Exception\Error)
+            if($e instanceof Error)
             {
                 $this->onInvalid($e->getMessage());
             }
@@ -345,7 +344,7 @@ class Handler
             $this->onAfter($bEndRequest);
         }
 
-        // If the called function returned no response, take the the global response
+        // If the called function returned no response, take the global response
         if(!$this->xResponseManager->getResponse())
         {
             $this->xResponseManager->append(jaxon()->getResponse());

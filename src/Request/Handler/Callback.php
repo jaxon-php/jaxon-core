@@ -15,122 +15,152 @@ namespace Jaxon\Request\Handler;
 class Callback
 {
     /**
-     * The callback to run before processing the request
+     * The callbacks to run before processing the request
      *
-     * @var callable
+     * @var callable[]
      */
-    protected $xBeforeCallback = null;
+    protected $xBeforeCallbacks = [];
 
     /**
-     * The callback to run afteer processing the request
+     * The callbacks to run afteer processing the request
      *
-     * @var callable
+     * @var callable[]
      */
-    protected $xAfterCallback = null;
+    protected $xAfterCallbacks = [];
 
     /**
-     * The callback to run in case of invalid request
+     * The callbacks to run in case of invalid request
      *
-     * @var callable
+     * @var callable[]
      */
-    protected $xInvalidCallback = null;
+    protected $xInvalidCallbacks = [];
 
     /**
-     * The callback to run in case of error
+     * The callbacks to run in case of error
      *
-     * @var callable
+     * @var callable[]
      */
-    protected $xErrorCallback = null;
+    protected $xErrorCallbacks = [];
 
     /**
-     * The callback to run when a class is instanciated
+     * The callbacks to run when a class is instanced
      *
-     * @var callable
+     * @var callable[]
      */
-    protected $xInitCallback = null;
+    protected $xInitCallbacks = [];
 
     /**
-     * Get or set the pre-request processing callback.
+     * Get the pre-request processing callbacks.
      *
-     * @param callable|null  $xCallable               The callback function
-     *
-     * @return Callback|callable
+     * @return callable[]
      */
-    public function before($xCallable = null)
+    public function getBeforeCallbacks()
     {
-        if($xCallable === null)
-        {
-            return $this->xBeforeCallback;
-        }
-        $this->xBeforeCallback = $xCallable;
+        return $this->xBeforeCallbacks;
+    }
+
+    /**
+     * Get the post-request processing callbacks.
+     *
+     * @return callable[]
+     */
+    public function getAfterCallbacks()
+    {
+        return $this->xAfterCallbacks;
+    }
+
+    /**
+     * Get the invalid request callbacks.
+     *
+     * @return callable[]
+     */
+    public function getInvalidCallbacks()
+    {
+        return $this->xInvalidCallbacks;
+    }
+
+    /**
+     * Get the processing error callbacks.
+     *
+     * @return callable[]
+     */
+    public function getErrorCallbacks()
+    {
+        return $this->xErrorCallbacks;
+    }
+
+    /**
+     * Get the class initialisation callbacks.
+     *
+     * @return callable[]
+     */
+    public function getInitCallbacks()
+    {
+        return $this->xInitCallbacks;
+    }
+
+    /**
+     * Add a pre-request processing callback.
+     *
+     * @param callable  $xCallable               The callback function
+     *
+     * @return Callback
+     */
+    public function before($xCallable)
+    {
+        $this->xBeforeCallbacks[] = $xCallable;
         return $this;
     }
 
     /**
-     * Get or set the post-request processing callback.
+     * Add a post-request processing callback.
      *
-     * @param callable|null  $xCallable               The callback function
+     * @param callable  $xCallable               The callback function
      *
-     * @return Callback|callable
+     * @return Callback
      */
-    public function after($xCallable = null)
+    public function after($xCallable)
     {
-        if($xCallable === null)
-        {
-            return $this->xAfterCallback;
-        }
-        $this->xAfterCallback = $xCallable;
+        $this->xAfterCallbacks[] = $xCallable;
         return $this;
     }
 
     /**
-     * Get or set the invalid request callback.
+     * Add a invalid request callback.
      *
-     * @param callable|null  $xCallable               The callback function
+     * @param callable  $xCallable               The callback function
      *
-     * @return Callback|callable
+     * @return Callback
      */
-    public function invalid($xCallable = null)
+    public function invalid($xCallable)
     {
-        if($xCallable === null)
-        {
-            return $this->xInvalidCallback;
-        }
-        $this->xInvalidCallback = $xCallable;
+        $this->xInvalidCallbacks[] = $xCallable;
         return $this;
     }
 
     /**
-     * Get or set the processing error callback.
+     * Add a processing error callback.
      *
-     * @param callable|null  $xCallable               The callback function
+     * @param callable  $xCallable               The callback function
      *
-     * @return Callback|callable
+     * @return Callback
      */
-    public function error($xCallable = null)
+    public function error($xCallable)
     {
-        if($xCallable === null)
-        {
-            return $this->xErrorCallback;
-        }
-        $this->xErrorCallback = $xCallable;
+        $this->xErrorCallbacks[] = $xCallable;
         return $this;
     }
 
     /**
-     * Get or set the class initialisation callback.
+     * Add a class initialisation callback.
      *
-     * @param callable|null  $xCallable               The callback function
+     * @param callable  $xCallable               The callback function
      *
-     * @return Callback|callable
+     * @return Callback
      */
-    public function init($xCallable = null)
+    public function init($xCallable)
     {
-        if($xCallable === null)
-        {
-            return $this->xInitCallback;
-        }
-        $this->xInitCallback = $xCallable;
+        $this->xInitCallbacks[] = $xCallable;
         return $this;
     }
 }

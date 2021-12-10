@@ -274,7 +274,7 @@ class CallableObject
             }
 
             // Run the callback for class initialisation
-            if(($xCallback = $di->getRequestHandler()->getCallbackManager()->init()))
+            foreach($di->getRequestHandler()->getCallbackManager()->getInitCallbacks() as $xCallback)
             {
                 \call_user_func($xCallback, $this->xRegisteredObject);
             }
