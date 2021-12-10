@@ -75,7 +75,7 @@ class Engine
      */
     public function pagination($sDirectory)
     {
-        $this->aNamespaces['pagination']['directory'] = $sDirectory;
+        $this->aNamespaces['pagination']['directory'] = rtrim(trim($sDirectory), "/\\") . DIRECTORY_SEPARATOR;
     }
 
     /**
