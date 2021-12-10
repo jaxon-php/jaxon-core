@@ -25,11 +25,20 @@
 
 namespace Jaxon;
 
+use Jaxon\App\App;
+use Jaxon\Contracts\Session;
 use Jaxon\Plugin\Plugin;
 use Jaxon\Plugin\Package;
+use Jaxon\Plugin\Response;
+use Jaxon\Request\Factory\CallableClass\Request;
+use Jaxon\Request\Handler\Callback;
+use Jaxon\Request\Plugin\FileUpload;
 use Jaxon\Utils\DI\Container;
 use Jaxon\Utils\Config\Reader as ConfigReader;
 
+use Jaxon\Utils\Dialogs\Dialog;
+use Jaxon\Utils\Template\Engine;
+use Jaxon\Utils\View\Renderer;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Psr\Log\LoggerAwareTrait;
@@ -301,7 +310,7 @@ class Jaxon implements LoggerAwareInterface
      *
      * @param string        $sClassName         The class name
      *
-     * @return \Jaxon\Request\Factory\CallableClass\Request
+     * @return Request|null
      */
     public function request($sClassName)
     {
@@ -414,7 +423,7 @@ class Jaxon implements LoggerAwareInterface
      *
      * @param string        $sName                The name of the plugin
      *
-     * @return \Jaxon\Plugin\Response
+     * @return Response
      */
     public function plugin($sName)
     {
@@ -426,7 +435,7 @@ class Jaxon implements LoggerAwareInterface
      *
      * @param string        $sClassName           The package class name
      *
-     * @return \Jaxon\Plugin\Package
+     * @return Package
      */
     public function package($sClassName)
     {
@@ -436,7 +445,7 @@ class Jaxon implements LoggerAwareInterface
     /**
      * Get the upload plugin
      *
-     * @return \Jaxon\Request\Plugin\FileUpload
+     * @return FileUpload
      */
     public function upload()
     {
@@ -446,7 +455,7 @@ class Jaxon implements LoggerAwareInterface
     /**
      * Get the request callback manager
      *
-     * @return \Jaxon\Request\Handler\Callback
+     * @return Callback
      */
     public function callback()
     {
@@ -456,7 +465,7 @@ class Jaxon implements LoggerAwareInterface
     /**
      * Get the dialog wrapper
      *
-     * @return \Jaxon\Utils\Dialogs\Dialog
+     * @return Dialog
      */
     public function dialog()
     {
@@ -466,7 +475,7 @@ class Jaxon implements LoggerAwareInterface
     /**
      * Get the template engine
      *
-     * @return \Jaxon\Utils\Template\Engine
+     * @return Engine
      */
     public function template()
     {
@@ -476,7 +485,7 @@ class Jaxon implements LoggerAwareInterface
     /**
      * Get the App instance
      *
-     * @return \Jaxon\App\App
+     * @return App
      */
     public function app()
     {
@@ -486,7 +495,7 @@ class Jaxon implements LoggerAwareInterface
     /**
      * Get the view renderer
      *
-     * @return \Jaxon\Utils\View\Renderer
+     * @return Renderer
      */
     public function view()
     {
@@ -496,7 +505,7 @@ class Jaxon implements LoggerAwareInterface
     /**
      * Get the session manager
      *
-     * @return \Jaxon\Contracts\Session
+     * @return Session
      */
     public function session()
     {

@@ -77,7 +77,8 @@ class Container
     /**
      * The class constructor
      *
-     * @param array     $aOptions       The default options
+     * @param array $aOptions The default options
+     * @throws \Jaxon\Utils\Config\Exception\Data
      */
     public function __construct(array $aOptions)
     {

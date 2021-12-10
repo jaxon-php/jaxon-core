@@ -19,25 +19,27 @@ class Yaml
     /**
      * Read options from a YAML formatted config file
      *
-     * @param string        $sConfigFile        The full path to the config file
+     * @param string $sConfigFile The full path to the config file
      *
      * @return array
+     * @throws Exception\Yaml
+     * @throws Exception\File
      */
     public static function read($sConfigFile)
     {
         $sConfigFile = realpath($sConfigFile);
         if(!extension_loaded('yaml'))
         {
-            throw new \Jaxon\Utils\Config\Exception\Yaml(jaxon_trans('config.errors.yaml.install'));
+            throw new Exception\Yaml(jaxon_trans('config.errors.yaml.install'));
         }
         if(!is_readable($sConfigFile))
         {
-            throw new \Jaxon\Utils\Config\Exception\File(jaxon_trans('config.errors.file.access', ['path' => $sConfigFile]));
+            throw new Exception\File(jaxon_trans('config.errors.file.access', ['path' => $sConfigFile]));
         }
         $aConfigOptions = yaml_parse_file($sConfigFile);
         if(!is_array($aConfigOptions))
         {
-            throw new \Jaxon\Utils\Config\Exception\File(jaxon_trans('config.errors.file.content', ['path' => $sConfigFile]));
+            throw new Exception\File(jaxon_trans('config.errors.file.content', ['path' => $sConfigFile]));
         }
 
         return $aConfigOptions;

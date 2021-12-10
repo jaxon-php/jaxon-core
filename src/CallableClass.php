@@ -2,8 +2,13 @@
 
 namespace Jaxon;
 
+use Jaxon\Contracts\Session;
+use Jaxon\Request\Factory\CallableClass\Request;
 use Jaxon\Request\Support\CallableObject;
 
+use Jaxon\Response\Plugin\JQuery\Dom\Element;
+use Jaxon\Response\Response;
+use Jaxon\Utils\View\Renderer;
 use Psr\Log\LoggerInterface;
 
 class CallableClass
@@ -18,14 +23,14 @@ class CallableClass
     /**
      * The Jaxon response returned by all classes methods
      *
-     * @var \Jaxon\Response\Response
+     * @var Response
      */
     protected $response = null;
 
     /**
      * Get the view renderer
      *
-     * @return \Jaxon\Utils\View\Renderer
+     * @return Renderer
      */
     public function view()
     {
@@ -35,7 +40,7 @@ class CallableClass
     /**
      * Get the session manager
      *
-     * @return \Jaxon\Contracts\Session
+     * @return Session
      */
     public function session()
     {
@@ -55,7 +60,7 @@ class CallableClass
     /**
      * Get the request factory.
      *
-     * @return \Jaxon\Request\Factory\CallableClass\Request
+     * @return Request
      */
     public function rq()
     {
@@ -68,7 +73,7 @@ class CallableClass
      * @param string        $sSelector            The jQuery selector
      * @param string        $sContext             A context associated to the selector
      *
-     * @return \Jaxon\Response\Plugin\JQuery\Dom\Element
+     * @return Element
      */
     public function jq($sSelector = '', $sContext = '')
     {

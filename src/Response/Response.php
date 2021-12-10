@@ -30,6 +30,8 @@
 
 namespace Jaxon\Response;
 
+use Jaxon\Response\Plugin\JQuery\Dom\Element;
+
 class Response extends AbstractResponse
 {
     use Features\DomCommands;
@@ -103,7 +105,7 @@ class Response extends AbstractResponse
      * @param string        $sSelector            The jQuery selector
      * @param string        $sContext             A context associated to the selector
      *
-     * @return \Jaxon\Response\Plugin\JQuery\Dom\Element
+     * @return Element
      */
     public function jq($sSelector = '', $sContext = '')
     {
@@ -118,7 +120,7 @@ class Response extends AbstractResponse
      * @param string        $sSelector            The jQuery selector
      * @param string        $sContext             A context associated to the selector
      *
-     * @return \Jaxon\Response\Plugin\JQuery\Dom\Element
+     * @return Element
      */
     public function jQuery($sSelector = '', $sContext = '')
     {

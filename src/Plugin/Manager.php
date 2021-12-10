@@ -21,10 +21,9 @@
 
 namespace Jaxon\Plugin;
 
+use Jaxon\Exception\Error;
 use Jaxon\Jaxon;
-use Jaxon\Plugin\Package;
 use Jaxon\Plugin\Code\Generator as CodeGenerator;
-use Jaxon\Request\Support\CallableRepository;
 use Jaxon\Request\Plugin\CallableClass;
 use Jaxon\Request\Plugin\CallableDir;
 use Jaxon\Request\Plugin\CallableFunction;
@@ -33,6 +32,8 @@ use Jaxon\Response\Plugin\JQuery as JQueryPlugin;
 use Jaxon\Utils\Config\Config;
 
 use Closure;
+use Jaxon\Utils\Config\Exception\File;
+use Jaxon\Utils\Config\Exception\Yaml;
 
 class Manager
 {
@@ -113,10 +114,11 @@ class Manager
      * - 1000 thru 8999: User created plugins, typically, these plugins don't care about order
      * - 9000 thru 9999: Plugins that generally need to be last or near the end of the plugin list
      *
-     * @param Plugin         $xPlugin               An instance of a plugin
-     * @param integer        $nPriority             The plugin priority, used to order the plugins
+     * @param Plugin $xPlugin An instance of a plugin
+     * @param integer $nPriority The plugin priority, used to order the plugins
      *
      * @return void
+     * @throws Error
      */
     public function registerPlugin(Plugin $xPlugin, $nPriority = 1000)
     {
@@ -158,17 +160,20 @@ class Manager
         if(!$bIsUsed)
         {
             $sErrorMessage = $this->trans('errors.register.invalid', ['name' => get_class($xPlugin)]);
-            throw new \Jaxon\Exception\Error($sErrorMessage);
+            throw new Error($sErrorMessage);
         }
     }
 
     /**
      * Register a package
      *
-     * @param string    $sClassName     The package class name
-     * @param array     $aAppOptions    The package options defined in the app section of the config file
+     * @param string $sClassName The package class name
+     * @param array $aAppOptions The package options defined in the app section of the config file
      *
      * @return void
+     * @throws Error
+     * @throws File
+     * @throws Yaml
      */
     public function registerPackage($sClassName, array $aAppOptions)
     {
@@ -208,17 +213,18 @@ class Manager
      *
      * Call the request plugin with the $sType defined as name.
      *
-     * @param string        $sType          The type of request handler being registered
-     * @param string        $sCallable      The callable entity being registered
-     * @param array|string  $aOptions       The associated options
+     * @param string $sType The type of request handler being registered
+     * @param string $sCallable The callable entity being registered
+     * @param array|string $aOptions The associated options
      *
      * @return void
+     * @throws Error
      */
     public function registerCallable($sType, $sCallable, $aOptions = [])
     {
         if(!key_exists($sType, $this->aRequestPlugins))
         {
-            throw new \Jaxon\Exception\Error($this->trans('errors.register.plugin', ['name' => $sType]));
+            throw new Error($this->trans('errors.register.plugin', ['name' => $sType]));
         }
 
         $xPlugin = $this->aRequestPlugins[$sType];
@@ -228,11 +234,12 @@ class Manager
     /**
      * Register callables from a section of the config
      *
-     * @param Config        $xAppConfig        The config options
-     * @param string        $sSection          The config section name
-     * @param string        $sCallableType     The type of callable to register
+     * @param Config $xAppConfig The config options
+     * @param string $sSection The config section name
+     * @param string $sCallableType The type of callable to register
      *
      * @return void
+     * @throws Error
      */
     private function registerCallablesFromConfig(Config $xAppConfig, $sSection, $sCallableType)
     {
@@ -260,9 +267,10 @@ class Manager
     /**
      * Read and set Jaxon options from a JSON config file
      *
-     * @param Config        $xAppConfig        The config options
+     * @param Config $xAppConfig The config options
      *
      * @return void
+     * @throws Error
      */
     private function _registerFromConfig(Config $xAppConfig)
     {
@@ -287,9 +295,10 @@ class Manager
     /**
      * Read and set Jaxon options from a JSON config file
      *
-     * @param Config        $xAppConfig        The config options
+     * @param Config $xAppConfig The config options
      *
      * @return void
+     * @throws Error
      */
     public function registerFromConfig(Config $xAppConfig)
     {
@@ -309,7 +318,7 @@ class Manager
      *
      * @param string        $sName                The name of the plugin
      *
-     * @return \Jaxon\Plugin\Response
+     * @return Response
      */
     public function getResponsePlugin($sName)
     {
@@ -325,7 +334,7 @@ class Manager
      *
      * @param string        $sName                The name of the plugin
      *
-     * @return \Jaxon\Plugin\Request
+     * @return Request
      */
     public function getRequestPlugin($sName)
     {
@@ -340,6 +349,7 @@ class Manager
      * Register the Jaxon request plugins
      *
      * @return void
+     * @throws Error
      */
     public function registerRequestPlugins()
     {
@@ -354,6 +364,7 @@ class Manager
      * Register the Jaxon response plugins
      *
      * @return void
+     * @throws Error
      */
     public function registerResponsePlugins()
     {

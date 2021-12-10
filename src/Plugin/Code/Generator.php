@@ -65,7 +65,7 @@ class Generator
             'sResponseType'             => 'JSON',
             'sVersion'                  => $this->getOption('core.version'),
             'sLanguage'                 => $this->getOption('core.language'),
-            'bLanguage'                 => $this->hasOption('core.language') ? true : false,
+            'bLanguage'                 => $this->hasOption('core.language'),
             'sRequestURI'               => $this->getOption('core.request.uri'),
             'sDefaultMode'              => $this->getOption('core.request.mode'),
             'sDefaultMethod'            => $this->getOption('core.request.method'),

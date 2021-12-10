@@ -53,11 +53,12 @@ class Config
     /**
      * Recursively set Jaxon options from a data array
      *
-     * @param array             $aOptions           The options array
-     * @param string            $sPrefix            The prefix for option names
-     * @param integer           $nDepth             The depth from the first call
+     * @param array $aOptions The options array
+     * @param string $sPrefix The prefix for option names
+     * @param integer $nDepth The depth from the first call
      *
      * @return void
+     * @throws Exception\Data
      */
     private function _setOptions(array $aOptions, $sPrefix = '', $nDepth = 0)
     {
@@ -92,10 +93,11 @@ class Config
     /**
      * Set the values of an array of config options
      *
-     * @param array             $aOptions           The options array
-     * @param string            $sKeys              The keys of the options in the array
+     * @param array $aOptions The options array
+     * @param string $sKeys The keys of the options in the array
      *
      * @return Config
+     * @throws Exception\Data
      */
     public function setOptions(array $aOptions, $sKeys = '')
     {

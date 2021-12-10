@@ -10,6 +10,7 @@
 
 namespace Jaxon\Response\Features;
 
+use Jaxon\Exception\Error;
 use Jaxon\Response\Response;
 
 trait JsCommands
@@ -70,10 +71,11 @@ trait JsCommands
      * If the user clicks cancel, the specified number of response commands
      * following this one, will be skipped.
      *
-     * @param string        $sMessage           The message to display to the user
-     * @param callable      $xCallable          The function
+     * @param string $sMessage The message to display to the user
+     * @param callable $xCallable The function
      *
-     * @return Response
+     * @return JsCommands
+     * @throws Error
      */
     public function confirm($sMessage, $xCallable)
     {

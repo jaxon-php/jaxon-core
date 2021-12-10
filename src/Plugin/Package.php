@@ -14,6 +14,7 @@
 namespace Jaxon\Plugin;
 
 use Jaxon\Utils\Config\Config;
+use Jaxon\Utils\View\Renderer;
 
 abstract class Package implements Code\Contracts\Generator
 {
@@ -74,7 +75,7 @@ abstract class Package implements Code\Contracts\Generator
     /**
      * Get the view renderer
      *
-     * @return \Jaxon\Utils\View\Renderer
+     * @return Renderer
      */
     public function view()
     {

@@ -19,21 +19,22 @@ class Php
     /**
      * Read options from a PHP config file
      *
-     * @param string        $sConfigFile        The full path to the config file
+     * @param string $sConfigFile The full path to the config file
      *
      * @return array
+     * @throws Exception\File
      */
     public static function read($sConfigFile)
     {
         $sConfigFile = realpath($sConfigFile);
         if(!is_readable($sConfigFile))
         {
-            throw new \Jaxon\Utils\Config\Exception\File(jaxon_trans('errors.file.access', ['path' => $sConfigFile]));
+            throw new Exception\File(jaxon_trans('errors.file.access', ['path' => $sConfigFile]));
         }
         $aConfigOptions = include($sConfigFile);
         if(!is_array($aConfigOptions))
         {
-            throw new \Jaxon\Utils\Config\Exception\File(jaxon_trans('errors.file.content', ['path' => $sConfigFile]));
+            throw new Exception\File(jaxon_trans('errors.file.content', ['path' => $sConfigFile]));
         }
 
         return $aConfigOptions;
