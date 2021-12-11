@@ -163,8 +163,8 @@ class Handler
         // Call the user defined callback
         foreach($this->xCallbackManager->getBeforeCallbacks() as $xCallback)
         {
-            $xReturn = call_user_func($xCallback,
-                $this->xTargetRequestPlugin->getTarget(), $bEndRequest);
+            $xReturn = call_user_func_array($xCallback,
+                [$this->xTargetRequestPlugin->getTarget(), &$bEndRequest]);
             if($xReturn instanceof AbstractResponse)
             {
                 $this->xResponseManager->append($xReturn);
@@ -181,8 +181,8 @@ class Handler
     {
         foreach($this->xCallbackManager->getAfterCallbacks() as $xCallback)
         {
-            $xReturn = call_user_func($xCallback,
-                $this->xTargetRequestPlugin->getTarget(), $bEndRequest);
+            $xReturn = call_user_func_array($xCallback,
+                [$this->xTargetRequestPlugin->getTarget(), $bEndRequest]);
             if($xReturn instanceof AbstractResponse)
             {
                 $this->xResponseManager->append($xReturn);
