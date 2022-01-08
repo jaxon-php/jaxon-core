@@ -124,7 +124,6 @@ class Handler
      */
     public function processArguments()
     {
-        $this->onBoot();
         return $this->xArgumentManager->process();
     }
 

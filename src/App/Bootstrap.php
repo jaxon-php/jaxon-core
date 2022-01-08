@@ -139,6 +139,8 @@ class Bootstrap
         $di->getPluginManager()->registerFromConfig($xAppConfig);
         // Save the view namespaces
         $di->getViewManager()->addNamespaces($xAppConfig);
+        // Call the on boot callbacks
+        $di->getRequestHandler()->onBoot();
     }
 
     /**
