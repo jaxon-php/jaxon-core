@@ -184,6 +184,18 @@ class Paginator
     }
 
     /**
+     * Get the pages.
+     *
+     * @return array
+     */
+    public function getPages()
+    {
+        return array_map(function($aPage) {
+            return (object)['type' => $aPage[0], 'text' => $aPage[1], 'call' => $aPage[2]];
+        }, $this->xRenderer->getPages($this->totalPages));
+    }
+
+    /**
      * Render an HTML pagination control.
      *
      * @return null|Store

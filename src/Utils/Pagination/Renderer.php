@@ -160,60 +160,65 @@ class Renderer
     }
 
     /**
-     * Render the previous link.
+     * Render a link to a page.
      *
-     * @param integer   $nNumber        The page number
-     * @param string    $sTemplate      The template for the call to the page
-     * @param string    $sEnabledText   The text of the link if it is enabled
-     * @param string    $sDisabledText  The text of the link if it is disabled
+     * @param string    $sTemplate      The template for the link to the page
+     * @param string    $sText          The text of the link if it is enabled
+     * @param string    $sCall          The call of the link if it is enabled
      *
      * @return null|Store
      */
-    protected function getLink($nNumber, $sTemplate, $sEnabledText, $sDisabledText)
+    protected function renderLink($sTemplate, $sText, $sCall)
     {
-        if($nNumber > 0)
-        {
-            return $this->xRenderer->render('pagination::links/' . $sTemplate, [
-                'text' => $sEnabledText,
-                'call' => $this->getPageCall($nNumber),
-            ]);
-        }
-        return $this->xRenderer->render('pagination::links/disabled', ['text' => $sDisabledText]);
+        return $this->xRenderer->render('pagination::links/' . $sTemplate, [
+            'text' => $sText,
+            'call' => $sCall,
+        ]);
     }
 
     /**
-     * Render the previous link.
+     * Get the previous page data.
      *
-     * @return null|Store
+     * @return array
      */
     protected function getPrevLink()
     {
-        $nNumber = ($this->currentPage > 1 ? $this->currentPage - 1 : 0);
-        return $this->getLink($nNumber, 'prev', $this->previousText, $this->previousText);
+        if($this->currentPage <= 1)
+        {
+            return ['disabled', $this->previousText, ''];
+        }
+        return ['enabled', $this->previousText, $this->getPageCall($this->currentPage - 1)];
     }
 
     /**
-     * Render the next link.
+     * Get the next page data.
      *
-     * @return null|Store
+     * @return array
      */
     protected function getNextLink()
     {
-        $nNumber = ($this->currentPage < $this->totalPages ? $this->currentPage + 1 : 0);
-        return $this->getLink($nNumber, 'next', $this->nextText, $this->nextText);
+        if($this->currentPage >= $this->totalPages)
+        {
+            return ['disabled', $this->nextText, ''];
+        }
+        return ['enabled', $this->nextText, $this->getPageCall($this->currentPage + 1)];
     }
 
     /**
-     * Render the pagination links.
+     * Get a page data.
      *
      * @param integer        $nNumber         The page number
      *
-     * @return null|Store
+     * @return array
      */
     protected function getPageLink($nNumber)
     {
-        $sTemplate = ($nNumber == $this->currentPage ? 'current' : 'enabled');
-        return $this->getLink($nNumber, $sTemplate, $nNumber, $this->ellipsysText);
+        if($nNumber < 1)
+        {
+            return ['disabled', $this->ellipsysText, ''];
+        }
+        $sTemplate = ($nNumber === $this->currentPage ? 'current' : 'enabled');
+        return [$sTemplate, $nNumber, $this->getPageCall($nNumber)];
     }
 
     /**
@@ -276,6 +281,27 @@ class Renderer
     }
 
     /**
+     * Get the pages.
+     *
+     * @param integer   $totalPages         The total number of pages
+     *
+     * @return array
+     */
+    public function getPages($totalPages)
+    {
+        $this->totalPages = $totalPages;
+
+        $aPageNumbers = $this->getPageNumbers();
+        $aPages = [$this->getPrevLink()];
+        array_walk($aPageNumbers, function($nNumber) use(&$aPages) {
+            $aPages[] = $this->getPageLink($nNumber);
+        });
+        $aPages[] = $this->getNextLink();
+
+        return $aPages;
+    }
+
+    /**
      * Render an HTML pagination control.
      *
      * @param integer   $totalPages         The total number of pages
@@ -284,16 +310,13 @@ class Renderer
      */
     public function render($totalPages)
     {
-        $this->totalPages = $totalPages;
+        $aLinks = array_map(function($aPage) {
+            return $this->renderLink($aPage[0], $aPage[1], $aPage[2]);
+        }, $this->getPages($totalPages));
 
-        $aLinks = array_map(function($nNumber) {
-            return $this->getPageLink($nNumber);
-        }, $this->getPageNumbers());
-
-        return $this->xRenderer->render('pagination::wrapper', [
-            'links' => $aLinks,
-            'prev' => $this->getPrevLink(),
-            'next' => $this->getNextLink(),
-        ]);
+        $aPrevLink = array_shift($aLinks); // The first entry in the array
+        $aNextLink = array_pop($aLinks); // The last entry in the array
+        return $this->xRenderer->render('pagination::wrapper',
+            ['links' => $aLinks, 'prev' => $aPrevLink, 'next' => $aNextLink]);
     }
 }
