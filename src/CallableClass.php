@@ -7,6 +7,7 @@ use Jaxon\Request\Factory\CallableClass\Request;
 use Jaxon\Request\Support\CallableObject;
 
 use Jaxon\Response\Plugin\JQuery\Dom\Element;
+use Jaxon\Response\Plugin\DataBag\Bag;
 use Jaxon\Response\Response;
 use Jaxon\Utils\View\Renderer;
 use Psr\Log\LoggerInterface;
@@ -112,5 +113,17 @@ class CallableClass
     public function files()
     {
         return jaxon()->upload()->files();
+    }
+
+    /**
+     * Get a data bag.
+     *
+     * @param string        $sName
+     *
+     * @return Bag
+     */
+    public function bag($sName)
+    {
+        return $this->response->plugin('bags')->bag($sName);
     }
 }

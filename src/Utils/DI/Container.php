@@ -30,6 +30,7 @@ use Jaxon\Request\Factory\CallableClass\Paginator as CallableClassPaginatorFacto
 use Jaxon\Request\Support\CallableObject;
 use Jaxon\Response\Manager as ResponseManager;
 use Jaxon\Response\Plugin\JQuery as JQueryPlugin;
+use Jaxon\Response\Plugin\DataBag;
 use Jaxon\Plugin\Manager as PluginManager;
 use Jaxon\Plugin\Code\Generator as CodeGenerator;
 use Jaxon\Contracts\Session as SessionContract;
@@ -186,6 +187,10 @@ class Container
         $this->libContainer[JQueryPlugin::class] = function() {
             return new JQueryPlugin();
         };
+        // DataBag response plugin
+        $this->libContainer[DataBag::class] = function() {
+            return new DataBag();
+        };
 
         /*
          * Managers
@@ -196,7 +201,8 @@ class Container
         };
         // Request Handler
         $this->libContainer[RequestHandler::class] = function($c) {
-            return new RequestHandler($c[PluginManager::class], $c[ResponseManager::class], $c[FileUpload::class]);
+            return new RequestHandler($c[PluginManager::class],
+                $c[ResponseManager::class], $c[FileUpload::class], $c[DataBag::class]);
         };
         // Request Factory
         $this->libContainer[RequestFactory::class] = function($c) {

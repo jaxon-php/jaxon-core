@@ -29,6 +29,7 @@ use Jaxon\Request\Plugin\CallableDir;
 use Jaxon\Request\Plugin\CallableFunction;
 use Jaxon\Request\Plugin\FileUpload;
 use Jaxon\Response\Plugin\JQuery as JQueryPlugin;
+use Jaxon\Response\Plugin\DataBag;
 use Jaxon\Utils\Config\Config;
 
 use Closure;
@@ -371,5 +372,7 @@ class Manager
         $di = jaxon()->di();
         // Register an instance of the JQuery plugin
         $this->registerPlugin($di->get(JQueryPlugin::class), 700);
+        // Register an instance of the DataBag plugin
+        $this->registerPlugin($di->get(DataBag::class), 700);
     }
 }

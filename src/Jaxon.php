@@ -297,7 +297,7 @@ class Jaxon implements LoggerAwareInterface
      *
      * @param string        $sClassName         The class name
      *
-     * @return mixed
+     * @return null|object
      */
     public function instance($sClassName)
     {

@@ -26,6 +26,7 @@ use Jaxon\Plugin\Manager as PluginManager;
 use Jaxon\Plugin\Request;
 use Jaxon\Response\Manager as ResponseManager;
 use Jaxon\Request\Plugin\FileUpload;
+use Jaxon\Response\Plugin\DataBag;
 use Jaxon\Response\AbstractResponse;
 
 use Exception;
@@ -74,21 +75,30 @@ class Handler
      *
      * @var FileUpload
      */
-    private $xUploadRequestPlugin = null;
+    private $xUploadPlugin = null;
+
+    /**
+     * The data bag response plugin
+     *
+     * @var DataBag
+     */
+    private $xDataBagPlugin = null;
 
     /**
      * The constructor
      *
      * @param PluginManager         $xPluginManager
      * @param ResponseManager       $xResponseManager
-     * @param FileUpload            $xUploadRequestPlugin
+     * @param FileUpload            $xUploadPlugin
+     * @param DataBag               $xDataBagPlugin
      */
     public function __construct(PluginManager $xPluginManager,
-        ResponseManager $xResponseManager, FileUpload $xUploadRequestPlugin)
+        ResponseManager $xResponseManager, FileUpload $xUploadPlugin, DataBag $xDataBagPlugin)
     {
         $this->xPluginManager = $xPluginManager;
         $this->xResponseManager = $xResponseManager;
-        $this->xUploadRequestPlugin = $xUploadRequestPlugin;
+        $this->xUploadPlugin = $xUploadPlugin;
+        $this->xDataBagPlugin = $xDataBagPlugin;
 
         $this->xArgumentManager = new Argument();
         $this->xCallbackManager = new Callback();
@@ -257,8 +267,8 @@ class Handler
 
         // If no other plugin than the upload plugin can process the request,
         // then it is a HTTP (not ajax) upload request
-        $this->xUploadRequestPlugin->noRequestPluginFound();
-        return $this->xUploadRequestPlugin->canProcessRequest();
+        $this->xUploadPlugin->noRequestPluginFound();
+        return $this->xUploadPlugin->canProcessRequest();
     }
 
     /**
@@ -273,7 +283,7 @@ class Handler
             // Process uploaded files, if the upload plugin is enabled
             if($this->getOption('core.upload.enabled'))
             {
-                $this->xUploadRequestPlugin->processRequest();
+                $this->xUploadPlugin->processRequest();
             }
 
             // Process the request
@@ -343,6 +353,8 @@ class Handler
         if(!$bEndRequest)
         {
             $this->_processRequest();
+            // Process the databag
+            $this->xDataBagPlugin->writeCommand();
         }
 
         // Clean the processing buffer
