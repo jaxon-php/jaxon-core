@@ -214,7 +214,12 @@ class CallableClass extends RequestPlugin
     {
         $aCallableOptions = $this->xRepository->getCallableOptions();
         $aConfig = $aCallableOptions[$sClassName];
-        $aCommonConfig = key_exists('*', $aConfig) ? $aConfig['*'] : [];
+
+        // Convert an option to string, to be displayed in the js script template.
+        $fConvertOption = function($xOption) {
+            return is_array($xOption) ? json_encode($xOption) : $xOption;
+        };
+        $aCommonConfig = isset($aConfig['*']) ? array_map($fConvertOption, $aConfig['*']) : [];
 
         $_aProtectedMethods = is_subclass_of($sClassName, UserCallableClass::class) ? $aProtectedMethods : [];
         $aMethods = [];
@@ -226,11 +231,11 @@ class CallableClass extends RequestPlugin
                 continue;
             }
             // Specific options for this method
-            $aMethodConfig = key_exists($sMethodName, $aConfig) ?
-                array_merge($aCommonConfig, $aConfig[$sMethodName]) : $aCommonConfig;
+            $aMethodConfig = isset($aConfig[$sMethodName]) ?
+                array_map($fConvertOption, $aConfig[$sMethodName]) : [];
             $aMethods[] = [
                 'name' => $sMethodName,
-                'config' => $aMethodConfig,
+                'config' => array_merge($aCommonConfig, $aMethodConfig),
             ];
         }
 
