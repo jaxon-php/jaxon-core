@@ -17,7 +17,7 @@ class Bag
     protected $sName = '';
 
     /**
-     * @var bool
+     * @var boolean
      */
     protected $bTouched = false;
 
