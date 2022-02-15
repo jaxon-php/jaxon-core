@@ -3,6 +3,7 @@
 namespace Jaxon\Response\Plugin\DataBag;
 
 use function is_array;
+use function array_map;
 
 class Bag
 {
@@ -28,7 +29,10 @@ class Bag
      */
     public function __construct(array $aData)
     {
-        $this->aData = $aData;
+        // Ensure all contents are arrays.
+        $this->aData = array_map(function($aValue) {
+            return is_array($aValue) ? $aValue : [];
+        }, $aData);
     }
 
     /**

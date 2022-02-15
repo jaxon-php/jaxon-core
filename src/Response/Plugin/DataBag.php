@@ -2,6 +2,8 @@
 
 namespace Jaxon\Response\Plugin;
 
+use function is_string;
+use function json_decode;
 use function is_array;
 
 class DataBag extends \Jaxon\Plugin\Response
@@ -16,17 +18,28 @@ class DataBag extends \Jaxon\Plugin\Response
      */
     public function __construct()
     {
-        // Todo: clean input data.
-        $aData = [];
-        if(isset($_POST['jxnbags']) && is_array($_POST['jxnbags']))
-        {
-            $aData = $_POST['jxnbags'];
-        }
-        elseif(isset($_GET['jxnbags']) && is_array($_GET['jxnbags']))
-        {
-            $aData = $_GET['jxnbags'];
-        }
+        $aData = isset($_POST['jxnbags']) ? $this->readData($_POST) :
+            (isset($_GET['jxnbags']) ? $this->readData($_GET) : []);
         $this->xBag = new DataBag\Bag($aData);
+    }
+
+    /**
+     * @param array $aFrom
+     *
+     * @return array
+     */
+    private function readData(array $aFrom)
+    {
+        // Todo: clean input data.
+        if(is_string($aFrom['jxnbags']))
+        {
+            return json_decode($aFrom['jxnbags'], true) ?: [];
+        }
+        if(is_array($aFrom['jxnbags']))
+        {
+            return $aFrom['jxnbags'];
+        }
+        return [];
     }
 
     /**
