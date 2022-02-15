@@ -19,6 +19,12 @@ use Jaxon\Request\Factory\CallableClass\Request as RequestFactory;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 
+use function explode;
+use function strncmp;
+use function strlen;
+use function array_merge;
+use function key_exists;
+
 class CallableRepository
 {
     /**
@@ -182,23 +188,25 @@ class CallableRepository
         // Functions options
         if(key_exists('functions', $aOptions))
         {
-            foreach($aOptions['functions'] as $sName => $xValue)
+            foreach($aOptions['functions'] as $sFunctionNames => $aFunctionOptions)
             {
-                // Options for PHP classes. They start with "__"
-                $aPhpOptions = array_filter($xValue, function($sOptionName) {
-                    return substr($sOptionName, 0, 2) === '__';
-                }, ARRAY_FILTER_USE_KEY);
-                foreach($aPhpOptions as $sOptionName => $xOptionValue)
+                $aNames = explode(',', $sFunctionNames); // Names are in comma-separated list.
+                foreach($aNames as $sFunctionName)
                 {
-                    $xCallableObject->configure($sOptionName, [$sName => $xOptionValue]);
-                    continue;
+                    foreach($aFunctionOptions as $sOptionName => $xOptionValue)
+                    {
+                        if(substr($sOptionName, 0, 2) === '__')
+                        {
+                            // Options for PHP classes. They start with "__".
+                            $xCallableObject->configure($sOptionName, [$sFunctionName => $xOptionValue]);
+                        }
+                        else
+                        {
+                            // Options for javascript code.
+                            $this->aCallableOptions[$sClassName][$sFunctionName][$sOptionName] = $xOptionValue;
+                        }
+                    }
                 }
-
-                // Options for javascript code.
-                $aJsOptions = array_filter($xValue, function($sOptionName) {
-                    return substr($sOptionName, 0, 2) !== '__';
-                }, ARRAY_FILTER_USE_KEY);
-                $this->aCallableOptions[$sClassName][$sName] = $aJsOptions;
             }
         }
 

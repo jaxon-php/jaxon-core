@@ -153,22 +153,15 @@ class CallableObject
      */
     public function setHookMethods(&$aHookMethods, $xValue)
     {
-        foreach($xValue as $sCalledMethods => $xMethodToCall)
+        foreach($xValue as $sCalledMethod => $xMethodToCall)
         {
-            $aCalledMethods = explode(',', $sCalledMethods);
             if(is_array($xMethodToCall))
             {
-                foreach($aCalledMethods as $sCalledMethod)
-                {
-                    $aHookMethods[$sCalledMethod] = $xMethodToCall;
-                }
+                $aHookMethods[$sCalledMethod] = $xMethodToCall;
             }
             elseif(is_string($xMethodToCall))
             {
-                foreach($aCalledMethods as $sCalledMethod)
-                {
-                    $aHookMethods[$sCalledMethod] = [$xMethodToCall];
-                }
+                $aHookMethods[$sCalledMethod] = [$xMethodToCall];
             }
         }
     }
