@@ -13,11 +13,6 @@ class Bag
     protected $aData = [];
 
     /**
-     * @var string
-     */
-    protected $sName = '';
-
-    /**
      * @var boolean
      */
     protected $bTouched = false;
@@ -44,17 +39,6 @@ class Bag
     }
 
     /**
-     * @param string $sName
-     *
-     * @return Bag
-     */
-    public function setName($sName)
-    {
-        $this->sName = $sName;
-        return $this;
-    }
-
-    /**
      * @return array
      */
     public function getAll()
@@ -63,25 +47,27 @@ class Bag
     }
 
     /**
+     * @param string $sBag
      * @param string $sKey
      * @param mixed $xValue
      *
      * @return void
      */
-    public function set($sKey, $xValue)
+    public function set($sBag, $sKey, $xValue)
     {
         $this->bTouched = true;
-        $this->aData[$this->sName][$sKey] = $xValue;
+        $this->aData[$sBag][$sKey] = $xValue;
     }
 
     /**
+     * @param string $sBag
      * @param string $sKey
      * @param mixed $xValue
      *
      * @return mixed
      */
-    public function get($sKey, $xValue = null)
+    public function get($sBag, $sKey, $xValue = null)
     {
-        return isset($this->aData[$this->sName][$sKey]) ? $this->aData[$this->sName][$sKey] : $xValue;
+        return isset($this->aData[$sBag][$sKey]) ? $this->aData[$sBag][$sKey] : $xValue;
     }
 }

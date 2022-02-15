@@ -87,10 +87,10 @@ class DataBag extends \Jaxon\Plugin\Response
     /**
      * @param string $sName
      *
-     * @return DataBag\Bag
+     * @return DataBag\Context
      */
     public function bag($sName)
     {
-        return $this->xBag->setName($sName);
+        return new DataBag\Context($this->xBag, $sName);
     }
 }

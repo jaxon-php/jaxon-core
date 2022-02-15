@@ -6,8 +6,8 @@ use Jaxon\Contracts\Session;
 use Jaxon\Request\Factory\CallableClass\Request;
 use Jaxon\Request\Support\CallableObject;
 
-use Jaxon\Response\Plugin\JQuery\Dom\Element;
-use Jaxon\Response\Plugin\DataBag\Bag;
+use Jaxon\Response\Plugin\JQuery\Dom\Element as DomElement;
+use Jaxon\Response\Plugin\DataBag\Context as DataBagContext;
 use Jaxon\Response\Response;
 use Jaxon\Utils\View\Renderer;
 use Psr\Log\LoggerInterface;
@@ -74,7 +74,7 @@ class CallableClass
      * @param string        $sSelector            The jQuery selector
      * @param string        $sContext             A context associated to the selector
      *
-     * @return Element
+     * @return DomElement
      */
     public function jq($sSelector = '', $sContext = '')
     {
@@ -120,7 +120,7 @@ class CallableClass
      *
      * @param string        $sName
      *
-     * @return Bag
+     * @return DataBagContext
      */
     public function bag($sName)
     {
