@@ -21,9 +21,16 @@
 
 namespace Jaxon\Response;
 
+use Jaxon\Jaxon;
+
 class Manager
 {
     use \Jaxon\Features\Translator;
+
+    /**
+     * @var Jaxon
+     */
+    private $jaxon;
 
     /**
      * The current response object that will be sent back to the browser
@@ -42,9 +49,12 @@ class Manager
 
     /**
      * The class constructor
+     *
+     * @param Jaxon $jaxon
      */
-    public function __construct()
+    public function __construct(Jaxon $jaxon)
     {
+        $this->jaxon = $jaxon;
         $this->xResponse = null;
         $this->aDebugMessages = [];
     }
@@ -126,7 +136,7 @@ class Manager
     public function error($sMessage)
     {
         $this->clear();
-        $this->append(jaxon()->newResponse());
+        $this->append($this->jaxon->newResponse());
         $this->debug($sMessage);
     }
 

@@ -32,7 +32,6 @@ use Jaxon\Response\Plugin\JQuery as JQueryPlugin;
 use Jaxon\Response\Plugin\DataBag;
 use Jaxon\Utils\Config\Config;
 
-use Closure;
 use Jaxon\Utils\Config\Exception\File;
 use Jaxon\Utils\Config\Exception\Yaml;
 
@@ -42,6 +41,11 @@ class Manager
     use \Jaxon\Features\Config;
     use \Jaxon\Features\Event;
     use \Jaxon\Features\Translator;
+
+    /**
+     * @var Jaxon
+     */
+    private $jaxon;
 
     /**
      * Request plugins, indexed by name
@@ -67,10 +71,12 @@ class Manager
     /**
      * The constructor
      *
-     * @param CodeGenerator     $xCodeGenerator
+     * @param Jaxon $jaxon
+     * @param CodeGenerator $xCodeGenerator
      */
-    public function __construct(CodeGenerator $xCodeGenerator)
+    public function __construct(Jaxon $jaxon, CodeGenerator $xCodeGenerator)
     {
+        $this->jaxon = $jaxon;
         $this->xCodeGenerator = $xCodeGenerator;
     }
 
@@ -103,8 +109,7 @@ class Manager
      */
     public function getPackage($sClassName)
     {
-        $sClassName = trim($sClassName, '\\ ');
-        return jaxon()->di()->get($sClassName);
+        return $this->jaxon->di()->get(trim($sClassName, '\\ '));
     }
 
     /**
@@ -142,13 +147,13 @@ class Manager
         // This plugin implements the Message interface
         if($xPlugin instanceof \Jaxon\Contracts\Dialogs\Message)
         {
-            jaxon()->dialog()->setMessage($xPlugin);
+            $this->jaxon->dialog()->setMessage($xPlugin);
             $bIsUsed = true;
         }
         // This plugin implements the Question interface
         if($xPlugin instanceof \Jaxon\Contracts\Dialogs\Question)
         {
-            jaxon()->dialog()->setQuestion($xPlugin);
+            $this->jaxon->dialog()->setQuestion($xPlugin);
             $bIsUsed = true;
         }
         // Register the plugin as an event listener
@@ -179,31 +184,21 @@ class Manager
     public function registerPackage($sClassName, array $aAppOptions)
     {
         $sClassName = trim($sClassName, '\\ ');
-        $jaxon = jaxon();
-        $di = $jaxon->di();
-
-        $xAppConfig = $di->newConfig($aAppOptions);
-        $di->set($sClassName, function($di) use($sClassName, $aAppOptions, $xAppConfig) {
-            $xPackage = $di->make($sClassName);
-            // Set the package options
-            $cSetter = function($aOptions, $xConfig) {
-                $this->aOptions = $aOptions;
-                $this->xConfig = $xConfig;
-            };
-            // Can now access protected attributes
-            \call_user_func($cSetter->bindTo($xPackage, $xPackage), $aAppOptions, $xAppConfig);
-            return $xPackage;
-        });
+        $di = $this->jaxon->di();
+        $xAppConfig = $di->registerPackage($sClassName, $aAppOptions);
 
         // Read and apply the package config.
-        $aPackageConfig = $jaxon->config()->read($sClassName::getConfigFile());
+        $aPackageConfig = $di->getConfigReader()->read($sClassName::getConfigFile());
         // Add the package name to the config
         $aPackageConfig['package'] = $sClassName;
-
         $xPackageConfig = $di->newConfig($aPackageConfig);
+
+        // Register the declarations in the package config.
         $this->_registerFromConfig($xPackageConfig);
+
         // Register the view namespaces
         $di->getViewManager()->addNamespaces($xPackageConfig, $xAppConfig);
+
         // Register the package as a code generator.
         $xPackage = $this->getPackage($sClassName);
         $this->xCodeGenerator->addGenerator($xPackage, 500);
@@ -285,7 +280,7 @@ class Manager
         $this->registerCallablesFromConfig($xAppConfig, 'directories', Jaxon::CALLABLE_DIR);
 
         // Register classes in DI container
-        $di = jaxon()->di();
+        $di = $this->jaxon->di();
         $aContainerConfig = $xAppConfig->getOption('container', []);
         foreach($aContainerConfig as $sClassName => $xClosure)
         {
@@ -354,7 +349,7 @@ class Manager
      */
     public function registerRequestPlugins()
     {
-        $di = jaxon()->di();
+        $di = $this->jaxon->di();
         $this->registerPlugin($di->get(CallableClass::class), 101);
         $this->registerPlugin($di->get(CallableDir::class), 102);
         $this->registerPlugin($di->get(CallableFunction::class), 103);
@@ -369,7 +364,7 @@ class Manager
      */
     public function registerResponsePlugins()
     {
-        $di = jaxon()->di();
+        $di = $this->jaxon->di();
         // Register an instance of the JQuery plugin
         $this->registerPlugin($di->get(JQueryPlugin::class), 700);
         // Register an instance of the DataBag plugin

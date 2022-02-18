@@ -12,6 +12,10 @@
 
 namespace Jaxon\App;
 
+use Jaxon\Jaxon;
+use Jaxon\Response\Manager as ResponseManager;
+use Jaxon\Utils\Config\Reader as ConfigReader;
+
 use Exception;
 
 class App
@@ -19,11 +23,41 @@ class App
     use \Jaxon\Features\App;
 
     /**
+     * @var Jaxon
+     */
+    private $jaxon;
+
+    /**
+     * @var ResponseManager
+     */
+    private $xResponseManager;
+
+    /**
+     * @var ConfigReader
+     */
+    private $xConfigReader;
+
+    /**
+     * The class constructor
+     *
+     * @param Jaxon $jaxon
+     * @param ResponseManager $xResponseManager
+     * @param ConfigReader $xConfigReader
+     */
+    public function __construct(Jaxon $jaxon, ResponseManager $xResponseManager, ConfigReader $xConfigReader)
+    {
+        $this->jaxon = $jaxon;
+        $this->xResponseManager = $xResponseManager;
+        $this->xConfigReader = $xConfigReader;
+    }
+
+    /**
      * Read config options from a config file and setup the library
      *
-     * @param string        $sConfigFile        The full path to the config file
+     * @param string $sConfigFile The full path to the config file
      *
      * @return void
+     * @throws Exception
      */
     public function setup($sConfigFile)
     {
@@ -33,7 +67,7 @@ class App
         }
 
         // Read the config options.
-        $aOptions = jaxon()->config()->read($sConfigFile);
+        $aOptions = $this->xConfigReader->read($sConfigFile);
         $aLibOptions = key_exists('lib', $aOptions) ? $aOptions['lib'] : [];
         $aAppOptions = key_exists('app', $aOptions) ? $aOptions['app'] : [];
 
@@ -55,21 +89,20 @@ class App
      *
      * @param string    $code       The HTTP response code
      *
-     * @return mixed
+     * @return void
      */
     public function httpResponse($code = '200')
     {
-        $jaxon = jaxon();
         // Only if the response is not yet sent
-        if(!$jaxon->getOption('core.response.send'))
+        if(!$this->jaxon->getOption('core.response.send'))
         {
             // Set the HTTP response code
             http_response_code(intval($code));
 
             // Send the response
-            $jaxon->di()->getResponseManager()->sendOutput();
+            $this->xResponseManager->sendOutput();
 
-            if(($jaxon->getOption('core.process.exit')))
+            if(($this->jaxon->getOption('core.process.exit')))
             {
                 exit();
             }
@@ -83,6 +116,6 @@ class App
      */
     public function processRequest()
     {
-        return jaxon()->processRequest();
+        $this->jaxon->processRequest();
     }
 }

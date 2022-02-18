@@ -14,6 +14,7 @@ namespace Jaxon\Request\Plugin;
 
 use Jaxon\Jaxon;
 use Jaxon\Plugin\Request as RequestPlugin;
+use Jaxon\Response\Manager as ResponseManager;
 use Jaxon\Request\Support\UploadedFile;
 use Jaxon\Request\Support\FileUpload as Support;
 use Jaxon\Response\UploadResponse;
@@ -25,6 +26,13 @@ class FileUpload extends RequestPlugin
     use \Jaxon\Features\Config;
     use \Jaxon\Features\Validator;
     use \Jaxon\Features\Translator;
+
+    /**
+     * The response manager
+     *
+     * @var ResponseManager
+     */
+    protected $xResponseManager;
 
     /**
      * The uploaded files copied in the user dir
@@ -64,10 +72,12 @@ class FileUpload extends RequestPlugin
     /**
      * The constructor
      *
-     * @param Support       $xSupport       HTTP file upload support
+     * @param ResponseManager   $xResponseManager
+     * @param Support           $xSupport       HTTP file upload support
      */
-    public function __construct(Support $xSupport)
+    public function __construct(ResponseManager $xResponseManager, Support $xSupport)
     {
+        $this->xResponseManager = $xResponseManager;
         $this->xSupport = $xSupport;
         $this->sUploadSubdir = uniqid() . DIRECTORY_SEPARATOR;
 
@@ -306,7 +316,7 @@ class FileUpload extends RequestPlugin
                 {
                     $xResponse->setErrorMessage($e->getMessage());
                 }
-                jaxon()->di()->getResponseManager()->append($xResponse);
+                $this->xResponseManager->append($xResponse);
             }
         }
         elseif(($this->sTempFile))

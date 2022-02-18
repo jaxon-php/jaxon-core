@@ -24,7 +24,7 @@ trait Config
      */
     public function setOption($sName, $sValue)
     {
-        return jaxon()->di()->getConfig()->setOption($sName, $sValue);
+        jaxon()->di()->getConfig()->setOption($sName, $sValue);
     }
 
     /**

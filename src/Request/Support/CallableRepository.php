@@ -14,7 +14,7 @@
 
 namespace Jaxon\Request\Support;
 
-use Jaxon\Request\Factory\CallableClass\Request as RequestFactory;
+use Jaxon\Utils\DI\Container;
 
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -27,6 +27,13 @@ use function key_exists;
 
 class CallableRepository
 {
+    /**
+     * The DI container
+     *
+     * @var Container
+     */
+    protected $di;
+
     /**
      * The classes
      *
@@ -46,18 +53,14 @@ class CallableRepository
     protected $aNamespaces = [];
 
     /**
-     * The created callable objects.
+     * The constructor
      *
-     * @var array
+     * @param Container         $di
      */
-    protected $aCallableObjects = [];
-
-    /**
-     * The options to be applied to callable objects.
-     *
-     * @var array
-     */
-    protected $aCallableOptions = [];
+    public function __construct(Container $di)
+    {
+        $this->di = $di;
+    }
 
     /**
      * Get a given class options from specified directory options
@@ -98,6 +101,36 @@ class CallableRepository
         }
 
         return $aClassOptions;
+    }
+
+    /**
+     * Get all registered classes
+     *
+     * @return array
+     */
+    public function getClasses()
+    {
+        return $this->aClasses;
+    }
+
+    /**
+     * Get all registered namespaces
+     *
+     * @return array
+     */
+    public function getNamespaces()
+    {
+        return $this->aNamespaces;
+    }
+
+    /**
+     * Get the names of all registered classess
+     *
+     * @return array
+     */
+    public function getClassNames()
+    {
+        return array_keys($this->aClasses);
     }
 
     /**
@@ -143,15 +176,101 @@ class CallableRepository
     }
 
     /**
+     * Read classes from directories registered without namespaces
+     *
+     * @return void
+     */
+    public function parseDirectories(array $aDirectories)
+    {
+        // Browse directories without namespaces and read all the files.
+        foreach($aDirectories as $sDirectory => $aOptions)
+        {
+            $itFile = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($sDirectory));
+            // Iterate on dir content
+            foreach($itFile as $xFile)
+            {
+                // skip everything except PHP files
+                if(!$xFile->isFile() || $xFile->getExtension() != 'php')
+                {
+                    continue;
+                }
+
+                $sClassName = $xFile->getBasename('.php');
+                $aClassOptions = ['timestamp' => $xFile->getMTime()];
+                // No more classmap autoloading. The file will be included when needed.
+                if(($aOptions['autoload']))
+                {
+                    $aClassOptions['include'] = $xFile->getPathname();
+                }
+                $this->addClass($sClassName, $aClassOptions, $aOptions);
+            }
+        }
+    }
+
+    /**
+     * Read classes from directories registered with namespaces
+     *
+     * @return void
+     */
+    public function parseNamespaces(array $aNamespaces)
+    {
+        // Browse directories with namespaces and read all the files.
+        $sDS = DIRECTORY_SEPARATOR;
+        foreach($aNamespaces as $sNamespace => $aOptions)
+        {
+            $this->addNamespace($sNamespace, ['separator' => $aOptions['separator']]);
+
+            // Iterate on dir content
+            $sDirectory = $aOptions['directory'];
+            $itFile = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($sDirectory));
+            foreach($itFile as $xFile)
+            {
+                // skip everything except PHP files
+                if(!$xFile->isFile() || $xFile->getExtension() != 'php')
+                {
+                    continue;
+                }
+
+                // Find the class path (the same as the class namespace)
+                $sClassPath = $sNamespace;
+                $sRelativePath = substr($xFile->getPath(), strlen($sDirectory));
+                $sRelativePath = trim(str_replace($sDS, '\\', $sRelativePath), '\\');
+                if($sRelativePath != '')
+                {
+                    $sClassPath .= '\\' . $sRelativePath;
+                }
+
+                $this->addNamespace($sClassPath, ['separator' => $aOptions['separator']]);
+
+                $sClassName = $sClassPath . '\\' . $xFile->getBasename('.php');
+                $aClassOptions = ['namespace' => $sNamespace, 'timestamp' => $xFile->getMTime()];
+                $this->addClass($sClassName, $aClassOptions, $aOptions);
+            }
+        }
+    }
+
+    /**
+     * Check if a callable object is created
+     *
+     * @param string        $sClassName            The class name of the callable object
+     *
+     * @return bool
+     */
+    public function hasCallableObject($sClassName)
+    {
+        return $this->di->has($sClassName);
+    }
+
+    /**
      * Find a callable object by class name
      *
      * @param string        $sClassName            The class name of the callable object
      *
-     * @return CallableObject|null
+     * @return CallableObject
      */
     public function getCallableObject($sClassName)
     {
-        return key_exists($sClassName, $this->aCallableObjects) ? $this->aCallableObjects[$sClassName] : null;
+        return $this->di->get($sClassName . '_CallableObject');
     }
 
     /**
@@ -160,9 +279,9 @@ class CallableRepository
      * @param string        $sClassName            The class name of the callable object
      * @param array         $aOptions              The callable object options
      *
-     * @return CallableObject|null
+     * @return void
      */
-    public function createCallableObject($sClassName, array $aOptions)
+    public function registerCallableObject($sClassName, array $aOptions)
     {
         // Make sure the registered class exists
         if(key_exists('include', $aOptions))
@@ -173,88 +292,7 @@ class CallableRepository
         {
             return null;
         }
-
-        // Create the callable object
-        $xCallableObject = new CallableObject($sClassName);
-        $this->aCallableOptions[$sClassName] = [];
-        foreach(['namespace', 'separator', 'protected'] as $sName)
-        {
-            if(key_exists($sName, $aOptions))
-            {
-                $xCallableObject->configure($sName, $aOptions[$sName]);
-            }
-        }
-
-        // Functions options
-        if(key_exists('functions', $aOptions))
-        {
-            foreach($aOptions['functions'] as $sFunctionNames => $aFunctionOptions)
-            {
-                $aNames = explode(',', $sFunctionNames); // Names are in comma-separated list.
-                foreach($aNames as $sFunctionName)
-                {
-                    foreach($aFunctionOptions as $sOptionName => $xOptionValue)
-                    {
-                        if(substr($sOptionName, 0, 2) === '__')
-                        {
-                            // Options for PHP classes. They start with "__".
-                            $xCallableObject->configure($sOptionName, [$sFunctionName => $xOptionValue]);
-                        }
-                        else
-                        {
-                            // Options for javascript code.
-                            $this->aCallableOptions[$sClassName][$sFunctionName][$sOptionName] = $xOptionValue;
-                        }
-                    }
-                }
-            }
-        }
-
-        $this->aCallableObjects[$sClassName] = $xCallableObject;
-
-        // Register the request factory for this callable object
-        jaxon()->di()->setCallableClassRequestFactory($sClassName, $xCallableObject);
-
-        return $xCallableObject;
-    }
-
-    /**
-     * Get all registered classes
-     *
-     * @return array
-     */
-    public function getClasses()
-    {
-        return $this->aClasses;
-    }
-
-    /**
-     * Get all registered namespaces
-     *
-     * @return array
-     */
-    public function getNamespaces()
-    {
-        return $this->aNamespaces;
-    }
-
-    /**
-     * Get all registered callable objects
-     *
-     * @return array
-     */
-    public function getCallableObjects()
-    {
-        return $this->aCallableObjects;
-    }
-
-    /**
-     * Get all registered callable objects options
-     *
-     * @return array
-     */
-    public function getCallableOptions()
-    {
-        return $this->aCallableOptions;
+        // Register the callable object
+        $this->di->registerCallableObject($sClassName, $aOptions);
     }
 }

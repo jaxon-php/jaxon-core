@@ -2,14 +2,23 @@
 
 namespace Jaxon\Features;
 
+use Jaxon\App\Bootstrap;
+use Jaxon\Contracts\Session;
+use Jaxon\Plugin\Package;
+use Jaxon\Request\Handler\Callback;
+use Jaxon\Response\Response;
+use Jaxon\Request\Factory\CallableClass\Request as CallableRequest;
+use Jaxon\Utils\View\Renderer;
 use Psr\Log\LoggerInterface;
+
+use function jaxon;
 
 trait App
 {
     /**
      * Get the Jaxon application bootstrapper.
      *
-     * @return \Jaxon\App\Bootstrap
+     * @return Bootstrap
      */
     protected function bootstrap()
     {
@@ -19,7 +28,7 @@ trait App
     /**
      * Get the Jaxon response.
      *
-     * @return \Jaxon\Response\Response
+     * @return Response
      */
     public function ajaxResponse()
     {
@@ -31,7 +40,7 @@ trait App
      *
      * @param string        $sClassName         The class name
      *
-     * @return mixed
+     * @return object|null
      */
     public function instance($sClassName)
     {
@@ -43,7 +52,7 @@ trait App
      *
      * @param string        $sClassName         The class name
      *
-     * @return \Jaxon\Request\Factory\CallableClass\Request
+     * @return CallableRequest
      */
     public function request($sClassName)
     {
@@ -55,7 +64,7 @@ trait App
      *
      * @param string        $sClassName           The package class name
      *
-     * @return \Jaxon\Plugin\Package
+     * @return Package
      */
     public function package($sClassName)
     {
@@ -65,7 +74,7 @@ trait App
     /**
      * Get the request callback manager
      *
-     * @return \Jaxon\Request\Handler\Callback
+     * @return Callback
      */
     public function callback()
     {
@@ -161,7 +170,7 @@ trait App
     /**
      * Get the view renderer
      *
-     * @return \Jaxon\Utils\View\Renderer
+     * @return Renderer
      */
     public function view()
     {
@@ -171,7 +180,7 @@ trait App
     /**
      * Get the session manager
      *
-     * @return \Jaxon\Contracts\Session
+     * @return Session
      */
     public function session()
     {
@@ -192,6 +201,8 @@ trait App
      * Sets a logger.
      *
      * @param LoggerInterface $logger
+     *
+     * @return void
      */
     public function setLogger(LoggerInterface $logger)
     {

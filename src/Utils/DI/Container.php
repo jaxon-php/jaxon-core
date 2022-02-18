@@ -14,6 +14,7 @@
 
 namespace Jaxon\Utils\DI;
 
+use Jaxon\Jaxon;
 use Jaxon\Response\Response;
 use Jaxon\Request\Support\CallableRegistry;
 use Jaxon\Request\Support\CallableRepository;
@@ -26,7 +27,6 @@ use Jaxon\Request\Handler\Handler as RequestHandler;
 use Jaxon\Request\Factory\RequestFactory;
 use Jaxon\Request\Factory\ParameterFactory;
 use Jaxon\Request\Factory\CallableClass\Request as CallableClassRequestFactory;
-use Jaxon\Request\Factory\CallableClass\Paginator as CallableClassPaginatorFactory;
 use Jaxon\Request\Support\CallableObject;
 use Jaxon\Response\Manager as ResponseManager;
 use Jaxon\Response\Plugin\JQuery as JQueryPlugin;
@@ -78,13 +78,14 @@ class Container
     /**
      * The class constructor
      *
+     * @param Jaxon $jaxon
      * @param array $aOptions The default options
      * @throws \Jaxon\Utils\Config\Exception\Data
      */
-    public function __construct(array $aOptions)
+    public function __construct(Jaxon $jaxon, array $aOptions)
     {
         $this->libContainer = new PimpleContainer();
-        $this->libContainer[Container::class] = $this;
+        $this->libContainer[Jaxon::class] = $jaxon;
 
         $sTranslationDir = realpath(__DIR__ . '/../../../translations');
         $sTemplateDir = realpath(__DIR__ . '/../../../templates');
@@ -144,12 +145,13 @@ class Container
             return new Dialog();
         };
         // Jaxon App
-        $this->libContainer[App::class] = function() {
-            return new App();
+        $this->libContainer[App::class] = function($c) {
+            return new App($c[Jaxon::class], $c[ResponseManager::class], $c[ConfigReader::class]);
         };
         // Jaxon App bootstrap
-        $this->libContainer[Bootstrap::class] = function() {
-            return new Bootstrap();
+        $this->libContainer[Bootstrap::class] = function($c) {
+            return new Bootstrap($c[Jaxon::class], $c[PluginManager::class],
+                $c[ViewManager::class], $c[RequestHandler::class]);
         };
 
         /*
@@ -157,7 +159,7 @@ class Container
          */
         // Callable objects repository
         $this->libContainer[CallableRepository::class] = function() {
-            return new CallableRepository();
+            return new CallableRepository($this);
         };
         // Callable objects registry
         $this->libContainer[CallableRegistry::class] = function($c) {
@@ -165,15 +167,16 @@ class Container
         };
         // Callable class plugin
         $this->libContainer[CallableClass::class] = function($c) {
-            return new CallableClass($c[CallableRegistry::class], $c[CallableRepository::class]);
+            return new CallableClass($c[RequestHandler::class], $c[ResponseManager::class],
+                $c[CallableRegistry::class], $c[CallableRepository::class]);
         };
         // Callable dir plugin
         $this->libContainer[CallableDir::class] = function($c) {
             return new CallableDir($c[CallableRegistry::class]);
         };
         // Callable function plugin
-        $this->libContainer[CallableFunction::class] = function() {
-            return new CallableFunction();
+        $this->libContainer[CallableFunction::class] = function($c) {
+            return new CallableFunction($this, $c[RequestHandler::class], $c[ResponseManager::class]);
         };
         // File upload support
         $this->libContainer[FileUploadSupport::class] = function() {
@@ -181,7 +184,7 @@ class Container
         };
         // File upload plugin
         $this->libContainer[FileUpload::class] = function($c) {
-            return new FileUpload($c[FileUploadSupport::class]);
+            return new FileUpload($c[ResponseManager::class], $c[FileUploadSupport::class]);
         };
         // JQuery response plugin
         $this->libContainer[JQueryPlugin::class] = function() {
@@ -197,11 +200,11 @@ class Container
          */
         // Plugin Manager
         $this->libContainer[PluginManager::class] = function($c) {
-            return new PluginManager($c[CodeGenerator::class]);
+            return new PluginManager($c[Jaxon::class], $c[CodeGenerator::class]);
         };
         // Request Handler
         $this->libContainer[RequestHandler::class] = function($c) {
-            return new RequestHandler($c[PluginManager::class],
+            return new RequestHandler($c[Jaxon::class], $c[PluginManager::class],
                 $c[ResponseManager::class], $c[FileUpload::class], $c[DataBag::class]);
         };
         // Request Factory
@@ -213,16 +216,16 @@ class Container
             return new ParameterFactory();
         };
         // Response Manager
-        $this->libContainer[ResponseManager::class] = function() {
-            return new ResponseManager();
+        $this->libContainer[ResponseManager::class] = function($c) {
+            return new ResponseManager($c[Jaxon::class]);
         };
         // Code Generator
         $this->libContainer[CodeGenerator::class] = function($c) {
-            return new CodeGenerator($c[TemplateEngine::class]);
+            return new CodeGenerator($c[Jaxon::class], $c[URI::class], $c[TemplateEngine::class]);
         };
         // View Manager
         $this->libContainer[ViewManager::class] = function() {
-            $xViewManager = new ViewManager();
+            $xViewManager = new ViewManager($this);
             // Add the default view renderer
             $xViewManager->addRenderer('jaxon', function($di) {
                 return new TemplateView($di->get(TemplateEngine::class));
@@ -246,8 +249,8 @@ class Container
         $this->libContainer[Config::class] = function() {
             return new Config();
         };
-        $this->libContainer[ConfigReader::class] = function() {
-            return new ConfigReader();
+        $this->libContainer[ConfigReader::class] = function($c) {
+            return new ConfigReader($c[Config::class]);
         };
 
         /*
@@ -472,6 +475,16 @@ class Container
     }
 
     /**
+     * Get the config reader
+     *
+     * @return ConfigReader
+     */
+    public function getConfigReader()
+    {
+        return $this->libContainer[ConfigReader::class];
+    }
+
+    /**
      * Create a new the config manager
      *
      * @param array             $aOptions           The options array
@@ -637,29 +650,151 @@ class Container
     }
 
     /**
-     * Set the callable class request factory
+     * Create a new callable object
      *
-     * @param string            $sClassName         The callable class name
-     * @param CallableObject    $xCallableObject    The corresponding callable object
+     * @param string        $sFunctionName      The function name
+     * @param string        $sCallableFunction  The callable function name
+     * @param array         $aOptions           The function options
      *
      * @return void
      */
-    public function setCallableClassRequestFactory($sClassName, CallableObject $xCallableObject)
+    public function registerCallableFunction($sFunctionName, $sCallableFunction, array $aOptions)
     {
-        $this->libContainer[$sClassName . '_RequestFactory'] = function() use ($xCallableObject) {
-            return new CallableClassRequestFactory($xCallableObject);
+        $this->set($sFunctionName, function() use($sFunctionName, $sCallableFunction, $aOptions) {
+            $xCallableFunction = new \Jaxon\Request\Support\CallableFunction($sCallableFunction);
+            foreach($aOptions as $sName => $sValue)
+            {
+                $xCallableFunction->configure($sName, $sValue);
+            }
+            return $xCallableFunction;
+        });
+    }
+
+    /**
+     * @param mixed $xCallableObject
+     * @param array $aOptions
+     *
+     * @return void
+     */
+    private function setCallableObjectOptions($xCallableObject, array $aOptions)
+    {
+        foreach(['namespace', 'separator', 'protected'] as $sName)
+        {
+            if(isset($aOptions[$sName]))
+            {
+                $xCallableObject->configure($sName, $aOptions[$sName]);
+            }
+        }
+
+        if(!isset($aOptions['functions']))
+        {
+            return [];
+        }
+        // Functions options
+        $aCallableOptions = [];
+        foreach($aOptions['functions'] as $sFunctionNames => $aFunctionOptions)
+        {
+            $aNames = explode(',', $sFunctionNames); // Names are in comma-separated list.
+            foreach($aNames as $sFunctionName)
+            {
+                foreach($aFunctionOptions as $sOptionName => $xOptionValue)
+                {
+                    if(substr($sOptionName, 0, 2) !== '__')
+                    {
+                        // Options for javascript code.
+                        $aCallableOptions[$sFunctionName][$sOptionName] = $xOptionValue;
+                        continue;
+                    }
+                    // Options for PHP classes. They start with "__".
+                    $xCallableObject->configure($sOptionName, [$sFunctionName => $xOptionValue]);
+                }
+            }
+        }
+        $xCallableObject->setOptions($aCallableOptions);
+    }
+
+    /**
+     * Create a new callable object
+     *
+     * @param string        $sClassName         The callable class name
+     * @param array         $aOptions           The callable object options
+     *
+     * @return CallableObject
+     */
+    public function registerCallableObject($sClassName, array $aOptions)
+    {
+        $sFactoryName = $sClassName . '_RequestFactory';
+        $sCallableName = $sClassName . '_CallableObject';
+        $sReflectionName = $sClassName . '_ReflectionClass';
+
+        // Register the reflection class
+        $this->libContainer[$sReflectionName] = function($c) use($sClassName) {
+            return new ReflectionClass($sClassName);
+        };
+
+        // Register the callable object
+        $this->libContainer[$sCallableName] = function($c) use($sReflectionName, $aOptions) {
+            $xCallableObject = new CallableObject($this, $c[$sReflectionName]);
+            $this->setCallableObjectOptions($xCallableObject, $aOptions);
+            return $xCallableObject;
+        };
+
+        // Register the request factory
+        $this->libContainer[$sFactoryName] = function($c) use($sCallableName) {
+            return new CallableClassRequestFactory($c[$sCallableName]);
+        };
+
+        // Register the user class
+        $this->libContainer[$sClassName] = function($c) use($sFactoryName, $sReflectionName) {
+            $xRegisteredObject = $this->make($c[$sReflectionName]);
+            // Initialize the object
+            if($xRegisteredObject instanceof \Jaxon\CallableClass)
+            {
+                $xResponse = $this->getResponse();
+                // Set the members of the object
+                $cSetter = function() use($c, $xResponse, $sFactoryName) {
+                    $this->jaxon = $c[Jaxon::class];
+                    $this->sRequest = $sFactoryName;
+                    $this->response = $xResponse;
+                };
+                $cSetter = $cSetter->bindTo($xRegisteredObject, $xRegisteredObject);
+                // Can now access protected attributes
+                \call_user_func($cSetter);
+            }
+
+            // Run the callback for class initialisation
+            $aCallbacks = $this->getRequestHandler()->getCallbackManager()->getInitCallbacks();
+            foreach($aCallbacks as $xCallback)
+            {
+                \call_user_func($xCallback, $xRegisteredObject);
+            }
+            return $xRegisteredObject;
         };
     }
 
     /**
-     * Get the callable class request factory
+     * Get a package instance
      *
-     * @param string        $sClassName             The callable class name
+     * @param string $sClassName The package class name
+     * @param array $aAppOptions The package options defined in the app section of the config file
      *
-     * @return CallableClassRequestFactory
+     * @return Config
      */
-    public function getCallableClassRequestFactory($sClassName)
+    public function registerPackage($sClassName, array $aAppOptions)
     {
-        return $this->libContainer[$sClassName . '_RequestFactory'];
+        $xAppConfig = $this->newConfig($aAppOptions);
+        $this->set($sClassName, function() use($sClassName, $aAppOptions, $xAppConfig) {
+            $xPackage = $this->make($sClassName);
+            // Set the package options
+            $cSetter = function($aOptions, $xConfig) {
+                $this->aOptions = $aOptions;
+                $this->xConfig = $xConfig;
+            };
+            // Can now access protected attributes
+            \call_user_func($cSetter->bindTo($xPackage, $xPackage), $aAppOptions, $xAppConfig);
+            return $xPackage;
+        });
+
+        return $xAppConfig;
     }
 }

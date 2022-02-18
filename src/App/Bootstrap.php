@@ -12,11 +12,54 @@
 
 namespace Jaxon\App;
 
+use Jaxon\Jaxon;
+use Jaxon\Plugin\Manager as PluginManager;
+use Jaxon\Utils\View\Manager as ViewManager;
+use Jaxon\Request\Handler\Handler as RequestHandler;
 use Jaxon\Utils\Config\Config;
+use Jaxon\Exception\Error as ErrorException;
+use Jaxon\Utils\Config\Exception\Data as DataException;
 
 class Bootstrap
 {
     use \Jaxon\Features\Event;
+
+    /**
+     * @var Jaxon
+     */
+    private $jaxon;
+
+    /**
+     * @var PluginManager
+     */
+    private $xPluginManager;
+
+    /**
+     * @var ViewManager
+     */
+    private $xViewManager;
+
+    /**
+     * @var RequestHandler
+     */
+    private $xRequestHandler;
+
+    /**
+     * The class constructor
+     *
+     * @param Jaxon $jaxon
+     * @param PluginManager $xPluginManager
+     * @param ViewManager $xViewManager
+     * @param RequestHandler $xRequestHandler
+     */
+    public function __construct(Jaxon $jaxon, PluginManager $xPluginManager,
+        ViewManager $xViewManager, RequestHandler $xRequestHandler)
+    {
+        $this->jaxon = $jaxon;
+        $this->xPluginManager = $xPluginManager;
+        $this->xViewManager = $xViewManager;
+        $this->xRequestHandler = $xRequestHandler;
+    }
 
     /**
      * The library options
@@ -128,30 +171,30 @@ class Bootstrap
     /**
      * Set the Jaxon application options.
      *
-     * @param Config        $xAppConfig        The config options
+     * @param Config $xAppConfig The config options
      *
      * @return void
+     * @throws ErrorException
      */
     private function setupApp($xAppConfig)
     {
-        $di = jaxon()->di();
         // Register user functions and classes
-        $di->getPluginManager()->registerFromConfig($xAppConfig);
+        $this->xPluginManager->registerFromConfig($xAppConfig);
         // Save the view namespaces
-        $di->getViewManager()->addNamespaces($xAppConfig);
+        $this->xViewManager->addNamespaces($xAppConfig);
         // Call the on boot callbacks
-        $di->getRequestHandler()->onBoot();
+        $this->xRequestHandler->onBoot();
     }
 
     /**
      * Wraps the module/package/bundle setup method.
      *
      * @return void
+     * @throws ErrorException|DataException
      */
     public function run()
     {
-        $jaxon = jaxon();
-        $di = $jaxon->di();
+        $di = $this->jaxon->di();
 
         // Event before setting up the module
         $this->triggerEvent('pre.setup');
@@ -171,29 +214,27 @@ class Bootstrap
         // Event after the module has read the config
         $this->triggerEvent('post.config');
 
-        // Use the Composer autoloader. It's important to call this before triggers and callbacks.
-        // $jaxon->useComposerAutoloader();
         // Jaxon library settings
-        if(!$jaxon->hasOption('js.app.export'))
+        if(!$this->jaxon->hasOption('js.app.export'))
         {
-            $jaxon->setOption('js.app.export', $this->bExportJs);
+            $this->jaxon->setOption('js.app.export', $this->bExportJs);
         }
-        if(!$jaxon->hasOption('js.app.minify'))
+        if(!$this->jaxon->hasOption('js.app.minify'))
         {
-            $jaxon->setOption('js.app.minify', $this->bMinifyJs);
+            $this->jaxon->setOption('js.app.minify', $this->bMinifyJs);
         }
-        if(!$jaxon->hasOption('js.app.uri') && $this->sJsUri != '')
+        if(!$this->jaxon->hasOption('js.app.uri') && $this->sJsUri != '')
         {
-            $jaxon->setOption('js.app.uri', $this->sJsUri);
+            $this->jaxon->setOption('js.app.uri', $this->sJsUri);
         }
-        if(!$jaxon->hasOption('js.app.dir') && $this->sJsDir != '')
+        if(!$this->jaxon->hasOption('js.app.dir') && $this->sJsDir != '')
         {
-            $jaxon->setOption('js.app.dir', $this->sJsDir);
+            $this->jaxon->setOption('js.app.dir', $this->sJsDir);
         }
         // Set the request URI
-        if(!$jaxon->hasOption('core.request.uri') && $this->sUri != '')
+        if(!$this->jaxon->hasOption('core.request.uri') && $this->sUri != '')
         {
-            $jaxon->setOption('core.request.uri', $this->sUri);
+            $this->jaxon->setOption('core.request.uri', $this->sUri);
         }
 
         // Event after setting up the module

@@ -2,9 +2,9 @@
 
 namespace Jaxon;
 
+use Jaxon\Jaxon;
 use Jaxon\Contracts\Session;
 use Jaxon\Request\Factory\CallableClass\Request;
-use Jaxon\Request\Support\CallableObject;
 
 use Jaxon\Response\Plugin\JQuery\Dom\Element as DomElement;
 use Jaxon\Response\Plugin\DataBag\Context as DataBagContext;
@@ -15,11 +15,16 @@ use Psr\Log\LoggerInterface;
 class CallableClass
 {
     /**
-     * The Callable object associated to this class
-     *
-     * @var CallableObject
+     * @var Jaxon
      */
-    protected $callable = null;
+    protected $jaxon = null;
+
+    /**
+     * The request factory DI key
+     *
+     * @var string
+     */
+    protected $sRequest = '';
 
     /**
      * The Jaxon response returned by all classes methods
@@ -35,7 +40,7 @@ class CallableClass
      */
     public function view()
     {
-        return jaxon()->view();
+        return $this->jaxon->view();
     }
 
     /**
@@ -45,7 +50,7 @@ class CallableClass
      */
     public function session()
     {
-        return jaxon()->session();
+        return $this->jaxon->session();
     }
 
     /**
@@ -55,7 +60,7 @@ class CallableClass
      */
     public function logger()
     {
-        return jaxon()->logger();
+        return $this->jaxon->logger();
     }
 
     /**
@@ -65,7 +70,7 @@ class CallableClass
      */
     public function rq()
     {
-        return jaxon()->di()->getCallableClassRequestFactory(get_class($this));
+        return $this->jaxon->di()->get($this->sRequest);
     }
 
     /**
@@ -90,19 +95,8 @@ class CallableClass
      */
     public function cl($name)
     {
-        $cFirstChar = substr($name, 0, 1);
-        // If the class name starts with a dot, then find the class in the same full namespace as the caller
-        if($cFirstChar == ':')
-        {
-            $name = $this->callable->getRootNamespace() . '\\' . str_replace('.', '\\', substr($name, 1));
-        }
-        // If the class name starts with a dot, then find the class in the same base namespace as the caller
-        elseif($cFirstChar == '.')
-        {
-            $name = $this->callable->getNamespace() . '\\' . str_replace('.', '\\', substr($name, 1));
-        }
         // Find the class instance
-        return jaxon()->instance($name);
+        return $this->jaxon->instance($name);
     }
 
     /**
@@ -112,7 +106,7 @@ class CallableClass
      */
     public function files()
     {
-        return jaxon()->upload()->files();
+        return $this->jaxon->upload()->files();
     }
 
     /**

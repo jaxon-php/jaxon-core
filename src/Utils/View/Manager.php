@@ -2,14 +2,18 @@
 
 namespace Jaxon\Utils\View;
 
+use Jaxon\Utils\DI\Container;
 use Jaxon\Utils\Config\Config;
 
-use stdClass;
-use Exception;
 use Closure;
 
 class Manager
 {
+    /**
+     * @var Container
+     */
+    protected $di;
+
     /**
      * The default namespace
      *
@@ -23,6 +27,16 @@ class Manager
      * @var array
      */
     protected $aNamespaces = [];
+
+    /**
+     * The class constructor
+     *
+     * @param Container $di
+     */
+    public function __construct(Container $di)
+    {
+        $this->di = $di;
+    }
 
     /**
      * Get the default namespace
@@ -146,7 +160,7 @@ class Manager
     public function getRenderer($sId)
     {
         // Return the view renderer with the given id
-        return jaxon()->di()->get('jaxon.app.view.' . $sId);
+        return $this->di->get('jaxon.app.view.' . $sId);
     }
 
     /**
@@ -159,10 +173,13 @@ class Manager
      */
     public function addRenderer($sId, Closure $xClosure)
     {
+        $sBaseId = 'jaxon.app.view.user.' . $sId;
+        // Return the user defined view renderer
+        $this->di->set($sBaseId, $xClosure);
         // Return the initialized view renderer
-        jaxon()->di()->set('jaxon.app.view.' . $sId, function($di) use ($sId, $xClosure) {
+        $this->di->set('jaxon.app.view.' . $sId, function($di) use ($sBaseId, $sId) {
             // Get the defined renderer
-            $xRenderer = call_user_func($xClosure, $di);
+            $xRenderer = $di->get($sBaseId);
 
             // Init the renderer with the template namespaces
             $aNamespaces = \array_filter($this->aNamespaces, function($aNamespace) use($sId) {

@@ -14,6 +14,7 @@
 
 namespace Jaxon\Plugin\Code;
 
+use Jaxon\Jaxon;
 use Jaxon\Plugin\Code\Contracts\Generator as GeneratorContract;
 use Jaxon\Utils\Template\Engine as TemplateEngine;
 use Jaxon\Utils\Http\URI;
@@ -22,6 +23,16 @@ class Generator
 {
     use \Jaxon\Features\Config;
     use \Jaxon\Features\Minifier;
+
+    /**
+     * @var Jaxon
+     */
+    private $jaxon;
+
+    /**
+     * @var URI
+     */
+    private $uri;
 
     /**
      * Default library URL
@@ -47,10 +58,14 @@ class Generator
     /**
      * The constructor
      *
-     * @param TemplateEngine        $xTemplateEngine      The template engine
+     * @param Jaxon $jaxon
+     * @param URI $uri
+     * @param TemplateEngine $xTemplateEngine      The template engine
      */
-    public function __construct(TemplateEngine $xTemplateEngine)
+    public function __construct(Jaxon $jaxon, URI $uri, TemplateEngine $xTemplateEngine)
     {
+        $this->jaxon = $jaxon;
+        $this->uri = $uri;
         $this->xTemplateEngine = $xTemplateEngine;
     }
 
@@ -120,7 +135,7 @@ class Generator
      */
     private function getHash()
     {
-        $sHash = jaxon()->getVersion();
+        $sHash = $this->jaxon->getVersion();
         foreach($this->aGenerators as $xGenerator)
         {
             $sHash .= $xGenerator->getHash();
@@ -289,7 +304,7 @@ class Generator
     {
         if(!$this->getOption('core.request.uri'))
         {
-            $this->setOption('core.request.uri', jaxon()->di()->get(URI::class)->detect());
+            $this->setOption('core.request.uri', $this->uri->detect());
         }
 
         $sScript = '';

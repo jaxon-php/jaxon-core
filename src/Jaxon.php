@@ -117,7 +117,7 @@ class Jaxon implements LoggerAwareInterface
 
         if(self::$xContainer == null)
         {
-            self::$xContainer = new Container($this->getDefaultOptions());
+            self::$xContainer = new Container($this, $this->getDefaultOptions());
             /*
             * Register the Jaxon request and response plugins
             */

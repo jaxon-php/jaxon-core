@@ -14,9 +14,6 @@
 
 namespace Jaxon\Request\Support;
 
-use RecursiveDirectoryIterator;
-use RecursiveIteratorIterator;
-
 class CallableRegistry
 {
     /**
@@ -145,7 +142,7 @@ class CallableRegistry
     }
 
     /**
-     * Read classes from registered directories (without namespaces)
+     * Read classes from directories registered without namespaces
      *
      * @return void
      */
@@ -159,38 +156,16 @@ class CallableRegistry
         }
         $this->bParsedDirectories = true;
 
-        foreach($this->aDirectories as $sDirectory => $aOptions)
-        {
-            $itFile = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($sDirectory));
-            // Iterate on dir content
-            foreach($itFile as $xFile)
-            {
-                // skip everything except PHP files
-                if(!$xFile->isFile() || $xFile->getExtension() != 'php')
-                {
-                    continue;
-                }
-
-                $sClassName = $xFile->getBasename('.php');
-                $aClassOptions = ['timestamp' => $xFile->getMTime()];
-                // No more classmap autoloading. The file will be included when needed.
-                if(($aOptions['autoload']))
-                {
-                    $aClassOptions['include'] = $xFile->getPathname();
-                }
-                $this->xRepository->addClass($sClassName, $aClassOptions, $aOptions);
-            }
-        }
+        $this->xRepository->parseDirectories($this->aDirectories);
     }
 
     /**
-     * Read classes from registered directories (with namespaces)
+     * Read classes from directories registered with namespaces
      *
      * @return void
      */
     protected function parseNamespaces()
     {
-        // Browse directories with namespaces and read all the files.
         // This is to be done only once.
         if($this->bParsedNamespaces)
         {
@@ -198,38 +173,7 @@ class CallableRegistry
         }
         $this->bParsedNamespaces = true;
 
-        $sDS = DIRECTORY_SEPARATOR;
-        foreach($this->aNamespaces as $sNamespace => $aOptions)
-        {
-            $this->xRepository->addNamespace($sNamespace, ['separator' => $aOptions['separator']]);
-
-            // Iterate on dir content
-            $sDirectory = $aOptions['directory'];
-            $itFile = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($sDirectory));
-            foreach($itFile as $xFile)
-            {
-                // skip everything except PHP files
-                if(!$xFile->isFile() || $xFile->getExtension() != 'php')
-                {
-                    continue;
-                }
-
-                // Find the class path (the same as the class namespace)
-                $sClassPath = $sNamespace;
-                $sRelativePath = substr($xFile->getPath(), strlen($sDirectory));
-                $sRelativePath = trim(str_replace($sDS, '\\', $sRelativePath), '\\');
-                if($sRelativePath != '')
-                {
-                    $sClassPath .= '\\' . $sRelativePath;
-                }
-
-                $this->xRepository->addNamespace($sClassPath, ['separator' => $aOptions['separator']]);
-
-                $sClassName = $sClassPath . '\\' . $xFile->getBasename('.php');
-                $aClassOptions = ['namespace' => $sNamespace, 'timestamp' => $xFile->getMTime()];
-                $this->xRepository->addClass($sClassName, $aClassOptions, $aOptions);
-            }
-        }
+        $this->xRepository->parseNamespaces($this->aNamespaces);
     }
 
     /**
@@ -292,7 +236,7 @@ class CallableRegistry
      *
      * @param string        $sClassName            The class name of the callable object
      *
-     * @return CallableObject
+     * @return CallableObject|null
      */
     public function getCallableObject($sClassName)
     {
@@ -306,18 +250,17 @@ class CallableRegistry
         }
 
         // Check if the callable object was already created.
-        if(($xCallableObject = $this->xRepository->getCallableObject($sClassName)) != null)
+        if(!$this->xRepository->hasCallableObject($sClassName))
         {
-            return $xCallableObject;
+            $aOptions = $this->getClassOptions($sClassName);
+            if($aOptions === null)
+            {
+                return null;
+            }
+            $this->xRepository->registerCallableObject($sClassName, $aOptions);
         }
 
-        $aOptions = $this->getClassOptions($sClassName);
-        if($aOptions === null)
-        {
-            return null;
-        }
-
-        return $this->xRepository->createCallableObject($sClassName, $aOptions);
+        return $this->xRepository->getCallableObject($sClassName);
     }
 
     /**
@@ -325,7 +268,7 @@ class CallableRegistry
      *
      * @return void
      */
-    public function registerCallableClasses()
+    public function parseCallableClasses()
     {
         $this->parseDirectories();
         $this->parseNamespaces();
@@ -336,16 +279,17 @@ class CallableRegistry
      *
      * @return void
      */
-    public function createCallableObjects()
+    public function registerCallableObjects()
     {
-        $this->registerCallableClasses();
+        $this->parseCallableClasses();
 
-        foreach($this->xRepository->getClasses() as $sClassName => $aClassOptions)
+        $aClasses = $this->xRepository->getClasses();
+        foreach($aClasses as $sClassName => $aClassOptions)
         {
             // Make sure we create each callable object only once.
-            if(!$this->xRepository->getCallableObject($sClassName))
+            if(!$this->xRepository->hasCallableObject($sClassName))
             {
-                $this->xRepository->createCallableObject($sClassName, $aClassOptions);
+                $this->xRepository->registerCallableObject($sClassName, $aClassOptions);
             }
         }
     }

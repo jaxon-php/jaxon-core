@@ -36,6 +36,11 @@ class Handler
     use \Jaxon\Features\Config;
 
     /**
+     * @var Jaxon
+     */
+    private $jaxon;
+
+    /**
      * The plugin manager.
      *
      * @var PluginManager
@@ -87,14 +92,16 @@ class Handler
     /**
      * The constructor
      *
+     * @param Jaxon $jaxon
      * @param PluginManager         $xPluginManager
      * @param ResponseManager       $xResponseManager
      * @param FileUpload            $xUploadPlugin
      * @param DataBag               $xDataBagPlugin
      */
-    public function __construct(PluginManager $xPluginManager,
+    public function __construct(Jaxon $jaxon, PluginManager $xPluginManager,
         ResponseManager $xResponseManager, FileUpload $xUploadPlugin, DataBag $xDataBagPlugin)
     {
+        $this->jaxon = $jaxon;
         $this->xPluginManager = $xPluginManager;
         $this->xResponseManager = $xResponseManager;
         $this->xUploadPlugin = $xUploadPlugin;
@@ -372,7 +379,7 @@ class Handler
         // If the called function returned no response, take the global response
         if(!$this->xResponseManager->getResponse())
         {
-            $this->xResponseManager->append(jaxon()->getResponse());
+            $this->xResponseManager->append($this->jaxon->getResponse());
         }
 
         $this->xResponseManager->printDebug();

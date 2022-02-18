@@ -24,11 +24,21 @@
 
 namespace Jaxon\Request\Support;
 
+use Jaxon\Utils\DI\Container;
 use Jaxon\Request\Request;
 use Jaxon\Response\Response;
 
+use ReflectionClass;
+
 class CallableObject
 {
+    /**
+     * The DI container
+     *
+     * @var Container
+     */
+    protected $di;
+
     /**
      * A reference to the callable object the user has registered
      *
@@ -39,7 +49,7 @@ class CallableObject
     /**
      * The reflection class of the user registered callable object
      *
-     * @var \ReflectionClass
+     * @var ReflectionClass
      */
     private $xReflectionClass;
 
@@ -65,6 +75,13 @@ class CallableObject
     private $aAfterMethods = [];
 
     /**
+     * The callable object options
+     *
+     * @var array
+     */
+    private $aOptions = [];
+
+    /**
      * The namespace the callable class was registered from
      *
      * @var string
@@ -81,16 +98,50 @@ class CallableObject
     /**
      * The class constructor
      *
-     * @param string            $sCallable               The callable object instance or class name
+     * @param Container         $di
+     * @param ReflectionClass   $xReflectionClass   The reflection class
      *
      */
-    public function __construct($sCallable)
+    public function __construct(Container $di, ReflectionClass  $xReflectionClass)
     {
-        $this->xReflectionClass = new \ReflectionClass($sCallable);
+        $this->di = $di;
+        $this->xReflectionClass = $xReflectionClass;
     }
 
     /**
-     * Return the class name of this callable object, without the namespace if any
+     * Set callable object options
+     *
+     * @param   array           $aOptions
+     *
+     * @return void
+     */
+    public function setOptions(array $aOptions)
+    {
+        return $this->aOptions = $aOptions;
+    }
+
+    /**
+     * Get callable object options
+     *
+     * @return array
+     */
+    public function getOptions()
+    {
+        return $this->aOptions;
+    }
+
+    /**
+     * Get the reflection class
+     *
+     * @return string
+     */
+    public function getReflectionClass()
+    {
+        return $this->xReflectionClass;
+    }
+
+    /**
+     * Get the class name of this callable object, without the namespace if any
      *
      * @return string
      */
@@ -101,7 +152,7 @@ class CallableObject
     }
 
     /**
-     * Return the name of this callable object
+     * Get the name of this callable object
      *
      * @return string
      */
@@ -112,7 +163,7 @@ class CallableObject
     }
 
     /**
-     * Return the name of the corresponding javascript class
+     * Get the name of the corresponding javascript class
      *
      * @return string
      */
@@ -122,7 +173,7 @@ class CallableObject
     }
 
     /**
-     * Return the namespace of this callable object
+     * Get the namespace of this callable object
      *
      * @return string
      */
@@ -133,7 +184,7 @@ class CallableObject
     }
 
     /**
-     * Return the namespace the callable class was registered from
+     * Get the namespace the callable class was registered from
      *
      * @return string
      */
@@ -243,36 +294,13 @@ class CallableObject
     }
 
     /**
-     * Return the registered callable object
+     * Get the registered callable object
      *
      * @return null|object
      */
     public function getRegisteredObject()
     {
-        if($this->xRegisteredObject == null)
-        {
-            $di = jaxon()->di();
-            $this->xRegisteredObject = $di->make($this->xReflectionClass);
-            // Initialize the object
-            if($this->xRegisteredObject instanceof \Jaxon\CallableClass)
-            {
-                // Set the members of the object
-                $cSetter = function($xCallable, $xResponse) {
-                    $this->callable = $xCallable;
-                    $this->response = $xResponse;
-                };
-                $cSetter = $cSetter->bindTo($this->xRegisteredObject, $this->xRegisteredObject);
-                // Can now access protected attributes
-                \call_user_func($cSetter, $this, jaxon()->getResponse());
-            }
-
-            // Run the callback for class initialisation
-            foreach($di->getRequestHandler()->getCallbackManager()->getInitCallbacks() as $xCallback)
-            {
-                \call_user_func($xCallback, $this->xRegisteredObject);
-            }
-        }
-        return $this->xRegisteredObject;
+        return $this->di->get($this->xReflectionClass->getName());
     }
 
     /**
@@ -284,7 +312,7 @@ class CallableObject
      */
     public function hasMethod($sMethod)
     {
-        return $this->xReflectionClass->hasMethod($sMethod)/* || $this->xReflectionClass->hasMethod('__call')*/;
+        return $this->xReflectionClass->hasMethod($sMethod);
     }
 
     /**

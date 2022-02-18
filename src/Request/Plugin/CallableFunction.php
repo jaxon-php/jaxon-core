@@ -24,11 +24,35 @@ namespace Jaxon\Request\Plugin;
 use Jaxon\Jaxon;
 use Jaxon\Plugin\Request as RequestPlugin;
 use Jaxon\Request\Target;
+use Jaxon\Request\Handler\Handler as RequestHandler;
+use Jaxon\Response\Manager as ResponseManager;
+use Jaxon\Utils\DI\Container;
 
 class CallableFunction extends RequestPlugin
 {
     use \Jaxon\Features\Validator;
     use \Jaxon\Features\Translator;
+
+    /**
+     * The DI container
+     *
+     * @var Container
+     */
+    protected $di;
+
+    /**
+     * The request handler
+     *
+     * @var RequestHandler
+     */
+    protected $xRequestHandler;
+
+    /**
+     * The response manager
+     *
+     * @var ResponseManager
+     */
+    protected $xResponseManager;
 
     /**
      * The registered user functions names
@@ -46,9 +70,17 @@ class CallableFunction extends RequestPlugin
 
     /**
      * The constructor
+     *
+     * @param Container         $di
+     * @param RequestHandler    $xRequestHandler
+     * @param ResponseManager   $xResponseManager
      */
-    public function __construct()
+    public function __construct(Container $di, RequestHandler $xRequestHandler, ResponseManager $xResponseManager)
     {
+        $this->di = $di;
+        $this->xRequestHandler = $xRequestHandler;
+        $this->xResponseManager = $xResponseManager;
+
         if(isset($_GET['jxnfun']))
         {
             $this->sRequestedFunction = $_GET['jxnfun'];
@@ -123,17 +155,7 @@ class CallableFunction extends RequestPlugin
         }
 
         $this->aFunctions[$sFunctionName] = $aOptions;
-        jaxon()->di()->set($sFunctionName, function() use ($sFunctionName, $sCallableFunction) {
-            $xCallableFunction = new \Jaxon\Request\Support\CallableFunction($sCallableFunction);
-
-            $aOptions = $this->aFunctions[$sFunctionName];
-            foreach($aOptions as $sName => $sValue)
-            {
-                $xCallableFunction->configure($sName, $sValue);
-            }
-
-            return $xCallableFunction;
-        });
+        $this->di->registerCallableFunction($sFunctionName, $sCallableFunction, $aOptions);
 
         return true;
     }
@@ -151,11 +173,10 @@ class CallableFunction extends RequestPlugin
      */
     public function getScript()
     {
-        $di = jaxon()->di();
         $code = '';
         foreach(array_keys($this->aFunctions) as $sName)
         {
-            $xFunction = $di->get($sName);
+            $xFunction = $this->di->get($sName);
             $code .= $xFunction->getScript();
         }
         return $code;
@@ -192,13 +213,12 @@ class CallableFunction extends RequestPlugin
                 ['name' => $this->sRequestedFunction]));
         }
 
-        $di = jaxon()->di();
-        $xFunction = $di->get($this->sRequestedFunction);
-        $aArgs = $di->getRequestHandler()->processArguments();
+        $xFunction = $this->di->get($this->sRequestedFunction);
+        $aArgs = $this->xRequestHandler->processArguments();
         $xResponse = $xFunction->call($aArgs);
         if(($xResponse))
         {
-            $di->getResponseManager()->append($xResponse);
+            $this->xResponseManager->append($xResponse);
         }
         return true;
     }

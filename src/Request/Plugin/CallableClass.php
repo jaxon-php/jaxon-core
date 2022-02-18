@@ -22,6 +22,8 @@
 namespace Jaxon\Request\Plugin;
 
 use Jaxon\Jaxon;
+use Jaxon\Request\Handler\Handler as RequestHandler;
+use Jaxon\Response\Manager as ResponseManager;
 use Jaxon\CallableClass as UserCallableClass;
 use Jaxon\Plugin\Request as RequestPlugin;
 use Jaxon\Request\Support\CallableObject;
@@ -35,6 +37,20 @@ class CallableClass extends RequestPlugin
     use \Jaxon\Features\Template;
     use \Jaxon\Features\Validator;
     use \Jaxon\Features\Translator;
+
+    /**
+     * The request handler
+     *
+     * @var RequestHandler
+     */
+    protected $xRequestHandler;
+
+    /**
+     * The response manager
+     *
+     * @var ResponseManager
+     */
+    protected $xResponseManager;
 
     /**
      * The callable registry
@@ -67,11 +83,16 @@ class CallableClass extends RequestPlugin
     /**
      * The class constructor
      *
+     * @param RequestHandler        $xRequestHandler
+     * @param ResponseManager       $xResponseManager
      * @param CallableRegistry      $xRegistry      The callable class registry
      * @param CallableRepository    $xRepository    The callable object repository
      */
-    public function __construct(CallableRegistry $xRegistry, CallableRepository $xRepository)
+    public function __construct(RequestHandler $xRequestHandler, ResponseManager $xResponseManager,
+        CallableRegistry $xRegistry, CallableRepository $xRepository)
     {
+        $this->xRequestHandler = $xRequestHandler;
+        $this->xResponseManager = $xResponseManager;
         $this->xRegistry = $xRegistry;
         $this->xRepository = $xRepository;
 
@@ -153,7 +174,7 @@ class CallableClass extends RequestPlugin
      */
     public function getHash()
     {
-        $this->xRegistry->registerCallableClasses();
+        $this->xRegistry->parseCallableClasses();
         $aNamespaces = $this->xRepository->getNamespaces();
         $aClasses = $this->xRepository->getClasses();
         $sHash = '';
@@ -212,8 +233,7 @@ class CallableClass extends RequestPlugin
      */
     private function getCallableScript($sClassName, CallableObject $xCallableObject, array $aProtectedMethods)
     {
-        $aCallableOptions = $this->xRepository->getCallableOptions();
-        $aConfig = $aCallableOptions[$sClassName];
+        $aConfig = $xCallableObject->getOptions();
 
         // Convert an option to string, to be displayed in the js script template.
         $fConvertOption = function($xOption) {
@@ -254,7 +274,7 @@ class CallableClass extends RequestPlugin
      */
     public function getScript()
     {
-        $this->xRegistry->createCallableObjects();
+        $this->xRegistry->registerCallableObjects();
 
         // The methods of the \Jaxon\CallableClass class must not be exported
         $xCallableClass = new \ReflectionClass(UserCallableClass::class);
@@ -266,13 +286,14 @@ class CallableClass extends RequestPlugin
 
         $sCode = $this->getNamespacesScript();
 
-        $aCallableObjects = $this->xRepository->getCallableObjects();
+        $aClassNames = $this->xRepository->getClassNames();
         // Sort the options by key length asc
-        uksort($aCallableObjects, function($name1, $name2) {
+        uksort($aClassNames, function($name1, $name2) {
             return strlen($name1) - strlen($name2);
         });
-        foreach($aCallableObjects as $sClassName => $xCallableObject)
+        foreach($aClassNames as $sClassName)
         {
+            $xCallableObject = $this->xRepository->getCallableObject($sClassName);
             $sCode .= $this->getCallableScript($sClassName, $xCallableObject, $aProtectedMethods);
         }
 
@@ -314,12 +335,11 @@ class CallableClass extends RequestPlugin
         }
 
         // Call the requested method
-        $di = jaxon()->di();
-        $aArgs = $di->getRequestHandler()->processArguments();
+        $aArgs = $this->xRequestHandler->processArguments();
         $xResponse = $xCallableObject->call($this->sRequestedMethod, $aArgs);
         if(($xResponse))
         {
-            $di->getResponseManager()->append($xResponse);
+            $this->xResponseManager->append($xResponse);
         }
         return true;
     }

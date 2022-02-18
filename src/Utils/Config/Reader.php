@@ -15,6 +15,21 @@ namespace Jaxon\Utils\Config;
 class Reader
 {
     /**
+     * @var Config
+     */
+    protected $xConfig;
+
+    /**
+     * The class constructor
+     *
+     * @param Config $xConfig
+     */
+    public function __construct(Config $xConfig)
+    {
+        $this->xConfig = $xConfig;
+    }
+
+    /**
      * Read options from a config file
      *
      * @param string $sConfigFile The full path to the config file
@@ -66,6 +81,6 @@ class Reader
     {
         $aConfigOptions = $this->read($sConfigFile);
         // Set up the lib config options.
-        jaxon()->di()->getConfig()->setOptions($aConfigOptions, $sConfigSection);
+        $this->xConfig->setOptions($aConfigOptions, $sConfigSection);
     }
 }
