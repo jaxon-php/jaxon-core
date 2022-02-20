@@ -20,7 +20,6 @@
 
 namespace Jaxon\Request\Factory;
 
-use Jaxon\Request\Factory\Parameter;
 use Jaxon\Request\Factory\Contracts\Parameter as ParameterContract;
 use Jaxon\Response\Plugin\JQuery\Dom\Element as DomElement;
 
@@ -357,7 +356,7 @@ class Request extends JsCall
      * @param integer       $nItemsPerPage          The number of items per page page
      * @param integer       $nItemsTotal            The total number of items
      *
-     * @return \Jaxon\Utils\Pagination\Paginator
+     * @return \Jaxon\Ui\Pagination\Paginator
      */
     public function pg($nCurrentPage, $nItemsPerPage, $nItemsTotal)
     {
@@ -372,7 +371,7 @@ class Request extends JsCall
      * @param integer       $nItemsPerPage          The number of items per page page
      * @param integer       $nItemsTotal            The total number of items
      *
-     * @return \Jaxon\Utils\Pagination\Paginator
+     * @return \Jaxon\Ui\Pagination\Paginator
      */
     public function paginate($nCurrentPage, $nItemsPerPage, $nItemsTotal)
     {

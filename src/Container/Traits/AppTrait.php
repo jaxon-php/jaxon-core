@@ -8,8 +8,8 @@ use Jaxon\App\Bootstrap;
 use Jaxon\Plugin\Manager as PluginManager;
 use Jaxon\Request\Handler\Handler as RequestHandler;
 use Jaxon\Response\Manager as ResponseManager;
+use Jaxon\Ui\View\Manager as ViewManager;
 use Jaxon\Utils\Config\Reader as ConfigReader;
-use Jaxon\Utils\View\Manager as ViewManager;
 
 trait AppTrait
 {

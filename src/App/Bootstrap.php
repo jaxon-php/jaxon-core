@@ -12,12 +12,12 @@
 
 namespace Jaxon\App;
 
+use Jaxon\Exception\Error as ErrorException;
 use Jaxon\Jaxon;
 use Jaxon\Plugin\Manager as PluginManager;
-use Jaxon\Utils\View\Manager as ViewManager;
 use Jaxon\Request\Handler\Handler as RequestHandler;
+use Jaxon\Ui\View\Manager as ViewManager;
 use Jaxon\Utils\Config\Config;
-use Jaxon\Exception\Error as ErrorException;
 use Jaxon\Utils\Config\Exception\Data as DataException;
 
 class Bootstrap

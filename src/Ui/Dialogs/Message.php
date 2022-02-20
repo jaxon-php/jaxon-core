@@ -10,7 +10,7 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Utils\Dialogs;
+namespace Jaxon\Ui\Dialogs;
 
 class Message implements \Jaxon\Contracts\Dialogs\Message
 {

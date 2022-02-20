@@ -12,7 +12,7 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Utils\Template;
+namespace Jaxon\Utils\File;
 
 use MatthiasMullie\Minify\JS as JsMinifier;
 

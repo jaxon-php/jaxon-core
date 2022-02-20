@@ -15,10 +15,6 @@
 
 namespace Jaxon\Request\Factory;
 
-use Jaxon\Request\Support\CallableObject;
-use Jaxon\Request\Support\CallableRepository;
-use Jaxon\Utils\Pagination\Paginator;
-
 // Extends Parameter for compatibility with older versions (see function rq())
 class ParameterFactory
 {

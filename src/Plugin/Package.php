@@ -13,8 +13,8 @@
 
 namespace Jaxon\Plugin;
 
+use Jaxon\Ui\View\Renderer;
 use Jaxon\Utils\Config\Config;
-use Jaxon\Utils\View\Renderer;
 
 abstract class Package implements Code\Contracts\Generator
 {

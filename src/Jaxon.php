@@ -26,23 +26,22 @@
 namespace Jaxon;
 
 use Jaxon\App\App;
+use Jaxon\Container\Container;
 use Jaxon\Contracts\Session;
-use Jaxon\Plugin\Plugin;
 use Jaxon\Plugin\Package;
+use Jaxon\Plugin\Plugin;
 use Jaxon\Plugin\Response;
 use Jaxon\Request\Factory\CallableClass\Request;
 use Jaxon\Request\Handler\Callback;
 use Jaxon\Request\Plugin\FileUpload;
-use Jaxon\Container\Container;
+use Jaxon\Ui\Dialogs\Dialog;
+use Jaxon\Ui\View\Renderer;
 use Jaxon\Utils\Config\Reader as ConfigReader;
-
-use Jaxon\Utils\Dialogs\Dialog;
 use Jaxon\Utils\Template\Engine;
-use Jaxon\Utils\View\Renderer;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
-use Psr\Log\LoggerAwareTrait;
-use Psr\Log\LoggerAwareInterface;
 
 class Jaxon implements LoggerAwareInterface
 {

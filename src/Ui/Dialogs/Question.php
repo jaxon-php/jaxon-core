@@ -11,7 +11,7 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Utils\Dialogs;
+namespace Jaxon\Ui\Dialogs;
 
 class Question implements \Jaxon\Contracts\Dialogs\Question
 {

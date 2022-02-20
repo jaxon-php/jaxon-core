@@ -21,19 +21,23 @@ namespace Jaxon\Utils\Validation;
  * http://www.w3schools.com/charsets/ref_html_utf8.asp
  * http://www.w3schools.com/charsets/ref_utf_latin1_supplement.asp
  */
+
+use Jaxon\Utils\Config\Config;
+use Jaxon\Utils\Translation\Translator;
+
 class Validator
 {
     /**
      * The translator
      *
-     * @var \Jaxon\Utils\Translation\Translator
+     * @var Translator
      */
     protected $xTranslator;
 
     /**
      * The config manager
      *
-     * @var \Jaxon\Utils\Config\Config
+     * @var Config
      */
     protected $xConfig;
 

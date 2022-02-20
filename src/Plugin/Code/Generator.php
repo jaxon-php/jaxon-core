@@ -16,8 +16,8 @@ namespace Jaxon\Plugin\Code;
 
 use Jaxon\Jaxon;
 use Jaxon\Plugin\Code\Contracts\Generator as GeneratorContract;
-use Jaxon\Utils\Template\Engine as TemplateEngine;
 use Jaxon\Utils\Http\URI;
+use Jaxon\Utils\Template\Engine as TemplateEngine;
 
 class Generator
 {

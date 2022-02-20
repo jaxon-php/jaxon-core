@@ -12,13 +12,12 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Utils\Pagination;
+namespace Jaxon\Ui\Pagination;
 
-use Jaxon\Utils\View\Renderer as ViewRenderer;
-use Jaxon\Utils\View\Store;
-use Jaxon\Utils\Template\Engine;
-use Jaxon\Request\Factory\Request;
 use Jaxon\Request\Factory\Parameter;
+use Jaxon\Request\Factory\Request;
+use Jaxon\Ui\View\Renderer as ViewRenderer;
+use Jaxon\Ui\View\Store;
 
 class Renderer
 {

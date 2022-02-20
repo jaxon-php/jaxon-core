@@ -2,11 +2,13 @@
 
 namespace Jaxon\Container\Traits;
 
-use Jaxon\Utils\Dialogs\Dialog;
+use Jaxon\Ui\Dialogs\Dialog;
+use Jaxon\Ui\Pagination\Paginator;
+use Jaxon\Ui\Pagination\Renderer as PaginationRenderer;
+use Jaxon\Ui\Template\View as TemplateView;
+use Jaxon\Ui\View\Manager as ViewManager;
+use Jaxon\Ui\View\Renderer as ViewRenderer;
 use Jaxon\Utils\Template\Engine as TemplateEngine;
-use Jaxon\Utils\Template\View as TemplateView;
-use Jaxon\Utils\View\Manager as ViewManager;
-use Jaxon\Utils\View\Renderer as ViewRenderer;
 
 trait ViewTrait
 {
@@ -21,16 +23,12 @@ trait ViewTrait
         $this->set(Dialog::class, function() {
             return new Dialog();
         });
-        // Template engine
-        $this->set(TemplateEngine::class, function($c) {
-            return new TemplateEngine($c->g('jaxon.core.dir.template'));
-        });
         // View Manager
         $this->set(ViewManager::class, function() {
             $xViewManager = new ViewManager($this);
             // Add the default view renderer
             $xViewManager->addRenderer('jaxon', function($di) {
-                return new TemplateView($di->get(TemplateEngine::class));
+                return new TemplateView($di->g(TemplateEngine::class));
             });
             // By default, render pagination templates with Jaxon.
             $xViewManager->addNamespace('pagination', '', '.php', 'jaxon');
@@ -39,6 +37,14 @@ trait ViewTrait
         // View Renderer
         $this->set(ViewRenderer::class, function($c) {
             return new ViewRenderer($c->g(ViewManager::class));
+        });
+        // Pagination Paginator
+        $this->set(Paginator::class, function($c) {
+            return new Paginator($c->g(PaginationRenderer::class));
+        });
+        // Pagination Renderer
+        $this->set(PaginationRenderer::class, function($c) {
+            return new PaginationRenderer($c->g(ViewRenderer::class));
         });
     }
 
@@ -50,16 +56,6 @@ trait ViewTrait
     public function getDialog()
     {
         return $this->g(Dialog::class);
-    }
-
-    /**
-     * Get the template engine
-     *
-     * @return TemplateEngine
-     */
-    public function getTemplateEngine()
-    {
-        return $this->g(TemplateEngine::class);
     }
 
     /**
@@ -80,5 +76,15 @@ trait ViewTrait
     public function getViewRenderer()
     {
         return $this->g(ViewRenderer::class);
+    }
+
+    /**
+     * Get the paginator
+     *
+     * @return Paginator
+     */
+    public function getPaginator()
+    {
+        return $this->g(Paginator::class);
     }
 }

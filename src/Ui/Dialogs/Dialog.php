@@ -9,7 +9,7 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Utils\Dialogs;
+namespace Jaxon\Ui\Dialogs;
 
 use Jaxon\Contracts\Dialogs\Message as MessageContract;
 use Jaxon\Contracts\Dialogs\Question as QuestionContract;

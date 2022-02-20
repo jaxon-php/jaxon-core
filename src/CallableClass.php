@@ -2,14 +2,12 @@
 
 namespace Jaxon;
 
-use Jaxon\Jaxon;
 use Jaxon\Contracts\Session;
 use Jaxon\Request\Factory\CallableClass\Request;
-
-use Jaxon\Response\Plugin\JQuery\Dom\Element as DomElement;
 use Jaxon\Response\Plugin\DataBag\Context as DataBagContext;
+use Jaxon\Response\Plugin\JQuery\Dom\Element as DomElement;
 use Jaxon\Response\Response;
-use Jaxon\Utils\View\Renderer;
+use Jaxon\Ui\View\Renderer;
 use Psr\Log\LoggerInterface;
 
 class CallableClass
@@ -70,7 +68,7 @@ class CallableClass
      */
     public function rq()
     {
-        return $this->jaxon->di()->get($this->sRequest);
+        return $this->jaxon->di()->g($this->sRequest);
     }
 
     /**
@@ -91,7 +89,7 @@ class CallableClass
      *
      * @param string $name the class name
      *
-     * @return CallableClass|null the Jaxon class instance, or null
+     * @return object
      */
     public function cl($name)
     {

@@ -5,12 +5,11 @@ namespace Jaxon\Features;
 use Jaxon\App\Bootstrap;
 use Jaxon\Contracts\Session;
 use Jaxon\Plugin\Package;
+use Jaxon\Request\Factory\CallableClass\Request as CallableRequest;
 use Jaxon\Request\Handler\Callback;
 use Jaxon\Response\Response;
-use Jaxon\Request\Factory\CallableClass\Request as CallableRequest;
-use Jaxon\Utils\View\Renderer;
+use Jaxon\Ui\View\Renderer;
 use Psr\Log\LoggerInterface;
-
 use function jaxon;
 
 trait App

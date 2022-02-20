@@ -1,9 +1,8 @@
 <?php
 
-namespace Jaxon\Utils\View;
+namespace Jaxon\Ui\View;
 
 use Jaxon\Contracts\View as ViewContract;
-use JsonSerializable;
 
 class Store
 {

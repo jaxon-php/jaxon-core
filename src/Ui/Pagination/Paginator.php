@@ -38,10 +38,10 @@ SOFTWARE.
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Utils\Pagination;
+namespace Jaxon\Ui\Pagination;
 
-use Jaxon\Utils\View\Store;
 use Jaxon\Request\Factory\Request;
+use Jaxon\Ui\View\Store;
 
 class Paginator
 {

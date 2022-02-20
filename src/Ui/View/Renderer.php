@@ -1,6 +1,6 @@
 <?php
 
-namespace Jaxon\Utils\View;
+namespace Jaxon\Ui\View;
 
 class Renderer
 {

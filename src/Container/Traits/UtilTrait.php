@@ -2,17 +2,12 @@
 
 namespace Jaxon\Container\Traits;
 
-use Jaxon\Contracts\Session as SessionContract;
 use Jaxon\Utils\Config\Config;
+use Jaxon\Utils\File\Minifier;
 use Jaxon\Utils\Http\URI;
-use Jaxon\Utils\Pagination\Paginator;
-use Jaxon\Utils\Pagination\Renderer as PaginationRenderer;
-use Jaxon\Utils\Session\Manager as SessionManager;
-use Jaxon\Utils\Template\Minifier;
+use Jaxon\Utils\Template\Engine as TemplateEngine;
 use Jaxon\Utils\Translation\Translator;
 use Jaxon\Utils\Validation\Validator;
-use Jaxon\Utils\View\Renderer as ViewRenderer;
-
 use Lemon\Event\EventDispatcher;
 
 trait UtilTrait
@@ -24,10 +19,6 @@ trait UtilTrait
      */
     private function registerUtils()
     {
-        // Minifier
-        $this->set(Minifier::class, function() {
-            return new Minifier();
-        });
         // Translator
         $this->set(Translator::class, function($c) {
             return new Translator($c->g('jaxon.core.dir.translation'), $c->g(Config::class));
@@ -36,13 +27,13 @@ trait UtilTrait
         $this->set(Validator::class, function($c) {
             return new Validator($c->g(Translator::class), $c->g(Config::class));
         });
-        // Pagination Paginator
-        $this->set(Paginator::class, function($c) {
-            return new Paginator($c->g(PaginationRenderer::class));
+        // Template engine
+        $this->set(TemplateEngine::class, function($c) {
+            return new TemplateEngine($c->g('jaxon.core.dir.template'));
         });
-        // Pagination Renderer
-        $this->set(PaginationRenderer::class, function($c) {
-            return new PaginationRenderer($c->g(ViewRenderer::class));
+        // Minifier
+        $this->set(Minifier::class, function() {
+            return new Minifier();
         });
         // Event Dispatcher
         $this->set(EventDispatcher::class, function() {
@@ -52,16 +43,6 @@ trait UtilTrait
         $this->set(URI::class, function() {
             return new URI();
         });
-    }
-
-    /**
-     * Get the minifier
-     *
-     * @return Minifier
-     */
-    public function getMinifier()
-    {
-        return $this->g(Minifier::class);
     }
 
     /**
@@ -85,13 +66,23 @@ trait UtilTrait
     }
 
     /**
-     * Get the paginator
+     * Get the template engine
      *
-     * @return Paginator
+     * @return TemplateEngine
      */
-    public function getPaginator()
+    public function getTemplateEngine()
     {
-        return $this->g(Paginator::class);
+        return $this->g(TemplateEngine::class);
+    }
+
+    /**
+     * Get the minifier
+     *
+     * @return Minifier
+     */
+    public function getMinifier()
+    {
+        return $this->g(Minifier::class);
     }
 
     /**

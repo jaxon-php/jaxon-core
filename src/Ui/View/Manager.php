@@ -1,12 +1,11 @@
 <?php
 
-namespace Jaxon\Utils\View;
+namespace Jaxon\Ui\View;
 
+use Closure;
 use Jaxon\Container\Container;
 use Jaxon\Contracts\View;
 use Jaxon\Utils\Config\Config;
-
-use Closure;
 
 class Manager
 {
