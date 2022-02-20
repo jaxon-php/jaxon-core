@@ -1,6 +1,6 @@
 <?php
 
-namespace Jaxon\Utils\DI\Traits;
+namespace Jaxon\Container\Traits;
 
 use Jaxon\Utils\Dialogs\Dialog;
 use Jaxon\Utils\Template\Engine as TemplateEngine;

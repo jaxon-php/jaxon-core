@@ -1,6 +1,6 @@
 <?php
 
-namespace Jaxon\Utils\DI\Traits;
+namespace Jaxon\Container\Traits;
 
 use Jaxon\Utils\Config\Config;
 use Jaxon\Utils\Config\Reader;
@@ -15,9 +15,7 @@ trait ConfigTrait
     private function registerConfigs()
     {
         $this->set(Config::class, function($c) {
-            $config = new Config();
-            $config->setOptions($c->g('jaxon.core.options'));
-            return $config;
+            return new Config($c->g('jaxon.core.options'));
         });
         $this->set(Reader::class, function($c) {
             return new Reader($c->g(Config::class));

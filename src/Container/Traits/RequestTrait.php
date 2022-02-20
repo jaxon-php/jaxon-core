@@ -1,6 +1,6 @@
 <?php
 
-namespace Jaxon\Utils\DI\Traits;
+namespace Jaxon\Container\Traits;
 
 use Jaxon\Jaxon;
 use Jaxon\Plugin\Manager as PluginManager;

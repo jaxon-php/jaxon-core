@@ -26,7 +26,7 @@ use Jaxon\Plugin\Request as RequestPlugin;
 use Jaxon\Request\Target;
 use Jaxon\Request\Handler\Handler as RequestHandler;
 use Jaxon\Response\Manager as ResponseManager;
-use Jaxon\Utils\DI\Container;
+use Jaxon\Container\Container;
 
 class CallableFunction extends RequestPlugin
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Jaxon\Utils\DI\Traits;
+namespace Jaxon\Container\Traits;
 
 use Jaxon\Contracts\Session as SessionContract;
 use Jaxon\Utils\Session\Manager as SessionManager;

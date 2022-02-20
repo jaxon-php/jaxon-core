@@ -12,7 +12,7 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Utils\DI;
+namespace Jaxon\Container;
 
 use Jaxon\Jaxon;
 use Pimple\Container as PimpleContainer;
@@ -57,8 +57,8 @@ class Container extends PimpleContainer
     {
         parent::__construct();
 
-        $sTranslationDir = realpath(__DIR__ . '/../../../translations');
-        $sTemplateDir = realpath(__DIR__ . '/../../../templates');
+        $sTranslationDir = realpath(__DIR__ . '/../../translations');
+        $sTemplateDir = realpath(__DIR__ . '/../../templates');
         // Translation directory
         $this->val('jaxon.core.dir.translation', $sTranslationDir);
         // Template directory

@@ -2,7 +2,8 @@
 
 namespace Jaxon\Utils\View;
 
-use Jaxon\Utils\DI\Container;
+use Jaxon\Container\Container;
+use Jaxon\Contracts\View;
 use Jaxon\Utils\Config\Config;
 
 use Closure;
@@ -155,7 +156,7 @@ class Manager
      *
      * @param string        $sId        The unique identifier of the view renderer
      *
-     * @return \Jaxon\Contracts\View
+     * @return View
      */
     public function getRenderer($sId)
     {
@@ -198,7 +199,7 @@ class Manager
      *
      * @param string        $sNamespace         The namespace name
      *
-     * @return \Jaxon\Contracts\View|null
+     * @return View|null
      */
     public function getNamespaceRenderer($sNamespace)
     {

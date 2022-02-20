@@ -33,7 +33,7 @@ use Jaxon\Plugin\Response;
 use Jaxon\Request\Factory\CallableClass\Request;
 use Jaxon\Request\Handler\Callback;
 use Jaxon\Request\Plugin\FileUpload;
-use Jaxon\Utils\DI\Container;
+use Jaxon\Container\Container;
 use Jaxon\Utils\Config\Reader as ConfigReader;
 
 use Jaxon\Utils\Dialogs\Dialog;
@@ -163,7 +163,7 @@ class Jaxon implements LoggerAwareInterface
      */
     public function config()
     {
-        return $this->di()->get(ConfigReader::class);
+        return $this->di()->getConfigReader();
     }
 
     /**

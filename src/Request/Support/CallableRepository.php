@@ -14,7 +14,7 @@
 
 namespace Jaxon\Request\Support;
 
-use Jaxon\Utils\DI\Container;
+use Jaxon\Container\Container;
 
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
