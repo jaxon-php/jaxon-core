@@ -2,10 +2,9 @@
 
 namespace Jaxon\Container\Traits;
 
-use Jaxon\Contracts\Session as SessionContract;
-use Jaxon\Utils\Session\Manager as SessionManager;
-
 use Closure;
+use Jaxon\Contracts\Session as SessionContract;
+use Jaxon\Session\Manager as SessionManager;
 
 trait SessionTrait
 {

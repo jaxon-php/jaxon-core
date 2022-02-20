@@ -1,6 +1,6 @@
 <?php
 
-namespace Jaxon\Utils\Session;
+namespace Jaxon\Session;
 
 use Jaxon\Contracts\Session as SessionContract;
 
