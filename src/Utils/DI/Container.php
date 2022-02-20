@@ -52,6 +52,7 @@ use Jaxon\Utils\Validation\Validator;
 use Jaxon\Utils\Translation\Translator;
 use Jaxon\Utils\Session\Manager as SessionManager;
 use Jaxon\Utils\Http\URI;
+use Jaxon\Utils\Config\Exception\Data as ConfigDataException;
 
 use Pimple\Container as PimpleContainer;
 use Psr\Container\ContainerInterface;
@@ -59,15 +60,10 @@ use Lemon\Event\EventDispatcher;
 use Closure;
 use ReflectionClass;
 
-class Container
-{
-    /**
-     * The Dependency Injection Container
-     *
-     * @var PimpleContainer
-     */
-    private $libContainer = null;
+use function realpath;
 
+class Container extends PimpleContainer
+{
     /**
      * The Dependency Injection Container
      *
@@ -80,16 +76,22 @@ class Container
      *
      * @param Jaxon $jaxon
      * @param array $aOptions The default options
-     * @throws \Jaxon\Utils\Config\Exception\Data
+     * @throws ConfigDataException
      */
     public function __construct(Jaxon $jaxon, array $aOptions)
     {
-        $this->libContainer = new PimpleContainer();
-        $this->libContainer[Jaxon::class] = $jaxon;
+        parent::__construct();
+
+        $this->val(Jaxon::class, $jaxon);
 
         $sTranslationDir = realpath(__DIR__ . '/../../../translations');
         $sTemplateDir = realpath(__DIR__ . '/../../../templates');
-        $this->init($sTranslationDir, $sTemplateDir);
+        // Translation directory
+        $this->val('jaxon.core.translation_dir', $sTranslationDir);
+        // Template directory
+        $this->val('jaxon.core.template_dir', $sTemplateDir);
+
+        $this->init();
         $this->getConfig()->setOptions($aOptions);
     }
 
@@ -118,113 +120,102 @@ class Container
     /**
      * Set the parameters and create the objects in the dependency injection container
      *
-     * @param string        $sTranslationDir     The translation directory
-     * @param string        $sTemplateDir        The template directory
-     *
      * @return void
      */
-    private function init($sTranslationDir, $sTemplateDir)
+    private function init()
     {
-        /*
-         * Parameters
-         */
-        // Translation directory
-        $this->libContainer['jaxon.core.translation_dir'] = $sTranslationDir;
-        // Template directory
-        $this->libContainer['jaxon.core.template_dir'] = $sTemplateDir;
-
         /*
          * Core library objects
          */
         // Global Response
-        $this->libContainer[Response::class] = function() {
+        $this->set(Response::class, function() {
             return new Response();
-        };
+        });
         // Dialog
-        $this->libContainer[Dialog::class] = function() {
+        $this->set(Dialog::class, function() {
             return new Dialog();
-        };
+        });
         // Jaxon App
-        $this->libContainer[App::class] = function($c) {
-            return new App($c[Jaxon::class], $c[ResponseManager::class], $c[ConfigReader::class]);
-        };
+        $this->set(App::class, function($c) {
+            return new App($c->g(Jaxon::class), $c->g(ResponseManager::class), $c->g(ConfigReader::class));
+        });
         // Jaxon App bootstrap
-        $this->libContainer[Bootstrap::class] = function($c) {
-            return new Bootstrap($c[Jaxon::class], $c[PluginManager::class],
-                $c[ViewManager::class], $c[RequestHandler::class]);
-        };
+        $this->set(Bootstrap::class, function($c) {
+            return new Bootstrap($c->g(Jaxon::class), $c->g(PluginManager::class),
+                $c->g(ViewManager::class), $c->g(RequestHandler::class));
+        });
 
         /*
          * Plugins
          */
         // Callable objects repository
-        $this->libContainer[CallableRepository::class] = function() {
+        $this->set(CallableRepository::class, function() {
             return new CallableRepository($this);
-        };
+        });
         // Callable objects registry
-        $this->libContainer[CallableRegistry::class] = function($c) {
-            return new CallableRegistry($c[CallableRepository::class]);
-        };
+        $this->set(CallableRegistry::class, function($c) {
+            return new CallableRegistry($c->g(CallableRepository::class));
+        });
         // Callable class plugin
-        $this->libContainer[CallableClass::class] = function($c) {
-            return new CallableClass($c[RequestHandler::class], $c[ResponseManager::class],
-                $c[CallableRegistry::class], $c[CallableRepository::class]);
-        };
+        $this->set(CallableClass::class, function($c) {
+            return new CallableClass($c->g(RequestHandler::class), $c->g(ResponseManager::class),
+                $c->g(CallableRegistry::class), $c->g(CallableRepository::class));
+        });
         // Callable dir plugin
-        $this->libContainer[CallableDir::class] = function($c) {
-            return new CallableDir($c[CallableRegistry::class]);
-        };
+        $this->set(CallableDir::class, function($c) {
+            return new CallableDir($c->g(CallableRegistry::class));
+        });
         // Callable function plugin
-        $this->libContainer[CallableFunction::class] = function($c) {
-            return new CallableFunction($this, $c[RequestHandler::class], $c[ResponseManager::class]);
-        };
+        $this->set(CallableFunction::class, function($c) {
+            return new CallableFunction($this, $c->g(RequestHandler::class), $c->g(ResponseManager::class));
+        });
         // File upload support
-        $this->libContainer[FileUploadSupport::class] = function() {
+        $this->set(FileUploadSupport::class, function() {
             return new FileUploadSupport();
-        };
+        });
         // File upload plugin
-        $this->libContainer[FileUpload::class] = function($c) {
-            return new FileUpload($c[ResponseManager::class], $c[FileUploadSupport::class]);
-        };
+        $this->set(FileUpload::class, function($c) {
+            return new FileUpload($c->g(ResponseManager::class), $c->g(FileUploadSupport::class));
+        });
         // JQuery response plugin
-        $this->libContainer[JQueryPlugin::class] = function() {
+        $this->set(JQueryPlugin::class, function() {
             return new JQueryPlugin();
-        };
+        });
         // DataBag response plugin
-        $this->libContainer[DataBag::class] = function() {
+        $this->set(DataBag::class, function() {
             return new DataBag();
-        };
+        });
 
         /*
          * Managers
          */
         // Plugin Manager
-        $this->libContainer[PluginManager::class] = function($c) {
-            return new PluginManager($c[Jaxon::class], $c[CodeGenerator::class]);
-        };
+        $this->set(PluginManager::class, function($c) {
+            return new PluginManager($c->g(Jaxon::class), $c->g(CodeGenerator::class));
+        });
         // Request Handler
-        $this->libContainer[RequestHandler::class] = function($c) {
-            return new RequestHandler($c[Jaxon::class], $c[PluginManager::class],
-                $c[ResponseManager::class], $c[FileUpload::class], $c[DataBag::class]);
-        };
+        $this->set(RequestHandler::class, function($c) {
+            return new RequestHandler($c->g(Jaxon::class), $c->g(PluginManager::class),
+                $c->g(ResponseManager::class), $c->g(FileUpload::class), $c->g(DataBag::class));
+        });
         // Request Factory
-        $this->libContainer[RequestFactory::class] = function($c) {
-            return new RequestFactory($c[CallableRegistry::class]);
-        };
+        $this->set(RequestFactory::class, function($c) {
+            return new RequestFactory($c->g(CallableRegistry::class));
+        });
         // Parameter Factory
-        $this->libContainer[ParameterFactory::class] = function() {
+        $this->set(ParameterFactory::class, function() {
             return new ParameterFactory();
-        };
+        });
         // Response Manager
-        $this->libContainer[ResponseManager::class] = function($c) {
-            return new ResponseManager($c[Jaxon::class]);
-        };
+        $this->set(ResponseManager::class, function($c) {
+            return new ResponseManager($c->g(Jaxon::class));
+        });
         // Code Generator
-        $this->libContainer[CodeGenerator::class] = function($c) {
-            return new CodeGenerator($c[Jaxon::class], $c[URI::class], $c[TemplateEngine::class]);
-        };
+        $this->set(CodeGenerator::class, function($c) {
+            return new CodeGenerator($c->g(Jaxon::class), $c->g(URI::class), $c->g(TemplateEngine::class));
+        });
         // View Manager
-        $this->libContainer[ViewManager::class] = function() {
+        $this->set(ViewManager::class, function() {
             $xViewManager = new ViewManager($this);
             // Add the default view renderer
             $xViewManager->addRenderer('jaxon', function($di) {
@@ -233,67 +224,97 @@ class Container
             // By default, render pagination templates with Jaxon.
             $xViewManager->addNamespace('pagination', '', '.php', 'jaxon');
             return $xViewManager;
-        };
+        });
         // View Renderer
-        $this->libContainer[ViewRenderer::class] = function($c) {
-            return new ViewRenderer($c[ViewManager::class]);
-        };
+        $this->set(ViewRenderer::class, function($c) {
+            return new ViewRenderer($c->g(ViewManager::class));
+        });
         // Set the default session manager
-        $this->libContainer[SessionContract::class] = function() {
+        $this->set(SessionContract::class, function() {
             return new SessionManager();
-        };
+        });
 
         /*
          * Config
          */
-        $this->libContainer[Config::class] = function() {
+        $this->set(Config::class, function() {
             return new Config();
-        };
-        $this->libContainer[ConfigReader::class] = function($c) {
-            return new ConfigReader($c[Config::class]);
-        };
+        });
+        $this->set(ConfigReader::class, function($c) {
+            return new ConfigReader($c->g(Config::class));
+        });
 
         /*
          * Services
          */
         // Minifier
-        $this->libContainer[Minifier::class] = function() {
+        $this->set(Minifier::class, function() {
             return new Minifier();
-        };
+        });
         // Translator
-        $this->libContainer[Translator::class] = function($c) {
-            return new Translator($c['jaxon.core.translation_dir'], $c[Config::class]);
-        };
+        $this->set(Translator::class, function($c) {
+            return new Translator($c->g('jaxon.core.translation_dir'), $c->g(Config::class));
+        });
         // Template engine
-        $this->libContainer[TemplateEngine::class] = function($c) {
-            return new TemplateEngine($c['jaxon.core.template_dir']);
-        };
+        $this->set(TemplateEngine::class, function($c) {
+            return new TemplateEngine($c->g('jaxon.core.template_dir'));
+        });
         // Validator
-        $this->libContainer[Validator::class] = function($c) {
-            return new Validator($c[Translator::class], $c[Config::class]);
-        };
+        $this->set(Validator::class, function($c) {
+            return new Validator($c->g(Translator::class), $c->g(Config::class));
+        });
         // Pagination Paginator
-        $this->libContainer[Paginator::class] = function($c) {
-            return new Paginator($c[PaginationRenderer::class]);
-        };
+        $this->set(Paginator::class, function($c) {
+            return new Paginator($c->g(PaginationRenderer::class));
+        });
         // Pagination Renderer
-        $this->libContainer[PaginationRenderer::class] = function($c) {
-            return new PaginationRenderer($c[ViewRenderer::class]);
-        };
+        $this->set(PaginationRenderer::class, function($c) {
+            return new PaginationRenderer($c->g(ViewRenderer::class));
+        });
         // Event Dispatcher
-        $this->libContainer[EventDispatcher::class] = function() {
+        $this->set(EventDispatcher::class, function() {
             return new EventDispatcher();
-        };
+        });
         // URI decoder
-        $this->libContainer[URI::class] = function() {
+        $this->set(URI::class, function() {
             return new URI();
-        };
+        });
+    }
+
+    /**
+     * Check if a class is defined in the container
+     *
+     * @param string                $sClass             The full class name
+     *
+     * @return bool
+     */
+    public function has($sClass)
+    {
+        if($this->appContainer != null && $this->appContainer->has($sClass))
+        {
+            return true;
+        }
+        return $this->offsetExists($sClass);
     }
 
     /**
      * Get a class instance
      *
-     * @return object        The class instance
+     * @param string                $sClass             The full class name
+     *
+     * @return mixed
+     */
+    public function g($sClass)
+    {
+        return $this->offsetGet($sClass);
+    }
+
+    /**
+     * Get a class instance
+     *
+     * @param string                $sClass             The full class name
+     *
+     * @return mixed
      */
     public function get($sClass)
     {
@@ -301,7 +322,7 @@ class Container
         {
             return $this->appContainer->get($sClass);
         }
-        return $this->libContainer[$sClass];
+        return $this->offsetGet($sClass);
     }
 
     /**
@@ -314,9 +335,7 @@ class Container
      */
     public function set($sClass, Closure $xClosure)
     {
-        $this->libContainer[$sClass] = function() use($xClosure) {
-            return call_user_func($xClosure, $this);
-        };
+        $this->offsetSet($sClass, $xClosure);
     }
 
     /**
@@ -329,7 +348,7 @@ class Container
      */
     public function val($sKey, $xValue)
     {
-        $this->libContainer[$sKey] = $xValue;
+        $this->offsetSet($sKey, $xValue);
     }
 
     /**
@@ -342,9 +361,9 @@ class Container
      */
     public function alias($sAlias, $sClass)
     {
-        $this->libContainer[$sAlias] = function($c) use ($sClass) {
-            return $c[$sClass];
-        };
+        $this->set($sAlias, function($c) use ($sClass) {
+            return $c->get($sClass);
+        });
     }
 
     /**
@@ -366,7 +385,7 @@ class Container
             return null;
         }
         // Use the Reflection class to get the parameters of the constructor
-        if(($constructor = $xClass->getConstructor()) == null)
+        if(($constructor = $xClass->getConstructor()) === null)
         {
             return $xClass->newInstance();
         }
@@ -389,9 +408,9 @@ class Container
      */
     public function auto($sClass)
     {
-        $this->libContainer[$sClass] = function($c) use ($sClass) {
+        $this->set($sClass, function($c) use ($sClass) {
             return $this->make($sClass);
-        };
+        });
     }
 
     /**
@@ -401,7 +420,7 @@ class Container
      */
     public function getPluginManager()
     {
-        return $this->libContainer[PluginManager::class];
+        return $this->get(PluginManager::class);
     }
 
     /**
@@ -411,7 +430,7 @@ class Container
      */
     public function getRequestHandler()
     {
-        return $this->libContainer[RequestHandler::class];
+        return $this->get(RequestHandler::class);
     }
 
     /**
@@ -421,7 +440,7 @@ class Container
      */
     public function getRequestFactory()
     {
-        return $this->libContainer[RequestFactory::class];
+        return $this->get(RequestFactory::class);
     }
 
     /**
@@ -431,7 +450,7 @@ class Container
      */
     public function getParameterFactory()
     {
-        return $this->libContainer[ParameterFactory::class];
+        return $this->get(ParameterFactory::class);
     }
 
     /**
@@ -441,7 +460,7 @@ class Container
      */
     public function getResponseManager()
     {
-        return $this->libContainer[ResponseManager::class];
+        return $this->get(ResponseManager::class);
     }
 
     /**
@@ -451,7 +470,7 @@ class Container
      */
     public function getCodeGenerator()
     {
-        return $this->libContainer[CodeGenerator::class];
+        return $this->get(CodeGenerator::class);
     }
 
     /**
@@ -461,7 +480,7 @@ class Container
      */
     public function getCallableRegistry()
     {
-        return $this->libContainer[CallableRegistry::class];
+        return $this->get(CallableRegistry::class);
     }
 
     /**
@@ -471,7 +490,7 @@ class Container
      */
     public function getConfig()
     {
-        return $this->libContainer[Config::class];
+        return $this->get(Config::class);
     }
 
     /**
@@ -481,7 +500,7 @@ class Container
      */
     public function getConfigReader()
     {
-        return $this->libContainer[ConfigReader::class];
+        return $this->get(ConfigReader::class);
     }
 
     /**
@@ -504,7 +523,7 @@ class Container
      */
     public function getDialog()
     {
-        return $this->libContainer[Dialog::class];
+        return $this->get(Dialog::class);
     }
 
     /**
@@ -514,7 +533,7 @@ class Container
      */
     public function getMinifier()
     {
-        return $this->libContainer[Minifier::class];
+        return $this->get(Minifier::class);
     }
 
     /**
@@ -524,7 +543,7 @@ class Container
      */
     public function getTranslator()
     {
-        return $this->libContainer[Translator::class];
+        return $this->get(Translator::class);
     }
 
     /**
@@ -534,7 +553,7 @@ class Container
      */
     public function getTemplateEngine()
     {
-        return $this->libContainer[TemplateEngine::class];
+        return $this->get(TemplateEngine::class);
     }
 
     /**
@@ -544,7 +563,7 @@ class Container
      */
     public function getValidator()
     {
-        return $this->libContainer[Validator::class];
+        return $this->get(Validator::class);
     }
 
     /**
@@ -554,7 +573,7 @@ class Container
      */
     public function getPaginator()
     {
-        return $this->libContainer[Paginator::class];
+        return $this->get(Paginator::class);
     }
 
     /**
@@ -564,7 +583,7 @@ class Container
      */
     public function getEventDispatcher()
     {
-        return $this->libContainer[EventDispatcher::class];
+        return $this->get(EventDispatcher::class);
     }
 
     /**
@@ -574,7 +593,7 @@ class Container
      */
     public function getResponse()
     {
-        return $this->libContainer[Response::class];
+        return $this->get(Response::class);
     }
 
     /**
@@ -594,7 +613,7 @@ class Container
      */
     public function getApp()
     {
-        return $this->libContainer[App::class];
+        return $this->get(App::class);
     }
 
     /**
@@ -604,7 +623,7 @@ class Container
      */
     public function getBootstrap()
     {
-        return $this->libContainer[Bootstrap::class];
+        return $this->get(Bootstrap::class);
     }
 
     /**
@@ -614,7 +633,7 @@ class Container
      */
     public function getViewManager()
     {
-        return $this->libContainer[ViewManager::class];
+        return $this->get(ViewManager::class);
     }
 
     /**
@@ -624,7 +643,7 @@ class Container
      */
     public function getViewRenderer()
     {
-        return $this->libContainer[ViewRenderer::class];
+        return $this->get(ViewRenderer::class);
     }
 
     /**
@@ -634,7 +653,7 @@ class Container
      */
     public function getSessionManager()
     {
-        return $this->libContainer[SessionContract::class];
+        return $this->get(SessionContract::class);
     }
 
     /**
@@ -646,7 +665,7 @@ class Container
      */
     public function setSessionManager(Closure $xClosure)
     {
-        $this->libContainer[SessionContract::class] = $xClosure;
+        $this->set(SessionContract::class, $xClosure);
     }
 
     /**
@@ -688,7 +707,7 @@ class Container
 
         if(!isset($aOptions['functions']))
         {
-            return [];
+            return;
         }
         // Functions options
         $aCallableOptions = [];
@@ -719,7 +738,7 @@ class Container
      * @param string        $sClassName         The callable class name
      * @param array         $aOptions           The callable object options
      *
-     * @return CallableObject
+     * @return void
      */
     public function registerCallableObject($sClassName, array $aOptions)
     {
@@ -728,48 +747,48 @@ class Container
         $sReflectionName = $sClassName . '_ReflectionClass';
 
         // Register the reflection class
-        $this->libContainer[$sReflectionName] = function($c) use($sClassName) {
+        $this->set($sReflectionName, function() use($sClassName) {
             return new ReflectionClass($sClassName);
-        };
+        });
 
         // Register the callable object
-        $this->libContainer[$sCallableName] = function($c) use($sReflectionName, $aOptions) {
-            $xCallableObject = new CallableObject($this, $c[$sReflectionName]);
+        $this->set($sCallableName, function($c) use($sReflectionName, $aOptions) {
+            $xCallableObject = new CallableObject($this, $c->g($sReflectionName));
             $this->setCallableObjectOptions($xCallableObject, $aOptions);
             return $xCallableObject;
-        };
+        });
 
         // Register the request factory
-        $this->libContainer[$sFactoryName] = function($c) use($sCallableName) {
-            return new CallableClassRequestFactory($c[$sCallableName]);
-        };
+        $this->set($sFactoryName, function($c) use($sCallableName) {
+            return new CallableClassRequestFactory($c->g($sCallableName));
+        });
 
         // Register the user class
-        $this->libContainer[$sClassName] = function($c) use($sFactoryName, $sReflectionName) {
-            $xRegisteredObject = $this->make($c[$sReflectionName]);
+        $this->set($sClassName, function($c) use($sFactoryName, $sReflectionName) {
+            $xRegisteredObject = $this->make($c->g($sReflectionName));
             // Initialize the object
             if($xRegisteredObject instanceof \Jaxon\CallableClass)
             {
                 $xResponse = $this->getResponse();
                 // Set the members of the object
                 $cSetter = function() use($c, $xResponse, $sFactoryName) {
-                    $this->jaxon = $c[Jaxon::class];
+                    $this->jaxon = $c->g(Jaxon::class);
                     $this->sRequest = $sFactoryName;
                     $this->response = $xResponse;
                 };
                 $cSetter = $cSetter->bindTo($xRegisteredObject, $xRegisteredObject);
                 // Can now access protected attributes
-                \call_user_func($cSetter);
+                call_user_func($cSetter);
             }
 
             // Run the callback for class initialisation
             $aCallbacks = $this->getRequestHandler()->getCallbackManager()->getInitCallbacks();
             foreach($aCallbacks as $xCallback)
             {
-                \call_user_func($xCallback, $xRegisteredObject);
+                call_user_func($xCallback, $xRegisteredObject);
             }
             return $xRegisteredObject;
-        };
+        });
     }
 
     /**
@@ -791,7 +810,7 @@ class Container
                 $this->xConfig = $xConfig;
             };
             // Can now access protected attributes
-            \call_user_func($cSetter->bindTo($xPackage, $xPackage), $aAppOptions, $xAppConfig);
+            call_user_func($cSetter->bindTo($xPackage, $xPackage), $aAppOptions, $xAppConfig);
             return $xPackage;
         });
 
