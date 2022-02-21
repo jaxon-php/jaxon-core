@@ -24,26 +24,6 @@ class Engine
     protected $aNamespaces;
 
     /**
-     * The constructor
-     *
-     * @param   string      $sTemplateDir       The template directory
-     */
-    public function __construct($sTemplateDir)
-    {
-        $sTemplateDir = rtrim(trim($sTemplateDir), '/\\');
-        $this->aNamespaces = [
-            'jaxon' => [
-                'directory' => $sTemplateDir . DIRECTORY_SEPARATOR,
-                'extension' => '.php',
-            ],
-            'pagination' => [
-                'directory' => $sTemplateDir . DIRECTORY_SEPARATOR . 'pagination' . DIRECTORY_SEPARATOR,
-                'extension' => '.php',
-            ],
-        ];
-    }
-
-    /**
      * Add a namespace to the template system
      *
      * @param string        $sNamespace         The namespace name
@@ -54,12 +34,6 @@ class Engine
      */
     public function addNamespace($sNamespace, $sDirectory, $sExtension = '')
     {
-        // The 'jaxon' key cannot be overriden
-        if($sNamespace == 'jaxon' || $sNamespace == 'pagination')
-        {
-            return;
-        }
-        // Save the namespace
         $this->aNamespaces[$sNamespace] = [
             'directory' => rtrim(trim($sDirectory), "/\\") . DIRECTORY_SEPARATOR,
             'extension' => $sExtension,

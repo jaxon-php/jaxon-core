@@ -10,6 +10,9 @@ use Jaxon\Utils\Translation\Translator;
 use Jaxon\Utils\Validation\Validator;
 use Lemon\Event\EventDispatcher;
 
+use function rtrim;
+use function trim;
+
 trait UtilTrait
 {
     /**
@@ -29,7 +32,12 @@ trait UtilTrait
         });
         // Template engine
         $this->set(TemplateEngine::class, function($c) {
-            return new TemplateEngine($c->g('jaxon.core.dir.template'));
+            $sTemplateDir = rtrim(trim($c->g('jaxon.core.dir.template')), '/\\');
+            $sPaginationDir = $sTemplateDir . DIRECTORY_SEPARATOR . 'pagination';
+            $engine = new TemplateEngine();
+            $engine->addNamespace('jaxon', $sTemplateDir, '.php');
+            $engine->addNamespace('pagination', $sPaginationDir, '.php');
+            return $engine;
         });
         // Minifier
         $this->set(Minifier::class, function() {
