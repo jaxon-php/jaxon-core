@@ -22,22 +22,36 @@ trait UtilTrait
      */
     private function registerUtils()
     {
-        // Translator
-        $this->set(Translator::class, function($c) {
-            return new Translator($c->g('jaxon.core.dir.translation'), $c->g(Config::class));
-        });
         // Validator
         $this->set(Validator::class, function($c) {
             return new Validator($c->g(Translator::class), $c->g(Config::class));
         });
+        // Translator
+        $this->set(Translator::class, function($c) {
+            $xTranslator = new Translator($c->g(Config::class));
+            $sResourceDir = rtrim(trim($c->g('jaxon.core.dir.translation')), '/\\');
+            // Load the Jaxon package translations
+            $xTranslator->loadTranslations($sResourceDir . '/en/errors.php', 'en');
+            $xTranslator->loadTranslations($sResourceDir . '/fr/errors.php', 'fr');
+            $xTranslator->loadTranslations($sResourceDir . '/es/errors.php', 'es');
+            // Load the config translations
+            $xTranslator->loadTranslations($sResourceDir . '/en/config.php', 'en');
+            $xTranslator->loadTranslations($sResourceDir . '/fr/config.php', 'fr');
+            $xTranslator->loadTranslations($sResourceDir . '/es/config.php', 'es');
+            // Load the upload translations
+            $xTranslator->loadTranslations($sResourceDir . '/en/upload.php', 'en');
+            $xTranslator->loadTranslations($sResourceDir . '/fr/upload.php', 'fr');
+            $xTranslator->loadTranslations($sResourceDir . '/es/upload.php', 'es');
+            return $xTranslator;
+        });
         // Template engine
         $this->set(TemplateEngine::class, function($c) {
+            $xTemplateEngine = new TemplateEngine();
             $sTemplateDir = rtrim(trim($c->g('jaxon.core.dir.template')), '/\\');
             $sPaginationDir = $sTemplateDir . DIRECTORY_SEPARATOR . 'pagination';
-            $engine = new TemplateEngine();
-            $engine->addNamespace('jaxon', $sTemplateDir, '.php');
-            $engine->addNamespace('pagination', $sPaginationDir, '.php');
-            return $engine;
+            $xTemplateEngine->addNamespace('jaxon', $sTemplateDir, '.php');
+            $xTemplateEngine->addNamespace('pagination', $sPaginationDir, '.php');
+            return $xTemplateEngine;
         });
         // Minifier
         $this->set(Minifier::class, function() {

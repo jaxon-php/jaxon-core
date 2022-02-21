@@ -49,27 +49,12 @@ class Translator
     /**
      * The constructor
      *
-     * @param string    $sResourceDir
      * @param Config    $xConfig
      */
-    public function __construct($sResourceDir, Config $xConfig)
+    public function __construct(Config $xConfig)
     {
-        // Set the translation resource directory
-        $this->sResourceDir = trim($sResourceDir);
         // Set the config manager
         $this->xConfig = $xConfig;
-        // Load the Jaxon package translations
-        $this->loadTranslations($this->sResourceDir . '/en/errors.php', 'en');
-        $this->loadTranslations($this->sResourceDir . '/fr/errors.php', 'fr');
-        $this->loadTranslations($this->sResourceDir . '/es/errors.php', 'es');
-        // Load the config translations
-        $this->loadTranslations($this->sResourceDir . '/en/config.php', 'en');
-        $this->loadTranslations($this->sResourceDir . '/fr/config.php', 'fr');
-        $this->loadTranslations($this->sResourceDir . '/es/config.php', 'es');
-        // Load the upload translations
-        $this->loadTranslations($this->sResourceDir . '/en/upload.php', 'en');
-        $this->loadTranslations($this->sResourceDir . '/fr/upload.php', 'fr');
-        $this->loadTranslations($this->sResourceDir . '/es/upload.php', 'es');
     }
 
     /**
