@@ -238,7 +238,7 @@ class Generator
     /**
      * Get the javascript file name
      *
-     * @return void
+     * @return string
      */
     private function getJsFileName()
     {

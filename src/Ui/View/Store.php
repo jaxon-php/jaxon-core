@@ -53,7 +53,7 @@ class Store
      *
      * @param array         $aViewData        The view data
      *
-     * @return void
+     * @return Store
      */
     public function setData(array $aViewData)
     {
@@ -69,7 +69,7 @@ class Store
      * @param string        $sViewName        The view name
      * @param array         $aViewData        The view data
      *
-     * @return void
+     * @return Store
      */
     public function setView(ViewContract $xRenderer, $sNamespace, $sViewName, array $aViewData = [])
     {
@@ -77,6 +77,7 @@ class Store
         $this->sNamespace = trim($sNamespace);
         $this->sViewName = trim($sViewName);
         $this->aViewData = array_merge($this->aViewData, $aViewData);
+        return $this;
     }
 
     /**

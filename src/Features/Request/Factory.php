@@ -14,12 +14,14 @@
 
 namespace Jaxon\Features\Request;
 
+use Jaxon\Request\Factory\Request;
+
 trait Factory
 {
     /**
      * Return the javascript call to an Jaxon object method
      *
-     * @return \Jaxon\Request\Request
+     * @return Request
      */
     public function call()
     {

@@ -74,7 +74,7 @@ class DataBag extends \Jaxon\Plugin\Response
     }
 
     /**
-     * @return bool
+     * @return void
      */
     public function writeCommand()
     {

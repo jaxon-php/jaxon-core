@@ -117,7 +117,7 @@ class CallableObject
      */
     public function setOptions(array $aOptions)
     {
-        return $this->aOptions = $aOptions;
+        $this->aOptions = $aOptions;
     }
 
     /**

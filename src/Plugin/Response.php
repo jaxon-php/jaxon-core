@@ -64,12 +64,12 @@ abstract class Response extends Plugin
      * reference provided in <Jaxon\Response\Response->setResponse>.
      *
      * @param array         $aAttributes        The attributes of the command
-     * @param string        $sData                The data to be added to the command
+     * @param mixed         $xData              The data to be added to the command
      *
      * @return void
      */
-    public function addCommand($aAttributes, $sData)
+    public function addCommand($aAttributes, $xData)
     {
-        $this->xResponse->addPluginCommand($this, $aAttributes, $sData);
+        $this->xResponse->addPluginCommand($this, $aAttributes, $xData);
     }
 }
