@@ -13,7 +13,7 @@ class Bag
     protected $aData = [];
 
     /**
-     * @var boolean
+     * @var bool
      */
     protected $bTouched = false;
 
@@ -53,7 +53,7 @@ class Bag
      *
      * @return void
      */
-    public function set($sBag, $sKey, $xValue)
+    public function set(string $sBag, string $sKey, $xValue)
     {
         $this->bTouched = true;
         $this->aData[$sBag][$sKey] = $xValue;
@@ -66,7 +66,7 @@ class Bag
      *
      * @return mixed
      */
-    public function get($sBag, $sKey, $xValue = null)
+    public function get(string $sBag, string $sKey, $xValue = null)
     {
         return isset($this->aData[$sBag][$sKey]) ? $this->aData[$sBag][$sKey] : $xValue;
     }

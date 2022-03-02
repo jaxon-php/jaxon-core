@@ -20,7 +20,7 @@
 
 namespace Jaxon\Request\Handler;
 
-use Jaxon\Exception\Error;
+use Jaxon\Exception\SetupException;
 use Jaxon\Jaxon;
 use Jaxon\Plugin\Manager as PluginManager;
 use Jaxon\Plugin\Request;
@@ -137,7 +137,7 @@ class Handler
      * Return the array of arguments that were extracted and parsed from the GET or POST data
      *
      * @return array
-     * @throws Error
+     * @throws SetupException
      */
     public function processArguments()
     {
@@ -170,7 +170,7 @@ class Handler
     /**
      * These are the pre-request processing callbacks passed to the Jaxon library.
      *
-     * @param  boolean  $bEndRequest   If set to true, the request processing is interrupted.
+     * @param  bool  $bEndRequest   If set to true, the request processing is interrupted.
      *
      * @return void
      */
@@ -193,7 +193,7 @@ class Handler
      *
      * @return void
      */
-    public function onAfter($bEndRequest)
+    public function onAfter(bool $bEndRequest)
     {
         foreach($this->xCallbackManager->getAfterCallbacks() as $xCallback)
         {
@@ -211,7 +211,7 @@ class Handler
      *
      * @return void
      */
-    public function onInvalid($sMessage)
+    public function onInvalid(string $sMessage)
     {
         foreach($this->xCallbackManager->getInvalidCallbacks() as $xCallback)
         {
@@ -246,7 +246,7 @@ class Handler
      *
      * Calls each of the request plugins and determines if the current request can be processed by one of them.
      *
-     * @return boolean
+     * @return bool
      */
     public function canProcessRequest()
     {
@@ -307,7 +307,7 @@ class Handler
 
             $this->xResponseManager->error($e->getMessage());
 
-            if($e instanceof Error)
+            if($e instanceof SetupException)
             {
                 $this->onInvalid($e->getMessage());
             }

@@ -49,7 +49,7 @@ class Element implements JsonSerializable, Parameter
      * @param string        $sSelector            The jQuery selector
      * @param string        $sContext             A context associated to the selector
      */
-    public function __construct($sSelector = '', $sContext = '')
+    public function __construct(string $sSelector = '', string $sContext = '')
     {
         $sSelector = trim($sSelector, " \t");
         $sContext = trim($sContext, " \t");
@@ -73,9 +73,12 @@ class Element implements JsonSerializable, Parameter
     /**
      * Add a call to a jQuery method on the selected elements
      *
+     * @param string        $sMethod
+     * @param array         $aArguments
+     *
      * @return Element
      */
-    public function __call($sMethod, $aArguments)
+    public function __call(string $sMethod, array $aArguments)
     {
         // Push the action into the array
         $this->aCalls[] = new Method($sMethod, $aArguments);
@@ -86,9 +89,11 @@ class Element implements JsonSerializable, Parameter
     /**
      * Get the value of an attribute on the first selected element
      *
+     * @param string        $sAttribute
+     *
      * @return Element
      */
-    public function __get($sAttribute)
+    public function __get(string $sAttribute)
     {
         // Push the action into the array
         $this->aCalls[] = new AttrGet($sAttribute);
@@ -99,9 +104,11 @@ class Element implements JsonSerializable, Parameter
     /**
      * Set the value of an attribute on the first selected element
      *
+     * @param string        $sAttribute
+     *
      * @return void
      */
-    public function __set($sAttribute, $xValue)
+    public function __set(string $sAttribute, $xValue)
     {
         // Push the action into the array
         $this->aCalls[] = new AttrSet($sAttribute, $xValue);

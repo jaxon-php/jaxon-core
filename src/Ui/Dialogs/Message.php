@@ -19,67 +19,67 @@ class Message implements \Jaxon\Contracts\Dialogs\Message
     /**
      * Print an alert message.
      *
-     * @param string              $message              The text of the message
+     * @param string              $sMessage             The text of the message
      *
      * @return string|void
      */
-    private function alert($message)
+    private function alert(string $sMessage)
     {
         if($this->getReturn())
         {
-            return 'alert(' . $message . ')';
+            return 'alert(' . $sMessage . ')';
         }
     }
 
     /**
      * Print a success message.
      *
-     * @param string              $message              The text of the message
-     * @param string|null         $title                The title of the message
+     * @param string              $sMessage             The text of the message
+     * @param string              $sTitle               The title of the message
      *
      * @return string|void
      */
-    public function success($message, $title = null)
+    public function success(string $sMessage, string $sTitle = '')
     {
-        return $this->alert($message);
+        return $this->alert($sMessage);
     }
 
     /**
      * Print an information message.
      *
-     * @param string              $message              The text of the message
-     * @param string|null         $title                The title of the message
+     * @param string              $sMessage             The text of the message
+     * @param string              $sTitle               The title of the message
      *
      * @return string|void
      */
-    public function info($message, $title = null)
+    public function info(string $sMessage, string $sTitle = '')
     {
-        return $this->alert($message);
+        return $this->alert($sMessage);
     }
 
     /**
      * Print a warning message.
      *
-     * @param string              $message              The text of the message
-     * @param string|null         $title                The title of the message
+     * @param string              $sMessage             The text of the message
+     * @param string              $sTitle               The title of the message
      *
      * @return string|void
      */
-    public function warning($message, $title = null)
+    public function warning(string $sMessage, string $sTitle = '')
     {
-        return $this->alert($message);
+        return $this->alert($sMessage);
     }
 
     /**
      * Print an error message.
      *
-     * @param string              $message              The text of the message
-     * @param string|null         $title                The title of the message
+     * @param string              $sMessage             The text of the message
+     * @param string              $sTitle               The title of the message
      *
      * @return string|void
      */
-    public function error($message, $title = null)
+    public function error(string $sMessage, string $sTitle = '')
     {
-        return $this->alert($message);
+        return $this->alert($sMessage);
     }
 }

@@ -7,7 +7,7 @@ interface Session
     /**
      * Get the current session id
      *
-     * @return string           The session id
+     * @return string
      */
     public function getId();
 
@@ -18,7 +18,7 @@ interface Session
      *
      * @return void
      */
-    public function newId($bDeleteData = false);
+    public function newId(bool $bDeleteData = false);
 
     /**
      * Save data in the session
@@ -28,7 +28,7 @@ interface Session
      *
      * @return void
      */
-    public function set($sKey, $xValue);
+    public function set(string $sKey, $xValue);
 
     /**
      * Save data in the session, that will be available only until the next call
@@ -38,16 +38,16 @@ interface Session
      *
      * @return void
      */
-    // public function flash($sKey, $xValue);
+    // public function flash(string $sKey, $xValue);
 
     /**
      * Check if a session key exists
      *
      * @param string        $sKey                The session key
      *
-     * @return bool             True if the session key exists, else false
+     * @return bool
      */
-    public function has($sKey);
+    public function has(string $sKey);
 
     /**
      * Get data from the session
@@ -55,14 +55,14 @@ interface Session
      * @param string        $sKey                The session key
      * @param mixed|null    $xDefault            The default value
      *
-     * @return mixed             The data under the session key, or the $xDefault parameter
+     * @return mixed
      */
-    public function get($sKey, $xDefault = null);
+    public function get(string $sKey, $xDefault = null);
 
     /**
      * Get all data in the session
      *
-     * @return array             An array of all data in the session
+     * @return array
      */
     public function all();
 
@@ -73,7 +73,7 @@ interface Session
      *
      * @return void
      */
-    public function delete($sKey);
+    public function delete(string $sKey);
 
     /**
      * Delete all data in the session

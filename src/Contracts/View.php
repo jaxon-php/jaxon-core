@@ -15,14 +15,14 @@ interface View
      *
      * @return void
      */
-    public function addNamespace($sNamespace, $sDirectory, $sExtension = '');
+    public function addNamespace(string $sNamespace, string $sDirectory, string $sExtension = '');
 
     /**
      * Render a view
      *
      * @param Store         $store        A store populated with the view data
      *
-     * @return string        The string representation of the view
+     * @return string
      */
     public function render(Store $store);
 }

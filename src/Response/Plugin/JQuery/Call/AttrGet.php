@@ -18,9 +18,9 @@ class AttrGet implements JsonSerializable
      *
      * @param string        $sAttrName            The attribute name
      */
-    public function __construct($sAttrName)
+    public function __construct(string $sAttrName)
     {
-        $this->sAttrName = (string)$sAttrName;
+        $this->sAttrName = $sAttrName;
     }
 
     /**

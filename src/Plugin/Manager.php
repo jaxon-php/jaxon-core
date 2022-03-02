@@ -21,7 +21,7 @@
 
 namespace Jaxon\Plugin;
 
-use Jaxon\Exception\Error;
+use Jaxon\Exception\SetupException;
 use Jaxon\Jaxon;
 use Jaxon\Plugin\Code\Generator as CodeGenerator;
 use Jaxon\Request\Plugin\CallableClass;
@@ -33,7 +33,13 @@ use Jaxon\Response\Plugin\DataBag;
 use Jaxon\Utils\Config\Config;
 
 use Jaxon\Utils\Config\Exception\File;
-use Jaxon\Utils\Config\Exception\Yaml;
+use Jaxon\Utils\Config\Exception\YamlExtension;
+
+use function trim;
+use function is_integer;
+use function is_string;
+use function is_array;
+use function get_class;
 
 class Manager
 {
@@ -107,7 +113,7 @@ class Manager
      *
      * @return Package
      */
-    public function getPackage($sClassName)
+    public function getPackage(string $sClassName)
     {
         return $this->jaxon->di()->get(trim($sClassName, '\\ '));
     }
@@ -124,9 +130,9 @@ class Manager
      * @param integer $nPriority The plugin priority, used to order the plugins
      *
      * @return void
-     * @throws Error
+     * @throws SetupException
      */
-    public function registerPlugin(Plugin $xPlugin, $nPriority = 1000)
+    public function registerPlugin(Plugin $xPlugin, int $nPriority = 1000)
     {
         $bIsUsed = false;
         if($xPlugin instanceof Request)
@@ -165,8 +171,8 @@ class Manager
 
         if(!$bIsUsed)
         {
-            $sErrorMessage = $this->trans('errors.register.invalid', ['name' => get_class($xPlugin)]);
-            throw new Error($sErrorMessage);
+            $sMessage = $this->trans('errors.register.invalid', ['name' => get_class($xPlugin)]);
+            throw new SetupException($sMessage);
         }
     }
 
@@ -177,11 +183,11 @@ class Manager
      * @param array $aAppOptions The package options defined in the app section of the config file
      *
      * @return void
-     * @throws Error
+     * @throws SetupException
      * @throws File
-     * @throws Yaml
+     * @throws YamlExtension
      */
-    public function registerPackage($sClassName, array $aAppOptions)
+    public function registerPackage(string $sClassName, array $aAppOptions)
     {
         $sClassName = trim($sClassName, '\\ ');
         $di = $this->jaxon->di();
@@ -214,13 +220,13 @@ class Manager
      * @param array|string $aOptions The associated options
      *
      * @return void
-     * @throws Error
+     * @throws SetupException
      */
-    public function registerCallable($sType, $sCallable, $aOptions = [])
+    public function registerCallable(string $sType, string $sCallable, $aOptions = [])
     {
-        if(!key_exists($sType, $this->aRequestPlugins))
+        if(!isset($this->aRequestPlugins[$sType]))
         {
-            throw new Error($this->trans('errors.register.plugin', ['name' => $sType]));
+            throw new SetupException($this->trans('errors.register.plugin', ['name' => $sType]));
         }
 
         $xPlugin = $this->aRequestPlugins[$sType];
@@ -235,9 +241,9 @@ class Manager
      * @param string $sCallableType The type of callable to register
      *
      * @return void
-     * @throws Error
+     * @throws SetupException
      */
-    private function registerCallablesFromConfig(Config $xAppConfig, $sSection, $sCallableType)
+    private function registerCallablesFromConfig(Config $xAppConfig, string $sSection, string $sCallableType)
     {
         $aConfig = $xAppConfig->getOption($sSection, []);
         foreach($aConfig as $xKey => $xValue)
@@ -266,7 +272,7 @@ class Manager
      * @param Config $xAppConfig The config options
      *
      * @return void
-     * @throws Error
+     * @throws SetupException
      */
     private function _registerFromConfig(Config $xAppConfig)
     {
@@ -294,7 +300,7 @@ class Manager
      * @param Config $xAppConfig The config options
      *
      * @return void
-     * @throws Error
+     * @throws SetupException
      */
     public function registerFromConfig(Config $xAppConfig)
     {
@@ -316,9 +322,9 @@ class Manager
      *
      * @return Response
      */
-    public function getResponsePlugin($sName)
+    public function getResponsePlugin(string $sName)
     {
-        if(array_key_exists($sName, $this->aResponsePlugins))
+        if(isset($this->aResponsePlugins[$sName]))
         {
             return $this->aResponsePlugins[$sName];
         }
@@ -332,9 +338,9 @@ class Manager
      *
      * @return Request
      */
-    public function getRequestPlugin($sName)
+    public function getRequestPlugin(string $sName)
     {
-        if(array_key_exists($sName, $this->aRequestPlugins))
+        if(isset($this->aRequestPlugins[$sName]))
         {
             return $this->aRequestPlugins[$sName];
         }
@@ -345,7 +351,7 @@ class Manager
      * Register the Jaxon request plugins
      *
      * @return void
-     * @throws Error
+     * @throws SetupException
      */
     public function registerRequestPlugins()
     {
@@ -360,7 +366,7 @@ class Manager
      * Register the Jaxon response plugins
      *
      * @return void
-     * @throws Error
+     * @throws SetupException
      */
     public function registerResponsePlugins()
     {

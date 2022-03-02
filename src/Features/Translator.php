@@ -14,6 +14,8 @@
 
 namespace Jaxon\Features;
 
+use function jaxon;
+
 trait Translator
 {
     /**
@@ -21,11 +23,11 @@ trait Translator
      *
      * @param string        $sText                The key of the translated string
      * @param array         $aPlaceHolders        The placeholders of the translated string
-     * @param string|null   $sLanguage            The language of the translated string
+     * @param string        $sLanguage            The language of the translated string
      *
-     * @return string        The translated string
+     * @return string
      */
-    public function trans($sText, array $aPlaceHolders = [], $sLanguage = null)
+    public function trans(string $sText, array $aPlaceHolders = [], string $sLanguage = '')
     {
         return jaxon()->di()->getTranslator()->trans($sText, $aPlaceHolders, $sLanguage);
     }

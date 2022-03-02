@@ -12,7 +12,7 @@ class Method extends JsCall
      * @param string        $sMethod            The jQuery function
      * @param array         $aArguments         The arguments of the jQuery function
      */
-    public function __construct($sMethod, $aArguments)
+    public function __construct(string $sMethod, array $aArguments)
     {
         parent::__construct($sMethod);
         // Always use single quotes

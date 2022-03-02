@@ -10,8 +10,16 @@
 
 namespace Jaxon\Response\Features;
 
-use Jaxon\Exception\Error;
+use Jaxon\Exception\SetupException;
 use Jaxon\Response\Response;
+
+use function strpos;
+use function substr;
+use function parse_str;
+use function rawurlencode;
+use function str_replace;
+use function call_user_func;
+use function jaxon;
 
 trait JsCommands
 {
@@ -31,22 +39,22 @@ trait JsCommands
      * @param string        $sName              The command name
      * @param array         $aAttributes        Associative array of attributes that will describe the command
      * @param mixed         $mData              The data to be associated with this command
-     * @param boolean       $bRemoveEmpty       If true, remove empty attributes
+     * @param bool       $bRemoveEmpty       If true, remove empty attributes
      *
      * @return Response
      */
-    abstract protected function _addCommand($sName, array $aAttributes, $mData, $bRemoveEmpty = false);
+    abstract protected function _addCommand(string $sName, array $aAttributes, $mData, bool $bRemoveEmpty = false);
 
     /**
      * Merge the response commands from the specified <Response> object with
      * the response commands in this <Response> object
      *
      * @param Response|array    $mCommands          The <Response> object
-     * @param boolean           $bBefore            Add the new commands to the beginning of the list
+     * @param bool           $bBefore            Add the new commands to the beginning of the list
      *
      * @return void
      */
-    abstract public function appendResponse($mCommands, $bBefore = false);
+    abstract public function appendResponse($mCommands, bool $bBefore = false);
 
     /**
      * Response command that prompts user with [ok] [cancel] style message box
@@ -54,14 +62,14 @@ trait JsCommands
      * If the user clicks cancel, the specified number of response commands
      * following this one, will be skipped.
      *
-     * @param integer       $iCommandCount      The number of commands to skip upon cancel
+     * @param integer       $nCommandCount      The number of commands to skip upon cancel
      * @param string        $sMessage           The message to display to the user
      *
      * @return Response
      */
-    public function confirmCommands($iCommandCount, $sMessage)
+    public function confirmCommands(int $nCommandCount, string $sMessage)
     {
-        $aAttributes = ['count' => $iCommandCount];
+        $aAttributes = ['count' => $nCommandCount];
         return $this->_addCommand('cc', $aAttributes, $sMessage);
     }
 
@@ -75,16 +83,16 @@ trait JsCommands
      * @param callable $xCallable The function
      *
      * @return JsCommands
-     * @throws Error
+     * @throws SetupException
      */
-    public function confirm($sMessage, $xCallable)
+    public function confirm(string $sMessage, callable $xCallable)
     {
         $xResponse = jaxon()->newResponse();
-        \call_user_func($xCallable, $xResponse);
-        $iCommandCount = $xResponse->getCommandCount();
-        if($iCommandCount > 0)
+        call_user_func($xCallable, $xResponse);
+        $nCommandCount = $xResponse->getCommandCount();
+        if($nCommandCount > 0)
         {
-            $this->confirmCommands($iCommandCount, $sMessage);
+            $this->confirmCommands($nCommandCount, $sMessage);
             $this->appendResponse($xResponse);
         }
         return $this;
@@ -97,7 +105,7 @@ trait JsCommands
      *
      * @return Response
      */
-    public function alert($sMessage)
+    public function alert(string $sMessage)
     {
         return $this->_addCommand('al', [], $sMessage);
     }
@@ -109,7 +117,7 @@ trait JsCommands
      *
      * @return Response
      */
-    public function debug($sMessage)
+    public function debug(string $sMessage)
     {
         return $this->_addCommand('dbg', [], $sMessage);
     }
@@ -118,11 +126,11 @@ trait JsCommands
      * Add a command to ask the browser to navigate to the specified URL
      *
      * @param string        $sURL                The relative or fully qualified URL
-     * @param integer        $iDelay                Number of seconds to delay before the redirect occurs
+     * @param integer       $nDelay                Number of seconds to delay before the redirect occurs
      *
      * @return Response
      */
-    public function redirect($sURL, $iDelay = 0)
+    public function redirect(string $sURL, int $nDelay = 0)
     {
         // we need to parse the query part so that the values are rawurlencode()'ed
         // can't just use parse_url() cos we could be dealing with a relative URL which
@@ -165,9 +173,9 @@ trait JsCommands
             $sURL = str_replace($queryPart, $newQueryPart, $sURL);
         }
 
-        if($iDelay > 0)
+        if($nDelay > 0)
         {
-            return $this->script('window.setTimeout("window.location = \'' . $sURL . '\';",' . ($iDelay * 1000) . ');');
+            return $this->script('window.setTimeout("window.location = \'' . $sURL . '\';",' . ($nDelay * 1000) . ');');
         }
         return $this->script('window.location = "' . $sURL . '";');
     }
@@ -184,7 +192,7 @@ trait JsCommands
      *
      * @return Response
      */
-    public function script($sJS)
+    public function script(string $sJS)
     {
         return $this->_addCommand('js', [], $sJS);
     }
@@ -196,7 +204,7 @@ trait JsCommands
      *
      * @return Response
      */
-    public function call($sFunc)
+    public function call(string $sFunc)
     {
         $aArgs = func_get_args();
         array_shift($aArgs);
@@ -213,12 +221,9 @@ trait JsCommands
      *
      * @return Response
      */
-    public function setEvent($sTarget, $sEvent, $sScript)
+    public function setEvent(string $sTarget, string $sEvent, string $sScript)
     {
-        $aAttributes = [
-            'id' => $sTarget,
-            'prop' => $sEvent
-        ];
+        $aAttributes = ['id' => $sTarget, 'prop' => $sEvent];
         return $this->_addCommand('ev', $aAttributes, $sScript);
     }
 
@@ -230,7 +235,7 @@ trait JsCommands
      *
      * @return Response
      */
-    public function onClick($sTarget, $sScript)
+    public function onClick(string $sTarget, string $sScript)
     {
         return $this->setEvent($sTarget, 'onclick', $sScript);
     }
@@ -246,12 +251,9 @@ trait JsCommands
      *
      * @return Response
      */
-    public function addHandler($sTarget, $sEvent, $sHandler)
+    public function addHandler(string $sTarget, string $sEvent, string $sHandler)
     {
-        $aAttributes = [
-            'id' => $sTarget,
-            'prop' => $sEvent
-        ];
+        $aAttributes = ['id' => $sTarget, 'prop' => $sEvent];
         return $this->_addCommand('ah', $aAttributes, $sHandler);
     }
 
@@ -264,12 +266,9 @@ trait JsCommands
      *
      * @return Response
      */
-    public function removeHandler($sTarget, $sEvent, $sHandler)
+    public function removeHandler(string $sTarget, string $sEvent, string $sHandler)
     {
-        $aAttributes = [
-            'id' => $sTarget,
-            'prop' => $sEvent
-        ];
+        $aAttributes = ['id' => $sTarget, 'prop' => $sEvent];
         return $this->_addCommand('rh', $aAttributes, $sHandler);
     }
 
@@ -282,12 +281,9 @@ trait JsCommands
      *
      * @return Response
      */
-    public function setFunction($sFunction, $sArgs, $sScript)
+    public function setFunction(string $sFunction, string $sArgs, string $sScript)
     {
-        $aAttributes = [
-            'func' => $sFunction,
-            'prop' => $sArgs
-        ];
+        $aAttributes = ['func' => $sFunction, 'prop' => $sArgs];
         return $this->_addCommand('sf', $aAttributes, $sScript);
     }
 
@@ -306,33 +302,25 @@ trait JsCommands
      *
      * @return Response
      */
-    public function wrapFunction($sFunction, $sArgs, $aScripts, $sReturnValueVar)
+    public function wrapFunction(string $sFunction, string $sArgs, $aScripts, string $sReturnValueVar)
     {
-        $aAttributes = [
-            'cmd' => 'wpf',
-            'func' => $sFunction,
-            'prop' => $sArgs,
-            'type' => $sReturnValueVar
-        ];
+        $aAttributes = ['cmd' => 'wpf', 'func' => $sFunction, 'prop' => $sArgs, 'type' => $sReturnValueVar];
         return $this->addCommand($aAttributes, $aScripts);
     }
 
     /**
      * Add a command to load a javascript file on the browser
      *
-     * @param boolean       $bIncludeOnce         Include once or not
+     * @param bool          $bIncludeOnce         Include once or not
      * @param string        $sFileName            The relative or fully qualified URI of the javascript file
      * @param string        $sType                Determines the script type. Defaults to 'text/javascript'
      * @param string        $sId                  The wrapper id
      *
      * @return Response
      */
-    private function _includeScript($bIncludeOnce, $sFileName, $sType, $sId)
+    private function _includeScript(bool $bIncludeOnce, string $sFileName, string $sType, string $sId)
     {
-        $aAttributes = [
-            'type' => $sType,
-            'elm_id' => $sId
-        ];
+        $aAttributes = ['type' => $sType, 'elm_id' => $sId];
         return $this->_addCommand(($bIncludeOnce ? 'ino' : 'in'), $aAttributes, $sFileName, true);
     }
 
@@ -345,7 +333,7 @@ trait JsCommands
      *
      * @return Response
      */
-    public function includeScript($sFileName, $sType = '', $sId = '')
+    public function includeScript(string $sFileName, string $sType = '', string $sId = '')
     {
         return $this->_includeScript(false, $sFileName, $sType, $sId);
     }
@@ -359,7 +347,7 @@ trait JsCommands
      *
      * @return Response
      */
-    public function includeScriptOnce($sFileName, $sType = '', $sId = '')
+    public function includeScriptOnce(string $sFileName, string $sType = '', string $sId = '')
     {
         return $this->_includeScript(true, $sFileName, $sType, $sId);
     }
@@ -374,7 +362,7 @@ trait JsCommands
      *
      * @return Response
      */
-    public function removeScript($sFileName, $sUnload = '')
+    public function removeScript(string $sFileName, string $sUnload = '')
     {
         $aAttributes = ['unld' => $sUnload];
         return $this->_addCommand('rjs', $aAttributes, $sFileName, true);
@@ -390,7 +378,7 @@ trait JsCommands
      *
      * @return Response
      */
-    public function includeCSS($sFileName, $sMedia = '')
+    public function includeCSS(string $sFileName, string $sMedia = '')
     {
         $aAttributes = ['media' => $sMedia];
         return $this->_addCommand('css', $aAttributes, $sFileName, true);
@@ -405,7 +393,7 @@ trait JsCommands
      *
      * @return Response
      */
-    public function removeCSS($sFileName, $sMedia = '')
+    public function removeCSS(string $sFileName, string $sMedia = '')
     {
         $aAttributes = ['media' => $sMedia];
         return $this->_addCommand('rcss', $aAttributes, $sFileName, true);
@@ -421,14 +409,14 @@ trait JsCommands
      * This command returns control back to the browser and pauses the execution of the response
      * until the CSS files, included previously, are loaded.
      *
-     * @param integer        $iTimeout            The number of 1/10ths of a second to pause before timing out
+     * @param integer        $nTimeout            The number of 1/10ths of a second to pause before timing out
      *                                             and continuing with the execution of the response commands
      *
      * @return Response
      */
-    public function waitForCSS($iTimeout = 600)
+    public function waitForCSS(int $nTimeout = 600)
     {
-        $aAttributes = ['cmd' => 'wcss', 'prop' => $iTimeout];
+        $aAttributes = ['cmd' => 'wcss', 'prop' => $nTimeout];
         return $this->addCommand($aAttributes, '');
     }
 
@@ -445,7 +433,7 @@ trait JsCommands
      *
      * @return Response
      */
-    public function waitFor($script, $tenths)
+    public function waitFor(string $script, int $tenths)
     {
         $aAttributes = ['cmd' => 'wf', 'prop' => $tenths];
         return $this->addCommand($aAttributes, $script);
@@ -461,7 +449,7 @@ trait JsCommands
      *
      * @return Response
      */
-    public function sleep($tenths)
+    public function sleep(int $tenths)
     {
         $aAttributes = ['cmd' =>'s', 'prop' => $tenths];
         return $this->addCommand($aAttributes, '');

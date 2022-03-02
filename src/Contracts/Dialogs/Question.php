@@ -18,7 +18,11 @@ interface Question
     /**
      * Return a script which makes a call only if the user answers yes to the given question
      *
+     * @param string            $sQuestion
+     * @param string            $sYesScript
+     * @param string            $sNoScript
+     *
      * @return string
      */
-    public function confirm($question, $yesScript, $noScript);
+    public function confirm(string $sQuestion, string $sYesScript, string $sNoScript);
 }

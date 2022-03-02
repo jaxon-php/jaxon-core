@@ -18,17 +18,18 @@ class Question implements \Jaxon\Contracts\Dialogs\Question
     /**
      * Get the script which makes a call only if the user answers yes to the given question
      *
+     * @param string            $sQuestion
+     * @param string            $sYesScript
+     * @param string            $sNoScript
+     *
      * @return string
      */
-    public function confirm($question, $yesScript, $noScript)
+    public function confirm(string $sQuestion, string $sYesScript, string $sNoScript)
     {
-        if(!$noScript)
+        if(!$sNoScript)
         {
-            return 'if(confirm(' . $question . ')){' . $yesScript . ';}';
+            return 'if(confirm(' . $sQuestion . ')){' . $sYesScript . ';}';
         }
-        else
-        {
-            return 'if(confirm(' . $question . ')){' . $yesScript . ';}else{' . $noScript . ';}';
-        }
+        return 'if(confirm(' . $sQuestion . ')){' . $sYesScript . ';}else{' . $sNoScript . ';}';
     }
 }

@@ -30,12 +30,23 @@ use Jaxon\Request\Support\CallableObject;
 use Jaxon\Request\Support\CallableRegistry;
 use Jaxon\Request\Support\CallableRepository;
 use Jaxon\Request\Target;
+use Jaxon\Request\Validator;
+
+use function trim;
+use function strlen;
+use function is_string;
+use function is_array;
+use function in_array;
+use function uksort;
+use function md5;
+use function array_map;
+use function array_merge;
+use function is_subclass_of;
 
 class CallableClass extends RequestPlugin
 {
     use \Jaxon\Features\Config;
     use \Jaxon\Features\Template;
-    use \Jaxon\Features\Validator;
     use \Jaxon\Features\Translator;
 
     /**
@@ -67,6 +78,13 @@ class CallableClass extends RequestPlugin
     protected $xRepository;
 
     /**
+     * The request data validator
+     *
+     * @var Validator
+     */
+    protected $xValidator;
+
+    /**
      * The value of the class parameter of the incoming Jaxon request
      *
      * @var string
@@ -87,28 +105,30 @@ class CallableClass extends RequestPlugin
      * @param ResponseManager       $xResponseManager
      * @param CallableRegistry      $xRegistry      The callable class registry
      * @param CallableRepository    $xRepository    The callable object repository
+     * @param Validator             $xValidator
      */
     public function __construct(RequestHandler $xRequestHandler, ResponseManager $xResponseManager,
-        CallableRegistry $xRegistry, CallableRepository $xRepository)
+        CallableRegistry $xRegistry, CallableRepository $xRepository, Validator $xValidator)
     {
         $this->xRequestHandler = $xRequestHandler;
         $this->xResponseManager = $xResponseManager;
         $this->xRegistry = $xRegistry;
         $this->xRepository = $xRepository;
+        $this->xValidator = $xValidator;
 
-        if(!empty($_GET['jxncls']))
+        if(isset($_GET['jxncls']))
         {
             $this->sRequestedClass = trim($_GET['jxncls']);
         }
-        if(!empty($_GET['jxnmthd']))
+        if(isset($_GET['jxnmthd']))
         {
             $this->sRequestedMethod = trim($_GET['jxnmthd']);
         }
-        if(!empty($_POST['jxncls']))
+        if(isset($_POST['jxncls']))
         {
             $this->sRequestedClass = trim($_POST['jxncls']);
         }
-        if(!empty($_POST['jxnmthd']))
+        if(isset($_POST['jxnmthd']))
         {
             $this->sRequestedMethod = trim($_POST['jxnmthd']);
         }
@@ -141,9 +161,9 @@ class CallableClass extends RequestPlugin
      * @param string        $sClassName     The name of the class being registered
      * @param array|string  $aOptions       The associated options
      *
-     * @return boolean
+     * @return bool
      */
-    public function register($sType, $sClassName, $aOptions)
+    public function register(string $sType, string $sClassName, $aOptions)
     {
         $sType = trim($sType);
         if($sType != $this->getName())
@@ -153,7 +173,7 @@ class CallableClass extends RequestPlugin
 
         if(!is_string($sClassName))
         {
-            throw new \Jaxon\Exception\Error($this->trans('errors.objects.invalid-declaration'));
+            throw new \Jaxon\Exception\SetupException($this->trans('errors.objects.invalid-declaration'));
         }
         if(is_string($aOptions))
         {
@@ -161,7 +181,7 @@ class CallableClass extends RequestPlugin
         }
         if(!is_array($aOptions))
         {
-            throw new \Jaxon\Exception\Error($this->trans('errors.objects.invalid-declaration'));
+            throw new \Jaxon\Exception\SetupException($this->trans('errors.objects.invalid-declaration'));
         }
 
         $this->xRepository->addClass(trim($sClassName), $aOptions);
@@ -211,7 +231,7 @@ class CallableClass extends RequestPlugin
             {
                 $sJsClass = substr($sJsNamespace, 0, $dotPosition);
                 // Generate code for this object
-                if(!key_exists($sJsClass, $aJsClasses))
+                if(!isset($aJsClasses[$sJsClass]))
                 {
                     $sCode .= "$sPrefix$sJsClass = {};\n";
                     $aJsClasses[$sJsClass] = $sJsClass;
@@ -231,7 +251,7 @@ class CallableClass extends RequestPlugin
      *
      * @return string
      */
-    private function getCallableScript($sClassName, CallableObject $xCallableObject, array $aProtectedMethods)
+    private function getCallableScript(string $sClassName, CallableObject $xCallableObject, array $aProtectedMethods)
     {
         $aConfig = $xCallableObject->getOptions();
 
@@ -306,8 +326,8 @@ class CallableClass extends RequestPlugin
     public function canProcessRequest()
     {
         // Check the validity of the class name
-        if(($this->sRequestedClass !== null && !$this->validateClass($this->sRequestedClass)) ||
-            ($this->sRequestedMethod !== null && !$this->validateMethod($this->sRequestedMethod)))
+        if(($this->sRequestedClass !== null && !$this->xValidator->validateClass($this->sRequestedClass)) ||
+            ($this->sRequestedMethod !== null && !$this->xValidator->validateMethod($this->sRequestedMethod)))
         {
             $this->sRequestedClass = null;
             $this->sRequestedMethod = null;
@@ -330,7 +350,7 @@ class CallableClass extends RequestPlugin
         if(!$xCallableObject || !$xCallableObject->hasMethod($this->sRequestedMethod))
         {
             // Unable to find the requested object or method
-            throw new \Jaxon\Exception\Error($this->trans('errors.objects.invalid',
+            throw new \Jaxon\Exception\SetupException($this->trans('errors.objects.invalid',
                 ['class' => $this->sRequestedClass, 'method' => $this->sRequestedMethod]));
         }
 

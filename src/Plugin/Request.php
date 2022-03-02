@@ -41,9 +41,9 @@ abstract class Request extends Plugin
      * @param string        $sCallable      The callable entity being registered
      * @param array|string  $aOptions       The associated options
      *
-     * @return boolean
+     * @return bool
      */
-    public function register($sType, $sCallable, $aOptions)
+    public function register(string $sType, string $sCallable, $aOptions)
     {
         return false;
     }
@@ -64,7 +64,7 @@ abstract class Request extends Plugin
      * Called by the <Jaxon\Plugin\Manager> when a request has been received to determine
      * if the request is destinated to this request plugin.
      *
-     * @return boolean
+     * @return bool
      */
     abstract public function canProcessRequest();
 
@@ -75,7 +75,7 @@ abstract class Request extends Plugin
      * This will only occur when <Jaxon> has determined that the current request
      * is a valid (registered) jaxon enabled function via <jaxon->canProcessRequest>.
      *
-     * @return boolean
+     * @return bool
      */
     abstract public function processRequest();
 }

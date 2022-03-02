@@ -2,6 +2,10 @@
 
 namespace Jaxon\Ui\View;
 
+use function strrpos;
+use function substr;
+use function array_merge;
+
 class Renderer
 {
     /**
@@ -50,43 +54,43 @@ class Renderer
     /**
      * Make a piece of data available for the rendered view
      *
-     * @param string        $name            The data name
-     * @param string        $value           The data value
+     * @param string        $sName           The data name
+     * @param string        $sValue          The data value
      *
      * @return Renderer
      */
-    public function set($name, $value)
+    public function set(string $sName, string $sValue)
     {
-        $this->store()->with($name, $value);
+        $this->store()->with($sName, $sValue);
         return $this;
     }
 
     /**
      * Make a piece of data available for all views
      *
-     * @param string        $name            The data name
-     * @param string        $value           The data value
+     * @param string        $sName           The data name
+     * @param string        $sValue          The data value
      *
      * @return Renderer
      */
-    public function share($name, $value)
+    public function share(string $sName, string $sValue)
     {
-        $this->aViewData[$name] = $value;
+        $this->aViewData[$sName] = $sValue;
         return $this;
     }
 
     /**
      * Make an array of data available for all views
      *
-     * @param array         $values          The data values
+     * @param array         $aValues         The data values
      *
      * @return Renderer
      */
-    public function shareValues(array $values)
+    public function shareValues(array $aValues)
     {
-        foreach($values as $name => $value)
+        foreach($aValues as $sName => $sValue)
         {
-            $this->share($name, $value);
+            $this->share($sName, (string)$sValue);
         }
         return $this;
     }
@@ -101,7 +105,7 @@ class Renderer
      *
      * @return null|Store   A store populated with the view data
      */
-    public function render($sViewName, array $aViewData = [])
+    public function render(string $sViewName, array $aViewData = [])
     {
         // Get the store
         $xStore = $this->store();
@@ -109,10 +113,10 @@ class Renderer
         // Get the default view namespace
         $sNamespace = $this->xManager->getDefaultNamespace();
         // Get the namespace from the view name
-        $iSeparatorPosition = strrpos($sViewName, '::');
-        if($iSeparatorPosition !== false)
+        $nSeparatorPosition = strrpos($sViewName, '::');
+        if($nSeparatorPosition !== false)
         {
-            $sNamespace = substr($sViewName, 0, $iSeparatorPosition);
+            $sNamespace = substr($sViewName, 0, $nSeparatorPosition);
         }
 
         $xRenderer = $this->xManager->getNamespaceRenderer($sNamespace);
@@ -122,7 +126,7 @@ class Renderer
             return null;
         }
 
-        $xStore->setData(\array_merge($this->aViewData, $aViewData))
+        $xStore->setData(array_merge($this->aViewData, $aViewData))
             ->setView($xRenderer, $sNamespace, $sViewName);
         // Set the store to null so a new store will be created for the next view.
         $this->xStore = null;

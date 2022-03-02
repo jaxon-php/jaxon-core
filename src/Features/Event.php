@@ -14,6 +14,8 @@ namespace Jaxon\Features;
 
 use Jaxon\Contracts\Event\Listener as EventListener;
 
+use function jaxon;
+
 trait Event
 {
     /**
@@ -33,7 +35,7 @@ trait Event
      *
      * @return void
      */
-    public function triggerEvent($sEvent)
+    public function triggerEvent(string $sEvent)
     {
         jaxon()->di()->getEventDispatcher()->dispatch($sEvent);
     }
@@ -43,7 +45,7 @@ trait Event
      *
      * This is the default implementation on the EventListener interface.
      *
-     * @return array An empty array
+     * @return array
      */
     public function getEvents()
     {
@@ -55,7 +57,7 @@ trait Event
      *
      * This is the implementation of the Lemon\Event\EventSubscriberInterface interface.
      *
-     * @return array The event names to listen to
+     * @return array
      */
     public function getSubscribedEvents()
     {

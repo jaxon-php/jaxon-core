@@ -25,23 +25,25 @@
 
 namespace Jaxon\Plugin;
 
+use Jaxon\Response\Response as JaxonResponse;
+
 abstract class Response extends Plugin
 {
     /**
      * The object used to build the response that will be sent to the client browser
      *
-     * @var \Jaxon\Response\Response
+     * @var JaxonResponse
      */
     protected $xResponse;
 
     /**
      * Set the <Jaxon\Response\Response> object
      *
-     * @param \Jaxon\Response\Response         $xResponse            The response
+     * @param JaxonResponse         $xResponse            The response
      *
      * @return void
      */
-    public function setResponse($xResponse)
+    public function setResponse(JaxonResponse $xResponse)
     {
         $this->xResponse = $xResponse;
     }
@@ -49,7 +51,7 @@ abstract class Response extends Plugin
     /**
      * Get the <Jaxon\Response\Response> object
      *
-     * @return \Jaxon\Response\Response
+     * @return JaxonResponse
      */
     public function response()
     {
@@ -68,7 +70,7 @@ abstract class Response extends Plugin
      *
      * @return void
      */
-    public function addCommand($aAttributes, $xData)
+    public function addCommand(array $aAttributes, $xData)
     {
         $this->xResponse->addPluginCommand($this, $aAttributes, $xData);
     }

@@ -19,6 +19,12 @@ use Jaxon\Plugin\Code\Contracts\Generator as GeneratorContract;
 use Jaxon\Utils\Http\URI;
 use Jaxon\Utils\Template\Engine as TemplateEngine;
 
+use function ksort;
+use function md5;
+use function rtrim;
+use function is_file;
+use function file_put_contents;
+
 class Generator
 {
     use \Jaxon\Features\Config;
@@ -32,7 +38,7 @@ class Generator
     /**
      * @var URI
      */
-    private $uri;
+    private $xUri;
 
     /**
      * Default library URL
@@ -59,13 +65,13 @@ class Generator
      * The constructor
      *
      * @param Jaxon $jaxon
-     * @param URI $uri
+     * @param URI $xUri
      * @param TemplateEngine $xTemplateEngine      The template engine
      */
-    public function __construct(Jaxon $jaxon, URI $uri, TemplateEngine $xTemplateEngine)
+    public function __construct(Jaxon $jaxon, URI $xUri, TemplateEngine $xTemplateEngine)
     {
         $this->jaxon = $jaxon;
-        $this->uri = $uri;
+        $this->xUri = $xUri;
         $this->xTemplateEngine = $xTemplateEngine;
     }
 
@@ -103,7 +109,7 @@ class Generator
      *
      * @return string
      */
-    private function _render($sTemplate, array $aVars = [])
+    private function _render(string $sTemplate, array $aVars = [])
     {
         $aVars['sJsOptions'] = $this->getOption('js.app.options', '');
         return $this->xTemplateEngine->render("jaxon::plugins/$sTemplate", $aVars);
@@ -117,7 +123,7 @@ class Generator
      *
      * @return void
      */
-    public function addGenerator(GeneratorContract $xGenerator, $nPriority)
+    public function addGenerator(GeneratorContract $xGenerator, int $nPriority)
     {
         while(isset($this->aGenerators[$nPriority]))
         {
@@ -261,7 +267,7 @@ class Generator
      *
      * @return string
      */
-    public function createFiles($sJsDirectory, $sJsFileName)
+    public function createFiles(string $sJsDirectory, string $sJsFileName)
     {
         // Check dir access
         // - The js.app.dir must be writable
@@ -295,16 +301,16 @@ class Generator
     /**
      * Get the javascript code to be sent to the browser
      *
-     * @param boolean        $bIncludeJs         Also get the JS files
-     * @param boolean        $bIncludeCss        Also get the CSS files
+     * @param bool        $bIncludeJs         Also get the JS files
+     * @param bool        $bIncludeCss        Also get the CSS files
      *
      * @return string
      */
-    public function getScript($bIncludeJs, $bIncludeCss)
+    public function getScript(bool $bIncludeJs, bool $bIncludeCss)
     {
         if(!$this->getOption('core.request.uri'))
         {
-            $this->setOption('core.request.uri', $this->uri->detect());
+            $this->setOption('core.request.uri', $this->xUri->detect($_SERVER));
         }
 
         $sScript = '';

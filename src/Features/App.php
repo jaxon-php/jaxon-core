@@ -10,6 +10,7 @@ use Jaxon\Request\Handler\Callback;
 use Jaxon\Response\Response;
 use Jaxon\Ui\View\Renderer;
 use Psr\Log\LoggerInterface;
+
 use function jaxon;
 
 trait App
@@ -41,7 +42,7 @@ trait App
      *
      * @return object|null
      */
-    public function instance($sClassName)
+    public function instance(string $sClassName)
     {
         return jaxon()->instance($sClassName);
     }
@@ -53,7 +54,7 @@ trait App
      *
      * @return CallableRequest
      */
-    public function request($sClassName)
+    public function request(string $sClassName)
     {
         return jaxon()->request($sClassName);
     }
@@ -65,7 +66,7 @@ trait App
      *
      * @return Package
      */
-    public function package($sClassName)
+    public function package(string $sClassName)
     {
         return jaxon()->package($sClassName);
     }
@@ -81,9 +82,9 @@ trait App
     }
 
     /**
-     * Determine if a call is a Jaxon request.
+     * Check if a call is a Jaxon request.
      *
-     * @return boolean
+     * @return bool
      */
     public function canProcessRequest()
     {
@@ -151,7 +152,7 @@ trait App
      *
      * @return string  the javascript code
      */
-    public function script($bIncludeJs = false, $bIncludeCss = false)
+    public function script(bool $bIncludeJs = false, bool $bIncludeCss = false)
     {
         return jaxon()->getScript($bIncludeJs, $bIncludeCss);
     }
@@ -161,7 +162,7 @@ trait App
      *
      * @return string  the javascript code
      */
-    public function getScript($bIncludeJs = false, $bIncludeCss = false)
+    public function getScript(bool $bIncludeJs = false, bool $bIncludeCss = false)
     {
         return jaxon()->getScript($bIncludeJs, $bIncludeCss);
     }

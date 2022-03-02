@@ -27,7 +27,7 @@ abstract class Plugin implements Code\Contracts\Generator
     /**
      * Check if the assets of this plugin shall be included in Jaxon generated code.
      *
-     * @return boolean
+     * @return bool
      */
     protected function includeAssets()
     {

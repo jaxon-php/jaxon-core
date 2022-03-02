@@ -25,7 +25,7 @@ trait RegisterTrait
      *
      * @return void
      */
-    public function registerCallableFunction($sFunctionName, $sCallableFunction, array $aOptions)
+    public function registerCallableFunction(string $sFunctionName, string $sCallableFunction, array $aOptions)
     {
         $this->set($sFunctionName, function() use($sFunctionName, $sCallableFunction, $aOptions) {
             $xCallableFunction = new CallableFunction($sCallableFunction);
@@ -88,7 +88,7 @@ trait RegisterTrait
      *
      * @return void
      */
-    public function registerCallableObject($sClassName, array $aOptions)
+    public function registerCallableObject(string $sClassName, array $aOptions)
     {
         $sFactoryName = $sClassName . '_RequestFactory';
         $sCallableName = $sClassName . '_CallableObject';
@@ -129,7 +129,7 @@ trait RegisterTrait
                 call_user_func($cSetter);
             }
 
-            // Run the callback for class registerialisation
+            // Run the callback for class initialisation
             $aCallbacks = $this->getRequestHandler()->getCallbackManager()->getInitCallbacks();
             foreach($aCallbacks as $xCallback)
             {
@@ -147,7 +147,7 @@ trait RegisterTrait
      *
      * @return Config
      */
-    public function registerPackage($sClassName, array $aAppOptions)
+    public function registerPackage(string $sClassName, array $aAppOptions)
     {
         $xAppConfig = $this->newConfig($aAppOptions);
         $this->set($sClassName, function() use($sClassName, $aAppOptions, $xAppConfig) {

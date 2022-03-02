@@ -26,7 +26,7 @@ interface Listener extends EventSubscriberInterface
      * For instance:
      *  ['eventType' => 'methodName']
      *
-     * @return array The event names to listen to
+     * @return array
      */
     public function getEvents();
 }

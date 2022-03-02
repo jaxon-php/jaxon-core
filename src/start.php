@@ -35,11 +35,11 @@ function jaxon()
  *
  * @param string        $sText                  The text to translate
  * @param array         $aPlaceHolders          The placeholders in the text
- * @param string|null   $sLanguage              The language to translate to
+ * @param string        $sLanguage              The language to translate to
  *
  * @return string
  */
-function jaxon_trans($sText, array $aPlaceHolders = [], $sLanguage = null)
+function jaxon_trans(string $sText, array $aPlaceHolders = [], string $sLanguage = '')
 {
     return Jaxon::getInstance()->di()->getTranslator()->trans($sText, $aPlaceHolders, $sLanguage);
 }
@@ -52,17 +52,19 @@ function jaxon_trans($sText, array $aPlaceHolders = [], $sLanguage = null)
  *
  * @return void
  */
-function jaxon_register_plugin(Plugin $xPlugin, $nPriority = 1000)
+function jaxon_register_plugin(Plugin $xPlugin, int $nPriority = 1000)
 {
     Jaxon::getInstance()->registerPlugin($xPlugin, $nPriority);
 }
 
 /**
  * Get the single instance of the request factory, and set the class to call.
+ * 
+ * @param string        $sClassName
  *
  * @return RequestFactory
  */
-function rq($sClassName = null)
+function rq(string $sClassName = '')
 {
     return Jaxon::getInstance()->di()->getRequestFactory()->setClassName($sClassName);
 }
@@ -103,7 +105,7 @@ if(!function_exists('pr'))
  *
  * @return DomElement
  */
-function jq($sSelector = '', $sContext = '')
+function jq(string $sSelector = '', string $sContext = '')
 {
     return new DomElement($sSelector, $sContext);
 }
@@ -119,7 +121,7 @@ function jq($sSelector = '', $sContext = '')
  *
  * @return DomElement
  */
-function jQuery($sSelector = '', $sContext = '')
+function jQuery(string $sSelector = '', string $sContext = '')
 {
     return jq($sSelector, $sContext);
 }

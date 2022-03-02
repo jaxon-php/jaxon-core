@@ -16,6 +16,8 @@ namespace Jaxon\Plugin;
 use Jaxon\Ui\View\Renderer;
 use Jaxon\Utils\Config\Config;
 
+use function jaxon;
+
 abstract class Package implements Code\Contracts\Generator
 {
     /**
@@ -35,7 +37,7 @@ abstract class Package implements Code\Contracts\Generator
     /**
      * Whether to include the getReadyScript() in the generated code.
      *
-     * @var boolean
+     * @var bool
      */
     protected $bReadyEnabled = false;
 
@@ -67,7 +69,7 @@ abstract class Package implements Code\Contracts\Generator
      *
      * @return mixed
      */
-    public function getOption($sOption, $xDefault = null)
+    public function getOption(string $sOption, $xDefault = null)
     {
         return $this->getConfig()->getOption((string)$sOption, $xDefault);
     }

@@ -12,6 +12,8 @@
 
 namespace Jaxon\Features;
 
+use function jaxon;
+
 trait Template
 {
     /**
@@ -20,9 +22,9 @@ trait Template
      * @param string        $sTemplate            The name of template to be rendered
      * @param array         $aVars                The template vars
      *
-     * @return string        The template content
+     * @return string
      */
-    public function render($sTemplate, array $aVars = [])
+    public function render(string $sTemplate, array $aVars = [])
     {
         return jaxon()->di()->getTemplateEngine()->render($sTemplate, $aVars);
     }

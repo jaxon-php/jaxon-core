@@ -168,7 +168,7 @@ class Jaxon implements LoggerAwareInterface
     /**
      * Get the default options of all components of the library
      *
-     * @return array<string,string|boolean|integer>
+     * @return array<string,string|bool|integer>
      */
     private function getDefaultOptions()
     {
@@ -239,7 +239,7 @@ class Jaxon implements LoggerAwareInterface
      *
      * @return void
      */
-    public function registerPlugin(Plugin $xPlugin, $nPriority = 1000)
+    public function registerPlugin(Plugin $xPlugin, int $nPriority = 1000)
     {
         $this->di()->getPluginManager()->registerPlugin($xPlugin, $nPriority);
     }
@@ -262,7 +262,7 @@ class Jaxon implements LoggerAwareInterface
      *
      * @return void
      */
-    public function register($sType, $sName, $xOptions = [])
+    public function register(string $sType, string $sName, $xOptions = [])
     {
         if($sType == self::CALLABLE_DIR ||
             $sType == self::CALLABLE_CLASS ||
@@ -298,7 +298,7 @@ class Jaxon implements LoggerAwareInterface
      *
      * @return null|object
      */
-    public function instance($sClassName)
+    public function instance(string $sClassName)
     {
         $xCallable = $this->di()->getCallableRegistry()->getCallableObject($sClassName);
         return ($xCallable) ? $xCallable->getRegisteredObject() : null;
@@ -311,7 +311,7 @@ class Jaxon implements LoggerAwareInterface
      *
      * @return Request|null
      */
-    public function request($sClassName)
+    public function request(string $sClassName)
     {
         $xInstance = $this->instance($sClassName);
         return ($xInstance) ? $xInstance->rq() : null;
@@ -323,12 +323,12 @@ class Jaxon implements LoggerAwareInterface
      * The javascript code returned by this function is dependent on the plugins
      * that are included and the functions and classes that are registered.
      *
-     * @param boolean        $bIncludeJs            Also get the JS files
-     * @param boolean        $bIncludeCss        Also get the CSS files
+     * @param bool        $bIncludeJs            Also get the JS files
+     * @param bool        $bIncludeCss        Also get the CSS files
      *
      * @return string
      */
-    public function getScript($bIncludeJs = false, $bIncludeCss = false)
+    public function getScript(bool $bIncludeJs = false, bool $bIncludeCss = false)
     {
         return $this->di()->getCodeGenerator()->getScript($bIncludeJs, $bIncludeCss);
     }
@@ -339,12 +339,12 @@ class Jaxon implements LoggerAwareInterface
      * The javascript code returned by this function is dependent on the plugins
      * that are included and the functions and classes that are registered.
      *
-     * @param boolean        $bIncludeJs            Also print the JS files
-     * @param boolean        $bIncludeCss        Also print the CSS files
+     * @param bool        $bIncludeJs         Also print the JS files
+     * @param bool        $bIncludeCss        Also print the CSS files
      *
      * @return void
      */
-    public function printScript($bIncludeJs = false, $bIncludeCss = false)
+    public function printScript(bool $bIncludeJs = false, bool $bIncludeCss = false)
     {
         print $this->getScript($bIncludeJs, $bIncludeCss);
     }
@@ -372,7 +372,7 @@ class Jaxon implements LoggerAwareInterface
     /**
      * Determine if a call is a jaxon request or a page load request
      *
-     * @return boolean
+     * @return bool
      */
     public function canProcessRequest()
     {
@@ -424,7 +424,7 @@ class Jaxon implements LoggerAwareInterface
      *
      * @return Response
      */
-    public function plugin($sName)
+    public function plugin(string $sName)
     {
         return $this->di()->getPluginManager()->getResponsePlugin($sName);
     }
@@ -436,7 +436,7 @@ class Jaxon implements LoggerAwareInterface
      *
      * @return Package
      */
-    public function package($sClassName)
+    public function package(string $sClassName)
     {
         return $this->di()->getPluginManager()->getPackage($sClassName);
     }

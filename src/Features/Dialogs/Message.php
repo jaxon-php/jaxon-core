@@ -17,18 +17,18 @@ trait Message
     /**
      *
      *
-     * @var boolean
+     * @var bool
      */
     private $bReturn;
 
     /**
      * Set the library to return the javascript code or run it in the browser.
      *
-     * @param boolean             $bReturn              Whether to return the code
+     * @param bool             $bReturn              Whether to return the code
      *
      * @return void
      */
-    public function setReturn($bReturn)
+    public function setReturn(bool $bReturn)
     {
         $this->bReturn = $bReturn;
     }
@@ -36,7 +36,7 @@ trait Message
     /**
      * Check if the library should return the js code or run it in the browser.
      *
-     * @return boolean
+     * @return bool
      */
     public function getReturn()
     {

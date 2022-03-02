@@ -13,6 +13,15 @@
 
 namespace Jaxon\Request\Factory;
 
+use function is_numeric;
+use function is_string;
+use function is_bool;
+use function is_array;
+use function is_object;
+use function str_replace;
+use function json_encode;
+use function method_exists;
+
 class Parameter implements Contracts\Parameter
 {
     /*
@@ -22,13 +31,13 @@ class Parameter implements Contracts\Parameter
     const FORM_VALUES = 'FormValues';
     // Specifies that the parameter will contain the value of an input control.
     const INPUT_VALUE = 'InputValue';
-    // Specifies that the parameter will consist of a boolean value of a checkbox.
+    // Specifies that the parameter will consist of a bool value of a checkbox.
     const CHECKED_VALUE = 'CheckedValue';
     // Specifies that the parameter value will be the innerHTML value of the element.
     const ELEMENT_INNERHTML = 'ElementInnerHTML';
     // Specifies that the parameter will be a quoted value (string).
     const QUOTED_VALUE = 'QuotedValue';
-    // Specifies that the parameter will be a boolean value (true or false).
+    // Specifies that the parameter will be a bool value (true or false).
     const BOOL_VALUE = 'BoolValue';
     // Specifies that the parameter will be a numeric, non-quoted value.
     const NUMERIC_VALUE = 'NumericValue';
@@ -58,7 +67,7 @@ class Parameter implements Contracts\Parameter
      * @param string        $sType                  The parameter type
      * @param mixed         $xValue                 The parameter value
      */
-    public function __construct($sType, $xValue)
+    public function __construct(string $sType, $xValue)
     {
         $this->sType = $sType;
         $this->xValue = $xValue;
@@ -148,7 +157,7 @@ class Parameter implements Contracts\Parameter
      *
      * @return string
      */
-    private function getJsCall($sFunction, $sParameter)
+    private function getJsCall(string $sFunction, string $sParameter)
     {
         return 'jaxon.' . $sFunction . '(' . $this->getQuotedValue($sParameter) . ')';
     }
@@ -174,7 +183,7 @@ class Parameter implements Contracts\Parameter
     }
 
     /**
-     * Get the script for a boolean value of a checkbox.
+     * Get the script for a bool value of a checkbox.
      *
      * @return string
      */
@@ -204,7 +213,7 @@ class Parameter implements Contracts\Parameter
     }
 
     /**
-     * Get the script for a boolean value (true or false).
+     * Get the script for a bool value (true or false).
      *
      * @return string
      */
@@ -257,7 +266,7 @@ class Parameter implements Contracts\Parameter
     public function getScript()
     {
         $sMethodName = 'get' . $this->sType . 'Script';
-        if(!\method_exists($this, $sMethodName))
+        if(!method_exists($this, $sMethodName))
         {
             return '';
         }

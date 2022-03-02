@@ -12,6 +12,8 @@
 
 namespace Jaxon\Features;
 
+use function jaxon;
+
 trait Config
 {
     /**
@@ -22,7 +24,7 @@ trait Config
      *
      * @return void
      */
-    public function setOption($sName, $sValue)
+    public function setOption(string $sName, string $sValue)
     {
         jaxon()->di()->getConfig()->setOption($sName, $sValue);
     }
@@ -33,9 +35,9 @@ trait Config
      * @param string        $sName              The option name
      * @param mixed|null    $xDefault           The default value, to be returned if the option is not defined
      *
-     * @return mixed        The option value, or null if the option is unknown
+     * @return mixed
      */
-    public function getOption($sName, $xDefault = null)
+    public function getOption(string $sName, $xDefault = null)
     {
         return jaxon()->di()->getConfig()->getOption($sName, $xDefault);
     }
@@ -45,9 +47,9 @@ trait Config
      *
      * @param string        $sName              The option name
      *
-     * @return bool        True if the option exists, and false if not
+     * @return bool
      */
-    public function hasOption($sName)
+    public function hasOption(string $sName)
     {
         return jaxon()->di()->getConfig()->hasOption($sName);
     }
@@ -57,9 +59,9 @@ trait Config
      *
      * @param string        $sPrefix        The prefix to match
      *
-     * @return array        The options matching the prefix
+     * @return array
      */
-    public function getOptionNames($sPrefix)
+    public function getOptionNames(string $sPrefix)
     {
         return jaxon()->di()->getConfig()->getOptionNames($sPrefix);
     }
@@ -67,7 +69,7 @@ trait Config
     /**
      * Create a new the config manager
      *
-     * @return \Jaxon\Utils\Config\Config            The config manager
+     * @return \Jaxon\Utils\Config\Config
      */
     public function newConfig()
     {

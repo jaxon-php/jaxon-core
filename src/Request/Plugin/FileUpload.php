@@ -21,6 +21,20 @@ use Jaxon\Response\UploadResponse;
 use Exception;
 use Closure;
 
+use function rtrim;
+use function trim;
+use function count;
+use function is_writable;
+use function is_readable;
+use function file_exists;
+use function mkdir;
+use function move_uploaded_file;
+use function uniqid;
+use function file_put_contents;
+use function json_decode;
+use function file_get_contents;
+use function unlink;
+
 class FileUpload extends RequestPlugin
 {
     use \Jaxon\Features\Config;
@@ -58,7 +72,7 @@ class FileUpload extends RequestPlugin
     /**
      * Is the current request an HTTP upload
      *
-     * @var boolean
+     * @var bool
      */
     protected $bRequestIsHttpUpload = false;
 
@@ -81,11 +95,11 @@ class FileUpload extends RequestPlugin
         $this->xSupport = $xSupport;
         $this->sUploadSubdir = uniqid() . DIRECTORY_SEPARATOR;
 
-        if(array_key_exists('jxnupl', $_POST))
+        if(isset($_POST['jxnupl']))
         {
             $this->sTempFile = $_POST['jxnupl'];
         }
-        elseif(array_key_exists('jxnupl', $_GET))
+        elseif(isset($_GET['jxnupl']))
         {
             $this->sTempFile = $_GET['jxnupl'];
         }
@@ -129,18 +143,18 @@ class FileUpload extends RequestPlugin
      *
      * @return string
      */
-    private function _makeUploadDir($sUploadDir, $sUploadSubDir)
+    private function _makeUploadDir(string $sUploadDir, string $sUploadSubDir)
     {
         $sUploadDir = rtrim(trim($sUploadDir), '/\\') . DIRECTORY_SEPARATOR;
         // Verify that the upload dir exists and is writable
         if(!is_writable($sUploadDir))
         {
-            throw new \Jaxon\Exception\Error($this->trans('errors.upload.access'));
+            throw new \Jaxon\Exception\SetupException($this->trans('errors.upload.access'));
         }
         $sUploadDir .= $sUploadSubDir;
         if(!file_exists($sUploadDir) && !@mkdir($sUploadDir))
         {
-            throw new \Jaxon\Exception\Error($this->trans('errors.upload.access'));
+            throw new \Jaxon\Exception\SetupException($this->trans('errors.upload.access'));
         }
         return $sUploadDir;
     }
@@ -152,7 +166,7 @@ class FileUpload extends RequestPlugin
      *
      * @return string
      */
-    protected function getUploadDir($sFieldId)
+    protected function getUploadDir(string $sFieldId)
     {
         // Default upload dir
         $sDefaultUploadDir = $this->getOption('upload.default.dir');
@@ -187,7 +201,7 @@ class FileUpload extends RequestPlugin
         $sUploadTempFile = $sUploadDir . $this->sTempFile . '.json';
         if(!is_readable($sUploadTempFile))
         {
-            throw new \Jaxon\Exception\Error($this->trans('errors.upload.access'));
+            throw new \Jaxon\Exception\SetupException($this->trans('errors.upload.access'));
         }
         return $sUploadTempFile;
     }
@@ -288,7 +302,7 @@ class FileUpload extends RequestPlugin
     /**
      * Process the uploaded files in the HTTP request
      *
-     * @return boolean
+     * @return bool
      */
     public function processRequest()
     {
@@ -297,34 +311,36 @@ class FileUpload extends RequestPlugin
             return false;
         }
 
-        if(count($_FILES) > 0)
-        {
-            // Ajax or Http request with upload
-            $this->readFromHttpData();
-
-            if($this->bRequestIsHttpUpload)
-            {
-                // Process an HTTP upload request
-                // This requires to set the response to be returned.
-                $xResponse = new UploadResponse();
-                try
-                {
-                    $this->saveToTempFile();
-                    $xResponse->setUploadedFile($this->sTempFile);
-                }
-                catch(Exception $e)
-                {
-                    $xResponse->setErrorMessage($e->getMessage());
-                }
-                $this->xResponseManager->append($xResponse);
-            }
-        }
-        elseif(($this->sTempFile))
+        if(($this->sTempFile))
         {
             // Ajax request following and HTTP upload
             $this->readFromTempFile();
+            return true;
         }
 
+        if(count($_FILES) === 0)
+        {
+            return false;
+        }
+        // Ajax or Http request with upload
+        $this->readFromHttpData();
+        if(!$this->bRequestIsHttpUpload)
+        {
+            return false;
+        }
+        // Process an HTTP upload request
+        // This requires to set the response to be returned.
+        $xResponse = new UploadResponse();
+        try
+        {
+            $this->saveToTempFile();
+            $xResponse->setUploadedFile($this->sTempFile);
+        }
+        catch(Exception $e)
+        {
+            $xResponse->setErrorMessage($e->getMessage());
+        }
+        $this->xResponseManager->append($xResponse);
         return true;
     }
 }

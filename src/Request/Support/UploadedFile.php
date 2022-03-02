@@ -64,7 +64,7 @@ class UploadedFile
      *
      * @return UploadedFile
      */
-    public static function fromHttpData($sUploadDir, array $aFile)
+    public static function fromHttpData(string $sUploadDir, array $aFile)
     {
         $xFile = new UploadedFile();
         $xFile->sType = $aFile['type'];
@@ -114,10 +114,12 @@ class UploadedFile
 
     /**
      * Slugify a text
+     * 
+     * @param string    $sText
      *
      * @var string
      */
-    protected function slugify($sText)
+    protected function slugify(string $sText)
     {
         // Todo: slugify the text.
         return $sText;

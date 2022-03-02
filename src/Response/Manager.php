@@ -23,6 +23,8 @@ namespace Jaxon\Response;
 
 use Jaxon\Jaxon;
 
+use function get_class;
+
 class Manager
 {
     use \Jaxon\Features\Translator;
@@ -98,7 +100,7 @@ class Manager
         {
             $this->xResponse = $xResponse;
         }
-        elseif(get_class($this->xResponse) == get_class($xResponse))
+        elseif(get_class($this->xResponse) === get_class($xResponse))
         {
             if($this->xResponse != $xResponse)
             {
@@ -121,7 +123,7 @@ class Manager
      *
      * @return void
      */
-    public function debug($sMessage)
+    public function debug(string $sMessage)
     {
         $this->aDebugMessages[] = $sMessage;
     }
@@ -133,7 +135,7 @@ class Manager
      *
      * @return void
      */
-    public function error($sMessage)
+    public function error(string $sMessage)
     {
         $this->clear();
         $this->append($this->jaxon->newResponse());

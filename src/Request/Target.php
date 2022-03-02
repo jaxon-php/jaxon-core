@@ -17,8 +17,6 @@ use Jaxon\Jaxon;
 use Jaxon\Plugin\Manager as PluginManager;
 use Jaxon\Response\Manager as ResponseManager;
 
-use Exception;
-
 class Target
 {
     /**
@@ -71,7 +69,7 @@ class Target
      * @param string    $sClassName         The class name
      * @param string    $sMethodName        The method name
      */
-    private function __construct($sType, $sFunctionName, $sClassName, $sMethodName)
+    private function __construct(string $sType, string $sFunctionName, string $sClassName, string $sMethodName)
     {
         $this->sType = $sType;
         $this->sFunctionName = $sFunctionName;
@@ -84,7 +82,7 @@ class Target
      *
      * @param string    $sFunctionName      The function name
      */
-    public static function makeFunction($sFunctionName)
+    public static function makeFunction(string $sFunctionName)
     {
         return new Target(self::TYPE_FUNCTION, $sFunctionName, '', '');
     }
@@ -95,7 +93,7 @@ class Target
      * @param string    $sClassName         The class name
      * @param string    $sMethodName        The method name
      */
-    public static function makeClass($sClassName, $sMethodName)
+    public static function makeClass(string $sClassName, string $sMethodName)
     {
         return new Target(self::TYPE_CLASS, '', $sClassName, $sMethodName);
     }

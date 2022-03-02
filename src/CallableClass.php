@@ -79,7 +79,7 @@ class CallableClass
      *
      * @return DomElement
      */
-    public function jq($sSelector = '', $sContext = '')
+    public function jq(string $sSelector = '', string $sContext = '')
     {
         return $this->response->plugin('jquery')->element($sSelector, $sContext);
     }
@@ -87,14 +87,14 @@ class CallableClass
     /**
      * Get an instance of a Jaxon class by name
      *
-     * @param string $name the class name
+     * @param string $sName the class name
      *
      * @return object
      */
-    public function cl($name)
+    public function cl(string $sName)
     {
         // Find the class instance
-        return $this->jaxon->instance($name);
+        return $this->jaxon->instance($sName);
     }
 
     /**
@@ -114,7 +114,7 @@ class CallableClass
      *
      * @return DataBagContext
      */
-    public function bag($sName)
+    public function bag(string $sName)
     {
         return $this->response->plugin('bags')->bag($sName);
     }

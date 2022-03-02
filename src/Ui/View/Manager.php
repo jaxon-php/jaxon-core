@@ -7,6 +7,10 @@ use Jaxon\Container\Container;
 use Jaxon\Contracts\View;
 use Jaxon\Utils\Config\Config;
 
+use function array_filter;
+use function is_array;
+use function rtrim;
+
 class Manager
 {
     /**
@@ -65,10 +69,9 @@ class Manager
      *
      * @return array|null
      */
-    public function getNamespace($sNamespace)
+    public function getNamespace(string $sNamespace)
     {
-        return \array_key_exists($sNamespace, $this->aNamespaces) ?
-            $this->aNamespaces[$sNamespace] : null;
+        return $this->aNamespaces[$sNamespace] ?? null;
     }
 
     /**
@@ -79,7 +82,7 @@ class Manager
      *
      * @return void
      */
-    private function _addNamespace($sNamespace, array $aNamespace)
+    private function _addNamespace(string $sNamespace, array $aNamespace)
     {
         $this->aNamespaces[$sNamespace] = $aNamespace;
     }
@@ -94,7 +97,7 @@ class Manager
      *
      * @return void
      */
-    public function addNamespace($sNamespace, $sDirectory, $sExtension, $sRenderer)
+    public function addNamespace(string $sNamespace, string $sDirectory, string $sExtension, string $sRenderer)
     {
         $aNamespace = [
             'directory' => $sDirectory,
@@ -112,13 +115,13 @@ class Manager
      *
      * @return void
      */
-    public function addNamespaces($xLibConfig, $xAppConfig = null)
+    public function addNamespaces(Config $xLibConfig, ?Config $xAppConfig = null)
     {
         $this->sDefaultNamespace = $xLibConfig->getOption('options.views.default', '');
 
         $sPackage = $xLibConfig->getOption('package', '');
 
-        if(\is_array($aNamespaces = $xLibConfig->getOptionNames('views')))
+        if(is_array($aNamespaces = $xLibConfig->getOptionNames('views')))
         {
             foreach($aNamespaces as $sNamespace => $sOption)
             {
@@ -130,19 +133,19 @@ class Manager
                 // Save the namespace
                 $aNamespace = $xLibConfig->getOption($sOption);
                 $aNamespace['package'] = $sPackage;
-                if(!\array_key_exists('renderer', $aNamespace))
+                if(!isset($aNamespace['renderer']))
                 {
                     $aNamespace['renderer'] = 'jaxon'; // 'jaxon' is the default renderer.
                 }
 
                 // If the lib config has defined a template option, then its value must be
                 // read from the app config.
-                if($xAppConfig !== null && \array_key_exists('template', $aNamespace))
+                if($xAppConfig !== null && isset($aNamespace['template']))
                 {
                     $sTemplateOption = $xLibConfig->getOption($sOption . '.template.option');
                     $sTemplateDefault = $xLibConfig->getOption($sOption . '.template.default');
                     $sTemplate = $xAppConfig->getOption($sTemplateOption, $sTemplateDefault);
-                    $aNamespace['directory'] = \rtrim($aNamespace['directory'], '/') . '/' . $sTemplate;
+                    $aNamespace['directory'] = rtrim($aNamespace['directory'], '/') . '/' . $sTemplate;
                 }
 
                 $this->_addNamespace($sNamespace, $aNamespace);
@@ -157,7 +160,7 @@ class Manager
      *
      * @return View
      */
-    public function getRenderer($sId)
+    public function getRenderer(string $sId)
     {
         // Return the view renderer with the given id
         return $this->di->get('jaxon.app.view.' . $sId);
@@ -171,7 +174,7 @@ class Manager
      *
      * @return void
      */
-    public function addRenderer($sId, Closure $xClosure)
+    public function addRenderer(string $sId, Closure $xClosure)
     {
         $sBaseId = 'jaxon.app.view.user.' . $sId;
         // Return the user defined view renderer
@@ -182,7 +185,7 @@ class Manager
             $xRenderer = $di->get($sBaseId);
 
             // Init the renderer with the template namespaces
-            $aNamespaces = \array_filter($this->aNamespaces, function($aNamespace) use($sId) {
+            $aNamespaces = array_filter($this->aNamespaces, function($aNamespace) use($sId) {
                 return $aNamespace['renderer'] === $sId;
             });
             foreach($aNamespaces as $sNamespace => $aNamespace)
@@ -200,7 +203,7 @@ class Manager
      *
      * @return View|null
      */
-    public function getNamespaceRenderer($sNamespace)
+    public function getNamespaceRenderer(string $sNamespace)
     {
         $aNamespace = $this->getNamespace($sNamespace);
         if(!$aNamespace)

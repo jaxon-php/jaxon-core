@@ -2,6 +2,8 @@
 
 namespace Jaxon\Response;
 
+use function array_walk;
+
 class UploadResponse extends AbstractResponse
 {
     /**
@@ -37,16 +39,24 @@ class UploadResponse extends AbstractResponse
 
     /**
      * Set the path to the uploaded file
+     *
+     * @param string        $sUploadedFile
+     *
+     * @return void
      */
-    public function setUploadedFile($sUploadedFile)
+    public function setUploadedFile(string $sUploadedFile)
     {
         $this->sUploadedFile = $sUploadedFile;
     }
 
     /**
      * Set the error message
+     *
+     * @param string        $sErrorMessage
+     *
+     * @return void
      */
-    public function setErrorMessage($sErrorMessage)
+    public function setErrorMessage(string $sErrorMessage)
     {
         $this->sErrorMessage = $sErrorMessage;
     }
@@ -58,7 +68,7 @@ class UploadResponse extends AbstractResponse
      *
      * @return UploadResponse
      */
-    public function debug($sMessage)
+    public function debug(string $sMessage)
     {
         $this->aDebugMessages[] = $sMessage;
         return $this;

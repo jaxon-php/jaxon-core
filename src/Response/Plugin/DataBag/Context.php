@@ -23,7 +23,7 @@ class Context
      * @param Bag $xBag
      * @param string $sBagName
      */
-    public function __construct(Bag $xBag, $sBagName)
+    public function __construct(Bag $xBag, string $sBagName)
     {
         $this->xBag = $xBag;
         $this->sBagName = $sBagName;
@@ -35,7 +35,7 @@ class Context
      *
      * @return void
      */
-    public function set($sKey, $xValue)
+    public function set(string $sKey, $xValue)
     {
         $this->xBag->set($this->sBagName, $sKey, $xValue);
     }
@@ -46,7 +46,7 @@ class Context
      *
      * @return mixed
      */
-    public function get($sKey, $xValue = null)
+    public function get(string $sKey, $xValue = null)
     {
         return $this->xBag->get($this->sBagName, $sKey, $xValue);
     }

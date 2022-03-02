@@ -19,6 +19,12 @@ use Jaxon\Request\Factory\Request;
 use Jaxon\Ui\View\Renderer as ViewRenderer;
 use Jaxon\Ui\View\Store;
 
+use function floor;
+use function array_map;
+use function array_shift;
+use function array_pop;
+use function array_walk;
+
 class Renderer
 {
     /**
@@ -40,32 +46,32 @@ class Renderer
     /**
      * @var string
      */
-    protected $previousText = '&laquo;';
+    protected $sPreviousText = '&laquo;';
 
     /**
      * @var string
      */
-    protected $nextText = '&raquo;';
+    protected $sNextText = '&raquo;';
 
     /**
      * @var string
      */
-    protected $ellipsysText = '...';
+    protected $sEllipsysText = '...';
 
     /**
      * @var integer
      */
-    protected $totalPages = 0;
+    protected $nTotalPages = 0;
 
     /**
      * @var integer
      */
-    protected $currentPage = 0;
+    protected $nCurrentPage = 0;
 
     /**
      * @var integer
      */
-    protected $maxPagesToShow = 10;
+    protected $nMaxPagesToShow = 10;
 
     /**
      * The class contructor
@@ -84,9 +90,9 @@ class Renderer
      *
      * @return void
      */
-    public function setPreviousText($text)
+    public function setPreviousText(string $text)
     {
-        $this->previousText = $text;
+        $this->sPreviousText = $text;
     }
 
     /**
@@ -96,9 +102,9 @@ class Renderer
      *
      * @return void
      */
-    public function setNextText($text)
+    public function setNextText(string $text)
     {
-        $this->nextText = $text;
+        $this->sNextText = $text;
     }
 
     /**
@@ -121,28 +127,28 @@ class Renderer
     /**
      * Set the current page number
      *
-     * @param int $currentPage The current page number
+     * @param int $nCurrentPage The current page number
      *
      * @return void
      */
-    public function setCurrentPage($currentPage)
+    public function setCurrentPage(int $nCurrentPage)
     {
-        $this->currentPage = intval($currentPage);
+        $this->nCurrentPage = intval($nCurrentPage);
     }
 
     /**
      * Set the max number of pages to show
      *
-     * @param int $maxPagesToShow The max number of pages to show
+     * @param int $nMaxPagesToShow The max number of pages to show
      *
      * @return void
      */
-    public function setMaxPagesToShow($maxPagesToShow)
+    public function setMaxPagesToShow(int $nMaxPagesToShow)
     {
-        $this->maxPagesToShow = intval($maxPagesToShow);
-        if($this->maxPagesToShow < 4)
+        $this->nMaxPagesToShow = intval($nMaxPagesToShow);
+        if($this->nMaxPagesToShow < 4)
         {
-            $this->maxPagesToShow = 4;
+            $this->nMaxPagesToShow = 4;
         }
     }
 
@@ -153,7 +159,7 @@ class Renderer
      *
      * @return string
      */
-    protected function getPageCall($pageNum)
+    protected function getPageCall(int $pageNum)
     {
         return $this->xRequest->setPageNumber($pageNum)->getScript();
     }
@@ -167,7 +173,7 @@ class Renderer
      *
      * @return null|Store
      */
-    protected function renderLink($sTemplate, $sText, $sCall)
+    protected function renderLink(string $sTemplate, string $sText, string $sCall)
     {
         return $this->xRenderer->render('pagination::links/' . $sTemplate, [
             'text' => $sText,
@@ -182,11 +188,11 @@ class Renderer
      */
     protected function getPrevLink()
     {
-        if($this->currentPage <= 1)
+        if($this->nCurrentPage <= 1)
         {
-            return ['disabled', $this->previousText, ''];
+            return ['disabled', $this->sPreviousText, ''];
         }
-        return ['enabled', $this->previousText, $this->getPageCall($this->currentPage - 1)];
+        return ['enabled', $this->sPreviousText, $this->getPageCall($this->nCurrentPage - 1)];
     }
 
     /**
@@ -196,11 +202,11 @@ class Renderer
      */
     protected function getNextLink()
     {
-        if($this->currentPage >= $this->totalPages)
+        if($this->nCurrentPage >= $this->nTotalPages)
         {
-            return ['disabled', $this->nextText, ''];
+            return ['disabled', $this->sNextText, ''];
         }
-        return ['enabled', $this->nextText, $this->getPageCall($this->currentPage + 1)];
+        return ['enabled', $this->sNextText, $this->getPageCall($this->nCurrentPage + 1)];
     }
 
     /**
@@ -210,13 +216,13 @@ class Renderer
      *
      * @return array
      */
-    protected function getPageLink($nNumber)
+    protected function getPageLink(int $nNumber)
     {
         if($nNumber < 1)
         {
-            return ['disabled', $this->ellipsysText, ''];
+            return ['disabled', $this->sEllipsysText, ''];
         }
-        $sTemplate = ($nNumber === $this->currentPage ? 'current' : 'enabled');
+        $sTemplate = ($nNumber === $this->nCurrentPage ? 'current' : 'enabled');
         return [$sTemplate, $nNumber, $this->getPageCall($nNumber)];
     }
 
@@ -229,66 +235,66 @@ class Renderer
      */
     protected function getPageNumbers()
     {
-        $pageNumbers = [];
+        $aPageNumbers = [];
 
-        if($this->totalPages <= $this->maxPagesToShow)
+        if($this->nTotalPages <= $this->nMaxPagesToShow)
         {
-            for($i = 0; $i < $this->totalPages; $i++)
+            for($i = 0; $i < $this->nTotalPages; $i++)
             {
-                $pageNumbers[] = $i + 1;
+                $aPageNumbers[] = $i + 1;
             }
 
-            return $pageNumbers;
+            return $aPageNumbers;
         }
 
         // Determine the sliding range, centered around the current page.
-        $numAdjacents = (int)floor(($this->maxPagesToShow - 4) / 2);
+        $nNumAdjacents = (int)floor(($this->nMaxPagesToShow - 4) / 2);
 
-        $slidingStart = 1;
-        $slidingEndOffset = $numAdjacents + 3 - $this->currentPage;
-        if($slidingEndOffset < 0)
+        $nSlidingStart = 1;
+        $nSlidingEndOffset = $nNumAdjacents + 3 - $this->nCurrentPage;
+        if($nSlidingEndOffset < 0)
         {
-            $slidingStart = $this->currentPage - $numAdjacents;
-            $slidingEndOffset = 0;
+            $nSlidingStart = $this->nCurrentPage - $nNumAdjacents;
+            $nSlidingEndOffset = 0;
         }
 
-        $slidingEnd = $this->totalPages;
-        $slidingStartOffset = $this->currentPage + $numAdjacents + 2 - $this->totalPages;
-        if($slidingStartOffset < 0)
+        $nSlidingEnd = $this->nTotalPages;
+        $nSlidingStartOffset = $this->nCurrentPage + $nNumAdjacents + 2 - $this->nTotalPages;
+        if($nSlidingStartOffset < 0)
         {
-            $slidingEnd = $this->currentPage + $numAdjacents;
-            $slidingStartOffset = 0;
+            $nSlidingEnd = $this->nCurrentPage + $nNumAdjacents;
+            $nSlidingStartOffset = 0;
         }
 
         // Build the list of page numbers.
-        if($slidingStart > 1)
+        if($nSlidingStart > 1)
         {
-            $pageNumbers[] = 1;
-            $pageNumbers[] = 0; // Ellipsys;
+            $aPageNumbers[] = 1;
+            $aPageNumbers[] = 0; // Ellipsys;
         }
-        for($i = $slidingStart - $slidingStartOffset; $i <= $slidingEnd + $slidingEndOffset; $i++)
+        for($i = $nSlidingStart - $nSlidingStartOffset; $i <= $nSlidingEnd + $nSlidingEndOffset; $i++)
         {
-            $pageNumbers[] = $i;
+            $aPageNumbers[] = $i;
         }
-        if($slidingEnd < $this->totalPages)
+        if($nSlidingEnd < $this->nTotalPages)
         {
-            $pageNumbers[] = 0; // Ellipsys;
-            $pageNumbers[] = $this->totalPages;
+            $aPageNumbers[] = 0; // Ellipsys;
+            $aPageNumbers[] = $this->nTotalPages;
         }
 
-        return $pageNumbers;
+        return $aPageNumbers;
     }
 
     /**
      * Get the pages.
      *
-     * @param integer   $totalPages         The total number of pages
+     * @param integer   $nTotalPages         The total number of pages
      *
      * @return array
      */
-    public function getPages($totalPages)
+    public function getPages(int $nTotalPages)
     {
-        $this->totalPages = $totalPages;
+        $this->nTotalPages = $nTotalPages;
 
         $aPageNumbers = $this->getPageNumbers();
         $aPages = [$this->getPrevLink()];
@@ -303,15 +309,15 @@ class Renderer
     /**
      * Render an HTML pagination control.
      *
-     * @param integer   $totalPages         The total number of pages
+     * @param integer   $nTotalPages        The total number of pages
      *
      * @return null|Store
      */
-    public function render($totalPages)
+    public function render(int $nTotalPages)
     {
         $aLinks = array_map(function($aPage) {
             return $this->renderLink($aPage[0], $aPage[1], $aPage[2]);
-        }, $this->getPages($totalPages));
+        }, $this->getPages($nTotalPages));
 
         $aPrevLink = array_shift($aLinks); // The first entry in the array
         $aNextLink = array_pop($aLinks); // The last entry in the array

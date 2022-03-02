@@ -61,14 +61,14 @@ interface Generator
     /**
      * Whether to include the getReadyScript() in the generated code.
      *
-     * @return boolean
+     * @return bool
      */
     public function readyEnabled();
 
     /**
      * Whether to export the getReadyScript() in external javascript files.
      *
-     * @return boolean
+     * @return bool
      */
     public function readyInlined();
 }

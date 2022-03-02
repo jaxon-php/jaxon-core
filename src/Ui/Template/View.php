@@ -32,7 +32,7 @@ class View implements ViewContract
      *
      * @return void
      */
-    public function addNamespace($sNamespace, $sDirectory, $sExtension = '')
+    public function addNamespace(string $sNamespace, string $sDirectory, string $sExtension = '')
     {
         $this->xEngine->addNamespace($sNamespace, $sDirectory, $sExtension);
     }

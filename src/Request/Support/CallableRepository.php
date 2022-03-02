@@ -71,21 +71,21 @@ class CallableRepository
      *
      * @return array
      */
-    public function makeClassOptions($sClassName, array $aClassOptions, array $aDirectoryOptions)
+    public function makeClassOptions(string $sClassName, array $aClassOptions, array $aDirectoryOptions)
     {
-        if(!key_exists('functions', $aClassOptions))
+        if(!isset($aClassOptions['functions']))
         {
             $aClassOptions['functions'] = [];
         }
         foreach(['separator', 'protected'] as $sName)
         {
-            if(key_exists($sName, $aDirectoryOptions))
+            if(isset($aDirectoryOptions[$sName]))
             {
                 $aClassOptions[$sName] = $aDirectoryOptions[$sName];
             }
         }
 
-        $aFunctionOptions = key_exists('classes', $aDirectoryOptions) ? $aDirectoryOptions['classes'] : [];
+        $aFunctionOptions = isset($aDirectoryOptions['classes']) ? $aDirectoryOptions['classes'] : [];
         foreach($aFunctionOptions as $sName => $xValue)
         {
             if($sName === '*' || strncmp($sClassName, $sName, strlen($sName)) === 0)
@@ -95,7 +95,7 @@ class CallableRepository
         }
 
         // This value will be used to compute hash
-        if(!key_exists('timestamp', $aClassOptions))
+        if(!isset($aClassOptions['timestamp']))
         {
             $aClassOptions['timestamp'] = 0;
         }
@@ -141,7 +141,7 @@ class CallableRepository
      *
      * @return void
      */
-    public function addClass($sClassName, array $aClassOptions, array $aDirectoryOptions = [])
+    public function addClass(string $sClassName, array $aClassOptions, array $aDirectoryOptions = [])
     {
         $this->aClasses[$sClassName] = $this->makeClassOptions($sClassName, $aClassOptions, $aDirectoryOptions);
     }
@@ -153,7 +153,7 @@ class CallableRepository
      *
      * @return void
      */
-    public function addNamespace($sNamespace, $aOptions)
+    public function addNamespace(string $sNamespace, $aOptions)
     {
         $this->aNamespaces[$sNamespace] = $aOptions;
     }
@@ -165,9 +165,9 @@ class CallableRepository
      *
      * @return array|null
      */
-    public function getClassOptions($sClassName)
+    public function getClassOptions(string $sClassName)
     {
-        if(!key_exists($sClassName, $this->aClasses))
+        if(!isset($this->aClasses[$sClassName]))
         {
             // Class not found
             return null;
@@ -177,6 +177,8 @@ class CallableRepository
 
     /**
      * Read classes from directories registered without namespaces
+     *
+     * @param array         $aDirectories    The directories
      *
      * @return void
      */
@@ -209,6 +211,8 @@ class CallableRepository
 
     /**
      * Read classes from directories registered with namespaces
+     *
+     * @param array         $aNamespaces     The namespaces
      *
      * @return void
      */
@@ -256,7 +260,7 @@ class CallableRepository
      *
      * @return bool
      */
-    public function hasCallableObject($sClassName)
+    public function hasCallableObject(string $sClassName)
     {
         return $this->di->has($sClassName);
     }
@@ -268,7 +272,7 @@ class CallableRepository
      *
      * @return CallableObject
      */
-    public function getCallableObject($sClassName)
+    public function getCallableObject(string $sClassName)
     {
         return $this->di->get($sClassName . '_CallableObject');
     }
@@ -281,10 +285,10 @@ class CallableRepository
      *
      * @return void
      */
-    public function registerCallableObject($sClassName, array $aOptions)
+    public function registerCallableObject(string $sClassName, array $aOptions)
     {
         // Make sure the registered class exists
-        if(key_exists('include', $aOptions))
+        if(isset($aOptions['include']))
         {
             require_once($aOptions['include']);
         }

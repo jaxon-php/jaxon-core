@@ -16,6 +16,11 @@ namespace Jaxon\Features\Request;
 
 use Jaxon\Request\Factory\Request;
 
+use function rq;
+use function get_class;
+use function func_get_args;
+use function call_user_func_array;
+
 trait Factory
 {
     /**

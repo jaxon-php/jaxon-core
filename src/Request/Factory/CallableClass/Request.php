@@ -16,6 +16,10 @@ namespace Jaxon\Request\Factory\CallableClass;
 
 use Jaxon\Request\Support\CallableObject;
 
+use function array_merge;
+use function call_user_func_array;
+use function rq;
+
 class Request
 {
     /**
@@ -38,9 +42,12 @@ class Request
     /**
      * Generate the javascript code for a call to a given method
      *
+     * @param string    $sMethod
+     * @param array     $aArguments
+     *
      * @return string
      */
-    public function __call($sMethod, $aArguments)
+    public function __call(string $sMethod, array $aArguments)
     {
         // Make the request
         $factory = rq()->setCallable($this->xCallable);

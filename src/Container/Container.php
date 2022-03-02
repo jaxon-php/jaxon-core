@@ -118,7 +118,7 @@ class Container extends PimpleContainer
      *
      * @return bool
      */
-    public function has($sClass)
+    public function has(string $sClass)
     {
         if($this->appContainer != null && $this->appContainer->has($sClass))
         {
@@ -134,7 +134,7 @@ class Container extends PimpleContainer
      *
      * @return mixed
      */
-    public function g($sClass)
+    public function g(string $sClass)
     {
         return $this->offsetGet($sClass);
     }
@@ -149,7 +149,7 @@ class Container extends PimpleContainer
      * @throws ContainerExceptionInterface Error while retrieving the entry.
      * @throws UnknownIdentifierException If the identifier is not defined
      */
-    public function get($sClass)
+    public function get(string $sClass)
     {
         if($this->appContainer != null && $this->appContainer->has($sClass))
         {
@@ -166,7 +166,7 @@ class Container extends PimpleContainer
      *
      * @return void
      */
-    public function set($sClass, Closure $xClosure)
+    public function set(string $sClass, Closure $xClosure)
     {
         $this->offsetSet($sClass, $xClosure);
     }
@@ -179,7 +179,7 @@ class Container extends PimpleContainer
      *
      * @return void
      */
-    public function val($sKey, $xValue)
+    public function val(string $sKey, $xValue)
     {
         $this->offsetSet($sKey, $xValue);
     }
@@ -192,7 +192,7 @@ class Container extends PimpleContainer
      *
      * @return void
      */
-    public function alias($sAlias, $sClass)
+    public function alias(string $sAlias, string $sClass)
     {
         $this->set($sAlias, function($c) use ($sClass) {
             return $c->get($sClass);
@@ -243,7 +243,7 @@ class Container extends PimpleContainer
      *
      * @return void
      */
-    public function auto($sClass)
+    public function auto(string $sClass)
     {
         $this->set($sClass, function($c) use ($sClass) {
             return $this->make($sClass);

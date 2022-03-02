@@ -52,7 +52,7 @@ class JsCall implements JsonSerializable
      *
      * @param string        $sFunction            The javascript function
      */
-    public function __construct($sFunction)
+    public function __construct(string $sFunction)
     {
         $this->aParameters = [];
         $this->sQuoteCharacter = '"';
@@ -144,7 +144,7 @@ class JsCall implements JsonSerializable
      *
      * @return JsCall
      */
-    public function addParameter($sType, $sValue)
+    public function addParameter(string $sType, string $sValue)
     {
         $this->pushParameter(new Parameter($sType, $sValue));
         return $this;

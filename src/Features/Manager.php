@@ -14,6 +14,8 @@
 
 namespace Jaxon\Features;
 
+use function jaxon;
+
 trait Manager
 {
     /**

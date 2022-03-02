@@ -18,6 +18,11 @@ namespace Jaxon\Request\Factory;
 use Jaxon\Request\Support\CallableObject;
 use Jaxon\Request\Support\CallableRegistry;
 
+use function func_get_args;
+use function array_shift;
+use function strpos;
+use function trim;
+
 // Extends Parameter for compatibility with older versions (see function rq())
 class RequestFactory
 {
@@ -50,11 +55,11 @@ class RequestFactory
     /**
      * Set the name of the class to call
      *
-     * @param string|null       $sClass              The callable class
+     * @param string        $sClass              The callable class
      *
      * @return RequestFactory
      */
-    public function setClassName($sClass)
+    public function setClassName(string $sClass)
     {
         $this->sPrefix = $this->getOption('core.prefix.function');
 
@@ -95,7 +100,7 @@ class RequestFactory
      *
      * @return Request
      */
-    public function call($sFunction)
+    public function call(string $sFunction)
     {
         $aArguments = func_get_args();
         $sFunction = (string)$sFunction;
@@ -123,7 +128,7 @@ class RequestFactory
      *
      * @return Request
      */
-    public function func($sFunction)
+    public function func(string $sFunction)
     {
         $aArguments = func_get_args();
         $sFunction = (string)$sFunction;

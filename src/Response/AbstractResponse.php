@@ -2,6 +2,12 @@
 
 namespace Jaxon\Response;
 
+use function trim;
+use function header;
+use function strlen;
+use function is_string;
+use function jaxon;
+
 abstract class AbstractResponse
 {
     use \Jaxon\Features\Config;
@@ -53,11 +59,11 @@ abstract class AbstractResponse
      * the response commands in this <Response> object
      *
      * @param AbstractResponse|array    $mCommands  The <Response> object
-     * @param boolean                   $bBefore    Add the new commands to the beginning of the list
+     * @param bool                   $bBefore    Add the new commands to the beginning of the list
      *
      * @return void
      */
-    public function appendResponse($mCommands, $bBefore = false)
+    public function appendResponse($mCommands, bool $bBefore = false)
     {
     }
 
@@ -68,7 +74,7 @@ abstract class AbstractResponse
      *
      * @return AbstractResponse
      */
-    abstract public function debug($sMessage);
+    abstract public function debug(string $sMessage);
 
     /**
      * Return the output, generated from the commands added to the response, that will be sent to the browser

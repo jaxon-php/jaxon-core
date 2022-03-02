@@ -26,9 +26,9 @@ class AttrSet implements JsonSerializable
      * @param string        $sAttrName            The attribute name
      * @param mixed         $xAttrValue           The attribute value
      */
-    public function __construct($sAttrName, $xAttrValue)
+    public function __construct(string $sAttrName, $xAttrValue)
     {
-        $this->sAttrName = (string)$sAttrName;
+        $this->sAttrName = $sAttrName;
         $this->xAttrValue = (string)$xAttrValue;
     }
 

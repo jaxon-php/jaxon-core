@@ -54,7 +54,7 @@ class CallableFunction
      */
     private $aConfiguration;
 
-    public function __construct($sCallableFunction)
+    public function __construct(string $sCallableFunction)
     {
         $this->aConfiguration = [];
         $this->sJsFunction = $sCallableFunction;
@@ -79,7 +79,7 @@ class CallableFunction
      *
      * @return void
      */
-    public function configure($sName, $sValue)
+    public function configure(string $sName, string $sValue)
     {
         switch($sName)
         {
@@ -124,7 +124,7 @@ class CallableFunction
      *
      * @return void
      */
-    public function call($aArgs = [])
+    public function call(array $aArgs = [])
     {
         if(($this->sInclude))
         {

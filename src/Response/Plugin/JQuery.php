@@ -48,7 +48,7 @@ class JQuery extends \Jaxon\Plugin\Response
      *
      * @return Element
      */
-    public function element($sSelector = '', $sContext = '')
+    public function element(string $sSelector = '', string $sContext = '')
     {
         $xElement = new Element($sSelector, $sContext);
         $this->addCommand(['cmd' => 'jquery'], $xElement);

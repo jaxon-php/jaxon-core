@@ -9,7 +9,7 @@ class Manager implements SessionContract
     /**
      * Get the current session id
      *
-     * @return string           The session id
+     * @return string
      */
     public function getId()
     {
@@ -23,7 +23,7 @@ class Manager implements SessionContract
      *
      * @return void
      */
-    public function newId($bDeleteData = false)
+    public function newId(bool $bDeleteData = false)
     {
         session_regenerate_id($bDeleteData);
     }
@@ -32,11 +32,11 @@ class Manager implements SessionContract
      * Save data in the session
      *
      * @param string        $sKey                The session key
-     * @param string        $xValue              The session value
+     * @param mixed         $xValue              The session value
      *
      * @return void
      */
-    public function set($sKey, $xValue)
+    public function set(string $sKey, $xValue)
     {
         $_SESSION[$sKey] = $xValue;
     }
@@ -45,11 +45,11 @@ class Manager implements SessionContract
      * Save data in the session, that will be available only until the next call
      *
      * @param string        $sKey                The session key
-     * @param string        $xValue              The session value
+     * @param mixed         $xValue              The session value
      *
      * @return void
      */
-    /* public function flash($sKey, $xValue)
+    /* public function flash(string $sKey, $xValue)
     {
     }*/
 
@@ -58,11 +58,11 @@ class Manager implements SessionContract
      *
      * @param string        $sKey                The session key
      *
-     * @return bool             True if the session key exists, else false
+     * @return bool
      */
-    public function has($sKey)
+    public function has(string $sKey)
     {
-        return key_exists($sKey, $_SESSION);
+        return isset($_SESSION[$sKey]);
     }
 
     /**
@@ -71,17 +71,17 @@ class Manager implements SessionContract
      * @param string        $sKey                The session key
      * @param string|null   $xDefault            The default value
      *
-     * @return mixed            The data under the session key, or the $xDefault parameter
+     * @return mixed
      */
-    public function get($sKey, $xDefault = null)
+    public function get(string $sKey, $xDefault = null)
     {
-        return key_exists($sKey, $_SESSION) ? $_SESSION[$sKey] : $xDefault;
+        return isset($_SESSION[$sKey]) ? $_SESSION[$sKey] : $xDefault;
     }
 
     /**
      * Get all data in the session
      *
-     * @return array             An array of all data in the session
+     * @return array
      */
     public function all()
     {
@@ -95,9 +95,9 @@ class Manager implements SessionContract
      *
      * @return void
      */
-    public function delete($sKey)
+    public function delete(string $sKey)
     {
-        if(key_exists($sKey, $_SESSION))
+        if(isset($_SESSION[$sKey]))
         {
             unset($_SESSION[$sKey]);
         }

@@ -16,6 +16,10 @@ namespace Jaxon\Request\Factory\CallableClass;
 
 use Jaxon\Request\Support\CallableObject;
 
+use function array_merge;
+use function call_user_func_array;
+use function rq;
+
 class Paginator
 {
     /**
@@ -65,7 +69,7 @@ class Paginator
      *
      * @return Paginator
      */
-    public function setProperties($nItemsTotal, $nItemsPerPage, $nCurrentPage)
+    public function setProperties(int $nItemsTotal, int $nItemsPerPage, int $nCurrentPage)
     {
         $this->nItemsTotal = $nItemsTotal;
         $this->nItemsPerPage = $nItemsPerPage;
@@ -77,9 +81,12 @@ class Paginator
     /**
      * Generate the corresponding javascript code for a call to any method
      *
+     * @param string    $sMethod
+     * @param array     $aArguments
+     *
      * @return string
      */
-    public function __call($sMethod, $aArguments)
+    public function __call(string $sMethod, array $aArguments)
     {
         // Add the paginator options to the method arguments
         $aPgArgs = [$this->nItemsTotal, $this->nItemsPerPage, $this->nCurrentPage, $sMethod];

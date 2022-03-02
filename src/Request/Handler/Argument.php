@@ -22,7 +22,24 @@
 
 namespace Jaxon\Request\Handler;
 
-use Jaxon\Exception\Error;
+use Jaxon\Exception\SetupException;
+
+use function strcasecmp;
+use function is_numeric;
+use function is_string;
+use function is_array;
+use function is_bool;
+use function substr;
+use function strlen;
+use function floor;
+use function json_decode;
+use function urlencode;
+use function call_user_func;
+use function array_walk;
+use function function_exists;
+use function iconv;
+use function mb_convert_encoding;
+use function utf8_decode;
 
 class Argument
 {
@@ -93,29 +110,25 @@ class Argument
     }
 
     /**
-     * Converts a string to a boolean var
+     * Converts a string to a bool var
      *
      * @param string        $sValue                The string to be converted
      *
-     * @return boolean
+     * @return bool
      */
-    private function __convertStringToBool($sValue)
+    private function __convertStringToBool(string $sValue)
     {
-        if(\strcasecmp($sValue, 'true') == 0)
+        if(strcasecmp($sValue, 'true') === 0)
         {
             return true;
         }
-        if(\strcasecmp($sValue, 'false') == 0)
+        if(strcasecmp($sValue, 'false') === 0)
         {
             return false;
         }
-        if(\is_numeric($sValue))
+        if(is_numeric($sValue))
         {
-            if($sValue == 0)
-            {
-                return false;
-            }
-            return true;
+            return ($sValue !== 0);
         }
         return false;
     }
@@ -144,12 +157,12 @@ class Argument
      *
      * @param string        $sValue                The keys of the options in the file
      *
-     * @return string|boolean|integer|double|null
+     * @return string|bool|integer|double|null
      */
-    private function __convertValue($sValue)
+    private function __convertValue(string $sValue)
     {
-        $cType = \substr($sValue, 0, 1);
-        $sValue = \substr($sValue, 1);
+        $cType = substr($sValue, 0, 1);
+        $sValue = substr($sValue, 1);
         switch($cType)
         {
         case 'S':
@@ -159,7 +172,7 @@ class Argument
             $value = $this->__convertStringToBool($sValue);
             break;
         case 'N':
-            $value = ($sValue == \floor($sValue) ? (int)$sValue : (float)$sValue);
+            $value = ($sValue == floor($sValue) ? (int)$sValue : (float)$sValue);
             break;
         case '*':
         default:
@@ -185,22 +198,22 @@ class Argument
 
         // Arguments are url encoded when uploading files
         $sType = 'multipart/form-data';
-        $iLen = \strlen($sType);
+        $nLen = strlen($sType);
         $sContentType = '';
-        if(\key_exists('CONTENT_TYPE', $_SERVER))
+        if(isset($_SERVER['CONTENT_TYPE']))
         {
-            $sContentType = \substr($_SERVER['CONTENT_TYPE'], 0, $iLen);
+            $sContentType = substr($_SERVER['CONTENT_TYPE'], 0, $nLen);
         }
-        elseif(\key_exists('HTTP_CONTENT_TYPE', $_SERVER))
+        elseif(isset($_SERVER['HTTP_CONTENT_TYPE']))
         {
-            $sContentType = \substr($_SERVER['HTTP_CONTENT_TYPE'], 0, $iLen);
+            $sContentType = substr($_SERVER['HTTP_CONTENT_TYPE'], 0, $nLen);
         }
         if($sContentType == $sType)
         {
-            $sArg = \urldecode($sArg);
+            $sArg = urldecode($sArg);
         }
 
-        $data = \json_decode($sArg, true);
+        $data = json_decode($sArg, true);
 
         if($data !== null && $sArg != $data)
         {
@@ -221,13 +234,13 @@ class Argument
      *
      * @return void
      */
-    private function _decode_utf8_argument(array &$aDst, $sKey, $mValue)
+    private function _decode_utf8_argument(array &$aDst, string $sKey, $mValue)
     {
         $sDestKey = $sKey;
         // Decode the key
-        if(\is_string($sDestKey))
+        if(is_string($sDestKey))
         {
-            $sDestKey = \call_user_func($this->cUtf8Decoder, $sDestKey);
+            $sDestKey = call_user_func($this->cUtf8Decoder, $sDestKey);
         }
 
         if(is_array($mValue))
@@ -238,13 +251,13 @@ class Argument
                 $this->_decode_utf8_argument($aDst[$sDestKey], $_sKey, $_mValue);
             }
         }
-        elseif(\is_numeric($mValue) || \is_bool($mValue))
+        elseif(is_numeric($mValue) || is_bool($mValue))
         {
             $aDst[$sDestKey] = $mValue;
         }
-        elseif(\is_string($mValue))
+        elseif(is_string($mValue))
         {
-            $aDst[$sDestKey] = \call_user_func($this->cUtf8Decoder, $mValue);
+            $aDst[$sDestKey] = call_user_func($this->cUtf8Decoder, $mValue);
         }
     }
 
@@ -259,7 +272,7 @@ class Argument
         // {
         //     \array_walk($this->aArgs, [$this, '__argumentStripSlashes']);
         // }
-        \array_walk($this->aArgs, [$this, '__argumentDecode']);
+        array_walk($this->aArgs, [$this, '__argumentDecode']);
 
         if(($this->getOption('core.decode_utf8')))
         {
@@ -267,27 +280,27 @@ class Argument
             $this->cUtf8Decoder = function($sStr) {
                 return $sStr;
             };
-            if(\function_exists('iconv'))
+            if(function_exists('iconv'))
             {
                 $this->cUtf8Decoder = function($sStr) {
-                    return \iconv("UTF-8", $this->getOption('core.encoding') . '//TRANSLIT', $sStr);
+                    return iconv("UTF-8", $this->getOption('core.encoding') . '//TRANSLIT', $sStr);
                 };
             }
-            elseif(\function_exists('mb_convert_encoding'))
+            elseif(function_exists('mb_convert_encoding'))
             {
                 $this->cUtf8Decoder = function($sStr) {
-                    return \mb_convert_encoding($sStr, $this->getOption('core.encoding'), "UTF-8");
+                    return mb_convert_encoding($sStr, $this->getOption('core.encoding'), "UTF-8");
                 };
             }
             elseif($this->getOption('core.encoding') == "ISO-8859-1")
             {
                 $this->cUtf8Decoder = function($sStr) {
-                    return \utf8_decode($sStr);
+                    return utf8_decode($sStr);
                 };
             }
             else
             {
-                throw new Error($this->trans('errors.request.conversion'));
+                throw new SetupException($this->trans('errors.request.conversion'));
             }
 
             $aDst = [];

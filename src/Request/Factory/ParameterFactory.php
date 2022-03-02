@@ -25,7 +25,7 @@ class ParameterFactory
      *
      * @return Parameter
      */
-    public function form($sFormId)
+    public function form(string $sFormId)
     {
         return new Parameter(Parameter::FORM_VALUES, $sFormId);
     }
@@ -37,7 +37,7 @@ class ParameterFactory
      *
      * @return Parameter
      */
-    public function input($sInputId)
+    public function input(string $sInputId)
     {
         return new Parameter(Parameter::INPUT_VALUE, $sInputId);
     }
@@ -49,7 +49,7 @@ class ParameterFactory
      *
      * @return Parameter
      */
-    public function checked($sInputId)
+    public function checked(string $sInputId)
     {
         return new Parameter(Parameter::CHECKED_VALUE, $sInputId);
     }
@@ -61,7 +61,7 @@ class ParameterFactory
      *
      * @return Parameter
      */
-    public function select($sInputId)
+    public function select(string $sInputId)
     {
         return self::input($sInputId);
     }
@@ -73,7 +73,7 @@ class ParameterFactory
      *
      * @return Parameter
      */
-    public function html($sElementId)
+    public function html(string $sElementId)
     {
         return new Parameter(Parameter::ELEMENT_INNERHTML, $sElementId);
     }
@@ -85,7 +85,7 @@ class ParameterFactory
      *
      * @return Parameter
      */
-    public function string($sValue)
+    public function string(string $sValue)
     {
         return new Parameter(Parameter::QUOTED_VALUE, $sValue);
     }
@@ -97,7 +97,7 @@ class ParameterFactory
      *
      * @return Parameter
      */
-    public function numeric($nValue)
+    public function numeric(int $nValue)
     {
         return new Parameter(Parameter::NUMERIC_VALUE, intval($nValue));
     }
@@ -109,7 +109,7 @@ class ParameterFactory
      *
      * @return Parameter
      */
-    public function int($nValue)
+    public function int(int $nValue)
     {
         return self::numeric($nValue);
     }
@@ -121,7 +121,7 @@ class ParameterFactory
      *
      * @return Parameter
      */
-    public function javascript($sValue)
+    public function javascript(string $sValue)
     {
         return new Parameter(Parameter::JS_VALUE, $sValue);
     }
@@ -133,7 +133,7 @@ class ParameterFactory
      *
      * @return Parameter
      */
-    public function js($sValue)
+    public function js(string $sValue)
     {
         return self::javascript($sValue);
     }

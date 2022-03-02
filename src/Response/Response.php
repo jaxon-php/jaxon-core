@@ -30,9 +30,20 @@
 
 namespace Jaxon\Response;
 
-use Jaxon\Exception\Error;
+use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\Response as ResponsePlugin;
 use Jaxon\Response\Plugin\JQuery\Dom\Element;
+
+use function json_encode;
+use function array_merge;
+use function array_map;
+use function is_integer;
+use function trim;
+use function is_array;
+use function trim;
+use function array_keys;
+use function count;
+use function jaxon;
 
 class Response extends AbstractResponse
 {
@@ -53,7 +64,7 @@ class Response extends AbstractResponse
      *
      * @var mixed
      */
-    protected $returnValue;
+    protected $xReturnValue;
 
     /**
      * Get the content type, which is always set to 'application/json'
@@ -74,7 +85,7 @@ class Response extends AbstractResponse
      *
      * @return null|ResponsePlugin
      */
-    public function plugin($sName)
+    public function plugin(string $sName)
     {
         $xPlugin = jaxon()->di()->getPluginManager()->getResponsePlugin($sName);
         if(!$xPlugin)
@@ -94,7 +105,7 @@ class Response extends AbstractResponse
      *
      * @return null|ResponsePlugin
      */
-    public function __get($sPluginName)
+    public function __get(string $sPluginName)
     {
         return $this->plugin($sPluginName);
     }
@@ -109,7 +120,7 @@ class Response extends AbstractResponse
      *
      * @return Element
      */
-    public function jq($sSelector = '', $sContext = '')
+    public function jq(string $sSelector = '', string $sContext = '')
     {
         return $this->plugin('jquery')->element($sSelector, $sContext);
     }
@@ -124,9 +135,49 @@ class Response extends AbstractResponse
      *
      * @return Element
      */
-    public function jQuery($sSelector = '', $sContext = '')
+    public function jQuery(string $sSelector = '', string $sContext = '')
     {
         return $this->jq($sSelector, $sContext);
+    }
+
+    /**
+     * Get the command data, merged with the last one if possible.
+     *
+     * @param array             $aAttributes        Associative array of attributes that will describe the command
+     * @param mixed             $mData              The data to be associated with this command
+     *
+     * @return array
+     */
+    private function getCommandData(array $aAttributes, $mData)
+    {
+        if(!$this->getOption('core.response.merge') ||
+            !in_array($aAttributes['cmd'], ['js', 'ap']) ||
+            ($count = count($this->aCommands)) === 0)
+        {
+            return [false, $mData];
+        }
+        $aLastCommand = $this->aCommands[$count - 1];
+        if($aLastCommand['cmd'] !== $aAttributes['cmd'])
+        {
+            return [false, $mData];
+        }
+        if($aLastCommand['cmd'] === 'js')
+        {
+            if($this->getOption('core.response.merge.js'))
+            {
+                return [true, $aLastCommand['data'] . '; ' . $mData];
+            }
+        }
+        elseif($aLastCommand['cmd'] === 'ap')
+        {
+            if($this->getOption('core.response.merge.ap') &&
+                $aLastCommand['id'] === $aAttributes['id'] &&
+                $aLastCommand['prop'] === $aAttributes['prop'])
+            {
+                return [true, $aLastCommand['data'] . ' ' . $mData];
+            }
+        }
+        return [false, $mData];
     }
 
     /**
@@ -139,41 +190,14 @@ class Response extends AbstractResponse
      */
     public function addCommand(array $aAttributes, $mData)
     {
-        array_walk($aAttributes, function(&$sAttribute) {
-            if(!is_integer($sAttribute))
-            {
-                $sAttribute = trim((string)$sAttribute, " \t");
-            }
-        });
+        $aAttributes = array_map(function($xAttribute) {
+            return is_integer($xAttribute) ? $xAttribute : trim((string)$xAttribute, " \t");
+        }, $aAttributes);
 
-        /* merge commands if possible */
-        if(in_array($aAttributes['cmd'], ['js', 'ap']))
+        [$bMerged, $mData] = $this->getCommandData($aAttributes, $mData);
+        if($bMerged)
         {
-            if(($aLastCommand = array_pop($this->aCommands)))
-            {
-                if($aLastCommand['cmd'] == $aAttributes['cmd'])
-                {
-                    if($this->getOption('core.response.merge.js') && $aLastCommand['cmd'] == 'js')
-                    {
-                        $mData = $aLastCommand['data'] . '; ' . $mData;
-                    }
-                    elseif($this->getOption('core.response.merge.ap') &&
-                        $aLastCommand['cmd'] == 'ap' &&
-                        $aLastCommand['id'] == $aAttributes['id'] &&
-                        $aLastCommand['prop'] == $aAttributes['prop'])
-                    {
-                        $mData = $aLastCommand['data'] . ' ' . $mData;
-                    }
-                    else
-                    {
-                        $this->aCommands[] = $aLastCommand;
-                    }
-                }
-                else
-                {
-                    $this->aCommands[] = $aLastCommand;
-                }
-            }
+            array_pop($this->aCommands);
         }
         $aAttributes['data'] = $mData;
         $this->aCommands[] = $aAttributes;
@@ -187,22 +211,15 @@ class Response extends AbstractResponse
      * @param string        $sName              The command name
      * @param array         $aAttributes        Associative array of attributes that will describe the command
      * @param mixed         $mData              The data to be associated with this command
-     * @param boolean       $bRemoveEmpty       If true, remove empty attributes
+     * @param bool       $bRemoveEmpty       If true, remove empty attributes
      *
      * @return Response
      */
-    protected function _addCommand($sName, array $aAttributes, $mData, $bRemoveEmpty = false)
+    protected function _addCommand(string $sName, array $aAttributes, $mData, bool $bRemoveEmpty = false)
     {
-        if(is_array($mData))
-        {
-            array_walk($mData, function(&$sData) {
-                $sData = trim((string)$sData, " \t\n");
-            });
-        }
-        else
-        {
-            $mData = trim((string)$mData, " \t\n");
-        }
+        $mData = is_array($mData) ? array_map(function($sData) {
+            return trim((string)$sData, " \t\n");
+        }, $mData) : trim((string)$mData, " \t\n");
 
         if($bRemoveEmpty)
         {
@@ -240,7 +257,7 @@ class Response extends AbstractResponse
      *
      * @return Response
      */
-    public function addPluginCommand($xPlugin, $aAttributes, $mData)
+    public function addPluginCommand(ResponsePlugin $xPlugin, array $aAttributes, $mData)
     {
         $aAttributes['plg'] = $xPlugin->getName();
         return $this->addCommand($aAttributes, $mData);
@@ -251,16 +268,16 @@ class Response extends AbstractResponse
      * the response commands in this <Response> object
      *
      * @param Response|array $mCommands The <Response> object
-     * @param boolean $bBefore Add the new commands to the beginning of the list
+     * @param bool $bBefore Add the new commands to the beginning of the list
      *
      * @return void
-     * @throws Error
+     * @throws SetupException
      */
-    public function appendResponse($mCommands, $bBefore = false)
+    public function appendResponse($mCommands, bool $bBefore = false)
     {
         if($mCommands instanceof Response)
         {
-            $this->returnValue = $mCommands->returnValue;
+            $this->xReturnValue = $mCommands->xReturnValue;
             $aCommands = $mCommands->aCommands;
         }
         elseif(is_array($mCommands))
@@ -269,7 +286,7 @@ class Response extends AbstractResponse
         }
         else
         {
-            throw new Error(jaxon_trans('errors.response.data.invalid'));
+            throw new SetupException(jaxon_trans('errors.response.data.invalid'));
         }
 
         $this->aCommands = ($bBefore) ?
@@ -309,7 +326,7 @@ class Response extends AbstractResponse
      */
     public function setReturnValue($value)
     {
-        $this->returnValue = $value;
+        $this->xReturnValue = $value;
         return $this;
     }
 
@@ -320,20 +337,20 @@ class Response extends AbstractResponse
      */
     public function getOutput()
     {
-        $response = [
+        $aResponse = [
             'jxnobj' => [],
         ];
 
-        if(($this->returnValue))
+        if(($this->xReturnValue))
         {
-            $response['jxnrv'] = $this->returnValue;
+            $aResponse['jxnrv'] = $this->xReturnValue;
         }
 
         foreach($this->aCommands as $xCommand)
         {
-            $response['jxnobj'][] = $xCommand;
+            $aResponse['jxnobj'][] = $xCommand;
         }
 
-        return json_encode($response);
+        return json_encode($aResponse);
     }
 }

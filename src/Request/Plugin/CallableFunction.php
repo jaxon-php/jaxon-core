@@ -25,12 +25,19 @@ use Jaxon\Jaxon;
 use Jaxon\Plugin\Request as RequestPlugin;
 use Jaxon\Request\Target;
 use Jaxon\Request\Handler\Handler as RequestHandler;
+use Jaxon\Request\Validator;
 use Jaxon\Response\Manager as ResponseManager;
 use Jaxon\Container\Container;
 
+use function trim;
+use function is_string;
+use function is_array;
+use function md5;
+use function implode;
+use function array_keys;
+
 class CallableFunction extends RequestPlugin
 {
-    use \Jaxon\Features\Validator;
     use \Jaxon\Features\Translator;
 
     /**
@@ -55,6 +62,13 @@ class CallableFunction extends RequestPlugin
     protected $xResponseManager;
 
     /**
+     * The request data validator
+     *
+     * @var Validator
+     */
+    protected $xValidator;
+
+    /**
      * The registered user functions names
      *
      * @var array
@@ -74,12 +88,15 @@ class CallableFunction extends RequestPlugin
      * @param Container         $di
      * @param RequestHandler    $xRequestHandler
      * @param ResponseManager   $xResponseManager
+     * @param Validator         $xValidator
      */
-    public function __construct(Container $di, RequestHandler $xRequestHandler, ResponseManager $xResponseManager)
+    public function __construct(Container $di, RequestHandler $xRequestHandler,
+        ResponseManager $xResponseManager, Validator $xValidator)
     {
         $this->di = $di;
         $this->xRequestHandler = $xRequestHandler;
         $this->xResponseManager = $xResponseManager;
+        $this->xValidator = $xValidator;
 
         if(isset($_GET['jxnfun']))
         {
@@ -118,9 +135,9 @@ class CallableFunction extends RequestPlugin
      * @param string        $sCallableFunction  The name of the function being registered
      * @param array|string  $aOptions           The associated options
      *
-     * @return boolean
+     * @return bool
      */
-    public function register($sType, $sCallableFunction, $aOptions)
+    public function register(string $sType, string $sCallableFunction, $aOptions)
     {
         $sType = trim($sType);
         if($sType != $this->getName())
@@ -130,7 +147,7 @@ class CallableFunction extends RequestPlugin
 
         if(!is_string($sCallableFunction))
         {
-            throw new \Jaxon\Exception\Error($this->trans('errors.functions.invalid-declaration'));
+            throw new \Jaxon\Exception\SetupException($this->trans('errors.functions.invalid-declaration'));
         }
 
         if(is_string($aOptions))
@@ -139,7 +156,7 @@ class CallableFunction extends RequestPlugin
         }
         if(!is_array($aOptions))
         {
-            throw new \Jaxon\Exception\Error($this->trans('errors.functions.invalid-declaration'));
+            throw new \Jaxon\Exception\SetupException($this->trans('errors.functions.invalid-declaration'));
         }
 
         $sCallableFunction = trim($sCallableFunction);
@@ -188,7 +205,7 @@ class CallableFunction extends RequestPlugin
     public function canProcessRequest()
     {
         // Check the validity of the function name
-        if(($this->sRequestedFunction) && !$this->validateFunction($this->sRequestedFunction))
+        if(($this->sRequestedFunction) && !$this->xValidator->validateFunction($this->sRequestedFunction))
         {
             $this->sRequestedFunction = null;
         }
@@ -206,10 +223,10 @@ class CallableFunction extends RequestPlugin
         }
 
         // Security check: make sure the requested function was registered.
-        if(!key_exists($this->sRequestedFunction, $this->aFunctions))
+        if(!isset($this->aFunctions[$this->sRequestedFunction]))
         {
             // Unable to find the requested function
-            throw new \Jaxon\Exception\Error($this->trans('errors.functions.invalid',
+            throw new \Jaxon\Exception\SetupException($this->trans('errors.functions.invalid',
                 ['name' => $this->sRequestedFunction]));
         }
 

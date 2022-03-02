@@ -123,15 +123,18 @@ class Dialog
     }
 
     /**
-     * Get the script which makes a call only if the user answers yes to the given question
-     *
+     * Get the script which makes a call only if the user answers yes to the given question.
      * It is a function of the Question interface.
+     *
+     * @param string            $sQuestion
+     * @param string            $sYesScript
+     * @param string            $sNoScript
      *
      * @return string
      */
-    public function confirm($question, $yesScript, $noScript)
+    public function confirm(string $sQuestion, string $sYesScript, string $sNoScript)
     {
-        return $this->getQuestion()->confirm($question, $yesScript, $noScript);
+        return $this->getQuestion()->confirm($sQuestion, $sYesScript, $sNoScript);
     }
 
     /**
@@ -139,14 +142,14 @@ class Dialog
      *
      * It is a function of the Message interface.
      *
-     * @param string              $message              The text of the message
-     * @param string|null         $title                The title of the message
+     * @param string              $sMessage             The text of the message
+     * @param string              $sTitle               The title of the message
      *
      * @return string|void
      */
-    public function success($message, $title = null)
+    public function success(string $sMessage, string $sTitle = '')
     {
-        return $this->getMessage()->success($message, $title);
+        return $this->getMessage()->success($sMessage, $sTitle);
     }
 
     /**
@@ -154,14 +157,14 @@ class Dialog
      *
      * It is a function of the Message interface.
      *
-     * @param string              $message              The text of the message
-     * @param string|null         $title                The title of the message
+     * @param string              $sMessage             The text of the message
+     * @param string              $sTitle               The title of the message
      *
      * @return string|void
      */
-    public function info($message, $title = null)
+    public function info(string $sMessage, string $sTitle = '')
     {
-        return $this->getMessage()->info($message, $title);
+        return $this->getMessage()->info($sMessage, $sTitle);
     }
 
     /**
@@ -169,14 +172,14 @@ class Dialog
      *
      * It is a function of the Message interface.
      *
-     * @param string              $message              The text of the message
-     * @param string|null         $title                The title of the message
+     * @param string              $sMessage             The text of the message
+     * @param string              $sTitle               The title of the message
      *
      * @return string|void
      */
-    public function warning($message, $title = null)
+    public function warning(string $sMessage, string $sTitle = '')
     {
-        return $this->getMessage()->warning($message, $title);
+        return $this->getMessage()->warning($sMessage, $sTitle);
     }
 
     /**
@@ -184,13 +187,13 @@ class Dialog
      *
      * It is a function of the Message interface.
      *
-     * @param string              $message              The text of the message
-     * @param string|null         $title                The title of the message
+     * @param string              $sMessage             The text of the message
+     * @param string              $sTitle               The title of the message
      *
      * @return string|void
      */
-    public function error($message, $title = null)
+    public function error(string $sMessage, string $sTitle = '')
     {
-        return $this->getMessage()->error($message, $title);
+        return $this->getMessage()->error($sMessage, $sTitle);
     }
 }

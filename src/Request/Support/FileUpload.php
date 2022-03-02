@@ -11,12 +11,20 @@
 
 namespace Jaxon\Request\Support;
 
+use Jaxon\Request\Validator;
+
 use Closure;
 
 class FileUpload
 {
-    use \Jaxon\Features\Validator;
     use \Jaxon\Features\Translator;
+
+    /**
+     * The request data validator
+     *
+     * @var Validator
+     */
+    protected $xValidator;
 
     /**
      * A user defined function to transform uploaded file names
@@ -26,9 +34,19 @@ class FileUpload
     protected $cNameSanitizer = null;
 
     /**
+     * The constructor
+     *
+     * @param Validator         $xValidator
+     */
+    public function __construct(Validator $xValidator)
+    {
+        $this->xValidator = $xValidator;
+    }
+
+    /**
      * Filter uploaded file name
      *
-     * @param Closure       $cNameSanitizer            The closure which filters filenames
+     * @param Closure       $cNameSanitizer     The closure which filters filenames
      *
      * @return void
      */
@@ -43,7 +61,7 @@ class FileUpload
      * @param array     $aFiles     The uploaded files
      *
      * @return void
-     * @throws \Jaxon\Exception\Error
+     * @throws \Jaxon\Exception\SetupException
      */
     private function checkFiles(array $aFiles)
     {
@@ -54,12 +72,12 @@ class FileUpload
                 // Verify upload result
                 if($aFile['error'] != 0)
                 {
-                    throw new \Jaxon\Exception\Error($this->trans('errors.upload.failed', $aFile));
+                    throw new \Jaxon\Exception\SetupException($this->trans('errors.upload.failed', $aFile));
                 }
                 // Verify file validity (format, size)
-                if(!$this->validateUploadedFile($sVarName, $aFile))
+                if(!$this->xValidator->validateUploadedFile($sVarName, $aFile))
                 {
-                    throw new \Jaxon\Exception\Error($this->getValidatorMessage());
+                    throw new \Jaxon\Exception\SetupException($this->getValidatorMessage());
                 }
             }
         }
@@ -74,7 +92,7 @@ class FileUpload
      *
      * @return null|array
      */
-    private function getUploadedFile($sVarName, array $aVarFiles, $nPosition)
+    private function getUploadedFile(string $sVarName, array $aVarFiles, int $nPosition)
     {
         if(!$aVarFiles['name'][$nPosition])
         {
@@ -127,7 +145,7 @@ class FileUpload
                 $aUploadedFile = $this->getUploadedFile($sVarName, $aVarFiles, $i);
                 if(is_array($aUploadedFile))
                 {
-                    if(!array_key_exists($sVarName, $aUploadedFiles))
+                    if(!isset($aUploadedFiles[$sVarName]))
                     {
                         $aUploadedFiles[$sVarName] = [];
                     }

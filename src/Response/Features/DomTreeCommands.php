@@ -20,11 +20,11 @@ trait DomTreeCommands
      * @param string        $sName              The command name
      * @param array         $aAttributes        Associative array of attributes that will describe the command
      * @param mixed         $mData              The data to be associated with this command
-     * @param boolean       $bRemoveEmpty       If true, remove empty attributes
+     * @param bool       $bRemoveEmpty       If true, remove empty attributes
      *
      * @return Response
      */
-    abstract protected function _addCommand($sName, array $aAttributes, $mData, $bRemoveEmpty = false);
+    abstract protected function _addCommand(string $sName, array $aAttributes, $mData, bool $bRemoveEmpty = false);
 
     /**
      * Add a command to start a DOM response
@@ -39,107 +39,101 @@ trait DomTreeCommands
     /**
      * Add a command to create a DOM element
      *
-     * @param string        $variable            The DOM element name (id or class)
-     * @param string        $tag                The HTML tag of the new DOM element
+     * @param string        $sVariable            The DOM element name (id or class)
+     * @param string        $sTag                The HTML tag of the new DOM element
      *
      * @return Response
      */
-    public function domCreateElement($variable, $tag)
+    public function domCreateElement(string $sVariable, string $sTag)
     {
-        $aAttributes = ['tgt' => $variable];
-        return $this->_addCommand('DCE', $aAttributes, $tag);
+        $aAttributes = ['tgt' => $sVariable];
+        return $this->_addCommand('DCE', $aAttributes, $sTag);
     }
 
     /**
      * Add a command to set an attribute on a DOM element
      *
-     * @param string        $variable            The DOM element name (id or class)
-     * @param string        $key                The name of the attribute
-     * @param string        $value                The value of the attribute
+     * @param string        $sVariable            The DOM element name (id or class)
+     * @param string        $sKey                The name of the attribute
+     * @param string        $sValue                The value of the attribute
      *
      * @return Response
      */
-    public function domSetAttribute($variable, $key, $value)
+    public function domSetAttribute(string $sVariable, string $sKey, string $sValue)
     {
-        $aAttributes = [
-            'tgt' => $variable,
-            'key' => $key
-        ];
-        return $this->_addCommand('DSA', $aAttributes, $value);
+        $aAttributes = ['tgt' => $sVariable, 'key' => $sKey];
+        return $this->_addCommand('DSA', $aAttributes, $sValue);
     }
 
     /**
      * Add a command to remove children from a DOM element
      *
-     * @param string        $parent             The DOM parent element
-     * @param string        $skip               The number of children to skip
-     * @param string        $remove             The number of children to remove
+     * @param string        $sParent             The DOM parent element
+     * @param int           $nSkip               The number of children to skip
+     * @param int           $nRemove             The number of children to remove
      *
      * @return Response
      */
-    public function domRemoveChildren($parent, $skip = '', $remove = '')
+    public function domRemoveChildren(string $sParent, int $nSkip = 0, int $nRemove = 0)
     {
-        $aAttributes = [
-            'skip' => $skip,
-            'remove' => $remove
-        ];
-        return $this->_addCommand('DRC', $aAttributes, $parent, true);
+        $aAttributes = ['skip' => $nSkip, 'remove' => $nRemove];
+        return $this->_addCommand('DRC', $aAttributes, $sParent, true);
     }
 
     /**
      * Add a command to append a child to a DOM element
      *
-     * @param string        $parent                The DOM parent element
-     * @param string        $variable            The DOM element name (id or class)
+     * @param string        $sParent                The DOM parent element
+     * @param string        $sVariable            The DOM element name (id or class)
      *
      * @return Response
      */
-    public function domAppendChild($parent, $variable)
+    public function domAppendChild(string $sParent, string $sVariable)
     {
-        $aAttributes = ['par' => $parent];
-        return $this->_addCommand('DAC', $aAttributes, $variable);
+        $aAttributes = ['par' => $sParent];
+        return $this->_addCommand('DAC', $aAttributes, $sVariable);
     }
 
     /**
      * Add a command to insert a DOM element before another
      *
-     * @param string        $target                The DOM target element
-     * @param string        $variable            The DOM element name (id or class)
+     * @param string        $sTarget                The DOM target element
+     * @param string        $sVariable            The DOM element name (id or class)
      *
      * @return Response
      */
-    public function domInsertBefore($target, $variable)
+    public function domInsertBefore(string $sTarget, string $sVariable)
     {
-        $aAttributes = ['tgt' => $target];
-        return $this->_addCommand('DIB', $aAttributes, $variable);
+        $aAttributes = ['tgt' => $sTarget];
+        return $this->_addCommand('DIB', $aAttributes, $sVariable);
     }
 
     /**
      * Add a command to insert a DOM element after another
      *
-     * @param string        $target                The DOM target element
-     * @param string        $variable            The DOM element name (id or class)
+     * @param string        $sTarget                The DOM target element
+     * @param string        $sVariable            The DOM element name (id or class)
      *
      * @return Response
      */
-    public function domInsertAfter($target, $variable)
+    public function domInsertAfter(string $sTarget, string $sVariable)
     {
-        $aAttributes = ['tgt' => $target];
-        return $this->_addCommand('DIA', $aAttributes, $variable);
+        $aAttributes = ['tgt' => $sTarget];
+        return $this->_addCommand('DIA', $aAttributes, $sVariable);
     }
 
     /**
      * Add a command to append a text to a DOM element
      *
-     * @param string        $parent                The DOM parent element
-     * @param string        $text                The HTML text to append
+     * @param string        $sParent                The DOM parent element
+     * @param string        $sText                The HTML text to append
      *
      * @return Response
      */
-    public function domAppendText($parent, $text)
+    public function domAppendText(string $sParent, string $sText)
     {
-        $aAttributes = ['par' => $parent];
-        return $this->_addCommand('DAT', $aAttributes, $text);
+        $aAttributes = ['par' => $sParent];
+        return $this->_addCommand('DAT', $aAttributes, $sText);
     }
 
     /**

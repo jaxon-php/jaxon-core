@@ -102,7 +102,7 @@ class CallableObject
      * @param ReflectionClass   $xReflectionClass   The reflection class
      *
      */
-    public function __construct(Container $di, ReflectionClass  $xReflectionClass)
+    public function __construct(Container $di, ReflectionClass $xReflectionClass)
     {
         $this->di = $di;
         $this->xReflectionClass = $xReflectionClass;
@@ -202,7 +202,7 @@ class CallableObject
      *
      * @return void
      */
-    public function setHookMethods(&$aHookMethods, $xValue)
+    public function setHookMethods(array &$aHookMethods, $xValue)
     {
         foreach($xValue as $sCalledMethod => $xMethodToCall)
         {
@@ -225,7 +225,7 @@ class CallableObject
      *
      * @return void
      */
-    public function configure($sName, $xValue)
+    public function configure(string $sName, $xValue)
     {
         switch($sName)
         {
@@ -308,9 +308,9 @@ class CallableObject
      *
      * @param string        $sMethod            The name of the method to check
      *
-     * @return boolean
+     * @return bool
      */
-    public function hasMethod($sMethod)
+    public function hasMethod(string $sMethod)
     {
         return $this->xReflectionClass->hasMethod($sMethod);
     }
@@ -324,14 +324,14 @@ class CallableObject
      *
      * @return void
      */
-    private function callHookMethods($aClassMethods, $sMethod)
+    private function callHookMethods(array $aClassMethods, string $sMethod)
     {
         $aMethods = [];
-        if(key_exists($sMethod, $aClassMethods))
+        if(isset($aClassMethods[$sMethod]))
         {
             $aMethods = $aClassMethods[$sMethod];
         }
-        elseif(key_exists('*', $aClassMethods))
+        elseif(isset($aClassMethods['*']))
         {
             $aMethods = $aClassMethods['*'];
         }
@@ -362,7 +362,7 @@ class CallableObject
      *
      * @return null|Response
      */
-    public function call($sMethod, $aArgs)
+    public function call(string $sMethod, array $aArgs)
     {
         if(!$this->hasMethod($sMethod))
         {

@@ -12,6 +12,8 @@
 
 namespace Jaxon\Features;
 
+use function jaxon;
+
 trait Minifier
 {
     /**
@@ -20,9 +22,9 @@ trait Minifier
      * @param string        $sJsFile            The javascript file to be minified
      * @param string        $sMinFile            The minified javascript file
      *
-     * @return boolean        True if the file was minified
+     * @return bool
      */
-    public function minify($sJsFile, $sMinFile)
+    public function minify(string $sJsFile, string $sMinFile)
     {
         return jaxon()->di()->getMinifier()->minify($sJsFile, $sMinFile);
     }

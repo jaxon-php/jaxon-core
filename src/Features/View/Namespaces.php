@@ -12,6 +12,9 @@
 
 namespace Jaxon\Features\View;
 
+use function ltrim;
+use function rtrim;
+
 trait Namespaces
 {
     /**
@@ -44,7 +47,7 @@ trait Namespaces
      *
      * @return void
      */
-    public function addNamespace($sNamespace, $sDirectory, $sExtension = '')
+    public function addNamespace(string $sNamespace, string $sDirectory, string $sExtension = '')
     {
         $this->aDirectories[$sNamespace] = ['path' => $sDirectory, 'ext' => $sExtension];
     }
@@ -56,11 +59,11 @@ trait Namespaces
      *
      * @return void
      */
-    public function setCurrentNamespace($sNamespace)
+    public function setCurrentNamespace(string $sNamespace)
     {
         $this->sDirectory = '';
         $this->sExtension = '';
-        if(key_exists($sNamespace, $this->aDirectories))
+        if(isset($this->aDirectories[$sNamespace]))
         {
             // Make sure there's only one '/' at the end of the string
             $this->sDirectory = rtrim($this->aDirectories[$sNamespace]['path'], '/') . '/';

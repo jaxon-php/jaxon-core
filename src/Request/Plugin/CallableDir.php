@@ -25,6 +25,13 @@ use Jaxon\Jaxon;
 use Jaxon\Plugin\Request as RequestPlugin;
 use Jaxon\Request\Support\CallableRegistry;
 
+use function is_string;
+use function is_array;
+use function rtrim;
+use function trim;
+use function is_dir;
+use function realpath;
+
 class CallableDir extends RequestPlugin
 {
     use \Jaxon\Features\Translator;
@@ -60,18 +67,18 @@ class CallableDir extends RequestPlugin
      * @param string        $sDirectory     The path of teh directory being registered
      *
      * @return string
-     * @throws \Jaxon\Exception\Error
+     * @throws \Jaxon\Exception\SetupException
      */
-    private function checkDirectory($sDirectory)
+    private function checkDirectory(string $sDirectory)
     {
-        if(!is_string($sDirectory))
-        {
-            throw new \Jaxon\Exception\Error($this->trans('errors.objects.invalid-declaration'));
-        }
+        // if(!is_string($sDirectory))
+        // {
+        //     throw new \Jaxon\Exception\SetupException($this->trans('errors.objects.invalid-declaration'));
+        // }
         $sDirectory = rtrim(trim($sDirectory), '/\\');
         if(!is_dir($sDirectory))
         {
-            throw new \Jaxon\Exception\Error($this->trans('errors.objects.invalid-declaration'));
+            throw new \Jaxon\Exception\SetupException($this->trans('errors.objects.invalid-declaration'));
         }
         return realpath($sDirectory);
     }
@@ -82,7 +89,7 @@ class CallableDir extends RequestPlugin
      * @param array|string  $aOptions       The associated options
      *
      * @return array
-     * @throws \Jaxon\Exception\Error
+     * @throws \Jaxon\Exception\SetupException
      */
     private function checkOptions($aOptions)
     {
@@ -92,7 +99,7 @@ class CallableDir extends RequestPlugin
         }
         if(!is_array($aOptions))
         {
-            throw new \Jaxon\Exception\Error($this->trans('errors.objects.invalid-declaration'));
+            throw new \Jaxon\Exception\SetupException($this->trans('errors.objects.invalid-declaration'));
         }
 
         // Change the keys in $aOptions to have "\" as separator
@@ -112,9 +119,9 @@ class CallableDir extends RequestPlugin
      * @param string        $sDirectory     The path of the directory being registered
      * @param array|string  $aOptions       The associated options
      *
-     * @return boolean
+     * @return bool
      */
-    public function register($sType, $sDirectory, $aOptions)
+    public function register(string $sType, string $sDirectory, $aOptions)
     {
         $sType = trim($sType);
         if($sType != $this->getName())
@@ -127,7 +134,7 @@ class CallableDir extends RequestPlugin
         $aOptions = $this->checkOptions($aOptions);
         $aOptions['directory'] = $sDirectory;
 
-        $sNamespace = key_exists('namespace', $aOptions) ? $aOptions['namespace'] : '';
+        $sNamespace = isset($aOptions['namespace']) ? $aOptions['namespace'] : '';
         if(!($sNamespace = trim($sNamespace, ' \\')))
         {
             $sNamespace = '';
@@ -156,7 +163,7 @@ class CallableDir extends RequestPlugin
     /**
      * Process the incoming Jaxon request
      *
-     * @return boolean
+     * @return bool
      */
     public function processRequest()
     {

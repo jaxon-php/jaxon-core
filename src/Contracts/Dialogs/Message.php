@@ -17,11 +17,11 @@ interface Message
     /**
      * Tells if the library should return the javascript code or run it in the browser.
      *
-     * @param boolean             $return               Whether to return the code
+     * @param bool             $bReturn              Whether to return the code
      *
      * @return void
      */
-    public function setReturn($return);
+    public function setReturn(bool $bReturn);
 
     /**
      * Tells if the library should return the js code or run it in the browser.
@@ -33,40 +33,40 @@ interface Message
     /**
      * Print a success message.
      *
-     * @param string              $message              The text of the message
-     * @param string|null         $title                The title of the message
+     * @param string              $sMessage             The text of the message
+     * @param string              $sTitle               The title of the message
      *
      * @return void
      */
-    public function success($message, $title = null);
+    public function success(string $sMessage, string $sTitle = '');
 
     /**
      * Print an information message.
      *
-     * @param string              $message              The text of the message
-     * @param string|null         $title                The title of the message
+     * @param string              $sMessage             The text of the message
+     * @param string              $sTitle               The title of the message
      *
      * @return void
      */
-    public function info($message, $title = null);
+    public function info(string $sMessage, string $sTitle = '');
 
     /**
      * Print a warning message.
      *
-     * @param string              $message              The text of the message
-     * @param string|null         $title                The title of the message
+     * @param string              $sMessage             The text of the message
+     * @param string              $sTitle               The title of the message
      *
      * @return void
      */
-    public function warning($message, $title = null);
+    public function warning(string $sMessage, string $sTitle = '');
 
     /**
      * Print an error message.
      *
-     * @param string              $message              The text of the message
-     * @param string|null         $title                The title of the message
+     * @param string              $sMessage             The text of the message
+     * @param string              $sTitle               The title of the message
      *
      * @return void
      */
-    public function error($message, $title = null);
+    public function error(string $sMessage, string $sTitle = '');
 }
