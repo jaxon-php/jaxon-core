@@ -10,9 +10,12 @@ use Jaxon\Request\Plugin\CallableDir;
 use Jaxon\Request\Plugin\CallableFunction;
 use Jaxon\Request\Support\CallableRegistry;
 use Jaxon\Request\Support\CallableRepository;
+use Jaxon\Request\Validator;
 use Jaxon\Response\Manager as ResponseManager;
+use Jaxon\Utils\Config\Config;
 use Jaxon\Utils\Http\URI;
 use Jaxon\Utils\Template\Engine as TemplateEngine;
+use Jaxon\Utils\Translation\Translator;
 
 trait CallableTrait
 {
@@ -23,6 +26,10 @@ trait CallableTrait
      */
     private function registerCallables()
     {
+        // Validator
+        $this->set(Validator::class, function($c) {
+            return new Validator($c->g(Translator::class), $c->g(Config::class));
+        });
         // Callable objects repository
         $this->set(CallableRepository::class, function() {
             return new CallableRepository($this);
@@ -33,8 +40,9 @@ trait CallableTrait
         });
         // Callable class plugin
         $this->set(CallableClass::class, function($c) {
-            return new CallableClass($c->g(RequestHandler::class), $c->g(ResponseManager::class),
-                $c->g(CallableRegistry::class), $c->g(CallableRepository::class));
+            return new CallableClass($c->g(RequestHandler::class),
+                $c->g(ResponseManager::class), $c->g(CallableRegistry::class),
+                $c->g(CallableRepository::class), $c->g(Translator::class));
         });
         // Callable dir plugin
         $this->set(CallableDir::class, function($c) {
@@ -42,7 +50,8 @@ trait CallableTrait
         });
         // Callable function plugin
         $this->set(CallableFunction::class, function($c) {
-            return new CallableFunction($this, $c->g(RequestHandler::class), $c->g(ResponseManager::class));
+            return new CallableFunction($this, $c->g(RequestHandler::class),
+                $c->g(ResponseManager::class), $c->g(Translator::class));
         });
         // Code Generator
         $this->set(CodeGenerator::class, function($c) {

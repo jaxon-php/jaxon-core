@@ -1,7 +1,6 @@
-# Do not commit Eclipse files
 .project
 .settings/*
-/jaxon-core.komodoproject
-vendor
+jaxon-core.komodoproject
+vendor/
 composer.lock
 .idea

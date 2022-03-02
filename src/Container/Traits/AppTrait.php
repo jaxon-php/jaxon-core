@@ -10,6 +10,7 @@ use Jaxon\Request\Handler\Handler as RequestHandler;
 use Jaxon\Response\Manager as ResponseManager;
 use Jaxon\Ui\View\Manager as ViewManager;
 use Jaxon\Utils\Config\Reader as ConfigReader;
+use Jaxon\Utils\Translation\Translator;
 
 trait AppTrait
 {
@@ -22,7 +23,8 @@ trait AppTrait
     {
         // Jaxon App
         $this->set(App::class, function($c) {
-            return new App($c->g(Jaxon::class), $c->g(ResponseManager::class), $c->g(ConfigReader::class));
+            return new App($c->g(Jaxon::class), $c->g(ResponseManager::class),
+                $c->g(ConfigReader::class), $c->g(Translator::class));
         });
         // Jaxon App bootstrap
         $this->set(Bootstrap::class, function($c) {

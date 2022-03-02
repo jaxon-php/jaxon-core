@@ -14,22 +14,12 @@ trait ConfigTrait
      */
     private function registerConfigs()
     {
-        $this->set(Config::class, function($c) {
-            return new Config($c->g('jaxon.core.options'));
-        });
         $this->set(Reader::class, function($c) {
             return new Reader($c->g(Config::class));
         });
-    }
-
-    /**
-     * Get the config manager
-     *
-     * @return Config
-     */
-    public function getConfig()
-    {
-        return $this->g(Config::class);
+        $this->set(Config::class, function($c) {
+            return new Config($c->g('jaxon.core.options'));
+        });
     }
 
     /**
@@ -43,14 +33,24 @@ trait ConfigTrait
     }
 
     /**
+     * Get the library config options
+     *
+     * @return Config
+     */
+    public function getConfig()
+    {
+        return $this->g(Config::class);
+    }
+
+    /**
      * Create a new the config manager
      *
      * @param array             $aOptions           The options array
-     * @param string            $sKeys              The keys of the options in the array
+     * @param string            $sKeys              The key prefix of the config options
      *
-     * @return Config            The config manager
+     * @return Config
      */
-    public function newConfig(array $aOptions = [], $sKeys = '')
+    public function newConfig(array $aOptions = [], string $sKeys = '')
     {
         return new Config($aOptions, $sKeys);
     }

@@ -7,6 +7,7 @@ use Jaxon\Plugin\Code\Generator as CodeGenerator;
 use Jaxon\Plugin\Manager as PluginManager;
 use Jaxon\Request\Plugin\FileUpload;
 use Jaxon\Request\Support\FileUpload as FileUploadSupport;
+use Jaxon\Request\Validator;
 use Jaxon\Response\Manager as ResponseManager;
 use Jaxon\Response\Plugin\DataBag;
 use Jaxon\Response\Plugin\JQuery as JQueryPlugin;
@@ -25,8 +26,8 @@ trait PluginTrait
             return new PluginManager($c->g(Jaxon::class), $c->g(CodeGenerator::class));
         });
         // File upload support
-        $this->set(FileUploadSupport::class, function() {
-            return new FileUploadSupport();
+        $this->set(FileUploadSupport::class, function($c) {
+            return new FileUploadSupport($c->g(Validator::class));
         });
         // File upload plugin
         $this->set(FileUpload::class, function($c) {

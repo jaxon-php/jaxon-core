@@ -1,24 +1,22 @@
 <?php
 
 /**
- * Error.php - Jaxon error
+ * AppException.php - Jaxon app exception
  *
- * This exception is thrown when a generic error occurs.
+ * This exception is thrown when an error occurs in the application.
  *
  * @package jaxon-core
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
- * @copyright 2016 Thierry Feuzeu <thierry.feuzeu@gmail.com>
+ * @copyright 2022 Thierry Feuzeu <thierry.feuzeu@gmail.com>
  * @license https://opensource.org/licenses/BSD-3-Clause BSD 3-Clause License
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
 namespace Jaxon\Exception;
 
-use Exception;
-
-class Error extends Exception
+class AppException extends Exception
 {
-    public function __construct($sMessage)
+    public function __construct(string $sMessage)
     {
         parent::__construct($sMessage);
     }

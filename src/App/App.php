@@ -13,10 +13,20 @@
 namespace Jaxon\App;
 
 use Jaxon\Jaxon;
+use Jaxon\Exception\SetupException;
 use Jaxon\Response\Manager as ResponseManager;
 use Jaxon\Utils\Config\Reader as ConfigReader;
+use Jaxon\Utils\Config\Exception\DataDepth;
+use Jaxon\Utils\Config\Exception\YamlExtension;
+use Jaxon\Utils\Config\Exception\FileAccess;
+use Jaxon\Utils\Config\Exception\FileExtension;
+use Jaxon\Utils\Config\Exception\FileContent;
+use Jaxon\Utils\Translation\Translator;
 
-use Exception;
+use function intval;
+use function file_exists;
+use function is_array;
+use function http_response_code;
 
 class App
 {
@@ -38,17 +48,66 @@ class App
     private $xConfigReader;
 
     /**
+     * @var Translator
+     */
+    private $xTranslator;
+
+    /**
      * The class constructor
      *
      * @param Jaxon $jaxon
      * @param ResponseManager $xResponseManager
      * @param ConfigReader $xConfigReader
+     * @param Translator $xTranslator
      */
-    public function __construct(Jaxon $jaxon, ResponseManager $xResponseManager, ConfigReader $xConfigReader)
+    public function __construct(Jaxon $jaxon, ResponseManager $xResponseManager,
+        ConfigReader $xConfigReader, Translator $xTranslator)
     {
         $this->jaxon = $jaxon;
         $this->xResponseManager = $xResponseManager;
         $this->xConfigReader = $xConfigReader;
+        $this->xTranslator = $xTranslator;
+    }
+
+    /**
+     * Read config options from a config file and setup the library
+     *
+     * @param string $sConfigFile The full path to the config file
+     *
+     * @return array
+     * @throws SetupException
+     */
+    private function readConfig(string $sConfigFile): array
+    {
+        try
+        {
+            return $this->xConfigReader->read($sConfigFile);
+        }
+        catch(DataDepth $e)
+        {
+            $sMessage = $this->xTranslator->trans('errors.data.depth', ['key' => $sPrefix, 'depth' => $nDepth]);
+            throw new SetupException($sMessage);
+        }
+        catch(YamlExtension $e)
+        {
+            $sMessage = $this->xTranslator->trans('errors.yaml.install');
+            throw new SetupException($sMessage);
+        }
+        catch(FileExtension $e)
+        {
+            $sMessage = $this->xTranslator->trans('errors.file.extension', ['path' => $sConfigFile]);
+            throw new SetupException($sMessage);
+        }
+        catch(FileAccess $e)
+        {
+            $sMessage = $this->xTranslator->trans('errors.file.access', ['path' => $sConfigFile]);
+            throw new SetupException($sMessage);
+        }
+        catch(FileContent $e)
+        {
+            $sMessage = $this->xTranslator->trans('errors.file.content', ['path' => $sConfigFile]);
+            throw new SetupException($sMessage);
+        }
     }
 
     /**
@@ -57,47 +116,49 @@ class App
      * @param string $sConfigFile The full path to the config file
      *
      * @return void
-     * @throws Exception
+     * @throws SetupException|DataDepth
      */
-    public function setup($sConfigFile)
+    public function setup(string $sConfigFile)
     {
         if(!file_exists($sConfigFile))
         {
-            throw new Exception("Unable to find config file at $sConfigFile");
+            $sMessage = $this->xTranslator->trans('errors.file.access', ['path' => $sConfigFile]);
+            throw new SetupException($sMessage);
         }
 
         // Read the config options.
-        $aOptions = $this->xConfigReader->read($sConfigFile);
-        $aLibOptions = key_exists('lib', $aOptions) ? $aOptions['lib'] : [];
-        $aAppOptions = key_exists('app', $aOptions) ? $aOptions['app'] : [];
+        $aOptions = $this->readConfig($sConfigFile);
+        $aLibOptions = $aOptions['lib'] ?? [];
+        $aAppOptions = $aOptions['app'] ?? [];
 
         if(!is_array($aLibOptions) || !is_array($aAppOptions))
         {
-            throw new Exception("Unexpected content in config file at $sConfigFile");
+            $sMessage = $this->xTranslator->trans('errors.file.content', ['path' => $sConfigFile]);
+            throw new SetupException($sMessage);
         }
 
         $this->bootstrap()
             ->lib($aLibOptions)
             ->app($aAppOptions)
             // ->uri($sUri)
-            // ->js(!$isDebug, $sJsUrl, $sJsDir, !$isDebug)
+            // ->js(!$bIsDebug, $sJsUrl, $sJsDir, !$bIsDebug)
             ->run();
     }
 
     /**
      * Get the HTTP response
      *
-     * @param string    $code       The HTTP response code
+     * @param string    $sCode      The HTTP response code
      *
      * @return void
      */
-    public function httpResponse($code = '200')
+    public function httpResponse(string $sCode = '200')
     {
         // Only if the response is not yet sent
         if(!$this->jaxon->getOption('core.response.send'))
         {
             // Set the HTTP response code
-            http_response_code(intval($code));
+            http_response_code(intval($sCode));
 
             // Send the response
             $this->xResponseManager->sendOutput();

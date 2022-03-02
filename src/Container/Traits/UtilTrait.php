@@ -7,7 +7,6 @@ use Jaxon\Utils\File\Minifier;
 use Jaxon\Utils\Http\URI;
 use Jaxon\Utils\Template\Engine as TemplateEngine;
 use Jaxon\Utils\Translation\Translator;
-use Jaxon\Utils\Validation\Validator;
 use Lemon\Event\EventDispatcher;
 
 use function rtrim;
@@ -22,13 +21,9 @@ trait UtilTrait
      */
     private function registerUtils()
     {
-        // Validator
-        $this->set(Validator::class, function($c) {
-            return new Validator($c->g(Translator::class), $c->g(Config::class));
-        });
         // Translator
         $this->set(Translator::class, function($c) {
-            $xTranslator = new Translator($c->g(Config::class));
+            $xTranslator = new Translator($c->g(Config::class)->getOption('language', ''));
             $sResourceDir = rtrim(trim($c->g('jaxon.core.dir.translation')), '/\\');
             // Load the Jaxon package translations
             $xTranslator->loadTranslations($sResourceDir . '/en/errors.php', 'en');
@@ -72,7 +67,7 @@ trait UtilTrait
      *
      * @return Translator
      */
-    public function getTranslator()
+    public function getTranslator(): Translator
     {
         return $this->g(Translator::class);
     }
@@ -82,7 +77,7 @@ trait UtilTrait
      *
      * @return Validator
      */
-    public function getValidator()
+    public function getValidator(): Validator
     {
         return $this->g(Validator::class);
     }
@@ -92,7 +87,7 @@ trait UtilTrait
      *
      * @return TemplateEngine
      */
-    public function getTemplateEngine()
+    public function getTemplateEngine(): TemplateEngine
     {
         return $this->g(TemplateEngine::class);
     }
@@ -102,7 +97,7 @@ trait UtilTrait
      *
      * @return Minifier
      */
-    public function getMinifier()
+    public function getMinifier(): Minifier
     {
         return $this->g(Minifier::class);
     }
@@ -112,7 +107,7 @@ trait UtilTrait
      *
      * @return EventDispatcher
      */
-    public function getEventDispatcher()
+    public function getEventDispatcher(): EventDispatcher
     {
         return $this->g(EventDispatcher::class);
     }

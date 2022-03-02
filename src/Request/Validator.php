@@ -1,18 +1,18 @@
 <?php
 
 /**
- * Validator.php - Jaxon input data validator
+ * Validator.php - Jaxon request data validator
  *
  * Validate requests data before the are passed into the library.
  *
  * @package jaxon-core
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
- * @copyright 2016 Thierry Feuzeu <thierry.feuzeu@gmail.com>
+ * @copyright 2022 Thierry Feuzeu <thierry.feuzeu@gmail.com>
  * @license https://opensource.org/licenses/BSD-3-Clause BSD 3-Clause License
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Utils\Validation;
+namespace Jaxon\Request;
 
 /*
  * See the following links to get explanations about the regexp.
@@ -24,6 +24,10 @@ namespace Jaxon\Utils\Validation;
 
 use Jaxon\Utils\Config\Config;
 use Jaxon\Utils\Translation\Translator;
+
+use function preg_match;
+use function is_array;
+use function in_array;
 
 class Validator
 {
@@ -48,7 +52,7 @@ class Validator
      */
     protected $sErrorMessage;
 
-    public function __construct($xTranslator, $xConfig)
+    public function __construct(Translator $xTranslator, Config $xConfig)
     {
         // Set the translator
         $this->xTranslator = $xTranslator;
@@ -59,9 +63,9 @@ class Validator
     /**
      * Get the last error message
      *
-     * @return string          The last error message
+     * @return string
      */
-    public function getErrorMessage()
+    public function getErrorMessage(): string
     {
         return $this->sErrorMessage;
     }
@@ -69,11 +73,11 @@ class Validator
     /**
      * Validate a function name
      *
-     * @param string        $sName            The function name
+     * @param string $sName The function name
      *
-     * @return boolean            True if the function name is valid, and false if not
+     * @return bool
      */
-    public function validateFunction($sName)
+    public function validateFunction(string $sName): bool
     {
         $this->sErrorMessage = '';
         return (preg_match('/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/', $sName) > 0);
@@ -82,11 +86,11 @@ class Validator
     /**
      * Validate an event name
      *
-     * @param string        $sName            The event name
+     * @param string $sName The event name
      *
-     * @return boolean            True if the event name is valid, and false if not
+     * @return bool
      */
-    public function validateEvent($sName)
+    public function validateEvent(string $sName): bool
     {
         $this->sErrorMessage = '';
         return (preg_match('/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/', $sName) > 0);
@@ -95,11 +99,11 @@ class Validator
     /**
      * Validate a class name
      *
-     * @param string        $sName            The class name
+     * @param string $sName The class name
      *
-     * @return boolean            True if the class name is valid, and false if not
+     * @return bool
      */
-    public function validateClass($sName)
+    public function validateClass(string $sName): bool
     {
         $this->sErrorMessage = '';
         return (preg_match('/^([a-zA-Z][a-zA-Z0-9_]*)(\.[a-zA-Z][a-zA-Z0-9_]*)*$/', $sName) > 0);
@@ -108,11 +112,11 @@ class Validator
     /**
      * Validate a method name
      *
-     * @param string        $sName            The function name
+     * @param string $sName The function name
      *
-     * @return boolean            True if the method name is valid, and false if not
+     * @return bool
      */
-    public function validateMethod($sName)
+    public function validateMethod(string $sName): bool
     {
         $this->sErrorMessage = '';
         // return (preg_match('/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/', $sName) > 0);
@@ -122,14 +126,14 @@ class Validator
     /**
      * Validate a property of an uploaded file
      *
-     * @param string        $sName          The uploaded file variable name
-     * @param string        $sValue         The value of the property
-     * @param string        $sProperty      The property name in config options
-     * @param string        $sField         The field name in file data
+     * @param string $sName The uploaded file variable name
+     * @param string $sValue The value of the property
+     * @param string $sProperty The property name in config options
+     * @param string $sField The field name in file data
      *
-     * @return boolean            True if the property valid, and false if not
+     * @return bool
      */
-    private function validateFileProperty($sName, $sValue, $sProperty, $sField)
+    private function validateFileProperty(string $sName, string $sValue, string $sProperty, string $sField): bool
     {
         $xDefault = $this->xConfig->getOption('upload.default.' . $sProperty);
         $aAllowed = $this->xConfig->getOption('upload.files.' . $sName . '.' . $sProperty, $xDefault);
@@ -144,21 +148,21 @@ class Validator
     /**
      * Validate the size of an uploaded file
      *
-     * @param string        $sName          The uploaded file variable name
-     * @param integer       $iFileSize      The uploaded file size
-     * @param string        $sProperty      The property name in config options
+     * @param string $sName The uploaded file variable name
+     * @param int $nFileSize The uploaded file size
+     * @param string $sProperty The property name in config options
      *
-     * @return boolean            True if the property valid, and false if not
+     * @return bool
      */
-    private function validateFileSize($sName, $iFileSize, $sProperty)
+    private function validateFileSize(string $sName, int $nFileSize, string $sProperty): bool
     {
         $xDefault = $this->xConfig->getOption('upload.default.' . $sProperty, 0);
-        $iSize = $this->xConfig->getOption('upload.files.' . $sName . '.' . $sProperty, $xDefault);
-        if($iSize > 0 && (
-            ($sProperty == 'max-size' && $iFileSize > $iSize) ||
-            ($sProperty == 'min-size' && $iFileSize < $iSize)))
+        $nSize = $this->xConfig->getOption('upload.files.' . $sName . '.' . $sProperty, $xDefault);
+        if($nSize > 0 && (
+            ($sProperty == 'max-size' && $nFileSize > $nSize) ||
+            ($sProperty == 'min-size' && $nFileSize < $nSize)))
         {
-            $this->sErrorMessage = $this->xTranslator->trans('errors.upload.' . $sProperty, ['size' => $iFileSize]);
+            $this->sErrorMessage = $this->xTranslator->trans('errors.upload.' . $sProperty, ['size' => $nFileSize]);
             return false;
         }
         return true;
@@ -167,12 +171,12 @@ class Validator
     /**
      * Validate an uploaded file
      *
-     * @param string        $sName            The uploaded file variable name
-     * @param array         $aUploadedFile    The file data received in the $_FILES array
+     * @param string $sName The uploaded file variable name
+     * @param array $aUploadedFile The file data received in the $_FILES array
      *
-     * @return boolean            True if the file data are valid, and false if not
+     * @return bool
      */
-    public function validateUploadedFile($sName, array $aUploadedFile)
+    public function validateUploadedFile(string $sName, array $aUploadedFile): bool
     {
         $this->sErrorMessage = '';
         // Verify the file extension

@@ -12,13 +12,13 @@
 
 namespace Jaxon\App;
 
-use Jaxon\Exception\Error as ErrorException;
+use Jaxon\Exception\SetupException;
 use Jaxon\Jaxon;
 use Jaxon\Plugin\Manager as PluginManager;
 use Jaxon\Request\Handler\Handler as RequestHandler;
 use Jaxon\Ui\View\Manager as ViewManager;
 use Jaxon\Utils\Config\Config;
-use Jaxon\Utils\Config\Exception\Data as DataException;
+use Jaxon\Utils\Config\Exception\DataDepth as DataException;
 
 class Bootstrap
 {
@@ -43,23 +43,6 @@ class Bootstrap
      * @var RequestHandler
      */
     private $xRequestHandler;
-
-    /**
-     * The class constructor
-     *
-     * @param Jaxon $jaxon
-     * @param PluginManager $xPluginManager
-     * @param ViewManager $xViewManager
-     * @param RequestHandler $xRequestHandler
-     */
-    public function __construct(Jaxon $jaxon, PluginManager $xPluginManager,
-        ViewManager $xViewManager, RequestHandler $xRequestHandler)
-    {
-        $this->jaxon = $jaxon;
-        $this->xPluginManager = $xPluginManager;
-        $this->xViewManager = $xViewManager;
-        $this->xRequestHandler = $xRequestHandler;
-    }
 
     /**
      * The library options
@@ -99,16 +82,33 @@ class Bootstrap
     /**
      * Export the js code
      *
-     * @var boolean
+     * @var bool
      */
     private $bExportJs = false;
 
     /**
      * Minify the js code
      *
-     * @var boolean
+     * @var bool
      */
     private $bMinifyJs = false;
+
+    /**
+     * The class constructor
+     *
+     * @param Jaxon $jaxon
+     * @param PluginManager $xPluginManager
+     * @param ViewManager $xViewManager
+     * @param RequestHandler $xRequestHandler
+     */
+    public function __construct(Jaxon $jaxon, PluginManager $xPluginManager,
+        ViewManager $xViewManager, RequestHandler $xRequestHandler)
+    {
+        $this->jaxon = $jaxon;
+        $this->xPluginManager = $xPluginManager;
+        $this->xViewManager = $xViewManager;
+        $this->xRequestHandler = $xRequestHandler;
+    }
 
     /**
      * Set the library options
@@ -143,7 +143,7 @@ class Bootstrap
      *
      * @return Bootstrap
      */
-    public function uri($sUri)
+    public function uri(string $sUri)
     {
         $this->sUri = $sUri;
         return $this;
@@ -152,14 +152,14 @@ class Bootstrap
     /**
      * Set the javascript code
      *
-     * @param boolean   $bExportJs      Whether to export the js code in a file
+     * @param bool   $bExportJs      Whether to export the js code in a file
      * @param string    $sJsUri         The URI to access the js file
      * @param string    $sJsDir         The directory where to create the js file
-     * @param boolean   $bMinifyJs      Whether to minify the exported js file
+     * @param bool   $bMinifyJs      Whether to minify the exported js file
      *
      * @return Bootstrap
      */
-    public function js($bExportJs, $sJsUri = '', $sJsDir = '', $bMinifyJs = false)
+    public function js(bool $bExportJs, string $sJsUri = '', string $sJsDir = '', bool $bMinifyJs = false)
     {
         $this->sJsUri = $sJsUri;
         $this->sJsDir = $sJsDir;
@@ -174,7 +174,7 @@ class Bootstrap
      * @param Config $xAppConfig The config options
      *
      * @return void
-     * @throws ErrorException
+     * @throws SetupException
      */
     private function setupApp($xAppConfig)
     {
@@ -190,7 +190,7 @@ class Bootstrap
      * Wraps the module/package/bundle setup method.
      *
      * @return void
-     * @throws ErrorException|DataException
+     * @throws SetupException|DataException
      */
     public function run()
     {

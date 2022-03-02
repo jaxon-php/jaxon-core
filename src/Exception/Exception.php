@@ -1,22 +1,22 @@
 <?php
 
 /**
- * Data.php - Incorrect config data exception
+ * Exception.php - Jaxon exception
  *
- * This exception is thrown when config data are incorrect.
+ * This is the generic exception.
  *
  * @package jaxon-core
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
- * @copyright 2016 Thierry Feuzeu <thierry.feuzeu@gmail.com>
+ * @copyright 2022 Thierry Feuzeu <thierry.feuzeu@gmail.com>
  * @license https://opensource.org/licenses/BSD-3-Clause BSD 3-Clause License
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Utils\Config\Exception;
+namespace Jaxon\Exception;
 
-class Data extends \Exception
+class Exception extends \Exception
 {
-    public function __construct($sMessage)
+    public function __construct(string $sMessage)
     {
         parent::__construct($sMessage);
     }
