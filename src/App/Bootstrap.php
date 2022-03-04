@@ -23,8 +23,6 @@ use Jaxon\Utils\Config\Exception\DataDepth;
 
 class Bootstrap
 {
-    use \Jaxon\Features\Event;
-
     /**
      * @var Jaxon
      */
@@ -204,25 +202,16 @@ class Bootstrap
     {
         $di = $this->jaxon->di();
 
-        // Event before setting up the module
-        $this->triggerEvent('pre.setup');
-
         // Setup the lib config options.
         try
         {
             $di->getConfig()->setOptions($this->aLibOptions);
-
-            // Event before the module has set the config
-            $this->triggerEvent('pre.config');
 
             // Get the app config options.
             $xAppConfig = $di->newConfig($this->aAppOptions);
             $xAppConfig->setOption('options.views.default', 'default');
             // Setup the app.
             $this->setupApp($xAppConfig);
-
-            // Event after the module has read the config
-            $this->triggerEvent('post.config');
         }
         catch(DataDepth $e)
         {
@@ -252,8 +241,5 @@ class Bootstrap
         {
             $this->jaxon->setOption('core.request.uri', $this->sUri);
         }
-
-        // Event after setting up the module
-        $this->triggerEvent('post.setup');
     }
 }

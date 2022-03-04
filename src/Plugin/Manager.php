@@ -24,7 +24,6 @@ namespace Jaxon\Plugin;
 use Jaxon\Jaxon;
 use Jaxon\Contracts\Dialogs\Message;
 use Jaxon\Contracts\Dialogs\Question;
-use Jaxon\Contracts\Event\Listener;
 use Jaxon\Plugin\Code\Generator as CodeGenerator;
 use Jaxon\Request\Plugin\CallableClass;
 use Jaxon\Request\Plugin\CallableDir;
@@ -51,7 +50,6 @@ class Manager
 {
     use \Jaxon\Features\Manager;
     use \Jaxon\Features\Config;
-    use \Jaxon\Features\Event;
     use \Jaxon\Features\Translator;
 
     /**
@@ -157,12 +155,6 @@ class Manager
             $this->jaxon->dialog()->setQuestion($sClassName);
             $bIsUsed = true;
         }
-        // Register the plugin as an event listener
-        // if(is_subclass_of($sClassName, Listener::class))
-        // {
-        //     $this->addEventListener($sClassName);
-        //     $bIsUsed = true;
-        // }
 
         if(!$bIsUsed)
         {

@@ -7,7 +7,6 @@ use Jaxon\Utils\File\Minifier;
 use Jaxon\Utils\Http\URI;
 use Jaxon\Utils\Template\Engine as TemplateEngine;
 use Jaxon\Utils\Translation\Translator;
-use Lemon\Event\EventDispatcher;
 
 use function rtrim;
 use function trim;
@@ -51,10 +50,6 @@ trait UtilTrait
         // Minifier
         $this->set(Minifier::class, function() {
             return new Minifier();
-        });
-        // Event Dispatcher
-        $this->set(EventDispatcher::class, function() {
-            return new EventDispatcher();
         });
         // URI decoder
         $this->set(URI::class, function() {
@@ -100,15 +95,5 @@ trait UtilTrait
     public function getMinifier(): Minifier
     {
         return $this->g(Minifier::class);
-    }
-
-    /**
-     * Get the event dispatcher
-     *
-     * @return EventDispatcher
-     */
-    public function getEventDispatcher(): EventDispatcher
-    {
-        return $this->g(EventDispatcher::class);
     }
 }

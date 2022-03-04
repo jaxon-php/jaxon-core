@@ -84,19 +84,6 @@ class Validator
     }
 
     /**
-     * Validate an event name
-     *
-     * @param string $sName The event name
-     *
-     * @return bool
-     */
-    public function validateEvent(string $sName): bool
-    {
-        $this->sErrorMessage = '';
-        return (preg_match('/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/', $sName) > 0);
-    }
-
-    /**
      * Validate a class name
      *
      * @param string $sName The class name
