@@ -28,6 +28,7 @@ use Jaxon\Request\Handler\Handler as RequestHandler;
 use Jaxon\Request\Validator;
 use Jaxon\Response\Manager as ResponseManager;
 use Jaxon\Container\Container;
+use Jaxon\Exception\SetupException;
 
 use function trim;
 use function is_string;
@@ -111,7 +112,7 @@ class CallableFunction extends RequestPlugin
     /**
      * @inheritDoc
      */
-    public function getName()
+    public function getName(): string
     {
         return Jaxon::CALLABLE_FUNCTION;
     }
@@ -119,7 +120,7 @@ class CallableFunction extends RequestPlugin
     /**
      * @inheritDoc
      */
-    public function getTarget()
+    public function getTarget(): ?Target
     {
         if(!$this->sRequestedFunction)
         {
@@ -131,13 +132,14 @@ class CallableFunction extends RequestPlugin
     /**
      * Register a user defined function
      *
-     * @param string        $sType              The type of request handler being registered
-     * @param string        $sCallableFunction  The name of the function being registered
-     * @param array|string  $aOptions           The associated options
+     * @param string $sType The type of request handler being registered
+     * @param string $sCallableFunction The name of the function being registered
+     * @param array|string $aOptions The associated options
      *
      * @return bool
+     * @throws SetupException
      */
-    public function register(string $sType, string $sCallableFunction, $aOptions)
+    public function register(string $sType, string $sCallableFunction, $aOptions): bool
     {
         $sType = trim($sType);
         if($sType != $this->getName())
@@ -145,10 +147,11 @@ class CallableFunction extends RequestPlugin
             return false;
         }
 
-        if(!is_string($sCallableFunction))
+        // Todo: validate function name
+        /*if(!is_string($sCallableFunction))
         {
-            throw new \Jaxon\Exception\SetupException($this->trans('errors.functions.invalid-declaration'));
-        }
+            throw new SetupException($this->trans('errors.functions.invalid-declaration'));
+        }*/
 
         if(is_string($aOptions))
         {
@@ -156,7 +159,7 @@ class CallableFunction extends RequestPlugin
         }
         if(!is_array($aOptions))
         {
-            throw new \Jaxon\Exception\SetupException($this->trans('errors.functions.invalid-declaration'));
+            throw new SetupException($this->trans('errors.functions.invalid-declaration'));
         }
 
         $sCallableFunction = trim($sCallableFunction);
@@ -180,7 +183,7 @@ class CallableFunction extends RequestPlugin
     /**
      * @inheritDoc
      */
-    public function getHash()
+    public function getHash(): string
     {
         return md5(implode('', array_keys($this->aFunctions)));
     }
@@ -188,7 +191,7 @@ class CallableFunction extends RequestPlugin
     /**
      * @inheritDoc
      */
-    public function getScript()
+    public function getScript(): string
     {
         $code = '';
         foreach(array_keys($this->aFunctions) as $sName)
@@ -202,7 +205,7 @@ class CallableFunction extends RequestPlugin
     /**
      * @inheritDoc
      */
-    public function canProcessRequest()
+    public function canProcessRequest(): bool
     {
         // Check the validity of the function name
         if(($this->sRequestedFunction) && !$this->xValidator->validateFunction($this->sRequestedFunction))
@@ -214,8 +217,9 @@ class CallableFunction extends RequestPlugin
 
     /**
      * @inheritDoc
+     * @throws SetupException
      */
-    public function processRequest()
+    public function processRequest(): bool
     {
         if(!$this->canProcessRequest())
         {
@@ -226,7 +230,7 @@ class CallableFunction extends RequestPlugin
         if(!isset($this->aFunctions[$this->sRequestedFunction]))
         {
             // Unable to find the requested function
-            throw new \Jaxon\Exception\SetupException($this->trans('errors.functions.invalid',
+            throw new SetupException($this->trans('errors.functions.invalid',
                 ['name' => $this->sRequestedFunction]));
         }
 

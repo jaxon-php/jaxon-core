@@ -25,7 +25,7 @@ class ParameterFactory
      *
      * @return Parameter
      */
-    public function form(string $sFormId)
+    public function form(string $sFormId): Parameter
     {
         return new Parameter(Parameter::FORM_VALUES, $sFormId);
     }
@@ -37,7 +37,7 @@ class ParameterFactory
      *
      * @return Parameter
      */
-    public function input(string $sInputId)
+    public function input(string $sInputId): Parameter
     {
         return new Parameter(Parameter::INPUT_VALUE, $sInputId);
     }
@@ -49,7 +49,7 @@ class ParameterFactory
      *
      * @return Parameter
      */
-    public function checked(string $sInputId)
+    public function checked(string $sInputId): Parameter
     {
         return new Parameter(Parameter::CHECKED_VALUE, $sInputId);
     }
@@ -61,7 +61,7 @@ class ParameterFactory
      *
      * @return Parameter
      */
-    public function select(string $sInputId)
+    public function select(string $sInputId): Parameter
     {
         return self::input($sInputId);
     }
@@ -73,7 +73,7 @@ class ParameterFactory
      *
      * @return Parameter
      */
-    public function html(string $sElementId)
+    public function html(string $sElementId): Parameter
     {
         return new Parameter(Parameter::ELEMENT_INNERHTML, $sElementId);
     }
@@ -85,7 +85,7 @@ class ParameterFactory
      *
      * @return Parameter
      */
-    public function string(string $sValue)
+    public function string(string $sValue): Parameter
     {
         return new Parameter(Parameter::QUOTED_VALUE, $sValue);
     }
@@ -97,7 +97,7 @@ class ParameterFactory
      *
      * @return Parameter
      */
-    public function numeric(int $nValue)
+    public function numeric(int $nValue): Parameter
     {
         return new Parameter(Parameter::NUMERIC_VALUE, intval($nValue));
     }
@@ -109,7 +109,7 @@ class ParameterFactory
      *
      * @return Parameter
      */
-    public function int(int $nValue)
+    public function int(int $nValue): Parameter
     {
         return self::numeric($nValue);
     }
@@ -121,7 +121,7 @@ class ParameterFactory
      *
      * @return Parameter
      */
-    public function javascript(string $sValue)
+    public function javascript(string $sValue): Parameter
     {
         return new Parameter(Parameter::JS_VALUE, $sValue);
     }
@@ -133,7 +133,7 @@ class ParameterFactory
      *
      * @return Parameter
      */
-    public function js(string $sValue)
+    public function js(string $sValue): Parameter
     {
         return self::javascript($sValue);
     }
@@ -143,7 +143,7 @@ class ParameterFactory
      *
      * @return Parameter
      */
-    public function page()
+    public function page(): Parameter
     {
         // By default, the value of a parameter of type Parameter::PAGE_NUMBER is 0.
         return new Parameter(Parameter::PAGE_NUMBER, 0);

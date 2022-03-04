@@ -38,7 +38,7 @@ trait Message
      *
      * @return bool
      */
-    public function getReturn()
+    public function getReturn(): bool
     {
         return $this->bReturn;
     }

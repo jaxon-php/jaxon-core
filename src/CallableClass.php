@@ -36,7 +36,7 @@ class CallableClass
      *
      * @return Renderer
      */
-    public function view()
+    public function view(): Renderer
     {
         return $this->jaxon->view();
     }
@@ -46,7 +46,7 @@ class CallableClass
      *
      * @return Session
      */
-    public function session()
+    public function session(): Session
     {
         return $this->jaxon->session();
     }
@@ -56,7 +56,7 @@ class CallableClass
      *
      * @return LoggerInterface
      */
-    public function logger()
+    public function logger(): LoggerInterface
     {
         return $this->jaxon->logger();
     }
@@ -66,7 +66,7 @@ class CallableClass
      *
      * @return Request
      */
-    public function rq()
+    public function rq(): Request
     {
         return $this->jaxon->di()->g($this->sRequest);
     }
@@ -79,7 +79,7 @@ class CallableClass
      *
      * @return DomElement
      */
-    public function jq(string $sSelector = '', string $sContext = '')
+    public function jq(string $sSelector = '', string $sContext = ''): DomElement
     {
         return $this->response->plugin('jquery')->element($sSelector, $sContext);
     }
@@ -102,7 +102,7 @@ class CallableClass
      *
      * @return array
      */
-    public function files()
+    public function files(): array
     {
         return $this->jaxon->upload()->files();
     }
@@ -114,7 +114,7 @@ class CallableClass
      *
      * @return DataBagContext
      */
-    public function bag(string $sName)
+    public function bag(string $sName): DataBagContext
     {
         return $this->response->plugin('bags')->bag($sName);
     }

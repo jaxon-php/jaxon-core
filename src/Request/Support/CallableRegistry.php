@@ -183,7 +183,7 @@ class CallableRegistry
      *
      * @return array|null
      */
-    protected function getClassOptionsFromNamespaces(string $sClassName)
+    protected function getClassOptionsFromNamespaces(string $sClassName): ?array
     {
         // Find the corresponding namespace
         $sNamespace = null;
@@ -215,7 +215,7 @@ class CallableRegistry
      *
      * @return array|null
      */
-    protected function getClassOptions(string $sClassName)
+    protected function getClassOptions(string $sClassName): ?array
     {
         // Find options for a class registered with namespace.
         $aOptions = $this->getClassOptionsFromNamespaces($sClassName);
@@ -238,7 +238,7 @@ class CallableRegistry
      *
      * @return CallableObject|null
      */
-    public function getCallableObject(string $sClassName)
+    public function getCallableObject(string $sClassName): ?CallableObject
     {
         // Replace all separators ('.' and '_') with antislashes, and remove the antislashes
         // at the beginning and the end of the class name.

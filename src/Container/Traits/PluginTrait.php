@@ -48,7 +48,7 @@ trait PluginTrait
      *
      * @return PluginManager
      */
-    public function getPluginManager()
+    public function getPluginManager(): PluginManager
     {
         return $this->g(PluginManager::class);
     }

@@ -42,7 +42,7 @@ trait CallableTrait
         $this->set(CallableClass::class, function($c) {
             return new CallableClass($c->g(RequestHandler::class),
                 $c->g(ResponseManager::class), $c->g(CallableRegistry::class),
-                $c->g(CallableRepository::class), $c->g(Translator::class));
+                $c->g(CallableRepository::class), $c->g(Validator::class));
         });
         // Callable dir plugin
         $this->set(CallableDir::class, function($c) {
@@ -51,7 +51,7 @@ trait CallableTrait
         // Callable function plugin
         $this->set(CallableFunction::class, function($c) {
             return new CallableFunction($this, $c->g(RequestHandler::class),
-                $c->g(ResponseManager::class), $c->g(Translator::class));
+                $c->g(ResponseManager::class), $c->g(Validator::class));
         });
         // Code Generator
         $this->set(CodeGenerator::class, function($c) {
@@ -64,7 +64,7 @@ trait CallableTrait
      *
      * @return CallableRegistry
      */
-    public function getCallableRegistry()
+    public function getCallableRegistry(): CallableRegistry
     {
         return $this->g(CallableRegistry::class);
     }
@@ -74,7 +74,7 @@ trait CallableTrait
      *
      * @return CodeGenerator
      */
-    public function getCodeGenerator()
+    public function getCodeGenerator(): CodeGenerator
     {
         return $this->g(CodeGenerator::class);
     }

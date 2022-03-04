@@ -71,7 +71,7 @@ class CallableRepository
      *
      * @return array
      */
-    public function makeClassOptions(string $sClassName, array $aClassOptions, array $aDirectoryOptions)
+    public function makeClassOptions(string $sClassName, array $aClassOptions, array $aDirectoryOptions): array
     {
         if(!isset($aClassOptions['functions']))
         {
@@ -85,7 +85,7 @@ class CallableRepository
             }
         }
 
-        $aFunctionOptions = isset($aDirectoryOptions['classes']) ? $aDirectoryOptions['classes'] : [];
+        $aFunctionOptions = $aDirectoryOptions['classes'] ?? [];
         foreach($aFunctionOptions as $sName => $xValue)
         {
             if($sName === '*' || strncmp($sClassName, $sName, strlen($sName)) === 0)
@@ -108,7 +108,7 @@ class CallableRepository
      *
      * @return array
      */
-    public function getClasses()
+    public function getClasses(): array
     {
         return $this->aClasses;
     }
@@ -118,7 +118,7 @@ class CallableRepository
      *
      * @return array
      */
-    public function getNamespaces()
+    public function getNamespaces(): array
     {
         return $this->aNamespaces;
     }
@@ -128,7 +128,7 @@ class CallableRepository
      *
      * @return array
      */
-    public function getClassNames()
+    public function getClassNames(): array
     {
         return array_keys($this->aClasses);
     }
@@ -165,7 +165,7 @@ class CallableRepository
      *
      * @return array|null
      */
-    public function getClassOptions(string $sClassName)
+    public function getClassOptions(string $sClassName): ?array
     {
         if(!isset($this->aClasses[$sClassName]))
         {
@@ -260,7 +260,7 @@ class CallableRepository
      *
      * @return bool
      */
-    public function hasCallableObject(string $sClassName)
+    public function hasCallableObject(string $sClassName): bool
     {
         return $this->di->has($sClassName);
     }
@@ -272,7 +272,7 @@ class CallableRepository
      *
      * @return CallableObject
      */
-    public function getCallableObject(string $sClassName)
+    public function getCallableObject(string $sClassName): CallableObject
     {
         return $this->di->get($sClassName . '_CallableObject');
     }

@@ -20,7 +20,7 @@ interface Generator
      *
      * @return string
      */
-    public function getHash();
+    public function getHash(): string;
 
     /**
      * Get the HTML tags to include CSS code and files into the page
@@ -29,7 +29,7 @@ interface Generator
      *
      * @return string
      */
-    public function getCss();
+    public function getCss(): string;
 
     /**
      * Get the HTML tags to include javascript code and files into the page
@@ -38,7 +38,7 @@ interface Generator
      *
      * @return string
      */
-    public function getJs();
+    public function getJs(): string;
 
     /**
      * Get the javascript code to include into the page
@@ -47,7 +47,7 @@ interface Generator
      *
      * @return string
      */
-    public function getScript();
+    public function getScript(): string;
 
     /**
      * Get the javascript code to execute after page load
@@ -56,19 +56,19 @@ interface Generator
      *
      * @return string
      */
-    public function getReadyScript();
+    public function getReadyScript(): string;
 
     /**
      * Whether to include the getReadyScript() in the generated code.
      *
      * @return bool
      */
-    public function readyEnabled();
+    public function readyEnabled(): bool;
 
     /**
      * Whether to export the getReadyScript() in external javascript files.
      *
      * @return bool
      */
-    public function readyInlined();
+    public function readyInlined(): bool;
 }

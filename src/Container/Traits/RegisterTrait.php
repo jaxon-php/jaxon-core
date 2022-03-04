@@ -147,7 +147,7 @@ trait RegisterTrait
      *
      * @return Config
      */
-    public function registerPackage(string $sClassName, array $aAppOptions)
+    public function registerPackage(string $sClassName, array $aAppOptions): Config
     {
         $xAppConfig = $this->newConfig($aAppOptions);
         $this->set($sClassName, function() use($sClassName, $aAppOptions, $xAppConfig) {

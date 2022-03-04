@@ -28,7 +28,7 @@ class AttrGet implements JsonSerializable
      *
      * @return string
      */
-    public function getScript()
+    public function getScript(): string
     {
         return $this->sAttrName;
     }
@@ -50,7 +50,7 @@ class AttrGet implements JsonSerializable
      *
      * @return string
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): string
     {
         return $this->getScript();
     }

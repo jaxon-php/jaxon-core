@@ -29,6 +29,7 @@ use Jaxon\Request\Request;
 use Jaxon\Response\Response;
 
 use ReflectionClass;
+use ReflectionException;
 
 class CallableObject
 {
@@ -38,13 +39,6 @@ class CallableObject
      * @var Container
      */
     protected $di;
-
-    /**
-     * A reference to the callable object the user has registered
-     *
-     * @var object
-     */
-    private $xRegisteredObject = null;
 
     /**
      * The reflection class of the user registered callable object
@@ -125,7 +119,7 @@ class CallableObject
      *
      * @return array
      */
-    public function getOptions()
+    public function getOptions(): array
     {
         return $this->aOptions;
     }
@@ -133,9 +127,9 @@ class CallableObject
     /**
      * Get the reflection class
      *
-     * @return string
+     * @return ReflectionClass
      */
-    public function getReflectionClass()
+    public function getReflectionClass(): ReflectionClass
     {
         return $this->xReflectionClass;
     }
@@ -145,7 +139,7 @@ class CallableObject
      *
      * @return string
      */
-    public function getClassName()
+    public function getClassName(): string
     {
         // Get the class name without the namespace.
         return $this->xReflectionClass->getShortName();
@@ -156,7 +150,7 @@ class CallableObject
      *
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         // Get the class name with the namespace.
         return $this->xReflectionClass->getName();
@@ -167,7 +161,7 @@ class CallableObject
      *
      * @return string
      */
-    public function getJsName()
+    public function getJsName(): string
     {
         return str_replace('\\', $this->sSeparator, $this->getName());
     }
@@ -177,7 +171,7 @@ class CallableObject
      *
      * @return string
      */
-    public function getNamespace()
+    public function getNamespace(): string
     {
         // The namespace of the registered class.
         return $this->xReflectionClass->getNamespaceName();
@@ -188,7 +182,7 @@ class CallableObject
      *
      * @return string
      */
-    public function getRootNamespace()
+    public function getRootNamespace(): string
     {
         // The namespace the callable class was registered from.
         return $this->sNamespace;
@@ -272,7 +266,7 @@ class CallableObject
      *
      * @return array
      */
-    public function getMethods()
+    public function getMethods(): array
     {
         $aMethods = [];
         foreach($this->xReflectionClass->getMethods(\ReflectionMethod::IS_PUBLIC) as $xMethod)
@@ -310,7 +304,7 @@ class CallableObject
      *
      * @return bool
      */
-    public function hasMethod(string $sMethod)
+    public function hasMethod(string $sMethod): bool
     {
         return $this->xReflectionClass->hasMethod($sMethod);
     }
@@ -318,11 +312,11 @@ class CallableObject
     /**
      * Call the specified method of the registered callable object using the specified array of arguments
      *
-     * @param array     $aClassMethods      The methods config options
-     * @param string    $sMethod            The method called by the request
-     * @param Response  $xResponse          The response returned by the method
+     * @param array $aClassMethods The methods config options
+     * @param string $sMethod The method called by the request
      *
      * @return void
+     * @throws ReflectionException
      */
     private function callHookMethods(array $aClassMethods, string $sMethod)
     {
@@ -357,12 +351,13 @@ class CallableObject
     /**
      * Call the specified method of the registered callable object using the specified array of arguments
      *
-     * @param string        $sMethod            The name of the method to call
-     * @param array         $aArgs              The arguments to pass to the method
+     * @param string $sMethod The name of the method to call
+     * @param array $aArgs The arguments to pass to the method
      *
      * @return null|Response
+     * @throws ReflectionException
      */
-    public function call(string $sMethod, array $aArgs)
+    public function call(string $sMethod, array $aArgs): ?Response
     {
         if(!$this->hasMethod($sMethod))
         {

@@ -102,9 +102,9 @@ class Argument
      *
      * The method is one of: self::METHOD_UNKNOWN, self::METHOD_GET, self::METHOD_POST.
      *
-     * @return integer
+     * @return int
      */
-    public function getRequestMethod()
+    public function getRequestMethod(): int
     {
         return $this->nMethod;
     }
@@ -116,7 +116,7 @@ class Argument
      *
      * @return bool
      */
-    private function __convertStringToBool(string $sValue)
+    private function __convertStringToBool(string $sValue): bool
     {
         if(strcasecmp($sValue, 'true') === 0)
         {
@@ -128,7 +128,7 @@ class Argument
         }
         if(is_numeric($sValue))
         {
-            return ($sValue !== 0);
+            return ($sValue !== '0');
         }
         return false;
     }
@@ -187,13 +187,13 @@ class Argument
      *
      * @param string        $sArg                The Jaxon request argument
      *
-     * @return string|null
+     * @return void
      */
-    private function __argumentDecode(&$sArg)
+    private function __argumentDecode(string &$sArg)
     {
-        if($sArg == '')
+        if($sArg === '')
         {
-            return '';
+            return;
         }
 
         // Arguments are url encoded when uploading files
@@ -236,12 +236,8 @@ class Argument
      */
     private function _decode_utf8_argument(array &$aDst, string $sKey, $mValue)
     {
-        $sDestKey = $sKey;
         // Decode the key
-        if(is_string($sDestKey))
-        {
-            $sDestKey = call_user_func($this->cUtf8Decoder, $sDestKey);
-        }
+        $sDestKey = call_user_func($this->cUtf8Decoder, $sKey);
 
         if(is_array($mValue))
         {
@@ -265,8 +261,9 @@ class Argument
      * Return the array of arguments that were extracted and parsed from the GET or POST data
      *
      * @return array
+     * @throws SetupException
      */
-    public function process()
+    public function process(): array
     {
         // if(get_magic_quotes_gpc() == 1)
         // {
@@ -274,44 +271,45 @@ class Argument
         // }
         array_walk($this->aArgs, [$this, '__argumentDecode']);
 
-        if(($this->getOption('core.decode_utf8')))
+        if(!$this->getOption('core.decode_utf8'))
         {
-            // By default, no decoding
-            $this->cUtf8Decoder = function($sStr) {
-                return $sStr;
-            };
-            if(function_exists('iconv'))
-            {
-                $this->cUtf8Decoder = function($sStr) {
-                    return iconv("UTF-8", $this->getOption('core.encoding') . '//TRANSLIT', $sStr);
-                };
-            }
-            elseif(function_exists('mb_convert_encoding'))
-            {
-                $this->cUtf8Decoder = function($sStr) {
-                    return mb_convert_encoding($sStr, $this->getOption('core.encoding'), "UTF-8");
-                };
-            }
-            elseif($this->getOption('core.encoding') == "ISO-8859-1")
-            {
-                $this->cUtf8Decoder = function($sStr) {
-                    return utf8_decode($sStr);
-                };
-            }
-            else
-            {
-                throw new SetupException($this->trans('errors.request.conversion'));
-            }
-
-            $aDst = [];
-            foreach($this->aArgs as $sKey => &$mValue)
-            {
-                $this->_decode_utf8_argument($aDst, $sKey, $mValue);
-            };
-            $this->aArgs = $aDst;
-
-            $this->setOption('core.decode_utf8', false);
+            return $this->aArgs;
         }
+        // By default, no decoding
+        $this->cUtf8Decoder = function($sStr) {
+            return $sStr;
+        };
+        if(function_exists('iconv'))
+        {
+            $this->cUtf8Decoder = function($sStr) {
+                return iconv("UTF-8", $this->getOption('core.encoding') . '//TRANSLIT', $sStr);
+            };
+        }
+        elseif(function_exists('mb_convert_encoding'))
+        {
+            $this->cUtf8Decoder = function($sStr) {
+                return mb_convert_encoding($sStr, $this->getOption('core.encoding'), "UTF-8");
+            };
+        }
+        elseif($this->getOption('core.encoding') == "ISO-8859-1")
+        {
+            $this->cUtf8Decoder = function($sStr) {
+                return utf8_decode($sStr);
+            };
+        }
+        else
+        {
+            throw new SetupException($this->trans('errors.request.conversion'));
+        }
+
+        $aDst = [];
+        foreach($this->aArgs as $sKey => &$mValue)
+        {
+            $this->_decode_utf8_argument($aDst, $sKey, $mValue);
+        };
+        $this->aArgs = $aDst;
+
+        $this->setOption('core.decode_utf8', false);
 
         return $this->aArgs;
     }

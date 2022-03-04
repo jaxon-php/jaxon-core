@@ -12,6 +12,7 @@
 
 namespace Jaxon\Request\Plugin;
 
+use Jaxon\Exception\SetupException;
 use Jaxon\Jaxon;
 use Jaxon\Plugin\Request as RequestPlugin;
 use Jaxon\Response\Manager as ResponseManager;
@@ -38,7 +39,6 @@ use function unlink;
 class FileUpload extends RequestPlugin
 {
     use \Jaxon\Features\Config;
-    use \Jaxon\Features\Validator;
     use \Jaxon\Features\Translator;
 
     /**
@@ -108,7 +108,7 @@ class FileUpload extends RequestPlugin
     /**
      * @inheritDoc
      */
-    public function getName()
+    public function getName(): string
     {
         return Jaxon::FILE_UPLOAD;
     }
@@ -130,7 +130,7 @@ class FileUpload extends RequestPlugin
      *
      * @return array
      */
-    public function files()
+    public function files(): array
     {
         return $this->aUserFiles;
     }
@@ -138,23 +138,24 @@ class FileUpload extends RequestPlugin
     /**
      * Make sure the upload dir exists and is writable
      *
-     * @param string        $sUploadDir             The filename
-     * @param string        $sUploadSubDir          The filename
+     * @param string $sUploadDir The filename
+     * @param string $sUploadSubDir The filename
      *
      * @return string
+     * @throws SetupException
      */
-    private function _makeUploadDir(string $sUploadDir, string $sUploadSubDir)
+    private function _makeUploadDir(string $sUploadDir, string $sUploadSubDir): string
     {
         $sUploadDir = rtrim(trim($sUploadDir), '/\\') . DIRECTORY_SEPARATOR;
         // Verify that the upload dir exists and is writable
         if(!is_writable($sUploadDir))
         {
-            throw new \Jaxon\Exception\SetupException($this->trans('errors.upload.access'));
+            throw new SetupException($this->trans('errors.upload.access'));
         }
         $sUploadDir .= $sUploadSubDir;
         if(!file_exists($sUploadDir) && !@mkdir($sUploadDir))
         {
-            throw new \Jaxon\Exception\SetupException($this->trans('errors.upload.access'));
+            throw new SetupException($this->trans('errors.upload.access'));
         }
         return $sUploadDir;
     }
@@ -162,11 +163,12 @@ class FileUpload extends RequestPlugin
     /**
      * Get the path to the upload dir
      *
-     * @param string        $sFieldId               The filename
+     * @param string $sFieldId The filename
      *
      * @return string
+     * @throws SetupException
      */
-    protected function getUploadDir(string $sFieldId)
+    protected function getUploadDir(string $sFieldId): string
     {
         // Default upload dir
         $sDefaultUploadDir = $this->getOption('upload.default.dir');
@@ -179,8 +181,9 @@ class FileUpload extends RequestPlugin
      * Get the path to the upload temp dir
      *
      * @return string
+     * @throws SetupException
      */
-    protected function getUploadTempDir()
+    protected function getUploadTempDir(): string
     {
         // Default upload dir
         $sUploadDir = $this->getOption('upload.default.dir');
@@ -192,8 +195,9 @@ class FileUpload extends RequestPlugin
      * Get the path to the upload temp file
      *
      * @return string
+     * @throws SetupException
      */
-    protected function getUploadTempFile()
+    protected function getUploadTempFile(): string
     {
         $sUploadDir = $this->getOption('upload.default.dir');
         $sUploadDir = rtrim(trim($sUploadDir), '/\\') . DIRECTORY_SEPARATOR;
@@ -201,7 +205,7 @@ class FileUpload extends RequestPlugin
         $sUploadTempFile = $sUploadDir . $this->sTempFile . '.json';
         if(!is_readable($sUploadTempFile))
         {
-            throw new \Jaxon\Exception\SetupException($this->trans('errors.upload.access'));
+            throw new SetupException($this->trans('errors.upload.access'));
         }
         return $sUploadTempFile;
     }
@@ -210,6 +214,7 @@ class FileUpload extends RequestPlugin
      * Read uploaded files info from HTTP request data
      *
      * @return void
+     * @throws SetupException
      */
     protected function readFromHttpData()
     {
@@ -238,6 +243,7 @@ class FileUpload extends RequestPlugin
      * Save uploaded files info to a temp file
      *
      * @return void
+     * @throws SetupException
      */
     protected function saveToTempFile()
     {
@@ -261,6 +267,7 @@ class FileUpload extends RequestPlugin
      * Read uploaded files info from a temp file
      *
      * @return void
+     * @throws SetupException
      */
     protected function readFromTempFile()
     {
@@ -294,7 +301,7 @@ class FileUpload extends RequestPlugin
     /**
      * @inheritDoc
      */
-    public function canProcessRequest()
+    public function canProcessRequest(): bool
     {
         return (count($_FILES) > 0 || ($this->sTempFile));
     }
@@ -303,8 +310,9 @@ class FileUpload extends RequestPlugin
      * Process the uploaded files in the HTTP request
      *
      * @return bool
+     * @throws SetupException
      */
-    public function processRequest()
+    public function processRequest(): bool
     {
         if(!$this->canProcessRequest())
         {

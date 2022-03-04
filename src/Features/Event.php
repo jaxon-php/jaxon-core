@@ -47,7 +47,7 @@ trait Event
      *
      * @return array
      */
-    public function getEvents()
+    public function getEvents(): array
     {
         return [];
     }
@@ -59,7 +59,7 @@ trait Event
      *
      * @return array
      */
-    public function getSubscribedEvents()
+    public function getSubscribedEvents(): array
     {
         return $this->getEvents();
     }

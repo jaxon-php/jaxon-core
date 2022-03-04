@@ -29,7 +29,7 @@ abstract class Plugin implements Code\Contracts\Generator
      *
      * @return bool
      */
-    protected function includeAssets()
+    protected function includeAssets(): bool
     {
         $sPluginOptionName = 'assets.include.' . $this->getName();
         if($this->hasOption($sPluginOptionName) && !$this->getOption($sPluginOptionName))
@@ -48,12 +48,12 @@ abstract class Plugin implements Code\Contracts\Generator
      *
      * @return string
      */
-    abstract public function getName();
+    abstract public function getName(): string;
 
     /**
      * @inheritDoc
      */
-    public final function readyEnabled()
+    public final function readyEnabled(): bool
     {
         // For plugins, the getReadyScript() is always included in the generated code.
         return true;
@@ -62,7 +62,7 @@ abstract class Plugin implements Code\Contracts\Generator
     /**
      * @inheritDoc
      */
-    public function readyInlined()
+    public function readyInlined(): bool
     {
         // For plugins, the getReadyScript() can be exported to external files.
         return false;
@@ -71,7 +71,7 @@ abstract class Plugin implements Code\Contracts\Generator
     /**
      * @inheritDoc
      */
-    public function getHash()
+    public function getHash(): string
     {
         return '';
     }
@@ -79,7 +79,7 @@ abstract class Plugin implements Code\Contracts\Generator
     /**
      * @inheritDoc
      */
-    public function getCss()
+    public function getCss(): string
     {
         return '';
     }
@@ -87,7 +87,7 @@ abstract class Plugin implements Code\Contracts\Generator
     /**
      * @inheritDoc
      */
-    public function getJs()
+    public function getJs(): string
     {
         return '';
     }
@@ -95,7 +95,7 @@ abstract class Plugin implements Code\Contracts\Generator
     /**
      * @inheritDoc
      */
-    public function getScript()
+    public function getScript(): string
     {
         return '';
     }
@@ -103,7 +103,7 @@ abstract class Plugin implements Code\Contracts\Generator
     /**
      * @inheritDoc
      */
-    public function getReadyScript()
+    public function getReadyScript(): string
     {
         return '';
     }

@@ -31,6 +31,7 @@ use Jaxon\Request\Support\CallableRegistry;
 use Jaxon\Request\Support\CallableRepository;
 use Jaxon\Request\Target;
 use Jaxon\Request\Validator;
+use Jaxon\Exception\SetupException;
 
 use function trim;
 use function strlen;
@@ -137,7 +138,7 @@ class CallableClass extends RequestPlugin
     /**
      * @inheritDoc
      */
-    public function getName()
+    public function getName(): string
     {
         return Jaxon::CALLABLE_CLASS;
     }
@@ -145,7 +146,7 @@ class CallableClass extends RequestPlugin
     /**
      * @inheritDoc
      */
-    public function getTarget()
+    public function getTarget(): ?Target
     {
         if(!$this->sRequestedClass || !$this->sRequestedMethod)
         {
@@ -157,13 +158,14 @@ class CallableClass extends RequestPlugin
     /**
      * Register a callable class
      *
-     * @param string        $sType          The type of request handler being registered
-     * @param string        $sClassName     The name of the class being registered
-     * @param array|string  $aOptions       The associated options
+     * @param string $sType The type of request handler being registered
+     * @param string $sClassName The name of the class being registered
+     * @param array|string $aOptions The associated options
      *
      * @return bool
+     * @throws SetupException
      */
-    public function register(string $sType, string $sClassName, $aOptions)
+    public function register(string $sType, string $sClassName, $aOptions): bool
     {
         $sType = trim($sType);
         if($sType != $this->getName())
@@ -171,17 +173,18 @@ class CallableClass extends RequestPlugin
             return false;
         }
 
-        if(!is_string($sClassName))
+        // Todo: validate function name
+        /*if(!is_string($sClassName))
         {
             throw new \Jaxon\Exception\SetupException($this->trans('errors.objects.invalid-declaration'));
-        }
+        }*/
         if(is_string($aOptions))
         {
             $aOptions = ['include' => $aOptions];
         }
         if(!is_array($aOptions))
         {
-            throw new \Jaxon\Exception\SetupException($this->trans('errors.objects.invalid-declaration'));
+            throw new SetupException($this->trans('errors.objects.invalid-declaration'));
         }
 
         $this->xRepository->addClass(trim($sClassName), $aOptions);
@@ -192,7 +195,7 @@ class CallableClass extends RequestPlugin
     /**
      * @inheritDoc
      */
-    public function getHash()
+    public function getHash(): string
     {
         $this->xRegistry->parseCallableClasses();
         $aNamespaces = $this->xRepository->getNamespaces();
@@ -216,7 +219,7 @@ class CallableClass extends RequestPlugin
      *
      * @return string
      */
-    private function getNamespacesScript()
+    private function getNamespacesScript(): string
     {
         $sCode = '';
         $sPrefix = $this->getOption('core.prefix.class');
@@ -251,7 +254,7 @@ class CallableClass extends RequestPlugin
      *
      * @return string
      */
-    private function getCallableScript(string $sClassName, CallableObject $xCallableObject, array $aProtectedMethods)
+    private function getCallableScript(string $sClassName, CallableObject $xCallableObject, array $aProtectedMethods): string
     {
         $aConfig = $xCallableObject->getOptions();
 
@@ -292,7 +295,7 @@ class CallableClass extends RequestPlugin
      *
      * @return string
      */
-    public function getScript()
+    public function getScript(): string
     {
         $this->xRegistry->registerCallableObjects();
 
@@ -323,7 +326,7 @@ class CallableClass extends RequestPlugin
     /**
      * @inheritDoc
      */
-    public function canProcessRequest()
+    public function canProcessRequest(): bool
     {
         // Check the validity of the class name
         if(($this->sRequestedClass !== null && !$this->xValidator->validateClass($this->sRequestedClass)) ||
@@ -337,8 +340,9 @@ class CallableClass extends RequestPlugin
 
     /**
      * @inheritDoc
+     * @throws SetupException
      */
-    public function processRequest()
+    public function processRequest(): bool
     {
         if(!$this->canProcessRequest())
         {
@@ -350,7 +354,7 @@ class CallableClass extends RequestPlugin
         if(!$xCallableObject || !$xCallableObject->hasMethod($this->sRequestedMethod))
         {
             // Unable to find the requested object or method
-            throw new \Jaxon\Exception\SetupException($this->trans('errors.objects.invalid',
+            throw new SetupException($this->trans('errors.objects.invalid',
                 ['class' => $this->sRequestedClass, 'method' => $this->sRequestedMethod]));
         }
 

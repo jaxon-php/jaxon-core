@@ -17,6 +17,7 @@ namespace Jaxon\Plugin\Code;
 use Jaxon\Jaxon;
 use Jaxon\Plugin\Code\Contracts\Generator as GeneratorContract;
 use Jaxon\Utils\Http\URI;
+use Jaxon\Utils\Http\UriException;
 use Jaxon\Utils\Template\Engine as TemplateEngine;
 
 use function ksort;
@@ -80,7 +81,7 @@ class Generator
      *
      * @return array
      */
-    private function getOptionVars()
+    private function getOptionVars(): array
     {
         return [
             'sResponseType'             => 'JSON',
@@ -109,7 +110,7 @@ class Generator
      *
      * @return string
      */
-    private function _render(string $sTemplate, array $aVars = [])
+    private function _render(string $sTemplate, array $aVars = []): string
     {
         $aVars['sJsOptions'] = $this->getOption('js.app.options', '');
         return $this->xTemplateEngine->render("jaxon::plugins/$sTemplate", $aVars);
@@ -139,7 +140,7 @@ class Generator
      *
      * @return string
      */
-    private function getHash()
+    private function getHash(): string
     {
         $sHash = $this->jaxon->getVersion();
         foreach($this->aGenerators as $xGenerator)
@@ -154,7 +155,7 @@ class Generator
      *
      * @return string
      */
-    public function getCss()
+    public function getCss(): string
     {
         $sCssCode = '';
         foreach($this->aGenerators as $xGenerator)
@@ -169,7 +170,7 @@ class Generator
      *
      * @return string
      */
-    public function getJs()
+    public function getJs(): string
     {
         $sJsExtension = $this->getOption('js.app.minify') ? '.min.js' : '.js';
 
@@ -202,7 +203,7 @@ class Generator
      *
      * @return string
      */
-    private function _getScript()
+    private function _getScript(): string
     {
         $sScript = '';
         $sReadyScript = '';
@@ -227,7 +228,7 @@ class Generator
      *
      * @return string
      */
-    private function _getInlineScript()
+    private function _getInlineScript(): string
     {
         $sScript = '';
         foreach($this->aGenerators as $xGenerator)
@@ -246,7 +247,7 @@ class Generator
      *
      * @return string
      */
-    private function getJsFileName()
+    private function getJsFileName(): string
     {
         // Check config options
         // - The js.app.export option must be set to true
@@ -265,9 +266,12 @@ class Generator
     /**
      * Write javascript files and return the corresponding URI
      *
+     * @param string $sJsDirectory
+     * @param string $sJsFileName
+     *
      * @return string
      */
-    public function createFiles(string $sJsDirectory, string $sJsFileName)
+    public function createFiles(string $sJsDirectory, string $sJsFileName): string
     {
         // Check dir access
         // - The js.app.dir must be writable
@@ -301,12 +305,13 @@ class Generator
     /**
      * Get the javascript code to be sent to the browser
      *
-     * @param bool        $bIncludeJs         Also get the JS files
-     * @param bool        $bIncludeCss        Also get the CSS files
+     * @param bool $bIncludeJs Also get the JS files
+     * @param bool $bIncludeCss Also get the CSS files
      *
      * @return string
+     * @throws UriException
      */
-    public function getScript(bool $bIncludeJs, bool $bIncludeCss)
+    public function getScript(bool $bIncludeJs, bool $bIncludeCss): string
     {
         if(!$this->getOption('core.request.uri'))
         {

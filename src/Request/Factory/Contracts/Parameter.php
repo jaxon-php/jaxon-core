@@ -20,5 +20,5 @@ interface Parameter
      *
      * @return string
      */
-    public function getScript();
+    public function getScript(): string;
 }

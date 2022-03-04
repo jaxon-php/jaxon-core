@@ -24,7 +24,7 @@ class Question implements \Jaxon\Contracts\Dialogs\Question
      *
      * @return string
      */
-    public function confirm(string $sQuestion, string $sYesScript, string $sNoScript)
+    public function confirm(string $sQuestion, string $sYesScript, string $sNoScript): string
     {
         if(!$sNoScript)
         {

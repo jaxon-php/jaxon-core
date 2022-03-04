@@ -28,7 +28,7 @@ class DataBag extends \Jaxon\Plugin\Response
      *
      * @return array
      */
-    private function readData(array $aFrom)
+    private function readData(array $aFrom): array
     {
         // Todo: clean input data.
         if(is_string($aFrom['jxnbags']))
@@ -45,7 +45,7 @@ class DataBag extends \Jaxon\Plugin\Response
     /**
      * @inheritDoc
      */
-    public function getName()
+    public function getName(): string
     {
         return 'bags';
     }
@@ -53,7 +53,7 @@ class DataBag extends \Jaxon\Plugin\Response
     /**
      * @inheritDoc
      */
-    public function getHash()
+    public function getHash(): string
     {
         // Use the version number as hash
         return '1.0.0';
@@ -62,7 +62,7 @@ class DataBag extends \Jaxon\Plugin\Response
     /**
      * @inheritDoc
      */
-    public function getReadyScript()
+    public function getReadyScript(): string
     {
         return '
     jaxon.command.handler.register("bags.set", function(args) {
@@ -89,7 +89,7 @@ class DataBag extends \Jaxon\Plugin\Response
      *
      * @return DataBag\Context
      */
-    public function bag(string $sName)
+    public function bag(string $sName): DataBag\Context
     {
         return new DataBag\Context($this->xBag, $sName);
     }

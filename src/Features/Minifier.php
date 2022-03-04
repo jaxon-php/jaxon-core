@@ -24,7 +24,7 @@ trait Minifier
      *
      * @return bool
      */
-    public function minify(string $sJsFile, string $sMinFile)
+    public function minify(string $sJsFile, string $sMinFile): bool
     {
         return jaxon()->di()->getMinifier()->minify($sJsFile, $sMinFile);
     }

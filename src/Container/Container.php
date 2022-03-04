@@ -94,7 +94,7 @@ class Container extends PimpleContainer
      *
      * @return ContainerInterface
      */
-    public function getAppContainer()
+    public function getAppContainer(): ?ContainerInterface
     {
         return $this->appContainer;
     }
@@ -102,13 +102,13 @@ class Container extends PimpleContainer
     /**
      * Set the container provided by the integrated framework
      *
-     * @param ContainerInterface  $container     The container implementation
+     * @param ContainerInterface  $xContainer     The container implementation
      *
      * @return void
      */
-    public function setAppContainer(ContainerInterface $container)
+    public function setAppContainer(ContainerInterface $xContainer)
     {
-        $this->appContainer = $container;
+        $this->appContainer = $xContainer;
     }
 
     /**
@@ -118,7 +118,7 @@ class Container extends PimpleContainer
      *
      * @return bool
      */
-    public function has(string $sClass)
+    public function has(string $sClass): bool
     {
         if($this->appContainer != null && $this->appContainer->has($sClass))
         {
@@ -237,7 +237,7 @@ class Container extends PimpleContainer
     }
 
     /**
-     * Create an instance of a class by automatically fetching the dependencies from the constructor.
+     * Create an instance of a class by automatically fetching the dependencies in the constructor.
      *
      * @param string                $sClass             The class name
      *
@@ -245,7 +245,7 @@ class Container extends PimpleContainer
      */
     public function auto(string $sClass)
     {
-        $this->set($sClass, function($c) use ($sClass) {
+        $this->set($sClass, function() use ($sClass) {
             return $this->make($sClass);
         });
     }

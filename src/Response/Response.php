@@ -40,7 +40,6 @@ use function array_map;
 use function is_integer;
 use function trim;
 use function is_array;
-use function trim;
 use function array_keys;
 use function count;
 use function jaxon;
@@ -71,7 +70,7 @@ class Response extends AbstractResponse
      *
      * @return string
      */
-    public function getContentType()
+    public function getContentType(): string
     {
         return 'application/json';
     }
@@ -85,15 +84,9 @@ class Response extends AbstractResponse
      *
      * @return null|ResponsePlugin
      */
-    public function plugin(string $sName)
+    public function plugin(string $sName): ?ResponsePlugin
     {
-        $xPlugin = jaxon()->di()->getPluginManager()->getResponsePlugin($sName);
-        if(!$xPlugin)
-        {
-            return null;
-        }
-        $xPlugin->setResponse($this);
-        return $xPlugin;
+        return jaxon()->di()->getPluginManager()->getResponsePlugin($sName, $this);
     }
 
     /**
@@ -120,7 +113,7 @@ class Response extends AbstractResponse
      *
      * @return Element
      */
-    public function jq(string $sSelector = '', string $sContext = '')
+    public function jq(string $sSelector = '', string $sContext = ''): Element
     {
         return $this->plugin('jquery')->element($sSelector, $sContext);
     }
@@ -135,7 +128,7 @@ class Response extends AbstractResponse
      *
      * @return Element
      */
-    public function jQuery(string $sSelector = '', string $sContext = '')
+    public function jQuery(string $sSelector = '', string $sContext = ''): Element
     {
         return $this->jq($sSelector, $sContext);
     }
@@ -148,7 +141,7 @@ class Response extends AbstractResponse
      *
      * @return array
      */
-    private function getCommandData(array $aAttributes, $mData)
+    private function getCommandData(array $aAttributes, $mData): array
     {
         if(!$this->getOption('core.response.merge') ||
             !in_array($aAttributes['cmd'], ['js', 'ap']) ||
@@ -188,7 +181,7 @@ class Response extends AbstractResponse
      *
      * @return Response
      */
-    public function addCommand(array $aAttributes, $mData)
+    public function addCommand(array $aAttributes, $mData): Response
     {
         $aAttributes = array_map(function($xAttribute) {
             return is_integer($xAttribute) ? $xAttribute : trim((string)$xAttribute, " \t");
@@ -215,7 +208,7 @@ class Response extends AbstractResponse
      *
      * @return Response
      */
-    protected function _addCommand(string $sName, array $aAttributes, $mData, bool $bRemoveEmpty = false)
+    protected function _addCommand(string $sName, array $aAttributes, $mData, bool $bRemoveEmpty = false): Response
     {
         $mData = is_array($mData) ? array_map(function($sData) {
             return trim((string)$sData, " \t\n");
@@ -241,10 +234,9 @@ class Response extends AbstractResponse
      *
      * @return Response
      */
-    public function clearCommands()
+    public function clearCommands(): Response
     {
         $this->aCommands = [];
-
         return $this;
     }
 
@@ -257,7 +249,7 @@ class Response extends AbstractResponse
      *
      * @return Response
      */
-    public function addPluginCommand(ResponsePlugin $xPlugin, array $aAttributes, $mData)
+    public function addPluginCommand(ResponsePlugin $xPlugin, array $aAttributes, $mData): Response
     {
         $aAttributes['plg'] = $xPlugin->getName();
         return $this->addCommand($aAttributes, $mData);
@@ -299,7 +291,7 @@ class Response extends AbstractResponse
      *
      * @return array
      */
-    public function getCommands()
+    public function getCommands(): array
     {
         return $this->aCommands;
     }
@@ -307,9 +299,9 @@ class Response extends AbstractResponse
     /**
      * Get the number of commands in the response
      *
-     * @return integer
+     * @return int
      */
-    public function getCommandCount()
+    public function getCommandCount(): int
     {
         return count($this->aCommands);
     }
@@ -324,7 +316,7 @@ class Response extends AbstractResponse
      *
      * @return Response
      */
-    public function setReturnValue($value)
+    public function setReturnValue($value): Response
     {
         $this->xReturnValue = $value;
         return $this;
@@ -335,17 +327,15 @@ class Response extends AbstractResponse
      *
      * @return string
      */
-    public function getOutput()
+    public function getOutput(): string
     {
         $aResponse = [
             'jxnobj' => [],
         ];
-
         if(($this->xReturnValue))
         {
             $aResponse['jxnrv'] = $this->xReturnValue;
         }
-
         foreach($this->aCommands as $xCommand)
         {
             $aResponse['jxnobj'][] = $xCommand;

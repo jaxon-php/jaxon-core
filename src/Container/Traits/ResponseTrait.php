@@ -33,7 +33,7 @@ trait ResponseTrait
      *
      * @return ResponseManager
      */
-    public function getResponseManager()
+    public function getResponseManager(): ResponseManager
     {
         return $this->g(ResponseManager::class);
     }
@@ -43,7 +43,7 @@ trait ResponseTrait
      *
      * @return Response
      */
-    public function getResponse()
+    public function getResponse(): Response
     {
         return $this->g(Response::class);
     }
@@ -53,7 +53,7 @@ trait ResponseTrait
      *
      * @return Response
      */
-    public function newResponse()
+    public function newResponse(): Response
     {
         return new Response();
     }

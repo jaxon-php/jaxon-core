@@ -26,7 +26,7 @@ trait SessionTrait
      *
      * @return SessionContract
      */
-    public function getSessionManager()
+    public function getSessionManager(): SessionContract
     {
         return $this->g(SessionContract::class);
     }

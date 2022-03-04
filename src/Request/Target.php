@@ -81,8 +81,10 @@ class Target
      * Create a target of type Function
      *
      * @param string    $sFunctionName      The function name
+     *
+     * @return Target
      */
-    public static function makeFunction(string $sFunctionName)
+    public static function makeFunction(string $sFunctionName): Target
     {
         return new Target(self::TYPE_FUNCTION, $sFunctionName, '', '');
     }
@@ -92,8 +94,10 @@ class Target
      *
      * @param string    $sClassName         The class name
      * @param string    $sMethodName        The method name
+     *
+     * @return Target
      */
-    public static function makeClass(string $sClassName, string $sMethodName)
+    public static function makeClass(string $sClassName, string $sMethodName): Target
     {
         return new Target(self::TYPE_CLASS, '', $sClassName, $sMethodName);
     }
@@ -103,9 +107,9 @@ class Target
      *
      * @return bool
      */
-    public function isFunction()
+    public function isFunction(): bool
     {
-        return $this->sType == self::TYPE_FUNCTION;
+        return $this->sType === self::TYPE_FUNCTION;
     }
 
     /**
@@ -113,9 +117,9 @@ class Target
      *
      * @return bool
      */
-    public function isClass()
+    public function isClass(): bool
     {
-        return $this->sType == self::TYPE_CLASS;
+        return $this->sType === self::TYPE_CLASS;
     }
 
     /**
@@ -123,7 +127,7 @@ class Target
      *
      * @return string
      */
-    public function getFunctionName()
+    public function getFunctionName(): string
     {
         return $this->sFunctionName;
     }
@@ -133,7 +137,7 @@ class Target
      *
      * @return string
      */
-    public function getClassName()
+    public function getClassName(): string
     {
         return $this->sClassName;
     }
@@ -143,7 +147,7 @@ class Target
      *
      * @return string
      */
-    public function getMethodName()
+    public function getMethodName(): string
     {
         return $this->sMethodName;
     }

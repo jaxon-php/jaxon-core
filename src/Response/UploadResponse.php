@@ -32,7 +32,7 @@ class UploadResponse extends AbstractResponse
      *
      * @return string
      */
-    public function getContentType()
+    public function getContentType(): string
     {
         return 'text/html';
     }
@@ -66,9 +66,9 @@ class UploadResponse extends AbstractResponse
      *
      * @param string        $sMessage            The message to be displayed
      *
-     * @return UploadResponse
+     * @return AbstractResponse
      */
-    public function debug(string $sMessage)
+    public function debug(string $sMessage): AbstractResponse
     {
         $this->aDebugMessages[] = $sMessage;
         return $this;
@@ -79,7 +79,7 @@ class UploadResponse extends AbstractResponse
      *
      * @return string
      */
-    public function getOutput()
+    public function getOutput(): string
     {
         $aResponse = ($this->sUploadedFile) ?
             ['code' => 'success', 'upl' => $this->sUploadedFile] : ['code' => 'error', 'msg' => $this->sErrorMessage];
@@ -92,7 +92,7 @@ class UploadResponse extends AbstractResponse
 
         return '
 <script>
-    var res = ' . json_encode($aResponse) . ';' . $sConsoleLog . '
+    let res = ' . json_encode($aResponse) . ';' . $sConsoleLog . '
 </script>
 ';
     }

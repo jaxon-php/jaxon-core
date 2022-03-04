@@ -22,6 +22,7 @@ namespace Jaxon\Request\Factory;
 
 use Jaxon\Request\Factory\Contracts\Parameter as ParameterContract;
 use Jaxon\Response\Plugin\JQuery\Dom\Element as DomElement;
+use Jaxon\Ui\Pagination\Paginator;
 
 use function array_map;
 use function func_get_args;
@@ -64,7 +65,7 @@ class Request extends JsCall
      *
      * @return Request
      */
-    public function when(string $sCondition)
+    public function when(string $sCondition): Request
     {
         $this->sCondition = Parameter::make($sCondition)->getScript();
         return $this;
@@ -79,7 +80,7 @@ class Request extends JsCall
      *
      * @return Request
      */
-    public function unless(string $sCondition)
+    public function unless(string $sCondition): Request
     {
         $this->sCondition = '!(' . Parameter::make($sCondition)->getScript() . ')';
         return $this;
@@ -93,7 +94,7 @@ class Request extends JsCall
      *
      * @return Request
      */
-    public function ifeq(string $sValue1, string $sValue2)
+    public function ifeq(string $sValue1, string $sValue2): Request
     {
         $this->sCondition = '(' . Parameter::make($sValue1) . '==' . Parameter::make($sValue2) . ')';
         return $this;
@@ -107,7 +108,7 @@ class Request extends JsCall
      *
      * @return Request
      */
-    public function ifne(string $sValue1, string $sValue2)
+    public function ifne(string $sValue1, string $sValue2): Request
     {
         $this->sCondition = '(' . Parameter::make($sValue1) . '!=' . Parameter::make($sValue2) . ')';
         return $this;
@@ -121,7 +122,7 @@ class Request extends JsCall
      *
      * @return Request
      */
-    public function ifgt(string $sValue1, string $sValue2)
+    public function ifgt(string $sValue1, string $sValue2): Request
     {
         $this->sCondition = '(' . Parameter::make($sValue1) . '>' . Parameter::make($sValue2) . ')';
         return $this;
@@ -135,7 +136,7 @@ class Request extends JsCall
      *
      * @return Request
      */
-    public function ifge(string $sValue1, string $sValue2)
+    public function ifge(string $sValue1, string $sValue2): Request
     {
         $this->sCondition = '(' . Parameter::make($sValue1) . '>=' . Parameter::make($sValue2) . ')';
         return $this;
@@ -149,7 +150,7 @@ class Request extends JsCall
      *
      * @return Request
      */
-    public function iflt(string $sValue1, string $sValue2)
+    public function iflt(string $sValue1, string $sValue2): Request
     {
         $this->sCondition = '(' . Parameter::make($sValue1) . '<' . Parameter::make($sValue2) . ')';
         return $this;
@@ -163,7 +164,7 @@ class Request extends JsCall
      *
      * @return Request
      */
-    public function ifle(string $sValue1, string $sValue2)
+    public function ifle(string $sValue1, string $sValue2): Request
     {
         $this->sCondition = '(' . Parameter::make($sValue1) . '<=' . Parameter::make($sValue2) . ')';
         return $this;
@@ -190,7 +191,7 @@ class Request extends JsCall
      *
      * @return Request
      */
-    public function confirm(string $sQuestion)
+    public function confirm(string $sQuestion): Request
     {
         $this->sCondition = '__confirm__';
         $this->setMessageArgs(func_get_args());
@@ -207,7 +208,7 @@ class Request extends JsCall
      *
      * @return Request
      */
-    public function elseShow(string $sMessage)
+    public function elseShow(string $sMessage): Request
     {
         $this->setMessageArgs(func_get_args());
         return $this;
@@ -216,14 +217,14 @@ class Request extends JsCall
     /**
      * Make unique js vars for parameters of type DomElement
      *
-     * @var ParameterContract   $xParameter
-     * @var array               $aVariables
-     * @var string              $sVars
-     * @var integer             $nVarId
+     * @param ParameterContract $xParameter
+     * @param array $aVariables
+     * @param string $sVars
+     * @param int $nVarId
      *
      * @return ParameterContract
      */
-    private function _makeUniqueJsVar(ParameterContract $xParameter, array &$aVariables, &$sVars, &$nVarId)
+    private function _makeUniqueJsVar(ParameterContract $xParameter, array &$aVariables, string &$sVars, int &$nVarId): ParameterContract
     {
         if($xParameter instanceof DomElement)
         {
@@ -251,7 +252,7 @@ class Request extends JsCall
      *
      * @return string
      */
-    public function getScript()
+    public function getScript(): string
     {
         /*
          * JQuery variables sometimes depend on the context where they are used, eg. when their value depends on $(this).
@@ -321,11 +322,11 @@ class Request extends JsCall
      *
      * @return bool
      */
-    public function hasPageNumber()
+    public function hasPageNumber(): bool
     {
         foreach($this->aParameters as $xParameter)
         {
-            if($xParameter->getType() == Parameter::PAGE_NUMBER)
+            if($xParameter->getType() === Parameter::PAGE_NUMBER)
             {
                 return true;
             }
@@ -340,7 +341,7 @@ class Request extends JsCall
      *
      * @return Request
      */
-    public function setPageNumber(int $nPageNumber)
+    public function setPageNumber(int $nPageNumber): Request
     {
         // Set the value of the Parameter::PAGE_NUMBER parameter
         foreach($this->aParameters as $xParameter)
@@ -361,9 +362,9 @@ class Request extends JsCall
      * @param integer       $nItemsPerPage          The number of items per page page
      * @param integer       $nItemsTotal            The total number of items
      *
-     * @return \Jaxon\Ui\Pagination\Paginator
+     * @return Paginator
      */
-    public function pg(int $nCurrentPage, int $nItemsPerPage, int $nItemsTotal)
+    public function pg(int $nCurrentPage, int $nItemsPerPage, int $nItemsTotal): Paginator
     {
         return jaxon()->di()->getPaginator()
             ->setup($nItemsTotal, $nItemsPerPage, $nCurrentPage, $this);
@@ -376,9 +377,9 @@ class Request extends JsCall
      * @param integer       $nItemsPerPage          The number of items per page page
      * @param integer       $nItemsTotal            The total number of items
      *
-     * @return \Jaxon\Ui\Pagination\Paginator
+     * @return Paginator
      */
-    public function paginate(int $nCurrentPage, int $nItemsPerPage, int $nItemsTotal)
+    public function paginate(int $nCurrentPage, int $nItemsPerPage, int $nItemsTotal): Paginator
     {
         return $this->pg($nCurrentPage, $nItemsPerPage, $nItemsTotal);
     }

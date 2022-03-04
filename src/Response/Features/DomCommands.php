@@ -24,7 +24,7 @@ trait DomCommands
      *
      * @return Response
      */
-    abstract protected function _addCommand(string $sName, array $aAttributes, $mData, bool $bRemoveEmpty = false);
+    abstract protected function _addCommand(string $sName, array $aAttributes, $mData, bool $bRemoveEmpty = false): Response;
 
     /**
      * Add a command to assign the specified value to the given element's attribute
@@ -35,7 +35,7 @@ trait DomCommands
      *
      * @return Response
      */
-    public function assign(string $sTarget, string $sAttribute, string $sData)
+    public function assign(string $sTarget, string $sAttribute, string $sData): Response
     {
         $aAttributes = ['id' => $sTarget, 'prop' => $sAttribute];
         return $this->_addCommand('as', $aAttributes, $sData);
@@ -51,7 +51,7 @@ trait DomCommands
      *
      * @return Response
      */
-    public function html(string $sTarget, string $sData)
+    public function html(string $sTarget, string $sData): Response
     {
         return $this->assign($sTarget, 'innerHTML', $sData);
     }
@@ -65,7 +65,7 @@ trait DomCommands
      *
      * @return Response
      */
-    public function append(string $sTarget, string $sAttribute, string $sData)
+    public function append(string $sTarget, string $sAttribute, string $sData): Response
     {
         $aAttributes = ['id' => $sTarget, 'prop' => $sAttribute];
         return $this->_addCommand('ap', $aAttributes, $sData);
@@ -80,7 +80,7 @@ trait DomCommands
      *
      * @return Response
      */
-    public function prepend(string $sTarget, string $sAttribute, string $sData)
+    public function prepend(string $sTarget, string $sAttribute, string $sData): Response
     {
         $aAttributes = ['id' => $sTarget, 'prop' => $sAttribute];
         return $this->_addCommand('pp', $aAttributes, $sData);
@@ -96,7 +96,7 @@ trait DomCommands
      *
      * @return Response
      */
-    public function replace(string $sTarget, string $sAttribute, string $sSearch, string $sData)
+    public function replace(string $sTarget, string $sAttribute, string $sSearch, string $sData): Response
     {
         $aAttributes = ['id' => $sTarget, 'prop' => $sAttribute];
         $aData = ['s' => $sSearch, 'r' => $sData];
@@ -111,7 +111,7 @@ trait DomCommands
      *
      * @return Response
      */
-    public function clear(string $sTarget, string $sAttribute = 'innerHTML')
+    public function clear(string $sTarget, string $sAttribute = 'innerHTML'): Response
     {
         return $this->assign($sTarget, $sAttribute, '');
     }
@@ -127,7 +127,7 @@ trait DomCommands
      *
      * @return Response
      */
-    public function contextAssign(string $sAttribute, string $sData)
+    public function contextAssign(string $sAttribute, string $sData): Response
     {
         $aAttributes = ['prop' => $sAttribute];
         return $this->_addCommand('c:as', $aAttributes, $sData);
@@ -144,7 +144,7 @@ trait DomCommands
      *
      * @return Response
      */
-    public function contextAppend(string $sAttribute, string $sData)
+    public function contextAppend(string $sAttribute, string $sData): Response
     {
         $aAttributes = ['prop' => $sAttribute];
         return $this->_addCommand('c:ap', $aAttributes, $sData);
@@ -161,7 +161,7 @@ trait DomCommands
      *
      * @return Response
      */
-    public function contextPrepend(string $sAttribute, string $sData)
+    public function contextPrepend(string $sAttribute, string $sData): Response
     {
         $aAttributes = ['prop' => $sAttribute];
         return $this->_addCommand('c:pp', $aAttributes, $sData);
@@ -177,7 +177,7 @@ trait DomCommands
      *
      * @return Response
      */
-    public function contextClear(string $sAttribute)
+    public function contextClear(string $sAttribute): Response
     {
         return $this->contextAssign($sAttribute, '');
     }
@@ -189,7 +189,7 @@ trait DomCommands
      *
      * @return Response
      */
-    public function remove(string $sTarget)
+    public function remove(string $sTarget): Response
     {
         $aAttributes = ['id' => $sTarget];
         return $this->_addCommand('rm', $aAttributes, '');
@@ -204,7 +204,7 @@ trait DomCommands
      *
      * @return Response
      */
-    public function create(string $sParent, string $sTag, string $sId)
+    public function create(string $sParent, string $sTag, string $sId): Response
     {
         $aAttributes = ['id' => $sParent, 'prop' => $sId];
         return $this->_addCommand('ce', $aAttributes, $sTag);
@@ -219,7 +219,7 @@ trait DomCommands
      *
      * @return Response
      */
-    public function insertBefore(string $sBefore, string $sTag, string $sId)
+    public function insertBefore(string $sBefore, string $sTag, string $sId): Response
     {
         $aAttributes = ['id' => $sBefore, 'prop' => $sId];
         return $this->_addCommand('ie', $aAttributes, $sTag);
@@ -235,7 +235,7 @@ trait DomCommands
      *
      * @return Response
      */
-    public function insert(string $sBefore, string $sTag, string $sId)
+    public function insert(string $sBefore, string $sTag, string $sId): Response
     {
         return $this->insertBefore($sBefore, $sTag, $sId);
     }
@@ -249,7 +249,7 @@ trait DomCommands
      *
      * @return Response
      */
-    public function insertAfter(string $sAfter, string $sTag, string $sId)
+    public function insertAfter(string $sAfter, string $sTag, string $sId): Response
     {
         $aAttributes = ['id' => $sAfter, 'prop' => $sId];
         return $this->_addCommand('ia', $aAttributes, $sTag);
@@ -265,7 +265,7 @@ trait DomCommands
      *
      * @return Response
      */
-    public function createInput(string $sParent, string $sType, string $sName, string $sId)
+    public function createInput(string $sParent, string $sType, string $sName, string $sId): Response
     {
         $aAttributes = ['id' => $sParent, 'prop' => $sId, 'type' => $sType];
         return $this->_addCommand('ci', $aAttributes, $sName);
@@ -281,7 +281,7 @@ trait DomCommands
      *
      * @return Response
      */
-    public function insertInput(string $sBefore, string $sType, string $sName, string $sId)
+    public function insertInput(string $sBefore, string $sType, string $sName, string $sId): Response
     {
         $aAttributes = ['id' => $sBefore, 'prop' => $sId, 'type' => $sType];
         return $this->_addCommand('ii', $aAttributes, $sName);
@@ -297,7 +297,7 @@ trait DomCommands
      *
      * @return Response
      */
-    public function insertInputAfter(string $sAfter, string $sType, string $sName, string $sId)
+    public function insertInputAfter(string $sAfter, string $sType, string $sName, string $sId): Response
     {
         $aAttributes = ['id' => $sAfter, 'prop' => $sId, 'type' => $sType];
         return $this->_addCommand('iia', $aAttributes, $sName);

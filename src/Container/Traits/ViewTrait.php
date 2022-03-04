@@ -53,7 +53,7 @@ trait ViewTrait
      *
      * @return Dialog
      */
-    public function getDialog()
+    public function getDialog(): Dialog
     {
         return $this->g(Dialog::class);
     }
@@ -63,7 +63,7 @@ trait ViewTrait
      *
      * @return ViewManager
      */
-    public function getViewManager()
+    public function getViewManager(): ViewManager
     {
         return $this->g(ViewManager::class);
     }
@@ -73,7 +73,7 @@ trait ViewTrait
      *
      * @return ViewRenderer
      */
-    public function getViewRenderer()
+    public function getViewRenderer(): ViewRenderer
     {
         return $this->g(ViewRenderer::class);
     }
@@ -83,7 +83,7 @@ trait ViewTrait
      *
      * @return Paginator
      */
-    public function getPaginator()
+    public function getPaginator(): Paginator
     {
         return $this->g(Paginator::class);
     }

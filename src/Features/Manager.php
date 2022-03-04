@@ -23,7 +23,7 @@ trait Manager
      *
      * @return \Jaxon\Plugin\Manager
      */
-    public function getPluginManager()
+    public function getPluginManager(): \Jaxon\Plugin\Manager
     {
         return jaxon()->di()->getPluginManager();
     }
@@ -33,7 +33,7 @@ trait Manager
      *
      * @return \Jaxon\Response\Manager
      */
-    public function getResponseManager()
+    public function getResponseManager(): \Jaxon\Response\Manager
     {
         return jaxon()->di()->getResponseManager();
     }

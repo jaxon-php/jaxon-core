@@ -24,5 +24,5 @@ interface View
      *
      * @return string
      */
-    public function render(Store $store);
+    public function render(Store $store): string;
 }

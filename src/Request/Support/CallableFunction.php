@@ -66,7 +66,7 @@ class CallableFunction
      *
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->sJsFunction;
     }
@@ -103,7 +103,7 @@ class CallableFunction
      *
      * @return string
      */
-    public function getScript()
+    public function getScript(): string
     {
         $sPrefix = $this->getOption('core.prefix.function');
         $sJsFunction = $this->getName();

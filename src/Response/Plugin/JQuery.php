@@ -11,7 +11,7 @@ class JQuery extends \Jaxon\Plugin\Response
     /**
      * @inheritDoc
      */
-    public function getName()
+    public function getName(): string
     {
         return 'jquery';
     }
@@ -19,7 +19,7 @@ class JQuery extends \Jaxon\Plugin\Response
     /**
      * @inheritDoc
      */
-    public function getHash()
+    public function getHash(): string
     {
         // Use the version number as hash
         return '3.3.0';
@@ -28,7 +28,7 @@ class JQuery extends \Jaxon\Plugin\Response
     /**
      * @inheritDoc
      */
-    public function getReadyScript()
+    public function getReadyScript(): string
     {
         return '
     jaxon.command.handler.register("jquery", function(args) {
@@ -48,7 +48,7 @@ class JQuery extends \Jaxon\Plugin\Response
      *
      * @return Element
      */
-    public function element(string $sSelector = '', string $sContext = '')
+    public function element(string $sSelector = '', string $sContext = ''): Element
     {
         $xElement = new Element($sSelector, $sContext);
         $this->addCommand(['cmd' => 'jquery'], $xElement);

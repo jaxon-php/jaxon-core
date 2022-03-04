@@ -36,9 +36,9 @@ interface Message
      * @param string              $sMessage             The text of the message
      * @param string              $sTitle               The title of the message
      *
-     * @return void
+     * @return string
      */
-    public function success(string $sMessage, string $sTitle = '');
+    public function success(string $sMessage, string $sTitle = ''): string;
 
     /**
      * Print an information message.
@@ -46,9 +46,9 @@ interface Message
      * @param string              $sMessage             The text of the message
      * @param string              $sTitle               The title of the message
      *
-     * @return void
+     * @return string
      */
-    public function info(string $sMessage, string $sTitle = '');
+    public function info(string $sMessage, string $sTitle = ''): string;
 
     /**
      * Print a warning message.
@@ -56,9 +56,9 @@ interface Message
      * @param string              $sMessage             The text of the message
      * @param string              $sTitle               The title of the message
      *
-     * @return void
+     * @return string
      */
-    public function warning(string $sMessage, string $sTitle = '');
+    public function warning(string $sMessage, string $sTitle = ''): string;
 
     /**
      * Print an error message.
@@ -66,7 +66,7 @@ interface Message
      * @param string              $sMessage             The text of the message
      * @param string              $sTitle               The title of the message
      *
-     * @return void
+     * @return string
      */
-    public function error(string $sMessage, string $sTitle = '');
+    public function error(string $sMessage, string $sTitle = ''): string;
 }

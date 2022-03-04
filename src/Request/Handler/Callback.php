@@ -61,7 +61,7 @@ class Callback
      *
      * @return callable[]
      */
-    public function getBootCallbacks()
+    public function getBootCallbacks(): array
     {
         return $this->xBootCallbacks;
     }
@@ -71,7 +71,7 @@ class Callback
      *
      * @return callable[]
      */
-    public function getBeforeCallbacks()
+    public function getBeforeCallbacks(): array
     {
         return $this->xBeforeCallbacks;
     }
@@ -81,7 +81,7 @@ class Callback
      *
      * @return callable[]
      */
-    public function getAfterCallbacks()
+    public function getAfterCallbacks(): array
     {
         return $this->xAfterCallbacks;
     }
@@ -91,7 +91,7 @@ class Callback
      *
      * @return callable[]
      */
-    public function getInvalidCallbacks()
+    public function getInvalidCallbacks(): array
     {
         return $this->xInvalidCallbacks;
     }
@@ -101,7 +101,7 @@ class Callback
      *
      * @return callable[]
      */
-    public function getErrorCallbacks()
+    public function getErrorCallbacks(): array
     {
         return $this->xErrorCallbacks;
     }
@@ -111,7 +111,7 @@ class Callback
      *
      * @return callable[]
      */
-    public function getInitCallbacks()
+    public function getInitCallbacks(): array
     {
         return $this->xInitCallbacks;
     }
@@ -119,11 +119,11 @@ class Callback
     /**
      * Add a library booting callback.
      *
-     * @param callable  $xCallable               The callback function
+     * @param callable $xCallable               The callback function
      *
      * @return Callback
      */
-    public function boot($xCallable)
+    public function boot(callable $xCallable): Callback
     {
         $this->xBootCallbacks[] = $xCallable;
         return $this;
@@ -132,11 +132,11 @@ class Callback
     /**
      * Add a pre-request processing callback.
      *
-     * @param callable  $xCallable               The callback function
+     * @param callable $xCallable               The callback function
      *
      * @return Callback
      */
-    public function before($xCallable)
+    public function before(callable $xCallable): Callback
     {
         $this->xBeforeCallbacks[] = $xCallable;
         return $this;
@@ -145,11 +145,11 @@ class Callback
     /**
      * Add a post-request processing callback.
      *
-     * @param callable  $xCallable               The callback function
+     * @param callable $xCallable               The callback function
      *
      * @return Callback
      */
-    public function after($xCallable)
+    public function after(callable $xCallable): Callback
     {
         $this->xAfterCallbacks[] = $xCallable;
         return $this;
@@ -158,11 +158,11 @@ class Callback
     /**
      * Add a invalid request callback.
      *
-     * @param callable  $xCallable               The callback function
+     * @param callable $xCallable               The callback function
      *
      * @return Callback
      */
-    public function invalid($xCallable)
+    public function invalid(callable $xCallable): Callback
     {
         $this->xInvalidCallbacks[] = $xCallable;
         return $this;
@@ -171,11 +171,11 @@ class Callback
     /**
      * Add a processing error callback.
      *
-     * @param callable  $xCallable               The callback function
+     * @param callable $xCallable               The callback function
      *
      * @return Callback
      */
-    public function error($xCallable)
+    public function error(callable $xCallable): Callback
     {
         $this->xErrorCallbacks[] = $xCallable;
         return $this;
@@ -184,11 +184,11 @@ class Callback
     /**
      * Add a class initialisation callback.
      *
-     * @param callable  $xCallable               The callback function
+     * @param callable $xCallable               The callback function
      *
      * @return Callback
      */
-    public function init($xCallable)
+    public function init(callable $xCallable): Callback
     {
         $this->xInitCallbacks[] = $xCallable;
         return $this;

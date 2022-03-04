@@ -12,6 +12,7 @@
 namespace Jaxon\Request\Support;
 
 use Jaxon\Request\Validator;
+use Jaxon\Exception\SetupException;
 
 use Closure;
 
@@ -61,7 +62,7 @@ class FileUpload
      * @param array     $aFiles     The uploaded files
      *
      * @return void
-     * @throws \Jaxon\Exception\SetupException
+     * @throws SetupException
      */
     private function checkFiles(array $aFiles)
     {
@@ -72,12 +73,12 @@ class FileUpload
                 // Verify upload result
                 if($aFile['error'] != 0)
                 {
-                    throw new \Jaxon\Exception\SetupException($this->trans('errors.upload.failed', $aFile));
+                    throw new SetupException($this->trans('errors.upload.failed', $aFile));
                 }
                 // Verify file validity (format, size)
                 if(!$this->xValidator->validateUploadedFile($sVarName, $aFile))
                 {
-                    throw new \Jaxon\Exception\SetupException($this->getValidatorMessage());
+                    throw new SetupException($this->xValidator->getErrorMessage());
                 }
             }
         }
@@ -92,7 +93,7 @@ class FileUpload
      *
      * @return null|array
      */
-    private function getUploadedFile(string $sVarName, array $aVarFiles, int $nPosition)
+    private function getUploadedFile(string $sVarName, array $aVarFiles, int $nPosition): ?array
     {
         if(!$aVarFiles['name'][$nPosition])
         {
@@ -121,8 +122,9 @@ class FileUpload
      * Read uploaded files info from HTTP request data
      *
      * @return array
+     * @throws SetupException
      */
-    public function getUploadedFiles()
+    public function getUploadedFiles(): array
     {
         // Check validity of the uploaded files
         $aUploadedFiles = [];

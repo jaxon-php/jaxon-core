@@ -59,7 +59,7 @@ class RequestFactory
      *
      * @return RequestFactory
      */
-    public function setClassName(string $sClass)
+    public function setClassName(string $sClass): RequestFactory
     {
         $this->sPrefix = $this->getOption('core.prefix.function');
 
@@ -86,10 +86,9 @@ class RequestFactory
      *
      * @return RequestFactory
      */
-    public function setCallable(CallableObject $xCallable)
+    public function setCallable(CallableObject $xCallable): RequestFactory
     {
         $this->sPrefix = $this->getOption('core.prefix.class') . $xCallable->getJsName() . '.';
-
         return $this;
     }
 
@@ -100,7 +99,7 @@ class RequestFactory
      *
      * @return Request
      */
-    public function call(string $sFunction)
+    public function call(string $sFunction): Request
     {
         $aArguments = func_get_args();
         $sFunction = (string)$sFunction;
@@ -128,7 +127,7 @@ class RequestFactory
      *
      * @return Request
      */
-    public function func(string $sFunction)
+    public function func(string $sFunction): Request
     {
         $aArguments = func_get_args();
         $sFunction = (string)$sFunction;

@@ -116,9 +116,9 @@ class Handler
      *
      * The method is one of: Argument::METHOD_UNKNOWN, Argument::METHOD_GET, Argument::METHOD_POST.
      *
-     * @return integer
+     * @return int
      */
-    public function getRequestMethod()
+    public function getRequestMethod(): int
     {
         return $this->xArgumentManager->getRequestMethod();
     }
@@ -128,7 +128,7 @@ class Handler
      *
      * @return bool
      */
-    public function requestMethodIsGet()
+    public function requestMethodIsGet(): bool
     {
         return ($this->xArgumentManager->getRequestMethod() == Argument::METHOD_GET);
     }
@@ -139,7 +139,7 @@ class Handler
      * @return array
      * @throws SetupException
      */
-    public function processArguments()
+    public function processArguments(): array
     {
         return $this->xArgumentManager->process();
     }
@@ -149,7 +149,7 @@ class Handler
      *
      * @return Callback
      */
-    public function getCallbackManager()
+    public function getCallbackManager(): Callback
     {
         return $this->xCallbackManager;
     }
@@ -170,11 +170,11 @@ class Handler
     /**
      * These are the pre-request processing callbacks passed to the Jaxon library.
      *
-     * @param  bool  $bEndRequest   If set to true, the request processing is interrupted.
+     * @param bool $bEndRequest   If set to true, the request processing is interrupted.
      *
      * @return void
      */
-    public function onBefore(&$bEndRequest)
+    public function onBefore(bool &$bEndRequest)
     {
         // Call the user defined callback
         foreach($this->xCallbackManager->getBeforeCallbacks() as $xCallback)
@@ -248,7 +248,7 @@ class Handler
      *
      * @return bool
      */
-    public function canProcessRequest()
+    public function canProcessRequest(): bool
     {
         // Return true if the request plugin was already found
         if(($this->xTargetRequestPlugin))
@@ -282,10 +282,11 @@ class Handler
      * Process the current request and handle errors and exceptions.
      *
      * @return void
+     * @throws SetupException
      */
     private function _processRequest()
     {
-        try
+        //try
         {
             // Process uploaded files, if the upload plugin is enabled
             if($this->getOption('core.upload.enabled'))
@@ -299,7 +300,7 @@ class Handler
                 $this->xTargetRequestPlugin->processRequest();
             }
         }
-        catch(Exception $e)
+        /*catch(Exception $e)
         {
             // An exception was thrown while processing the request.
             // The request missed the corresponding handler function,
@@ -315,7 +316,7 @@ class Handler
             {
                 $this->onError($e);
             }
-        }
+        }*/
     }
 
     /**
@@ -340,6 +341,7 @@ class Handler
      * If any plugin processes the request, it will return true.
      *
      * @return void
+     * @throws SetupException
      */
     public function processRequest()
     {

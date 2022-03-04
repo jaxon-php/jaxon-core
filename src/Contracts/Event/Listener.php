@@ -28,5 +28,5 @@ interface Listener extends EventSubscriberInterface
      *
      * @return array
      */
-    public function getEvents();
+    public function getEvents(): array;
 }

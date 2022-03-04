@@ -27,7 +27,7 @@ trait Translator
      *
      * @return string
      */
-    public function trans(string $sText, array $aPlaceHolders = [], string $sLanguage = '')
+    public function trans(string $sText, array $aPlaceHolders = [], string $sLanguage = ''): string
     {
         return jaxon()->di()->getTranslator()->trans($sText, $aPlaceHolders, $sLanguage);
     }

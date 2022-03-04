@@ -78,7 +78,7 @@ class Parameter implements Contracts\Parameter
      *
      * @return string
      */
-    public function getType()
+    public function getType(): string
     {
         return $this->sType;
     }
@@ -110,9 +110,9 @@ class Parameter implements Contracts\Parameter
      *
      * @param mixed         $xValue                 The parameter value
      *
-     * @return Parameter
+     * @return Contracts\Parameter
      */
-    public static function make($xValue)
+    public static function make($xValue): Contracts\Parameter
     {
         if($xValue instanceof Contracts\Parameter)
         {
@@ -139,14 +139,13 @@ class Parameter implements Contracts\Parameter
     /**
      * Add quotes to a given value
      *
-     * @param string    $xValue     The value to be quoted
+     * @param string    $sValue     The value to be quoted
      *
      * @return string
      */
-    private function getQuotedValue($xValue)
+    private function getQuotedValue(string $sValue): string
     {
-        $sQuoteCharacter = "'";
-        return $sQuoteCharacter . $xValue . $sQuoteCharacter;
+        return "'" . $sValue . "'";
     }
 
     /**
@@ -157,7 +156,7 @@ class Parameter implements Contracts\Parameter
      *
      * @return string
      */
-    private function getJsCall(string $sFunction, string $sParameter)
+    private function getJsCall(string $sFunction, string $sParameter): string
     {
         return 'jaxon.' . $sFunction . '(' . $this->getQuotedValue($sParameter) . ')';
     }
@@ -167,7 +166,7 @@ class Parameter implements Contracts\Parameter
      *
      * @return string
      */
-    protected function getFormValuesScript()
+    protected function getFormValuesScript(): string
     {
         return $this->getJsCall('getFormValues', $this->xValue);
     }
@@ -177,7 +176,7 @@ class Parameter implements Contracts\Parameter
      *
      * @return string
      */
-    protected function getInputValueScript()
+    protected function getInputValueScript(): string
     {
         return $this->getJsCall('$', $this->xValue) . '.value';
     }
@@ -187,7 +186,7 @@ class Parameter implements Contracts\Parameter
      *
      * @return string
      */
-    protected function getCheckedValueScript()
+    protected function getCheckedValueScript(): string
     {
         return $this->getJsCall('$', $this->xValue) . '.checked';
     }
@@ -197,7 +196,7 @@ class Parameter implements Contracts\Parameter
      *
      * @return string
      */
-    protected function getElementInnerHTMLScript()
+    protected function getElementInnerHTMLScript(): string
     {
         return $this->getJsCall('$', $this->xValue) . '.innerHTML';
     }
@@ -207,7 +206,7 @@ class Parameter implements Contracts\Parameter
      *
      * @return string
      */
-    protected function getQuotedValueScript()
+    protected function getQuotedValueScript(): string
     {
         return $this->getQuotedValue(addslashes($this->xValue));
     }
@@ -217,7 +216,7 @@ class Parameter implements Contracts\Parameter
      *
      * @return string
      */
-    protected function getBoolValueScript()
+    protected function getBoolValueScript(): string
     {
         return ($this->xValue) ? 'true' : 'false';
     }
@@ -227,7 +226,7 @@ class Parameter implements Contracts\Parameter
      *
      * @return string
      */
-    protected function getNumericValueScript()
+    protected function getNumericValueScript(): string
     {
         return (string)$this->xValue;
     }
@@ -237,7 +236,7 @@ class Parameter implements Contracts\Parameter
      *
      * @return string
      */
-    protected function getUnquotedValueScript()
+    protected function getUnquotedValueScript(): string
     {
         if(is_array($this->xValue) || is_object($this->xValue))
         {
@@ -253,7 +252,7 @@ class Parameter implements Contracts\Parameter
      *
      * @return string
      */
-    protected function getPageNumberScript()
+    protected function getPageNumberScript(): string
     {
         return (string)$this->xValue;
     }
@@ -263,7 +262,7 @@ class Parameter implements Contracts\Parameter
      *
      * @return string
      */
-    public function getScript()
+    public function getScript(): string
     {
         $sMethodName = 'get' . $this->sType . 'Script';
         if(!method_exists($this, $sMethodName))
@@ -290,7 +289,7 @@ class Parameter implements Contracts\Parameter
      *
      * @return string
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): string
     {
         return $this->getScript();
     }

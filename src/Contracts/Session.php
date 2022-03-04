@@ -9,7 +9,7 @@ interface Session
      *
      * @return string
      */
-    public function getId();
+    public function getId(): string;
 
     /**
      * Generate a new session id
@@ -24,7 +24,7 @@ interface Session
      * Save data in the session
      *
      * @param string        $sKey                The session key
-     * @param string        $xValue              The session value
+     * @param mixed         $xValue              The session value
      *
      * @return void
      */
@@ -47,7 +47,7 @@ interface Session
      *
      * @return bool
      */
-    public function has(string $sKey);
+    public function has(string $sKey): bool;
 
     /**
      * Get data from the session
@@ -64,7 +64,7 @@ interface Session
      *
      * @return array
      */
-    public function all();
+    public function all(): array;
 
     /**
      * Delete a session key and its data

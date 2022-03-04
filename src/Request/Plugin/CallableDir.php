@@ -24,6 +24,7 @@ namespace Jaxon\Request\Plugin;
 use Jaxon\Jaxon;
 use Jaxon\Plugin\Request as RequestPlugin;
 use Jaxon\Request\Support\CallableRegistry;
+use Jaxon\Exception\SetupException;
 
 use function is_string;
 use function is_array;
@@ -56,7 +57,7 @@ class CallableDir extends RequestPlugin
     /**
      * @inheritDoc
      */
-    public function getName()
+    public function getName(): string
     {
         return Jaxon::CALLABLE_DIR;
     }
@@ -67,9 +68,9 @@ class CallableDir extends RequestPlugin
      * @param string        $sDirectory     The path of teh directory being registered
      *
      * @return string
-     * @throws \Jaxon\Exception\SetupException
+     * @throws SetupException
      */
-    private function checkDirectory(string $sDirectory)
+    private function checkDirectory(string $sDirectory): string
     {
         // if(!is_string($sDirectory))
         // {
@@ -78,7 +79,7 @@ class CallableDir extends RequestPlugin
         $sDirectory = rtrim(trim($sDirectory), '/\\');
         if(!is_dir($sDirectory))
         {
-            throw new \Jaxon\Exception\SetupException($this->trans('errors.objects.invalid-declaration'));
+            throw new SetupException($this->trans('errors.objects.invalid-declaration'));
         }
         return realpath($sDirectory);
     }
@@ -89,9 +90,9 @@ class CallableDir extends RequestPlugin
      * @param array|string  $aOptions       The associated options
      *
      * @return array
-     * @throws \Jaxon\Exception\SetupException
+     * @throws SetupException
      */
-    private function checkOptions($aOptions)
+    private function checkOptions($aOptions): array
     {
         if(is_string($aOptions))
         {
@@ -99,7 +100,7 @@ class CallableDir extends RequestPlugin
         }
         if(!is_array($aOptions))
         {
-            throw new \Jaxon\Exception\SetupException($this->trans('errors.objects.invalid-declaration'));
+            throw new SetupException($this->trans('errors.objects.invalid-declaration'));
         }
 
         // Change the keys in $aOptions to have "\" as separator
@@ -115,13 +116,14 @@ class CallableDir extends RequestPlugin
     /**
      * Register a callable class
      *
-     * @param string        $sType          The type of request handler being registered
-     * @param string        $sDirectory     The path of the directory being registered
-     * @param array|string  $aOptions       The associated options
+     * @param string $sType The type of request handler being registered
+     * @param string $sDirectory The path of the directory being registered
+     * @param array|string $aOptions The associated options
      *
      * @return bool
+     * @throws SetupException
      */
-    public function register(string $sType, string $sDirectory, $aOptions)
+    public function register(string $sType, string $sDirectory, $aOptions): bool
     {
         $sType = trim($sType);
         if($sType != $this->getName())
@@ -134,7 +136,7 @@ class CallableDir extends RequestPlugin
         $aOptions = $this->checkOptions($aOptions);
         $aOptions['directory'] = $sDirectory;
 
-        $sNamespace = isset($aOptions['namespace']) ? $aOptions['namespace'] : '';
+        $sNamespace = $aOptions['namespace'] ?? '';
         if(!($sNamespace = trim($sNamespace, ' \\')))
         {
             $sNamespace = '';
@@ -155,7 +157,7 @@ class CallableDir extends RequestPlugin
     /**
      * @inheritDoc
      */
-    public function canProcessRequest()
+    public function canProcessRequest(): bool
     {
         return false;
     }
@@ -165,7 +167,7 @@ class CallableDir extends RequestPlugin
      *
      * @return bool
      */
-    public function processRequest()
+    public function processRequest(): bool
     {
         return false;
     }

@@ -41,7 +41,7 @@ trait RequestTrait
      *
      * @return RequestHandler
      */
-    public function getRequestHandler()
+    public function getRequestHandler(): RequestHandler
     {
         return $this->g(RequestHandler::class);
     }
@@ -51,7 +51,7 @@ trait RequestTrait
      *
      * @return RequestFactory
      */
-    public function getRequestFactory()
+    public function getRequestFactory(): RequestFactory
     {
         return $this->g(RequestFactory::class);
     }
@@ -61,7 +61,7 @@ trait RequestTrait
      *
      * @return ParameterFactory
      */
-    public function getParameterFactory()
+    public function getParameterFactory(): ParameterFactory
     {
         return $this->g(ParameterFactory::class);
     }

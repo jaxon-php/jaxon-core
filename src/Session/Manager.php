@@ -11,7 +11,7 @@ class Manager implements SessionContract
      *
      * @return string
      */
-    public function getId()
+    public function getId(): string
     {
         return session_id();
     }
@@ -60,7 +60,7 @@ class Manager implements SessionContract
      *
      * @return bool
      */
-    public function has(string $sKey)
+    public function has(string $sKey): bool
     {
         return isset($_SESSION[$sKey]);
     }
@@ -75,7 +75,7 @@ class Manager implements SessionContract
      */
     public function get(string $sKey, $xDefault = null)
     {
-        return isset($_SESSION[$sKey]) ? $_SESSION[$sKey] : $xDefault;
+        return $_SESSION[$sKey] ?? $xDefault;
     }
 
     /**
@@ -83,7 +83,7 @@ class Manager implements SessionContract
      *
      * @return array
      */
-    public function all()
+    public function all(): array
     {
         return $_SESSION;
     }

@@ -20,7 +20,7 @@ trait App
      *
      * @return Bootstrap
      */
-    protected function bootstrap()
+    protected function bootstrap(): Bootstrap
     {
         return jaxon()->di()->getBootstrap();
     }
@@ -30,7 +30,7 @@ trait App
      *
      * @return Response
      */
-    public function ajaxResponse()
+    public function ajaxResponse(): Response
     {
         return jaxon()->getResponse();
     }
@@ -66,7 +66,7 @@ trait App
      *
      * @return Package
      */
-    public function package(string $sClassName)
+    public function package(string $sClassName): Package
     {
         return jaxon()->package($sClassName);
     }
@@ -76,7 +76,7 @@ trait App
      *
      * @return Callback
      */
-    public function callback()
+    public function callback(): Callback
     {
         return jaxon()->callback();
     }
@@ -86,7 +86,7 @@ trait App
      *
      * @return bool
      */
-    public function canProcessRequest()
+    public function canProcessRequest(): bool
     {
         return jaxon()->canProcessRequest();
     }
@@ -94,11 +94,11 @@ trait App
     /**
      * Get the HTTP response
      *
-     * @param string    $code       The HTTP response code
+     * @param string $sCode      The HTTP response code
      *
      * @return mixed
      */
-    abstract public function httpResponse($code = '200');
+    abstract public function httpResponse(string $sCode = '200');
 
     /**
      * Process an incoming Jaxon request, and return the response.
@@ -112,7 +112,7 @@ trait App
      *
      * @return string  the javascript code
      */
-    public function css()
+    public function css(): string
     {
         return jaxon()->getCss();
     }
@@ -122,7 +122,7 @@ trait App
      *
      * @return string  the javascript code
      */
-    public function getCss()
+    public function getCss(): string
     {
         return jaxon()->getCss();
     }
@@ -132,7 +132,7 @@ trait App
      *
      * @return string  the javascript code
      */
-    public function js()
+    public function js(): string
     {
         return jaxon()->getJs();
     }
@@ -142,7 +142,7 @@ trait App
      *
      * @return string  the javascript code
      */
-    public function getJs()
+    public function getJs(): string
     {
         return jaxon()->getJs();
     }
@@ -152,7 +152,7 @@ trait App
      *
      * @return string  the javascript code
      */
-    public function script(bool $bIncludeJs = false, bool $bIncludeCss = false)
+    public function script(bool $bIncludeJs = false, bool $bIncludeCss = false): string
     {
         return jaxon()->getScript($bIncludeJs, $bIncludeCss);
     }
@@ -162,7 +162,7 @@ trait App
      *
      * @return string  the javascript code
      */
-    public function getScript(bool $bIncludeJs = false, bool $bIncludeCss = false)
+    public function getScript(bool $bIncludeJs = false, bool $bIncludeCss = false): string
     {
         return jaxon()->getScript($bIncludeJs, $bIncludeCss);
     }
@@ -172,7 +172,7 @@ trait App
      *
      * @return Renderer
      */
-    public function view()
+    public function view(): Renderer
     {
         return jaxon()->view();
     }
@@ -182,7 +182,7 @@ trait App
      *
      * @return Session
      */
-    public function session()
+    public function session(): Session
     {
         return jaxon()->session();
     }
@@ -192,7 +192,7 @@ trait App
      *
      * @return LoggerInterface
      */
-    public function logger()
+    public function logger(): LoggerInterface
     {
         return jaxon()->logger();
     }

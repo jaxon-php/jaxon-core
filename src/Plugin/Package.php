@@ -46,7 +46,7 @@ abstract class Package implements Code\Contracts\Generator
      *
      * @return array
      */
-    public function getOptions()
+    public function getOptions(): array
     {
         return $this->aOptions;
     }
@@ -56,7 +56,7 @@ abstract class Package implements Code\Contracts\Generator
      *
      * @return Config
      */
-    public function getConfig()
+    public function getConfig(): Config
     {
         return $this->xConfig;
     }
@@ -79,7 +79,7 @@ abstract class Package implements Code\Contracts\Generator
      *
      * @return Renderer
      */
-    public function view()
+    public function view(): Renderer
     {
         return jaxon()->view();
     }
@@ -89,7 +89,7 @@ abstract class Package implements Code\Contracts\Generator
      *
      * @return string
      */
-    abstract public static function getConfigFile();
+    abstract public static function getConfigFile(): string;
 
     /**
      * Include the getReadyScript() in the generated code.
@@ -104,7 +104,7 @@ abstract class Package implements Code\Contracts\Generator
     /**
      * @inheritDoc
      */
-    public function readyEnabled()
+    public function readyEnabled(): bool
     {
         return $this->bReadyEnabled;
     }
@@ -112,7 +112,7 @@ abstract class Package implements Code\Contracts\Generator
     /**
      * @inheritDoc
      */
-    public final function readyInlined()
+    public final function readyInlined(): bool
     {
         // For packages, the getReadyScript() is never exported to external files.
         return true;
@@ -121,7 +121,7 @@ abstract class Package implements Code\Contracts\Generator
     /**
      * @inheritDoc
      */
-    public final function getHash()
+    public final function getHash(): string
     {
         // Packages do not generate hash on their own. So we make this method final.
         return '';
@@ -130,7 +130,7 @@ abstract class Package implements Code\Contracts\Generator
     /**
      * @inheritDoc
      */
-    public function getCss()
+    public function getCss(): string
     {
         return '';
     }
@@ -138,7 +138,7 @@ abstract class Package implements Code\Contracts\Generator
     /**
      * @inheritDoc
      */
-    public function getJs()
+    public function getJs(): string
     {
         return '';
     }
@@ -146,7 +146,7 @@ abstract class Package implements Code\Contracts\Generator
     /**
      * @inheritDoc
      */
-    public function getScript()
+    public function getScript(): string
     {
         return '';
     }
@@ -156,7 +156,7 @@ abstract class Package implements Code\Contracts\Generator
      *
      * @return string
      */
-    abstract public function getHtml();
+    abstract public function getHtml(): string;
 
     /**
      * Get the HTML code of the package home page
@@ -165,7 +165,7 @@ abstract class Package implements Code\Contracts\Generator
      *
      * @return string
      */
-    public function html()
+    public function html(): string
     {
         return $this->getHtml();
     }

@@ -49,7 +49,7 @@ trait Config
      *
      * @return bool
      */
-    public function hasOption(string $sName)
+    public function hasOption(string $sName): bool
     {
         return jaxon()->di()->getConfig()->hasOption($sName);
     }
@@ -61,18 +61,8 @@ trait Config
      *
      * @return array
      */
-    public function getOptionNames(string $sPrefix)
+    public function getOptionNames(string $sPrefix): array
     {
         return jaxon()->di()->getConfig()->getOptionNames($sPrefix);
-    }
-
-    /**
-     * Create a new the config manager
-     *
-     * @return \Jaxon\Utils\Config\Config
-     */
-    public function newConfig()
-    {
-        return jaxon()->di()->newConfig();
     }
 }

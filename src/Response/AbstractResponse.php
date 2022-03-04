@@ -17,14 +17,14 @@ abstract class AbstractResponse
      *
      * @return string
      */
-    abstract public function getContentType();
+    abstract public function getContentType(): string;
 
     /**
      * Get the configured character encoding
      *
      * @return string
      */
-    public function getCharacterEncoding()
+    public function getCharacterEncoding(): string
     {
         return trim($this->getOption('core.encoding'));
     }
@@ -46,7 +46,7 @@ abstract class AbstractResponse
 
         $sCharacterSet = '';
         $sCharacterEncoding = $this->getCharacterEncoding();
-        if(is_string($sCharacterEncoding) && strlen($sCharacterEncoding) > 0)
+        if(strlen($sCharacterEncoding) > 0)
         {
             $sCharacterSet = '; charset="' . $sCharacterEncoding . '"';
         }
@@ -74,14 +74,14 @@ abstract class AbstractResponse
      *
      * @return AbstractResponse
      */
-    abstract public function debug(string $sMessage);
+    abstract public function debug(string $sMessage): AbstractResponse;
 
     /**
      * Return the output, generated from the commands added to the response, that will be sent to the browser
      *
      * @return string
      */
-    abstract public function getOutput();
+    abstract public function getOutput(): string;
 
     /**
      * Print the output, generated from the commands added to the response, that will be sent to the browser

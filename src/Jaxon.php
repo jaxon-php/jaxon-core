@@ -30,10 +30,11 @@ use Jaxon\Container\Container;
 use Jaxon\Contracts\Session;
 use Jaxon\Plugin\Package;
 use Jaxon\Plugin\Plugin;
-use Jaxon\Plugin\Response;
+use Jaxon\Plugin\Response as ResponsePlugin;
 use Jaxon\Request\Factory\CallableClass\Request;
 use Jaxon\Request\Handler\Callback;
 use Jaxon\Request\Plugin\FileUpload;
+use Jaxon\Response\Response;
 use Jaxon\Ui\Dialogs\Dialog;
 use Jaxon\Ui\View\Renderer;
 use Jaxon\Utils\Config\Reader as ConfigReader;
@@ -97,7 +98,7 @@ class Jaxon implements LoggerAwareInterface
      *
      * @return Jaxon
      */
-    public static function getInstance()
+    public static function getInstance(): ?Jaxon
     {
         if(self::$xInstance == null)
         {
@@ -130,7 +131,7 @@ class Jaxon implements LoggerAwareInterface
      *
      * @return Container
      */
-    public function di()
+    public function di(): ?Container
     {
         return self::$xContainer;
     }
@@ -140,7 +141,7 @@ class Jaxon implements LoggerAwareInterface
      *
      * @return string
      */
-    public function getVersion()
+    public function getVersion(): string
     {
         return $this->sVersion;
     }
@@ -150,7 +151,7 @@ class Jaxon implements LoggerAwareInterface
      *
      * @return LoggerInterface
      */
-    public function logger()
+    public function logger(): LoggerInterface
     {
         return $this->logger;
     }
@@ -160,7 +161,7 @@ class Jaxon implements LoggerAwareInterface
      *
      * @return ConfigReader
      */
-    public function config()
+    public function config(): ConfigReader
     {
         return $this->di()->getConfigReader();
     }
@@ -170,7 +171,7 @@ class Jaxon implements LoggerAwareInterface
      *
      * @return array<string,string|bool|integer>
      */
-    private function getDefaultOptions()
+    private function getDefaultOptions(): array
     {
         // The default configuration settings.
         return [
@@ -209,9 +210,9 @@ class Jaxon implements LoggerAwareInterface
     /**
      * Get the Global Response object
      *
-     * @return \Jaxon\Response\Response
+     * @return Response
      */
-    public function getResponse()
+    public function getResponse(): Response
     {
         return $this->di()->getResponse();
     }
@@ -219,9 +220,9 @@ class Jaxon implements LoggerAwareInterface
     /**
      * Create a new Jaxon response object
      *
-     * @return \Jaxon\Response\Response
+     * @return Response
      */
-    public function newResponse()
+    public function newResponse(): Response
     {
         return $this->di()->newResponse();
     }
@@ -234,10 +235,11 @@ class Jaxon implements LoggerAwareInterface
      * - 1000 thru 8999: User created plugins, typically, these plugins don't care about order
      * - 9000 thru 9999: Plugins that generally need to be last or near the end of the plugin list
      *
-     * @param Plugin    $xPlugin        An instance of a plugin
-     * @param integer   $nPriority      The plugin priority, used to order the plugins
+     * @param Plugin $xPlugin An instance of a plugin
+     * @param integer $nPriority The plugin priority, used to order the plugins
      *
      * @return void
+     * @throws Exception\SetupException
      */
     public function registerPlugin(Plugin $xPlugin, int $nPriority = 1000)
     {
@@ -247,20 +249,21 @@ class Jaxon implements LoggerAwareInterface
     /**
      * Register request handlers, including functions, callable classes and directories.
      *
-     * @param string        $sType            The type of request handler being registered
+     * @param string $sType The type of request handler being registered
      *        Options include:
      *        - Jaxon::CALLABLE_FUNCTION: a function declared at global scope
      *        - Jaxon::CALLABLE_CLASS: a class who's methods are to be registered
      *        - Jaxon::CALLABLE_DIR: a directory containing classes to be registered
      *        - Jaxon::PACKAGE: a package
-     * @param string        $sName
+     * @param string $sName
      *        When registering a function, this is the name of the function
      *        When registering a callable class, this is the class name
      *        When registering a callable directory, this is the full path to the directory
      *        When registering a package or a plugin, this is the corresponding class name
-     * @param array|string  $xOptions   The related options
+     * @param array|string $xOptions The related options
      *
      * @return void
+     * @throws Exception\SetupException
      */
     public function register(string $sType, string $sName, $xOptions = [])
     {
@@ -311,7 +314,7 @@ class Jaxon implements LoggerAwareInterface
      *
      * @return Request|null
      */
-    public function request(string $sClassName)
+    public function request(string $sClassName): ?Request
     {
         $xInstance = $this->instance($sClassName);
         return ($xInstance) ? $xInstance->rq() : null;
@@ -328,7 +331,7 @@ class Jaxon implements LoggerAwareInterface
      *
      * @return string
      */
-    public function getScript(bool $bIncludeJs = false, bool $bIncludeCss = false)
+    public function getScript(bool $bIncludeJs = false, bool $bIncludeCss = false): string
     {
         return $this->di()->getCodeGenerator()->getScript($bIncludeJs, $bIncludeCss);
     }
@@ -354,7 +357,7 @@ class Jaxon implements LoggerAwareInterface
      *
      * @return string
      */
-    public function getJs()
+    public function getJs(): string
     {
         return $this->di()->getCodeGenerator()->getJs();
     }
@@ -364,7 +367,7 @@ class Jaxon implements LoggerAwareInterface
      *
      * @return string
      */
-    public function getCss()
+    public function getCss(): string
     {
         return $this->di()->getCodeGenerator()->getCss();
     }
@@ -374,7 +377,7 @@ class Jaxon implements LoggerAwareInterface
      *
      * @return bool
      */
-    public function canProcessRequest()
+    public function canProcessRequest(): bool
     {
         return $this->di()->getRequestHandler()->canProcessRequest();
     }
@@ -422,9 +425,9 @@ class Jaxon implements LoggerAwareInterface
      *
      * @param string        $sName                The name of the plugin
      *
-     * @return Response
+     * @return ResponsePlugin
      */
-    public function plugin(string $sName)
+    public function plugin(string $sName): ResponsePlugin
     {
         return $this->di()->getPluginManager()->getResponsePlugin($sName);
     }
@@ -436,7 +439,7 @@ class Jaxon implements LoggerAwareInterface
      *
      * @return Package
      */
-    public function package(string $sClassName)
+    public function package(string $sClassName): Package
     {
         return $this->di()->getPluginManager()->getPackage($sClassName);
     }
@@ -446,7 +449,7 @@ class Jaxon implements LoggerAwareInterface
      *
      * @return FileUpload
      */
-    public function upload()
+    public function upload(): FileUpload
     {
         return $this->di()->getPluginManager()->getRequestPlugin(self::FILE_UPLOAD);
     }
@@ -456,7 +459,7 @@ class Jaxon implements LoggerAwareInterface
      *
      * @return Callback
      */
-    public function callback()
+    public function callback(): Callback
     {
         return $this->di()->getRequestHandler()->getCallbackManager();
     }
@@ -466,7 +469,7 @@ class Jaxon implements LoggerAwareInterface
      *
      * @return Dialog
      */
-    public function dialog()
+    public function dialog(): Dialog
     {
         return $this->di()->getDialog();
     }
@@ -476,7 +479,7 @@ class Jaxon implements LoggerAwareInterface
      *
      * @return Engine
      */
-    public function template()
+    public function template(): Engine
     {
         return $this->di()->getTemplateEngine();
     }
@@ -486,7 +489,7 @@ class Jaxon implements LoggerAwareInterface
      *
      * @return App
      */
-    public function app()
+    public function app(): App
     {
         return $this->di()->getApp();
     }
@@ -496,7 +499,7 @@ class Jaxon implements LoggerAwareInterface
      *
      * @return Renderer
      */
-    public function view()
+    public function view(): Renderer
     {
         return $this->di()->getViewRenderer();
     }
@@ -506,7 +509,7 @@ class Jaxon implements LoggerAwareInterface
      *
      * @return Session
      */
-    public function session()
+    public function session(): Session
     {
         return $this->di()->getSessionManager();
     }

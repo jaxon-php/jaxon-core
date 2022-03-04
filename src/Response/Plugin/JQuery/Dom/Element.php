@@ -121,7 +121,7 @@ class Element implements JsonSerializable, Parameter
      *
      * @return string
      */
-    public function getScript()
+    public function getScript(): string
     {
         if(count($this->aCalls) == 0)
         {
@@ -147,7 +147,7 @@ class Element implements JsonSerializable, Parameter
      *
      * @return string
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): string
     {
         return $this->getScript();
     }

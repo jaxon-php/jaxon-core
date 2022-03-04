@@ -47,7 +47,7 @@ class Manager
      *
      * @return string
      */
-    public function getDefaultNamespace()
+    public function getDefaultNamespace(): string
     {
         return $this->sDefaultNamespace;
     }
@@ -57,7 +57,7 @@ class Manager
      *
      * @return array
      */
-    public function getNamespaces()
+    public function getNamespaces(): array
     {
         return $this->aNamespaces;
     }
@@ -69,7 +69,7 @@ class Manager
      *
      * @return array|null
      */
-    public function getNamespace(string $sNamespace)
+    public function getNamespace(string $sNamespace): ?array
     {
         return $this->aNamespaces[$sNamespace] ?? null;
     }
@@ -110,8 +110,8 @@ class Manager
     /**
      * Set the view namespaces.
      *
-     * @param Config    $xLibConfig     The config options provided in the library
-     * @param Config    $xAppConfig     The config options provided in the app section of the global config file.
+     * @param Config $xLibConfig The config options provided in the library
+     * @param Config|null $xAppConfig The config options provided in the app section of the global config file.
      *
      * @return void
      */
@@ -160,7 +160,7 @@ class Manager
      *
      * @return View
      */
-    public function getRenderer(string $sId)
+    public function getRenderer(string $sId): View
     {
         // Return the view renderer with the given id
         return $this->di->get('jaxon.app.view.' . $sId);
@@ -176,14 +176,10 @@ class Manager
      */
     public function addRenderer(string $sId, Closure $xClosure)
     {
-        $sBaseId = 'jaxon.app.view.user.' . $sId;
-        // Return the user defined view renderer
-        $this->di->set($sBaseId, $xClosure);
         // Return the initialized view renderer
-        $this->di->set('jaxon.app.view.' . $sId, function($di) use ($sBaseId, $sId) {
+        $this->di->set('jaxon.app.view.' . $sId, function($di) use ($sId, $xClosure) {
             // Get the defined renderer
-            $xRenderer = $di->get($sBaseId);
-
+            $xRenderer = $xClosure($di);
             // Init the renderer with the template namespaces
             $aNamespaces = array_filter($this->aNamespaces, function($aNamespace) use($sId) {
                 return $aNamespace['renderer'] === $sId;
@@ -203,7 +199,7 @@ class Manager
      *
      * @return View|null
      */
-    public function getNamespaceRenderer(string $sNamespace)
+    public function getNamespaceRenderer(string $sNamespace): ?View
     {
         $aNamespace = $this->getNamespace($sNamespace);
         if(!$aNamespace)

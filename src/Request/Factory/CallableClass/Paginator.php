@@ -69,7 +69,7 @@ class Paginator
      *
      * @return Paginator
      */
-    public function setProperties(int $nItemsTotal, int $nItemsPerPage, int $nCurrentPage)
+    public function setProperties(int $nItemsTotal, int $nItemsPerPage, int $nCurrentPage): Paginator
     {
         $this->nItemsTotal = $nItemsTotal;
         $this->nItemsPerPage = $nItemsPerPage;

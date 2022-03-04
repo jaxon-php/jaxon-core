@@ -31,7 +31,7 @@ trait JsCommands
      *
      * @return Response
      */
-    abstract public function addCommand(array $aAttributes, $mData);
+    abstract public function addCommand(array $aAttributes, $mData): Response;
 
     /**
      * Add a response command to the array of commands that will be sent to the browser
@@ -43,7 +43,7 @@ trait JsCommands
      *
      * @return Response
      */
-    abstract protected function _addCommand(string $sName, array $aAttributes, $mData, bool $bRemoveEmpty = false);
+    abstract protected function _addCommand(string $sName, array $aAttributes, $mData, bool $bRemoveEmpty = false): Response;
 
     /**
      * Merge the response commands from the specified <Response> object with
@@ -67,7 +67,7 @@ trait JsCommands
      *
      * @return Response
      */
-    public function confirmCommands(int $nCommandCount, string $sMessage)
+    public function confirmCommands(int $nCommandCount, string $sMessage): Response
     {
         $aAttributes = ['count' => $nCommandCount];
         return $this->_addCommand('cc', $aAttributes, $sMessage);
@@ -85,7 +85,7 @@ trait JsCommands
      * @return JsCommands
      * @throws SetupException
      */
-    public function confirm(string $sMessage, callable $xCallable)
+    public function confirm(string $sMessage, callable $xCallable): JsCommands
     {
         $xResponse = jaxon()->newResponse();
         call_user_func($xCallable, $xResponse);
@@ -105,7 +105,7 @@ trait JsCommands
      *
      * @return Response
      */
-    public function alert(string $sMessage)
+    public function alert(string $sMessage): Response
     {
         return $this->_addCommand('al', [], $sMessage);
     }
@@ -117,7 +117,7 @@ trait JsCommands
      *
      * @return Response
      */
-    public function debug(string $sMessage)
+    public function debug(string $sMessage): Response
     {
         return $this->_addCommand('dbg', [], $sMessage);
     }
@@ -130,7 +130,7 @@ trait JsCommands
      *
      * @return Response
      */
-    public function redirect(string $sURL, int $nDelay = 0)
+    public function redirect(string $sURL, int $nDelay = 0): Response
     {
         // we need to parse the query part so that the values are rawurlencode()'ed
         // can't just use parse_url() cos we could be dealing with a relative URL which
@@ -192,7 +192,7 @@ trait JsCommands
      *
      * @return Response
      */
-    public function script(string $sJS)
+    public function script(string $sJS): Response
     {
         return $this->_addCommand('js', [], $sJS);
     }
@@ -204,7 +204,7 @@ trait JsCommands
      *
      * @return Response
      */
-    public function call(string $sFunc)
+    public function call(string $sFunc): Response
     {
         $aArgs = func_get_args();
         array_shift($aArgs);
@@ -221,7 +221,7 @@ trait JsCommands
      *
      * @return Response
      */
-    public function setEvent(string $sTarget, string $sEvent, string $sScript)
+    public function setEvent(string $sTarget, string $sEvent, string $sScript): Response
     {
         $aAttributes = ['id' => $sTarget, 'prop' => $sEvent];
         return $this->_addCommand('ev', $aAttributes, $sScript);
@@ -235,7 +235,7 @@ trait JsCommands
      *
      * @return Response
      */
-    public function onClick(string $sTarget, string $sScript)
+    public function onClick(string $sTarget, string $sScript): Response
     {
         return $this->setEvent($sTarget, 'onclick', $sScript);
     }
@@ -251,7 +251,7 @@ trait JsCommands
      *
      * @return Response
      */
-    public function addHandler(string $sTarget, string $sEvent, string $sHandler)
+    public function addHandler(string $sTarget, string $sEvent, string $sHandler): Response
     {
         $aAttributes = ['id' => $sTarget, 'prop' => $sEvent];
         return $this->_addCommand('ah', $aAttributes, $sHandler);
@@ -266,7 +266,7 @@ trait JsCommands
      *
      * @return Response
      */
-    public function removeHandler(string $sTarget, string $sEvent, string $sHandler)
+    public function removeHandler(string $sTarget, string $sEvent, string $sHandler): Response
     {
         $aAttributes = ['id' => $sTarget, 'prop' => $sEvent];
         return $this->_addCommand('rh', $aAttributes, $sHandler);
@@ -281,7 +281,7 @@ trait JsCommands
      *
      * @return Response
      */
-    public function setFunction(string $sFunction, string $sArgs, string $sScript)
+    public function setFunction(string $sFunction, string $sArgs, string $sScript): Response
     {
         $aAttributes = ['func' => $sFunction, 'prop' => $sArgs];
         return $this->_addCommand('sf', $aAttributes, $sScript);
@@ -292,7 +292,7 @@ trait JsCommands
      *
      * @param string        $sFunction            The name of the existing function to wrap
      * @param string        $sArgs                The comma separated list of parameters for the function
-     * @param array            $aScripts            An array of javascript code snippets that will be used to build
+     * @param array $aScripts            An array of javascript code snippets that will be used to build
      *                                             the body of the function
      *                                             The first piece of code specified in the array will occur before
      *                                             the call to the original function, the second will occur after
@@ -302,7 +302,7 @@ trait JsCommands
      *
      * @return Response
      */
-    public function wrapFunction(string $sFunction, string $sArgs, $aScripts, string $sReturnValueVar)
+    public function wrapFunction(string $sFunction, string $sArgs, array $aScripts, string $sReturnValueVar): Response
     {
         $aAttributes = ['cmd' => 'wpf', 'func' => $sFunction, 'prop' => $sArgs, 'type' => $sReturnValueVar];
         return $this->addCommand($aAttributes, $aScripts);
@@ -318,7 +318,7 @@ trait JsCommands
      *
      * @return Response
      */
-    private function _includeScript(bool $bIncludeOnce, string $sFileName, string $sType, string $sId)
+    private function _includeScript(bool $bIncludeOnce, string $sFileName, string $sType, string $sId): Response
     {
         $aAttributes = ['type' => $sType, 'elm_id' => $sId];
         return $this->_addCommand(($bIncludeOnce ? 'ino' : 'in'), $aAttributes, $sFileName, true);
@@ -333,7 +333,7 @@ trait JsCommands
      *
      * @return Response
      */
-    public function includeScript(string $sFileName, string $sType = '', string $sId = '')
+    public function includeScript(string $sFileName, string $sType = '', string $sId = ''): Response
     {
         return $this->_includeScript(false, $sFileName, $sType, $sId);
     }
@@ -347,7 +347,7 @@ trait JsCommands
      *
      * @return Response
      */
-    public function includeScriptOnce(string $sFileName, string $sType = '', string $sId = '')
+    public function includeScriptOnce(string $sFileName, string $sType = '', string $sId = ''): Response
     {
         return $this->_includeScript(true, $sFileName, $sType, $sId);
     }
@@ -362,7 +362,7 @@ trait JsCommands
      *
      * @return Response
      */
-    public function removeScript(string $sFileName, string $sUnload = '')
+    public function removeScript(string $sFileName, string $sUnload = ''): Response
     {
         $aAttributes = ['unld' => $sUnload];
         return $this->_addCommand('rjs', $aAttributes, $sFileName, true);
@@ -378,7 +378,7 @@ trait JsCommands
      *
      * @return Response
      */
-    public function includeCSS(string $sFileName, string $sMedia = '')
+    public function includeCSS(string $sFileName, string $sMedia = ''): Response
     {
         $aAttributes = ['media' => $sMedia];
         return $this->_addCommand('css', $aAttributes, $sFileName, true);
@@ -393,7 +393,7 @@ trait JsCommands
      *
      * @return Response
      */
-    public function removeCSS(string $sFileName, string $sMedia = '')
+    public function removeCSS(string $sFileName, string $sMedia = ''): Response
     {
         $aAttributes = ['media' => $sMedia];
         return $this->_addCommand('rcss', $aAttributes, $sFileName, true);
@@ -414,7 +414,7 @@ trait JsCommands
      *
      * @return Response
      */
-    public function waitForCSS(int $nTimeout = 600)
+    public function waitForCSS(int $nTimeout = 600): Response
     {
         $aAttributes = ['cmd' => 'wcss', 'prop' => $nTimeout];
         return $this->addCommand($aAttributes, '');
@@ -433,7 +433,7 @@ trait JsCommands
      *
      * @return Response
      */
-    public function waitFor(string $script, int $tenths)
+    public function waitFor(string $script, int $tenths): Response
     {
         $aAttributes = ['cmd' => 'wf', 'prop' => $tenths];
         return $this->addCommand($aAttributes, $script);
@@ -449,7 +449,7 @@ trait JsCommands
      *
      * @return Response
      */
-    public function sleep(int $tenths)
+    public function sleep(int $tenths): Response
     {
         $aAttributes = ['cmd' =>'s', 'prop' => $tenths];
         return $this->addCommand($aAttributes, '');

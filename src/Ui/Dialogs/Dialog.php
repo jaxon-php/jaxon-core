@@ -85,7 +85,7 @@ class Dialog
      *
      * @return QuestionContract
      */
-    public function getDefaultQuestion()
+    public function getDefaultQuestion(): QuestionContract
     {
         return $this->xDefaultQuestion;
     }
@@ -107,17 +107,17 @@ class Dialog
      *
      * @return MessageContract
      */
-    public function getMessage()
+    public function getMessage(): MessageContract
     {
-        return (($this->xMessage) ? $this->xMessage : $this->xDefaultMessage);
+        return $this->xMessage ?? $this->xDefaultMessage;
     }
 
     /**
      * Get the default javascript alert function
      *
-     * @return Message
+     * @return MessageContract
      */
-    public function getDefaultMessage()
+    public function getDefaultMessage(): MessageContract
     {
         return $this->xDefaultMessage;
     }
@@ -132,7 +132,7 @@ class Dialog
      *
      * @return string
      */
-    public function confirm(string $sQuestion, string $sYesScript, string $sNoScript)
+    public function confirm(string $sQuestion, string $sYesScript, string $sNoScript): string
     {
         return $this->getQuestion()->confirm($sQuestion, $sYesScript, $sNoScript);
     }
@@ -145,9 +145,9 @@ class Dialog
      * @param string              $sMessage             The text of the message
      * @param string              $sTitle               The title of the message
      *
-     * @return string|void
+     * @return string
      */
-    public function success(string $sMessage, string $sTitle = '')
+    public function success(string $sMessage, string $sTitle = ''): string
     {
         return $this->getMessage()->success($sMessage, $sTitle);
     }
@@ -160,9 +160,9 @@ class Dialog
      * @param string              $sMessage             The text of the message
      * @param string              $sTitle               The title of the message
      *
-     * @return string|void
+     * @return string
      */
-    public function info(string $sMessage, string $sTitle = '')
+    public function info(string $sMessage, string $sTitle = ''): string
     {
         return $this->getMessage()->info($sMessage, $sTitle);
     }
@@ -175,9 +175,9 @@ class Dialog
      * @param string              $sMessage             The text of the message
      * @param string              $sTitle               The title of the message
      *
-     * @return string|void
+     * @return string
      */
-    public function warning(string $sMessage, string $sTitle = '')
+    public function warning(string $sMessage, string $sTitle = ''): string
     {
         return $this->getMessage()->warning($sMessage, $sTitle);
     }
@@ -190,9 +190,9 @@ class Dialog
      * @param string              $sMessage             The text of the message
      * @param string              $sTitle               The title of the message
      *
-     * @return string|void
+     * @return string
      */
-    public function error(string $sMessage, string $sTitle = '')
+    public function error(string $sMessage, string $sTitle = ''): string
     {
         return $this->getMessage()->error($sMessage, $sTitle);
     }

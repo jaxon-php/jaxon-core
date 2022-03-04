@@ -78,7 +78,7 @@ class Manager
      *
      * @return AbstractResponse
      */
-    public function getResponse()
+    public function getResponse(): ?AbstractResponse
     {
         return $this->xResponse;
     }
@@ -177,7 +177,7 @@ class Manager
      *
      * @return string
      */
-    public function getOutput()
+    public function getOutput(): string
     {
         if(($this->xResponse))
         {

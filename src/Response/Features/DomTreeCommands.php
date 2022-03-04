@@ -24,14 +24,14 @@ trait DomTreeCommands
      *
      * @return Response
      */
-    abstract protected function _addCommand(string $sName, array $aAttributes, $mData, bool $bRemoveEmpty = false);
+    abstract protected function _addCommand(string $sName, array $aAttributes, $mData, bool $bRemoveEmpty = false): Response;
 
     /**
      * Add a command to start a DOM response
      *
      * @return Response
      */
-    public function domStartResponse()
+    public function domStartResponse(): Response
     {
         return $this->_addCommand('DSR', [], '');
     }
@@ -44,7 +44,7 @@ trait DomTreeCommands
      *
      * @return Response
      */
-    public function domCreateElement(string $sVariable, string $sTag)
+    public function domCreateElement(string $sVariable, string $sTag): Response
     {
         $aAttributes = ['tgt' => $sVariable];
         return $this->_addCommand('DCE', $aAttributes, $sTag);
@@ -59,7 +59,7 @@ trait DomTreeCommands
      *
      * @return Response
      */
-    public function domSetAttribute(string $sVariable, string $sKey, string $sValue)
+    public function domSetAttribute(string $sVariable, string $sKey, string $sValue): Response
     {
         $aAttributes = ['tgt' => $sVariable, 'key' => $sKey];
         return $this->_addCommand('DSA', $aAttributes, $sValue);
@@ -74,7 +74,7 @@ trait DomTreeCommands
      *
      * @return Response
      */
-    public function domRemoveChildren(string $sParent, int $nSkip = 0, int $nRemove = 0)
+    public function domRemoveChildren(string $sParent, int $nSkip = 0, int $nRemove = 0): Response
     {
         $aAttributes = ['skip' => $nSkip, 'remove' => $nRemove];
         return $this->_addCommand('DRC', $aAttributes, $sParent, true);
@@ -88,7 +88,7 @@ trait DomTreeCommands
      *
      * @return Response
      */
-    public function domAppendChild(string $sParent, string $sVariable)
+    public function domAppendChild(string $sParent, string $sVariable): Response
     {
         $aAttributes = ['par' => $sParent];
         return $this->_addCommand('DAC', $aAttributes, $sVariable);
@@ -102,7 +102,7 @@ trait DomTreeCommands
      *
      * @return Response
      */
-    public function domInsertBefore(string $sTarget, string $sVariable)
+    public function domInsertBefore(string $sTarget, string $sVariable): Response
     {
         $aAttributes = ['tgt' => $sTarget];
         return $this->_addCommand('DIB', $aAttributes, $sVariable);
@@ -116,7 +116,7 @@ trait DomTreeCommands
      *
      * @return Response
      */
-    public function domInsertAfter(string $sTarget, string $sVariable)
+    public function domInsertAfter(string $sTarget, string $sVariable): Response
     {
         $aAttributes = ['tgt' => $sTarget];
         return $this->_addCommand('DIA', $aAttributes, $sVariable);
@@ -130,7 +130,7 @@ trait DomTreeCommands
      *
      * @return Response
      */
-    public function domAppendText(string $sParent, string $sText)
+    public function domAppendText(string $sParent, string $sText): Response
     {
         $aAttributes = ['par' => $sParent];
         return $this->_addCommand('DAT', $aAttributes, $sText);
@@ -141,7 +141,7 @@ trait DomTreeCommands
      *
      * @return Response
      */
-    public function domEndResponse()
+    public function domEndResponse(): Response
     {
         return $this->_addCommand('DER', [], '');
     }

@@ -29,7 +29,7 @@ trait AppTrait
         // Jaxon App bootstrap
         $this->set(Bootstrap::class, function($c) {
             return new Bootstrap($c->g(Jaxon::class), $c->g(PluginManager::class),
-                $c->g(ViewManager::class), $c->g(RequestHandler::class));
+                $c->g(ViewManager::class), $c->g(RequestHandler::class), $c->g(Translator::class));
         });
     }
 

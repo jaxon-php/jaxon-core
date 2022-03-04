@@ -4,6 +4,7 @@ namespace Jaxon\Container\Traits;
 
 use Jaxon\Utils\Config\Config;
 use Jaxon\Utils\Config\Reader;
+use Jaxon\Utils\Config\Exception\DataDepth;
 
 trait ConfigTrait
 {
@@ -27,7 +28,7 @@ trait ConfigTrait
      *
      * @return Reader
      */
-    public function getConfigReader()
+    public function getConfigReader(): Reader
     {
         return $this->g(Reader::class);
     }
@@ -37,7 +38,7 @@ trait ConfigTrait
      *
      * @return Config
      */
-    public function getConfig()
+    public function getConfig(): Config
     {
         return $this->g(Config::class);
     }
@@ -45,12 +46,13 @@ trait ConfigTrait
     /**
      * Create a new the config manager
      *
-     * @param array             $aOptions           The options array
-     * @param string            $sKeys              The key prefix of the config options
+     * @param array $aOptions The options array
+     * @param string $sKeys The key prefix of the config options
      *
      * @return Config
+     * @throws DataDepth
      */
-    public function newConfig(array $aOptions = [], string $sKeys = '')
+    public function newConfig(array $aOptions = [], string $sKeys = ''): Config
     {
         return new Config($aOptions, $sKeys);
     }

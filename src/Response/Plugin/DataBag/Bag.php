@@ -33,7 +33,7 @@ class Bag
     /**
      * @return bool
      */
-    public function touched()
+    public function touched(): bool
     {
         return $this->bTouched;
     }
@@ -41,7 +41,7 @@ class Bag
     /**
      * @return array
      */
-    public function getAll()
+    public function getAll(): array
     {
         return $this->aData;
     }
@@ -68,6 +68,6 @@ class Bag
      */
     public function get(string $sBag, string $sKey, $xValue = null)
     {
-        return isset($this->aData[$sBag][$sKey]) ? $this->aData[$sBag][$sKey] : $xValue;
+        return $this->aData[$sBag][$sKey] ?? $xValue;
     }
 }

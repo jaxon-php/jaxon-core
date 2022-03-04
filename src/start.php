@@ -5,6 +5,7 @@ use Jaxon\Plugin\Plugin;
 use Jaxon\Request\Factory\RequestFactory;
 use Jaxon\Request\Factory\ParameterFactory;
 use Jaxon\Response\Plugin\JQuery\Dom\Element as DomElement;
+use Jaxon\Exception\SetupException;
 
 /**
  * start.php -
@@ -25,7 +26,7 @@ use Jaxon\Response\Plugin\JQuery\Dom\Element as DomElement;
  *
  * @return Jaxon
  */
-function jaxon()
+function jaxon(): Jaxon
 {
     return Jaxon::getInstance();
 }
@@ -39,7 +40,7 @@ function jaxon()
  *
  * @return string
  */
-function jaxon_trans(string $sText, array $aPlaceHolders = [], string $sLanguage = '')
+function jaxon_trans(string $sText, array $aPlaceHolders = [], string $sLanguage = ''): string
 {
     return Jaxon::getInstance()->di()->getTranslator()->trans($sText, $aPlaceHolders, $sLanguage);
 }
@@ -47,10 +48,11 @@ function jaxon_trans(string $sText, array $aPlaceHolders = [], string $sLanguage
 /**
  * Register a plugin
  *
- * @param Plugin         $xPlugin               An instance of a plugin
- * @param integer        $nPriority             The plugin priority, used to order the plugins
+ * @param Plugin $xPlugin An instance of a plugin
+ * @param integer $nPriority The plugin priority, used to order the plugins
  *
  * @return void
+ * @throws SetupException
  */
 function jaxon_register_plugin(Plugin $xPlugin, int $nPriority = 1000)
 {
@@ -64,7 +66,7 @@ function jaxon_register_plugin(Plugin $xPlugin, int $nPriority = 1000)
  *
  * @return RequestFactory
  */
-function rq(string $sClassName = '')
+function rq(string $sClassName = ''): RequestFactory
 {
     return Jaxon::getInstance()->di()->getRequestFactory()->setClassName($sClassName);
 }
@@ -74,7 +76,7 @@ function rq(string $sClassName = '')
  *
  * @return ParameterFactory
  */
-function pm()
+function pm(): ParameterFactory
 {
     return Jaxon::getInstance()->di()->getParameterFactory();
 }
@@ -89,7 +91,7 @@ function pm()
  */
 if(!function_exists('pr'))
 {
-    function pr()
+    function pr(): ParameterFactory
     {
         return Jaxon::getInstance()->di()->getParameterFactory();
     }
@@ -105,7 +107,7 @@ if(!function_exists('pr'))
  *
  * @return DomElement
  */
-function jq(string $sSelector = '', string $sContext = '')
+function jq(string $sSelector = '', string $sContext = ''): DomElement
 {
     return new DomElement($sSelector, $sContext);
 }
@@ -121,7 +123,7 @@ function jq(string $sSelector = '', string $sContext = '')
  *
  * @return DomElement
  */
-function jQuery(string $sSelector = '', string $sContext = '')
+function jQuery(string $sSelector = '', string $sContext = ''): DomElement
 {
     return jq($sSelector, $sContext);
 }

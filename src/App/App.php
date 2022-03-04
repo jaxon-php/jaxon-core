@@ -70,6 +70,14 @@ class App
     }
 
     /**
+     * @return Translator
+     */
+    protected function translator(): Translator
+    {
+        return $this->xTranslator;
+    }
+
+    /**
      * Read config options from a config file and setup the library
      *
      * @param string $sConfigFile The full path to the config file
@@ -82,11 +90,6 @@ class App
         try
         {
             return $this->xConfigReader->read($sConfigFile);
-        }
-        catch(DataDepth $e)
-        {
-            $sMessage = $this->xTranslator->trans('errors.data.depth', ['key' => $sPrefix, 'depth' => $nDepth]);
-            throw new SetupException($sMessage);
         }
         catch(YamlExtension $e)
         {
@@ -116,7 +119,7 @@ class App
      * @param string $sConfigFile The full path to the config file
      *
      * @return void
-     * @throws SetupException|DataDepth
+     * @throws SetupException
      */
     public function setup(string $sConfigFile)
     {
@@ -130,7 +133,6 @@ class App
         $aOptions = $this->readConfig($sConfigFile);
         $aLibOptions = $aOptions['lib'] ?? [];
         $aAppOptions = $aOptions['app'] ?? [];
-
         if(!is_array($aLibOptions) || !is_array($aAppOptions))
         {
             $sMessage = $this->xTranslator->trans('errors.file.content', ['path' => $sConfigFile]);
@@ -148,7 +150,7 @@ class App
     /**
      * Get the HTTP response
      *
-     * @param string    $sCode      The HTTP response code
+     * @param string $sCode      The HTTP response code
      *
      * @return void
      */

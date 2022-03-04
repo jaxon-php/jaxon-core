@@ -21,7 +21,6 @@
 
 namespace Jaxon\Plugin;
 
-use Jaxon\Exception\SetupException;
 use Jaxon\Jaxon;
 use Jaxon\Plugin\Code\Generator as CodeGenerator;
 use Jaxon\Request\Plugin\CallableClass;
@@ -30,10 +29,14 @@ use Jaxon\Request\Plugin\CallableFunction;
 use Jaxon\Request\Plugin\FileUpload;
 use Jaxon\Response\Plugin\JQuery as JQueryPlugin;
 use Jaxon\Response\Plugin\DataBag;
+use Jaxon\Response\Response as JaxonResponse;
+use Jaxon\Exception\SetupException;
 use Jaxon\Utils\Config\Config;
-
-use Jaxon\Utils\Config\Exception\File;
+use Jaxon\Utils\Config\Exception\FileAccess;
+use Jaxon\Utils\Config\Exception\FileContent;
+use Jaxon\Utils\Config\Exception\FileExtension;
 use Jaxon\Utils\Config\Exception\YamlExtension;
+use Jaxon\Utils\Config\Exception\DataDepth;
 
 use function trim;
 use function is_integer;
@@ -91,7 +94,7 @@ class Manager
      *
      * @return array
      */
-    public function getRequestPlugins()
+    public function getRequestPlugins(): array
     {
         return $this->aRequestPlugins;
     }
@@ -101,7 +104,7 @@ class Manager
      *
      * @return array
      */
-    public function getResponsePlugins()
+    public function getResponsePlugins(): array
     {
         return $this->aResponsePlugins;
     }
@@ -113,7 +116,7 @@ class Manager
      *
      * @return Package
      */
-    public function getPackage(string $sClassName)
+    public function getPackage(string $sClassName): Package
     {
         return $this->jaxon->di()->get(trim($sClassName, '\\ '));
     }
@@ -180,12 +183,56 @@ class Manager
      * Register a package
      *
      * @param string $sClassName The package class name
+     *
+     * @return Config
+     * @throws SetupException
+     */
+    private function readPackageConfig(string $sClassName): Config
+    {
+        $sConfigFile = $sClassName::getConfigFile();
+        try
+        {
+            $di = $this->jaxon->di();
+            $aPackageConfig = $di->getConfigReader()->read($sConfigFile);
+            // Add the package name to the config
+            $aPackageConfig['package'] = $sClassName;
+            return $di->newConfig($aPackageConfig);
+        }
+        catch(YamlExtension $e)
+        {
+            $sMessage = $this->trans('errors.yaml.install');
+            throw new SetupException($sMessage);
+        }
+        catch(FileExtension $e)
+        {
+            $sMessage = $this->trans('errors.file.extension', ['path' => $sConfigFile]);
+            throw new SetupException($sMessage);
+        }
+        catch(FileAccess $e)
+        {
+            $sMessage = $this->trans('errors.file.access', ['path' => $sConfigFile]);
+            throw new SetupException($sMessage);
+        }
+        catch(FileContent $e)
+        {
+            $sMessage = $this->trans('errors.file.content', ['path' => $sConfigFile]);
+            throw new SetupException($sMessage);
+        }
+        catch(DataDepth $e)
+        {
+            $sMessage = $this->trans('errors.data.depth', ['key' => $e->sPrefix, 'depth' => $e->nDepth]);
+            throw new SetupException($sMessage);
+        }
+    }
+
+    /**
+     * Register a package
+     *
+     * @param string $sClassName The package class name
      * @param array $aAppOptions The package options defined in the app section of the config file
      *
      * @return void
      * @throws SetupException
-     * @throws File
-     * @throws YamlExtension
      */
     public function registerPackage(string $sClassName, array $aAppOptions)
     {
@@ -193,11 +240,8 @@ class Manager
         $di = $this->jaxon->di();
         $xAppConfig = $di->registerPackage($sClassName, $aAppOptions);
 
-        // Read and apply the package config.
-        $aPackageConfig = $di->getConfigReader()->read($sClassName::getConfigFile());
-        // Add the package name to the config
-        $aPackageConfig['package'] = $sClassName;
-        $xPackageConfig = $di->newConfig($aPackageConfig);
+        // Read the package config.
+        $xPackageConfig = $this->readPackageConfig($sClassName);
 
         // Register the declarations in the package config.
         $this->_registerFromConfig($xPackageConfig);
@@ -322,13 +366,15 @@ class Manager
      *
      * @return Response
      */
-    public function getResponsePlugin(string $sName)
+    public function getResponsePlugin(string $sName, JaxonResponse $xResponse): ?Response
     {
-        if(isset($this->aResponsePlugins[$sName]))
+        if(!isset($this->aResponsePlugins[$sName]))
         {
-            return $this->aResponsePlugins[$sName];
+            return null;
         }
-        return null;
+        $xPlugin = $this->aResponsePlugins[$sName];
+        $xPlugin->setResponse($xResponse);
+        return $xPlugin;
     }
 
     /**
@@ -338,7 +384,7 @@ class Manager
      *
      * @return Request
      */
-    public function getRequestPlugin(string $sName)
+    public function getRequestPlugin(string $sName): ?Request
     {
         if(isset($this->aRequestPlugins[$sName]))
         {

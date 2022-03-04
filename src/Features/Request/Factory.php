@@ -28,7 +28,7 @@ trait Factory
      *
      * @return Request
      */
-    public function call()
+    public function call(): Request
     {
         // Make the request
         return call_user_func_array([rq(get_class($this)), 'call'], func_get_args());

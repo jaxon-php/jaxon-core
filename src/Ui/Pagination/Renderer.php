@@ -86,25 +86,25 @@ class Renderer
     /**
      * Set the text for the previous page link
      *
-     * @param string $text The text for the previous page link
+     * @param string $sText The text for the previous page link
      *
      * @return void
      */
-    public function setPreviousText(string $text)
+    public function setPreviousText(string $sText)
     {
-        $this->sPreviousText = $text;
+        $this->sPreviousText = $sText;
     }
 
     /**
      * Set the text for the next page link
      *
-     * @param string $text The text for the previous page link
+     * @param string $sText The text for the previous page link
      *
      * @return void
      */
-    public function setNextText(string $text)
+    public function setNextText(string $sText)
     {
-        $this->sNextText = $text;
+        $this->sNextText = $sText;
     }
 
     /**
@@ -118,7 +118,7 @@ class Renderer
     {
         $this->xRequest = $xRequest;
         // Append the page number to the parameter list, if not yet given.
-        if(($this->xRequest) && !$this->xRequest->hasPageNumber())
+        if(!$this->xRequest->hasPageNumber())
         {
             $this->xRequest->addParameter(Parameter::PAGE_NUMBER, 0);
         }
@@ -133,7 +133,7 @@ class Renderer
      */
     public function setCurrentPage(int $nCurrentPage)
     {
-        $this->nCurrentPage = intval($nCurrentPage);
+        $this->nCurrentPage = $nCurrentPage;
     }
 
     /**
@@ -145,7 +145,7 @@ class Renderer
      */
     public function setMaxPagesToShow(int $nMaxPagesToShow)
     {
-        $this->nMaxPagesToShow = intval($nMaxPagesToShow);
+        $this->nMaxPagesToShow = $nMaxPagesToShow;
         if($this->nMaxPagesToShow < 4)
         {
             $this->nMaxPagesToShow = 4;
@@ -159,7 +159,7 @@ class Renderer
      *
      * @return string
      */
-    protected function getPageCall(int $pageNum)
+    protected function getPageCall(int $pageNum): string
     {
         return $this->xRequest->setPageNumber($pageNum)->getScript();
     }
@@ -173,7 +173,7 @@ class Renderer
      *
      * @return null|Store
      */
-    protected function renderLink(string $sTemplate, string $sText, string $sCall)
+    protected function renderLink(string $sTemplate, string $sText, string $sCall): ?Store
     {
         return $this->xRenderer->render('pagination::links/' . $sTemplate, [
             'text' => $sText,
@@ -186,7 +186,7 @@ class Renderer
      *
      * @return array
      */
-    protected function getPrevLink()
+    protected function getPrevLink(): array
     {
         if($this->nCurrentPage <= 1)
         {
@@ -200,7 +200,7 @@ class Renderer
      *
      * @return array
      */
-    protected function getNextLink()
+    protected function getNextLink(): array
     {
         if($this->nCurrentPage >= $this->nTotalPages)
         {
@@ -216,7 +216,7 @@ class Renderer
      *
      * @return array
      */
-    protected function getPageLink(int $nNumber)
+    protected function getPageLink(int $nNumber): array
     {
         if($nNumber < 1)
         {
@@ -233,7 +233,7 @@ class Renderer
      *
      * @return array
      */
-    protected function getPageNumbers()
+    protected function getPageNumbers(): array
     {
         $aPageNumbers = [];
 
@@ -292,7 +292,7 @@ class Renderer
      *
      * @return array
      */
-    public function getPages(int $nTotalPages)
+    public function getPages(int $nTotalPages): array
     {
         $this->nTotalPages = $nTotalPages;
 
@@ -313,7 +313,7 @@ class Renderer
      *
      * @return null|Store
      */
-    public function render(int $nTotalPages)
+    public function render(int $nTotalPages): ?Store
     {
         $aLinks = array_map(function($aPage) {
             return $this->renderLink($aPage[0], $aPage[1], $aPage[2]);

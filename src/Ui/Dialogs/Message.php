@@ -21,14 +21,15 @@ class Message implements \Jaxon\Contracts\Dialogs\Message
      *
      * @param string              $sMessage             The text of the message
      *
-     * @return string|void
+     * @return string
      */
-    private function alert(string $sMessage)
+    private function alert(string $sMessage): string
     {
         if($this->getReturn())
         {
             return 'alert(' . $sMessage . ')';
         }
+        return '';
     }
 
     /**
@@ -37,9 +38,9 @@ class Message implements \Jaxon\Contracts\Dialogs\Message
      * @param string              $sMessage             The text of the message
      * @param string              $sTitle               The title of the message
      *
-     * @return string|void
+     * @return string
      */
-    public function success(string $sMessage, string $sTitle = '')
+    public function success(string $sMessage, string $sTitle = ''): string
     {
         return $this->alert($sMessage);
     }
@@ -50,9 +51,9 @@ class Message implements \Jaxon\Contracts\Dialogs\Message
      * @param string              $sMessage             The text of the message
      * @param string              $sTitle               The title of the message
      *
-     * @return string|void
+     * @return string
      */
-    public function info(string $sMessage, string $sTitle = '')
+    public function info(string $sMessage, string $sTitle = ''): string
     {
         return $this->alert($sMessage);
     }
@@ -63,9 +64,9 @@ class Message implements \Jaxon\Contracts\Dialogs\Message
      * @param string              $sMessage             The text of the message
      * @param string              $sTitle               The title of the message
      *
-     * @return string|void
+     * @return string
      */
-    public function warning(string $sMessage, string $sTitle = '')
+    public function warning(string $sMessage, string $sTitle = ''): string
     {
         return $this->alert($sMessage);
     }
@@ -76,9 +77,9 @@ class Message implements \Jaxon\Contracts\Dialogs\Message
      * @param string              $sMessage             The text of the message
      * @param string              $sTitle               The title of the message
      *
-     * @return string|void
+     * @return string
      */
-    public function error(string $sMessage, string $sTitle = '')
+    public function error(string $sMessage, string $sTitle = ''): string
     {
         return $this->alert($sMessage);
     }

@@ -12,13 +12,14 @@
 
 namespace Jaxon\App;
 
-use Jaxon\Exception\SetupException;
 use Jaxon\Jaxon;
 use Jaxon\Plugin\Manager as PluginManager;
 use Jaxon\Request\Handler\Handler as RequestHandler;
 use Jaxon\Ui\View\Manager as ViewManager;
 use Jaxon\Utils\Config\Config;
-use Jaxon\Utils\Config\Exception\DataDepth as DataException;
+use Jaxon\Utils\Translation\Translator;
+use Jaxon\Exception\SetupException;
+use Jaxon\Utils\Config\Exception\DataDepth;
 
 class Bootstrap
 {
@@ -43,6 +44,11 @@ class Bootstrap
      * @var RequestHandler
      */
     private $xRequestHandler;
+
+    /**
+     * @var Translator
+     */
+    private $xTranslator;
 
     /**
      * The library options
@@ -100,14 +106,16 @@ class Bootstrap
      * @param PluginManager $xPluginManager
      * @param ViewManager $xViewManager
      * @param RequestHandler $xRequestHandler
+     * @param Translator $xTranslator
      */
     public function __construct(Jaxon $jaxon, PluginManager $xPluginManager,
-        ViewManager $xViewManager, RequestHandler $xRequestHandler)
+        ViewManager $xViewManager, RequestHandler $xRequestHandler, Translator $xTranslator)
     {
         $this->jaxon = $jaxon;
         $this->xPluginManager = $xPluginManager;
         $this->xViewManager = $xViewManager;
         $this->xRequestHandler = $xRequestHandler;
+        $this->xTranslator = $xTranslator;
     }
 
     /**
@@ -117,7 +125,7 @@ class Bootstrap
      *
      * @return Bootstrap
      */
-    public function lib(array $aLibOptions)
+    public function lib(array $aLibOptions): Bootstrap
     {
         $this->aLibOptions = $aLibOptions;
         return $this;
@@ -130,7 +138,7 @@ class Bootstrap
      *
      * @return Bootstrap
      */
-    public function app(array $aAppOptions)
+    public function app(array $aAppOptions): Bootstrap
     {
         $this->aAppOptions = $aAppOptions;
         return $this;
@@ -143,7 +151,7 @@ class Bootstrap
      *
      * @return Bootstrap
      */
-    public function uri(string $sUri)
+    public function uri(string $sUri): Bootstrap
     {
         $this->sUri = $sUri;
         return $this;
@@ -159,7 +167,7 @@ class Bootstrap
      *
      * @return Bootstrap
      */
-    public function js(bool $bExportJs, string $sJsUri = '', string $sJsDir = '', bool $bMinifyJs = false)
+    public function js(bool $bExportJs, string $sJsUri = '', string $sJsDir = '', bool $bMinifyJs = false): Bootstrap
     {
         $this->sJsUri = $sJsUri;
         $this->sJsDir = $sJsDir;
@@ -176,7 +184,7 @@ class Bootstrap
      * @return void
      * @throws SetupException
      */
-    private function setupApp($xAppConfig)
+    private function setupApp(Config $xAppConfig)
     {
         // Register user functions and classes
         $this->xPluginManager->registerFromConfig($xAppConfig);
@@ -190,7 +198,7 @@ class Bootstrap
      * Wraps the module/package/bundle setup method.
      *
      * @return void
-     * @throws SetupException|DataException
+     * @throws SetupException
      */
     public function run()
     {
@@ -200,19 +208,27 @@ class Bootstrap
         $this->triggerEvent('pre.setup');
 
         // Setup the lib config options.
-        $di->getConfig()->setOptions($this->aLibOptions);
+        try
+        {
+            $di->getConfig()->setOptions($this->aLibOptions);
 
-        // Event before the module has set the config
-        $this->triggerEvent('pre.config');
+            // Event before the module has set the config
+            $this->triggerEvent('pre.config');
 
-        // Get the app config options.
-        $xAppConfig = $di->newConfig($this->aAppOptions);
-        $xAppConfig->setOption('options.views.default', 'default');
-        // Setup the app.
-        $this->setupApp($xAppConfig);
+            // Get the app config options.
+            $xAppConfig = $di->newConfig($this->aAppOptions);
+            $xAppConfig->setOption('options.views.default', 'default');
+            // Setup the app.
+            $this->setupApp($xAppConfig);
 
-        // Event after the module has read the config
-        $this->triggerEvent('post.config');
+            // Event after the module has read the config
+            $this->triggerEvent('post.config');
+        }
+        catch(DataDepth $e)
+        {
+            $sMessage = $this->xTranslator->trans('errors.data.depth', ['key' => $e->sPrefix, 'depth' => $e->nDepth]);
+            throw new SetupException($sMessage);
+        }
 
         // Jaxon library settings
         if(!$this->jaxon->hasOption('js.app.export'))

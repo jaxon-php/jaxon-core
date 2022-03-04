@@ -44,7 +44,7 @@ class View implements ViewContract
      *
      * @return string        The string representation of the view
      */
-    public function render(Store $store)
+    public function render(Store $store): string
     {
         $sViewName = $store->getViewName();
         $sNamespace = $store->getNamespace();

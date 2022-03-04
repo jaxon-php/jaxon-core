@@ -64,7 +64,7 @@ class UploadedFile
      *
      * @return UploadedFile
      */
-    public static function fromHttpData(string $sUploadDir, array $aFile)
+    public static function fromHttpData(string $sUploadDir, array $aFile): UploadedFile
     {
         $xFile = new UploadedFile();
         $xFile->sType = $aFile['type'];
@@ -81,7 +81,7 @@ class UploadedFile
      *
      * @return array<string,string>
      */
-    public function toTempData()
+    public function toTempData(): array
     {
         return [
             'type' => $this->sType,
@@ -100,7 +100,7 @@ class UploadedFile
      *
      * @return UploadedFile
      */
-    public static function fromTempData(array $aFile)
+    public static function fromTempData(array $aFile): UploadedFile
     {
         $xFile = new UploadedFile();
         $xFile->sType = $aFile['type'];
@@ -117,9 +117,9 @@ class UploadedFile
      * 
      * @param string    $sText
      *
-     * @var string
+     * @return string
      */
-    protected function slugify(string $sText)
+    protected function slugify(string $sText): string
     {
         // Todo: slugify the text.
         return $sText;
@@ -130,7 +130,7 @@ class UploadedFile
      *
      * @return string
      */
-    public function type()
+    public function type(): string
     {
         return $this->sType;
     }
@@ -140,7 +140,7 @@ class UploadedFile
      *
      * @return string
      */
-    public function name()
+    public function name(): string
     {
         return $this->sName;
     }
@@ -150,7 +150,7 @@ class UploadedFile
      *
      * @return string
      */
-    public function filename()
+    public function filename(): string
     {
         return $this->sFilename;
     }
@@ -160,7 +160,7 @@ class UploadedFile
      *
      * @return string
      */
-    public function path()
+    public function path(): string
     {
         return $this->sPath;
     }
@@ -170,7 +170,7 @@ class UploadedFile
      *
      * @return string
      */
-    public function size()
+    public function size(): string
     {
         return $this->sSize;
     }
@@ -180,7 +180,7 @@ class UploadedFile
      *
      * @return string
      */
-    public function extension()
+    public function extension(): string
     {
         return $this->sExtension;
     }

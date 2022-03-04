@@ -40,13 +40,13 @@ class Store
      * Make a piece of data available for the rendered view
      *
      * @param string        $sName           The data name
-     * @param string        $sValue          The data value
+     * @param mixed         $xValue          The data value
      *
      * @return Store
      */
-    public function with(string $sName, string $sValue)
+    public function with(string $sName, $xValue): Store
     {
-        $this->aViewData[$sName] = $sValue;
+        $this->aViewData[$sName] = $xValue;
         return $this;
     }
 
@@ -57,7 +57,7 @@ class Store
      *
      * @return Store
      */
-    public function setData(array $aViewData)
+    public function setData(array $aViewData): Store
     {
         $this->aViewData = array_merge($this->aViewData, $aViewData);
         return $this;
@@ -73,7 +73,7 @@ class Store
      *
      * @return Store
      */
-    public function setView(ViewContract $xRenderer, string $sNamespace, string $sViewName, array $aViewData = [])
+    public function setView(ViewContract $xRenderer, string $sNamespace, string $sViewName, array $aViewData = []): Store
     {
         $this->xRenderer = $xRenderer;
         $this->sNamespace = trim($sNamespace);
@@ -87,7 +87,7 @@ class Store
      *
      * @return string        The view namespace
      */
-    public function getNamespace()
+    public function getNamespace(): string
     {
         return $this->sNamespace;
     }
@@ -97,7 +97,7 @@ class Store
      *
      * @return string        The view name
      */
-    public function getViewName()
+    public function getViewName(): string
     {
         return $this->sViewName;
     }
@@ -107,7 +107,7 @@ class Store
      *
      * @return array         The view data
      */
-    public function getViewData()
+    public function getViewData(): array
     {
         return $this->aViewData;
     }
@@ -129,7 +129,7 @@ class Store
      *
      * @return string
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): string
     {
         return $this->__toString();
     }

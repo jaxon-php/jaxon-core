@@ -84,26 +84,26 @@ class Paginator
     /**
      * Set the text for the previous page link
      *
-     * @param string $text The text for the previous page link
+     * @param string $sText The text for the previous page link
      *
      * @return Paginator
      */
-    public function setPreviousText(string $text)
+    public function setPreviousText(string $sText): Paginator
     {
-        $this->xRenderer->setPreviousText($text);
+        $this->xRenderer->setPreviousText($sText);
         return $this;
     }
 
     /**
      * Set the text for the next page link
      *
-     * @param string $text The text for the previous page link
+     * @param string $sText The text for the previous page link
      *
      * @return Paginator
      */
-    public function setNextText(string $text)
+    public function setNextText(string $sText): Paginator
     {
-        $this->xRenderer->setNextText($text);
+        $this->xRenderer->setNextText($sText);
         return $this;
     }
 
@@ -112,7 +112,7 @@ class Paginator
      *
      * @return Paginator
      */
-    protected function updateTotalPages()
+    protected function updateTotalPages(): Paginator
     {
         $this->nTotalPages = ($this->nItemsPerPage == 0 ? 0 : (int)ceil($this->nTotalItems / $this->nItemsPerPage));
         return $this;
@@ -121,26 +121,26 @@ class Paginator
     /**
      * Set the max number of pages to show
      *
-     * @param int $maxPagesToShow The max number of pages to show
+     * @param int $nMaxPagesToShow The max number of pages to show
      *
      * @return Paginator
      */
-    public function setMaxPagesToShow(int $maxPagesToShow)
+    public function setMaxPagesToShow(int $nMaxPagesToShow): Paginator
     {
-        $this->xRenderer->setMaxPagesToShow($maxPagesToShow);
+        $this->xRenderer->setMaxPagesToShow($nMaxPagesToShow);
         return $this;
     }
 
     /**
      * Set the current page number
      *
-     * @param int $currentPage The current page number
+     * @param int $nCurrentPage The current page number
      *
      * @return Paginator
      */
-    protected function setCurrentPage(int $currentPage)
+    protected function setCurrentPage(int $nCurrentPage): Paginator
     {
-        $this->xRenderer->setCurrentPage($currentPage);
+        $this->xRenderer->setCurrentPage($nCurrentPage);
         return $this;
     }
 
@@ -151,9 +151,9 @@ class Paginator
      *
      * @return Paginator
      */
-    protected function setItemsPerPage(int $nItemsPerPage)
+    protected function setItemsPerPage(int $nItemsPerPage): Paginator
     {
-        $this->nItemsPerPage = intval($nItemsPerPage);
+        $this->nItemsPerPage = $nItemsPerPage;
         return $this->updateTotalPages();
     }
 
@@ -164,9 +164,9 @@ class Paginator
      *
      * @return Paginator
      */
-    protected function setTotalItems(int $nTotalItems)
+    protected function setTotalItems(int $nTotalItems): Paginator
     {
-        $this->nTotalItems = intval($nTotalItems);
+        $this->nTotalItems = $nTotalItems;
         return $this->updateTotalPages();
     }
 
@@ -175,14 +175,14 @@ class Paginator
      *
      * @param int $nTotalItems The total number of items
      * @param int $nItemsPerPage The number of items per page
-     * @param int $currentPage The current page number
+     * @param int $nCurrentPage The current page number
      * @param Request $xRequest The request to be paginated
      *
      * @return Paginator
      */
-    public function setup(int $nTotalItems, int $nItemsPerPage, int $currentPage, Request $xRequest)
+    public function setup(int $nTotalItems, int $nItemsPerPage, int $nCurrentPage, Request $xRequest): Paginator
     {
-        $this->setTotalItems($nTotalItems)->setItemsPerPage($nItemsPerPage)->setCurrentPage($currentPage);
+        $this->setTotalItems($nTotalItems)->setItemsPerPage($nItemsPerPage)->setCurrentPage($nCurrentPage);
         $this->xRenderer->setRequest($xRequest);
         return $this;
     }
@@ -192,7 +192,7 @@ class Paginator
      *
      * @return array
      */
-    public function getPages()
+    public function getPages(): array
     {
         return array_map(function($aPage) {
             return (object)['type' => $aPage[0], 'text' => $aPage[1], 'call' => $aPage[2]];
@@ -204,7 +204,7 @@ class Paginator
      *
      * @return null|Store
      */
-    public function render()
+    public function render(): ?Store
     {
         return $this->xRenderer->render($this->nTotalPages);
     }

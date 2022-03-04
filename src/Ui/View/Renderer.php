@@ -42,7 +42,7 @@ class Renderer
      *
      * @return Store
      */
-    protected function store()
+    protected function store(): Store
     {
         if(!$this->xStore)
         {
@@ -55,13 +55,13 @@ class Renderer
      * Make a piece of data available for the rendered view
      *
      * @param string        $sName           The data name
-     * @param string        $sValue          The data value
+     * @param mixed         $xValue          The data value
      *
      * @return Renderer
      */
-    public function set(string $sName, string $sValue)
+    public function set(string $sName, $xValue): Renderer
     {
-        $this->store()->with($sName, $sValue);
+        $this->store()->with($sName, $xValue);
         return $this;
     }
 
@@ -69,13 +69,13 @@ class Renderer
      * Make a piece of data available for all views
      *
      * @param string        $sName           The data name
-     * @param string        $sValue          The data value
+     * @param mixed         $xValue          The data value
      *
      * @return Renderer
      */
-    public function share(string $sName, string $sValue)
+    public function share(string $sName, $xValue): Renderer
     {
-        $this->aViewData[$sName] = $sValue;
+        $this->aViewData[$sName] = $xValue;
         return $this;
     }
 
@@ -86,11 +86,11 @@ class Renderer
      *
      * @return Renderer
      */
-    public function shareValues(array $aValues)
+    public function shareValues(array $aValues): Renderer
     {
-        foreach($aValues as $sName => $sValue)
+        foreach($aValues as $sName => $xValue)
         {
-            $this->share($sName, (string)$sValue);
+            $this->share($sName, $xValue);
         }
         return $this;
     }
@@ -105,7 +105,7 @@ class Renderer
      *
      * @return null|Store   A store populated with the view data
      */
-    public function render(string $sViewName, array $aViewData = [])
+    public function render(string $sViewName, array $aViewData = []): ?Store
     {
         // Get the store
         $xStore = $this->store();

@@ -64,7 +64,7 @@ class JsCall implements JsonSerializable
      *
      * @return JsCall
      */
-    public function useSingleQuote()
+    public function useSingleQuote(): JsCall
     {
         $this->sQuoteCharacter = "'";
         return $this;
@@ -75,7 +75,7 @@ class JsCall implements JsonSerializable
      *
      * @return JsCall
      */
-    public function useSingleQuotes()
+    public function useSingleQuotes(): JsCall
     {
         $this->sQuoteCharacter = "'";
         return $this;
@@ -86,7 +86,7 @@ class JsCall implements JsonSerializable
      *
      * @return JsCall
      */
-    public function useDoubleQuote()
+    public function useDoubleQuote(): JsCall
     {
         $this->sQuoteCharacter = '"';
         return $this;
@@ -97,7 +97,7 @@ class JsCall implements JsonSerializable
      *
      * @return JsCall
      */
-    public function useDoubleQuotes()
+    public function useDoubleQuotes(): JsCall
     {
         $this->sQuoteCharacter = '"';
         return $this;
@@ -108,7 +108,7 @@ class JsCall implements JsonSerializable
      *
      * @return JsCall
      */
-    public function clearParameters()
+    public function clearParameters(): JsCall
     {
         $this->aParameters = [];
         return $this;
@@ -121,7 +121,7 @@ class JsCall implements JsonSerializable
      *
      * @return JsCall
      */
-    public function pushParameter(Contracts\Parameter $xParameter)
+    public function pushParameter(Contracts\Parameter $xParameter): JsCall
     {
         $this->aParameters[] = $xParameter;
         return $this;
@@ -144,7 +144,7 @@ class JsCall implements JsonSerializable
      *
      * @return JsCall
      */
-    public function addParameter(string $sType, string $sValue)
+    public function addParameter(string $sType, string $sValue): JsCall
     {
         $this->pushParameter(new Parameter($sType, $sValue));
         return $this;
@@ -157,7 +157,7 @@ class JsCall implements JsonSerializable
      *
      * @return JsCall
      */
-    public function addParameters(array $aParameters)
+    public function addParameters(array $aParameters): JsCall
     {
         foreach($aParameters as $xParameter)
         {
@@ -178,7 +178,7 @@ class JsCall implements JsonSerializable
      *
      * @return string
      */
-    public function getScript()
+    public function getScript(): string
     {
         return $this->sFunction . '(' . implode(', ', $this->aParameters) . ')';
     }
@@ -200,7 +200,7 @@ class JsCall implements JsonSerializable
      *
      * @return string
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): string
     {
         return $this->getScript();
     }

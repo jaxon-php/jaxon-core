@@ -43,7 +43,7 @@ abstract class Request extends Plugin
      *
      * @return bool
      */
-    public function register(string $sType, string $sCallable, $aOptions)
+    public function register(string $sType, string $sCallable, $aOptions): bool
     {
         return false;
     }
@@ -53,7 +53,7 @@ abstract class Request extends Plugin
      *
      * @return Target|null
      */
-    public function getTarget()
+    public function getTarget(): ?Target
     {
         return null;
     }
@@ -66,7 +66,7 @@ abstract class Request extends Plugin
      *
      * @return bool
      */
-    abstract public function canProcessRequest();
+    abstract public function canProcessRequest(): bool;
 
     /**
      * Process the current request
@@ -77,5 +77,5 @@ abstract class Request extends Plugin
      *
      * @return bool
      */
-    abstract public function processRequest();
+    abstract public function processRequest(): bool;
 }

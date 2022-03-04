@@ -37,7 +37,7 @@ class AttrSet implements JsonSerializable
      *
      * @return string
      */
-    public function getScript()
+    public function getScript(): string
     {
         return $this->sAttrName . ' = ' . $this->xAttrValue;
     }
@@ -59,7 +59,7 @@ class AttrSet implements JsonSerializable
      *
      * @return string
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): string
     {
         return $this->getScript();
     }
