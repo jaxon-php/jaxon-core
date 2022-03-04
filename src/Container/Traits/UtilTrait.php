@@ -4,7 +4,7 @@ namespace Jaxon\Container\Traits;
 
 use Jaxon\Utils\Config\Config;
 use Jaxon\Utils\File\Minifier;
-use Jaxon\Utils\Http\URI;
+use Jaxon\Utils\Http\UriDetector;
 use Jaxon\Utils\Template\Engine as TemplateEngine;
 use Jaxon\Utils\Translation\Translator;
 
@@ -52,8 +52,8 @@ trait UtilTrait
             return new Minifier();
         });
         // URI decoder
-        $this->set(URI::class, function() {
-            return new URI();
+        $this->set(UriDetector::class, function() {
+            return new UriDetector();
         });
     }
 

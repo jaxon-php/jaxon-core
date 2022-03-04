@@ -13,7 +13,7 @@ use Jaxon\Request\Support\CallableRepository;
 use Jaxon\Request\Validator;
 use Jaxon\Response\Manager as ResponseManager;
 use Jaxon\Utils\Config\Config;
-use Jaxon\Utils\Http\URI;
+use Jaxon\Utils\Http\UriDetector;
 use Jaxon\Utils\Template\Engine as TemplateEngine;
 use Jaxon\Utils\Translation\Translator;
 
@@ -55,7 +55,7 @@ trait CallableTrait
         });
         // Code Generator
         $this->set(CodeGenerator::class, function($c) {
-            return new CodeGenerator($c->g(Jaxon::class), $c->g(URI::class), $c->g(TemplateEngine::class));
+            return new CodeGenerator($c->g(Jaxon::class), $c->g(UriDetector::class), $c->g(TemplateEngine::class));
         });
     }
 

@@ -16,7 +16,7 @@ namespace Jaxon\Plugin\Code;
 
 use Jaxon\Jaxon;
 use Jaxon\Plugin\Code\Contracts\Generator as GeneratorContract;
-use Jaxon\Utils\Http\URI;
+use Jaxon\Utils\Http\UriDetector;
 use Jaxon\Utils\Http\UriException;
 use Jaxon\Utils\Template\Engine as TemplateEngine;
 
@@ -37,9 +37,9 @@ class Generator
     private $jaxon;
 
     /**
-     * @var URI
+     * @var UriDetector
      */
-    private $xUri;
+    private $xUriDetector;
 
     /**
      * Default library URL
@@ -66,13 +66,13 @@ class Generator
      * The constructor
      *
      * @param Jaxon $jaxon
-     * @param URI $xUri
+     * @param UriDetector $xUriDetector
      * @param TemplateEngine $xTemplateEngine      The template engine
      */
-    public function __construct(Jaxon $jaxon, URI $xUri, TemplateEngine $xTemplateEngine)
+    public function __construct(Jaxon $jaxon, UriDetector $xUriDetector, TemplateEngine $xTemplateEngine)
     {
         $this->jaxon = $jaxon;
-        $this->xUri = $xUri;
+        $this->xUriDetector = $xUriDetector;
         $this->xTemplateEngine = $xTemplateEngine;
     }
 
@@ -158,7 +158,6 @@ class Generator
      */
     public function getCss(): string
     {
-        jaxon()->logger()->debug('Class names', ['names' => $this->aClassNames]);
         $sCssCode = '';
         foreach($this->aClassNames as $sClassName)
         {
@@ -321,7 +320,7 @@ class Generator
     {
         if(!$this->getOption('core.request.uri'))
         {
-            $this->setOption('core.request.uri', $this->xUri->detect($_SERVER));
+            $this->setOption('core.request.uri', $this->xUriDetector->detect($_SERVER));
         }
 
         $sScript = '';
