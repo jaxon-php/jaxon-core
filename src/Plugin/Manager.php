@@ -22,6 +22,9 @@
 namespace Jaxon\Plugin;
 
 use Jaxon\Jaxon;
+use Jaxon\Contracts\Dialogs\Message;
+use Jaxon\Contracts\Dialogs\Question;
+use Jaxon\Contracts\Event\Listener;
 use Jaxon\Plugin\Code\Generator as CodeGenerator;
 use Jaxon\Request\Plugin\CallableClass;
 use Jaxon\Request\Plugin\CallableDir;
@@ -42,7 +45,7 @@ use function trim;
 use function is_integer;
 use function is_string;
 use function is_array;
-use function get_class;
+use function is_subclass_of;
 
 class Manager
 {
@@ -100,16 +103,6 @@ class Manager
     }
 
     /**
-     * Get the response plugins
-     *
-     * @return array
-     */
-    public function getResponsePlugins(): array
-    {
-        return $this->aResponsePlugins;
-    }
-
-    /**
      * Get a package instance
      *
      * @param string        $sClassName           The package class name
@@ -129,52 +122,51 @@ class Manager
      * - 1000 thru 8999: User created plugins, typically, these plugins don't care about order
      * - 9000 thru 9999: Plugins that generally need to be last or near the end of the plugin list
      *
-     * @param Plugin $xPlugin An instance of a plugin
+     * @param string $sClassName The plugin class
+     * @param string $sPluginName The plugin name
      * @param integer $nPriority The plugin priority, used to order the plugins
      *
      * @return void
      * @throws SetupException
      */
-    public function registerPlugin(Plugin $xPlugin, int $nPriority = 1000)
+    public function registerPlugin(string $sClassName, string $sPluginName, int $nPriority = 1000)
     {
         $bIsUsed = false;
-        if($xPlugin instanceof Request)
+        if(is_subclass_of($sClassName, Request::class))
         {
-            // The name of a request plugin is used as key in the plugin table
-            $this->aRequestPlugins[$xPlugin->getName()] = $xPlugin;
-            $this->xCodeGenerator->addGenerator($xPlugin, $nPriority);
+            $this->aRequestPlugins[$sPluginName] = $sClassName;
+            $this->xCodeGenerator->addGenerator($sClassName, $nPriority);
             $bIsUsed = true;
         }
-        elseif($xPlugin instanceof Response)
+        elseif(is_subclass_of($sClassName, Response::class))
         {
-            // The name of a response plugin is used as key in the plugin table
-            $this->aResponsePlugins[$xPlugin->getName()] = $xPlugin;
-            $this->xCodeGenerator->addGenerator($xPlugin, $nPriority);
+            $this->aResponsePlugins[$sPluginName] = $sClassName;
+            $this->xCodeGenerator->addGenerator($sClassName, $nPriority);
             $bIsUsed = true;
         }
 
         // This plugin implements the Message interface
-        if($xPlugin instanceof \Jaxon\Contracts\Dialogs\Message)
+        if(is_subclass_of($sClassName, Message::class))
         {
-            $this->jaxon->dialog()->setMessage($xPlugin);
+            $this->jaxon->dialog()->setMessage($sClassName);
             $bIsUsed = true;
         }
         // This plugin implements the Question interface
-        if($xPlugin instanceof \Jaxon\Contracts\Dialogs\Question)
+        if(is_subclass_of($sClassName, Question::class))
         {
-            $this->jaxon->dialog()->setQuestion($xPlugin);
+            $this->jaxon->dialog()->setQuestion($sClassName);
             $bIsUsed = true;
         }
         // Register the plugin as an event listener
-        if($xPlugin instanceof \Jaxon\Contracts\Event\Listener)
-        {
-            $this->addEventListener($xPlugin);
-            $bIsUsed = true;
-        }
+        // if(is_subclass_of($sClassName, Listener::class))
+        // {
+        //     $this->addEventListener($sClassName);
+        //     $bIsUsed = true;
+        // }
 
         if(!$bIsUsed)
         {
-            $sMessage = $this->trans('errors.register.invalid', ['name' => get_class($xPlugin)]);
+            $sMessage = $this->trans('errors.register.invalid', ['name' => $sClassName]);
             throw new SetupException($sMessage);
         }
     }
@@ -250,8 +242,7 @@ class Manager
         $di->getViewManager()->addNamespaces($xPackageConfig, $xAppConfig);
 
         // Register the package as a code generator.
-        $xPackage = $this->getPackage($sClassName);
-        $this->xCodeGenerator->addGenerator($xPackage, 500);
+        $this->xCodeGenerator->addGenerator($sClassName, 500);
     }
 
     /**
@@ -273,7 +264,7 @@ class Manager
             throw new SetupException($this->trans('errors.register.plugin', ['name' => $sType]));
         }
 
-        $xPlugin = $this->aRequestPlugins[$sType];
+        $xPlugin = $this->jaxon->di()->g($this->aRequestPlugins[$sType]);
         $xPlugin->register($sType, $sCallable, $aOptions);
     }
 
@@ -362,18 +353,22 @@ class Manager
     /**
      * Find the specified response plugin by name and return a reference to it if one exists
      *
-     * @param string        $sName                The name of the plugin
+     * @param string $sName The name of the plugin
+     * @param JaxonResponse|null $xResponse The response to attach the plugin to
      *
      * @return Response
      */
-    public function getResponsePlugin(string $sName, JaxonResponse $xResponse): ?Response
+    public function getResponsePlugin(string $sName, ?JaxonResponse $xResponse = null): ?Response
     {
         if(!isset($this->aResponsePlugins[$sName]))
         {
             return null;
         }
-        $xPlugin = $this->aResponsePlugins[$sName];
-        $xPlugin->setResponse($xResponse);
+        $xPlugin = $this->jaxon->di()->g($this->aResponsePlugins[$sName]);
+        if(($xResponse))
+        {
+            $xPlugin->setResponse($xResponse);
+        }
         return $xPlugin;
     }
 
@@ -386,11 +381,11 @@ class Manager
      */
     public function getRequestPlugin(string $sName): ?Request
     {
-        if(isset($this->aRequestPlugins[$sName]))
+        if(!isset($this->aRequestPlugins[$sName]))
         {
-            return $this->aRequestPlugins[$sName];
+            return null;
         }
-        return null;
+        return $this->jaxon->di()->g($this->aRequestPlugins[$sName]);
     }
 
     /**
@@ -401,11 +396,10 @@ class Manager
      */
     public function registerRequestPlugins()
     {
-        $di = $this->jaxon->di();
-        $this->registerPlugin($di->get(CallableClass::class), 101);
-        $this->registerPlugin($di->get(CallableDir::class), 102);
-        $this->registerPlugin($di->get(CallableFunction::class), 103);
-        $this->registerPlugin($di->get(FileUpload::class), 104);
+        $this->registerPlugin(CallableClass::class, Jaxon::CALLABLE_CLASS, 101);
+        $this->registerPlugin(CallableFunction::class, Jaxon::CALLABLE_FUNCTION, 102);
+        $this->registerPlugin(FileUpload::class, Jaxon::FILE_UPLOAD, 103);
+        $this->registerPlugin(CallableDir::class, Jaxon::CALLABLE_DIR, 104);
     }
 
     /**
@@ -416,10 +410,9 @@ class Manager
      */
     public function registerResponsePlugins()
     {
-        $di = $this->jaxon->di();
         // Register an instance of the JQuery plugin
-        $this->registerPlugin($di->get(JQueryPlugin::class), 700);
+        $this->registerPlugin(JQueryPlugin::class, 'jquery', 700);
         // Register an instance of the DataBag plugin
-        $this->registerPlugin($di->get(DataBag::class), 700);
+        $this->registerPlugin(DataBag::class, 'bags', 700);
     }
 }

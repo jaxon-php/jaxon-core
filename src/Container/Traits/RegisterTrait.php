@@ -150,6 +150,7 @@ trait RegisterTrait
     public function registerPackage(string $sClassName, array $aAppOptions): Config
     {
         $xAppConfig = $this->newConfig($aAppOptions);
+        $this->val($sClassName . '_config', $xAppConfig);
         $this->set($sClassName, function() use($sClassName, $aAppOptions, $xAppConfig) {
             $xPackage = $this->make($sClassName);
             // Set the package options
@@ -163,5 +164,17 @@ trait RegisterTrait
         });
 
         return $xAppConfig;
+    }
+
+    /**
+     * Get a package config
+     *
+     * @param string $sClassName The package class name
+     *
+     * @return Config
+     */
+    public function getPackageConfig(string $sClassName): Config
+    {
+        return $this->g($sClassName . '_config');
     }
 }

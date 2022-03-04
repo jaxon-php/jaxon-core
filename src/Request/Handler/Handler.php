@@ -257,8 +257,9 @@ class Handler
         }
 
         // Find a plugin to process the request
-        foreach($this->xPluginManager->getRequestPlugins() as $xPlugin)
+        foreach($this->xPluginManager->getRequestPlugins() as $sClassName)
         {
+            $xPlugin = $this->jaxon->di()->get($sClassName);
             if($xPlugin->getName() != Jaxon::FILE_UPLOAD && $xPlugin->canProcessRequest())
             {
                 $this->xTargetRequestPlugin = $xPlugin;

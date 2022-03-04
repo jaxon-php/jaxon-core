@@ -2,6 +2,7 @@
 
 namespace Jaxon\Container\Traits;
 
+use Jaxon\Jaxon;
 use Jaxon\Ui\Dialogs\Dialog;
 use Jaxon\Ui\Pagination\Paginator;
 use Jaxon\Ui\Pagination\Renderer as PaginationRenderer;
@@ -20,8 +21,8 @@ trait ViewTrait
     private function registerViews()
     {
         // Dialog
-        $this->set(Dialog::class, function() {
-            return new Dialog();
+        $this->set(Dialog::class, function($c) {
+            return new Dialog($c->g(Jaxon::class));
         });
         // View Manager
         $this->set(ViewManager::class, function() {

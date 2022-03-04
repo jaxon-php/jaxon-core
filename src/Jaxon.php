@@ -235,15 +235,16 @@ class Jaxon implements LoggerAwareInterface
      * - 1000 thru 8999: User created plugins, typically, these plugins don't care about order
      * - 9000 thru 9999: Plugins that generally need to be last or near the end of the plugin list
      *
-     * @param Plugin $xPlugin An instance of a plugin
+     * @param string $sClassName The plugin class
+     * @param string $sPluginName The plugin name
      * @param integer $nPriority The plugin priority, used to order the plugins
      *
      * @return void
      * @throws Exception\SetupException
      */
-    public function registerPlugin(Plugin $xPlugin, int $nPriority = 1000)
+    public function registerPlugin(string $sClassName, string $sPluginName, int $nPriority = 1000)
     {
-        $this->di()->getPluginManager()->registerPlugin($xPlugin, $nPriority);
+        $this->di()->getPluginManager()->registerPlugin($sClassName, $sPluginName, $nPriority);
     }
 
     /**
@@ -326,10 +327,11 @@ class Jaxon implements LoggerAwareInterface
      * The javascript code returned by this function is dependent on the plugins
      * that are included and the functions and classes that are registered.
      *
-     * @param bool        $bIncludeJs            Also get the JS files
-     * @param bool        $bIncludeCss        Also get the CSS files
+     * @param bool $bIncludeJs Also get the JS files
+     * @param bool $bIncludeCss Also get the CSS files
      *
      * @return string
+     * @throws Utils\Http\UriException
      */
     public function getScript(bool $bIncludeJs = false, bool $bIncludeCss = false): string
     {
@@ -342,10 +344,11 @@ class Jaxon implements LoggerAwareInterface
      * The javascript code returned by this function is dependent on the plugins
      * that are included and the functions and classes that are registered.
      *
-     * @param bool        $bIncludeJs         Also print the JS files
-     * @param bool        $bIncludeCss        Also print the CSS files
+     * @param bool $bIncludeJs Also print the JS files
+     * @param bool $bIncludeCss Also print the CSS files
      *
      * @return void
+     * @throws Utils\Http\UriException
      */
     public function printScript(bool $bIncludeJs = false, bool $bIncludeCss = false)
     {
@@ -394,6 +397,7 @@ class Jaxon implements LoggerAwareInterface
      *
      * @return void
      *
+     * @throws Exception\SetupException
      * @see <Jaxon\Jaxon->canProcessRequest>
      */
     public function processRequest()

@@ -49,11 +49,11 @@ class Generator
     const JS_LIB_URL = 'https://cdn.jsdelivr.net/gh/jaxon-php/jaxon-js@3.3/dist';
 
     /**
-     * The objects that generate code
+     * The class names of objects that generate code
      *
-     * @var array<GeneratorContract>
+     * @var array<string>
      */
-    protected $aGenerators = [];
+    protected $aClassNames = [];
 
     /**
      * The Jaxon template engine
@@ -77,7 +77,7 @@ class Generator
     }
 
     /**
-     * Get the correspondances between previous and current config options
+     * Get the mappings between previous and current config options
      *
      * @return array
      */
@@ -119,20 +119,20 @@ class Generator
     /**
      * Add a new generator to the list
      *
-     * @param GeneratorContract     $xGenerator     The code generator
-     * @param integer               $nPriority      The desired priority, used to order the plugins
+     * @param string $sClassName     The code generator class
+     * @param int $nPriority      The desired priority, used to order the plugins
      *
      * @return void
      */
-    public function addGenerator(GeneratorContract $xGenerator, int $nPriority)
+    public function addGenerator(string $sClassName, int $nPriority)
     {
-        while(isset($this->aGenerators[$nPriority]))
+        while(isset($this->aClassNames[$nPriority]))
         {
             $nPriority++;
         }
-        $this->aGenerators[$nPriority] = $xGenerator;
+        $this->aClassNames[$nPriority] = $sClassName;
         // Sort the array by ascending keys
-        ksort($this->aGenerators);
+        ksort($this->aClassNames);
     }
 
     /**
@@ -143,8 +143,9 @@ class Generator
     private function getHash(): string
     {
         $sHash = $this->jaxon->getVersion();
-        foreach($this->aGenerators as $xGenerator)
+        foreach($this->aClassNames as $sClassName)
         {
+            $xGenerator = $this->jaxon->di()->get($sClassName);
             $sHash .= $xGenerator->getHash();
         }
         return md5($sHash);
@@ -157,9 +158,11 @@ class Generator
      */
     public function getCss(): string
     {
+        jaxon()->logger()->debug('Class names', ['names' => $this->aClassNames]);
         $sCssCode = '';
-        foreach($this->aGenerators as $xGenerator)
+        foreach($this->aClassNames as $sClassName)
         {
+            $xGenerator = $this->jaxon->di()->get($sClassName);
             $sCssCode = rtrim($sCssCode, " \n") . "\n" . $xGenerator->getCss();
         }
         return rtrim($sCssCode, " \n") . "\n";
@@ -191,8 +194,9 @@ class Generator
         $sJsFiles = $this->_render('includes.js', ['aUrls' => $aJsFiles]);
 
         $sJsCode = '';
-        foreach($this->aGenerators as $xGenerator)
+        foreach($this->aClassNames as $sClassName)
         {
+            $xGenerator = $this->jaxon->di()->get($sClassName);
             $sJsCode = rtrim($sJsCode, " \n") . "\n" . $xGenerator->getJs();
         }
         return $sJsFiles . "\n" . rtrim($sJsCode, " \n") . "\n";
@@ -207,8 +211,9 @@ class Generator
     {
         $sScript = '';
         $sReadyScript = '';
-        foreach($this->aGenerators as $xGenerator)
+        foreach($this->aClassNames as $sClassName)
         {
+            $xGenerator = $this->jaxon->di()->get($sClassName);
             $sScript .= rtrim($xGenerator->getScript(), " \n") . "\n";
             if($xGenerator->readyEnabled() && !$xGenerator->readyInlined())
             {
@@ -231,8 +236,9 @@ class Generator
     private function _getInlineScript(): string
     {
         $sScript = '';
-        foreach($this->aGenerators as $xGenerator)
+        foreach($this->aClassNames as $sClassName)
         {
+            $xGenerator = $this->jaxon->di()->get($sClassName);
             if($xGenerator->readyEnabled() && $xGenerator->readyInlined())
             {
                 // Ready code which must be inlined in HTML.

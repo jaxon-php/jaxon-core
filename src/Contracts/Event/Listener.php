@@ -1,7 +1,7 @@
 <?php
 
 /**
- * EventListener.php - Event listener
+ * Listener.php - Event listener
  *
  * Allow the use of the class methods as event handlers.
  * See https://github.com/lemonphp/event for more information.

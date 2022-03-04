@@ -11,17 +11,23 @@
 
 namespace Jaxon\Ui\Dialogs;
 
+use Jaxon\Jaxon;
 use Jaxon\Contracts\Dialogs\Message as MessageContract;
 use Jaxon\Contracts\Dialogs\Question as QuestionContract;
 
 class Dialog
 {
     /**
-     * Javascript confirm function
-     *
-     * @var QuestionContract
+     * @var Jaxon
      */
-    private $xQuestion;
+    private $jaxon;
+
+    /**
+     * The QuestionContract class name (javascript confirm function)
+     *
+     * @var string
+     */
+    private $sQuestion = '';
 
     /**
      * Default javascript confirm function
@@ -31,11 +37,11 @@ class Dialog
     private $xDefaultQuestion;
 
     /**
-     * Javascript alert function
+     * The MessageContract class name (javascript alert function)
      *
-     * @var MessageContract
+     * @var string
      */
-    private $xMessage;
+    private $sMessage = '';
 
     /**
      * Default javascript alert function
@@ -46,42 +52,42 @@ class Dialog
 
     /**
      * The constructor
+     *
+     * @param Jaxon $jaxon
      */
-    public function __construct()
+    public function __construct(Jaxon $jaxon)
     {
+        $this->jaxon = $jaxon;
         // Javascript confirm function
-        $this->xQuestion = null;
         $this->xDefaultQuestion = new Question();
-
         // Javascript alert function
-        $this->xMessage = null;
         $this->xDefaultMessage = new Message();
     }
 
     /**
-     * Set the javascript confirm function
+     * Set the QuestionContract class name
      *
-     * @param QuestionContract         $xQuestion     The javascript confirm function
+     * @param string $sQuestion     The QuestionContract class name
      *
      * @return void
      */
-    public function setQuestion(QuestionContract $xQuestion)
+    public function setQuestion(string $sQuestion)
     {
-        $this->xQuestion = $xQuestion;
+        $this->sQuestion = $sQuestion;
     }
 
     /**
-     * Get the javascript question function
+     * Get the QuestionContract class name (javascript question function)
      *
      * @return QuestionContract
      */
     public function getQuestion()
     {
-        return (($this->xQuestion) ? $this->xQuestion : $this->xDefaultQuestion);
+        return ($this->sQuestion) ? $this->jaxon->di()->get($this->sQuestion) : $this->xDefaultQuestion;
     }
 
     /**
-     * Get the default javascript confirm function
+     * Get the default QuestionContract class name (javascript confirm function)
      *
      * @return QuestionContract
      */
@@ -91,29 +97,29 @@ class Dialog
     }
 
     /**
-     * Set the javascript alert function
+     * Set MessageContract class name
      *
-     * @param MessageContract           $xMessage       The javascript alert function
+     * @param string $sMessage       The MessageContract class name
      *
      * @return void
      */
-    public function setMessage(MessageContract $xMessage)
+    public function setMessage(string $sMessage)
     {
-        $this->xMessage = $xMessage;
+        $this->sMessage = $sMessage;
     }
 
     /**
-     * Get the javascript alert function
+     * Get the MessageContract class name (javascript alert function)
      *
      * @return MessageContract
      */
     public function getMessage(): MessageContract
     {
-        return $this->xMessage ?? $this->xDefaultMessage;
+        return ($this->sMessage) ? $this->jaxon->di()->get($this->sMessage) : $this->xDefaultMessage;
     }
 
     /**
-     * Get the default javascript alert function
+     * Get the default MessageContract class name (javascript alert function)
      *
      * @return MessageContract
      */
