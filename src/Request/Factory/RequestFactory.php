@@ -17,6 +17,7 @@ namespace Jaxon\Request\Factory;
 
 use Jaxon\Request\Support\CallableObject;
 use Jaxon\Request\Support\CallableRegistry;
+use Jaxon\Utils\Config\Config;
 
 use function func_get_args;
 use function array_shift;
@@ -26,7 +27,10 @@ use function trim;
 // Extends Parameter for compatibility with older versions (see function rq())
 class RequestFactory
 {
-    use \Jaxon\Features\Config;
+    /**
+     * @var Config
+     */
+    protected $xConfig;
 
     /**
      * The prefix to prepend on each call
@@ -45,10 +49,12 @@ class RequestFactory
     /**
      * The class constructor
      *
+     * @param Config $xConfig
      * @param CallableRegistry    $xCallableRegistry
      */
-    public function __construct(CallableRegistry $xCallableRegistry)
+    public function __construct(Config $xConfig, CallableRegistry $xCallableRegistry)
     {
+        $this->xConfig = $xConfig;
         $this->xCallableRegistry = $xCallableRegistry;
     }
 
@@ -61,7 +67,7 @@ class RequestFactory
      */
     public function setClassName(string $sClass): RequestFactory
     {
-        $this->sPrefix = $this->getOption('core.prefix.function');
+        $this->sPrefix = $this->xConfig->getOption('core.prefix.function');
 
         $sClass = trim($sClass, '.\\ ');
         if(!$sClass)
@@ -88,7 +94,7 @@ class RequestFactory
      */
     public function setCallable(CallableObject $xCallable): RequestFactory
     {
-        $this->sPrefix = $this->getOption('core.prefix.class') . $xCallable->getJsName() . '.';
+        $this->sPrefix = $this->xConfig->getOption('core.prefix.class') . $xCallable->getJsName() . '.';
         return $this;
     }
 
@@ -110,7 +116,7 @@ class RequestFactory
         if(strpos($sFunction, '.') !== false)
         {
             // If there is a dot in the name, then it is a call to a class
-            $this->sPrefix = $this->getOption('core.prefix.class');
+            $this->sPrefix = $this->xConfig->getOption('core.prefix.class');
         }
 
         // Make the request

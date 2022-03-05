@@ -16,6 +16,9 @@ namespace Jaxon\Plugin\Code;
 
 use Jaxon\Jaxon;
 use Jaxon\Plugin\Code\Contracts\Generator as GeneratorContract;
+use Jaxon\Plugin\Plugin;
+use Jaxon\Utils\Config\Config;
+use Jaxon\Utils\File\Minifier;
 use Jaxon\Utils\Http\UriDetector;
 use Jaxon\Utils\Http\UriException;
 use Jaxon\Utils\Template\Engine as TemplateEngine;
@@ -25,21 +28,29 @@ use function md5;
 use function rtrim;
 use function is_file;
 use function file_put_contents;
+use function is_subclass_of;
 
 class Generator
 {
-    use \Jaxon\Features\Config;
-    use \Jaxon\Features\Minifier;
-
     /**
      * @var Jaxon
      */
     private $jaxon;
 
     /**
+     * @var Config
+     */
+    protected $xConfig;
+
+    /**
      * @var UriDetector
      */
     private $xUriDetector;
+
+    /**
+     * @var Minifier
+     */
+    private $xMinifier;
 
     /**
      * Default library URL
@@ -66,14 +77,19 @@ class Generator
      * The constructor
      *
      * @param Jaxon $jaxon
+     * @param Config $xConfig
      * @param UriDetector $xUriDetector
      * @param TemplateEngine $xTemplateEngine      The template engine
+     * @param Minifier $xMinifier
      */
-    public function __construct(Jaxon $jaxon, UriDetector $xUriDetector, TemplateEngine $xTemplateEngine)
+    public function __construct(Jaxon $jaxon, Config $xConfig, UriDetector $xUriDetector,
+        TemplateEngine $xTemplateEngine, Minifier $xMinifier)
     {
         $this->jaxon = $jaxon;
+        $this->xConfig = $xConfig;
         $this->xUriDetector = $xUriDetector;
         $this->xTemplateEngine = $xTemplateEngine;
+        $this->xMinifier = $xMinifier;
     }
 
     /**
@@ -85,20 +101,20 @@ class Generator
     {
         return [
             'sResponseType'             => 'JSON',
-            'sVersion'                  => $this->getOption('core.version'),
-            'sLanguage'                 => $this->getOption('core.language'),
-            'bLanguage'                 => $this->hasOption('core.language'),
-            'sRequestURI'               => $this->getOption('core.request.uri'),
-            'sDefaultMode'              => $this->getOption('core.request.mode'),
-            'sDefaultMethod'            => $this->getOption('core.request.method'),
-            'sCsrfMetaName'             => $this->getOption('core.request.csrf_meta'),
-            'bDebug'                    => $this->getOption('core.debug.on'),
-            'bVerboseDebug'             => $this->getOption('core.debug.verbose'),
-            'sDebugOutputID'            => $this->getOption('core.debug.output_id'),
-            'nResponseQueueSize'        => $this->getOption('js.lib.queue_size'),
-            'sStatusMessages'           => $this->getOption('js.lib.show_status') ? 'true' : 'false',
-            'sWaitCursor'               => $this->getOption('js.lib.show_cursor') ? 'true' : 'false',
-            'sDefer'                    => $this->getOption('js.app.options', ''),
+            'sVersion'                  => $this->xConfig->getOption('core.version'),
+            'sLanguage'                 => $this->xConfig->getOption('core.language'),
+            'bLanguage'                 => $this->xConfig->hasOption('core.language'),
+            'sRequestURI'               => $this->xConfig->getOption('core.request.uri'),
+            'sDefaultMode'              => $this->xConfig->getOption('core.request.mode'),
+            'sDefaultMethod'            => $this->xConfig->getOption('core.request.method'),
+            'sCsrfMetaName'             => $this->xConfig->getOption('core.request.csrf_meta'),
+            'bDebug'                    => $this->xConfig->getOption('core.debug.on'),
+            'bVerboseDebug'             => $this->xConfig->getOption('core.debug.verbose'),
+            'sDebugOutputID'            => $this->xConfig->getOption('core.debug.output_id'),
+            'nResponseQueueSize'        => $this->xConfig->getOption('js.lib.queue_size'),
+            'sStatusMessages'           => $this->xConfig->getOption('js.lib.show_status') ? 'true' : 'false',
+            'sWaitCursor'               => $this->xConfig->getOption('js.lib.show_cursor') ? 'true' : 'false',
+            'sDefer'                    => $this->xConfig->getOption('js.app.options', ''),
         ];
     }
 
@@ -112,7 +128,7 @@ class Generator
      */
     private function _render(string $sTemplate, array $aVars = []): string
     {
-        $aVars['sJsOptions'] = $this->getOption('js.app.options', '');
+        $aVars['sJsOptions'] = $this->xConfig->getOption('js.app.options', '');
         return $this->xTemplateEngine->render("jaxon::plugins/$sTemplate", $aVars);
     }
 
@@ -126,6 +142,11 @@ class Generator
      */
     public function addGenerator(string $sClassName, int $nPriority)
     {
+        if(!is_subclass_of($sClassName, GeneratorContract::class))
+        {
+            // Todo: print a warning message in the logs.
+            return;
+        }
         while(isset($this->aClassNames[$nPriority]))
         {
             $nPriority++;
@@ -152,16 +173,53 @@ class Generator
     }
 
     /**
+     * Check if all plugins assets shall be included in Jaxon generated code.
+     *
+     * @return bool
+     */
+    protected function shallIncludeAllAssets(): bool
+    {
+        if($this->xConfig->hasOption('assets.include.all'))
+        {
+            return ($this->xConfig->getOption('assets.include.all'));
+        }
+        return true;
+    }
+
+    /**
+     * Check if the assets of this plugin shall be included in Jaxon generated code.
+     *
+     * @param Plugin $xPlugin
+     *
+     * @return bool
+     */
+    protected function shallIncludeAssets(Plugin $xPlugin): bool
+    {
+        $sPluginOptionName = 'assets.include.' . $xPlugin->getName();
+        if($this->xConfig->hasOption($sPluginOptionName))
+        {
+            return ($this->xConfig->getOption($sPluginOptionName));
+        }
+        return true;
+    }
+
+    /**
      * Get the HTML tags to include Jaxon CSS code and files into the page
      *
      * @return string
      */
     public function getCss(): string
     {
+        $bIncludeAllAssets = $this->shallIncludeAllAssets();
         $sCssCode = '';
         foreach($this->aClassNames as $sClassName)
         {
             $xGenerator = $this->jaxon->di()->get($sClassName);
+            if(is_subclass_of($xGenerator, Plugin::class) &&
+                (!$this->shallIncludeAssets($xGenerator) || !$bIncludeAllAssets))
+            {
+                continue;
+            }
             $sCssCode = rtrim($sCssCode, " \n") . "\n" . $xGenerator->getCss();
         }
         return rtrim($sCssCode, " \n") . "\n";
@@ -174,28 +232,34 @@ class Generator
      */
     public function getJs(): string
     {
-        $sJsExtension = $this->getOption('js.app.minify') ? '.min.js' : '.js';
+        $sJsExtension = $this->xConfig->getOption('js.app.minify') ? '.min.js' : '.js';
 
         // The URI for the javascript library files
-        $sJsLibUri = rtrim($this->getOption('js.lib.uri', self::JS_LIB_URL), '/') . '/';
+        $sJsLibUri = rtrim($this->xConfig->getOption('js.lib.uri', self::JS_LIB_URL), '/') . '/';
         // Add component files to the javascript file array;
         $aJsFiles = [$sJsLibUri . 'jaxon.core' . $sJsExtension];
-        if($this->getOption('core.debug.on'))
+        if($this->xConfig->getOption('core.debug.on'))
         {
-            $sLanguage = $this->getOption('core.language');
+            $sLanguage = $this->xConfig->getOption('core.language');
             $aJsFiles[] = $sJsLibUri . 'jaxon.debug' . $sJsExtension;
             $aJsFiles[] = $sJsLibUri . 'lang/jaxon.' . $sLanguage . $sJsExtension;
-            /*if($this->getOption('core.debug.verbose'))
+            /*if($this->xConfig->getOption('core.debug.verbose'))
             {
                 $aJsFiles[] = $sJsLibUri . 'jaxon.verbose' . $sJsExtension;
             }*/
         }
         $sJsFiles = $this->_render('includes.js', ['aUrls' => $aJsFiles]);
 
+        $bIncludeAllAssets = $this->shallIncludeAllAssets();
         $sJsCode = '';
         foreach($this->aClassNames as $sClassName)
         {
             $xGenerator = $this->jaxon->di()->get($sClassName);
+            if(is_subclass_of($xGenerator, Plugin::class) &&
+                (!$this->shallIncludeAssets($xGenerator) || !$bIncludeAllAssets))
+            {
+                continue;
+            }
             $sJsCode = rtrim($sJsCode, " \n") . "\n" . $xGenerator->getJs();
         }
         return $sJsFiles . "\n" . rtrim($sJsCode, " \n") . "\n";
@@ -257,15 +321,16 @@ class Generator
         // Check config options
         // - The js.app.export option must be set to true
         // - The js.app.uri and js.app.dir options must be set to non null values
-        if(!$this->getOption('js.app.export') ||
-            !$this->getOption('js.app.uri') ||
-            !$this->getOption('js.app.dir'))
+        if(!$this->xConfig->getOption('js.app.export') ||
+            !$this->xConfig->getOption('js.app.uri') ||
+            !$this->xConfig->getOption('js.app.dir'))
         {
             return '';
         }
 
         // The file name
-        return $this->hasOption('js.app.file') ? $this->getOption('js.app.file') : $this->getHash();
+        return $this->xConfig->hasOption('js.app.file') ?
+            $this->xConfig->getOption('js.app.file') : $this->getHash();
     }
 
     /**
@@ -294,16 +359,16 @@ class Generator
                 return '';
             }
         }
-        if(($this->getOption('js.app.minify')) && !is_file($sJsDirectory . $sMinFile))
+        if(($this->xConfig->getOption('js.app.minify')) && !is_file($sJsDirectory . $sMinFile))
         {
-            if(!$this->minify($sJsDirectory . $sOutFile, $sJsDirectory . $sMinFile))
+            if(!$this->xMinifier->minify($sJsDirectory . $sOutFile, $sJsDirectory . $sMinFile))
             {
                 return '';
             }
         }
 
-        $sJsAppUri = rtrim($this->getOption('js.app.uri'), '/') . '/';
-        $sJsExtension = $this->getOption('js.app.minify') ? '.min.js' : '.js';
+        $sJsAppUri = rtrim($this->xConfig->getOption('js.app.uri'), '/') . '/';
+        $sJsExtension = $this->xConfig->getOption('js.app.minify') ? '.min.js' : '.js';
         return $sJsAppUri . $sJsFileName . $sJsExtension;
     }
 
@@ -318,9 +383,9 @@ class Generator
      */
     public function getScript(bool $bIncludeJs, bool $bIncludeCss): string
     {
-        if(!$this->getOption('core.request.uri'))
+        if(!$this->xConfig->getOption('core.request.uri'))
         {
-            $this->setOption('core.request.uri', $this->xUriDetector->detect($_SERVER));
+            $this->xConfig->setOption('core.request.uri', $this->xUriDetector->detect($_SERVER));
         }
 
         $sScript = '';
@@ -333,7 +398,7 @@ class Generator
             $sScript .= $this->getJs() . "\n";
         }
 
-        $sJsDirectory = rtrim($this->getOption('js.app.dir'), '/') . '/';
+        $sJsDirectory = rtrim($this->xConfig->getOption('js.app.dir'), '/') . '/';
         $sUrl = $this->createFiles($sJsDirectory, $this->getJsFileName());
         if(($sUrl))
         {

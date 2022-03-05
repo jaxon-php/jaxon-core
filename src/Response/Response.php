@@ -143,7 +143,8 @@ class Response extends AbstractResponse
      */
     private function getCommandData(array $aAttributes, $mData): array
     {
-        if(!$this->getOption('core.response.merge') ||
+        $xConfig = jaxon()->config();
+        if(!$xConfig->getOption('core.response.merge') ||
             !in_array($aAttributes['cmd'], ['js', 'ap']) ||
             ($count = count($this->aCommands)) === 0)
         {
@@ -156,14 +157,14 @@ class Response extends AbstractResponse
         }
         if($aLastCommand['cmd'] === 'js')
         {
-            if($this->getOption('core.response.merge.js'))
+            if($xConfig->getOption('core.response.merge.js'))
             {
                 return [true, $aLastCommand['data'] . '; ' . $mData];
             }
         }
         elseif($aLastCommand['cmd'] === 'ap')
         {
-            if($this->getOption('core.response.merge.ap') &&
+            if($xConfig->getOption('core.response.merge.ap') &&
                 $aLastCommand['id'] === $aAttributes['id'] &&
                 $aLastCommand['prop'] === $aAttributes['prop'])
             {

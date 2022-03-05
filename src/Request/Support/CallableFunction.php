@@ -22,9 +22,6 @@ namespace Jaxon\Request\Support;
 
 class CallableFunction
 {
-    use \Jaxon\Features\Config;
-    use \Jaxon\Features\Template;
-
     /**
      * The name of the corresponding javascript function
      *
@@ -72,6 +69,16 @@ class CallableFunction
     }
 
     /**
+     * Get the config options of the function being referenced
+     *
+     * @return array
+     */
+    public function getConfigOptions(): array
+    {
+        return $this->aConfiguration;
+    }
+
+    /**
      * Set call options for this instance
      *
      * @param string        $sName                The name of the configuration option
@@ -96,24 +103,6 @@ class CallableFunction
             $this->aConfiguration[$sName] = $sValue;
             break;
         }
-    }
-
-    /**
-     * Generate the javascript function stub that is sent to the browser on initial page load
-     *
-     * @return string
-     */
-    public function getScript(): string
-    {
-        $sPrefix = $this->getOption('core.prefix.function');
-        $sJsFunction = $this->getName();
-
-        return $this->render('jaxon::support/function.js', [
-            'sPrefix' => $sPrefix,
-            'sAlias' => $sJsFunction,
-            'sFunction' => $sJsFunction, // sAlias is the same as sFunction
-            'aConfig' => $this->aConfiguration,
-        ]);
     }
 
     /**

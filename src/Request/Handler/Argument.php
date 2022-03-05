@@ -23,6 +23,8 @@
 namespace Jaxon\Request\Handler;
 
 use Jaxon\Exception\SetupException;
+use Jaxon\Utils\Config\Config;
+use Jaxon\Utils\Translation\Translator;
 
 use function strcasecmp;
 use function is_numeric;
@@ -33,7 +35,6 @@ use function substr;
 use function strlen;
 use function floor;
 use function json_decode;
-use function urlencode;
 use function call_user_func;
 use function array_walk;
 use function function_exists;
@@ -43,15 +44,22 @@ use function utf8_decode;
 
 class Argument
 {
-    use \Jaxon\Features\Config;
-    use \Jaxon\Features\Translator;
-
     /*
      * Request methods
      */
     const METHOD_UNKNOWN = 0;
     const METHOD_GET = 1;
     const METHOD_POST = 2;
+
+    /**
+     * @var Config
+     */
+    protected $xConfig;
+
+    /**
+     * @var Translator
+     */
+    protected $xTranslator;
 
     /**
      * An array of arguments received via the GET or POST parameter jxnargs.
@@ -79,9 +87,14 @@ class Argument
      * The constructor
      *
      * Get and decode the arguments of the HTTP request
+     *
+     * @param Config $xConfig
+     * @param Translator $xTranslator
      */
-    public function __construct()
+    public function __construct(Config $xConfig, Translator $xTranslator)
     {
+        $this->xConfig = $xConfig;
+        $this->xTranslator = $xTranslator;
         $this->aArgs = [];
         $this->nMethod = self::METHOD_UNKNOWN;
 
@@ -107,6 +120,16 @@ class Argument
     public function getRequestMethod(): int
     {
         return $this->nMethod;
+    }
+
+    /**
+     * Return true if the current request method is GET
+     *
+     * @return bool
+     */
+    public function requestMethodIsGet(): bool
+    {
+        return ($this->getRequestMethod() === self::METHOD_GET);
     }
 
     /**
@@ -271,7 +294,7 @@ class Argument
         // }
         array_walk($this->aArgs, [$this, '__argumentDecode']);
 
-        if(!$this->getOption('core.decode_utf8'))
+        if(!$this->xConfig->getOption('core.decode_utf8'))
         {
             return $this->aArgs;
         }
@@ -282,16 +305,16 @@ class Argument
         if(function_exists('iconv'))
         {
             $this->cUtf8Decoder = function($sStr) {
-                return iconv("UTF-8", $this->getOption('core.encoding') . '//TRANSLIT', $sStr);
+                return iconv("UTF-8", $this->xConfig->getOption('core.encoding') . '//TRANSLIT', $sStr);
             };
         }
         elseif(function_exists('mb_convert_encoding'))
         {
             $this->cUtf8Decoder = function($sStr) {
-                return mb_convert_encoding($sStr, $this->getOption('core.encoding'), "UTF-8");
+                return mb_convert_encoding($sStr, $this->xConfig->getOption('core.encoding'), "UTF-8");
             };
         }
-        elseif($this->getOption('core.encoding') == "ISO-8859-1")
+        elseif($this->xConfig->getOption('core.encoding') == "ISO-8859-1")
         {
             $this->cUtf8Decoder = function($sStr) {
                 return utf8_decode($sStr);
@@ -299,7 +322,7 @@ class Argument
         }
         else
         {
-            throw new SetupException($this->trans('errors.request.conversion'));
+            throw new SetupException($this->xTranslator->trans('errors.request.conversion'));
         }
 
         $aDst = [];

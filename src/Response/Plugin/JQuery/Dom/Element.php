@@ -27,6 +27,10 @@ use Jaxon\Response\Plugin\JQuery\Call\Method;
 use Jaxon\Response\Plugin\JQuery\Call\AttrSet;
 use Jaxon\Response\Plugin\JQuery\Call\AttrGet;
 
+use function trim;
+use function count;
+use function implode;
+
 class Element implements JsonSerializable, Parameter
 {
     /**
@@ -46,16 +50,16 @@ class Element implements JsonSerializable, Parameter
     /**
      * The constructor.
      *
+     * @param string        $jQueryNs             The jQuery symbol
      * @param string        $sSelector            The jQuery selector
      * @param string        $sContext             A context associated to the selector
      */
-    public function __construct(string $sSelector = '', string $sContext = '')
+    public function __construct(string $jQueryNs, string $sSelector, string $sContext)
     {
         $sSelector = trim($sSelector, " \t");
         $sContext = trim($sContext, " \t");
         $this->aCalls = [];
 
-        $jQueryNs = jaxon()->getOption('core.jquery.no_conflict', false) ? 'jQuery' : '$';
         if(!$sSelector)
         {
             $this->sSelector = "$jQueryNs(this)"; // If an empty selector is given, use javascript "this" instead
@@ -123,7 +127,7 @@ class Element implements JsonSerializable, Parameter
      */
     public function getScript(): string
     {
-        if(count($this->aCalls) == 0)
+        if(count($this->aCalls) === 0)
         {
             return $this->sSelector;
         }

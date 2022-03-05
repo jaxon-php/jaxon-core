@@ -22,27 +22,6 @@ namespace Jaxon\Plugin;
 
 abstract class Plugin implements Code\Contracts\Generator
 {
-    use \Jaxon\Features\Config;
-
-    /**
-     * Check if the assets of this plugin shall be included in Jaxon generated code.
-     *
-     * @return bool
-     */
-    protected function includeAssets(): bool
-    {
-        $sPluginOptionName = 'assets.include.' . $this->getName();
-        if($this->hasOption($sPluginOptionName) && !$this->getOption($sPluginOptionName))
-        {
-            return false;
-        }
-        if($this->hasOption('assets.include.all') && !$this->getOption('assets.include.all'))
-        {
-            return false;
-        }
-        return true;
-    }
-
     /**
      * Get a unique name to identify the plugin.
      *

@@ -19,6 +19,8 @@ use Jaxon\Response\Manager as ResponseManager;
 use Jaxon\Request\Support\UploadedFile;
 use Jaxon\Request\Support\FileUpload as Support;
 use Jaxon\Response\UploadResponse;
+use Jaxon\Utils\Config\Config;
+use Jaxon\Utils\Translation\Translator;
 use Exception;
 use Closure;
 
@@ -38,8 +40,10 @@ use function unlink;
 
 class FileUpload extends RequestPlugin
 {
-    use \Jaxon\Features\Config;
-    use \Jaxon\Features\Translator;
+    /**
+     * @var Config
+     */
+    protected $xConfig;
 
     /**
      * The response manager
@@ -47,6 +51,18 @@ class FileUpload extends RequestPlugin
      * @var ResponseManager
      */
     protected $xResponseManager;
+
+    /**
+     * HTTP file upload support
+     *
+     * @var Support
+     */
+    protected $xSupport = null;
+
+    /**
+     * @var Translator
+     */
+    protected $xTranslator;
 
     /**
      * The uploaded files copied in the user dir
@@ -77,22 +93,20 @@ class FileUpload extends RequestPlugin
     protected $bRequestIsHttpUpload = false;
 
     /**
-     * HTTP file upload support
-     *
-     * @var Support
-     */
-    protected $xSupport = null;
-
-    /**
      * The constructor
      *
+     * @param Config            $xConfig
      * @param ResponseManager   $xResponseManager
      * @param Support           $xSupport       HTTP file upload support
+     * @param Translator        $xTranslator
      */
-    public function __construct(ResponseManager $xResponseManager, Support $xSupport)
+    public function __construct(Config $xConfig, ResponseManager $xResponseManager,
+        Support $xSupport, Translator $xTranslator)
     {
+        $this->xConfig = $xConfig;
         $this->xResponseManager = $xResponseManager;
         $this->xSupport = $xSupport;
+        $this->xTranslator = $xTranslator;
         $this->sUploadSubdir = uniqid() . DIRECTORY_SEPARATOR;
 
         if(isset($_POST['jxnupl']))
@@ -150,12 +164,12 @@ class FileUpload extends RequestPlugin
         // Verify that the upload dir exists and is writable
         if(!is_writable($sUploadDir))
         {
-            throw new SetupException($this->trans('errors.upload.access'));
+            throw new SetupException($this->xTranslator->trans('errors.upload.access'));
         }
         $sUploadDir .= $sUploadSubDir;
         if(!file_exists($sUploadDir) && !@mkdir($sUploadDir))
         {
-            throw new SetupException($this->trans('errors.upload.access'));
+            throw new SetupException($this->xTranslator->trans('errors.upload.access'));
         }
         return $sUploadDir;
     }
@@ -171,8 +185,8 @@ class FileUpload extends RequestPlugin
     protected function getUploadDir(string $sFieldId): string
     {
         // Default upload dir
-        $sDefaultUploadDir = $this->getOption('upload.default.dir');
-        $sUploadDir = $this->getOption('upload.files.' . $sFieldId . '.dir', $sDefaultUploadDir);
+        $sDefaultUploadDir = $this->xConfig->getOption('upload.default.dir');
+        $sUploadDir = $this->xConfig->getOption('upload.files.' . $sFieldId . '.dir', $sDefaultUploadDir);
 
         return $this->_makeUploadDir($sUploadDir, $this->sUploadSubdir);
     }
@@ -186,7 +200,7 @@ class FileUpload extends RequestPlugin
     protected function getUploadTempDir(): string
     {
         // Default upload dir
-        $sUploadDir = $this->getOption('upload.default.dir');
+        $sUploadDir = $this->xConfig->getOption('upload.default.dir');
 
         return $this->_makeUploadDir($sUploadDir, 'tmp' . DIRECTORY_SEPARATOR);
     }
@@ -199,13 +213,13 @@ class FileUpload extends RequestPlugin
      */
     protected function getUploadTempFile(): string
     {
-        $sUploadDir = $this->getOption('upload.default.dir');
+        $sUploadDir = $this->xConfig->getOption('upload.default.dir');
         $sUploadDir = rtrim(trim($sUploadDir), '/\\') . DIRECTORY_SEPARATOR;
         $sUploadDir .= 'tmp' . DIRECTORY_SEPARATOR;
         $sUploadTempFile = $sUploadDir . $this->sTempFile . '.json';
         if(!is_readable($sUploadTempFile))
         {
-            throw new SetupException($this->trans('errors.upload.access'));
+            throw new SetupException($this->xTranslator->trans('errors.upload.access'));
         }
         return $sUploadTempFile;
     }

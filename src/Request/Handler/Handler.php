@@ -20,7 +20,6 @@
 
 namespace Jaxon\Request\Handler;
 
-use Jaxon\Exception\SetupException;
 use Jaxon\Jaxon;
 use Jaxon\Plugin\Manager as PluginManager;
 use Jaxon\Plugin\Request;
@@ -28,17 +27,22 @@ use Jaxon\Response\Manager as ResponseManager;
 use Jaxon\Request\Plugin\FileUpload;
 use Jaxon\Response\Plugin\DataBag;
 use Jaxon\Response\AbstractResponse;
+use Jaxon\Utils\Config\Config;
+use Jaxon\Exception\SetupException;
 
 use Exception;
 
 class Handler
 {
-    use \Jaxon\Features\Config;
-
     /**
      * @var Jaxon
      */
     private $jaxon;
+
+    /**
+     * @var Config
+     */
+    protected $xConfig;
 
     /**
      * The plugin manager.
@@ -93,21 +97,24 @@ class Handler
      * The constructor
      *
      * @param Jaxon $jaxon
+     * @param Config $xConfig
+     * @param Argument $xArgument
      * @param PluginManager         $xPluginManager
      * @param ResponseManager       $xResponseManager
      * @param FileUpload            $xUploadPlugin
      * @param DataBag               $xDataBagPlugin
      */
-    public function __construct(Jaxon $jaxon, PluginManager $xPluginManager,
+    public function __construct(Jaxon $jaxon, Config $xConfig, Argument $xArgument, PluginManager $xPluginManager,
         ResponseManager $xResponseManager, FileUpload $xUploadPlugin, DataBag $xDataBagPlugin)
     {
         $this->jaxon = $jaxon;
+        $this->xConfig = $xConfig;
         $this->xPluginManager = $xPluginManager;
         $this->xResponseManager = $xResponseManager;
         $this->xUploadPlugin = $xUploadPlugin;
         $this->xDataBagPlugin = $xDataBagPlugin;
+        $this->xArgumentManager = $xArgument;
 
-        $this->xArgumentManager = new Argument();
         $this->xCallbackManager = new Callback();
     }
 
@@ -121,16 +128,6 @@ class Handler
     public function getRequestMethod(): int
     {
         return $this->xArgumentManager->getRequestMethod();
-    }
-
-    /**
-     * Return true if the current request method is GET
-     *
-     * @return bool
-     */
-    public function requestMethodIsGet(): bool
-    {
-        return ($this->xArgumentManager->getRequestMethod() == Argument::METHOD_GET);
     }
 
     /**
@@ -268,7 +265,7 @@ class Handler
         }
 
         // Check if the upload plugin is enabled
-        if(!$this->getOption('core.upload.enabled'))
+        if(!$this->xConfig->getOption('core.upload.enabled'))
         {
             return false;
         }
@@ -290,7 +287,7 @@ class Handler
         //try
         {
             // Process uploaded files, if the upload plugin is enabled
-            if($this->getOption('core.upload.enabled'))
+            if($this->xConfig->getOption('core.upload.enabled'))
             {
                 $this->xUploadPlugin->processRequest();
             }
@@ -368,7 +365,7 @@ class Handler
         }
 
         // Clean the processing buffer
-        if(($this->getOption('core.process.clean')))
+        if(($this->xConfig->getOption('core.process.clean')))
         {
             $this->_cleanOutputBuffers();
         }

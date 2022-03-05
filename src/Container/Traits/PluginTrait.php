@@ -11,6 +11,8 @@ use Jaxon\Request\Validator;
 use Jaxon\Response\Manager as ResponseManager;
 use Jaxon\Response\Plugin\DataBag;
 use Jaxon\Response\Plugin\JQuery as JQueryPlugin;
+use Jaxon\Utils\Config\Config;
+use Jaxon\Utils\Translation\Translator;
 
 trait PluginTrait
 {
@@ -23,19 +25,21 @@ trait PluginTrait
     {
         // Plugin Manager
         $this->set(PluginManager::class, function($c) {
-            return new PluginManager($c->g(Jaxon::class), $c->g(CodeGenerator::class));
+            return new PluginManager($c->g(Jaxon::class), $c->g(Config::class),
+                $c->g(Translator::class), $c->g(CodeGenerator::class));
         });
         // File upload support
         $this->set(FileUploadSupport::class, function($c) {
-            return new FileUploadSupport($c->g(Validator::class));
+            return new FileUploadSupport($c->g(Validator::class), $c->g(Translator::class));
         });
         // File upload plugin
         $this->set(FileUpload::class, function($c) {
-            return new FileUpload($c->g(ResponseManager::class), $c->g(FileUploadSupport::class));
+            return new FileUpload($c->g(Config::class), $c->g(ResponseManager::class),
+                $c->g(FileUploadSupport::class), $c->g(Translator::class));
         });
         // JQuery response plugin
-        $this->set(JQueryPlugin::class, function() {
-            return new JQueryPlugin();
+        $this->set(JQueryPlugin::class, function($c) {
+            return new JQueryPlugin($c->g(Config::class));
         });
         // DataBag response plugin
         $this->set(DataBag::class, function() {

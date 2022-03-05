@@ -25,6 +25,7 @@ use Jaxon\Jaxon;
 use Jaxon\Plugin\Request as RequestPlugin;
 use Jaxon\Request\Support\CallableRegistry;
 use Jaxon\Exception\SetupException;
+use Jaxon\Utils\Translation\Translator;
 
 use function is_string;
 use function is_array;
@@ -35,8 +36,6 @@ use function realpath;
 
 class CallableDir extends RequestPlugin
 {
-    use \Jaxon\Features\Translator;
-
     /**
      * The callable registrar
      *
@@ -45,13 +44,20 @@ class CallableDir extends RequestPlugin
     protected $xRegistry;
 
     /**
+     * @var Translator
+     */
+    protected $xTranslator;
+
+    /**
      * The class constructor
      *
-     * @param CallableRegistry        $xRegistry
+     * @param CallableRegistry      $xRegistry
+     * @param Translator            $xTranslator
      */
-    public function __construct(CallableRegistry $xRegistry)
+    public function __construct(CallableRegistry $xRegistry, Translator $xTranslator)
     {
         $this->xRegistry = $xRegistry;
+        $this->xTranslator = $xTranslator;
     }
 
     /**
@@ -74,12 +80,12 @@ class CallableDir extends RequestPlugin
     {
         // if(!is_string($sDirectory))
         // {
-        //     throw new \Jaxon\Exception\SetupException($this->trans('errors.objects.invalid-declaration'));
+        //     throw new \Jaxon\Exception\SetupException($this->xTranslator->trans('errors.objects.invalid-declaration'));
         // }
         $sDirectory = rtrim(trim($sDirectory), '/\\');
         if(!is_dir($sDirectory))
         {
-            throw new SetupException($this->trans('errors.objects.invalid-declaration'));
+            throw new SetupException($this->xTranslator->trans('errors.objects.invalid-declaration'));
         }
         return realpath($sDirectory);
     }
@@ -100,7 +106,7 @@ class CallableDir extends RequestPlugin
         }
         if(!is_array($aOptions))
         {
-            throw new SetupException($this->trans('errors.objects.invalid-declaration'));
+            throw new SetupException($this->xTranslator->trans('errors.objects.invalid-declaration'));
         }
 
         // Change the keys in $aOptions to have "\" as separator

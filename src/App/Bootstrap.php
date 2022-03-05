@@ -220,26 +220,27 @@ class Bootstrap
         }
 
         // Jaxon library settings
-        if(!$this->jaxon->hasOption('js.app.export'))
+        $xConfig = $this->jaxon->config();
+        if(!$xConfig->hasOption('js.app.export'))
         {
-            $this->jaxon->setOption('js.app.export', $this->bExportJs);
+            $xConfig->setOption('js.app.export', $this->bExportJs);
         }
-        if(!$this->jaxon->hasOption('js.app.minify'))
+        if(!$xConfig->hasOption('js.app.minify'))
         {
-            $this->jaxon->setOption('js.app.minify', $this->bMinifyJs);
+            $xConfig->setOption('js.app.minify', $this->bMinifyJs);
         }
-        if(!$this->jaxon->hasOption('js.app.uri') && $this->sJsUri != '')
+        if(!$xConfig->hasOption('js.app.uri') && $this->sJsUri != '')
         {
-            $this->jaxon->setOption('js.app.uri', $this->sJsUri);
+            $xConfig->setOption('js.app.uri', $this->sJsUri);
         }
-        if(!$this->jaxon->hasOption('js.app.dir') && $this->sJsDir != '')
+        if(!$xConfig->hasOption('js.app.dir') && $this->sJsDir != '')
         {
-            $this->jaxon->setOption('js.app.dir', $this->sJsDir);
+            $xConfig->setOption('js.app.dir', $this->sJsDir);
         }
         // Set the request URI
-        if(!$this->jaxon->hasOption('core.request.uri') && $this->sUri != '')
+        if(!$xConfig->hasOption('core.request.uri') && $this->sUri != '')
         {
-            $this->jaxon->setOption('core.request.uri', $this->sUri);
+            $xConfig->setOption('core.request.uri', $this->sUri);
         }
     }
 }

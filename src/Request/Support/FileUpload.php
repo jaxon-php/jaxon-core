@@ -13,19 +13,23 @@ namespace Jaxon\Request\Support;
 
 use Jaxon\Request\Validator;
 use Jaxon\Exception\SetupException;
+use Jaxon\Utils\Translation\Translator;
 
 use Closure;
 
 class FileUpload
 {
-    use \Jaxon\Features\Translator;
-
     /**
      * The request data validator
      *
      * @var Validator
      */
     protected $xValidator;
+
+    /**
+     * @var Translator
+     */
+    protected $xTranslator;
 
     /**
      * A user defined function to transform uploaded file names
@@ -38,10 +42,12 @@ class FileUpload
      * The constructor
      *
      * @param Validator         $xValidator
+     * @param Translator        $xTranslator
      */
-    public function __construct(Validator $xValidator)
+    public function __construct(Validator $xValidator, Translator $xTranslator)
     {
         $this->xValidator = $xValidator;
+        $this->xTranslator = $xTranslator;
     }
 
     /**
@@ -73,7 +79,7 @@ class FileUpload
                 // Verify upload result
                 if($aFile['error'] != 0)
                 {
-                    throw new SetupException($this->trans('errors.upload.failed', $aFile));
+                    throw new SetupException($this->xTranslator->trans('errors.upload.failed', $aFile));
                 }
                 // Verify file validity (format, size)
                 if(!$this->xValidator->validateUploadedFile($sVarName, $aFile))

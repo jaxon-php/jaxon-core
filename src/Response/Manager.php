@@ -22,17 +22,37 @@
 namespace Jaxon\Response;
 
 use Jaxon\Jaxon;
+use Jaxon\Request\Handler\Argument;
+use Jaxon\Utils\Config\Config;
+use Jaxon\Utils\Translation\Translator;
 
+use function trim;
+use function header;
+use function strlen;
+use function gmdate;
 use function get_class;
 
 class Manager
 {
-    use \Jaxon\Features\Translator;
-
     /**
      * @var Jaxon
      */
     private $jaxon;
+
+    /**
+     * @var Config
+     */
+    private $xConfig;
+
+    /**
+     * @var Argument
+     */
+    private $xArgumentManager;
+
+    /**
+     * @var Translator
+     */
+    protected $xTranslator;
 
     /**
      * The current response object that will be sent back to the browser
@@ -53,10 +73,16 @@ class Manager
      * The class constructor
      *
      * @param Jaxon $jaxon
+     * @param Config $xConfig
+     * @param Argument $xArgumentManager
+     * @param Translator $xTranslator
      */
-    public function __construct(Jaxon $jaxon)
+    public function __construct(Jaxon $jaxon, Config $xConfig, Argument $xArgumentManager, Translator $xTranslator)
     {
         $this->jaxon = $jaxon;
+        $this->xConfig = $xConfig;
+        $this->xArgumentManager = $xArgumentManager;
+        $this->xTranslator = $xTranslator;
         $this->xResponse = null;
         $this->aDebugMessages = [];
     }
@@ -74,7 +100,7 @@ class Manager
     }
 
     /**
-     * Get the reponse to the Jaxon request
+     * Get the response to the Jaxon request
      *
      * @return AbstractResponse
      */
@@ -102,14 +128,14 @@ class Manager
         }
         elseif(get_class($this->xResponse) === get_class($xResponse))
         {
-            if($this->xResponse != $xResponse)
+            if($this->xResponse !== $xResponse)
             {
                 $this->xResponse->appendResponse($xResponse);
             }
         }
         else
         {
-            $this->debug($this->trans('errors.mismatch.types', ['class' => get_class($xResponse)]));
+            $this->debug($this->xTranslator->trans('errors.mismatch.types', ['class' => get_class($xResponse)]));
         }
     }
 
@@ -160,6 +186,31 @@ class Manager
     }
 
     /**
+     * Used internally to generate the response headers
+     *
+     * @return void
+     */
+    private function _sendHeaders()
+    {
+        if($this->xArgumentManager->requestMethodIsGet())
+        {
+            header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
+            header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
+            header("Cache-Control: no-cache, must-revalidate");
+            header("Pragma: no-cache");
+        }
+
+        $sCharacterSet = '';
+        $sCharacterEncoding = trim($this->xConfig->getOption('core.encoding'));
+        if(strlen($sCharacterEncoding) > 0)
+        {
+            $sCharacterSet = '; charset="' . $sCharacterEncoding . '"';
+        }
+
+        header('content-type: ' . $this->xResponse->getContentType() . ' ' . $sCharacterSet);
+    }
+
+    /**
      * Sends the HTTP headers back to the browser
      *
      * @return void
@@ -168,7 +219,7 @@ class Manager
     {
         if(($this->xResponse))
         {
-            $this->xResponse->sendHeaders();
+            $this->_sendHeaders();
         }
     }
 
@@ -195,7 +246,7 @@ class Manager
     {
         if(($this->xResponse))
         {
-            $this->xResponse->sendHeaders();
+            $this->_sendHeaders();
             $this->xResponse->printOutput();
         }
     }

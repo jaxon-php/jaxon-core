@@ -14,6 +14,13 @@
 
 namespace Jaxon\Request\Support;
 
+use function strncmp;
+use function trim;
+use function in_array;
+use function strlen;
+use function str_replace;
+use function file_exists;
+
 class CallableRegistry
 {
     /**

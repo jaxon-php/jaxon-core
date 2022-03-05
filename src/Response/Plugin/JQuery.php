@@ -3,10 +3,24 @@
 namespace Jaxon\Response\Plugin;
 
 use Jaxon\Response\Plugin\JQuery\Dom\Element;
+use Jaxon\Utils\Config\Config;
 
 class JQuery extends \Jaxon\Plugin\Response
 {
-    use \Jaxon\Features\Config;
+    /**
+     * @var Config
+     */
+    protected $xConfig;
+
+    /**
+     * The class constructor
+     *
+     * @param Config $xConfig
+     */
+    public function __construct(Config $xConfig)
+    {
+        $this->xConfig = $xConfig;
+    }
 
     /**
      * @inheritDoc
@@ -50,7 +64,8 @@ class JQuery extends \Jaxon\Plugin\Response
      */
     public function element(string $sSelector = '', string $sContext = ''): Element
     {
-        $xElement = new Element($sSelector, $sContext);
+        $jQueryNs = $this->xConfig->getOption('core.jquery.no_conflict', false) ? 'jQuery' : '$';
+        $xElement = new Element($jQueryNs, $sSelector, $sContext);
         $this->addCommand(['cmd' => 'jquery'], $xElement);
         return $xElement;
     }

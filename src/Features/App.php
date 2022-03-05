@@ -9,6 +9,7 @@ use Jaxon\Request\Factory\CallableClass\Request as CallableRequest;
 use Jaxon\Request\Handler\Callback;
 use Jaxon\Response\Response;
 use Jaxon\Ui\View\Renderer;
+use Jaxon\Utils\Http\UriException;
 use Psr\Log\LoggerInterface;
 
 use function jaxon;
@@ -54,7 +55,7 @@ trait App
      *
      * @return CallableRequest
      */
-    public function request(string $sClassName)
+    public function request(string $sClassName): CallableRequest
     {
         return jaxon()->request($sClassName);
     }
@@ -151,6 +152,7 @@ trait App
      * Get the javascript code to be sent to the browser.
      *
      * @return string  the javascript code
+     * @throws UriException
      */
     public function script(bool $bIncludeJs = false, bool $bIncludeCss = false): string
     {
@@ -161,6 +163,7 @@ trait App
      * Get the javascript code to be sent to the browser.
      *
      * @return string  the javascript code
+     * @throws UriException
      */
     public function getScript(bool $bIncludeJs = false, bool $bIncludeCss = false): string
     {

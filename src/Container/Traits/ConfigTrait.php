@@ -24,16 +24,6 @@ trait ConfigTrait
     }
 
     /**
-     * Get the config reader
-     *
-     * @return Reader
-     */
-    public function getConfigReader(): Reader
-    {
-        return $this->g(Reader::class);
-    }
-
-    /**
      * Get the library config options
      *
      * @return Config
@@ -41,6 +31,16 @@ trait ConfigTrait
     public function getConfig(): Config
     {
         return $this->g(Config::class);
+    }
+
+    /**
+     * Get the config reader
+     *
+     * @return Reader
+     */
+    public function getConfigReader(): Reader
+    {
+        return $this->g(Reader::class);
     }
 
     /**

@@ -109,7 +109,9 @@ if(!function_exists('pr'))
  */
 function jq(string $sSelector = '', string $sContext = ''): DomElement
 {
-    return new DomElement($sSelector, $sContext);
+    $xConfig = Jaxon::getInstance()->config();
+    $jQueryNs = $xConfig->getOption('core.jquery.no_conflict', false) ? 'jQuery' : '$';
+    return new DomElement($jQueryNs, $sSelector, $sContext);
 }
 
 /**

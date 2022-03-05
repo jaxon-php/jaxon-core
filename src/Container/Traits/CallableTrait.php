@@ -13,6 +13,7 @@ use Jaxon\Request\Support\CallableRepository;
 use Jaxon\Request\Validator;
 use Jaxon\Response\Manager as ResponseManager;
 use Jaxon\Utils\Config\Config;
+use Jaxon\Utils\File\Minifier;
 use Jaxon\Utils\Http\UriDetector;
 use Jaxon\Utils\Template\Engine as TemplateEngine;
 use Jaxon\Utils\Translation\Translator;
@@ -40,22 +41,24 @@ trait CallableTrait
         });
         // Callable class plugin
         $this->set(CallableClass::class, function($c) {
-            return new CallableClass($c->g(RequestHandler::class),
-                $c->g(ResponseManager::class), $c->g(CallableRegistry::class),
-                $c->g(CallableRepository::class), $c->g(Validator::class));
+            return new CallableClass($c->g(Config::class), $c->g(RequestHandler::class),
+                $c->g(ResponseManager::class), $c->g(CallableRegistry::class), $c->g(CallableRepository::class),
+                $c->g(TemplateEngine::class), $c->g(Translator::class), $c->g(Validator::class));
         });
         // Callable dir plugin
         $this->set(CallableDir::class, function($c) {
-            return new CallableDir($c->g(CallableRegistry::class));
+            return new CallableDir($c->g(CallableRegistry::class), $c->g(Translator::class));
         });
         // Callable function plugin
         $this->set(CallableFunction::class, function($c) {
-            return new CallableFunction($this, $c->g(RequestHandler::class),
-                $c->g(ResponseManager::class), $c->g(Validator::class));
+            return new CallableFunction($c->g(Jaxon::class), $c->g(Config::class),
+                $c->g(RequestHandler::class), $c->g(ResponseManager::class),
+                $c->g(TemplateEngine::class), $c->g(Translator::class), $c->g(Validator::class));
         });
         // Code Generator
         $this->set(CodeGenerator::class, function($c) {
-            return new CodeGenerator($c->g(Jaxon::class), $c->g(UriDetector::class), $c->g(TemplateEngine::class));
+            return new CodeGenerator($c->g(Jaxon::class), $c->g(Config::class),
+                $c->g(UriDetector::class), $c->g(TemplateEngine::class), $c->g(Minifier::class));
         });
     }
 

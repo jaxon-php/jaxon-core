@@ -39,6 +39,7 @@ use Jaxon\Utils\Config\Exception\FileContent;
 use Jaxon\Utils\Config\Exception\FileExtension;
 use Jaxon\Utils\Config\Exception\YamlExtension;
 use Jaxon\Utils\Config\Exception\DataDepth;
+use Jaxon\Utils\Translation\Translator;
 
 use function trim;
 use function is_integer;
@@ -48,14 +49,20 @@ use function is_subclass_of;
 
 class Manager
 {
-    use \Jaxon\Features\Manager;
-    use \Jaxon\Features\Config;
-    use \Jaxon\Features\Translator;
-
     /**
      * @var Jaxon
      */
     private $jaxon;
+
+    /**
+     * @var Config
+     */
+    protected $xConfig;
+
+    /**
+     * @var Translator
+     */
+    protected $xTranslator;
 
     /**
      * Request plugins, indexed by name
@@ -82,11 +89,15 @@ class Manager
      * The constructor
      *
      * @param Jaxon $jaxon
+     * @param Config $xConfig
+     * @param Translator $xTranslator
      * @param CodeGenerator $xCodeGenerator
      */
-    public function __construct(Jaxon $jaxon, CodeGenerator $xCodeGenerator)
+    public function __construct(Jaxon $jaxon, Config $xConfig, Translator $xTranslator, CodeGenerator $xCodeGenerator)
     {
         $this->jaxon = $jaxon;
+        $this->xConfig = $xConfig;
+        $this->xTranslator = $xTranslator;
         $this->xCodeGenerator = $xCodeGenerator;
     }
 
@@ -158,7 +169,7 @@ class Manager
 
         if(!$bIsUsed)
         {
-            $sMessage = $this->trans('errors.register.invalid', ['name' => $sClassName]);
+            $sMessage = $this->xTranslator->trans('errors.register.invalid', ['name' => $sClassName]);
             throw new SetupException($sMessage);
         }
     }
@@ -184,27 +195,27 @@ class Manager
         }
         catch(YamlExtension $e)
         {
-            $sMessage = $this->trans('errors.yaml.install');
+            $sMessage = $this->xTranslator->trans('errors.yaml.install');
             throw new SetupException($sMessage);
         }
         catch(FileExtension $e)
         {
-            $sMessage = $this->trans('errors.file.extension', ['path' => $sConfigFile]);
+            $sMessage = $this->xTranslator->trans('errors.file.extension', ['path' => $sConfigFile]);
             throw new SetupException($sMessage);
         }
         catch(FileAccess $e)
         {
-            $sMessage = $this->trans('errors.file.access', ['path' => $sConfigFile]);
+            $sMessage = $this->xTranslator->trans('errors.file.access', ['path' => $sConfigFile]);
             throw new SetupException($sMessage);
         }
         catch(FileContent $e)
         {
-            $sMessage = $this->trans('errors.file.content', ['path' => $sConfigFile]);
+            $sMessage = $this->xTranslator->trans('errors.file.content', ['path' => $sConfigFile]);
             throw new SetupException($sMessage);
         }
         catch(DataDepth $e)
         {
-            $sMessage = $this->trans('errors.data.depth', ['key' => $e->sPrefix, 'depth' => $e->nDepth]);
+            $sMessage = $this->xTranslator->trans('errors.data.depth', ['key' => $e->sPrefix, 'depth' => $e->nDepth]);
             throw new SetupException($sMessage);
         }
     }
@@ -253,7 +264,7 @@ class Manager
     {
         if(!isset($this->aRequestPlugins[$sType]))
         {
-            throw new SetupException($this->trans('errors.register.plugin', ['name' => $sType]));
+            throw new SetupException($this->xTranslator->trans('errors.register.plugin', ['name' => $sType]));
         }
 
         $xPlugin = $this->jaxon->di()->g($this->aRequestPlugins[$sType]);
