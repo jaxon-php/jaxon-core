@@ -74,9 +74,6 @@ class Jaxon implements LoggerAwareInterface
     const CALLABLE_FUNCTION = 'CallableFunction';
     // For uploaded files.
     const FILE_UPLOAD = 'FileUpload';
-    // For compatibility with previous versions
-    const CALLABLE_OBJECT = 'CallableClass'; // Same as CALLABLE_CLASS
-    const USER_FUNCTION = 'CallableFunction'; // Same as CALLABLE_FUNCTION
 
     /**
      * A static instance on this class
@@ -118,8 +115,8 @@ class Jaxon implements LoggerAwareInterface
             // Save the Jaxon instance in the DI
             self::$xContainer->val(Jaxon::class, self::$xInstance);
             /*
-            * Register the Jaxon request and response plugins
-            */
+             * Register the Jaxon request and response plugins
+             */
             self::$xContainer->getPluginManager()->registerRequestPlugins();
             self::$xContainer->getPluginManager()->registerResponsePlugins();
         }
