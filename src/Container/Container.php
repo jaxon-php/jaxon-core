@@ -15,6 +15,8 @@
 namespace Jaxon\Container;
 
 use Jaxon\Jaxon;
+use Jaxon\Utils\Config\Config;
+use Jaxon\Utils\Translation\Translator;
 use Pimple\Container as PimpleContainer;
 use Pimple\Exception\UnknownIdentifierException;
 use Psr\Container\ContainerInterface;
@@ -50,10 +52,9 @@ class Container extends PimpleContainer
     /**
      * The class constructor
      *
-     * @param Jaxon $jaxon
      * @param array $aOptions The default options
      */
-    public function __construct(Jaxon $jaxon, array $aOptions)
+    public function __construct(array $aOptions)
     {
         parent::__construct();
 
@@ -66,8 +67,6 @@ class Container extends PimpleContainer
         // Library options
         $this->val('jaxon.core.options', $aOptions);
 
-        $this->val(Jaxon::class, $jaxon);
-
         $this->registerAll();
     }
 
@@ -78,6 +77,10 @@ class Container extends PimpleContainer
      */
     private function registerAll()
     {
+        $this->set(Jaxon::class, function($c) {
+            return new Jaxon($c->g(Config::class), $c->g(Translator::class));
+        });
+
         $this->registerApp();
         $this->registerRequests();
         $this->registerResponses();

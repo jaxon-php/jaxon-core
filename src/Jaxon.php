@@ -29,7 +29,6 @@ use Jaxon\App\App;
 use Jaxon\Container\Container;
 use Jaxon\Contracts\Session;
 use Jaxon\Plugin\Package;
-use Jaxon\Plugin\Plugin;
 use Jaxon\Plugin\Response as ResponsePlugin;
 use Jaxon\Request\Factory\CallableClass\Request;
 use Jaxon\Request\Handler\Callback;
@@ -37,8 +36,10 @@ use Jaxon\Request\Plugin\FileUpload;
 use Jaxon\Response\Response;
 use Jaxon\Ui\Dialogs\Dialog;
 use Jaxon\Ui\View\Renderer;
+use Jaxon\Utils\Config\Config;
 use Jaxon\Utils\Config\Reader as ConfigReader;
 use Jaxon\Utils\Template\Engine;
+use Jaxon\Utils\Translation\Translator;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
@@ -46,16 +47,14 @@ use Psr\Log\NullLogger;
 
 class Jaxon implements LoggerAwareInterface
 {
-    use Features\Config;
-    use Features\Translator;
     use LoggerAwareTrait;
 
     /**
      * Package version number
      *
-     * @var string
+     * @const string
      */
-    private $sVersion = 'Jaxon 3.8.0';
+    const VERSION = 'Jaxon 3.8.0';
 
     /*
      * Plugin types
@@ -94,15 +93,35 @@ class Jaxon implements LoggerAwareInterface
     private static $xContainer = null;
 
     /**
+     * @var Config
+     */
+    protected $xConfig;
+
+    /**
+     * @var Translator
+     */
+    protected $xTranslator;
+
+    /**
      * Get the static instance
      *
      * @return Jaxon
+     * @throws Exception\SetupException
      */
     public static function getInstance(): ?Jaxon
     {
-        if(self::$xInstance == null)
+        if(self::$xInstance === null)
         {
-            self::$xInstance = new Jaxon();
+            self::$xContainer = new Container(self::getDefaultOptions());
+            self::$xInstance = new Jaxon(self::$xContainer->g(Config::class),
+                self::$xContainer->g(Translator::class));
+            // Save the Jaxon instance in the DI
+            self::$xContainer->val(Jaxon::class, self::$xInstance);
+            /*
+            * Register the Jaxon request and response plugins
+            */
+            self::$xContainer->getPluginManager()->registerRequestPlugins();
+            self::$xContainer->getPluginManager()->registerResponsePlugins();
         }
         return self::$xInstance;
     }
@@ -110,30 +129,12 @@ class Jaxon implements LoggerAwareInterface
     /**
      * The constructor
      */
-    public function __construct()
+    private function __construct(Config $xConfig, Translator $xTranslator)
     {
+        $this->xConfig = $xConfig;
+        $this->xTranslator = $xTranslator;
         // Set the default logger
         $this->setLogger(new NullLogger());
-
-        if(self::$xContainer == null)
-        {
-            self::$xContainer = new Container($this, $this->getDefaultOptions());
-            /*
-            * Register the Jaxon request and response plugins
-            */
-            $this->di()->getPluginManager()->registerRequestPlugins();
-            $this->di()->getPluginManager()->registerResponsePlugins();
-        }
-    }
-
-    /**
-     * Get the DI container
-     *
-     * @return Container
-     */
-    public function di(): ?Container
-    {
-        return self::$xContainer;
     }
 
     /**
@@ -143,27 +144,7 @@ class Jaxon implements LoggerAwareInterface
      */
     public function getVersion(): string
     {
-        return $this->sVersion;
-    }
-
-    /**
-     * Get the logger
-     *
-     * @return LoggerInterface
-     */
-    public function logger(): LoggerInterface
-    {
-        return $this->logger;
-    }
-
-    /**
-     * Get the config reader
-     *
-     * @return ConfigReader
-     */
-    public function config(): ConfigReader
-    {
-        return $this->di()->getConfigReader();
+        return self::VERSION;
     }
 
     /**
@@ -171,11 +152,11 @@ class Jaxon implements LoggerAwareInterface
      *
      * @return array<string,string|bool|integer>
      */
-    private function getDefaultOptions(): array
+    private static function getDefaultOptions(): array
     {
         // The default configuration settings.
         return [
-            'core.version'                      => $this->getVersion(),
+            'core.version'                      => self::VERSION,
             'core.language'                     => 'en',
             'core.encoding'                     => 'utf-8',
             'core.decode_utf8'                  => false,
@@ -205,6 +186,56 @@ class Jaxon implements LoggerAwareInterface
             'js.app.minify'                     => true,
             'js.app.options'                    => '',
         ];
+    }
+
+    /**
+     * Get the DI container
+     *
+     * @return Container
+     */
+    public function di(): ?Container
+    {
+        return self::$xContainer;
+    }
+
+    /**
+     * Get the logger
+     *
+     * @return LoggerInterface
+     */
+    public function logger(): LoggerInterface
+    {
+        return $this->logger;
+    }
+
+    /**
+     * Get the library config
+     *
+     * @return Config
+     */
+    public function config(): Config
+    {
+        return $this->di()->getConfig();
+    }
+
+    /**
+     * Get the config reader
+     *
+     * @return ConfigReader
+     */
+    public function getConfigReader(): ConfigReader
+    {
+        return $this->di()->getConfigReader();
+    }
+
+    /**
+     * Get the configured character encoding
+     *
+     * @return string
+     */
+    public function getCharacterEncoding(): string
+    {
+        return trim($this->config()->getOption('core.encoding'));
     }
 
     /**
@@ -405,19 +436,18 @@ class Jaxon implements LoggerAwareInterface
         // Check to see if headers have already been sent out, in which case we can't do our job
         if(headers_sent($filename, $linenumber))
         {
-            echo $this->trans('errors.output.already-sent', [
+            echo $this->xTranslator->trans('errors.output.already-sent', [
                 'location' => $filename . ':' . $linenumber
-            ]), "\n", $this->trans('errors.output.advice');
+            ]), "\n", $this->xTranslator->trans('errors.output.advice');
             exit();
         }
 
         $this->di()->getRequestHandler()->processRequest();
 
-        if(($this->getOption('core.response.send')))
+        if(($this->xConfig->getOption('core.response.send')))
         {
             $this->di()->getResponseManager()->sendOutput();
-
-            if(($this->getOption('core.process.exit')))
+            if(($this->xConfig->getOption('core.process.exit')))
             {
                 exit();
             }
