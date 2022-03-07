@@ -28,15 +28,21 @@ namespace Jaxon;
 use Jaxon\App\App;
 use Jaxon\Container\Container;
 use Jaxon\Contracts\Session;
+use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\Package;
 use Jaxon\Plugin\Response as ResponsePlugin;
 use Jaxon\Request\Factory\CallableClass\Request;
 use Jaxon\Request\Handler\Callback;
 use Jaxon\Request\Plugin\FileUpload;
+use Jaxon\Response\AbstractResponse;
 use Jaxon\Response\Response;
 use Jaxon\Ui\Dialogs\Dialog;
 use Jaxon\Ui\View\Renderer;
 use Jaxon\Utils\Config\Config;
+use Jaxon\Utils\Config\Exception\FileAccess;
+use Jaxon\Utils\Config\Exception\FileContent;
+use Jaxon\Utils\Config\Exception\FileExtension;
+use Jaxon\Utils\Config\Exception\YamlExtension;
 use Jaxon\Utils\Config\Reader as ConfigReader;
 use Jaxon\Utils\Template\Engine;
 use Jaxon\Utils\Translation\Translator;
@@ -216,13 +222,39 @@ class Jaxon implements LoggerAwareInterface
     }
 
     /**
-     * Get the config reader
+     * Read a config file
      *
-     * @return ConfigReader
+     * @param string $sConfigFile
+     *
+     * @return array
+     * @throws SetupException
      */
-    public function getConfigReader(): ConfigReader
+    public function readConfig(string $sConfigFile): array
     {
-        return $this->di()->getConfigReader();
+        try
+        {
+            return $this->di()->getConfigReader()->read($sConfigFile);
+        }
+        catch(YamlExtension $e)
+        {
+            $sMessage = $this->xTranslator->trans('errors.yaml.install');
+            throw new SetupException($sMessage);
+        }
+        catch(FileExtension $e)
+        {
+            $sMessage = $this->xTranslator->trans('errors.file.extension', ['path' => $sConfigFile]);
+            throw new SetupException($sMessage);
+        }
+        catch(FileAccess $e)
+        {
+            $sMessage = $this->xTranslator->trans('errors.file.access', ['path' => $sConfigFile]);
+            throw new SetupException($sMessage);
+        }
+        catch(FileContent $e)
+        {
+            $sMessage = $this->xTranslator->trans('errors.file.content', ['path' => $sConfigFile]);
+            throw new SetupException($sMessage);
+        }
     }
 
     /**
@@ -238,19 +270,23 @@ class Jaxon implements LoggerAwareInterface
     /**
      * Get the Global Response object
      *
-     * @return Response
+     * @return AbstractResponse
      */
-    public function getResponse(): Response
+    public function getResponse(): AbstractResponse
     {
+        if(($xResponse = $this->di()->getResponseManager()->getResponse()))
+        {
+            return $xResponse;
+        }
         return $this->di()->getResponse();
     }
 
     /**
      * Create a new Jaxon response object
      *
-     * @return Response
+     * @return AbstractResponse
      */
-    public function newResponse(): Response
+    public function newResponse(): AbstractResponse
     {
         return $this->di()->newResponse();
     }

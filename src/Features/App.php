@@ -2,20 +2,27 @@
 
 namespace Jaxon\Features;
 
+use Jaxon\Jaxon;
 use Jaxon\App\Bootstrap;
 use Jaxon\Contracts\Session;
 use Jaxon\Plugin\Package;
 use Jaxon\Request\Factory\CallableClass\Request as CallableRequest;
 use Jaxon\Request\Handler\Callback;
-use Jaxon\Response\Response;
+use Jaxon\Response\AbstractResponse;
 use Jaxon\Ui\View\Renderer;
 use Jaxon\Utils\Http\UriException;
+use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 
-use function jaxon;
+use Closure;
 
 trait App
 {
+    /**
+     * @var Jaxon
+     */
+    protected $jaxon;
+
     /**
      * Get the Jaxon application bootstrapper.
      *
@@ -23,17 +30,17 @@ trait App
      */
     protected function bootstrap(): Bootstrap
     {
-        return jaxon()->di()->getBootstrap();
+        return $this->jaxon->di()->getBootstrap();
     }
 
     /**
      * Get the Jaxon response.
      *
-     * @return Response
+     * @return AbstractResponse
      */
-    public function ajaxResponse(): Response
+    public function ajaxResponse(): AbstractResponse
     {
-        return jaxon()->getResponse();
+        return $this->jaxon->getResponse();
     }
 
     /**
@@ -45,7 +52,7 @@ trait App
      */
     public function instance(string $sClassName)
     {
-        return jaxon()->instance($sClassName);
+        return $this->jaxon->instance($sClassName);
     }
 
     /**
@@ -57,7 +64,7 @@ trait App
      */
     public function request(string $sClassName): CallableRequest
     {
-        return jaxon()->request($sClassName);
+        return $this->jaxon->request($sClassName);
     }
 
     /**
@@ -69,7 +76,7 @@ trait App
      */
     public function package(string $sClassName): Package
     {
-        return jaxon()->package($sClassName);
+        return $this->jaxon->package($sClassName);
     }
 
     /**
@@ -79,7 +86,7 @@ trait App
      */
     public function callback(): Callback
     {
-        return jaxon()->callback();
+        return $this->jaxon->callback();
     }
 
     /**
@@ -89,7 +96,7 @@ trait App
      */
     public function canProcessRequest(): bool
     {
-        return jaxon()->canProcessRequest();
+        return $this->jaxon->canProcessRequest();
     }
 
     /**
@@ -115,7 +122,7 @@ trait App
      */
     public function css(): string
     {
-        return jaxon()->getCss();
+        return $this->jaxon->getCss();
     }
 
     /**
@@ -125,7 +132,7 @@ trait App
      */
     public function getCss(): string
     {
-        return jaxon()->getCss();
+        return $this->jaxon->getCss();
     }
 
     /**
@@ -135,7 +142,7 @@ trait App
      */
     public function js(): string
     {
-        return jaxon()->getJs();
+        return $this->jaxon->getJs();
     }
 
     /**
@@ -145,7 +152,7 @@ trait App
      */
     public function getJs(): string
     {
-        return jaxon()->getJs();
+        return $this->jaxon->getJs();
     }
 
     /**
@@ -156,7 +163,7 @@ trait App
      */
     public function script(bool $bIncludeJs = false, bool $bIncludeCss = false): string
     {
-        return jaxon()->getScript($bIncludeJs, $bIncludeCss);
+        return $this->jaxon->getScript($bIncludeJs, $bIncludeCss);
     }
 
     /**
@@ -167,7 +174,7 @@ trait App
      */
     public function getScript(bool $bIncludeJs = false, bool $bIncludeCss = false): string
     {
-        return jaxon()->getScript($bIncludeJs, $bIncludeCss);
+        return $this->jaxon->getScript($bIncludeJs, $bIncludeCss);
     }
 
     /**
@@ -177,7 +184,7 @@ trait App
      */
     public function view(): Renderer
     {
-        return jaxon()->view();
+        return $this->jaxon->view();
     }
 
     /**
@@ -187,7 +194,7 @@ trait App
      */
     public function session(): Session
     {
-        return jaxon()->session();
+        return $this->jaxon->session();
     }
 
     /**
@@ -197,7 +204,7 @@ trait App
      */
     public function logger(): LoggerInterface
     {
-        return jaxon()->logger();
+        return $this->jaxon->logger();
     }
 
     /**
@@ -209,6 +216,58 @@ trait App
      */
     public function setLogger(LoggerInterface $logger)
     {
-        jaxon()->setLogger($logger);
+        $this->jaxon->setLogger($logger);
+    }
+
+    /**
+     * Set the container provided by the integrated framework
+     *
+     * @param ContainerInterface  $xContainer     The container implementation
+     *
+     * @return void
+     */
+    public function setAppContainer(ContainerInterface $xContainer)
+    {
+        $this->jaxon->di()->setAppContainer($xContainer);
+    }
+
+    /**
+     * Add a view namespace, and set the corresponding renderer.
+     *
+     * @param string        $sNamespace         The namespace name
+     * @param string        $sDirectory         The namespace directory
+     * @param string        $sExtension         The extension to append to template names
+     * @param string        $sRenderer          The corresponding renderer name
+     *
+     * @return void
+     */
+    public function addViewNamespace(string $sNamespace, string $sDirectory, string $sExtension, string $sRenderer)
+    {
+        $this->jaxon->di()->getViewManager()->addNamespace($sNamespace, $sDirectory, $sExtension, $sRenderer);
+    }
+
+    /**
+     * Add a view renderer with an id
+     *
+     * @param string        $sId        The unique identifier of the view renderer
+     * @param Closure       $xClosure   A closure to create the view instance
+     *
+     * @return void
+     */
+    public function addViewRenderer(string $sId, Closure $xClosure)
+    {
+        $this->jaxon->di()->getViewManager()->addRenderer($sId, $xClosure);
+    }
+
+    /**
+     * Set the session manager
+     *
+     * @param Closure      $xClosure      A closure to create the session manager instance
+     *
+     * @return void
+     */
+    public function setSessionManager(Closure $xClosure)
+    {
+        $this->jaxon->di()->setSessionManager($xClosure);
     }
 }

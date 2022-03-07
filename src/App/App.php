@@ -33,11 +33,6 @@ class App
     use \Jaxon\Features\App;
 
     /**
-     * @var Jaxon
-     */
-    private $jaxon;
-
-    /**
      * @var ResponseManager
      */
     private $xResponseManager;
@@ -82,42 +77,6 @@ class App
      *
      * @param string $sConfigFile The full path to the config file
      *
-     * @return array
-     * @throws SetupException
-     */
-    private function readConfig(string $sConfigFile): array
-    {
-        try
-        {
-            return $this->xConfigReader->read($sConfigFile);
-        }
-        catch(YamlExtension $e)
-        {
-            $sMessage = $this->xTranslator->trans('errors.yaml.install');
-            throw new SetupException($sMessage);
-        }
-        catch(FileExtension $e)
-        {
-            $sMessage = $this->xTranslator->trans('errors.file.extension', ['path' => $sConfigFile]);
-            throw new SetupException($sMessage);
-        }
-        catch(FileAccess $e)
-        {
-            $sMessage = $this->xTranslator->trans('errors.file.access', ['path' => $sConfigFile]);
-            throw new SetupException($sMessage);
-        }
-        catch(FileContent $e)
-        {
-            $sMessage = $this->xTranslator->trans('errors.file.content', ['path' => $sConfigFile]);
-            throw new SetupException($sMessage);
-        }
-    }
-
-    /**
-     * Read config options from a config file and setup the library
-     *
-     * @param string $sConfigFile The full path to the config file
-     *
      * @return void
      * @throws SetupException
      */
@@ -130,7 +89,7 @@ class App
         }
 
         // Read the config options.
-        $aOptions = $this->readConfig($sConfigFile);
+        $aOptions = $this->jaxon->readConfig($sConfigFile);
         $aLibOptions = $aOptions['lib'] ?? [];
         $aAppOptions = $aOptions['app'] ?? [];
         if(!is_array($aLibOptions) || !is_array($aAppOptions))
@@ -176,6 +135,7 @@ class App
      * Process an incoming Jaxon request, and return the response.
      *
      * @return void
+     * @throws SetupException
      */
     public function processRequest()
     {

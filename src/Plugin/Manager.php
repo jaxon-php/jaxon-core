@@ -34,10 +34,6 @@ use Jaxon\Response\Plugin\DataBag;
 use Jaxon\Response\Response as JaxonResponse;
 use Jaxon\Exception\SetupException;
 use Jaxon\Utils\Config\Config;
-use Jaxon\Utils\Config\Exception\FileAccess;
-use Jaxon\Utils\Config\Exception\FileContent;
-use Jaxon\Utils\Config\Exception\FileExtension;
-use Jaxon\Utils\Config\Exception\YamlExtension;
 use Jaxon\Utils\Config\Exception\DataDepth;
 use Jaxon\Utils\Translation\Translator;
 
@@ -185,33 +181,12 @@ class Manager
     private function readPackageConfig(string $sClassName): Config
     {
         $sConfigFile = $sClassName::getConfigFile();
+        $aPackageConfig = $this->jaxon->readConfig($sConfigFile);
+        // Add the package name to the config
+        $aPackageConfig['package'] = $sClassName;
         try
         {
-            $di = $this->jaxon->di();
-            $aPackageConfig = $di->getConfigReader()->read($sConfigFile);
-            // Add the package name to the config
-            $aPackageConfig['package'] = $sClassName;
-            return $di->newConfig($aPackageConfig);
-        }
-        catch(YamlExtension $e)
-        {
-            $sMessage = $this->xTranslator->trans('errors.yaml.install');
-            throw new SetupException($sMessage);
-        }
-        catch(FileExtension $e)
-        {
-            $sMessage = $this->xTranslator->trans('errors.file.extension', ['path' => $sConfigFile]);
-            throw new SetupException($sMessage);
-        }
-        catch(FileAccess $e)
-        {
-            $sMessage = $this->xTranslator->trans('errors.file.access', ['path' => $sConfigFile]);
-            throw new SetupException($sMessage);
-        }
-        catch(FileContent $e)
-        {
-            $sMessage = $this->xTranslator->trans('errors.file.content', ['path' => $sConfigFile]);
-            throw new SetupException($sMessage);
+            return $this->jaxon->di()->newConfig($aPackageConfig);
         }
         catch(DataDepth $e)
         {

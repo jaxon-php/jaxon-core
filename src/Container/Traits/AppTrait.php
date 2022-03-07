@@ -38,7 +38,7 @@ trait AppTrait
      *
      * @return App
      */
-    public function getApp()
+    public function getApp(): App
     {
         return $this->g(App::class);
     }
@@ -48,7 +48,7 @@ trait AppTrait
      *
      * @return Bootstrap
      */
-    public function getBootstrap()
+    public function getBootstrap(): Bootstrap
     {
         return $this->g(Bootstrap::class);
     }

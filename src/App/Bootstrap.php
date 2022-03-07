@@ -198,7 +198,7 @@ class Bootstrap
      * @return void
      * @throws SetupException
      */
-    public function run()
+    public function setup()
     {
         $di = $this->jaxon->di();
 
@@ -242,5 +242,16 @@ class Bootstrap
         {
             $xConfig->setOption('core.request.uri', $this->sUri);
         }
+    }
+
+    /**
+     * Wraps the module/package/bundle setup method.
+     *
+     * @return void
+     * @throws SetupException
+     */
+    public function run()
+    {
+        $this->setup();
     }
 }
