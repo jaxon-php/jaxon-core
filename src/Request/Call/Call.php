@@ -70,13 +70,13 @@ class Call extends JsCall
      *
      * The request is sent only if the condition is true.
      *
-     * @param string        $sCondition               The condition to check
+     * @param mixed         $xCondition               The condition to check
      *
      * @return Call
      */
-    public function when(string $sCondition): Call
+    public function when($xCondition): Call
     {
-        $this->sCondition = Parameter::make($sCondition)->getScript();
+        $this->sCondition = Parameter::make($xCondition)->getScript();
         return $this;
     }
 
@@ -85,97 +85,97 @@ class Call extends JsCall
      *
      * The request is sent only if the condition is false.
      *
-     * @param string        $sCondition               The condition to check
+     * @param mixed         $xCondition               The condition to check
      *
      * @return Call
      */
-    public function unless(string $sCondition): Call
+    public function unless($xCondition): Call
     {
-        $this->sCondition = '!(' . Parameter::make($sCondition)->getScript() . ')';
+        $this->sCondition = '!(' . Parameter::make($xCondition)->getScript() . ')';
         return $this;
     }
 
     /**
      * Check if a value is equal to another before sending the request
      *
-     * @param string        $sValue1                  The first value to compare
-     * @param string        $sValue2                  The second value to compare
+     * @param mixed         $xValue1                  The first value to compare
+     * @param mixed         $xValue2                  The second value to compare
      *
      * @return Call
      */
-    public function ifeq(string $sValue1, string $sValue2): Call
+    public function ifeq($xValue1, $xValue2): Call
     {
-        $this->sCondition = '(' . Parameter::make($sValue1) . '==' . Parameter::make($sValue2) . ')';
+        $this->sCondition = '(' . Parameter::make($xValue1) . '==' . Parameter::make($xValue2) . ')';
         return $this;
     }
 
     /**
      * Check if a value is not equal to another before sending the request
      *
-     * @param string        $sValue1                  The first value to compare
-     * @param string        $sValue2                  The second value to compare
+     * @param mixed         $xValue1                  The first value to compare
+     * @param mixed         $xValue2                  The second value to compare
      *
      * @return Call
      */
-    public function ifne(string $sValue1, string $sValue2): Call
+    public function ifne($xValue1, $xValue2): Call
     {
-        $this->sCondition = '(' . Parameter::make($sValue1) . '!=' . Parameter::make($sValue2) . ')';
+        $this->sCondition = '(' . Parameter::make($xValue1) . '!=' . Parameter::make($xValue2) . ')';
         return $this;
     }
 
     /**
      * Check if a value is greater than another before sending the request
      *
-     * @param string        $sValue1                  The first value to compare
-     * @param string        $sValue2                  The second value to compare
+     * @param mixed         $xValue1                  The first value to compare
+     * @param mixed         $xValue2                  The second value to compare
      *
      * @return Call
      */
-    public function ifgt(string $sValue1, string $sValue2): Call
+    public function ifgt($xValue1, $xValue2): Call
     {
-        $this->sCondition = '(' . Parameter::make($sValue1) . '>' . Parameter::make($sValue2) . ')';
+        $this->sCondition = '(' . Parameter::make($xValue1) . '>' . Parameter::make($xValue2) . ')';
         return $this;
     }
 
     /**
      * Check if a value is greater or equal to another before sending the request
      *
-     * @param string        $sValue1                  The first value to compare
-     * @param string        $sValue2                  The second value to compare
+     * @param mixed         $xValue1                  The first value to compare
+     * @param mixed         $xValue2                  The second value to compare
      *
      * @return Call
      */
-    public function ifge(string $sValue1, string $sValue2): Call
+    public function ifge($xValue1, $xValue2): Call
     {
-        $this->sCondition = '(' . Parameter::make($sValue1) . '>=' . Parameter::make($sValue2) . ')';
+        $this->sCondition = '(' . Parameter::make($xValue1) . '>=' . Parameter::make($xValue2) . ')';
         return $this;
     }
 
     /**
      * Check if a value is lower than another before sending the request
      *
-     * @param string        $sValue1                  The first value to compare
-     * @param string        $sValue2                  The second value to compare
+     * @param mixed         $xValue1                  The first value to compare
+     * @param mixed         $xValue2                  The second value to compare
      *
      * @return Call
      */
-    public function iflt(string $sValue1, string $sValue2): Call
+    public function iflt($xValue1, $xValue2): Call
     {
-        $this->sCondition = '(' . Parameter::make($sValue1) . '<' . Parameter::make($sValue2) . ')';
+        $this->sCondition = '(' . Parameter::make($xValue1) . '<' . Parameter::make($xValue2) . ')';
         return $this;
     }
 
     /**
      * Check if a value is lower or equal to another before sending the request
      *
-     * @param string        $sValue1                  The first value to compare
-     * @param string        $sValue2                  The second value to compare
+     * @param mixed         $xValue1                  The first value to compare
+     * @param mixed         $xValue2                  The second value to compare
      *
      * @return Call
      */
-    public function ifle(string $sValue1, string $sValue2): Call
+    public function ifle($xValue1, $xValue2): Call
     {
-        $this->sCondition = '(' . Parameter::make($sValue1) . '<=' . Parameter::make($sValue2) . ')';
+        $this->sCondition = '(' . Parameter::make($xValue1) . '<=' . Parameter::make($xValue2) . ')';
         return $this;
     }
 
@@ -210,7 +210,7 @@ class Call extends JsCall
     /**
      * Set the message to show if the condition to send the request is not met
      *
-     * The first parameter is the message to show. The followin allow to insert data from
+     * The first parameter is the message to show. The followings allow inserting data from
      * the webpage in the message using positional placeholders.
      *
      * @param string        $sMessage                 The message to show if the request is not sent
