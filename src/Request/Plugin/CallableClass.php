@@ -208,7 +208,10 @@ class CallableClass extends RequestPlugin
             throw new SetupException($this->xTranslator->trans('errors.objects.invalid-declaration'));
         }
 
-        $this->xRepository->addClass(trim($sClassName), $aOptions);
+        $sClassName = trim($sClassName);
+        $this->xRepository->addClass($sClassName, $aOptions);
+        // Also register the class in the DI container.
+        $this->xRepository->registerCallableObject($sClassName, $aOptions);
 
         return true;
     }
