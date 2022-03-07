@@ -56,4 +56,14 @@ trait PluginTrait
     {
         return $this->g(PluginManager::class);
     }
+
+    /**
+     * Get the upload plugin
+     *
+     * @return FileUpload
+     */
+    public function getUploadPlugin(): FileUpload
+    {
+        return $this->g(FileUpload::class);
+    }
 }

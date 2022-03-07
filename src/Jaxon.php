@@ -527,7 +527,7 @@ class Jaxon implements LoggerAwareInterface
      */
     public function upload(): FileUpload
     {
-        return $this->di()->getPluginManager()->getRequestPlugin(self::FILE_UPLOAD);
+        return $this->di()->getUploadPlugin();
     }
 
     /**
