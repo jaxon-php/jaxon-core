@@ -6,7 +6,7 @@ use Jaxon\Jaxon;
 use Jaxon\App\Bootstrap;
 use Jaxon\Contracts\Session;
 use Jaxon\Plugin\Package;
-use Jaxon\Request\Factory\CallableClass\Request as CallableRequest;
+use Jaxon\Request\Factory\RequestFactory;
 use Jaxon\Request\Handler\Callback;
 use Jaxon\Response\AbstractResponse;
 use Jaxon\Ui\View\Renderer;
@@ -60,9 +60,9 @@ trait App
      *
      * @param string        $sClassName         The class name
      *
-     * @return CallableRequest
+     * @return RequestFactory|null
      */
-    public function request(string $sClassName): CallableRequest
+    public function request(string $sClassName): ?RequestFactory
     {
         return $this->jaxon->request($sClassName);
     }

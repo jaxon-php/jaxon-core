@@ -1,101 +1,67 @@
 <?php
 
+namespace Jaxon\Request\Factory;
+
 /**
- * RequestFactory.php - Jaxon Request Factory
+ * RequestFactory.php
  *
  * Create Jaxon client side requests, which will generate the client script necessary
  * to invoke a jaxon request from the browser to registered objects.
  *
  * @package jaxon-core
- * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
- * @copyright 2016 Thierry Feuzeu <thierry.feuzeu@gmail.com>
+ * @author Thierry Feuzeu
+ * @copyright 2022 Thierry Feuzeu <thierry.feuzeu@gmail.com>
  * @license https://opensource.org/licenses/BSD-3-Clause BSD 3-Clause License
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Request\Factory;
+use Jaxon\Request\Call\Call;
+use Jaxon\Ui\Pagination\Paginator;
 
-use Jaxon\Request\Support\CallableObject;
-use Jaxon\Request\Support\CallableRegistry;
-use Jaxon\Utils\Config\Config;
-
-use function func_get_args;
 use function array_shift;
-use function strpos;
-use function trim;
+use function func_get_args;
 
-// Extends Parameter for compatibility with older versions (see function rq())
 class RequestFactory
 {
-    /**
-     * @var Config
-     */
-    protected $xConfig;
-
     /**
      * The prefix to prepend on each call
      *
      * @var string
      */
-    protected $sPrefix = '';
+    protected $sPrefix;
 
     /**
-     * The callable repository
-     *
-     * @var CallableRegistry
+     * @var Paginator
      */
-    protected $xCallableRegistry;
+    protected $xPaginator;
 
     /**
      * The class constructor
      *
-     * @param Config $xConfig
-     * @param CallableRegistry    $xCallableRegistry
+     * @param string $sPrefix
+     * @param Paginator $xPaginator
      */
-    public function __construct(Config $xConfig, CallableRegistry $xCallableRegistry)
+    public function __construct(string $sPrefix, Paginator $xPaginator)
     {
-        $this->xConfig = $xConfig;
-        $this->xCallableRegistry = $xCallableRegistry;
+        $this->sPrefix = $sPrefix;
+        $this->xPaginator = $xPaginator;
     }
 
     /**
-     * Set the name of the class to call
+     * Generate the javascript code for a call to a given method
      *
-     * @param string        $sClass              The callable class
+     * @param string $sFunction
+     * @param array $aArguments
      *
-     * @return RequestFactory
+     * @return Call
      */
-    public function setClassName(string $sClass): RequestFactory
+    public function __call(string $sFunction, array $aArguments): Call
     {
-        $this->sPrefix = $this->xConfig->getOption('core.prefix.function');
-
-        $sClass = trim($sClass, '.\\ ');
-        if(!$sClass)
-        {
-            return $this;
-        }
-
-        if(!($xCallable = $this->xCallableRegistry->getCallableObject($sClass)))
-        {
-            // Todo: decide which of these values to return
-            // return null;
-            return $this;
-        }
-
-        return $this->setCallable($xCallable);
-    }
-
-    /**
-     * Set the callable object to call
-     *
-     * @param CallableObject    $xCallable              The callable object
-     *
-     * @return RequestFactory
-     */
-    public function setCallable(CallableObject $xCallable): RequestFactory
-    {
-        $this->sPrefix = $this->xConfig->getOption('core.prefix.class') . $xCallable->getJsName() . '.';
-        return $this;
+        // Make the request
+        $xCall = new Call($this->sPrefix . $sFunction, $this->xPaginator);
+        $xCall->useSingleQuote();
+        $xCall->addParameters($aArguments);
+        return $xCall;
     }
 
     /**
@@ -103,46 +69,14 @@ class RequestFactory
      *
      * @param string            $sFunction          The function or method (without class) name
      *
-     * @return Request
+     * @return Call
      */
-    public function call(string $sFunction): Request
+    public function call(string $sFunction): Call
     {
         $aArguments = func_get_args();
-        $sFunction = (string)$sFunction;
-        // Remove the function name from the arguments array.
-        array_shift($aArguments);
-
-        // Makes legacy code works
-        if(strpos($sFunction, '.') !== false)
-        {
-            // If there is a dot in the name, then it is a call to a class
-            $this->sPrefix = $this->xConfig->getOption('core.prefix.class');
-        }
-
-        // Make the request
-        $xRequest = new Request($this->sPrefix . $sFunction);
-        $xRequest->useSingleQuote();
-        $xRequest->addParameters($aArguments);
-        return $xRequest;
-    }
-
-    /**
-     * Return the javascript call to a generic function
-     *
-     * @param string            $sFunction          The function or method (with class) name
-     *
-     * @return Request
-     */
-    public function func(string $sFunction): Request
-    {
-        $aArguments = func_get_args();
-        $sFunction = (string)$sFunction;
         // Remove the function name from the arguments array.
         array_shift($aArguments);
         // Make the request
-        $xRequest = new Request($sFunction);
-        $xRequest->useSingleQuote();
-        $xRequest->addParameters($aArguments);
-        return $xRequest;
+        return $this->__call($sFunction, $aArguments);
     }
 }

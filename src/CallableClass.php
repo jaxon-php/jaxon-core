@@ -3,7 +3,8 @@
 namespace Jaxon;
 
 use Jaxon\Contracts\Session;
-use Jaxon\Request\Factory\CallableClass\Request;
+use Jaxon\Request\Factory\RequestFactory;
+use Jaxon\Request\Factory\ParameterFactory;
 use Jaxon\Response\Plugin\DataBag\Context as DataBagContext;
 use Jaxon\Response\Plugin\JQuery\Dom\Element as DomElement;
 use Jaxon\Response\Response;
@@ -18,18 +19,18 @@ class CallableClass
     protected $jaxon = null;
 
     /**
-     * The request factory DI key
-     *
-     * @var string
-     */
-    protected $sRequest = '';
-
-    /**
      * The Jaxon response returned by all classes methods
      *
      * @var Response
      */
     protected $response = null;
+
+    /**
+     * The name of the registered class
+     *
+     * @var string
+     */
+    protected $_class = '';
 
     /**
      * Get the view renderer
@@ -64,11 +65,21 @@ class CallableClass
     /**
      * Get the request factory.
      *
-     * @return Request
+     * @return RequestFactory
      */
-    public function rq(): Request
+    public function rq(): RequestFactory
     {
-        return $this->jaxon->di()->g($this->sRequest);
+        return $this->jaxon->factory()->request($this->_class);
+    }
+
+    /**
+     * Get the parameter factory.
+     *
+     * @return ParameterFactory
+     */
+    public function pm(): ParameterFactory
+    {
+        return $this->jaxon->factory()->parameter();
     }
 
     /**

@@ -32,16 +32,16 @@ function jaxon(): Jaxon
 }
 
 /**
- * Get the single instance of the request factory, and set the class to call.
+ * Get the ajax request to a PHP class or function.
  *
  * @param string $sClassName
  *
- * @return RequestFactory
+ * @return RequestFactory|null
  * @throws SetupException
  */
-function rq(string $sClassName = ''): RequestFactory
+function rq(string $sClassName = ''): ?RequestFactory
 {
-    return Jaxon::getInstance()->di()->getRequestFactory()->setClassName($sClassName);
+    return Jaxon::getInstance()->factory()->request($sClassName);
 }
 
 /**
@@ -52,7 +52,7 @@ function rq(string $sClassName = ''): RequestFactory
  */
 function pm(): ParameterFactory
 {
-    return Jaxon::getInstance()->di()->getParameterFactory();
+    return Jaxon::getInstance()->factory()->parameter();
 }
 
 /**

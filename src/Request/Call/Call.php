@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Request.php - The Jaxon Request
+ * Call.php - The Jaxon Call
  *
  * This class is used to create client side requests to callable classes and functions.
  *
@@ -18,20 +18,27 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Request\Factory;
+namespace Jaxon\Request\Call;
 
-use Jaxon\Request\Factory\Contracts\Parameter as ParameterContract;
+use Jaxon\Request\Call\Contracts\Parameter as ParameterContract;
 use Jaxon\Response\Plugin\JQuery\Dom\Element as DomElement;
 use Jaxon\Ui\Pagination\Paginator;
+use Jaxon\Ui\View\Store;
+use Jaxon\Exception\SetupException;
 
 use function array_map;
-use function func_get_args;
-use function count;
 use function array_shift;
+use function count;
+use function func_get_args;
 use function jaxon;
 
-class Request extends JsCall
+class Call extends JsCall
 {
+    /**
+     * @var Paginator
+     */
+    protected $xPaginator;
+
     /**
      * A condition to check before sending this request
      *
@@ -50,10 +57,12 @@ class Request extends JsCall
      * The constructor.
      *
      * @param string        $sName            The javascript function or method name
+     * @param Paginator $xPaginator
      */
-    public function __construct(string $sName)
+    public function __construct(string $sName, Paginator $xPaginator)
     {
         parent::__construct($sName);
+        $this->xPaginator = $xPaginator;
     }
 
     /**
@@ -63,9 +72,9 @@ class Request extends JsCall
      *
      * @param string        $sCondition               The condition to check
      *
-     * @return Request
+     * @return Call
      */
-    public function when(string $sCondition): Request
+    public function when(string $sCondition): Call
     {
         $this->sCondition = Parameter::make($sCondition)->getScript();
         return $this;
@@ -78,9 +87,9 @@ class Request extends JsCall
      *
      * @param string        $sCondition               The condition to check
      *
-     * @return Request
+     * @return Call
      */
-    public function unless(string $sCondition): Request
+    public function unless(string $sCondition): Call
     {
         $this->sCondition = '!(' . Parameter::make($sCondition)->getScript() . ')';
         return $this;
@@ -92,9 +101,9 @@ class Request extends JsCall
      * @param string        $sValue1                  The first value to compare
      * @param string        $sValue2                  The second value to compare
      *
-     * @return Request
+     * @return Call
      */
-    public function ifeq(string $sValue1, string $sValue2): Request
+    public function ifeq(string $sValue1, string $sValue2): Call
     {
         $this->sCondition = '(' . Parameter::make($sValue1) . '==' . Parameter::make($sValue2) . ')';
         return $this;
@@ -106,9 +115,9 @@ class Request extends JsCall
      * @param string        $sValue1                  The first value to compare
      * @param string        $sValue2                  The second value to compare
      *
-     * @return Request
+     * @return Call
      */
-    public function ifne(string $sValue1, string $sValue2): Request
+    public function ifne(string $sValue1, string $sValue2): Call
     {
         $this->sCondition = '(' . Parameter::make($sValue1) . '!=' . Parameter::make($sValue2) . ')';
         return $this;
@@ -120,9 +129,9 @@ class Request extends JsCall
      * @param string        $sValue1                  The first value to compare
      * @param string        $sValue2                  The second value to compare
      *
-     * @return Request
+     * @return Call
      */
-    public function ifgt(string $sValue1, string $sValue2): Request
+    public function ifgt(string $sValue1, string $sValue2): Call
     {
         $this->sCondition = '(' . Parameter::make($sValue1) . '>' . Parameter::make($sValue2) . ')';
         return $this;
@@ -134,9 +143,9 @@ class Request extends JsCall
      * @param string        $sValue1                  The first value to compare
      * @param string        $sValue2                  The second value to compare
      *
-     * @return Request
+     * @return Call
      */
-    public function ifge(string $sValue1, string $sValue2): Request
+    public function ifge(string $sValue1, string $sValue2): Call
     {
         $this->sCondition = '(' . Parameter::make($sValue1) . '>=' . Parameter::make($sValue2) . ')';
         return $this;
@@ -148,9 +157,9 @@ class Request extends JsCall
      * @param string        $sValue1                  The first value to compare
      * @param string        $sValue2                  The second value to compare
      *
-     * @return Request
+     * @return Call
      */
-    public function iflt(string $sValue1, string $sValue2): Request
+    public function iflt(string $sValue1, string $sValue2): Call
     {
         $this->sCondition = '(' . Parameter::make($sValue1) . '<' . Parameter::make($sValue2) . ')';
         return $this;
@@ -162,9 +171,9 @@ class Request extends JsCall
      * @param string        $sValue1                  The first value to compare
      * @param string        $sValue2                  The second value to compare
      *
-     * @return Request
+     * @return Call
      */
-    public function ifle(string $sValue1, string $sValue2): Request
+    public function ifle(string $sValue1, string $sValue2): Call
     {
         $this->sCondition = '(' . Parameter::make($sValue1) . '<=' . Parameter::make($sValue2) . ')';
         return $this;
@@ -189,9 +198,9 @@ class Request extends JsCall
      *
      * @param string        $sQuestion                The question to ask
      *
-     * @return Request
+     * @return Call
      */
-    public function confirm(string $sQuestion): Request
+    public function confirm(string $sQuestion): Call
     {
         $this->sCondition = '__confirm__';
         $this->setMessageArgs(func_get_args());
@@ -206,9 +215,9 @@ class Request extends JsCall
      *
      * @param string        $sMessage                 The message to show if the request is not sent
      *
-     * @return Request
+     * @return Call
      */
-    public function elseShow(string $sMessage): Request
+    public function elseShow(string $sMessage): Call
     {
         $this->setMessageArgs(func_get_args());
         return $this;
@@ -251,6 +260,7 @@ class Request extends JsCall
      * Returns a string representation of the script output (javascript) from this request object
      *
      * @return string
+     * @throws SetupException
      */
     public function getScript(): string
     {
@@ -311,6 +321,7 @@ class Request extends JsCall
      * Prints a string representation of the script output (javascript) from this request object
      *
      * @return void
+     * @throws SetupException
      */
     public function printScript()
     {
@@ -339,9 +350,9 @@ class Request extends JsCall
      *
      * @param integer        $nPageNumber        The current page number
      *
-     * @return Request
+     * @return Call
      */
-    public function setPageNumber(int $nPageNumber): Request
+    public function setPageNumber(int $nPageNumber): Call
     {
         // Set the value of the Parameter::PAGE_NUMBER parameter
         foreach($this->aParameters as $xParameter)
@@ -362,12 +373,11 @@ class Request extends JsCall
      * @param integer       $nItemsPerPage          The number of items per page page
      * @param integer       $nItemsTotal            The total number of items
      *
-     * @return Paginator
+     * @return Store|null
      */
-    public function pg(int $nCurrentPage, int $nItemsPerPage, int $nItemsTotal): Paginator
+    public function paginate(int $nCurrentPage, int $nItemsPerPage, int $nItemsTotal): ?Store
     {
-        return jaxon()->di()->getPaginator()
-            ->setup($nItemsTotal, $nItemsPerPage, $nCurrentPage, $this);
+        return $this->xPaginator->setup($nItemsTotal, $nItemsPerPage, $nCurrentPage, $this)->render();
     }
 
     /**
@@ -377,10 +387,25 @@ class Request extends JsCall
      * @param integer       $nItemsPerPage          The number of items per page page
      * @param integer       $nItemsTotal            The total number of items
      *
-     * @return Paginator
+     * @return Store|null
      */
-    public function paginate(int $nCurrentPage, int $nItemsPerPage, int $nItemsTotal): Paginator
+    public function pg(int $nCurrentPage, int $nItemsPerPage, int $nItemsTotal): ?Store
     {
-        return $this->pg($nCurrentPage, $nItemsPerPage, $nItemsTotal);
+        return $this->paginate($nCurrentPage, $nItemsPerPage, $nItemsTotal);
+    }
+
+    /**
+     * Make the pagination links for this request
+     *
+     * @param integer $nCurrentPage The current page
+     * @param integer $nItemsPerPage The number of items per page page
+     * @param integer $nItemsTotal The total number of items
+     *
+     * @return array
+     * @throws SetupException
+     */
+    public function pages(int $nCurrentPage, int $nItemsPerPage, int $nItemsTotal): array
+    {
+        return $this->xPaginator->setup($nItemsTotal, $nItemsPerPage, $nCurrentPage, $this)->getPages();
     }
 }

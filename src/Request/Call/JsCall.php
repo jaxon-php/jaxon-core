@@ -16,10 +16,9 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Request\Factory;
+namespace Jaxon\Request\Call;
 
 use JsonSerializable;
-use Jaxon\Jaxon;
 
 class JsCall implements JsonSerializable
 {
@@ -31,18 +30,11 @@ class JsCall implements JsonSerializable
     private $sFunction;
 
     /**
-     * A string containing either a single or a double quote character that will be used
-     * during the generation of the javascript for this function.
-     * This can be set prior to calling <Request->getScript>
-     *
      * @var string
      */
     public $sQuoteCharacter;
 
     /**
-     * An array of parameters that will be used to populate the argument list for this function
-     * when the javascript is output in <Request->getScript>
-     *
      * @var array
      */
     protected $aParameters;

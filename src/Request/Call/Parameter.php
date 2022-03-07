@@ -11,16 +11,16 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Request\Factory;
+namespace Jaxon\Request\Call;
 
-use function is_numeric;
-use function is_string;
-use function is_bool;
 use function is_array;
+use function is_bool;
+use function is_numeric;
 use function is_object;
-use function str_replace;
+use function is_string;
 use function json_encode;
 use function method_exists;
+use function str_replace;
 
 class Parameter implements Contracts\Parameter
 {

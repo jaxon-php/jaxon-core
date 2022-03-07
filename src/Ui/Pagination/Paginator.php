@@ -40,12 +40,12 @@ SOFTWARE.
 
 namespace Jaxon\Ui\Pagination;
 
-use Jaxon\Request\Factory\Request;
+use Jaxon\Request\Call\Call;
 use Jaxon\Ui\View\Store;
+use Jaxon\Exception\SetupException;
 
-use function intval;
-use function ceil;
 use function array_map;
+use function ceil;
 
 class Paginator
 {
@@ -176,14 +176,14 @@ class Paginator
      * @param int $nTotalItems The total number of items
      * @param int $nItemsPerPage The number of items per page
      * @param int $nCurrentPage The current page number
-     * @param Request $xRequest The request to be paginated
+     * @param Call $xCall The call to be paginated
      *
      * @return Paginator
      */
-    public function setup(int $nTotalItems, int $nItemsPerPage, int $nCurrentPage, Request $xRequest): Paginator
+    public function setup(int $nTotalItems, int $nItemsPerPage, int $nCurrentPage, Call $xCall): Paginator
     {
         $this->setTotalItems($nTotalItems)->setItemsPerPage($nItemsPerPage)->setCurrentPage($nCurrentPage);
-        $this->xRenderer->setRequest($xRequest);
+        $this->xRenderer->setRequest($xCall);
         return $this;
     }
 
@@ -191,6 +191,7 @@ class Paginator
      * Get the pages.
      *
      * @return array
+     * @throws SetupException
      */
     public function getPages(): array
     {
@@ -203,6 +204,7 @@ class Paginator
      * Render an HTML pagination control.
      *
      * @return null|Store
+     * @throws SetupException
      */
     public function render(): ?Store
     {
@@ -213,6 +215,7 @@ class Paginator
      * Render an HTML pagination control.
      *
      * @return string
+     * @throws SetupException
      */
     public function __toString()
     {

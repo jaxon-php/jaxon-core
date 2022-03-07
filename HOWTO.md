@@ -56,7 +56,7 @@ jaxon()->register(Jaxon::CALLABLE_FUNCTION, 'sayHello', [
 
 ```php
 <button onclick="<?php echo rq('HelloWorld')->call('sayHello', 0) ?>" >Click Me</button>
-<button onclick="<?php echo rq('HelloWorld')->call('setColor', pr()->select('color')) ?>" >Click Me</button>
+<button onclick="<?php echo rq('HelloWorld')->call('setColor', pm()->select('color')) ?>" >Click Me</button>
 ```
 
 **Call a registered function**

@@ -1,10 +1,9 @@
 <?php
 
 /**
- * RequestFactory.php - Jaxon Request Factory
+ * ParameterFactory.php - Jaxon Call Factory
  *
- * Create Jaxon client side requests, which will generate the client script necessary
- * to invoke a jaxon request from the browser to registered objects.
+ * Create js parameters for calls to Jaxon classes.
  *
  * @package jaxon-core
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
@@ -15,7 +14,8 @@
 
 namespace Jaxon\Request\Factory;
 
-// Extends Parameter for compatibility with older versions (see function rq())
+use Jaxon\Request\Call\Parameter;
+
 class ParameterFactory
 {
     /**

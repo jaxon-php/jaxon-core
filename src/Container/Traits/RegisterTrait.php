@@ -3,10 +3,12 @@
 namespace Jaxon\Container\Traits;
 
 use Jaxon\Jaxon;
-use Jaxon\Request\Factory\CallableClass\Request as CallableClassRequestFactory;
+use Jaxon\Request\Factory\RequestFactory;
 use Jaxon\Request\Support\CallableObject;
 use Jaxon\Request\Support\CallableFunction;
+use Jaxon\Ui\Pagination\Paginator;
 use Jaxon\Utils\Config\Config;
+use Jaxon\Utils\Config\Exception\DataDepth;
 
 use ReflectionClass;
 
@@ -108,21 +110,24 @@ trait RegisterTrait
 
         // Register the request factory
         $this->set($sFactoryName, function($c) use($sCallableName) {
-            return new CallableClassRequestFactory($c->g($sCallableName));
+            $xConfig = $c->g(Config::class);
+            $xCallable = $c->g($sCallableName);
+            $sJsClass = $xConfig->getOption('core.prefix.class') . $xCallable->getJsName() . '.';
+            return new RequestFactory($sJsClass, $c->g(Paginator::class));
         });
 
         // Register the user class
-        $this->set($sClassName, function($c) use($sFactoryName, $sReflectionName) {
+        $this->set($sClassName, function($c) use($sClassName, $sReflectionName) {
             $xRegisteredObject = $this->make($c->g($sReflectionName));
             // Initialize the object
             if($xRegisteredObject instanceof \Jaxon\CallableClass)
             {
                 $xResponse = $this->getResponse();
                 // Set the members of the object
-                $cSetter = function() use($c, $xResponse, $sFactoryName) {
+                $cSetter = function() use($c, $xResponse, $sClassName) {
                     $this->jaxon = $c->g(Jaxon::class);
-                    $this->sRequest = $sFactoryName;
                     $this->response = $xResponse;
+                    $this->_class = $sClassName;
                 };
                 $cSetter = $cSetter->bindTo($xRegisteredObject, $xRegisteredObject);
                 // Can now access protected attributes
@@ -140,12 +145,30 @@ trait RegisterTrait
     }
 
     /**
+     * Get the request factory
+     *
+     * @param string $sClassName
+     *
+     * @return RequestFactory
+     */
+    public function getRequestFactory(string $sClassName = ''): RequestFactory
+    {
+        $sClassName = trim($sClassName);
+        if(!$sClassName)
+        {
+            return $this->g(RequestFactory::class);
+        }
+        return $this->g($sClassName . '_RequestFactory');
+    }
+
+    /**
      * Get a package instance
      *
      * @param string $sClassName The package class name
      * @param array $aAppOptions The package options defined in the app section of the config file
      *
      * @return Config
+     * @throws DataDepth
      */
     public function registerPackage(string $sClassName, array $aAppOptions): Config
     {

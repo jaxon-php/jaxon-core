@@ -31,11 +31,12 @@ use Jaxon\Contracts\Session;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\Package;
 use Jaxon\Plugin\Response as ResponsePlugin;
-use Jaxon\Request\Factory\CallableClass\Request;
+use Jaxon\Request\Factory\Factory;
+use Jaxon\Request\Factory\RequestFactory;
+use Jaxon\Request\Factory\ParameterFactory;
 use Jaxon\Request\Handler\Callback;
 use Jaxon\Request\Plugin\FileUpload;
 use Jaxon\Response\AbstractResponse;
-use Jaxon\Response\Response;
 use Jaxon\Ui\Dialogs\Dialog;
 use Jaxon\Ui\View\Renderer;
 use Jaxon\Utils\Config\Config;
@@ -43,7 +44,6 @@ use Jaxon\Utils\Config\Exception\FileAccess;
 use Jaxon\Utils\Config\Exception\FileContent;
 use Jaxon\Utils\Config\Exception\FileExtension;
 use Jaxon\Utils\Config\Exception\YamlExtension;
-use Jaxon\Utils\Config\Reader as ConfigReader;
 use Jaxon\Utils\Template\Engine;
 use Jaxon\Utils\Translation\Translator;
 use Psr\Log\LoggerAwareInterface;
@@ -373,16 +373,25 @@ class Jaxon implements LoggerAwareInterface
     }
 
     /**
+     * Get the factory
+     *
+     * @return Factory
+     */
+    public function factory(): Factory
+    {
+        return $this->di()->g(Factory::class);
+    }
+
+    /**
      * Get a request to a registered class
      *
      * @param string        $sClassName         The class name
      *
-     * @return Request|null
+     * @return RequestFactory|null
      */
-    public function request(string $sClassName): ?Request
+    public function request(string $sClassName): ?RequestFactory
     {
-        $xInstance = $this->instance($sClassName);
-        return ($xInstance) ? $xInstance->rq() : null;
+        return $this->factory()->request($sClassName);
     }
 
     /**

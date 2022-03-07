@@ -20,16 +20,16 @@
 
 namespace Jaxon\Response\Plugin\JQuery\Dom;
 
-use JsonSerializable;
-use Jaxon\Request\Factory\Contracts\Parameter;
-
-use Jaxon\Response\Plugin\JQuery\Call\Method;
-use Jaxon\Response\Plugin\JQuery\Call\AttrSet;
+use Jaxon\Request\Call\Contracts\Parameter;
 use Jaxon\Response\Plugin\JQuery\Call\AttrGet;
+use Jaxon\Response\Plugin\JQuery\Call\AttrSet;
+use Jaxon\Response\Plugin\JQuery\Call\Method;
 
-use function trim;
+use JsonSerializable;
+
 use function count;
 use function implode;
+use function trim;
 
 class Element implements JsonSerializable, Parameter
 {

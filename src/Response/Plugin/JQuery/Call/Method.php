@@ -2,7 +2,7 @@
 
 namespace Jaxon\Response\Plugin\JQuery\Call;
 
-use Jaxon\Request\Factory\JsCall;
+use Jaxon\Request\Call\JsCall;
 
 class Method extends JsCall
 {

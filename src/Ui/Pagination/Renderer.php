@@ -14,16 +14,17 @@
 
 namespace Jaxon\Ui\Pagination;
 
-use Jaxon\Request\Factory\Parameter;
-use Jaxon\Request\Factory\Request;
+use Jaxon\Request\Call\Call;
+use Jaxon\Request\Call\Parameter;
 use Jaxon\Ui\View\Renderer as ViewRenderer;
 use Jaxon\Ui\View\Store;
+use Jaxon\Exception\SetupException;
 
-use function floor;
 use function array_map;
-use function array_shift;
 use function array_pop;
+use function array_shift;
 use function array_walk;
+use function floor;
 
 class Renderer
 {
@@ -39,9 +40,9 @@ class Renderer
     /**
      * The Jaxon request to be paginated
      *
-     * @var Request
+     * @var Call
      */
-    protected $xRequest = null;
+    protected $xCall = null;
 
     /**
      * @var string
@@ -110,17 +111,17 @@ class Renderer
     /**
      * Set the request to be paginated
      *
-     * @param Request $xRequest The request to be paginated
+     * @param Call $xCall The request to be paginated
      *
      * @return void
      */
-    public function setRequest(Request $xRequest)
+    public function setRequest(Call $xCall)
     {
-        $this->xRequest = $xRequest;
+        $this->xCall = $xCall;
         // Append the page number to the parameter list, if not yet given.
-        if(!$this->xRequest->hasPageNumber())
+        if(!$this->xCall->hasPageNumber())
         {
-            $this->xRequest->addParameter(Parameter::PAGE_NUMBER, 0);
+            $this->xCall->addParameter(Parameter::PAGE_NUMBER, 0);
         }
     }
 
@@ -158,10 +159,11 @@ class Renderer
      * @param int $pageNum The page number
      *
      * @return string
+     * @throws SetupException
      */
     protected function getPageCall(int $pageNum): string
     {
-        return $this->xRequest->setPageNumber($pageNum)->getScript();
+        return $this->xCall->setPageNumber($pageNum)->getScript();
     }
 
     /**
@@ -185,6 +187,7 @@ class Renderer
      * Get the previous page data.
      *
      * @return array
+     * @throws SetupException
      */
     protected function getPrevLink(): array
     {
@@ -199,6 +202,7 @@ class Renderer
      * Get the next page data.
      *
      * @return array
+     * @throws SetupException
      */
     protected function getNextLink(): array
     {
@@ -212,9 +216,10 @@ class Renderer
     /**
      * Get a page data.
      *
-     * @param integer        $nNumber         The page number
+     * @param integer $nNumber The page number
      *
      * @return array
+     * @throws SetupException
      */
     protected function getPageLink(int $nNumber): array
     {
@@ -288,9 +293,10 @@ class Renderer
     /**
      * Get the pages.
      *
-     * @param integer   $nTotalPages         The total number of pages
+     * @param integer $nTotalPages The total number of pages
      *
      * @return array
+     * @throws SetupException
      */
     public function getPages(int $nTotalPages): array
     {
@@ -309,9 +315,10 @@ class Renderer
     /**
      * Render an HTML pagination control.
      *
-     * @param integer   $nTotalPages        The total number of pages
+     * @param integer $nTotalPages The total number of pages
      *
      * @return null|Store
+     * @throws SetupException
      */
     public function render(int $nTotalPages): ?Store
     {

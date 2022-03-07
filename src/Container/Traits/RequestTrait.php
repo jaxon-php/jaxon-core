@@ -4,14 +4,15 @@ namespace Jaxon\Container\Traits;
 
 use Jaxon\Jaxon;
 use Jaxon\Plugin\Manager as PluginManager;
-use Jaxon\Request\Factory\ParameterFactory;
+use Jaxon\Request\Factory\Factory;
 use Jaxon\Request\Factory\RequestFactory;
+use Jaxon\Request\Factory\ParameterFactory;
 use Jaxon\Request\Handler\Argument as RequestArgument;
 use Jaxon\Request\Handler\Handler as RequestHandler;
 use Jaxon\Request\Plugin\FileUpload;
-use Jaxon\Request\Support\CallableRegistry;
 use Jaxon\Response\Manager as ResponseManager;
 use Jaxon\Response\Plugin\DataBag;
+use Jaxon\Ui\Pagination\Paginator;
 use Jaxon\Utils\Config\Config;
 use Jaxon\Utils\Translation\Translator;
 
@@ -35,8 +36,13 @@ trait RequestTrait
                 $c->g(FileUpload::class), $c->g(DataBag::class));
         });
         // Request Factory
+        $this->set(Factory::class, function($c) {
+            return new Factory($c->g(Jaxon::class), $c->g(ParameterFactory::class));
+        });
+        // Factory for requests to functions
         $this->set(RequestFactory::class, function($c) {
-            return new RequestFactory($c->g(Config::class), $c->g(CallableRegistry::class));
+            $sPrefix = $c->g(Config::class)->getOption('core.prefix.function');
+            return new RequestFactory($sPrefix, $c->g(Paginator::class));
         });
         // Parameter Factory
         $this->set(ParameterFactory::class, function() {
@@ -52,16 +58,6 @@ trait RequestTrait
     public function getRequestHandler(): RequestHandler
     {
         return $this->g(RequestHandler::class);
-    }
-
-    /**
-     * Get the request factory
-     *
-     * @return RequestFactory
-     */
-    public function getRequestFactory(): RequestFactory
-    {
-        return $this->g(RequestFactory::class);
     }
 
     /**
