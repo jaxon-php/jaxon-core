@@ -1,34 +1,45 @@
 <?php
+
 namespace Jaxon\Tests\Request;
 
+use Jaxon\Jaxon;
 use PHPUnit\Framework\TestCase;
+
+use function jaxon;
+use function pr;
+use function pm;
 
 /**
  * @covers Jaxon\Request
  */
 final class RequestTest extends TestCase
 {
+    public static function setUpBeforeClass(): void
+    {
+        jaxon()->register(Jaxon::CALLABLE_CLASS, 'Test', __DIR__ . '/defs/classes.php');
+    }
+
     public function testRequestToGlobalFunction()
     {
         $this->assertEquals(
-            "testFunction()",
-            rq()->func('testFunction')->getScript()
+            "jaxon_testFunction()",
+            rq()->testFunction()->getScript()
         );
     }
 
     public function testRequestToGlobalFunctionWithParameter()
     {
         $this->assertEquals(
-            "testFunction('string', 2, true)",
-            rq()->func('testFunction', 'string', 2, true)->getScript()
+            "jaxon_testFunction('string', 2, true)",
+            rq()->testFunction('string', 2, true)->getScript()
         );
     }
 
     public function testRequestToGlobalFunctionWithJaxonParameter()
     {
         $this->assertEquals(
-            "testFunction('string', 2, true, jaxon.getFormValues('elt_id'), jaxon.$('elt_id').value)",
-            rq()->func('testFunction', 'string', 2, true, pm()->form('elt_id'), pm()->input('elt_id'))->getScript()
+            "jaxon_testFunction('string', 2, true, jaxon.getFormValues('elt_id'), jaxon.$('elt_id').value)",
+            rq()->testFunction('string', 2, true, pm()->form('elt_id'), pm()->input('elt_id'))->getScript()
         );
     }
 
@@ -36,7 +47,7 @@ final class RequestTest extends TestCase
     {
         $this->assertEquals(
             "jaxon_testFunction()",
-            rq()->call('testFunction')->getScript()
+            rq()->testFunction()->getScript()
         );
     }
 
@@ -44,7 +55,7 @@ final class RequestTest extends TestCase
     {
         $this->assertEquals(
             "jaxon_testFunction('string', 2, true)",
-            rq()->call('testFunction', 'string', 2, true)->getScript()
+            rq()->testFunction('string', 2, true)->getScript()
         );
     }
 
@@ -52,7 +63,7 @@ final class RequestTest extends TestCase
     {
         $this->assertEquals(
             "jaxon_testFunction('string', 2, true, jaxon.getFormValues('elt_id'), jaxon.$('elt_id').value)",
-            rq()->call('testFunction', 'string', 2, true, pm()->form('elt_id'), pm()->input('elt_id'))->getScript()
+            rq()->testFunction('string', 2, true, pm()->form('elt_id'), pm()->input('elt_id'))->getScript()
         );
     }
 
@@ -60,7 +71,11 @@ final class RequestTest extends TestCase
     {
         $this->assertEquals(
             "JaxonTest.method()",
-            rq()->call('Test.method')->getScript()
+            rq('Test')->method()->getScript()
+        );
+        $this->assertEquals(
+            "JaxonTest.method()",
+            rq('Test')->call('method')->getScript()
         );
     }
 
@@ -68,7 +83,11 @@ final class RequestTest extends TestCase
     {
         $this->assertEquals(
             "JaxonTest.method('string', 2, true)",
-            rq()->call('Test.method', 'string', 2, true)->getScript()
+            rq('Test')->method('string', 2, true)->getScript()
+        );
+        $this->assertEquals(
+            "JaxonTest.method('string', 2, true)",
+            rq('Test')->call('method', 'string', 2, true)->getScript()
         );
     }
 
@@ -76,7 +95,11 @@ final class RequestTest extends TestCase
     {
         $this->assertEquals(
             "JaxonTest.method(jaxon.getFormValues('elt_id'))",
-            rq()->call('Test.method', pm()->form('elt_id'))->getScript()
+            rq('Test')->method(pm()->form('elt_id'))->getScript()
+        );
+        $this->assertEquals(
+            "JaxonTest.method(jaxon.getFormValues('elt_id'))",
+            rq('Test')->call('method', pm()->form('elt_id'))->getScript()
         );
     }
 
@@ -84,7 +107,11 @@ final class RequestTest extends TestCase
     {
         $this->assertEquals(
             "JaxonTest.method(jaxon.$('elt_id').value)",
-            rq()->call('Test.method', pm()->input('elt_id'))->getScript()
+            rq('Test')->method(pm()->input('elt_id'))->getScript()
+        );
+        $this->assertEquals(
+            "JaxonTest.method(jaxon.$('elt_id').value)",
+            rq('Test')->call('method', pm()->input('elt_id'))->getScript()
         );
     }
 
@@ -92,7 +119,11 @@ final class RequestTest extends TestCase
     {
         $this->assertEquals(
             "JaxonTest.method(jaxon.$('check_id').checked)",
-            rq()->call('Test.method', pm()->checked('check_id'))->getScript()
+            rq('Test')->method(pm()->checked('check_id'))->getScript()
+        );
+        $this->assertEquals(
+            "JaxonTest.method(jaxon.$('check_id').checked)",
+            rq('Test')->call('method', pm()->checked('check_id'))->getScript()
         );
     }
 
@@ -100,7 +131,11 @@ final class RequestTest extends TestCase
     {
         $this->assertEquals(
             "JaxonTest.method(jaxon.$('select_id').value)",
-            rq()->call('Test.method', pm()->select('select_id'))->getScript()
+            rq('Test')->method(pm()->select('select_id'))->getScript()
+        );
+        $this->assertEquals(
+            "JaxonTest.method(jaxon.$('select_id').value)",
+            rq('Test')->call('method', pm()->select('select_id'))->getScript()
         );
     }
 
@@ -108,7 +143,11 @@ final class RequestTest extends TestCase
     {
         $this->assertEquals(
             "JaxonTest.method(jaxon.$('elt_id').innerHTML)",
-            rq()->call('Test.method', pm()->html('elt_id'))->getScript()
+            rq('Test')->method(pm()->html('elt_id'))->getScript()
+        );
+        $this->assertEquals(
+            "JaxonTest.method(jaxon.$('elt_id').innerHTML)",
+            rq('Test')->call('method', pm()->html('elt_id'))->getScript()
         );
     }
 
@@ -116,7 +155,11 @@ final class RequestTest extends TestCase
     {
         $this->assertEquals(
             "JaxonTest.method(jaxon.$('check_id').checked, jaxon.$('select_id').value, jaxon.$('elt_id').innerHTML)",
-            rq()->call('Test.method', pm()->checked('check_id'), pm()->select('select_id'), pm()->html('elt_id'))->getScript()
+            rq('Test')->method(pm()->checked('check_id'), pm()->select('select_id'), pm()->html('elt_id'))->getScript()
+        );
+        $this->assertEquals(
+            "JaxonTest.method(jaxon.$('check_id').checked, jaxon.$('select_id').value, jaxon.$('elt_id').innerHTML)",
+            rq('Test')->call('method', pm()->checked('check_id'), pm()->select('select_id'), pm()->html('elt_id'))->getScript()
         );
     }
 
@@ -124,7 +167,11 @@ final class RequestTest extends TestCase
     {
         $this->assertEquals(
             "if(confirm('Really?')){JaxonTest.method(jaxon.$('elt_id').innerHTML);}",
-            rq()->call('Test.method', pm()->html('elt_id'))->confirm("Really?")->getScript()
+            rq('Test')->method(pm()->html('elt_id'))->confirm("Really?")->getScript()
+        );
+        $this->assertEquals(
+            "if(confirm('Really?')){JaxonTest.method(jaxon.$('elt_id').innerHTML);}",
+            rq('Test')->call('method', pm()->html('elt_id'))->confirm("Really?")->getScript()
         );
     }
 
@@ -132,7 +179,11 @@ final class RequestTest extends TestCase
     {
          $this->assertEquals(
             "if(confirm('Really M. {1}?'.supplant({'1':jaxon.$('name_id').innerHTML}))){JaxonTest.method(jaxon.$('elt_id').innerHTML);}",
-            rq()->call('Test.method', pm()->html('elt_id'))->confirm("Really M. {1}?", pm()->html('name_id'))->getScript()
+            rq('Test')->method(pm()->html('elt_id'))->confirm("Really M. {1}?", pm()->html('name_id'))->getScript()
+        );
+        $this->assertEquals(
+            "if(confirm('Really M. {1}?'.supplant({'1':jaxon.$('name_id').innerHTML}))){JaxonTest.method(jaxon.$('elt_id').innerHTML);}",
+            rq('Test')->call('method', pm()->html('elt_id'))->confirm("Really M. {1}?", pm()->html('name_id'))->getScript()
         );
     }
 
@@ -140,7 +191,11 @@ final class RequestTest extends TestCase
     {
         $this->assertEquals(
             "if(jaxon.$('cond_id').checked){JaxonTest.method(jaxon.$('elt_id').innerHTML);}",
-            rq()->call('Test.method', pm()->html('elt_id'))->when(pm()->checked('cond_id'))->getScript()
+            rq('Test')->method(pm()->html('elt_id'))->when(pm()->checked('cond_id'))->getScript()
+        );
+        $this->assertEquals(
+            "if(jaxon.$('cond_id').checked){JaxonTest.method(jaxon.$('elt_id').innerHTML);}",
+            rq('Test')->call('method', pm()->html('elt_id'))->when(pm()->checked('cond_id'))->getScript()
         );
     }
 
@@ -149,7 +204,14 @@ final class RequestTest extends TestCase
         $this->assertEquals(
             "if(jaxon.$('cond_id').checked){JaxonTest.method(jaxon.$('elt_id').innerHTML);}" .
                 "else{alert('Please check the option');}",
-            rq()->call('Test.method', pm()->html('elt_id'))
+            rq('Test')->method(pm()->html('elt_id'))
+                ->when(pm()->checked('cond_id'))
+                ->elseShow("Please check the option")->getScript()
+        );
+        $this->assertEquals(
+            "if(jaxon.$('cond_id').checked){JaxonTest.method(jaxon.$('elt_id').innerHTML);}" .
+                "else{alert('Please check the option');}",
+            rq('Test')->call('method', pm()->html('elt_id'))
                 ->when(pm()->checked('cond_id'))
                 ->elseShow("Please check the option")->getScript()
         );
@@ -160,7 +222,14 @@ final class RequestTest extends TestCase
         $this->assertEquals(
             "if(jaxon.$('cond_id').checked){JaxonTest.method(jaxon.$('elt_id').innerHTML);}else" .
                 "{alert('M. {1}, please check the option'.supplant({'1':jaxon.$('name_id').innerHTML}));}",
-            rq()->call('Test.method', pm()->html('elt_id'))
+            rq('Test')->method(pm()->html('elt_id'))
+                ->when(pm()->checked('cond_id'))
+                ->elseShow("M. {1}, please check the option", pm()->html('name_id'))->getScript()
+        );
+        $this->assertEquals(
+            "if(jaxon.$('cond_id').checked){JaxonTest.method(jaxon.$('elt_id').innerHTML);}else" .
+                "{alert('M. {1}, please check the option'.supplant({'1':jaxon.$('name_id').innerHTML}));}",
+            rq('Test')->call('method', pm()->html('elt_id'))
                 ->when(pm()->checked('cond_id'))
                 ->elseShow("M. {1}, please check the option", pm()->html('name_id'))->getScript()
         );
@@ -170,7 +239,12 @@ final class RequestTest extends TestCase
     {
          $this->assertEquals(
             "if(!(jaxon.$('cond_id').checked)){JaxonTest.method(jaxon.$('elt_id').innerHTML);}",
-            rq()->call('Test.method', pm()->html('elt_id'))
+            rq('Test')->method(pm()->html('elt_id'))
+                ->unless(pm()->checked('cond_id'))->getScript()
+        );
+        $this->assertEquals(
+            "if(!(jaxon.$('cond_id').checked)){JaxonTest.method(jaxon.$('elt_id').innerHTML);}",
+            rq('Test')->call('method', pm()->html('elt_id'))
                 ->unless(pm()->checked('cond_id'))->getScript()
         );
     }
@@ -180,7 +254,14 @@ final class RequestTest extends TestCase
          $this->assertEquals(
             "if(!(jaxon.$('cond_id').checked)){JaxonTest.method(jaxon.$('elt_id').innerHTML);}" .
                 "else{alert('Please uncheck the option');}",
-            rq()->call('Test.method', pm()->html('elt_id'))
+            rq('Test')->method(pm()->html('elt_id'))
+                ->unless(pm()->checked('cond_id'))
+                ->elseShow("Please uncheck the option")->getScript()
+        );
+        $this->assertEquals(
+            "if(!(jaxon.$('cond_id').checked)){JaxonTest.method(jaxon.$('elt_id').innerHTML);}" .
+                "else{alert('Please uncheck the option');}",
+            rq('Test')->call('method', pm()->html('elt_id'))
                 ->unless(pm()->checked('cond_id'))
                 ->elseShow("Please uncheck the option")->getScript()
         );
@@ -191,7 +272,14 @@ final class RequestTest extends TestCase
          $this->assertEquals(
             "if(!(jaxon.$('cond_id').checked)){JaxonTest.method(jaxon.$('elt_id').innerHTML);}" .
                 "else{alert('M. {1}, please uncheck the option'.supplant({'1':jaxon.$('name_id').innerHTML}));}",
-            rq()->call('Test.method', pm()->html('elt_id'))
+            rq('Test')->method(pm()->html('elt_id'))
+                ->unless(pm()->checked('cond_id'))
+                ->elseShow("M. {1}, please uncheck the option", pm()->html('name_id'))->getScript()
+        );
+        $this->assertEquals(
+            "if(!(jaxon.$('cond_id').checked)){JaxonTest.method(jaxon.$('elt_id').innerHTML);}" .
+                "else{alert('M. {1}, please uncheck the option'.supplant({'1':jaxon.$('name_id').innerHTML}));}",
+            rq('Test')->call('method', pm()->html('elt_id'))
                 ->unless(pm()->checked('cond_id'))
                 ->elseShow("M. {1}, please uncheck the option", pm()->html('name_id'))->getScript()
         );

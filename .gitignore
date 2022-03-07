@@ -4,3 +4,4 @@ jaxon-core.komodoproject
 vendor/
 composer.lock
 .idea
+.phpunit.result.cache

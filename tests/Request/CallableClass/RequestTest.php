@@ -9,10 +9,10 @@ use PHPUnit\Framework\TestCase;
  */
 final class RequestTest extends TestCase
 {
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         include __DIR__ . '/defs/classes.php';
-        jaxon()->register(Jaxon::CALLABLE_OBJECT, 'Sample');
+        jaxon()->register(Jaxon::CALLABLE_CLASS, 'Sample');
     }
 
     public function testRequestToJaxonClass()
