@@ -14,9 +14,6 @@
 
 namespace Jaxon\Container;
 
-use Jaxon\Jaxon;
-use Jaxon\Utils\Config\Config;
-use Jaxon\Utils\Translation\Translator;
 use Pimple\Container as PimpleContainer;
 use Pimple\Exception\UnknownIdentifierException;
 use Psr\Container\ContainerInterface;
@@ -58,14 +55,14 @@ class Container extends PimpleContainer
     {
         parent::__construct();
 
-        $sTranslationDir = realpath(__DIR__ . '/../../translations');
-        $sTemplateDir = realpath(__DIR__ . '/../../templates');
-        // Translation directory
-        $this->val('jaxon.core.dir.translation', $sTranslationDir);
-        // Template directory
-        $this->val('jaxon.core.dir.template', $sTemplateDir);
         // Library options
         $this->val('jaxon.core.options', $aOptions);
+        // Template directory
+        $sTemplateDir = realpath(__DIR__ . '/../../templates');
+        $this->val('jaxon.core.dir.template', $sTemplateDir);
+        // Translation directory
+        $sTranslationDir = realpath(__DIR__ . '/../../translations');
+        $this->val('jaxon.core.dir.translation', $sTranslationDir);
 
         $this->registerAll();
     }
@@ -77,10 +74,6 @@ class Container extends PimpleContainer
      */
     private function registerAll()
     {
-        $this->set(Jaxon::class, function($c) {
-            return new Jaxon($c->g(Config::class), $c->g(Translator::class));
-        });
-
         $this->registerApp();
         $this->registerRequests();
         $this->registerResponses();

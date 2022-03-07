@@ -60,7 +60,7 @@ class Manager
      *
      * @var AbstractResponse
      */
-    private $xResponse;
+    private $xResponse = null;
 
     /**
      * The debug messages
@@ -83,7 +83,6 @@ class Manager
         $this->xConfig = $xConfig;
         $this->xArgumentManager = $xArgumentManager;
         $this->xTranslator = $xTranslator;
-        $this->xResponse = null;
         $this->aDebugMessages = [];
     }
 

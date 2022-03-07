@@ -1,7 +1,6 @@
 <?php
 
 use Jaxon\Jaxon;
-use Jaxon\Plugin\Plugin;
 use Jaxon\Request\Factory\RequestFactory;
 use Jaxon\Request\Factory\ParameterFactory;
 use Jaxon\Response\Plugin\JQuery\Dom\Element as DomElement;
@@ -25,6 +24,7 @@ use Jaxon\Exception\SetupException;
  * Return the singleton instance of the Jaxon/Jaxon class
  *
  * @return Jaxon
+ * @throws SetupException
  */
 function jaxon(): Jaxon
 {
@@ -32,39 +32,12 @@ function jaxon(): Jaxon
 }
 
 /**
- * Translate a text to the selected language
- *
- * @param string        $sText                  The text to translate
- * @param array         $aPlaceHolders          The placeholders in the text
- * @param string        $sLanguage              The language to translate to
- *
- * @return string
- */
-function jaxon_trans(string $sText, array $aPlaceHolders = [], string $sLanguage = ''): string
-{
-    return Jaxon::getInstance()->di()->getTranslator()->trans($sText, $aPlaceHolders, $sLanguage);
-}
-
-/**
- * Register a plugin
- *
- * @param Plugin $xPlugin An instance of a plugin
- * @param integer $nPriority The plugin priority, used to order the plugins
- *
- * @return void
- * @throws SetupException
- */
-function jaxon_register_plugin(Plugin $xPlugin, int $nPriority = 1000)
-{
-    Jaxon::getInstance()->registerPlugin($xPlugin, $nPriority);
-}
-
-/**
  * Get the single instance of the request factory, and set the class to call.
- * 
- * @param string        $sClassName
+ *
+ * @param string $sClassName
  *
  * @return RequestFactory
+ * @throws SetupException
  */
 function rq(string $sClassName = ''): RequestFactory
 {
@@ -75,6 +48,7 @@ function rq(string $sClassName = ''): RequestFactory
  * Get the single instance of the parameter factory
  *
  * @return ParameterFactory
+ * @throws SetupException
  */
 function pm(): ParameterFactory
 {
@@ -82,30 +56,16 @@ function pm(): ParameterFactory
 }
 
 /**
- * Get the single instance of the parameter factory
- *
- * The pr function is already defined in CakePHP, so it was renamed to pm.
- * This function is therefore deprecated, and will be removed in a future version.
- *
- * @return ParameterFactory
- */
-if(!function_exists('pr'))
-{
-    function pr(): ParameterFactory
-    {
-        return Jaxon::getInstance()->di()->getParameterFactory();
-    }
-}
-/**
  * Create a JQuery Element with a given selector
  *
  * The returned element is not linked to any Jaxon response, so this function shall be used
  * to insert jQuery code into a javascript function, or as a parameter of a Jaxon function call.
  *
- * @param string        $sSelector            The jQuery selector
- * @param string        $sContext             A context associated to the selector
+ * @param string $sSelector The jQuery selector
+ * @param string $sContext A context associated to the selector
  *
  * @return DomElement
+ * @throws SetupException
  */
 function jq(string $sSelector = '', string $sContext = ''): DomElement
 {
@@ -120,10 +80,11 @@ function jq(string $sSelector = '', string $sContext = ''): DomElement
  * The returned element is not linked to any Jaxon response, so this function shall be used
  * to insert jQuery code into a javascript function, or as a parameter of a Jaxon function call.
  *
- * @param string        $sSelector            The jQuery selector
- * @param string        $sContext             A context associated to the selector
+ * @param string $sSelector The jQuery selector
+ * @param string $sContext A context associated to the selector
  *
  * @return DomElement
+ * @throws SetupException
  */
 function jQuery(string $sSelector = '', string $sContext = ''): DomElement
 {
