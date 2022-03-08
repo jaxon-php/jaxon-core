@@ -60,7 +60,7 @@ class Jaxon implements LoggerAwareInterface
      *
      * @const string
      */
-    const VERSION = 'Jaxon 3.8.0';
+    const VERSION = 'Jaxon 4.0.0-dev';
 
     /*
      * Request plugins
