@@ -21,16 +21,16 @@ trait RegisterTrait
     /**
      * Create a new callable object
      *
-     * @param string        $sFunctionName      The function name
-     * @param string        $sCallableFunction  The callable function name
+     * @param string        $sJsFunction     The name of the js function
+     * @param string        $sFunctionName      The callable function name
      * @param array         $aOptions           The function options
      *
      * @return void
      */
-    public function registerCallableFunction(string $sFunctionName, string $sCallableFunction, array $aOptions)
+    public function registerCallableFunction(string $sJsFunction, string $sFunctionName, array $aOptions)
     {
-        $this->set($sFunctionName, function() use($sFunctionName, $sCallableFunction, $aOptions) {
-            $xCallableFunction = new CallableFunction($sCallableFunction);
+        $this->set($sJsFunction, function() use($sJsFunction, $sFunctionName, $aOptions) {
+            $xCallableFunction = new CallableFunction($sFunctionName);
             foreach($aOptions as $sName => $sValue)
             {
                 $xCallableFunction->configure($sName, $sValue);
@@ -156,8 +156,10 @@ trait RegisterTrait
         $sClassName = trim($sClassName);
         if(!$sClassName)
         {
+            // There is a single request factory for all callable functions.
             return $this->g(RequestFactory::class);
         }
+        // While each callable class has it own request factory.
         return $this->g($sClassName . '_RequestFactory');
     }
 

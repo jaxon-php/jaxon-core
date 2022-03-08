@@ -78,10 +78,6 @@ class CallableDir extends RequestPlugin
      */
     private function checkDirectory(string $sDirectory): string
     {
-        // if(!is_string($sDirectory))
-        // {
-        //     throw new \Jaxon\Exception\SetupException($this->xTranslator->trans('errors.objects.invalid-declaration'));
-        // }
         $sDirectory = rtrim(trim($sDirectory), '/\\');
         if(!is_dir($sDirectory))
         {
@@ -91,27 +87,31 @@ class CallableDir extends RequestPlugin
     }
 
     /**
-     * Check the options
-     *
-     * @param array|string  $aOptions       The associated options
-     *
-     * @return array
+     * @inheritDoc
      * @throws SetupException
      */
-    private function checkOptions($aOptions): array
+    public function checkOptions(string $sCallable, $xOptions): array
     {
-        if(is_string($aOptions))
+        if(is_string($xOptions))
         {
-            $aOptions = ['namespace' => $aOptions];
+            $xOptions = ['namespace' => $xOptions];
         }
-        if(!is_array($aOptions))
+        if(!is_array($xOptions))
         {
             throw new SetupException($this->xTranslator->trans('errors.objects.invalid-declaration'));
         }
+        // Check the directory
+        $xOptions['directory'] = $this->checkDirectory($sCallable);
+        // Check the namespace
+        $sNamespace = $xOptions['namespace'] ?? '';
+        if(!($xOptions['namespace'] = trim($sNamespace, ' \\')))
+        {
+            $xOptions['namespace'] = '';
+        }
 
-        // Change the keys in $aOptions to have "\" as separator
+        // Change the keys in $xOptions to have "\" as separator
         $_aOptions = [];
-        foreach($aOptions as $sName => $aOption)
+        foreach($xOptions as $sName => $aOption)
         {
             $sName = trim(str_replace('.', '\\', $sName), ' \\');
             $_aOptions[$sName] = $aOption;
@@ -123,40 +123,19 @@ class CallableDir extends RequestPlugin
      * Register a callable class
      *
      * @param string $sType The type of request handler being registered
-     * @param string $sDirectory The path of the directory being registered
-     * @param array|string $aOptions The associated options
+     * @param string $sCallable The path of the directory being registered
+     * @param array $aOptions The associated options
      *
      * @return bool
-     * @throws SetupException
      */
-    public function register(string $sType, string $sDirectory, $aOptions): bool
+    public function register(string $sType, string $sCallable, array $aOptions): bool
     {
-        $sType = trim($sType);
-        if($sType != $this->getName())
+        if(($aOptions['namespace']))
         {
-            return false;
+            $this->xRegistry->addNamespace($aOptions['namespace'], $aOptions);
+            return true;
         }
-
-        $sDirectory = $this->checkDirectory($sDirectory);
-
-        $aOptions = $this->checkOptions($aOptions);
-        $aOptions['directory'] = $sDirectory;
-
-        $sNamespace = $aOptions['namespace'] ?? '';
-        if(!($sNamespace = trim($sNamespace, ' \\')))
-        {
-            $sNamespace = '';
-        }
-
-        if(($sNamespace))
-        {
-            $this->xRegistry->addNamespace($sNamespace, $aOptions);
-        }
-        else
-        {
-            $this->xRegistry->addDirectory($sDirectory, $aOptions);
-        }
-
+        $this->xRegistry->addDirectory($aOptions['directory'], $aOptions);
         return true;
     }
 

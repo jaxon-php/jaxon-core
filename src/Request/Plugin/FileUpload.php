@@ -128,6 +128,14 @@ class FileUpload extends RequestPlugin
     }
 
     /**
+     * @inheritDoc
+     */
+    public function checkOptions(string $sCallable, $xOptions): array
+    {
+        return [];
+    }
+
+    /**
      * Set the uploaded file name sanitizer
      *
      * @param Closure       $cSanitizer            The closure

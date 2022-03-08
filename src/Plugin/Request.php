@@ -31,6 +31,16 @@ use Jaxon\Request\Target;
 abstract class Request extends Plugin
 {
     /**
+     * Check if the provided options are correct, and convert them into an array.
+     *
+     * @param string $sCallable
+     * @param mixed $xOptions
+     *
+     * @return array
+     */
+    abstract public function checkOptions(string $sCallable, $xOptions): array;
+
+    /**
      * Register a function, an event or an object.
      *
      * Called by the <Jaxon\Plugin\Manager> when a user script
@@ -39,11 +49,11 @@ abstract class Request extends Plugin
      *
      * @param string        $sType          The type of request handler being registered
      * @param string        $sCallable      The callable entity being registered
-     * @param array|string  $aOptions       The associated options
+     * @param array         $aOptions       The associated options
      *
      * @return bool
      */
-    public function register(string $sType, string $sCallable, $aOptions): bool
+    public function register(string $sType, string $sCallable, array $aOptions): bool
     {
         return false;
     }

@@ -203,6 +203,7 @@ class Manager
      *
      * @return void
      * @throws SetupException
+     * @throws DataDepth
      */
     public function registerPackage(string $sClassName, array $aAppOptions)
     {
@@ -230,20 +231,21 @@ class Manager
      *
      * @param string $sType The type of request handler being registered
      * @param string $sCallable The callable entity being registered
-     * @param array|string $aOptions The associated options
+     * @param array|string $xOptions The associated options
      *
      * @return void
      * @throws SetupException
      */
-    public function registerCallable(string $sType, string $sCallable, $aOptions = [])
+    public function registerCallable(string $sType, string $sCallable, $xOptions = [])
     {
-        if(!isset($this->aRequestPlugins[$sType]))
+        if(isset($this->aRequestPlugins[$sType]) &&
+            ($xPlugin = $this->jaxon->di()->g($this->aRequestPlugins[$sType])))
         {
-            throw new SetupException($this->xTranslator->trans('errors.register.plugin', ['name' => $sType]));
+            $xPlugin->register($sType, $sCallable, $xPlugin->checkOptions($sCallable, $xOptions));
+            return;
         }
-
-        $xPlugin = $this->jaxon->di()->g($this->aRequestPlugins[$sType]);
-        $xPlugin->register($sType, $sCallable, $aOptions);
+        throw new SetupException($this->xTranslator->trans('errors.register.plugin',
+            ['name' => $sType, 'callable' => $sCallable]));
     }
 
     /**
@@ -314,6 +316,7 @@ class Manager
      *
      * @return void
      * @throws SetupException
+     * @throws DataDepth
      */
     public function registerFromConfig(Config $xAppConfig)
     {

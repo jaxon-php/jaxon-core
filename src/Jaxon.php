@@ -33,7 +33,6 @@ use Jaxon\Plugin\Package;
 use Jaxon\Plugin\Response as ResponsePlugin;
 use Jaxon\Request\Factory\Factory;
 use Jaxon\Request\Factory\RequestFactory;
-use Jaxon\Request\Factory\ParameterFactory;
 use Jaxon\Request\Handler\Callback;
 use Jaxon\Request\Plugin\FileUpload;
 use Jaxon\Response\AbstractResponse;
@@ -46,6 +45,7 @@ use Jaxon\Utils\Config\Exception\FileExtension;
 use Jaxon\Utils\Config\Exception\YamlExtension;
 use Jaxon\Utils\Template\Engine;
 use Jaxon\Utils\Translation\Translator;
+use Jaxon\Utils\Config\Exception\DataDepth as DataDepthException;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
@@ -61,16 +61,6 @@ class Jaxon implements LoggerAwareInterface
      * @const string
      */
     const VERSION = 'Jaxon 3.8.0';
-
-    /*
-     * Plugin types
-     */
-    // Response plugin
-    const PLUGIN_RESPONSE = 'ResponsePlugin';
-    // Request plugin
-    const PLUGIN_REQUEST = 'RequestPlugin';
-    // Package plugin
-    const PLUGIN_PACKAGE = 'PackagePlugin';
 
     /*
      * Request plugins
@@ -109,7 +99,7 @@ class Jaxon implements LoggerAwareInterface
      * Get the static instance
      *
      * @return Jaxon
-     * @throws Exception\SetupException
+     * @throws SetupException
      */
     public static function getInstance(): ?Jaxon
     {
@@ -304,11 +294,26 @@ class Jaxon implements LoggerAwareInterface
      * @param integer $nPriority The plugin priority, used to order the plugins
      *
      * @return void
-     * @throws Exception\SetupException
+     * @throws SetupException
      */
     public function registerPlugin(string $sClassName, string $sPluginName, int $nPriority = 1000)
     {
         $this->di()->getPluginManager()->registerPlugin($sClassName, $sPluginName, $nPriority);
+    }
+
+    /**
+     * Register a package
+     *
+     * @param string $sClassName The package class
+     * @param array $aOptions The package options
+     *
+     * @return void
+     * @throws SetupException
+     * @throws DataDepthException
+     */
+    public function registerPackage(string $sClassName, array $aOptions)
+    {
+        $this->di()->getPluginManager()->registerPackage($sClassName, $aOptions);
     }
 
     /**
@@ -319,44 +324,18 @@ class Jaxon implements LoggerAwareInterface
      *        - Jaxon::CALLABLE_FUNCTION: a function declared at global scope
      *        - Jaxon::CALLABLE_CLASS: a class who's methods are to be registered
      *        - Jaxon::CALLABLE_DIR: a directory containing classes to be registered
-     *        - Jaxon::PACKAGE: a package
      * @param string $sName
      *        When registering a function, this is the name of the function
      *        When registering a callable class, this is the class name
      *        When registering a callable directory, this is the full path to the directory
-     *        When registering a package or a plugin, this is the corresponding class name
      * @param array|string $xOptions The related options
      *
      * @return void
-     * @throws Exception\SetupException
+     * @throws SetupException
      */
     public function register(string $sType, string $sName, $xOptions = [])
     {
-        if($sType == self::CALLABLE_DIR ||
-            $sType == self::CALLABLE_CLASS ||
-            $sType == self::CALLABLE_FUNCTION)
-        {
-            $this->di()->getPluginManager()->registerCallable($sType, $sName, $xOptions);
-            return;
-        }
-        /*
-        if($sType == self::PLUGIN_RESPONSE)
-        {
-            $this->di()->getPluginManager()->registerRequestPlugin($sName, $xOptions);
-            return;
-        }
-        if($sType == self::PLUGIN_REQUEST)
-        {
-            $this->di()->getPluginManager()->registerResponsePlugin($sName, $xOptions);
-            return;
-        }
-        */
-        if($sType == self::PLUGIN_PACKAGE && is_array($xOptions))
-        {
-            $this->di()->getPluginManager()->registerPackage($sName, $xOptions);
-            return;
-        }
-        // Todo: throw an error
+        $this->di()->getPluginManager()->registerCallable($sType, $sName, $xOptions);
     }
 
     /**
@@ -470,7 +449,7 @@ class Jaxon implements LoggerAwareInterface
      *
      * @return void
      *
-     * @throws Exception\SetupException
+     * @throws SetupException
      * @see <Jaxon\Jaxon->canProcessRequest>
      */
     public function processRequest()

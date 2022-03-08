@@ -177,42 +177,41 @@ class CallableClass extends RequestPlugin
     }
 
     /**
-     * Register a callable class
-     *
-     * @param string $sType The type of request handler being registered
-     * @param string $sClassName The name of the class being registered
-     * @param array|string $aOptions The associated options
-     *
-     * @return bool
+     * @inheritDoc
      * @throws SetupException
      */
-    public function register(string $sType, string $sClassName, $aOptions): bool
+    public function checkOptions(string $sCallable, $xOptions): array
     {
-        $sType = trim($sType);
-        if($sType != $this->getName())
-        {
-            return false;
-        }
-
-        // Todo: validate function name
-        /*if(!is_string($sClassName))
-        {
-            throw new \Jaxon\Exception\SetupException($this->xTranslator->trans('errors.objects.invalid-declaration'));
-        }*/
-        if(is_string($aOptions))
-        {
-            $aOptions = ['include' => $aOptions];
-        }
-        if(!is_array($aOptions))
+        if(!$this->xValidator->validateClass(trim($sCallable)))
         {
             throw new SetupException($this->xTranslator->trans('errors.objects.invalid-declaration'));
         }
+        if(is_string($xOptions))
+        {
+            $xOptions = ['include' => $xOptions];
+        }
+        elseif(!is_array($xOptions))
+        {
+            throw new SetupException($this->xTranslator->trans('errors.objects.invalid-declaration'));
+        }
+        return $xOptions;
+    }
 
-        $sClassName = trim($sClassName);
+    /**
+     * Register a callable class
+     *
+     * @param string $sType The type of request handler being registered
+     * @param string $sCallable The name of the class being registered
+     * @param array $aOptions The associated options
+     *
+     * @return bool
+     */
+    public function register(string $sType, string $sCallable, array $aOptions): bool
+    {
+        $sClassName = trim($sCallable);
         $this->xRepository->addClass($sClassName, $aOptions);
         // Also register the class in the DI container.
         $this->xRepository->registerCallableObject($sClassName, $aOptions);
-
         return true;
     }
 

@@ -151,53 +151,42 @@ class CallableFunction extends RequestPlugin
     }
 
     /**
+     * @inheritDoc
+     * @throws SetupException
+     */
+    public function checkOptions(string $sCallable, $xOptions): array
+    {
+        if(!$this->xValidator->validateFunction(trim($sCallable)))
+        {
+            throw new SetupException($this->xTranslator->trans('errors.objects.invalid-declaration'));
+        }
+        if(is_string($xOptions))
+        {
+            $xOptions = ['include' => $xOptions];
+        }
+        elseif(!is_array($xOptions))
+        {
+            throw new SetupException($this->xTranslator->trans('errors.objects.invalid-declaration'));
+        }
+        return $xOptions;
+    }
+
+    /**
      * Register a user defined function
      *
      * @param string $sType The type of request handler being registered
-     * @param string $sCallableFunction The name of the function being registered
-     * @param array|string $aOptions The associated options
+     * @param string $sCallable The name of the function being registered
+     * @param array $aOptions The associated options
      *
      * @return bool
-     * @throws SetupException
      */
-    public function register(string $sType, string $sCallableFunction, $aOptions): bool
+    public function register(string $sType, string $sCallable, array $aOptions): bool
     {
-        $sType = trim($sType);
-        if($sType != $this->getName())
-        {
-            return false;
-        }
-
-        // Todo: validate function name
-        /*if(!is_string($sCallableFunction))
-        {
-            throw new SetupException($this->xTranslator->trans('errors.functions.invalid-declaration'));
-        }*/
-
-        if(is_string($aOptions))
-        {
-            $aOptions = ['include' => $aOptions];
-        }
-        if(!is_array($aOptions))
-        {
-            throw new SetupException($this->xTranslator->trans('errors.functions.invalid-declaration'));
-        }
-
-        $sCallableFunction = trim($sCallableFunction);
+        $sFunctionName = trim($sCallable);
         // Check if an alias is defined
-        $sFunctionName = $sCallableFunction;
-        foreach($aOptions as $sName => $sValue)
-        {
-            if($sName == 'alias')
-            {
-                $sFunctionName = $sValue;
-                break;
-            }
-        }
-
-        $this->aFunctions[$sFunctionName] = $aOptions;
-        $this->jaxon->di()->registerCallableFunction($sFunctionName, $sCallableFunction, $aOptions);
-
+        $sJsFunction = $aOptions['alias'] ?? $sFunctionName;
+        $this->aFunctions[$sJsFunction] = $aOptions;
+        $this->jaxon->di()->registerCallableFunction($sJsFunction, $sFunctionName, $aOptions);
         return true;
     }
 
