@@ -35,6 +35,7 @@ use Jaxon\Exception\SetupException;
 use Jaxon\Utils\Config\Config;
 use Jaxon\Utils\Template\Engine as TemplateEngine;
 use Jaxon\Utils\Translation\Translator;
+use ReflectionException;
 
 use function trim;
 use function strlen;
@@ -210,8 +211,6 @@ class CallableClass extends RequestPlugin
     {
         $sClassName = trim($sCallable);
         $this->xRepository->addClass($sClassName, $aOptions);
-        // Also register the class in the DI container.
-        $this->xRepository->registerCallableObject($sClassName, $aOptions);
         return true;
     }
 
@@ -339,7 +338,7 @@ class CallableClass extends RequestPlugin
         });
         foreach($aClassNames as $sClassName)
         {
-            $xCallableObject = $this->xRepository->getCallableObject($sClassName);
+            $xCallableObject = $this->xRegistry->getCallableObject($sClassName);
             $sCode .= $this->getCallableScript($xCallableObject, $sClassName, $aProtectedMethods);
         }
 
@@ -364,6 +363,7 @@ class CallableClass extends RequestPlugin
     /**
      * @inheritDoc
      * @throws SetupException
+     * @throws ReflectionException
      */
     public function processRequest(): bool
     {

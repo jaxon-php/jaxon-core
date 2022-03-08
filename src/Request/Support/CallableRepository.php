@@ -19,11 +19,13 @@ use Jaxon\Container\Container;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 
-use function explode;
-use function strncmp;
+use function substr;
 use function strlen;
+use function trim;
+use function str_replace;
+use function strncmp;
 use function array_merge;
-use function key_exists;
+use function class_exists;
 
 class CallableRepository
 {
@@ -51,6 +53,20 @@ class CallableRepository
      * @var array
      */
     protected $aNamespaces = [];
+
+    /**
+     * Indicate if the registered directories are already parsed
+     *
+     * @var bool
+     */
+    protected $bParsedDirectories = false;
+
+    /**
+     * Indicate if the registered namespaces are already parsed
+     *
+     * @var bool
+     */
+    protected $bParsedNamespaces = false;
 
     /**
      * The constructor
@@ -185,6 +201,14 @@ class CallableRepository
     public function parseDirectories(array $aDirectories)
     {
         // Browse directories without namespaces and read all the files.
+        // This is to be done only once.
+        if($this->bParsedDirectories)
+        {
+            return;
+        }
+        $this->bParsedDirectories = true;
+
+        // Browse directories without namespaces and read all the files.
         foreach($aDirectories as $sDirectory => $aOptions)
         {
             $itFile = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($sDirectory));
@@ -218,6 +242,13 @@ class CallableRepository
      */
     public function parseNamespaces(array $aNamespaces)
     {
+        // This is to be done only once.
+        if($this->bParsedNamespaces)
+        {
+            return;
+        }
+        $this->bParsedNamespaces = true;
+
         // Browse directories with namespaces and read all the files.
         $sDS = DIRECTORY_SEPARATOR;
         foreach($aNamespaces as $sNamespace => $aOptions)
@@ -251,30 +282,6 @@ class CallableRepository
                 $this->addClass($sClassName, $aClassOptions, $aOptions);
             }
         }
-    }
-
-    /**
-     * Check if a callable object is created
-     *
-     * @param string        $sClassName            The class name of the callable object
-     *
-     * @return bool
-     */
-    public function hasCallableObject(string $sClassName): bool
-    {
-        return $this->di->has($sClassName);
-    }
-
-    /**
-     * Find a callable object by class name
-     *
-     * @param string        $sClassName            The class name of the callable object
-     *
-     * @return CallableObject
-     */
-    public function getCallableObject(string $sClassName): CallableObject
-    {
-        return $this->di->get($sClassName . '_CallableObject');
     }
 
     /**

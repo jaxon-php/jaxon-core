@@ -10,6 +10,7 @@ use Jaxon\Request\Factory\ParameterFactory;
 use Jaxon\Request\Handler\Argument as RequestArgument;
 use Jaxon\Request\Handler\Handler as RequestHandler;
 use Jaxon\Request\Plugin\FileUpload;
+use Jaxon\Request\Support\CallableRegistry;
 use Jaxon\Response\Manager as ResponseManager;
 use Jaxon\Response\Plugin\DataBag;
 use Jaxon\Ui\Pagination\Paginator;
@@ -37,7 +38,8 @@ trait RequestTrait
         });
         // Request Factory
         $this->set(Factory::class, function($c) {
-            return new Factory($c->g(Jaxon::class), $c->g(ParameterFactory::class));
+            return new Factory($c->g(CallableRegistry::class),
+                $c->g(RequestFactory::class), $c->g(ParameterFactory::class));
         });
         // Factory for requests to functions
         $this->set(RequestFactory::class, function($c) {

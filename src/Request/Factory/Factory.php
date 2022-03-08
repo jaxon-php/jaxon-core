@@ -2,7 +2,9 @@
 
 namespace Jaxon\Request\Factory;
 
-use Jaxon\Jaxon;
+use Jaxon\Request\Support\CallableRegistry;
+
+use function trim;
 
 /**
  * Factory.php
@@ -19,9 +21,14 @@ use Jaxon\Jaxon;
 class Factory
 {
     /**
-     * @var Jaxon
+     * @var CallableRegistry
      */
-    private $jaxon;
+    private $xCallableRegistry;
+
+    /**
+     * @var RequestFactory
+     */
+    protected $xRequestFactory;
 
     /**
      * @var ParameterFactory
@@ -31,12 +38,15 @@ class Factory
     /**
      * The constructor.
      *
-     * @param Jaxon $jaxon
+     * @param CallableRegistry $xCallableRegistry
+     * @param RequestFactory $xRequestFactory
      * @param ParameterFactory $xParameterFactory
      */
-    public function __construct(Jaxon $jaxon, ParameterFactory $xParameterFactory)
+    public function __construct(CallableRegistry $xCallableRegistry,
+        RequestFactory $xRequestFactory, ParameterFactory $xParameterFactory)
     {
-        $this->jaxon = $jaxon;
+        $this->xCallableRegistry = $xCallableRegistry;
+        $this->xRequestFactory = $xRequestFactory;
         $this->xParameterFactory = $xParameterFactory;
     }
 
@@ -49,7 +59,14 @@ class Factory
      */
     public function request(string $sClassName = ''): ?RequestFactory
     {
-        return $this->jaxon->di()->getRequestFactory($sClassName);
+        $sClassName = trim($sClassName);
+        if(!$sClassName)
+        {
+            // There is a single request factory for all callable functions.
+            return $this->xRequestFactory;
+        }
+        // While each callable class has it own request factory.
+        return $this->xCallableRegistry->getRequestFactory($sClassName);
     }
 
     /**
@@ -62,4 +79,3 @@ class Factory
         return $this->xParameterFactory;
     }
 }
-

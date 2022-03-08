@@ -37,7 +37,7 @@ trait CallableTrait
         });
         // Callable objects registry
         $this->set(CallableRegistry::class, function($c) {
-            return new CallableRegistry($c->g(CallableRepository::class));
+            return new CallableRegistry($this, $c->g(CallableRepository::class));
         });
         // Callable class plugin
         $this->set(CallableClass::class, function($c) {

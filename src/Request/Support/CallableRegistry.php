@@ -14,6 +14,9 @@
 
 namespace Jaxon\Request\Support;
 
+use Jaxon\Container\Container;
+use Jaxon\Request\Factory\RequestFactory;
+
 use function strncmp;
 use function trim;
 use function in_array;
@@ -23,6 +26,13 @@ use function file_exists;
 
 class CallableRegistry
 {
+    /**
+     * The DI container
+     *
+     * @var Container
+     */
+    protected $di;
+
     /**
      * The callable repository
      *
@@ -40,13 +50,6 @@ class CallableRegistry
     protected $aDirectories = [];
 
     /**
-     * Indicate if the registered directories are already parsed
-     *
-     * @var bool
-     */
-    protected $bParsedDirectories = false;
-
-    /**
      * The registered namespaces
      *
      * These are the namespaces specified when registering directories.
@@ -54,13 +57,6 @@ class CallableRegistry
      * @var array
      */
     protected $aNamespaces = [];
-
-    /**
-     * Indicate if the registered namespaces are already parsed
-     *
-     * @var bool
-     */
-    protected $bParsedNamespaces = false;
 
     /**
      * If the underscore is used as separator in js class names.
@@ -79,10 +75,12 @@ class CallableRegistry
     /**
      * The class constructor
      *
-     * @param CallableRepository        $xRepository
+     * @param Container $di
+     * @param CallableRepository $xRepository
      */
-    public function __construct(CallableRepository $xRepository)
+    public function __construct(Container $di, CallableRepository $xRepository)
     {
+        $this->di = $di;
         $this->xRepository = $xRepository;
 
         // Set the composer autoloader
@@ -130,7 +128,7 @@ class CallableRegistry
         {
             $aOptions['separator'] = '.';
         }
-        if($aOptions['separator'] == '_')
+        if($aOptions['separator'] === '_')
         {
             $this->bUsingUnderscore = true;
         }
@@ -146,41 +144,6 @@ class CallableRegistry
         }
 
         $this->aNamespaces[$sNamespace] = $aOptions;
-    }
-
-    /**
-     * Read classes from directories registered without namespaces
-     *
-     * @return void
-     */
-    protected function parseDirectories()
-    {
-        // Browse directories without namespaces and read all the files.
-        // This is to be done only once.
-        if($this->bParsedDirectories)
-        {
-            return;
-        }
-        $this->bParsedDirectories = true;
-
-        $this->xRepository->parseDirectories($this->aDirectories);
-    }
-
-    /**
-     * Read classes from directories registered with namespaces
-     *
-     * @return void
-     */
-    protected function parseNamespaces()
-    {
-        // This is to be done only once.
-        if($this->bParsedNamespaces)
-        {
-            return;
-        }
-        $this->bParsedNamespaces = true;
-
-        $this->xRepository->parseNamespaces($this->aNamespaces);
     }
 
     /**
@@ -232,14 +195,41 @@ class CallableRegistry
         }
 
         // Without a namespace, we need to parse all classes to be able to find one.
-        $this->parseDirectories();
+        $this->xRepository->parseDirectories($this->aDirectories);
 
         // Find options for a class registered without namespace.
         return $this->xRepository->getClassOptions($sClassName);
     }
 
     /**
-     * Find a callable object by class name
+     * Check if a callable object is already in the DI, and register if not
+     *
+     * @param string        $sClassName            The class name of the callable object
+     *
+     * @return string
+     */
+    private function checkCallableObject(string $sClassName): string
+    {
+        // Replace all separators ('.' and '_') with antislashes, and remove the antislashes
+        // at the beginning and the end of the class name.
+        $sSeparator = $this->bUsingUnderscore ? '_' : '.';
+        $sClassName = trim(str_replace($sSeparator, '\\', $sClassName), '\\');
+
+        // Check if the callable object was already created.
+        if(!$this->di->h($sClassName))
+        {
+            $aOptions = $this->getClassOptions($sClassName);
+            if($aOptions === null)
+            {
+                return '';
+            }
+            $this->xRepository->registerCallableObject($sClassName, $aOptions);
+        }
+        return $sClassName;
+    }
+
+    /**
+     * Get the callable object for a given class
      *
      * @param string        $sClassName            The class name of the callable object
      *
@@ -247,27 +237,19 @@ class CallableRegistry
      */
     public function getCallableObject(string $sClassName): ?CallableObject
     {
-        // Replace all separators ('.' and '_') with antislashes, and remove the antislashes
-        // at the beginning and the end of the class name.
-        $sClassName = (string)$sClassName;
-        $sClassName = trim(str_replace('.', '\\', $sClassName), '\\');
-        if($this->bUsingUnderscore)
-        {
-            $sClassName = trim(str_replace('_', '\\', $sClassName), '\\');
-        }
+        return $this->di->getCallableObject($this->checkCallableObject($sClassName));
+    }
 
-        // Check if the callable object was already created.
-        if(!$this->xRepository->hasCallableObject($sClassName))
-        {
-            $aOptions = $this->getClassOptions($sClassName);
-            if($aOptions === null)
-            {
-                return null;
-            }
-            $this->xRepository->registerCallableObject($sClassName, $aOptions);
-        }
-
-        return $this->xRepository->getCallableObject($sClassName);
+    /**
+     * Get the request factory for a given class
+     *
+     * @param string        $sClassName            The class name of the callable object
+     *
+     * @return RequestFactory|null
+     */
+    public function getRequestFactory(string $sClassName): ?RequestFactory
+    {
+        return $this->di->getRequestFactory($this->checkCallableObject($sClassName));
     }
 
     /**
@@ -277,8 +259,8 @@ class CallableRegistry
      */
     public function parseCallableClasses()
     {
-        $this->parseDirectories();
-        $this->parseNamespaces();
+        $this->xRepository->parseDirectories($this->aDirectories);
+        $this->xRepository->parseNamespaces($this->aNamespaces);
     }
 
     /**
@@ -294,7 +276,7 @@ class CallableRegistry
         foreach($aClasses as $sClassName => $aClassOptions)
         {
             // Make sure we create each callable object only once.
-            if(!$this->xRepository->hasCallableObject($sClassName))
+            if(!$this->di->h($sClassName))
             {
                 $this->xRepository->registerCallableObject($sClassName, $aClassOptions);
             }

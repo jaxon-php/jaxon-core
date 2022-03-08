@@ -145,21 +145,26 @@ trait RegisterTrait
     }
 
     /**
-     * Get the request factory
+     * Get the callable object for a given class
+     *
+     * @param string $sClassName
+     *
+     * @return CallableObject
+     */
+    public function getCallableObject(string $sClassName): CallableObject
+    {
+        return $this->g($sClassName . '_CallableObject');
+    }
+
+    /**
+     * Get the request factory for a given class
      *
      * @param string $sClassName
      *
      * @return RequestFactory
      */
-    public function getRequestFactory(string $sClassName = ''): RequestFactory
+    public function getRequestFactory(string $sClassName): RequestFactory
     {
-        $sClassName = trim($sClassName);
-        if(!$sClassName)
-        {
-            // There is a single request factory for all callable functions.
-            return $this->g(RequestFactory::class);
-        }
-        // While each callable class has it own request factory.
         return $this->g($sClassName . '_RequestFactory');
     }
 

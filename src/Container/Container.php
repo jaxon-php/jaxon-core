@@ -114,6 +114,18 @@ class Container extends PimpleContainer
      *
      * @return bool
      */
+    public function h(string $sClass): bool
+    {
+        return $this->offsetExists($sClass);
+    }
+
+    /**
+     * Check if a class is defined in the container
+     *
+     * @param string                $sClass             The full class name
+     *
+     * @return bool
+     */
     public function has(string $sClass): bool
     {
         if($this->appContainer != null && $this->appContainer->has($sClass))
