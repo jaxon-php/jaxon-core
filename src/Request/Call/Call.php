@@ -357,9 +357,9 @@ class Call extends JsCall
         // Set the value of the Parameter::PAGE_NUMBER parameter
         foreach($this->aParameters as $xParameter)
         {
-            if($xParameter->getType() == Parameter::PAGE_NUMBER)
+            if($xParameter->getType() === Parameter::PAGE_NUMBER)
             {
-                $xParameter->setValue(intval($nPageNumber));
+                $xParameter->setValue($nPageNumber);
                 break;
             }
         }
@@ -369,25 +369,27 @@ class Call extends JsCall
     /**
      * Make the pagination links for this request
      *
-     * @param integer       $nCurrentPage           The current page
-     * @param integer       $nItemsPerPage          The number of items per page page
-     * @param integer       $nItemsTotal            The total number of items
+     * @param integer $nCurrentPage The current page
+     * @param integer $nItemsPerPage The number of items per page
+     * @param integer $nItemsTotal The total number of items
      *
      * @return Store|null
+     * @throws SetupException
      */
     public function paginate(int $nCurrentPage, int $nItemsPerPage, int $nItemsTotal): ?Store
     {
-        return $this->xPaginator->setup($nItemsTotal, $nItemsPerPage, $nCurrentPage, $this)->render();
+        return $this->xPaginator->setup($this, $nCurrentPage, $nItemsPerPage, $nItemsTotal)->render();
     }
 
     /**
      * Make the pagination links for this request
      *
-     * @param integer       $nCurrentPage           The current page
-     * @param integer       $nItemsPerPage          The number of items per page page
-     * @param integer       $nItemsTotal            The total number of items
+     * @param integer $nCurrentPage The current page
+     * @param integer $nItemsPerPage The number of items per page
+     * @param integer $nItemsTotal The total number of items
      *
      * @return Store|null
+     * @throws SetupException
      */
     public function pg(int $nCurrentPage, int $nItemsPerPage, int $nItemsTotal): ?Store
     {
@@ -398,7 +400,7 @@ class Call extends JsCall
      * Make the pagination links for this request
      *
      * @param integer $nCurrentPage The current page
-     * @param integer $nItemsPerPage The number of items per page page
+     * @param integer $nItemsPerPage The number of items per page
      * @param integer $nItemsTotal The total number of items
      *
      * @return array
@@ -406,6 +408,6 @@ class Call extends JsCall
      */
     public function pages(int $nCurrentPage, int $nItemsPerPage, int $nItemsTotal): array
     {
-        return $this->xPaginator->setup($nItemsTotal, $nItemsPerPage, $nCurrentPage, $this)->getPages();
+        return $this->xPaginator->setup($this, $nCurrentPage, $nItemsPerPage, $nItemsTotal)->getPages();
     }
 }

@@ -173,16 +173,16 @@ class Paginator
     /**
      * Setup the paginator
      *
-     * @param int $nTotalItems The total number of items
-     * @param int $nItemsPerPage The number of items per page
-     * @param int $nCurrentPage The current page number
      * @param Call $xCall The call to be paginated
+     * @param int $nCurrentPage The current page number
+     * @param int $nItemsPerPage The number of items per page
+     * @param int $nTotalItems The total number of items
      *
      * @return Paginator
      */
-    public function setup(int $nTotalItems, int $nItemsPerPage, int $nCurrentPage, Call $xCall): Paginator
+    public function setup(Call $xCall, int $nCurrentPage, int $nItemsPerPage, int $nTotalItems): Paginator
     {
-        $this->setTotalItems($nTotalItems)->setItemsPerPage($nItemsPerPage)->setCurrentPage($nCurrentPage);
+        $this->setCurrentPage($nCurrentPage)->setItemsPerPage($nItemsPerPage)->setTotalItems($nTotalItems);
         $this->xRenderer->setRequest($xCall);
         return $this;
     }
@@ -209,20 +209,5 @@ class Paginator
     public function render(): ?Store
     {
         return $this->xRenderer->render($this->nTotalPages);
-    }
-
-    /**
-     * Render an HTML pagination control.
-     *
-     * @return string
-     * @throws SetupException
-     */
-    public function __toString()
-    {
-        if($this->nTotalPages < 2)
-        {
-            return '';
-        }
-        return $this->render()->__toString();
     }
 }

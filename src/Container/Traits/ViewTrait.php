@@ -25,14 +25,17 @@ trait ViewTrait
             return new Dialog($c->g(Jaxon::class));
         });
         // View Manager
-        $this->set(ViewManager::class, function() {
+        $this->set(ViewManager::class, function($c) {
             $xViewManager = new ViewManager($this);
             // Add the default view renderer
             $xViewManager->addRenderer('jaxon', function($di) {
                 return new TemplateView($di->g(TemplateEngine::class));
             });
+            $sTemplateDir = rtrim(trim($c->g('jaxon.core.dir.template')), '/\\');
+            $sPaginationDir = $sTemplateDir . DIRECTORY_SEPARATOR . 'pagination';
             // By default, render pagination templates with Jaxon.
-            $xViewManager->addNamespace('pagination', '', '.php', 'jaxon');
+            $xViewManager->addNamespace('jaxon', $sTemplateDir, '.php', 'jaxon');
+            $xViewManager->addNamespace('pagination', $sPaginationDir, '.php', 'jaxon');
             return $xViewManager;
         });
         // View Renderer
