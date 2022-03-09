@@ -248,6 +248,55 @@ class Jaxon implements LoggerAwareInterface
     }
 
     /**
+     * Set the value of a config option
+     *
+     * @param string $sName                The option name
+     * @param mixed         $sValue               The option value
+     *
+     * @return void
+     */
+    public function setOption(string $sName, $sValue)
+    {
+        $this->config()->setOption($sName, $sValue);
+    }
+
+    /**
+     * Get the value of a config option
+     *
+     * @param string $sName              The option name
+     * @param mixed|null    $xDefault           The default value, to be returned if the option is not defined
+     *
+     * @return mixed        The option value, or null if the option is unknown
+     */
+    public function getOption(string $sName, $xDefault = null)
+    {
+        return $this->config()->getOption($sName, $xDefault);
+    }
+
+    /**
+     * Check the presence of a config option
+     *
+     * @param string $sName              The option name
+     *
+     * @return bool        True if the option exists, and false if not
+     */
+    public function hasOption(string $sName): bool
+    {
+        return $this->config()->hasOption($sName);
+    }
+
+    /**
+     * Create a new the config set
+     *
+     * @return Config            The config manager
+     * @throws DataDepthException
+     */
+    public function newConfig(): Config
+    {
+        return $this->di()->newConfig();
+    }
+
+    /**
      * Get the configured character encoding
      *
      * @return string
@@ -255,6 +304,20 @@ class Jaxon implements LoggerAwareInterface
     public function getCharacterEncoding(): string
     {
         return trim($this->config()->getOption('core.encoding'));
+    }
+
+    /**
+     * Get a translated string
+     *
+     * @param string $sText                The key of the translated string
+     * @param array         $aPlaceHolders        The placeholders of the translated string
+     * @param string $sLanguage            The language of the translated string
+     *
+     * @return string
+     */
+    public function trans(string $sText, array $aPlaceHolders = [], string $sLanguage = ''): string
+    {
+        return $this->di()->getTranslator()->trans($sText, $aPlaceHolders, $sLanguage);
     }
 
     /**
