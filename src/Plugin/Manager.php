@@ -208,6 +208,11 @@ class Manager
     public function registerPackage(string $sClassName, array $aAppOptions)
     {
         $sClassName = trim($sClassName, '\\ ');
+        if(!is_subclass_of($sClassName, Package::class))
+        {
+            $sMessage = $this->xTranslator->trans('errors.register.invalid', ['name' => $sClassName]);
+            throw new SetupException($sMessage);
+        }
         $di = $this->jaxon->di();
         $xAppConfig = $di->registerPackage($sClassName, $aAppOptions);
 

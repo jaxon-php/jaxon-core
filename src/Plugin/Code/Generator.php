@@ -15,7 +15,6 @@
 namespace Jaxon\Plugin\Code;
 
 use Jaxon\Jaxon;
-use Jaxon\Plugin\Code\Contracts\Generator as GeneratorContract;
 use Jaxon\Plugin\Plugin;
 use Jaxon\Utils\Config\Config;
 use Jaxon\Utils\File\Minifier;
@@ -142,11 +141,6 @@ class Generator
      */
     public function addGenerator(string $sClassName, int $nPriority)
     {
-        if(!is_subclass_of($sClassName, GeneratorContract::class))
-        {
-            // Todo: print a warning message in the logs.
-            return;
-        }
         while(isset($this->aClassNames[$nPriority]))
         {
             $nPriority++;
