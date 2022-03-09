@@ -248,6 +248,30 @@ class Jaxon implements LoggerAwareInterface
     }
 
     /**
+     * Load a config file
+     *
+     * @param string $sConfigFile
+     * @param string $sConfigSection
+     *
+     * @return void
+     * @throws SetupException
+     */
+    public function loadConfig(string $sConfigFile, string $sConfigSection = '')
+    {
+        $aConfigOptions = $this->readConfig($sConfigFile);
+        try
+        {
+            // Set up the lib config options.
+            $this->config()->setOptions($aConfigOptions, $sConfigSection);
+        }
+        catch(DataDepthException $e)
+        {
+            $sMessage = $this->xTranslator->trans('errors.data.depth', ['key' => $e->sPrefix, 'depth' => $e->nDepth]);
+            throw new SetupException($sMessage);
+        }
+    }
+
+    /**
      * Set the value of a config option
      *
      * @param string $sName                The option name
@@ -374,7 +398,7 @@ class Jaxon implements LoggerAwareInterface
      * @throws SetupException
      * @throws DataDepthException
      */
-    public function registerPackage(string $sClassName, array $aOptions)
+    public function registerPackage(string $sClassName, array $aOptions = [])
     {
         $this->di()->getPluginManager()->registerPackage($sClassName, $aOptions);
     }
