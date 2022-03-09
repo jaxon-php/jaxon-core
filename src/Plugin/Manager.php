@@ -163,6 +163,12 @@ class Manager
             $bIsUsed = true;
         }
 
+        // Register the plugin in the DI container, if necessary
+        if($bIsUsed && !$this->jaxon->di()->has($sClassName))
+        {
+            $this->jaxon->di()->auto($sClassName);
+        }
+
         if(!$bIsUsed)
         {
             $sMessage = $this->xTranslator->trans('errors.register.invalid', ['name' => $sClassName]);
