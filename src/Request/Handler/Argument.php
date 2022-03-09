@@ -157,26 +157,9 @@ class Argument
     }
 
     /**
-     * Strip the slashes from a string
+     * Convert a Jaxon request argument to its value
      *
-     * @param string        $sArg                The string to be stripped
-     *
-     * @return string
-     */
-    // private function __argumentStripSlashes(&$sArg)
-    // {
-    //     if(!is_string($sArg))
-    //     {
-    //         return '';
-    //     }
-    //     $sArg = stripslashes($sArg);
-    //     return $sArg;
-    // }
-
-    /**
-     * Convert an Jaxon request argument to its value
-     *
-     * Depending of its first char, the Jaxon request argument is converted to a given type.
+     * Depending on its first char, the Jaxon request argument is converted to a given type.
      *
      * @param string        $sValue                The keys of the options in the file
      *
@@ -189,7 +172,7 @@ class Argument
         switch($cType)
         {
         case 'S':
-            $value = ($sValue === false ? '' : $sValue);
+            $value = ($sValue == false ? '' : $sValue);
             break;
         case 'B':
             $value = $this->__convertStringToBool($sValue);
@@ -288,10 +271,7 @@ class Argument
      */
     public function process(): array
     {
-        // if(get_magic_quotes_gpc() == 1)
-        // {
-        //     \array_walk($this->aArgs, [$this, '__argumentStripSlashes']);
-        // }
+
         array_walk($this->aArgs, [$this, '__argumentDecode']);
 
         if(!$this->xConfig->getOption('core.decode_utf8'))
@@ -332,7 +312,7 @@ class Argument
         };
         $this->aArgs = $aDst;
 
-        $this->setOption('core.decode_utf8', false);
+        $this->xConfig->setOption('core.decode_utf8', false);
 
         return $this->aArgs;
     }

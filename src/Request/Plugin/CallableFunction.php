@@ -226,7 +226,7 @@ class CallableFunction extends RequestPlugin
         $code = '';
         foreach(array_keys($this->aFunctions) as $sName)
         {
-            $xFunction = $this->di->get($sName);
+            $xFunction = $this->jaxon->di()->get($sName);
             $code .= $this->getCallableScript($xFunction);
         }
         return $code;
@@ -264,7 +264,7 @@ class CallableFunction extends RequestPlugin
                 ['name' => $this->sRequestedFunction]));
         }
 
-        $xFunction = $this->di->get($this->sRequestedFunction);
+        $xFunction = $this->jaxon->di()->get($this->sRequestedFunction);
         $aArgs = $this->xRequestHandler->processArguments();
         $xResponse = $xFunction->call($aArgs);
         if(($xResponse))
