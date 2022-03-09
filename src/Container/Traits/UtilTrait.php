@@ -39,8 +39,13 @@ trait UtilTrait
             return $xTranslator;
         });
         // Template engine
-        $this->set(TemplateEngine::class, function() {
-            return new TemplateEngine();
+        $this->set(TemplateEngine::class, function($c) {
+            $xTemplateEngine = new TemplateEngine();
+            $sTemplateDir = rtrim(trim($c->g('jaxon.core.dir.template')), '/\\');
+            $sPaginationDir = $sTemplateDir . DIRECTORY_SEPARATOR . 'pagination';
+            $xTemplateEngine->addNamespace('jaxon', $sTemplateDir, '.php');
+            $xTemplateEngine->addNamespace('pagination', $sPaginationDir, '.php');
+            return $xTemplateEngine;
         });
         // Minifier
         $this->set(Minifier::class, function() {

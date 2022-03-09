@@ -19,7 +19,7 @@ trait Message
      *
      * @var bool
      */
-    private $bReturn;
+    private $bReturn = false;
 
     /**
      * Set the library to return the javascript code or run it in the browser.
