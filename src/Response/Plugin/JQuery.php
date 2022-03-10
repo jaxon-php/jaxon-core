@@ -57,8 +57,8 @@ class JQuery extends \Jaxon\Plugin\Response
      * Since this element is linked to a response, its code will be automatically sent to the client.
      * The returned object can be used to call jQuery functions on the selected elements.
      *
-     * @param string        $sSelector            The jQuery selector
-     * @param string        $sContext             A context associated to the selector
+     * @param string $sSelector    The jQuery selector
+     * @param string $sContext    A context associated to the selector
      *
      * @return Element
      */

@@ -19,7 +19,7 @@ class Message implements \Jaxon\Contracts\Dialogs\Message
     /**
      * Print an alert message.
      *
-     * @param string              $sMessage             The text of the message
+     * @param string $sMessage    The text of the message
      *
      * @return string
      */
@@ -35,8 +35,8 @@ class Message implements \Jaxon\Contracts\Dialogs\Message
     /**
      * Print a success message.
      *
-     * @param string              $sMessage             The text of the message
-     * @param string              $sTitle               The title of the message
+     * @param string $sMessage    The text of the message
+     * @param string $sTitle    The title of the message
      *
      * @return string
      */
@@ -48,8 +48,8 @@ class Message implements \Jaxon\Contracts\Dialogs\Message
     /**
      * Print an information message.
      *
-     * @param string              $sMessage             The text of the message
-     * @param string              $sTitle               The title of the message
+     * @param string $sMessage    The text of the message
+     * @param string $sTitle    The title of the message
      *
      * @return string
      */
@@ -61,8 +61,8 @@ class Message implements \Jaxon\Contracts\Dialogs\Message
     /**
      * Print a warning message.
      *
-     * @param string              $sMessage             The text of the message
-     * @param string              $sTitle               The title of the message
+     * @param string $sMessage    The text of the message
+     * @param string $sTitle    The title of the message
      *
      * @return string
      */
@@ -74,8 +74,8 @@ class Message implements \Jaxon\Contracts\Dialogs\Message
     /**
      * Print an error message.
      *
-     * @param string              $sMessage             The text of the message
-     * @param string              $sTitle               The title of the message
+     * @param string $sMessage    The text of the message
+     * @param string $sTitle    The title of the message
      *
      * @return string
      */

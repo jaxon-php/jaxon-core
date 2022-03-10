@@ -39,8 +39,8 @@ class Store
     /**
      * Make a piece of data available for the rendered view
      *
-     * @param string        $sName           The data name
-     * @param mixed         $xValue          The data value
+     * @param string $sName    The data name
+     * @param mixed $xValue    The data value
      *
      * @return Store
      */
@@ -53,7 +53,7 @@ class Store
     /**
      * Set the data to be rendered
      *
-     * @param array         $aViewData        The view data
+     * @param array $aViewData    The view data
      *
      * @return Store
      */
@@ -66,10 +66,10 @@ class Store
     /**
      * Set the view to be rendered, with optional data
      *
-     * @param ViewContract  $xRenderer        The view renderer
-     * @param string        $sNamespace       The view namespace
-     * @param string        $sViewName        The view name
-     * @param array         $aViewData        The view data
+     * @param ViewContract $xRenderer    The view renderer
+     * @param string $sNamespace    The view namespace
+     * @param string $sViewName    The view name
+     * @param array $aViewData    The view data
      *
      * @return Store
      */

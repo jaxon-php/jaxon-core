@@ -93,8 +93,8 @@ class CallableRegistry
 
     /**
      *
-     * @param string        $sDirectory     The directory being registered
-     * @param array         $aOptions       The associated options
+     * @param string $sDirectory    The directory being registered
+     * @param array $aOptions    The associated options
      *
      * @return void
      */
@@ -111,8 +111,8 @@ class CallableRegistry
 
     /**
      *
-     * @param string        $sNamespace     The namespace of the directory being registered
-     * @param array         $aOptions       The associated options
+     * @param string $sNamespace    The namespace of the directory being registered
+     * @param array $aOptions    The associated options
      *
      * @return void
      */
@@ -149,7 +149,7 @@ class CallableRegistry
     /**
      * Find options for a class which is registered with namespace
      *
-     * @param string        $sClassName            The class name
+     * @param string $sClassName    The class name
      *
      * @return array|null
      */
@@ -181,7 +181,7 @@ class CallableRegistry
     /**
      * Find the options associated with a registered class name
      *
-     * @param string        $sClassName            The class name
+     * @param string $sClassName    The class name
      *
      * @return array|null
      */
@@ -204,7 +204,7 @@ class CallableRegistry
     /**
      * Check if a callable object is already in the DI, and register if not
      *
-     * @param string        $sClassName            The class name of the callable object
+     * @param string $sClassName    The class name of the callable object
      *
      * @return string
      */
@@ -231,7 +231,7 @@ class CallableRegistry
     /**
      * Get the callable object for a given class
      *
-     * @param string        $sClassName            The class name of the callable object
+     * @param string $sClassName    The class name of the callable object
      *
      * @return CallableObject|null
      */
@@ -243,7 +243,7 @@ class CallableRegistry
     /**
      * Get the request factory for a given class
      *
-     * @param string        $sClassName            The class name of the callable object
+     * @param string $sClassName    The class name of the callable object
      *
      * @return RequestFactory|null
      */

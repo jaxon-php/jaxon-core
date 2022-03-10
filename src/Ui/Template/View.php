@@ -26,9 +26,9 @@ class View implements ViewContract
     /**
      * Add a namespace to this view renderer
      *
-     * @param string        $sNamespace         The namespace name
-     * @param string        $sDirectory         The namespace directory
-     * @param string        $sExtension         The extension to append to template names
+     * @param string $sNamespace    The namespace name
+     * @param string $sDirectory    The namespace directory
+     * @param string $sExtension    The extension to append to template names
      *
      * @return void
      */
@@ -40,7 +40,7 @@ class View implements ViewContract
     /**
      * Render a view
      *
-     * @param Store         $store        A store populated with the view data
+     * @param Store $store    A store populated with the view data
      *
      * @return string        The string representation of the view
      */

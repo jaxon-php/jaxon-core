@@ -99,10 +99,10 @@ class Handler
      * @param Jaxon $jaxon
      * @param Config $xConfig
      * @param Argument $xArgument
-     * @param PluginManager         $xPluginManager
-     * @param ResponseManager       $xResponseManager
-     * @param FileUpload            $xUploadPlugin
-     * @param DataBag               $xDataBagPlugin
+     * @param PluginManager  $xPluginManager
+     * @param ResponseManager  $xResponseManager
+     * @param FileUpload  $xUploadPlugin
+     * @param DataBag  $xDataBagPlugin
      */
     public function __construct(Jaxon $jaxon, Config $xConfig, Argument $xArgument, PluginManager $xPluginManager,
         ResponseManager $xResponseManager, FileUpload $xUploadPlugin, DataBag $xDataBagPlugin)
@@ -167,7 +167,7 @@ class Handler
     /**
      * These are the pre-request processing callbacks passed to the Jaxon library.
      *
-     * @param bool $bEndRequest   If set to true, the request processing is interrupted.
+     * @param bool $bEndRequest    If set to true, the request processing is interrupted.
      *
      * @return void
      */

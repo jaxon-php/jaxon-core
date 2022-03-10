@@ -14,7 +14,7 @@ interface Session
     /**
      * Generate a new session id
      *
-     * @param bool          $bDeleteData         Whether to delete data from the previous session
+     * @param bool $bDeleteData    Whether to delete data from the previous session
      *
      * @return void
      */
@@ -23,8 +23,8 @@ interface Session
     /**
      * Save data in the session
      *
-     * @param string        $sKey                The session key
-     * @param mixed         $xValue              The session value
+     * @param string $sKey    The session key
+     * @param mixed $xValue    The session value
      *
      * @return void
      */
@@ -33,8 +33,8 @@ interface Session
     /**
      * Save data in the session, that will be available only until the next call
      *
-     * @param string        $sKey                The session key
-     * @param string        $xValue              The session value
+     * @param string $sKey    The session key
+     * @param string $xValue    The session value
      *
      * @return void
      */
@@ -43,7 +43,7 @@ interface Session
     /**
      * Check if a session key exists
      *
-     * @param string        $sKey                The session key
+     * @param string $sKey    The session key
      *
      * @return bool
      */
@@ -52,8 +52,8 @@ interface Session
     /**
      * Get data from the session
      *
-     * @param string        $sKey                The session key
-     * @param mixed|null    $xDefault            The default value
+     * @param string $sKey    The session key
+     * @param mixed|null $xDefault    The default value
      *
      * @return mixed
      */
@@ -69,7 +69,7 @@ interface Session
     /**
      * Delete a session key and its data
      *
-     * @param string        $sKey                The session key
+     * @param string $sKey    The session key
      *
      * @return void
      */

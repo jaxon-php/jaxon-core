@@ -117,14 +117,14 @@ class CallableClass extends RequestPlugin
     /**
      * The class constructor
      *
-     * @param Config                $xConfig
-     * @param RequestHandler        $xRequestHandler
-     * @param ResponseManager       $xResponseManager
-     * @param CallableRegistry      $xRegistry      The callable class registry
-     * @param CallableRepository    $xRepository    The callable object repository
-     * @param TemplateEngine        $xTemplateEngine
-     * @param Translator            $xTranslator
-     * @param Validator             $xValidator
+     * @param Config  $xConfig
+     * @param RequestHandler  $xRequestHandler
+     * @param ResponseManager  $xResponseManager
+     * @param CallableRegistry $xRegistry    The callable class registry
+     * @param CallableRepository $xRepository    The callable object repository
+     * @param TemplateEngine  $xTemplateEngine
+     * @param Translator  $xTranslator
+     * @param Validator  $xValidator
      */
     public function __construct(Config $xConfig, RequestHandler $xRequestHandler,
         ResponseManager $xResponseManager, CallableRegistry $xRegistry, CallableRepository $xRepository,
@@ -201,9 +201,9 @@ class CallableClass extends RequestPlugin
     /**
      * Register a callable class
      *
-     * @param string $sType The type of request handler being registered
-     * @param string $sCallable The name of the class being registered
-     * @param array $aOptions The associated options
+     * @param string $sType    The type of request handler being registered
+     * @param string $sCallable    The name of the class being registered
+     * @param array $aOptions    The associated options
      *
      * @return bool
      */
@@ -270,9 +270,9 @@ class CallableClass extends RequestPlugin
     /**
      * Generate client side javascript code for a callable class
      *
-     * @param CallableObject    $xCallableObject    The corresponding callable object
-     * @param string            $sClassName         The class name
-     * @param array             $aProtectedMethods  The protected methods
+     * @param CallableObject $xCallableObject    The corresponding callable object
+     * @param string $sClassName    The class name
+     * @param array $aProtectedMethods    The protected methods
      *
      * @return string
      */

@@ -274,8 +274,8 @@ class Jaxon implements LoggerAwareInterface
     /**
      * Set the value of a config option
      *
-     * @param string $sName                The option name
-     * @param mixed         $sValue               The option value
+     * @param string $sName    The option name
+     * @param mixed $sValue    The option value
      *
      * @return void
      */
@@ -287,8 +287,8 @@ class Jaxon implements LoggerAwareInterface
     /**
      * Get the value of a config option
      *
-     * @param string $sName              The option name
-     * @param mixed|null    $xDefault           The default value, to be returned if the option is not defined
+     * @param string $sName    The option name
+     * @param mixed|null $xDefault    The default value, to be returned if the option is not defined
      *
      * @return mixed        The option value, or null if the option is unknown
      */
@@ -300,7 +300,7 @@ class Jaxon implements LoggerAwareInterface
     /**
      * Check the presence of a config option
      *
-     * @param string $sName              The option name
+     * @param string $sName    The option name
      *
      * @return bool        True if the option exists, and false if not
      */
@@ -333,9 +333,9 @@ class Jaxon implements LoggerAwareInterface
     /**
      * Get a translated string
      *
-     * @param string $sText                The key of the translated string
-     * @param array         $aPlaceHolders        The placeholders of the translated string
-     * @param string $sLanguage            The language of the translated string
+     * @param string $sText    The key of the translated string
+     * @param array $aPlaceHolders    The placeholders of the translated string
+     * @param string $sLanguage    The language of the translated string
      *
      * @return string
      */
@@ -376,9 +376,9 @@ class Jaxon implements LoggerAwareInterface
      * - 1000 thru 8999: User created plugins, typically, these plugins don't care about order
      * - 9000 thru 9999: Plugins that generally need to be last or near the end of the plugin list
      *
-     * @param string $sClassName The plugin class
-     * @param string $sPluginName The plugin name
-     * @param integer $nPriority The plugin priority, used to order the plugins
+     * @param string $sClassName    The plugin class
+     * @param string $sPluginName    The plugin name
+     * @param integer $nPriority    The plugin priority, used to order the plugins
      *
      * @return void
      * @throws SetupException
@@ -391,8 +391,8 @@ class Jaxon implements LoggerAwareInterface
     /**
      * Register a package
      *
-     * @param string $sClassName The package class
-     * @param array $aOptions The package options
+     * @param string $sClassName    The package class
+     * @param array $aOptions    The package options
      *
      * @return void
      * @throws SetupException
@@ -406,7 +406,7 @@ class Jaxon implements LoggerAwareInterface
     /**
      * Register request handlers, including functions, callable classes and directories.
      *
-     * @param string $sType The type of request handler being registered
+     * @param string $sType    The type of request handler being registered
      *        Options include:
      *        - Jaxon::CALLABLE_FUNCTION: a function declared at global scope
      *        - Jaxon::CALLABLE_CLASS: a class who's methods are to be registered
@@ -415,7 +415,7 @@ class Jaxon implements LoggerAwareInterface
      *        When registering a function, this is the name of the function
      *        When registering a callable class, this is the class name
      *        When registering a callable directory, this is the full path to the directory
-     * @param array|string $xOptions The related options
+     * @param array|string $xOptions    The related options
      *
      * @return void
      * @throws SetupException
@@ -428,7 +428,7 @@ class Jaxon implements LoggerAwareInterface
     /**
      * Get an instance of a registered class
      *
-     * @param string        $sClassName         The class name
+     * @param string $sClassName    The class name
      *
      * @return null|object
      */
@@ -451,7 +451,7 @@ class Jaxon implements LoggerAwareInterface
     /**
      * Get a request to a registered class
      *
-     * @param string        $sClassName         The class name
+     * @param string $sClassName    The class name
      *
      * @return RequestFactory|null
      */
@@ -466,8 +466,8 @@ class Jaxon implements LoggerAwareInterface
      * The javascript code returned by this function is dependent on the plugins
      * that are included and the functions and classes that are registered.
      *
-     * @param bool $bIncludeJs Also get the JS files
-     * @param bool $bIncludeCss Also get the CSS files
+     * @param bool $bIncludeJs    Also get the JS files
+     * @param bool $bIncludeCss    Also get the CSS files
      *
      * @return string
      * @throws Utils\Http\UriException
@@ -483,8 +483,8 @@ class Jaxon implements LoggerAwareInterface
      * The javascript code returned by this function is dependent on the plugins
      * that are included and the functions and classes that are registered.
      *
-     * @param bool $bIncludeJs Also print the JS files
-     * @param bool $bIncludeCss Also print the CSS files
+     * @param bool $bIncludeJs    Also print the JS files
+     * @param bool $bIncludeCss    Also print the CSS files
      *
      * @return void
      * @throws Utils\Http\UriException
@@ -565,7 +565,7 @@ class Jaxon implements LoggerAwareInterface
     /**
      * Get a registered response plugin
      *
-     * @param string        $sName                The name of the plugin
+     * @param string $sName    The name of the plugin
      *
      * @return ResponsePlugin
      */
@@ -577,7 +577,7 @@ class Jaxon implements LoggerAwareInterface
     /**
      * Get a package instance
      *
-     * @param string        $sClassName           The package class name
+     * @param string $sClassName    The package class name
      *
      * @return Package
      */

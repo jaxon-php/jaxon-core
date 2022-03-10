@@ -21,9 +21,9 @@ trait RegisterTrait
     /**
      * Create a new callable object
      *
-     * @param string        $sJsFunction     The name of the js function
-     * @param string        $sFunctionName      The callable function name
-     * @param array         $aOptions           The function options
+     * @param string $sJsFunction    The name of the js function
+     * @param string $sFunctionName    The callable function name
+     * @param array $aOptions    The function options
      *
      * @return void
      */
@@ -85,8 +85,8 @@ trait RegisterTrait
     /**
      * Create a new callable object
      *
-     * @param string        $sClassName         The callable class name
-     * @param array         $aOptions           The callable object options
+     * @param string $sClassName    The callable class name
+     * @param array $aOptions    The callable object options
      *
      * @return void
      */
@@ -171,8 +171,8 @@ trait RegisterTrait
     /**
      * Get a package instance
      *
-     * @param string $sClassName The package class name
-     * @param array $aAppOptions The package options defined in the app section of the config file
+     * @param string $sClassName    The package class name
+     * @param array $aAppOptions    The package options defined in the app section of the config file
      *
      * @return Config
      * @throws DataDepth
@@ -199,7 +199,7 @@ trait RegisterTrait
     /**
      * Get a package config
      *
-     * @param string $sClassName The package class name
+     * @param string $sClassName    The package class name
      *
      * @return Config
      */

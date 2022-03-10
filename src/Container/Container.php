@@ -49,7 +49,7 @@ class Container extends PimpleContainer
     /**
      * The class constructor
      *
-     * @param array $aOptions The default options
+     * @param array $aOptions    The default options
      */
     public function __construct(array $aOptions)
     {
@@ -98,7 +98,7 @@ class Container extends PimpleContainer
     /**
      * Set the container provided by the integrated framework
      *
-     * @param ContainerInterface  $xContainer     The container implementation
+     * @param ContainerInterface $xContainer    The container implementation
      *
      * @return void
      */
@@ -110,7 +110,7 @@ class Container extends PimpleContainer
     /**
      * Check if a class is defined in the container
      *
-     * @param string                $sClass             The full class name
+     * @param string $sClass    The full class name
      *
      * @return bool
      */
@@ -122,7 +122,7 @@ class Container extends PimpleContainer
     /**
      * Check if a class is defined in the container
      *
-     * @param string                $sClass             The full class name
+     * @param string $sClass    The full class name
      *
      * @return bool
      */
@@ -138,7 +138,7 @@ class Container extends PimpleContainer
     /**
      * Get a class instance
      *
-     * @param string                $sClass             The full class name
+     * @param string $sClass    The full class name
      *
      * @return mixed
      */
@@ -150,7 +150,7 @@ class Container extends PimpleContainer
     /**
      * Get a class instance
      *
-     * @param string                $sClass             The full class name
+     * @param string $sClass    The full class name
      *
      * @return mixed
      * @throws NotFoundExceptionInterface  No entry was found for **this** identifier.
@@ -169,8 +169,8 @@ class Container extends PimpleContainer
     /**
      * Save a closure in the container
      *
-     * @param string                $sClass             The full class name
-     * @param Closure               $xClosure           The closure
+     * @param string $sClass    The full class name
+     * @param Closure $xClosure    The closure
      *
      * @return void
      */
@@ -182,8 +182,8 @@ class Container extends PimpleContainer
     /**
      * Save a value in the container
      *
-     * @param string                $sKey               The key
-     * @param mixed                 $xValue             The value
+     * @param string $sKey    The key
+     * @param mixed $xValue    The value
      *
      * @return void
      */
@@ -195,8 +195,8 @@ class Container extends PimpleContainer
     /**
      * Set an alias in the container
      *
-     * @param string                $sAlias             The alias name
-     * @param string                $sClass             The class name
+     * @param string $sAlias    The alias name
+     * @param string $sClass    The class name
      *
      * @return void
      */
@@ -210,7 +210,7 @@ class Container extends PimpleContainer
     /**
      * Create an instance of a class, getting the contructor parameters from the DI container
      *
-     * @param string|ReflectionClass $xClass The class name or the reflection class
+     * @param string|ReflectionClass $xClass    The class name or the reflection class
      *
      * @return object|null
      * @throws ReflectionException
@@ -247,7 +247,7 @@ class Container extends PimpleContainer
     /**
      * Create an instance of a class by automatically fetching the dependencies in the constructor.
      *
-     * @param string                $sClass             The class name
+     * @param string $sClass    The class name
      *
      * @return void
      */

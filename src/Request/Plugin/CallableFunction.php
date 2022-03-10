@@ -100,13 +100,13 @@ class CallableFunction extends RequestPlugin
     /**
      * The constructor
      *
-     * @param Jaxon             $jaxon
-     * @param Config            $xConfig
-     * @param RequestHandler    $xRequestHandler
-     * @param ResponseManager   $xResponseManager
-     * @param TemplateEngine    $xTemplateEngine
-     * @param Translator        $xTranslator
-     * @param Validator         $xValidator
+     * @param Jaxon  $jaxon
+     * @param Config  $xConfig
+     * @param RequestHandler  $xRequestHandler
+     * @param ResponseManager  $xResponseManager
+     * @param TemplateEngine  $xTemplateEngine
+     * @param Translator  $xTranslator
+     * @param Validator  $xValidator
      */
     public function __construct(Jaxon $jaxon, Config $xConfig,
         RequestHandler $xRequestHandler, ResponseManager $xResponseManager,
@@ -174,9 +174,9 @@ class CallableFunction extends RequestPlugin
     /**
      * Register a user defined function
      *
-     * @param string $sType The type of request handler being registered
-     * @param string $sCallable The name of the function being registered
-     * @param array $aOptions The associated options
+     * @param string $sType    The type of request handler being registered
+     * @param string $sCallable    The name of the function being registered
+     * @param array $aOptions    The associated options
      *
      * @return bool
      */

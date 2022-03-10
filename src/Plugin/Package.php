@@ -64,8 +64,8 @@ abstract class Package implements Code\Contracts\Generator
     /**
      * Get the value of a given package option
      *
-     * @param string $sOption   The option name
-     * @param mixed  $xDefault  The default value
+     * @param string $sOption    The option name
+     * @param mixed $xDefault    The default value
      *
      * @return mixed
      */

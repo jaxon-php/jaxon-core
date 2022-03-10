@@ -71,7 +71,7 @@ class CallableRepository
     /**
      * The constructor
      *
-     * @param Container         $di
+     * @param Container  $di
      */
     public function __construct(Container $di)
     {
@@ -81,9 +81,9 @@ class CallableRepository
     /**
      * Get a given class options from specified directory options
      *
-     * @param string        $sClassName         The class name
-     * @param array         $aClassOptions      The default class options
-     * @param array         $aDirectoryOptions  The directory options
+     * @param string $sClassName    The class name
+     * @param array $aClassOptions    The default class options
+     * @param array $aDirectoryOptions    The directory options
      *
      * @return array
      */
@@ -151,9 +151,9 @@ class CallableRepository
 
     /**
      *
-     * @param string        $sClassName         The class name
-     * @param array         $aClassOptions      The default class options
-     * @param array         $aDirectoryOptions  The directory options
+     * @param string $sClassName    The class name
+     * @param array $aClassOptions    The default class options
+     * @param array $aDirectoryOptions    The directory options
      *
      * @return void
      */
@@ -164,8 +164,8 @@ class CallableRepository
 
     /**
      *
-     * @param string        $sNamespace     The namespace
-     * @param array|string  $aOptions       The associated options
+     * @param string $sNamespace    The namespace
+     * @param array|string $aOptions    The associated options
      *
      * @return void
      */
@@ -177,7 +177,7 @@ class CallableRepository
     /**
      * Find the options associated with a registered class name
      *
-     * @param string        $sClassName            The class name
+     * @param string $sClassName    The class name
      *
      * @return array|null
      */
@@ -194,7 +194,7 @@ class CallableRepository
     /**
      * Read classes from directories registered without namespaces
      *
-     * @param array         $aDirectories    The directories
+     * @param array $aDirectories    The directories
      *
      * @return void
      */
@@ -236,7 +236,7 @@ class CallableRepository
     /**
      * Read classes from directories registered with namespaces
      *
-     * @param array         $aNamespaces     The namespaces
+     * @param array $aNamespaces    The namespaces
      *
      * @return void
      */
@@ -287,8 +287,8 @@ class CallableRepository
     /**
      * Create a new callable object
      *
-     * @param string        $sClassName            The class name of the callable object
-     * @param array         $aOptions              The callable object options
+     * @param string $sClassName    The class name of the callable object
+     * @param array $aOptions    The callable object options
      *
      * @return void
      */

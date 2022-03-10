@@ -46,7 +46,7 @@ trait App
     /**
      * Get an instance of a registered class
      *
-     * @param string        $sClassName         The class name
+     * @param string $sClassName    The class name
      *
      * @return object|null
      */
@@ -58,7 +58,7 @@ trait App
     /**
      * Get a request to a registered class
      *
-     * @param string        $sClassName         The class name
+     * @param string $sClassName    The class name
      *
      * @return RequestFactory|null
      */
@@ -70,7 +70,7 @@ trait App
     /**
      * Get a package instance
      *
-     * @param string        $sClassName           The package class name
+     * @param string $sClassName    The package class name
      *
      * @return Package
      */
@@ -102,7 +102,7 @@ trait App
     /**
      * Get the HTTP response
      *
-     * @param string $sCode      The HTTP response code
+     * @param string $sCode    The HTTP response code
      *
      * @return mixed
      */
@@ -222,7 +222,7 @@ trait App
     /**
      * Set the container provided by the integrated framework
      *
-     * @param ContainerInterface  $xContainer     The container implementation
+     * @param ContainerInterface $xContainer    The container implementation
      *
      * @return void
      */
@@ -234,10 +234,10 @@ trait App
     /**
      * Add a view namespace, and set the corresponding renderer.
      *
-     * @param string        $sNamespace         The namespace name
-     * @param string        $sDirectory         The namespace directory
-     * @param string        $sExtension         The extension to append to template names
-     * @param string        $sRenderer          The corresponding renderer name
+     * @param string $sNamespace    The namespace name
+     * @param string $sDirectory    The namespace directory
+     * @param string $sExtension    The extension to append to template names
+     * @param string $sRenderer    The corresponding renderer name
      *
      * @return void
      */
@@ -249,8 +249,8 @@ trait App
     /**
      * Add a view renderer with an id
      *
-     * @param string        $sId        The unique identifier of the view renderer
-     * @param Closure       $xClosure   A closure to create the view instance
+     * @param string $sId    The unique identifier of the view renderer
+     * @param Closure $xClosure    A closure to create the view instance
      *
      * @return void
      */
@@ -262,7 +262,7 @@ trait App
     /**
      * Set the session manager
      *
-     * @param Closure      $xClosure      A closure to create the session manager instance
+     * @param Closure $xClosure    A closure to create the session manager instance
      *
      * @return void
      */

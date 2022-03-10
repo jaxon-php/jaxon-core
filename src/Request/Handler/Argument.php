@@ -135,7 +135,7 @@ class Argument
     /**
      * Converts a string to a bool var
      *
-     * @param string        $sValue                The string to be converted
+     * @param string $sValue    The string to be converted
      *
      * @return bool
      */
@@ -161,7 +161,7 @@ class Argument
      *
      * Depending on its first char, the Jaxon request argument is converted to a given type.
      *
-     * @param string        $sValue                The keys of the options in the file
+     * @param string $sValue    The keys of the options in the file
      *
      * @return string|bool|integer|double|null
      */
@@ -191,7 +191,7 @@ class Argument
     /**
      * Decode and convert an Jaxon request argument from JSON
      *
-     * @param string        $sArg                The Jaxon request argument
+     * @param string $sArg    The Jaxon request argument
      *
      * @return void
      */
@@ -234,9 +234,9 @@ class Argument
     /**
      * Decode an Jaxon request argument from UTF8
      *
-     * @param array             $aDst           An array to store the decoded arguments
-     * @param string            $sKey           The key of the argument being decoded
-     * @param string|array      $mValue         The value of the argument being decoded
+     * @param array $aDst    An array to store the decoded arguments
+     * @param string $sKey    The key of the argument being decoded
+     * @param string|array $mValue    The value of the argument being decoded
      *
      * @return void
      */

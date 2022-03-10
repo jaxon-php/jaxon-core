@@ -51,8 +51,8 @@ class CallableDir extends RequestPlugin
     /**
      * The class constructor
      *
-     * @param CallableRegistry      $xRegistry
-     * @param Translator            $xTranslator
+     * @param CallableRegistry  $xRegistry
+     * @param Translator  $xTranslator
      */
     public function __construct(CallableRegistry $xRegistry, Translator $xTranslator)
     {
@@ -71,7 +71,7 @@ class CallableDir extends RequestPlugin
     /**
      * Check the directory
      *
-     * @param string        $sDirectory     The path of teh directory being registered
+     * @param string $sDirectory    The path of teh directory being registered
      *
      * @return string
      * @throws SetupException
@@ -122,9 +122,9 @@ class CallableDir extends RequestPlugin
     /**
      * Register a callable class
      *
-     * @param string $sType The type of request handler being registered
-     * @param string $sCallable The path of the directory being registered
-     * @param array $aOptions The associated options
+     * @param string $sType    The type of request handler being registered
+     * @param string $sCallable    The path of the directory being registered
+     * @param array $aOptions    The associated options
      *
      * @return bool
      */

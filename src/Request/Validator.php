@@ -73,7 +73,7 @@ class Validator
     /**
      * Validate a function name
      *
-     * @param string $sName The function name
+     * @param string $sName    The function name
      *
      * @return bool
      */
@@ -86,7 +86,7 @@ class Validator
     /**
      * Validate a class name
      *
-     * @param string $sName The class name
+     * @param string $sName    The class name
      *
      * @return bool
      */
@@ -99,7 +99,7 @@ class Validator
     /**
      * Validate a method name
      *
-     * @param string $sName The function name
+     * @param string $sName    The function name
      *
      * @return bool
      */
@@ -113,10 +113,10 @@ class Validator
     /**
      * Validate a property of an uploaded file
      *
-     * @param string $sName The uploaded file variable name
-     * @param string $sValue The value of the property
-     * @param string $sProperty The property name in config options
-     * @param string $sField The field name in file data
+     * @param string $sName    The uploaded file variable name
+     * @param string $sValue    The value of the property
+     * @param string $sProperty    The property name in config options
+     * @param string $sField    The field name in file data
      *
      * @return bool
      */
@@ -135,9 +135,9 @@ class Validator
     /**
      * Validate the size of an uploaded file
      *
-     * @param string $sName The uploaded file variable name
-     * @param int $nFileSize The uploaded file size
-     * @param string $sProperty The property name in config options
+     * @param string $sName    The uploaded file variable name
+     * @param int $nFileSize    The uploaded file size
+     * @param string $sProperty    The property name in config options
      *
      * @return bool
      */
@@ -158,8 +158,8 @@ class Validator
     /**
      * Validate an uploaded file
      *
-     * @param string $sName The uploaded file variable name
-     * @param array $aUploadedFile The file data received in the $_FILES array
+     * @param string $sName    The uploaded file variable name
+     * @param array $aUploadedFile    The file data received in the $_FILES array
      *
      * @return bool
      */

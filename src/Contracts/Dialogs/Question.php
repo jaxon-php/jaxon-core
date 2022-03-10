@@ -18,9 +18,9 @@ interface Question
     /**
      * Return a script which makes a call only if the user answers yes to the given question
      *
-     * @param string            $sQuestion
-     * @param string            $sYesScript
-     * @param string            $sNoScript
+     * @param string  $sQuestion
+     * @param string  $sYesScript
+     * @param string  $sNoScript
      *
      * @return string
      */

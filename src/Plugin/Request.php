@@ -47,9 +47,9 @@ abstract class Request extends Plugin
      * when a function or callable object is to be registered.
      * Additional plugins may support other registration types.
      *
-     * @param string        $sType          The type of request handler being registered
-     * @param string        $sCallable      The callable entity being registered
-     * @param array         $aOptions       The associated options
+     * @param string $sType    The type of request handler being registered
+     * @param string $sCallable    The callable entity being registered
+     * @param array $aOptions    The associated options
      *
      * @return bool
      */

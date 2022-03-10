@@ -17,7 +17,7 @@ interface Message
     /**
      * Tells if the library should return the javascript code or run it in the browser.
      *
-     * @param bool             $bReturn              Whether to return the code
+     * @param bool $bReturn    Whether to return the code
      *
      * @return void
      */
@@ -33,8 +33,8 @@ interface Message
     /**
      * Print a success message.
      *
-     * @param string              $sMessage             The text of the message
-     * @param string              $sTitle               The title of the message
+     * @param string $sMessage    The text of the message
+     * @param string $sTitle    The title of the message
      *
      * @return string
      */
@@ -43,8 +43,8 @@ interface Message
     /**
      * Print an information message.
      *
-     * @param string              $sMessage             The text of the message
-     * @param string              $sTitle               The title of the message
+     * @param string $sMessage    The text of the message
+     * @param string $sTitle    The title of the message
      *
      * @return string
      */
@@ -53,8 +53,8 @@ interface Message
     /**
      * Print a warning message.
      *
-     * @param string              $sMessage             The text of the message
-     * @param string              $sTitle               The title of the message
+     * @param string $sMessage    The text of the message
+     * @param string $sTitle    The title of the message
      *
      * @return string
      */
@@ -63,8 +63,8 @@ interface Message
     /**
      * Print an error message.
      *
-     * @param string              $sMessage             The text of the message
-     * @param string              $sTitle               The title of the message
+     * @param string $sMessage    The text of the message
+     * @param string $sTitle    The title of the message
      *
      * @return string
      */

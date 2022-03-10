@@ -77,7 +77,7 @@ class Renderer
     /**
      * The class contructor
      *
-     * @param ViewRenderer          $xRenderer
+     * @param ViewRenderer  $xRenderer
      */
     public function __construct(ViewRenderer $xRenderer)
     {
@@ -87,7 +87,7 @@ class Renderer
     /**
      * Set the text for the previous page link
      *
-     * @param string $sText The text for the previous page link
+     * @param string $sText    The text for the previous page link
      *
      * @return void
      */
@@ -99,7 +99,7 @@ class Renderer
     /**
      * Set the text for the next page link
      *
-     * @param string $sText The text for the previous page link
+     * @param string $sText    The text for the previous page link
      *
      * @return void
      */
@@ -111,7 +111,7 @@ class Renderer
     /**
      * Set the request to be paginated
      *
-     * @param Call $xCall The request to be paginated
+     * @param Call $xCall    The request to be paginated
      *
      * @return void
      */
@@ -128,7 +128,7 @@ class Renderer
     /**
      * Set the current page number
      *
-     * @param int $nCurrentPage The current page number
+     * @param int $nCurrentPage    The current page number
      *
      * @return void
      */
@@ -140,7 +140,7 @@ class Renderer
     /**
      * Set the max number of pages to show
      *
-     * @param int $nMaxPagesToShow The max number of pages to show
+     * @param int $nMaxPagesToShow    The max number of pages to show
      *
      * @return void
      */
@@ -156,7 +156,7 @@ class Renderer
     /**
      * Get the js call to a given page
      *
-     * @param int $pageNum The page number
+     * @param int $pageNum    The page number
      *
      * @return string
      * @throws SetupException
@@ -169,9 +169,9 @@ class Renderer
     /**
      * Render a link to a page.
      *
-     * @param string    $sTemplate      The template for the link to the page
-     * @param string    $sText          The text of the link if it is enabled
-     * @param string    $sCall          The call of the link if it is enabled
+     * @param string $sTemplate    The template for the link to the page
+     * @param string $sText    The text of the link if it is enabled
+     * @param string $sCall    The call of the link if it is enabled
      *
      * @return null|Store
      */
@@ -216,7 +216,7 @@ class Renderer
     /**
      * Get a page data.
      *
-     * @param integer $nNumber The page number
+     * @param integer $nNumber    The page number
      *
      * @return array
      * @throws SetupException
@@ -293,7 +293,7 @@ class Renderer
     /**
      * Get the pages.
      *
-     * @param integer $nTotalPages The total number of pages
+     * @param integer $nTotalPages    The total number of pages
      *
      * @return array
      * @throws SetupException
@@ -315,7 +315,7 @@ class Renderer
     /**
      * Render an HTML pagination control.
      *
-     * @param integer $nTotalPages The total number of pages
+     * @param integer $nTotalPages    The total number of pages
      *
      * @return null|Store
      * @throws SetupException

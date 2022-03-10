@@ -119,7 +119,7 @@ class Bootstrap
     /**
      * Set the library options
      *
-     * @param array       $aLibOptions    The library options
+     * @param array $aLibOptions    The library options
      *
      * @return Bootstrap
      */
@@ -132,7 +132,7 @@ class Bootstrap
     /**
      * Set the applications options
      *
-     * @param array       $aAppOptions    The application options
+     * @param array $aAppOptions    The application options
      *
      * @return Bootstrap
      */
@@ -145,7 +145,7 @@ class Bootstrap
     /**
      * Set the ajax endpoint URI
      *
-     * @param string  $sUri   The ajax endpoint URI
+     * @param string $sUri    The ajax endpoint URI
      *
      * @return Bootstrap
      */
@@ -158,10 +158,10 @@ class Bootstrap
     /**
      * Set the javascript code
      *
-     * @param bool   $bExportJs      Whether to export the js code in a file
-     * @param string    $sJsUri         The URI to access the js file
-     * @param string    $sJsDir         The directory where to create the js file
-     * @param bool   $bMinifyJs      Whether to minify the exported js file
+     * @param bool $bExportJs    Whether to export the js code in a file
+     * @param string $sJsUri    The URI to access the js file
+     * @param string $sJsDir    The directory where to create the js file
+     * @param bool $bMinifyJs    Whether to minify the exported js file
      *
      * @return Bootstrap
      */
@@ -177,7 +177,7 @@ class Bootstrap
     /**
      * Set the Jaxon application options.
      *
-     * @param Config $xAppConfig The config options
+     * @param Config $xAppConfig    The config options
      *
      * @return void
      * @throws SetupException

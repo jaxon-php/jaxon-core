@@ -23,8 +23,8 @@ class AttrSet implements JsonSerializable
     /**
      * The constructor.
      *
-     * @param string        $sAttrName            The attribute name
-     * @param mixed         $xAttrValue           The attribute value
+     * @param string $sAttrName    The attribute name
+     * @param mixed $xAttrValue    The attribute value
      */
     public function __construct(string $sAttrName, $xAttrValue)
     {

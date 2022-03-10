@@ -61,8 +61,8 @@ function pm(): ParameterFactory
  * The returned element is not linked to any Jaxon response, so this function shall be used
  * to insert jQuery code into a javascript function, or as a parameter of a Jaxon function call.
  *
- * @param string $sSelector The jQuery selector
- * @param string $sContext A context associated to the selector
+ * @param string $sSelector    The jQuery selector
+ * @param string $sContext    A context associated to the selector
  *
  * @return DomElement
  * @throws SetupException
@@ -80,8 +80,8 @@ function jq(string $sSelector = '', string $sContext = ''): DomElement
  * The returned element is not linked to any Jaxon response, so this function shall be used
  * to insert jQuery code into a javascript function, or as a parameter of a Jaxon function call.
  *
- * @param string $sSelector The jQuery selector
- * @param string $sContext A context associated to the selector
+ * @param string $sSelector    The jQuery selector
+ * @param string $sContext    A context associated to the selector
  *
  * @return DomElement
  * @throws SetupException

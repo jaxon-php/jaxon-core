@@ -64,8 +64,8 @@ class Parameter implements Contracts\Parameter
     /**
      * The constructor.
      *
-     * @param string        $sType                  The parameter type
-     * @param mixed         $xValue                 The parameter value
+     * @param string $sType    The parameter type
+     * @param mixed $xValue    The parameter value
      */
     public function __construct(string $sType, $xValue)
     {
@@ -96,7 +96,7 @@ class Parameter implements Contracts\Parameter
     /**
      * Set the parameter value
      *
-     * @param mixed         $xValue                 The parameter value
+     * @param mixed $xValue    The parameter value
      *
      * @return void
      */
@@ -108,7 +108,7 @@ class Parameter implements Contracts\Parameter
     /**
      * Create a Parameter instance using the given value
      *
-     * @param mixed         $xValue                 The parameter value
+     * @param mixed $xValue    The parameter value
      *
      * @return Contracts\Parameter
      */
@@ -139,7 +139,7 @@ class Parameter implements Contracts\Parameter
     /**
      * Add quotes to a given value
      *
-     * @param string    $sValue     The value to be quoted
+     * @param string $sValue    The value to be quoted
      *
      * @return string
      */
@@ -151,8 +151,8 @@ class Parameter implements Contracts\Parameter
     /**
      * Get a js call to Jaxon with a single parameter
      *
-     * @param string    $sFunction      The function name
-     * @param string    $sParameter     The function parameter
+     * @param string $sFunction    The function name
+     * @param string $sParameter    The function parameter
      *
      * @return string
      */

@@ -17,10 +17,10 @@ trait DomTreeCommands
     /**
      * Add a response command to the array of commands that will be sent to the browser
      *
-     * @param string        $sName              The command name
-     * @param array         $aAttributes        Associative array of attributes that will describe the command
-     * @param mixed         $mData              The data to be associated with this command
-     * @param bool       $bRemoveEmpty       If true, remove empty attributes
+     * @param string $sName    The command name
+     * @param array $aAttributes    Associative array of attributes that will describe the command
+     * @param mixed $mData    The data to be associated with this command
+     * @param bool $bRemoveEmpty    If true, remove empty attributes
      *
      * @return Response
      */
@@ -39,8 +39,8 @@ trait DomTreeCommands
     /**
      * Add a command to create a DOM element
      *
-     * @param string        $sVariable            The DOM element name (id or class)
-     * @param string        $sTag                The HTML tag of the new DOM element
+     * @param string $sVariable    The DOM element name (id or class)
+     * @param string $sTag    The HTML tag of the new DOM element
      *
      * @return Response
      */
@@ -53,9 +53,9 @@ trait DomTreeCommands
     /**
      * Add a command to set an attribute on a DOM element
      *
-     * @param string        $sVariable            The DOM element name (id or class)
-     * @param string        $sKey                The name of the attribute
-     * @param string        $sValue                The value of the attribute
+     * @param string $sVariable    The DOM element name (id or class)
+     * @param string $sKey    The name of the attribute
+     * @param string $sValue    The value of the attribute
      *
      * @return Response
      */
@@ -68,9 +68,9 @@ trait DomTreeCommands
     /**
      * Add a command to remove children from a DOM element
      *
-     * @param string        $sParent             The DOM parent element
-     * @param int           $nSkip               The number of children to skip
-     * @param int           $nRemove             The number of children to remove
+     * @param string $sParent    The DOM parent element
+     * @param int $nSkip    The number of children to skip
+     * @param int $nRemove    The number of children to remove
      *
      * @return Response
      */
@@ -83,8 +83,8 @@ trait DomTreeCommands
     /**
      * Add a command to append a child to a DOM element
      *
-     * @param string        $sParent                The DOM parent element
-     * @param string        $sVariable            The DOM element name (id or class)
+     * @param string $sParent    The DOM parent element
+     * @param string $sVariable    The DOM element name (id or class)
      *
      * @return Response
      */
@@ -97,8 +97,8 @@ trait DomTreeCommands
     /**
      * Add a command to insert a DOM element before another
      *
-     * @param string        $sTarget                The DOM target element
-     * @param string        $sVariable            The DOM element name (id or class)
+     * @param string $sTarget    The DOM target element
+     * @param string $sVariable    The DOM element name (id or class)
      *
      * @return Response
      */
@@ -111,8 +111,8 @@ trait DomTreeCommands
     /**
      * Add a command to insert a DOM element after another
      *
-     * @param string        $sTarget                The DOM target element
-     * @param string        $sVariable            The DOM element name (id or class)
+     * @param string $sTarget    The DOM target element
+     * @param string $sVariable    The DOM element name (id or class)
      *
      * @return Response
      */
@@ -125,8 +125,8 @@ trait DomTreeCommands
     /**
      * Add a command to append a text to a DOM element
      *
-     * @param string        $sParent                The DOM parent element
-     * @param string        $sText                The HTML text to append
+     * @param string $sParent    The DOM parent element
+     * @param string $sText    The HTML text to append
      *
      * @return Response
      */

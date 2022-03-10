@@ -115,7 +115,7 @@ class Manager
      * If no prior response has been appended, this response becomes the main response
      * object to which other response objects will be appended.
      *
-     * @param AbstractResponse  $xResponse            The response object to be appended
+     * @param AbstractResponse $xResponse    The response object to be appended
      *
      * @return void
      */
@@ -144,7 +144,7 @@ class Manager
      * Debug messages will be sent to the client with the normal response
      * (if the response object supports the sending of debug messages, see: <Response>)
      *
-     * @param string        $sMessage            The debug message
+     * @param string $sMessage    The debug message
      *
      * @return void
      */
@@ -156,7 +156,7 @@ class Manager
     /**
      * Clear the response and appends a debug message on the end of the debug message queue
      *
-     * @param string        $sMessage            The debug message
+     * @param string $sMessage    The debug message
      *
      * @return void
      */

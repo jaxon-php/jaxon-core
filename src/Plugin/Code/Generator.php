@@ -78,7 +78,7 @@ class Generator
      * @param Jaxon $jaxon
      * @param Config $xConfig
      * @param UriDetector $xUriDetector
-     * @param TemplateEngine $xTemplateEngine      The template engine
+     * @param TemplateEngine $xTemplateEngine    The template engine
      * @param Minifier $xMinifier
      */
     public function __construct(Jaxon $jaxon, Config $xConfig, UriDetector $xUriDetector,
@@ -120,8 +120,8 @@ class Generator
     /**
      * Render a template in the 'plugins' subdir
      *
-     * @param string    $sTemplate      The template filename
-     * @param array     $aVars          The template variables
+     * @param string $sTemplate    The template filename
+     * @param array $aVars    The template variables
      *
      * @return string
      */
@@ -134,8 +134,8 @@ class Generator
     /**
      * Add a new generator to the list
      *
-     * @param string $sClassName     The code generator class
-     * @param int $nPriority      The desired priority, used to order the plugins
+     * @param string $sClassName    The code generator class
+     * @param int $nPriority    The desired priority, used to order the plugins
      *
      * @return void
      */
@@ -369,8 +369,8 @@ class Generator
     /**
      * Get the javascript code to be sent to the browser
      *
-     * @param bool $bIncludeJs Also get the JS files
-     * @param bool $bIncludeCss Also get the CSS files
+     * @param bool $bIncludeJs    Also get the JS files
+     * @param bool $bIncludeCss    Also get the CSS files
      *
      * @return string
      * @throws UriException

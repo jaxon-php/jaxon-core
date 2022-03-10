@@ -56,7 +56,7 @@ class Call extends JsCall
     /**
      * The constructor.
      *
-     * @param string        $sName            The javascript function or method name
+     * @param string $sName    The javascript function or method name
      * @param Paginator $xPaginator
      */
     public function __construct(string $sName, Paginator $xPaginator)
@@ -70,7 +70,7 @@ class Call extends JsCall
      *
      * The request is sent only if the condition is true.
      *
-     * @param mixed         $xCondition               The condition to check
+     * @param mixed $xCondition    The condition to check
      *
      * @return Call
      */
@@ -85,7 +85,7 @@ class Call extends JsCall
      *
      * The request is sent only if the condition is false.
      *
-     * @param mixed         $xCondition               The condition to check
+     * @param mixed $xCondition    The condition to check
      *
      * @return Call
      */
@@ -98,8 +98,8 @@ class Call extends JsCall
     /**
      * Check if a value is equal to another before sending the request
      *
-     * @param mixed         $xValue1                  The first value to compare
-     * @param mixed         $xValue2                  The second value to compare
+     * @param mixed $xValue1    The first value to compare
+     * @param mixed $xValue2    The second value to compare
      *
      * @return Call
      */
@@ -112,8 +112,8 @@ class Call extends JsCall
     /**
      * Check if a value is not equal to another before sending the request
      *
-     * @param mixed         $xValue1                  The first value to compare
-     * @param mixed         $xValue2                  The second value to compare
+     * @param mixed $xValue1    The first value to compare
+     * @param mixed $xValue2    The second value to compare
      *
      * @return Call
      */
@@ -126,8 +126,8 @@ class Call extends JsCall
     /**
      * Check if a value is greater than another before sending the request
      *
-     * @param mixed         $xValue1                  The first value to compare
-     * @param mixed         $xValue2                  The second value to compare
+     * @param mixed $xValue1    The first value to compare
+     * @param mixed $xValue2    The second value to compare
      *
      * @return Call
      */
@@ -140,8 +140,8 @@ class Call extends JsCall
     /**
      * Check if a value is greater or equal to another before sending the request
      *
-     * @param mixed         $xValue1                  The first value to compare
-     * @param mixed         $xValue2                  The second value to compare
+     * @param mixed $xValue1    The first value to compare
+     * @param mixed $xValue2    The second value to compare
      *
      * @return Call
      */
@@ -154,8 +154,8 @@ class Call extends JsCall
     /**
      * Check if a value is lower than another before sending the request
      *
-     * @param mixed         $xValue1                  The first value to compare
-     * @param mixed         $xValue2                  The second value to compare
+     * @param mixed $xValue1    The first value to compare
+     * @param mixed $xValue2    The second value to compare
      *
      * @return Call
      */
@@ -168,8 +168,8 @@ class Call extends JsCall
     /**
      * Check if a value is lower or equal to another before sending the request
      *
-     * @param mixed         $xValue1                  The first value to compare
-     * @param mixed         $xValue2                  The second value to compare
+     * @param mixed $xValue1    The first value to compare
+     * @param mixed $xValue2    The second value to compare
      *
      * @return Call
      */
@@ -182,7 +182,7 @@ class Call extends JsCall
     /**
      * Create parameters for message arguments
      *
-     * @param array     $aArgs          The arguments
+     * @param array $aArgs    The arguments
      *
      * @return void
      */
@@ -196,7 +196,7 @@ class Call extends JsCall
     /**
      * Add a confirmation question to the request
      *
-     * @param string        $sQuestion                The question to ask
+     * @param string $sQuestion    The question to ask
      *
      * @return Call
      */
@@ -213,7 +213,7 @@ class Call extends JsCall
      * The first parameter is the message to show. The followings allow inserting data from
      * the webpage in the message using positional placeholders.
      *
-     * @param string        $sMessage                 The message to show if the request is not sent
+     * @param string $sMessage    The message to show if the request is not sent
      *
      * @return Call
      */
@@ -348,7 +348,7 @@ class Call extends JsCall
     /**
      * Set a value to the Parameter::PAGE_NUMBER parameter
      *
-     * @param integer        $nPageNumber        The current page number
+     * @param integer $nPageNumber    The current page number
      *
      * @return Call
      */
@@ -369,9 +369,9 @@ class Call extends JsCall
     /**
      * Make the pagination links for this request
      *
-     * @param integer $nCurrentPage The current page
-     * @param integer $nItemsPerPage The number of items per page
-     * @param integer $nItemsTotal The total number of items
+     * @param integer $nCurrentPage    The current page
+     * @param integer $nItemsPerPage    The number of items per page
+     * @param integer $nItemsTotal    The total number of items
      *
      * @return Store|null
      * @throws SetupException
@@ -384,9 +384,9 @@ class Call extends JsCall
     /**
      * Make the pagination links for this request
      *
-     * @param integer $nCurrentPage The current page
-     * @param integer $nItemsPerPage The number of items per page
-     * @param integer $nItemsTotal The total number of items
+     * @param integer $nCurrentPage    The current page
+     * @param integer $nItemsPerPage    The number of items per page
+     * @param integer $nItemsTotal    The total number of items
      *
      * @return Store|null
      * @throws SetupException
@@ -399,9 +399,9 @@ class Call extends JsCall
     /**
      * Make the pagination links for this request
      *
-     * @param integer $nCurrentPage The current page
-     * @param integer $nItemsPerPage The number of items per page
-     * @param integer $nItemsTotal The total number of items
+     * @param integer $nCurrentPage    The current page
+     * @param integer $nItemsPerPage    The number of items per page
+     * @param integer $nItemsTotal    The total number of items
      *
      * @return array
      * @throws SetupException

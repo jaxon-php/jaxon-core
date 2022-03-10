@@ -67,7 +67,7 @@ class Dialog
     /**
      * Set the QuestionContract class name
      *
-     * @param string $sQuestion     The QuestionContract class name
+     * @param string $sQuestion    The QuestionContract class name
      *
      * @return void
      */
@@ -99,7 +99,7 @@ class Dialog
     /**
      * Set MessageContract class name
      *
-     * @param string $sMessage       The MessageContract class name
+     * @param string $sMessage    The MessageContract class name
      *
      * @return void
      */
@@ -132,9 +132,9 @@ class Dialog
      * Get the script which makes a call only if the user answers yes to the given question.
      * It is a function of the Question interface.
      *
-     * @param string            $sQuestion
-     * @param string            $sYesScript
-     * @param string            $sNoScript
+     * @param string  $sQuestion
+     * @param string  $sYesScript
+     * @param string  $sNoScript
      *
      * @return string
      */
@@ -148,8 +148,8 @@ class Dialog
      *
      * It is a function of the Message interface.
      *
-     * @param string              $sMessage             The text of the message
-     * @param string              $sTitle               The title of the message
+     * @param string $sMessage    The text of the message
+     * @param string $sTitle    The title of the message
      *
      * @return string
      */
@@ -163,8 +163,8 @@ class Dialog
      *
      * It is a function of the Message interface.
      *
-     * @param string              $sMessage             The text of the message
-     * @param string              $sTitle               The title of the message
+     * @param string $sMessage    The text of the message
+     * @param string $sTitle    The title of the message
      *
      * @return string
      */
@@ -178,8 +178,8 @@ class Dialog
      *
      * It is a function of the Message interface.
      *
-     * @param string              $sMessage             The text of the message
-     * @param string              $sTitle               The title of the message
+     * @param string $sMessage    The text of the message
+     * @param string $sTitle    The title of the message
      *
      * @return string
      */
@@ -193,8 +193,8 @@ class Dialog
      *
      * It is a function of the Message interface.
      *
-     * @param string              $sMessage             The text of the message
-     * @param string              $sTitle               The title of the message
+     * @param string $sMessage    The text of the message
+     * @param string $sTitle    The title of the message
      *
      * @return string
      */

@@ -41,8 +41,8 @@ class FileUpload
     /**
      * The constructor
      *
-     * @param Validator         $xValidator
-     * @param Translator        $xTranslator
+     * @param Validator  $xValidator
+     * @param Translator  $xTranslator
      */
     public function __construct(Validator $xValidator, Translator $xTranslator)
     {
@@ -53,7 +53,7 @@ class FileUpload
     /**
      * Filter uploaded file name
      *
-     * @param Closure       $cNameSanitizer     The closure which filters filenames
+     * @param Closure $cNameSanitizer    The closure which filters filenames
      *
      * @return void
      */
@@ -65,7 +65,7 @@ class FileUpload
     /**
      * Check uploaded files
      *
-     * @param array     $aFiles     The uploaded files
+     * @param array $aFiles    The uploaded files
      *
      * @return void
      * @throws SetupException
@@ -93,9 +93,9 @@ class FileUpload
     /**
      * Get a file from upload entry
      *
-     * @param string    $sVarName       The corresponding variable
-     * @param array     $aVarFiles      An entry in the PHP $_FILES array
-     * @param integer   $nPosition      The postion of the file to be processed
+     * @param string $sVarName    The corresponding variable
+     * @param array $aVarFiles    An entry in the PHP $_FILES array
+     * @param integer $nPosition    The postion of the file to be processed
      *
      * @return null|array
      */

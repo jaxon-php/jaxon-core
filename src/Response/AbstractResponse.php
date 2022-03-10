@@ -15,8 +15,8 @@ abstract class AbstractResponse
      * Merge the response commands from the specified <Response> object with
      * the response commands in this <Response> object
      *
-     * @param AbstractResponse|array    $mCommands  The <Response> object
-     * @param bool                   $bBefore    Add the new commands to the beginning of the list
+     * @param AbstractResponse|array $mCommands    The <Response> object
+     * @param bool $bBefore    Add the new commands to the beginning of the list
      *
      * @return void
      */
@@ -26,7 +26,7 @@ abstract class AbstractResponse
     /**
      * Add a command to display a debug message to the user
      *
-     * @param string        $sMessage            The message to be displayed
+     * @param string $sMessage    The message to be displayed
      *
      * @return AbstractResponse
      */

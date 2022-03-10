@@ -85,8 +85,8 @@ class CallableClass
     /**
      * Create a JQuery Element with a given selector, and link it to the response attribute.
      *
-     * @param string        $sSelector            The jQuery selector
-     * @param string        $sContext             A context associated to the selector
+     * @param string $sSelector    The jQuery selector
+     * @param string $sContext    A context associated to the selector
      *
      * @return DomElement
      */
@@ -98,7 +98,7 @@ class CallableClass
     /**
      * Get an instance of a Jaxon class by name
      *
-     * @param string $sName the class name
+     * @param string $sName    the class name
      *
      * @return object
      */
@@ -121,7 +121,7 @@ class CallableClass
     /**
      * Get a data bag.
      *
-     * @param string        $sName
+     * @param string  $sName
      *
      * @return DataBagContext
      */

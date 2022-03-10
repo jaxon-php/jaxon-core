@@ -34,7 +34,7 @@ trait SessionTrait
     /**
      * Set the session manager
      *
-     * @param Closure      $xClosure      A closure to create the session manager instance
+     * @param Closure $xClosure    A closure to create the session manager instance
      *
      * @return void
      */

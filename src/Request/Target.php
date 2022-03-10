@@ -64,10 +64,10 @@ class Target
     /**
      * The constructor
      *
-     * @param string    $sType              The target type
-     * @param string    $sFunctionName      The function name
-     * @param string    $sClassName         The class name
-     * @param string    $sMethodName        The method name
+     * @param string $sType    The target type
+     * @param string $sFunctionName    The function name
+     * @param string $sClassName    The class name
+     * @param string $sMethodName    The method name
      */
     private function __construct(string $sType, string $sFunctionName, string $sClassName, string $sMethodName)
     {
@@ -80,7 +80,7 @@ class Target
     /**
      * Create a target of type Function
      *
-     * @param string    $sFunctionName      The function name
+     * @param string $sFunctionName    The function name
      *
      * @return Target
      */
@@ -92,8 +92,8 @@ class Target
     /**
      * Create a target of type Class
      *
-     * @param string    $sClassName         The class name
-     * @param string    $sMethodName        The method name
+     * @param string $sClassName    The class name
+     * @param string $sMethodName    The method name
      *
      * @return Target
      */

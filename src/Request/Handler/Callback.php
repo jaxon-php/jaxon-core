@@ -119,7 +119,7 @@ class Callback
     /**
      * Add a library booting callback.
      *
-     * @param callable $xCallable               The callback function
+     * @param callable $xCallable    The callback function
      *
      * @return Callback
      */
@@ -132,7 +132,7 @@ class Callback
     /**
      * Add a pre-request processing callback.
      *
-     * @param callable $xCallable               The callback function
+     * @param callable $xCallable    The callback function
      *
      * @return Callback
      */
@@ -145,7 +145,7 @@ class Callback
     /**
      * Add a post-request processing callback.
      *
-     * @param callable $xCallable               The callback function
+     * @param callable $xCallable    The callback function
      *
      * @return Callback
      */
@@ -158,7 +158,7 @@ class Callback
     /**
      * Add a invalid request callback.
      *
-     * @param callable $xCallable               The callback function
+     * @param callable $xCallable    The callback function
      *
      * @return Callback
      */
@@ -171,7 +171,7 @@ class Callback
     /**
      * Add a processing error callback.
      *
-     * @param callable $xCallable               The callback function
+     * @param callable $xCallable    The callback function
      *
      * @return Callback
      */
@@ -184,7 +184,7 @@ class Callback
     /**
      * Add a class initialisation callback.
      *
-     * @param callable $xCallable               The callback function
+     * @param callable $xCallable    The callback function
      *
      * @return Callback
      */

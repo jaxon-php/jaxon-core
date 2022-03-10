@@ -17,10 +17,10 @@ trait DomCommands
     /**
      * Add a response command to the array of commands that will be sent to the browser
      *
-     * @param string        $sName              The command name
-     * @param array         $aAttributes        Associative array of attributes that will describe the command
-     * @param mixed         $mData              The data to be associated with this command
-     * @param bool       $bRemoveEmpty       If true, remove empty attributes
+     * @param string $sName    The command name
+     * @param array $aAttributes    Associative array of attributes that will describe the command
+     * @param mixed $mData    The data to be associated with this command
+     * @param bool $bRemoveEmpty    If true, remove empty attributes
      *
      * @return Response
      */
@@ -29,9 +29,9 @@ trait DomCommands
     /**
      * Add a command to assign the specified value to the given element's attribute
      *
-     * @param string        $sTarget              The id of the html element on the browser
-     * @param string        $sAttribute           The attribute to be assigned
-     * @param string        $sData                The value to be assigned to the attribute
+     * @param string $sTarget    The id of the html element on the browser
+     * @param string $sAttribute    The attribute to be assigned
+     * @param string $sData    The value to be assigned to the attribute
      *
      * @return Response
      */
@@ -46,8 +46,8 @@ trait DomCommands
      *
      * This is a shortcut for assign() on the innerHTML attribute.
      *
-     * @param string        $sTarget              The id of the html element on the browser
-     * @param string        $sData                The value to be assigned to the attribute
+     * @param string $sTarget    The id of the html element on the browser
+     * @param string $sData    The value to be assigned to the attribute
      *
      * @return Response
      */
@@ -59,9 +59,9 @@ trait DomCommands
     /**
      * Add a command to append the specified data to the given element's attribute
      *
-     * @param string        $sTarget            The id of the element to be updated
-     * @param string        $sAttribute            The name of the attribute to be appended to
-     * @param string        $sData                The data to be appended to the attribute
+     * @param string $sTarget    The id of the element to be updated
+     * @param string $sAttribute    The name of the attribute to be appended to
+     * @param string $sData    The data to be appended to the attribute
      *
      * @return Response
      */
@@ -74,9 +74,9 @@ trait DomCommands
     /**
      * Add a command to prepend the specified data to the given element's attribute
      *
-     * @param string        $sTarget            The id of the element to be updated
-     * @param string        $sAttribute            The name of the attribute to be prepended to
-     * @param string        $sData                The value to be prepended to the attribute
+     * @param string $sTarget    The id of the element to be updated
+     * @param string $sAttribute    The name of the attribute to be prepended to
+     * @param string $sData    The value to be prepended to the attribute
      *
      * @return Response
      */
@@ -89,10 +89,10 @@ trait DomCommands
     /**
      * Add a command to replace a specified value with another value within the given element's attribute
      *
-     * @param string        $sTarget            The id of the element to update
-     * @param string        $sAttribute            The attribute to be updated
-     * @param string        $sSearch            The needle to search for
-     * @param string        $sData                The data to use in place of the needle
+     * @param string $sTarget    The id of the element to update
+     * @param string $sAttribute    The attribute to be updated
+     * @param string $sSearch    The needle to search for
+     * @param string $sData    The data to use in place of the needle
      *
      * @return Response
      */
@@ -106,8 +106,8 @@ trait DomCommands
     /**
      * Add a command to clear the specified attribute of the given element
      *
-     * @param string        $sTarget            The id of the element to be updated.
-     * @param string        $sAttribute         The attribute to be cleared
+     * @param string $sTarget    The id of the element to be updated.
+     * @param string $sAttribute    The attribute to be cleared
      *
      * @return Response
      */
@@ -122,8 +122,8 @@ trait DomCommands
      *
      * The object is referenced using the 'this' keyword in the sAttribute parameter.
      *
-     * @param string        $sAttribute             The attribute to be updated
-     * @param string        $sData                  The value to assign
+     * @param string $sAttribute    The attribute to be updated
+     * @param string $sData    The value to assign
      *
      * @return Response
      */
@@ -139,8 +139,8 @@ trait DomCommands
      *
      * The object is referenced using the 'this' keyword in the sAttribute parameter.
      *
-     * @param string        $sAttribute            The attribute to be appended to
-     * @param string        $sData                The value to append
+     * @param string $sAttribute    The attribute to be appended to
+     * @param string $sData    The value to append
      *
      * @return Response
      */
@@ -156,8 +156,8 @@ trait DomCommands
      *
      * The object is access via the 'this' keyword in the sAttribute parameter.
      *
-     * @param string        $sAttribute            The attribute to be updated
-     * @param string        $sData                The value to be prepended
+     * @param string $sAttribute    The attribute to be updated
+     * @param string $sData    The value to be prepended
      *
      * @return Response
      */
@@ -173,7 +173,7 @@ trait DomCommands
      * The member is access via the 'this' keyword and can be used to update a javascript
      * object specified by context in the request parameters.
      *
-     * @param string        $sAttribute            The attribute to be cleared
+     * @param string $sAttribute    The attribute to be cleared
      *
      * @return Response
      */
@@ -185,7 +185,7 @@ trait DomCommands
     /**
      * Add a command to remove an element from the document
      *
-     * @param string        $sTarget            The id of the element to be removed
+     * @param string $sTarget    The id of the element to be removed
      *
      * @return Response
      */
@@ -198,9 +198,9 @@ trait DomCommands
     /**
      * Add a command to create a new element on the browser
      *
-     * @param string        $sParent            The id of the parent element
-     * @param string        $sTag                The tag name to be used for the new element
-     * @param string        $sId                The id to assign to the new element
+     * @param string $sParent    The id of the parent element
+     * @param string $sTag    The tag name to be used for the new element
+     * @param string $sId    The id to assign to the new element
      *
      * @return Response
      */
@@ -213,9 +213,9 @@ trait DomCommands
     /**
      * Add a command to insert a new element just prior to the specified element
      *
-     * @param string        $sBefore            The id of the element used as a reference point for the insertion
-     * @param string        $sTag               The tag name to be used for the new element
-     * @param string        $sId                The id to assign to the new element
+     * @param string $sBefore    The id of the element used as a reference point for the insertion
+     * @param string $sTag    The tag name to be used for the new element
+     * @param string $sId    The id to assign to the new element
      *
      * @return Response
      */
@@ -229,9 +229,9 @@ trait DomCommands
      * Add a command to insert a new element just prior to the specified element
      * This is an alias for insertBefore.
      *
-     * @param string        $sBefore            The id of the element used as a reference point for the insertion
-     * @param string        $sTag               The tag name to be used for the new element
-     * @param string        $sId                The id to assign to the new element
+     * @param string $sBefore    The id of the element used as a reference point for the insertion
+     * @param string $sTag    The tag name to be used for the new element
+     * @param string $sId    The id to assign to the new element
      *
      * @return Response
      */
@@ -243,9 +243,9 @@ trait DomCommands
     /**
      * Add a command to insert a new element after the specified
      *
-     * @param string        $sAfter             The id of the element used as a reference point for the insertion
-     * @param string        $sTag               The tag name to be used for the new element
-     * @param string        $sId                The id to assign to the new element
+     * @param string $sAfter    The id of the element used as a reference point for the insertion
+     * @param string $sTag    The tag name to be used for the new element
+     * @param string $sId    The id to assign to the new element
      *
      * @return Response
      */
@@ -258,10 +258,10 @@ trait DomCommands
     /**
      * Add a command to create an input element on the browser
      *
-     * @param string        $sParent            The id of the parent element
-     * @param string        $sType              The type of the new input element
-     * @param string        $sName              The name of the new input element
-     * @param string        $sId                The id of the new element
+     * @param string $sParent    The id of the parent element
+     * @param string $sType    The type of the new input element
+     * @param string $sName    The name of the new input element
+     * @param string $sId    The id of the new element
      *
      * @return Response
      */
@@ -274,10 +274,10 @@ trait DomCommands
     /**
      * Add a command to insert a new input element preceding the specified element
      *
-     * @param string        $sBefore            The id of the element to be used as the reference point for the insertion
-     * @param string        $sType                The type of the new input element
-     * @param string        $sName                The name of the new input element
-     * @param string        $sId                The id of the new element
+     * @param string $sBefore    The id of the element to be used as the reference point for the insertion
+     * @param string $sType    The type of the new input element
+     * @param string $sName    The name of the new input element
+     * @param string $sId    The id of the new element
      *
      * @return Response
      */
@@ -290,10 +290,10 @@ trait DomCommands
     /**
      * Add a command to insert a new input element after the specified element
      *
-     * @param string        $sAfter                The id of the element to be used as the reference point for the insertion
-     * @param string        $sType                The type of the new input element
-     * @param string        $sName                The name of the new input element
-     * @param string        $sId                The id of the new element
+     * @param string $sAfter    The id of the element to be used as the reference point for the insertion
+     * @param string $sType    The type of the new input element
+     * @param string $sName    The name of the new input element
+     * @param string $sId    The id of the new element
      *
      * @return Response
      */

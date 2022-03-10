@@ -92,8 +92,8 @@ class CallableObject
     /**
      * The class constructor
      *
-     * @param Container         $di
-     * @param ReflectionClass   $xReflectionClass   The reflection class
+     * @param Container  $di
+     * @param ReflectionClass $xReflectionClass    The reflection class
      *
      */
     public function __construct(Container $di, ReflectionClass $xReflectionClass)
@@ -105,7 +105,7 @@ class CallableObject
     /**
      * Set callable object options
      *
-     * @param   array           $aOptions
+     * @param array  $aOptions
      *
      * @return void
      */
@@ -191,8 +191,8 @@ class CallableObject
     /**
      * Set hook methods
      *
-     * @param array         $aHookMethods      The array of hook methods
-     * @param string|array  $xValue             The value of the configuration option
+     * @param array $aHookMethods    The array of hook methods
+     * @param string|array $xValue    The value of the configuration option
      *
      * @return void
      */
@@ -214,8 +214,8 @@ class CallableObject
     /**
      * Set configuration options / call options for each method
      *
-     * @param string        $sName              The name of the configuration option
-     * @param string|array  $xValue             The value of the configuration option
+     * @param string $sName    The name of the configuration option
+     * @param string|array $xValue    The value of the configuration option
      *
      * @return void
      */
@@ -300,7 +300,7 @@ class CallableObject
     /**
      * Check if the specified method name is one of the methods of the registered callable object
      *
-     * @param string        $sMethod            The name of the method to check
+     * @param string $sMethod    The name of the method to check
      *
      * @return bool
      */
@@ -312,8 +312,8 @@ class CallableObject
     /**
      * Call the specified method of the registered callable object using the specified array of arguments
      *
-     * @param array $aClassMethods The methods config options
-     * @param string $sMethod The method called by the request
+     * @param array $aClassMethods    The methods config options
+     * @param string $sMethod    The method called by the request
      *
      * @return void
      * @throws ReflectionException
@@ -351,8 +351,8 @@ class CallableObject
     /**
      * Call the specified method of the registered callable object using the specified array of arguments
      *
-     * @param string $sMethod The name of the method to call
-     * @param array $aArgs The arguments to pass to the method
+     * @param string $sMethod    The name of the method to call
+     * @param array $aArgs    The arguments to pass to the method
      *
      * @return null|Response
      * @throws ReflectionException

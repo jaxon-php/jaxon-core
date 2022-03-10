@@ -42,7 +42,7 @@ class JsCall implements JsonSerializable
     /**
      * The constructor.
      *
-     * @param string        $sFunction            The javascript function
+     * @param string $sFunction    The javascript function
      */
     public function __construct(string $sFunction)
     {
@@ -109,7 +109,7 @@ class JsCall implements JsonSerializable
     /**
      * Set the value of the parameter at the given position
      *
-     * @param Contracts\Parameter      $xParameter             The value to be used
+     * @param Contracts\Parameter $xParameter    The value to be used
      *
      * @return JsCall
      */
@@ -122,8 +122,8 @@ class JsCall implements JsonSerializable
     /**
      * Add a parameter value to the parameter list for this request
      *
-     * @param string            $sType              The type of the value to be used
-     * @param string            $sValue             The value to be used
+     * @param string $sType    The type of the value to be used
+     * @param string $sValue    The value to be used
      *
      * Types should be one of the following <Parameter::FORM_VALUES>, <Parameter::QUOTED_VALUE>, <Parameter::NUMERIC_VALUE>,
      * <Parameter::JS_VALUE>, <Parameter::INPUT_VALUE>, <Parameter::CHECKED_VALUE>, <Parameter::PAGE_NUMBER>.
@@ -145,7 +145,7 @@ class JsCall implements JsonSerializable
     /**
      * Add a set of parameters to this request
      *
-     * @param array             $aParameters             The parameters
+     * @param array $aParameters    The parameters
      *
      * @return JsCall
      */

@@ -50,9 +50,9 @@ class Element implements JsonSerializable, Parameter
     /**
      * The constructor.
      *
-     * @param string        $jQueryNs             The jQuery symbol
-     * @param string        $sSelector            The jQuery selector
-     * @param string        $sContext             A context associated to the selector
+     * @param string $jQueryNs    The jQuery symbol
+     * @param string $sSelector    The jQuery selector
+     * @param string $sContext    A context associated to the selector
      */
     public function __construct(string $jQueryNs, string $sSelector, string $sContext)
     {
@@ -77,8 +77,8 @@ class Element implements JsonSerializable, Parameter
     /**
      * Add a call to a jQuery method on the selected elements
      *
-     * @param string        $sMethod
-     * @param array         $aArguments
+     * @param string  $sMethod
+     * @param array  $aArguments
      *
      * @return Element
      */
@@ -93,7 +93,7 @@ class Element implements JsonSerializable, Parameter
     /**
      * Get the value of an attribute on the first selected element
      *
-     * @param string        $sAttribute
+     * @param string  $sAttribute
      *
      * @return Element
      */
@@ -108,7 +108,7 @@ class Element implements JsonSerializable, Parameter
     /**
      * Set the value of an attribute on the first selected element
      *
-     * @param string        $sAttribute
+     * @param string  $sAttribute
      *
      * @return void
      */

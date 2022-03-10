@@ -40,7 +40,7 @@ class UploadResponse extends AbstractResponse
     /**
      * Set the path to the uploaded file
      *
-     * @param string        $sUploadedFile
+     * @param string  $sUploadedFile
      *
      * @return void
      */
@@ -52,7 +52,7 @@ class UploadResponse extends AbstractResponse
     /**
      * Set the error message
      *
-     * @param string        $sErrorMessage
+     * @param string  $sErrorMessage
      *
      * @return void
      */
@@ -64,7 +64,7 @@ class UploadResponse extends AbstractResponse
     /**
      * Add a command to display a debug message to the user
      *
-     * @param string        $sMessage            The message to be displayed
+     * @param string $sMessage    The message to be displayed
      *
      * @return AbstractResponse
      */

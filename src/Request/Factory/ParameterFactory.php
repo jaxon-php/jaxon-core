@@ -21,7 +21,7 @@ class ParameterFactory
     /**
      * Make a parameter of type Parameter::FORM_VALUES
      *
-     * @param string        $sFormId                The id of the HTML form
+     * @param string $sFormId    The id of the HTML form
      *
      * @return Parameter
      */
@@ -33,7 +33,7 @@ class ParameterFactory
     /**
      * Make a parameter of type Parameter::INPUT_VALUE
      *
-     * @param string $sInputId the id of the HTML input element
+     * @param string $sInputId    the id of the HTML input element
      *
      * @return Parameter
      */
@@ -45,7 +45,7 @@ class ParameterFactory
     /**
      * Make a parameter of type Parameter::CHECKED_VALUE
      *
-     * @param string $sInputId the name of the HTML form element
+     * @param string $sInputId    the name of the HTML form element
      *
      * @return Parameter
      */
@@ -57,7 +57,7 @@ class ParameterFactory
     /**
      * Make a parameter of type Parameter::CHECKED_VALUE
      *
-     * @param string $sInputId the name of the HTML form element
+     * @param string $sInputId    the name of the HTML form element
      *
      * @return Parameter
      */
@@ -69,7 +69,7 @@ class ParameterFactory
     /**
      * Make a parameter of type Parameter::ELEMENT_INNERHTML
      *
-     * @param string $sElementId the id of the HTML element
+     * @param string $sElementId    the id of the HTML element
      *
      * @return Parameter
      */
@@ -81,7 +81,7 @@ class ParameterFactory
     /**
      * Make a parameter of type Parameter::QUOTED_VALUE
      *
-     * @param string $sValue the value of the parameter
+     * @param string $sValue    the value of the parameter
      *
      * @return Parameter
      */
@@ -93,7 +93,7 @@ class ParameterFactory
     /**
      * Make a parameter of type Parameter::NUMERIC_VALUE
      *
-     * @param numeric $nValue the value of the parameter
+     * @param numeric $nValue    the value of the parameter
      *
      * @return Parameter
      */
@@ -105,7 +105,7 @@ class ParameterFactory
     /**
      * Make a parameter of type Parameter::NUMERIC_VALUE
      *
-     * @param numeric $nValue the value of the parameter
+     * @param numeric $nValue    the value of the parameter
      *
      * @return Parameter
      */
@@ -117,7 +117,7 @@ class ParameterFactory
     /**
      * Make a parameter of type Parameter::JS_VALUE
      *
-     * @param string $sValue the javascript code of the parameter
+     * @param string $sValue    the javascript code of the parameter
      *
      * @return Parameter
      */
@@ -129,7 +129,7 @@ class ParameterFactory
     /**
      * Make a parameter of type Parameter::JS_VALUE
      *
-     * @param string $sValue the javascript code of the parameter
+     * @param string $sValue    the javascript code of the parameter
      *
      * @return Parameter
      */

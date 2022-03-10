@@ -110,7 +110,7 @@ class Manager
     /**
      * Get a package instance
      *
-     * @param string        $sClassName           The package class name
+     * @param string $sClassName    The package class name
      *
      * @return Package
      */
@@ -127,9 +127,9 @@ class Manager
      * - 1000 thru 8999: User created plugins, typically, these plugins don't care about order
      * - 9000 thru 9999: Plugins that generally need to be last or near the end of the plugin list
      *
-     * @param string $sClassName The plugin class
-     * @param string $sPluginName The plugin name
-     * @param integer $nPriority The plugin priority, used to order the plugins
+     * @param string $sClassName    The plugin class
+     * @param string $sPluginName    The plugin name
+     * @param integer $nPriority    The plugin priority, used to order the plugins
      *
      * @return void
      * @throws SetupException
@@ -179,7 +179,7 @@ class Manager
     /**
      * Register a package
      *
-     * @param string $sClassName The package class name
+     * @param string $sClassName    The package class name
      *
      * @return Config
      * @throws SetupException
@@ -204,8 +204,8 @@ class Manager
     /**
      * Register a package
      *
-     * @param string $sClassName The package class name
-     * @param array $aAppOptions The package options defined in the app section of the config file
+     * @param string $sClassName    The package class name
+     * @param array $aAppOptions    The package options defined in the app section of the config file
      *
      * @return void
      * @throws SetupException
@@ -240,9 +240,9 @@ class Manager
      *
      * Call the request plugin with the $sType defined as name.
      *
-     * @param string $sType The type of request handler being registered
-     * @param string $sCallable The callable entity being registered
-     * @param array|string $xOptions The associated options
+     * @param string $sType    The type of request handler being registered
+     * @param string $sCallable    The callable entity being registered
+     * @param array|string $xOptions    The associated options
      *
      * @return void
      * @throws SetupException
@@ -262,9 +262,9 @@ class Manager
     /**
      * Register callables from a section of the config
      *
-     * @param Config $xAppConfig The config options
-     * @param string $sSection The config section name
-     * @param string $sCallableType The type of callable to register
+     * @param Config $xAppConfig    The config options
+     * @param string $sSection    The config section name
+     * @param string $sCallableType    The type of callable to register
      *
      * @return void
      * @throws SetupException
@@ -295,7 +295,7 @@ class Manager
     /**
      * Read and set Jaxon options from a JSON config file
      *
-     * @param Config $xAppConfig The config options
+     * @param Config $xAppConfig    The config options
      *
      * @return void
      * @throws SetupException
@@ -323,7 +323,7 @@ class Manager
     /**
      * Read and set Jaxon options from a JSON config file
      *
-     * @param Config $xAppConfig The config options
+     * @param Config $xAppConfig    The config options
      *
      * @return void
      * @throws SetupException
@@ -345,8 +345,8 @@ class Manager
     /**
      * Find the specified response plugin by name and return a reference to it if one exists
      *
-     * @param string $sName The name of the plugin
-     * @param JaxonResponse|null $xResponse The response to attach the plugin to
+     * @param string $sName    The name of the plugin
+     * @param JaxonResponse|null $xResponse    The response to attach the plugin to
      *
      * @return Response
      */
@@ -367,7 +367,7 @@ class Manager
     /**
      * Find the specified request plugin by name and return a reference to it if one exists
      *
-     * @param string        $sName                The name of the plugin
+     * @param string $sName    The name of the plugin
      *
      * @return Request
      */

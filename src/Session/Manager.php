@@ -19,7 +19,7 @@ class Manager implements SessionContract
     /**
      * Generate a new session id
      *
-     * @param bool          $bDeleteData         Whether to delete data from the previous session
+     * @param bool $bDeleteData    Whether to delete data from the previous session
      *
      * @return void
      */
@@ -31,8 +31,8 @@ class Manager implements SessionContract
     /**
      * Save data in the session
      *
-     * @param string        $sKey                The session key
-     * @param mixed         $xValue              The session value
+     * @param string $sKey    The session key
+     * @param mixed $xValue    The session value
      *
      * @return void
      */
@@ -44,8 +44,8 @@ class Manager implements SessionContract
     /**
      * Save data in the session, that will be available only until the next call
      *
-     * @param string        $sKey                The session key
-     * @param mixed         $xValue              The session value
+     * @param string $sKey    The session key
+     * @param mixed $xValue    The session value
      *
      * @return void
      */
@@ -56,7 +56,7 @@ class Manager implements SessionContract
     /**
      * Check if a session key exists
      *
-     * @param string        $sKey                The session key
+     * @param string $sKey    The session key
      *
      * @return bool
      */
@@ -68,8 +68,8 @@ class Manager implements SessionContract
     /**
      * Get data from the session
      *
-     * @param string        $sKey                The session key
-     * @param string|null   $xDefault            The default value
+     * @param string $sKey    The session key
+     * @param string|null $xDefault    The default value
      *
      * @return mixed
      */
@@ -91,7 +91,7 @@ class Manager implements SessionContract
     /**
      * Delete a session key and its data
      *
-     * @param string        $sKey                The session key
+     * @param string $sKey    The session key
      *
      * @return void
      */

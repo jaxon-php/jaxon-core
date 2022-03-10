@@ -54,8 +54,8 @@ class Renderer
     /**
      * Make a piece of data available for the rendered view
      *
-     * @param string        $sName           The data name
-     * @param mixed         $xValue          The data value
+     * @param string $sName    The data name
+     * @param mixed $xValue    The data value
      *
      * @return Renderer
      */
@@ -68,8 +68,8 @@ class Renderer
     /**
      * Make a piece of data available for all views
      *
-     * @param string        $sName           The data name
-     * @param mixed         $xValue          The data value
+     * @param string $sName    The data name
+     * @param mixed $xValue    The data value
      *
      * @return Renderer
      */
@@ -82,7 +82,7 @@ class Renderer
     /**
      * Make an array of data available for all views
      *
-     * @param array         $aValues         The data values
+     * @param array $aValues    The data values
      *
      * @return Renderer
      */
@@ -100,8 +100,8 @@ class Renderer
      *
      * The store returned by this function will later be used with the make() method to render the view.
      *
-     * @param string        $sViewName        The view name
-     * @param array         $aViewData        The view data
+     * @param string $sViewName    The view name
+     * @param array $aViewData    The view data
      *
      * @return null|Store   A store populated with the view data
      */

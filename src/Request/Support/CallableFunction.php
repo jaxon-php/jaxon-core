@@ -81,8 +81,8 @@ class CallableFunction
     /**
      * Set call options for this instance
      *
-     * @param string        $sName                The name of the configuration option
-     * @param string        $sValue               The value of the configuration option
+     * @param string $sName    The name of the configuration option
+     * @param string $sValue    The value of the configuration option
      *
      * @return void
      */
@@ -109,7 +109,7 @@ class CallableFunction
      * Call the registered user function, including an external file if needed
      * and passing along the specified arguments
      *
-     * @param array         $aArgs                The function arguments
+     * @param array $aArgs    The function arguments
      *
      * @return void
      */

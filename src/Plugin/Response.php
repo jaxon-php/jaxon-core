@@ -39,7 +39,7 @@ abstract class Response extends Plugin
     /**
      * Set the <Jaxon\Response\Response> object
      *
-     * @param JaxonResponse         $xResponse            The response
+     * @param JaxonResponse $xResponse    The response
      *
      * @return void
      */
@@ -65,8 +65,8 @@ abstract class Response extends Plugin
      * This will call <Jaxon\Response\Response->addPluginCommand> using the
      * reference provided in <Jaxon\Response\Response->setResponse>.
      *
-     * @param array         $aAttributes        The attributes of the command
-     * @param mixed         $xData              The data to be added to the command
+     * @param array $aAttributes    The attributes of the command
+     * @param mixed $xData    The data to be added to the command
      *
      * @return void
      */

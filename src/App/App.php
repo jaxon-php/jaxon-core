@@ -75,7 +75,7 @@ class App
     /**
      * Read config options from a config file and setup the library
      *
-     * @param string $sConfigFile The full path to the config file
+     * @param string $sConfigFile    The full path to the config file
      *
      * @return void
      * @throws SetupException
@@ -109,7 +109,7 @@ class App
     /**
      * Get the HTTP response
      *
-     * @param string $sCode      The HTTP response code
+     * @param string $sCode    The HTTP response code
      *
      * @return void
      */

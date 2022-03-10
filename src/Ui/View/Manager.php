@@ -65,7 +65,7 @@ class Manager
     /**
      * Find a view namespace by its name.
      *
-     * @param string        $sNamespace         The namespace name
+     * @param string $sNamespace    The namespace name
      *
      * @return array|null
      */
@@ -77,8 +77,8 @@ class Manager
     /**
      * Add a view namespace, and set the corresponding renderer.
      *
-     * @param string        $sNamespace         The corresponding renderer name
-     * @param array         $aNamespace         The namespace options
+     * @param string $sNamespace    The corresponding renderer name
+     * @param array $aNamespace    The namespace options
      *
      * @return void
      */
@@ -90,10 +90,10 @@ class Manager
     /**
      * Add a view namespace, and set the corresponding renderer.
      *
-     * @param string        $sNamespace         The namespace name
-     * @param string        $sDirectory         The namespace directory
-     * @param string        $sExtension         The extension to append to template names
-     * @param string        $sRenderer          The corresponding renderer name
+     * @param string $sNamespace    The namespace name
+     * @param string $sDirectory    The namespace directory
+     * @param string $sExtension    The extension to append to template names
+     * @param string $sRenderer    The corresponding renderer name
      *
      * @return void
      */
@@ -110,8 +110,8 @@ class Manager
     /**
      * Set the view namespaces.
      *
-     * @param Config $xLibConfig The config options provided in the library
-     * @param Config|null $xAppConfig The config options provided in the app section of the global config file.
+     * @param Config $xLibConfig    The config options provided in the library
+     * @param Config|null $xAppConfig    The config options provided in the app section of the global config file.
      *
      * @return void
      */
@@ -156,7 +156,7 @@ class Manager
     /**
      * Get the view renderer
      *
-     * @param string        $sId        The unique identifier of the view renderer
+     * @param string $sId    The unique identifier of the view renderer
      *
      * @return View
      */
@@ -169,8 +169,8 @@ class Manager
     /**
      * Add a view renderer with an id
      *
-     * @param string        $sId        The unique identifier of the view renderer
-     * @param Closure       $xClosure   A closure to create the view instance
+     * @param string $sId    The unique identifier of the view renderer
+     * @param Closure $xClosure    A closure to create the view instance
      *
      * @return void
      */
@@ -195,7 +195,7 @@ class Manager
     /**
      * Get the view renderer for a given namespace
      *
-     * @param string        $sNamespace         The namespace name
+     * @param string $sNamespace    The namespace name
      *
      * @return View|null
      */

@@ -95,10 +95,10 @@ class FileUpload extends RequestPlugin
     /**
      * The constructor
      *
-     * @param Config            $xConfig
-     * @param ResponseManager   $xResponseManager
-     * @param Support           $xSupport       HTTP file upload support
-     * @param Translator        $xTranslator
+     * @param Config  $xConfig
+     * @param ResponseManager  $xResponseManager
+     * @param Support $xSupport    HTTP file upload support
+     * @param Translator  $xTranslator
      */
     public function __construct(Config $xConfig, ResponseManager $xResponseManager,
         Support $xSupport, Translator $xTranslator)
@@ -138,7 +138,7 @@ class FileUpload extends RequestPlugin
     /**
      * Set the uploaded file name sanitizer
      *
-     * @param Closure       $cSanitizer            The closure
+     * @param Closure $cSanitizer    The closure
      *
      * @return void
      */
@@ -160,8 +160,8 @@ class FileUpload extends RequestPlugin
     /**
      * Make sure the upload dir exists and is writable
      *
-     * @param string $sUploadDir The filename
-     * @param string $sUploadSubDir The filename
+     * @param string $sUploadDir    The filename
+     * @param string $sUploadSubDir    The filename
      *
      * @return string
      * @throws SetupException
@@ -185,7 +185,7 @@ class FileUpload extends RequestPlugin
     /**
      * Get the path to the upload dir
      *
-     * @param string $sFieldId The filename
+     * @param string $sFieldId    The filename
      *
      * @return string
      * @throws SetupException

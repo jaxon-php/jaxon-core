@@ -24,7 +24,7 @@ trait Message
     /**
      * Set the library to return the javascript code or run it in the browser.
      *
-     * @param bool             $bReturn              Whether to return the code
+     * @param bool $bReturn    Whether to return the code
      *
      * @return void
      */

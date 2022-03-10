@@ -67,7 +67,7 @@ class RequestFactory
     /**
      * Return the javascript call to a Jaxon function or object method
      *
-     * @param string            $sFunction          The function or method (without class) name
+     * @param string $sFunction    The function or method (without class) name
      *
      * @return Call
      */

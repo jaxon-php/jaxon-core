@@ -26,8 +26,8 @@ trait JsCommands
     /**
      * Add a response command to the array of commands that will be sent to the browser
      *
-     * @param array         $aAttributes        Associative array of attributes that will describe the command
-     * @param mixed            $mData                The data to be associated with this command
+     * @param array $aAttributes    Associative array of attributes that will describe the command
+     * @param mixed $mData    The data to be associated with this command
      *
      * @return Response
      */
@@ -36,10 +36,10 @@ trait JsCommands
     /**
      * Add a response command to the array of commands that will be sent to the browser
      *
-     * @param string        $sName              The command name
-     * @param array         $aAttributes        Associative array of attributes that will describe the command
-     * @param mixed         $mData              The data to be associated with this command
-     * @param bool       $bRemoveEmpty       If true, remove empty attributes
+     * @param string $sName    The command name
+     * @param array $aAttributes    Associative array of attributes that will describe the command
+     * @param mixed $mData    The data to be associated with this command
+     * @param bool $bRemoveEmpty    If true, remove empty attributes
      *
      * @return Response
      */
@@ -49,8 +49,8 @@ trait JsCommands
      * Merge the response commands from the specified <Response> object with
      * the response commands in this <Response> object
      *
-     * @param Response|array    $mCommands          The <Response> object
-     * @param bool           $bBefore            Add the new commands to the beginning of the list
+     * @param Response|array $mCommands    The <Response> object
+     * @param bool $bBefore    Add the new commands to the beginning of the list
      *
      * @return void
      */
@@ -62,8 +62,8 @@ trait JsCommands
      * If the user clicks cancel, the specified number of response commands
      * following this one, will be skipped.
      *
-     * @param integer       $nCommandCount      The number of commands to skip upon cancel
-     * @param string        $sMessage           The message to display to the user
+     * @param integer $nCommandCount    The number of commands to skip upon cancel
+     * @param string $sMessage    The message to display to the user
      *
      * @return Response
      */
@@ -79,8 +79,8 @@ trait JsCommands
      * If the user clicks cancel, the specified number of response commands
      * following this one, will be skipped.
      *
-     * @param string $sMessage The message to display to the user
-     * @param callable $xCallable The function
+     * @param string $sMessage    The message to display to the user
+     * @param callable $xCallable    The function
      *
      * @return JsCommands
      * @throws SetupException
@@ -101,7 +101,7 @@ trait JsCommands
     /**
      * Add a command to display an alert message to the user
      *
-     * @param string        $sMessage            The message to be displayed
+     * @param string $sMessage    The message to be displayed
      *
      * @return Response
      */
@@ -113,7 +113,7 @@ trait JsCommands
     /**
      * Add a command to display a debug message to the user
      *
-     * @param string        $sMessage            The message to be displayed
+     * @param string $sMessage    The message to be displayed
      *
      * @return Response
      */
@@ -125,8 +125,8 @@ trait JsCommands
     /**
      * Add a command to ask the browser to navigate to the specified URL
      *
-     * @param string        $sURL                The relative or fully qualified URL
-     * @param integer       $nDelay                Number of seconds to delay before the redirect occurs
+     * @param string $sURL    The relative or fully qualified URL
+     * @param integer $nDelay    Number of seconds to delay before the redirect occurs
      *
      * @return Response
      */
@@ -188,7 +188,7 @@ trait JsCommands
      * To construct a variable that will be accessable globally, even after the script has executed,
      * leave off the 'var' keyword.
      *
-     * @param string        $sJS                The script to execute
+     * @param string $sJS    The script to execute
      *
      * @return Response
      */
@@ -200,7 +200,7 @@ trait JsCommands
     /**
      * Add a command to call the specified javascript function with the given (optional) parameters
      *
-     * @param string        $sFunc                The name of the function to call
+     * @param string $sFunc    The name of the function to call
      *
      * @return Response
      */
@@ -215,9 +215,9 @@ trait JsCommands
     /**
      * Add a command to set an event handler on the browser
      *
-     * @param string        $sTarget            The id of the element that contains the event
-     * @param string        $sEvent             The name of the event
-     * @param string        $sScript            The javascript to execute when the event is fired
+     * @param string $sTarget    The id of the element that contains the event
+     * @param string $sEvent    The name of the event
+     * @param string $sScript    The javascript to execute when the event is fired
      *
      * @return Response
      */
@@ -230,8 +230,8 @@ trait JsCommands
     /**
      * Add a command to set a click handler on the browser
      *
-     * @param string        $sTarget            The id of the element that contains the event
-     * @param string        $sScript            The javascript to execute when the event is fired
+     * @param string $sTarget    The id of the element that contains the event
+     * @param string $sScript    The javascript to execute when the event is fired
      *
      * @return Response
      */
@@ -245,9 +245,9 @@ trait JsCommands
      *
      * You can add more than one event handler to an element's event using this method.
      *
-     * @param string        $sTarget             The id of the element
-     * @param string        $sEvent              The name of the event
-     * @param string        $sHandler            The name of the javascript function to call when the event is fired
+     * @param string $sTarget    The id of the element
+     * @param string $sEvent    The name of the event
+     * @param string $sHandler    The name of the javascript function to call when the event is fired
      *
      * @return Response
      */
@@ -260,9 +260,9 @@ trait JsCommands
     /**
      * Add a command to remove an event handler from an element
      *
-     * @param string        $sTarget             The id of the element
-     * @param string        $sEvent              The name of the event
-     * @param string        $sHandler            The name of the javascript function called when the event is fired
+     * @param string $sTarget    The id of the element
+     * @param string $sEvent    The name of the event
+     * @param string $sHandler    The name of the javascript function called when the event is fired
      *
      * @return Response
      */
@@ -275,9 +275,9 @@ trait JsCommands
     /**
      * Add a command to construct a javascript function on the browser
      *
-     * @param string        $sFunction            The name of the function to construct
-     * @param string        $sArgs                Comma separated list of parameter names
-     * @param string        $sScript            The javascript code that will become the body of the function
+     * @param string $sFunction    The name of the function to construct
+     * @param string $sArgs    Comma separated list of parameter names
+     * @param string $sScript    The javascript code that will become the body of the function
      *
      * @return Response
      */
@@ -290,14 +290,14 @@ trait JsCommands
     /**
      * Add a command to construct a wrapper function around an existing javascript function on the browser
      *
-     * @param string        $sFunction            The name of the existing function to wrap
-     * @param string        $sArgs                The comma separated list of parameters for the function
-     * @param array $aScripts            An array of javascript code snippets that will be used to build
+     * @param string $sFunction    The name of the existing function to wrap
+     * @param string $sArgs    The comma separated list of parameters for the function
+     * @param array $aScripts    An array of javascript code snippets that will be used to build
      *                                             the body of the function
      *                                             The first piece of code specified in the array will occur before
      *                                             the call to the original function, the second will occur after
      *                                             the original function is called.
-     * @param string        $sReturnValueVar    The name of the variable that will retain the return value
+     * @param string $sReturnValueVar    The name of the variable that will retain the return value
      *                                             from the call to the original function
      *
      * @return Response
@@ -311,10 +311,10 @@ trait JsCommands
     /**
      * Add a command to load a javascript file on the browser
      *
-     * @param bool          $bIncludeOnce         Include once or not
-     * @param string        $sFileName            The relative or fully qualified URI of the javascript file
-     * @param string        $sType                Determines the script type. Defaults to 'text/javascript'
-     * @param string        $sId                  The wrapper id
+     * @param bool $bIncludeOnce    Include once or not
+     * @param string $sFileName    The relative or fully qualified URI of the javascript file
+     * @param string $sType    Determines the script type. Defaults to 'text/javascript'
+     * @param string $sId    The wrapper id
      *
      * @return Response
      */
@@ -327,9 +327,9 @@ trait JsCommands
     /**
      * Add a command to load a javascript file on the browser
      *
-     * @param string        $sFileName            The relative or fully qualified URI of the javascript file
-     * @param string        $sType                Determines the script type. Defaults to 'text/javascript'
-     * @param string        $sId                  The wrapper id
+     * @param string $sFileName    The relative or fully qualified URI of the javascript file
+     * @param string $sType    Determines the script type. Defaults to 'text/javascript'
+     * @param string $sId    The wrapper id
      *
      * @return Response
      */
@@ -341,9 +341,9 @@ trait JsCommands
     /**
      * Add a command to include a javascript file on the browser if it has not already been loaded
      *
-     * @param string        $sFileName            The relative or fully qualified URI of the javascript file
-     * @param string        $sType                Determines the script type. Defaults to 'text/javascript'
-     * @param string        $sId                  The wrapper id
+     * @param string $sFileName    The relative or fully qualified URI of the javascript file
+     * @param string $sType    Determines the script type. Defaults to 'text/javascript'
+     * @param string $sId    The wrapper id
      *
      * @return Response
      */
@@ -357,8 +357,8 @@ trait JsCommands
      *
      * Optionally, you can call a javascript function just prior to the file being unloaded (for cleanup).
      *
-     * @param string        $sFileName            The relative or fully qualified URI of the javascript file
-     * @param string        $sUnload            Name of a javascript function to call prior to unlaoding the file
+     * @param string $sFileName    The relative or fully qualified URI of the javascript file
+     * @param string $sUnload    Name of a javascript function to call prior to unlaoding the file
      *
      * @return Response
      */
@@ -373,8 +373,8 @@ trait JsCommands
      *
      * This will cause the browser to load and apply the style sheet.
      *
-     * @param string        $sFileName            The relative or fully qualified URI of the css file
-     * @param string        $sMedia                The media type of the CSS file. Defaults to 'screen'
+     * @param string $sFileName    The relative or fully qualified URI of the css file
+     * @param string $sMedia    The media type of the CSS file. Defaults to 'screen'
      *
      * @return Response
      */
@@ -389,7 +389,7 @@ trait JsCommands
      *
      * This causes the browser to unload the style sheet, effectively removing the style changes it caused.
      *
-     * @param string        $sFileName            The relative or fully qualified URI of the css file
+     * @param string $sFileName    The relative or fully qualified URI of the css file
      *
      * @return Response
      */
@@ -409,7 +409,7 @@ trait JsCommands
      * This command returns control back to the browser and pauses the execution of the response
      * until the CSS files, included previously, are loaded.
      *
-     * @param integer        $nTimeout            The number of 1/10ths of a second to pause before timing out
+     * @param integer $nTimeout    The number of 1/10ths of a second to pause before timing out
      *                                             and continuing with the execution of the response commands
      *
      * @return Response
@@ -427,8 +427,8 @@ trait JsCommands
      * Jaxon will continue to monitor the specified condition and, when it evaluates to true,
      * will continue processing response commands.
      *
-     * @param string        $script                A piece of javascript code that evaulates to true or false
-     * @param integer        $tenths                The number of 1/10ths of a second to wait before timing out
+     * @param string $script    A piece of javascript code that evaulates to true or false
+     * @param integer $tenths    The number of 1/10ths of a second to wait before timing out
      *                                             and continuing with the execution of the response commands.
      *
      * @return Response
@@ -445,7 +445,7 @@ trait JsCommands
      *
      * After the specified delay, Jaxon will continue execution of the response commands.
      *
-     * @param integer        $tenths                The number of 1/10ths of a second to sleep
+     * @param integer $tenths    The number of 1/10ths of a second to sleep
      *
      * @return Response
      */

@@ -46,8 +46,8 @@ trait ConfigTrait
     /**
      * Create a new the config manager
      *
-     * @param array $aOptions The options array
-     * @param string $sKeys The key prefix of the config options
+     * @param array $aOptions    The options array
+     * @param string $sKeys    The key prefix of the config options
      *
      * @return Config
      * @throws DataDepth

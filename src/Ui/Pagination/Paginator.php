@@ -84,7 +84,7 @@ class Paginator
     /**
      * Set the text for the previous page link
      *
-     * @param string $sText The text for the previous page link
+     * @param string $sText    The text for the previous page link
      *
      * @return Paginator
      */
@@ -97,7 +97,7 @@ class Paginator
     /**
      * Set the text for the next page link
      *
-     * @param string $sText The text for the previous page link
+     * @param string $sText    The text for the previous page link
      *
      * @return Paginator
      */
@@ -121,7 +121,7 @@ class Paginator
     /**
      * Set the max number of pages to show
      *
-     * @param int $nMaxPagesToShow The max number of pages to show
+     * @param int $nMaxPagesToShow    The max number of pages to show
      *
      * @return Paginator
      */
@@ -134,7 +134,7 @@ class Paginator
     /**
      * Set the current page number
      *
-     * @param int $nCurrentPage The current page number
+     * @param int $nCurrentPage    The current page number
      *
      * @return Paginator
      */
@@ -147,7 +147,7 @@ class Paginator
     /**
      * Set the number of items per page
      *
-     * @param int $nItemsPerPage The number of items per page
+     * @param int $nItemsPerPage    The number of items per page
      *
      * @return Paginator
      */
@@ -160,7 +160,7 @@ class Paginator
     /**
      * Set the total number of items
      *
-     * @param int $nTotalItems The total number of items
+     * @param int $nTotalItems    The total number of items
      *
      * @return Paginator
      */
@@ -173,10 +173,10 @@ class Paginator
     /**
      * Setup the paginator
      *
-     * @param Call $xCall The call to be paginated
-     * @param int $nCurrentPage The current page number
-     * @param int $nItemsPerPage The number of items per page
-     * @param int $nTotalItems The total number of items
+     * @param Call $xCall    The call to be paginated
+     * @param int $nCurrentPage    The current page number
+     * @param int $nItemsPerPage    The number of items per page
+     * @param int $nTotalItems    The total number of items
      *
      * @return Paginator
      */

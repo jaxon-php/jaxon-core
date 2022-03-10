@@ -59,8 +59,8 @@ class UploadedFile
     /**
      * Create an instance of this class using data from the $_FILES global var.
      *
-     * @param string        $sUploadDir     The directory where to save the uploaded file
-     * @param array         $aFile          The uploaded file data
+     * @param string $sUploadDir    The directory where to save the uploaded file
+     * @param array $aFile    The uploaded file data
      *
      * @return UploadedFile
      */
@@ -96,7 +96,7 @@ class UploadedFile
     /**
      * Create an instance of this class using data from an array.
      *
-     * @param array         $aFile          The uploaded file data
+     * @param array $aFile    The uploaded file data
      *
      * @return UploadedFile
      */
@@ -114,8 +114,8 @@ class UploadedFile
 
     /**
      * Slugify a text
-     * 
-     * @param string    $sText
+     *
+     * @param string  $sText
      *
      * @return string
      */
