@@ -12,7 +12,7 @@
 namespace Jaxon\Request\Support;
 
 use Jaxon\Request\Validator;
-use Jaxon\Exception\SetupException;
+use Jaxon\Exception\RequestException;
 use Jaxon\Utils\Translation\Translator;
 
 use Closure;
@@ -68,7 +68,7 @@ class FileUpload
      * @param array $aFiles    The uploaded files
      *
      * @return void
-     * @throws SetupException
+     * @throws RequestException
      */
     private function checkFiles(array $aFiles)
     {
@@ -79,12 +79,12 @@ class FileUpload
                 // Verify upload result
                 if($aFile['error'] != 0)
                 {
-                    throw new SetupException($this->xTranslator->trans('errors.upload.failed', $aFile));
+                    throw new RequestException($this->xTranslator->trans('errors.upload.failed', $aFile));
                 }
                 // Verify file validity (format, size)
                 if(!$this->xValidator->validateUploadedFile($sVarName, $aFile))
                 {
-                    throw new SetupException($this->xValidator->getErrorMessage());
+                    throw new RequestException($this->xValidator->getErrorMessage());
                 }
             }
         }
@@ -128,7 +128,7 @@ class FileUpload
      * Read uploaded files info from HTTP request data
      *
      * @return array
-     * @throws SetupException
+     * @throws RequestException
      */
     public function getUploadedFiles(): array
     {

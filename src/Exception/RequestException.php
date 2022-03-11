@@ -14,6 +14,6 @@
 
 namespace Jaxon\Exception;
 
-class AppException extends Exception
+class RequestException extends Exception
 {
 }

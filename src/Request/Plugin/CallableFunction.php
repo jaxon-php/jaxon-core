@@ -28,6 +28,7 @@ use Jaxon\Request\Handler\Handler as RequestHandler;
 use Jaxon\Request\Validator;
 use Jaxon\Response\Manager as ResponseManager;
 use Jaxon\Request\Support\CallableFunction as CallableFunctionSupport;
+use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;
 use Jaxon\Utils\Config\Config;
 use Jaxon\Utils\Template\Engine as TemplateEngine;
@@ -247,7 +248,7 @@ class CallableFunction extends RequestPlugin
 
     /**
      * @inheritDoc
-     * @throws SetupException
+     * @throws RequestException
      */
     public function processRequest(): bool
     {
@@ -260,7 +261,7 @@ class CallableFunction extends RequestPlugin
         if(!isset($this->aFunctions[$this->sRequestedFunction]))
         {
             // Unable to find the requested function
-            throw new SetupException($this->xTranslator->trans('errors.functions.invalid',
+            throw new RequestException($this->xTranslator->trans('errors.functions.invalid',
                 ['name' => $this->sRequestedFunction]));
         }
 

@@ -12,7 +12,6 @@
 
 namespace Jaxon\Request\Plugin;
 
-use Jaxon\Exception\SetupException;
 use Jaxon\Jaxon;
 use Jaxon\Plugin\Request as RequestPlugin;
 use Jaxon\Response\Manager as ResponseManager;
@@ -21,6 +20,7 @@ use Jaxon\Request\Support\FileUpload as Support;
 use Jaxon\Response\UploadResponse;
 use Jaxon\Utils\Config\Config;
 use Jaxon\Utils\Translation\Translator;
+use Jaxon\Exception\RequestException;
 use Exception;
 use Closure;
 
@@ -164,7 +164,7 @@ class FileUpload extends RequestPlugin
      * @param string $sUploadSubDir    The filename
      *
      * @return string
-     * @throws SetupException
+     * @throws RequestException
      */
     private function _makeUploadDir(string $sUploadDir, string $sUploadSubDir): string
     {
@@ -172,12 +172,12 @@ class FileUpload extends RequestPlugin
         // Verify that the upload dir exists and is writable
         if(!is_writable($sUploadDir))
         {
-            throw new SetupException($this->xTranslator->trans('errors.upload.access'));
+            throw new RequestException($this->xTranslator->trans('errors.upload.access'));
         }
         $sUploadDir .= $sUploadSubDir;
         if(!file_exists($sUploadDir) && !@mkdir($sUploadDir))
         {
-            throw new SetupException($this->xTranslator->trans('errors.upload.access'));
+            throw new RequestException($this->xTranslator->trans('errors.upload.access'));
         }
         return $sUploadDir;
     }
@@ -188,7 +188,7 @@ class FileUpload extends RequestPlugin
      * @param string $sFieldId    The filename
      *
      * @return string
-     * @throws SetupException
+     * @throws RequestException
      */
     protected function getUploadDir(string $sFieldId): string
     {
@@ -203,7 +203,7 @@ class FileUpload extends RequestPlugin
      * Get the path to the upload temp dir
      *
      * @return string
-     * @throws SetupException
+     * @throws RequestException
      */
     protected function getUploadTempDir(): string
     {
@@ -217,7 +217,7 @@ class FileUpload extends RequestPlugin
      * Get the path to the upload temp file
      *
      * @return string
-     * @throws SetupException
+     * @throws RequestException
      */
     protected function getUploadTempFile(): string
     {
@@ -227,7 +227,7 @@ class FileUpload extends RequestPlugin
         $sUploadTempFile = $sUploadDir . $this->sTempFile . '.json';
         if(!is_readable($sUploadTempFile))
         {
-            throw new SetupException($this->xTranslator->trans('errors.upload.access'));
+            throw new RequestException($this->xTranslator->trans('errors.upload.access'));
         }
         return $sUploadTempFile;
     }
@@ -236,7 +236,7 @@ class FileUpload extends RequestPlugin
      * Read uploaded files info from HTTP request data
      *
      * @return void
-     * @throws SetupException
+     * @throws RequestException
      */
     protected function readFromHttpData()
     {
@@ -265,7 +265,7 @@ class FileUpload extends RequestPlugin
      * Save uploaded files info to a temp file
      *
      * @return void
-     * @throws SetupException
+     * @throws RequestException
      */
     protected function saveToTempFile()
     {
@@ -289,7 +289,7 @@ class FileUpload extends RequestPlugin
      * Read uploaded files info from a temp file
      *
      * @return void
-     * @throws SetupException
+     * @throws RequestException
      */
     protected function readFromTempFile()
     {
@@ -332,7 +332,7 @@ class FileUpload extends RequestPlugin
      * Process the uploaded files in the HTTP request
      *
      * @return bool
-     * @throws SetupException
+     * @throws RequestException
      */
     public function processRequest(): bool
     {

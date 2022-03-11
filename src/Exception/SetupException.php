@@ -16,8 +16,4 @@ namespace Jaxon\Exception;
 
 class SetupException extends Exception
 {
-    public function __construct(string $sMessage)
-    {
-        parent::__construct($sMessage);
-    }
 }

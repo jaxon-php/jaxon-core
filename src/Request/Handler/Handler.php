@@ -28,9 +28,15 @@ use Jaxon\Request\Plugin\FileUpload;
 use Jaxon\Response\Plugin\DataBag;
 use Jaxon\Response\AbstractResponse;
 use Jaxon\Utils\Config\Config;
-use Jaxon\Exception\SetupException;
+use Jaxon\Exception\RequestException;
 
 use Exception;
+
+use function call_user_func;
+use function call_user_func_array;
+use function error_reporting;
+use function ob_get_level;
+use function ob_end_clean;
 
 class Handler
 {
@@ -134,7 +140,7 @@ class Handler
      * Return the array of arguments that were extracted and parsed from the GET or POST data
      *
      * @return array
-     * @throws SetupException
+     * @throws RequestException
      */
     public function processArguments(): array
     {
@@ -223,8 +229,9 @@ class Handler
     /**
      * These callbacks are called whenever an invalid request is processed.
      *
+     * @var Exception $xException
+     *
      * @return void
-     * @throws Exception
      */
     public function onError(Exception $xException)
     {
@@ -280,11 +287,11 @@ class Handler
      * Process the current request and handle errors and exceptions.
      *
      * @return void
-     * @throws SetupException
+     * @throws RequestException
      */
     private function _processRequest()
     {
-        //try
+        try
         {
             // Process uploaded files, if the upload plugin is enabled
             if($this->xConfig->getOption('core.upload.enabled'))
@@ -298,15 +305,13 @@ class Handler
                 $this->xTargetRequestPlugin->processRequest();
             }
         }
-        /*catch(Exception $e)
+        catch(Exception $e)
         {
             // An exception was thrown while processing the request.
             // The request missed the corresponding handler function,
             // or an error occurred while attempting to execute the handler.
-
             $this->xResponseManager->error($e->getMessage());
-
-            if($e instanceof SetupException)
+            if($e instanceof RequestException)
             {
                 $this->onInvalid($e->getMessage());
             }
@@ -314,7 +319,8 @@ class Handler
             {
                 $this->onError($e);
             }
-        }*/
+            throw $e;
+        }
     }
 
     /**
@@ -339,7 +345,7 @@ class Handler
      * If any plugin processes the request, it will return true.
      *
      * @return void
-     * @throws SetupException
+     * @throws RequestException
      */
     public function processRequest()
     {

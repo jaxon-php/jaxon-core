@@ -30,12 +30,12 @@
 
 namespace Jaxon\Response;
 
-use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\Manager as PluginManager;
 use Jaxon\Plugin\Response as ResponsePlugin;
 use Jaxon\Response\Plugin\JQuery\Dom\Element;
 use Jaxon\Utils\Config\Config;
 use Jaxon\Utils\Translation\Translator;
+use Jaxon\Exception\RequestException;
 
 use function json_encode;
 use function array_merge;
@@ -290,7 +290,7 @@ class Response extends AbstractResponse
      * @param bool $bBefore    Add the new commands to the beginning of the list
      *
      * @return void
-     * @throws SetupException
+     * @throws RequestException
      */
     public function appendResponse($mCommands, bool $bBefore = false)
     {
@@ -305,7 +305,7 @@ class Response extends AbstractResponse
         }
         else
         {
-            throw new SetupException($this->xTranslator->trans('errors.response.data.invalid'));
+            throw new RequestException($this->xTranslator->trans('errors.response.data.invalid'));
         }
 
         $this->aCommands = ($bBefore) ?

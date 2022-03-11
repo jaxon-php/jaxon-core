@@ -28,6 +28,7 @@ namespace Jaxon;
 use Jaxon\App\App;
 use Jaxon\Container\Container;
 use Jaxon\Contracts\Session;
+use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\Package;
 use Jaxon\Plugin\Response as ResponsePlugin;
@@ -50,6 +51,8 @@ use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
+
+use function headers_sent;
 
 class Jaxon implements LoggerAwareInterface
 {
@@ -535,7 +538,7 @@ class Jaxon implements LoggerAwareInterface
      *
      * @return void
      *
-     * @throws SetupException
+     * @throws RequestException
      * @see <Jaxon\Jaxon->canProcessRequest>
      */
     public function processRequest()

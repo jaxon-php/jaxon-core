@@ -31,6 +31,7 @@ use Jaxon\Request\Support\CallableRegistry;
 use Jaxon\Request\Support\CallableRepository;
 use Jaxon\Request\Target;
 use Jaxon\Request\Validator;
+use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;
 use Jaxon\Utils\Config\Config;
 use Jaxon\Utils\Template\Engine as TemplateEngine;
@@ -362,8 +363,7 @@ class CallableClass extends RequestPlugin
 
     /**
      * @inheritDoc
-     * @throws SetupException
-     * @throws ReflectionException
+     * @throws RequestException
      */
     public function processRequest(): bool
     {
@@ -377,16 +377,25 @@ class CallableClass extends RequestPlugin
         if(!$xCallableObject || !$xCallableObject->hasMethod($this->sRequestedMethod))
         {
             // Unable to find the requested object or method
-            throw new SetupException($this->xTranslator->trans('errors.objects.invalid',
+            throw new RequestException($this->xTranslator->trans('errors.objects.invalid',
                 ['class' => $this->sRequestedClass, 'method' => $this->sRequestedMethod]));
         }
 
         // Call the requested method
         $aArgs = $this->xRequestHandler->processArguments();
-        $xResponse = $xCallableObject->call($this->sRequestedMethod, $aArgs);
-        if(($xResponse))
+        try
         {
-            $this->xResponseManager->append($xResponse);
+            $xResponse = $xCallableObject->call($this->sRequestedMethod, $aArgs);
+            if(($xResponse))
+            {
+                $this->xResponseManager->append($xResponse);
+            }
+        }
+        catch(ReflectionException $e)
+        {
+            // Unable to find the requested class
+            throw new RequestException($this->xTranslator->trans('errors.objects.invalid',
+                ['class' => $this->sRequestedClass, 'method' => $this->sRequestedMethod]));
         }
         return true;
     }

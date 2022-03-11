@@ -22,9 +22,9 @@
 
 namespace Jaxon\Request\Handler;
 
-use Jaxon\Exception\SetupException;
 use Jaxon\Utils\Config\Config;
 use Jaxon\Utils\Translation\Translator;
+use Jaxon\Exception\RequestException;
 
 use function strcasecmp;
 use function is_numeric;
@@ -267,7 +267,7 @@ class Argument
      * Return the array of arguments that were extracted and parsed from the GET or POST data
      *
      * @return array
-     * @throws SetupException
+     * @throws RequestException
      */
     public function process(): array
     {
@@ -302,7 +302,7 @@ class Argument
         }
         else
         {
-            throw new SetupException($this->xTranslator->trans('errors.request.conversion'));
+            throw new RequestException($this->xTranslator->trans('errors.request.conversion'));
         }
 
         $aDst = [];
