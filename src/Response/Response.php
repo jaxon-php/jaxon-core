@@ -70,6 +70,10 @@ class Response extends AbstractResponse
 
     /**
      * The constructor
+     *
+     * @param Config $xConfig
+     * @param Translator $xTranslator
+     * @param PluginManager $xPluginManager
      */
     public function __construct(Config $xConfig, Translator $xTranslator, PluginManager $xPluginManager)
     {

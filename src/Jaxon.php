@@ -30,21 +30,27 @@ use Jaxon\Container\Container;
 use Jaxon\Contracts\Session;
 use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;
-use Jaxon\Plugin\Package;
 use Jaxon\Plugin\Response as ResponsePlugin;
+use Jaxon\Plugin\Package;
+use Jaxon\Plugin\Code\Generator as CodeGenerator;
+use Jaxon\Plugin\Manager as PluginManager;
 use Jaxon\Request\Factory\Factory;
 use Jaxon\Request\Factory\RequestFactory;
 use Jaxon\Request\Handler\Callback;
+use Jaxon\Request\Handler\Handler as RequestHandler;
 use Jaxon\Request\Plugin\FileUpload;
+use Jaxon\Request\Support\CallableRegistry;
+use Jaxon\Response\Manager as ResponseManager;
 use Jaxon\Response\Response;
 use Jaxon\Ui\Dialogs\Dialog;
 use Jaxon\Ui\View\Renderer;
 use Jaxon\Utils\Config\Config;
+use Jaxon\Utils\Config\Reader as ConfigReader;
 use Jaxon\Utils\Config\Exception\FileAccess;
 use Jaxon\Utils\Config\Exception\FileContent;
 use Jaxon\Utils\Config\Exception\FileExtension;
 use Jaxon\Utils\Config\Exception\YamlExtension;
-use Jaxon\Utils\Template\Engine;
+use Jaxon\Utils\Template\Engine as TemplateEngine;
 use Jaxon\Utils\Translation\Translator;
 use Jaxon\Utils\Config\Exception\DataDepth;
 use Psr\Log\LoggerAwareInterface;
@@ -99,6 +105,36 @@ class Jaxon implements LoggerAwareInterface
     protected $xTranslator;
 
     /**
+     * @var ConfigReader
+     */
+    protected $xConfigReader;
+
+    /**
+     * @var PluginManager
+     */
+    protected $xPluginManager;
+
+    /**
+     * @var CodeGenerator
+     */
+    protected $xCodeGenerator;
+
+    /**
+     * @var CallableRegistry
+     */
+    protected $xCallableRegistry;
+
+    /**
+     * @var RequestHandler
+     */
+    protected $xRequestHandler;
+
+    /**
+     * @var ResponseManager
+     */
+    protected $xResponseManager;
+
+    /**
      * Get the static instance
      *
      * @return Jaxon
@@ -109,15 +145,21 @@ class Jaxon implements LoggerAwareInterface
         if(self::$xInstance === null)
         {
             self::$xContainer = new Container(self::getDefaultOptions());
-            self::$xInstance = new Jaxon(self::$xContainer->g(Config::class),
-                self::$xContainer->g(Translator::class));
+            self::$xInstance = new Jaxon();
             // Save the Jaxon instance in the DI
             self::$xContainer->val(Jaxon::class, self::$xInstance);
-            /*
-             * Register the Jaxon request and response plugins
-             */
-            self::$xContainer->getPluginManager()->registerRequestPlugins();
-            self::$xContainer->getPluginManager()->registerResponsePlugins();
+            // Set the attributes from the container
+            self::$xInstance->xConfig = self::$xContainer->g(Config::class);
+            self::$xInstance->xTranslator = self::$xContainer->g(Translator::class);
+            self::$xInstance->xConfigReader = self::$xContainer->g(ConfigReader::class);
+            self::$xInstance->xPluginManager = self::$xContainer->g(PluginManager::class);
+            self::$xInstance->xCodeGenerator = self::$xContainer->g(CodeGenerator::class);
+            self::$xInstance->xCallableRegistry = self::$xContainer->g(CallableRegistry::class);
+            self::$xInstance->xRequestHandler = self::$xContainer->g(RequestHandler::class);
+            self::$xInstance->xResponseManager = self::$xContainer->g(ResponseManager::class);
+            // Register the Jaxon request and response plugins
+            self::$xInstance->xPluginManager->registerRequestPlugins();
+            self::$xInstance->xPluginManager->registerResponsePlugins();
         }
         return self::$xInstance;
     }
@@ -125,10 +167,8 @@ class Jaxon implements LoggerAwareInterface
     /**
      * The constructor
      */
-    private function __construct(Config $xConfig, Translator $xTranslator)
+    private function __construct()
     {
-        $this->xConfig = $xConfig;
-        $this->xTranslator = $xTranslator;
         // Set the default logger
         $this->setLogger(new NullLogger());
     }
@@ -211,7 +251,7 @@ class Jaxon implements LoggerAwareInterface
      */
     public function config(): Config
     {
-        return $this->di()->getConfig();
+        return $this->xConfig;
     }
 
     /**
@@ -226,7 +266,7 @@ class Jaxon implements LoggerAwareInterface
     {
         try
         {
-            return $this->di()->getConfigReader()->read($sConfigFile);
+            return $this->xConfigReader->read($sConfigFile);
         }
         catch(YamlExtension $e)
         {
@@ -265,7 +305,7 @@ class Jaxon implements LoggerAwareInterface
         try
         {
             // Set up the lib config options.
-            $this->config()->setOptions($aConfigOptions, $sConfigSection);
+            $this->xConfig->setOptions($aConfigOptions, $sConfigSection);
         }
         catch(DataDepth $e)
         {
@@ -284,7 +324,7 @@ class Jaxon implements LoggerAwareInterface
      */
     public function setOption(string $sName, $sValue)
     {
-        $this->config()->setOption($sName, $sValue);
+        $this->xConfig->setOption($sName, $sValue);
     }
 
     /**
@@ -297,7 +337,7 @@ class Jaxon implements LoggerAwareInterface
      */
     public function getOption(string $sName, $xDefault = null)
     {
-        return $this->config()->getOption($sName, $xDefault);
+        return $this->xConfig->getOption($sName, $xDefault);
     }
 
     /**
@@ -309,7 +349,7 @@ class Jaxon implements LoggerAwareInterface
      */
     public function hasOption(string $sName): bool
     {
-        return $this->config()->hasOption($sName);
+        return $this->xConfig->hasOption($sName);
     }
 
     /**
@@ -330,7 +370,7 @@ class Jaxon implements LoggerAwareInterface
      */
     public function getCharacterEncoding(): string
     {
-        return trim($this->config()->getOption('core.encoding'));
+        return trim($this->xConfig->getOption('core.encoding'));
     }
 
     /**
@@ -344,7 +384,7 @@ class Jaxon implements LoggerAwareInterface
      */
     public function trans(string $sText, array $aPlaceHolders = [], string $sLanguage = ''): string
     {
-        return $this->di()->getTranslator()->trans($sText, $aPlaceHolders, $sLanguage);
+        return $this->xTranslator->trans($sText, $aPlaceHolders, $sLanguage);
     }
 
     /**
@@ -354,7 +394,7 @@ class Jaxon implements LoggerAwareInterface
      */
     public function getResponse(): Response
     {
-        if(($xResponse = $this->di()->getResponseManager()->getResponse()))
+        if(($xResponse = $this->xResponseManager->getResponse()))
         {
             return $xResponse;
         }
@@ -388,7 +428,7 @@ class Jaxon implements LoggerAwareInterface
      */
     public function registerPlugin(string $sClassName, string $sPluginName, int $nPriority = 1000)
     {
-        $this->di()->getPluginManager()->registerPlugin($sClassName, $sPluginName, $nPriority);
+        $this->xPluginManager->registerPlugin($sClassName, $sPluginName, $nPriority);
     }
 
     /**
@@ -402,7 +442,7 @@ class Jaxon implements LoggerAwareInterface
      */
     public function registerPackage(string $sClassName, array $aOptions = [])
     {
-        $this->di()->getPluginManager()->registerPackage($sClassName, $aOptions);
+        $this->xPluginManager->registerPackage($sClassName, $aOptions);
     }
 
     /**
@@ -424,7 +464,7 @@ class Jaxon implements LoggerAwareInterface
      */
     public function register(string $sType, string $sName, $xOptions = [])
     {
-        $this->di()->getPluginManager()->registerCallable($sType, $sName, $xOptions);
+        $this->xPluginManager->registerCallable($sType, $sName, $xOptions);
     }
 
     /**
@@ -436,7 +476,7 @@ class Jaxon implements LoggerAwareInterface
      */
     public function instance(string $sClassName)
     {
-        $xCallable = $this->di()->getCallableRegistry()->getCallableObject($sClassName);
+        $xCallable = $this->xCallableRegistry->getCallableObject($sClassName);
         return ($xCallable) ? $xCallable->getRegisteredObject() : null;
     }
 
@@ -476,7 +516,7 @@ class Jaxon implements LoggerAwareInterface
      */
     public function getScript(bool $bIncludeJs = false, bool $bIncludeCss = false): string
     {
-        return $this->di()->getCodeGenerator()->getScript($bIncludeJs, $bIncludeCss);
+        return $this->xCodeGenerator->getScript($bIncludeJs, $bIncludeCss);
     }
 
     /**
@@ -503,7 +543,7 @@ class Jaxon implements LoggerAwareInterface
      */
     public function getJs(): string
     {
-        return $this->di()->getCodeGenerator()->getJs();
+        return $this->xCodeGenerator->getJs();
     }
 
     /**
@@ -513,7 +553,7 @@ class Jaxon implements LoggerAwareInterface
      */
     public function getCss(): string
     {
-        return $this->di()->getCodeGenerator()->getCss();
+        return $this->xCodeGenerator->getCss();
     }
 
     /**
@@ -523,7 +563,7 @@ class Jaxon implements LoggerAwareInterface
      */
     public function canProcessRequest(): bool
     {
-        return $this->di()->getRequestHandler()->canProcessRequest();
+        return $this->xRequestHandler->canProcessRequest();
     }
 
     /**
@@ -552,11 +592,11 @@ class Jaxon implements LoggerAwareInterface
             exit();
         }
 
-        $this->di()->getRequestHandler()->processRequest();
+        $this->xRequestHandler->processRequest();
 
         if(($this->xConfig->getOption('core.response.send')))
         {
-            $this->di()->getResponseManager()->sendOutput();
+            $this->xResponseManager->sendOutput();
             if(($this->xConfig->getOption('core.process.exit')))
             {
                 exit();
@@ -573,7 +613,7 @@ class Jaxon implements LoggerAwareInterface
      */
     public function plugin(string $sName): ResponsePlugin
     {
-        return $this->di()->getPluginManager()->getResponsePlugin($sName);
+        return $this->xPluginManager->getResponsePlugin($sName);
     }
 
     /**
@@ -585,7 +625,7 @@ class Jaxon implements LoggerAwareInterface
      */
     public function package(string $sClassName): Package
     {
-        return $this->di()->getPluginManager()->getPackage($sClassName);
+        return $this->xPluginManager->getPackage($sClassName);
     }
 
     /**
@@ -605,7 +645,7 @@ class Jaxon implements LoggerAwareInterface
      */
     public function callback(): Callback
     {
-        return $this->di()->getRequestHandler()->getCallbackManager();
+        return $this->xRequestHandler->getCallbackManager();
     }
 
     /**
@@ -621,9 +661,9 @@ class Jaxon implements LoggerAwareInterface
     /**
      * Get the template engine
      *
-     * @return Engine
+     * @return TemplateEngine
      */
-    public function template(): Engine
+    public function template(): TemplateEngine
     {
         return $this->di()->getTemplateEngine();
     }

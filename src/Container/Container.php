@@ -64,6 +64,10 @@ class Container extends PimpleContainer
         $sTranslationDir = realpath(__DIR__ . '/../../translations');
         $this->val('jaxon.core.dir.translation', $sTranslationDir);
 
+        // Save this instance for the Container class.
+        // It will allow the auto() method to work with classes having this one as dependency.
+        $this->val(Container::class, $this);
+
         $this->registerAll();
     }
 
