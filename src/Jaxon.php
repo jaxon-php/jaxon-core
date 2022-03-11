@@ -35,7 +35,7 @@ use Jaxon\Request\Factory\Factory;
 use Jaxon\Request\Factory\RequestFactory;
 use Jaxon\Request\Handler\Callback;
 use Jaxon\Request\Plugin\FileUpload;
-use Jaxon\Response\AbstractResponse;
+use Jaxon\Response\Response;
 use Jaxon\Ui\Dialogs\Dialog;
 use Jaxon\Ui\View\Renderer;
 use Jaxon\Utils\Config\Config;
@@ -347,9 +347,9 @@ class Jaxon implements LoggerAwareInterface
     /**
      * Get the Global Response object
      *
-     * @return AbstractResponse
+     * @return Response
      */
-    public function getResponse(): AbstractResponse
+    public function getResponse(): Response
     {
         if(($xResponse = $this->di()->getResponseManager()->getResponse()))
         {
@@ -361,9 +361,9 @@ class Jaxon implements LoggerAwareInterface
     /**
      * Create a new Jaxon response object
      *
-     * @return AbstractResponse
+     * @return Response
      */
-    public function newResponse(): AbstractResponse
+    public function newResponse(): Response
     {
         return $this->di()->newResponse();
     }

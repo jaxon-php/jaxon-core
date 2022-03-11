@@ -31,24 +31,52 @@
 namespace Jaxon\Response;
 
 use Jaxon\Exception\SetupException;
+use Jaxon\Plugin\Manager as PluginManager;
 use Jaxon\Plugin\Response as ResponsePlugin;
 use Jaxon\Response\Plugin\JQuery\Dom\Element;
+use Jaxon\Utils\Config\Config;
+use Jaxon\Utils\Translation\Translator;
 
 use function json_encode;
 use function array_merge;
 use function array_map;
+use function array_pop;
 use function is_integer;
 use function trim;
 use function is_array;
 use function array_keys;
 use function count;
-use function jaxon;
 
 class Response extends AbstractResponse
 {
     use Features\DomCommands;
     use Features\JsCommands;
     use Features\DomTreeCommands;
+
+    /**
+     * @var Config
+     */
+    protected $xConfig;
+
+    /**
+     * @var Translator
+     */
+    protected $xTranslator;
+
+    /**
+     * @var PluginManager
+     */
+    protected $xPluginManager;
+
+    /**
+     * The constructor
+     */
+    public function __construct(Config $xConfig, Translator $xTranslator, PluginManager $xPluginManager)
+    {
+        $this->xConfig = $xConfig;
+        $this->xTranslator = $xTranslator;
+        $this->xPluginManager = $xPluginManager;
+    }
 
     /**
      * The commands that will be sent to the browser in the response
@@ -86,7 +114,7 @@ class Response extends AbstractResponse
      */
     public function plugin(string $sName): ?ResponsePlugin
     {
-        return jaxon()->di()->getPluginManager()->getResponsePlugin($sName, $this);
+        return $this->xPluginManager->getResponsePlugin($sName, $this);
     }
 
     /**
@@ -143,10 +171,8 @@ class Response extends AbstractResponse
      */
     private function getCommandData(array $aAttributes, $mData): array
     {
-        $xConfig = jaxon()->config();
-        if(!$xConfig->getOption('core.response.merge') ||
-            !in_array($aAttributes['cmd'], ['js', 'ap']) ||
-            ($count = count($this->aCommands)) === 0)
+        if(!$this->xConfig->getOption('core.response.merge') ||
+            !in_array($aAttributes['cmd'], ['js', 'ap']) || ($count = count($this->aCommands)) === 0)
         {
             return [false, $mData];
         }
@@ -157,14 +183,14 @@ class Response extends AbstractResponse
         }
         if($aLastCommand['cmd'] === 'js')
         {
-            if($xConfig->getOption('core.response.merge.js'))
+            if($this->xConfig->getOption('core.response.merge.js'))
             {
                 return [true, $aLastCommand['data'] . '; ' . $mData];
             }
         }
         elseif($aLastCommand['cmd'] === 'ap')
         {
-            if($xConfig->getOption('core.response.merge.ap') &&
+            if($this->xConfig->getOption('core.response.merge.ap') &&
                 $aLastCommand['id'] === $aAttributes['id'] &&
                 $aLastCommand['prop'] === $aAttributes['prop'])
             {
@@ -279,7 +305,7 @@ class Response extends AbstractResponse
         }
         else
         {
-            throw new SetupException(jaxon_trans('errors.response.data.invalid'));
+            throw new SetupException($this->xTranslator->trans('errors.response.data.invalid'));
         }
 
         $this->aCommands = ($bBefore) ?

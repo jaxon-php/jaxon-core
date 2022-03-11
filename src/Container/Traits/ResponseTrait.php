@@ -3,6 +3,7 @@
 namespace Jaxon\Container\Traits;
 
 use Jaxon\Jaxon;
+use Jaxon\Plugin\Manager as PluginManager;
 use Jaxon\Request\Handler\Argument as RequestArgument;
 use Jaxon\Response\Response;
 use Jaxon\Response\Manager as ResponseManager;
@@ -22,8 +23,9 @@ trait ResponseTrait
          * Core library objects
          */
         // Global Response
-        $this->set(Response::class, function() {
-            return new Response();
+        $this->set(Response::class, function($c) {
+            return new Response($c->g(Config::class),
+                $c->g(Translator::class), $c->g(PluginManager::class));
         });
         // Response Manager
         $this->set(ResponseManager::class, function($c) {
@@ -59,6 +61,7 @@ trait ResponseTrait
      */
     public function newResponse(): Response
     {
-        return new Response();
+        return new Response($this->g(Config::class),
+            $this->g(Translator::class), $this->g(PluginManager::class));
     }
 }

@@ -3,6 +3,8 @@
 namespace Jaxon\Response;
 
 use function array_walk;
+use function addslashes;
+use function json_encode;
 
 class UploadResponse extends AbstractResponse
 {
