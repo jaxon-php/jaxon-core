@@ -16,23 +16,21 @@ namespace Jaxon\Plugin;
 use Jaxon\Ui\View\Renderer;
 use Jaxon\Utils\Config\Config;
 
-use function jaxon;
-
 abstract class Package implements Code\Contracts\Generator
 {
     /**
      * The configuration options of the package
      *
-     * @var array
-     */
-    protected $aOptions = [];
-
-    /**
-     * The configuration options of the package
-     *
      * @var Config
      */
-    protected $xConfig;
+    protected $xPkgConfig;
+
+    /**
+     * The view renderer
+     *
+     * @var Renderer
+     */
+    protected $xRenderer;
 
     /**
      * Whether to include the getReadyScript() in the generated code.
@@ -42,23 +40,13 @@ abstract class Package implements Code\Contracts\Generator
     protected $bReadyEnabled = false;
 
     /**
-     * Get the package options in an array.
-     *
-     * @return array
-     */
-    public function getOptions(): array
-    {
-        return $this->aOptions;
-    }
-
-    /**
      * Get the package options in a Config object.
      *
      * @return Config
      */
     public function getConfig(): Config
     {
-        return $this->xConfig;
+        return $this->xPkgConfig;
     }
 
     /**
@@ -71,7 +59,7 @@ abstract class Package implements Code\Contracts\Generator
      */
     public function getOption(string $sOption, $xDefault = null)
     {
-        return $this->getConfig()->getOption((string)$sOption, $xDefault);
+        return $this->xPkgConfig->getOption($sOption, $xDefault);
     }
 
     /**
@@ -81,7 +69,7 @@ abstract class Package implements Code\Contracts\Generator
      */
     public function view(): Renderer
     {
-        return jaxon()->view();
+        return $this->xRenderer;
     }
 
     /**

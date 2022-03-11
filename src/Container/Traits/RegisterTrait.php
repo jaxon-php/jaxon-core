@@ -7,8 +7,9 @@ use Jaxon\Request\Factory\RequestFactory;
 use Jaxon\Request\Support\CallableObject;
 use Jaxon\Request\Support\CallableFunction;
 use Jaxon\Ui\Pagination\Paginator;
+use Jaxon\Ui\View\Renderer;
 use Jaxon\Utils\Config\Config;
-use Jaxon\Utils\Config\Exception\DataDepth;
+use Jaxon\Exception\SetupException;
 
 use ReflectionClass;
 
@@ -181,15 +182,15 @@ trait RegisterTrait
     {
         $xAppConfig = $this->newConfig($aAppOptions);
         $this->val($sClassName . '_config', $xAppConfig);
-        $this->set($sClassName, function() use($sClassName, $aAppOptions, $xAppConfig) {
+        $this->set($sClassName, function($c) use($sClassName) {
             $xPackage = $this->make($sClassName);
             // Set the package options
-            $cSetter = function($aOptions, $xConfig) {
-                $this->aOptions = $aOptions;
-                $this->xConfig = $xConfig;
+            $cSetter = function($c, $sClassName) {
+                $this->xPkgConfig = $c->g($sClassName . '_config');
+                $this->xRenderer = $c->g(Renderer::class);
             };
             // Can now access protected attributes
-            call_user_func($cSetter->bindTo($xPackage, $xPackage), $aAppOptions, $xAppConfig);
+            call_user_func($cSetter->bindTo($xPackage, $xPackage), $c, $sClassName);
             return $xPackage;
         });
 
