@@ -28,7 +28,7 @@ Features
 - The generated javascript classes are named according to their namespace or the subdirectory where they are located.
 - All PHP packages install with `Composer`, are fully namespaced, and implement `PSR-4` autoloading.
 - The library natively implements Ajax file upload.
-- The library runs on PHP versions 5.4 to 7.X.
+- Up to version 3, the library runs on PHP versions 5.4 to 7.X. The version 4 runs on PHP versions 7.1 to 8.X.
 
 Documentation
 -------------
