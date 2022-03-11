@@ -16,11 +16,6 @@ use Jaxon\Jaxon;
 use Jaxon\Exception\SetupException;
 use Jaxon\Response\Manager as ResponseManager;
 use Jaxon\Utils\Config\Reader as ConfigReader;
-use Jaxon\Utils\Config\Exception\DataDepth;
-use Jaxon\Utils\Config\Exception\YamlExtension;
-use Jaxon\Utils\Config\Exception\FileAccess;
-use Jaxon\Utils\Config\Exception\FileExtension;
-use Jaxon\Utils\Config\Exception\FileContent;
 use Jaxon\Utils\Translation\Translator;
 
 use function intval;
@@ -103,42 +98,17 @@ class App
             ->app($aAppOptions)
             // ->uri($sUri)
             // ->js(!$bIsDebug, $sJsUrl, $sJsDir, !$bIsDebug)
-            ->run();
+            ->setup();
     }
 
     /**
-     * Get the HTTP response
-     *
-     * @param string $sCode    The HTTP response code
-     *
-     * @return void
+     * @inheritDoc
      */
     public function httpResponse(string $sCode = '200')
     {
-        // Only if the response is not yet sent
-        if(!$this->jaxon->getOption('core.response.send'))
-        {
-            // Set the HTTP response code
-            http_response_code(intval($sCode));
-
-            // Send the response
-            $this->xResponseManager->sendOutput();
-
-            if(($this->jaxon->getOption('core.process.exit')))
-            {
-                exit();
-            }
-        }
-    }
-
-    /**
-     * Process an incoming Jaxon request, and return the response.
-     *
-     * @return void
-     * @throws SetupException
-     */
-    public function processRequest()
-    {
-        $this->jaxon->processRequest();
+        // Set the HTTP response code
+        http_response_code(intval($sCode));
+        // Send the response
+        $this->xResponseManager->sendOutput();
     }
 }

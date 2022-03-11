@@ -11,6 +11,7 @@ use Jaxon\Request\Handler\Callback;
 use Jaxon\Response\AbstractResponse;
 use Jaxon\Ui\View\Renderer;
 use Jaxon\Utils\Http\UriException;
+use Jaxon\Exception\SetupException;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 
@@ -112,8 +113,20 @@ trait App
      * Process an incoming Jaxon request, and return the response.
      *
      * @return mixed
+     * @throws SetupException
      */
-    abstract public function processRequest();
+    public function processRequest()
+    {
+        // Prevent the Jaxon library from sending the response or exiting
+        $this->jaxon->config()->setOption('core.response.send', false);
+        $this->jaxon->config()->setOption('core.process.exit', false);
+
+        // Process the jaxon request
+        $this->jaxon->processRequest();
+
+        // Return the response to the request
+        return $this->httpResponse();
+    }
 
     /**
      * Get the HTML tags to include Jaxon CSS code and files into the page.
