@@ -34,7 +34,6 @@ use Jaxon\Response\Plugin\DataBag;
 use Jaxon\Response\Response as JaxonResponse;
 use Jaxon\Exception\SetupException;
 use Jaxon\Utils\Config\Config;
-use Jaxon\Utils\Config\Exception\DataDepth;
 use Jaxon\Utils\Translation\Translator;
 
 use function trim;
@@ -164,16 +163,17 @@ class Manager
         }
 
         // Register the plugin in the DI container, if necessary
-        if($bIsUsed && !$this->jaxon->di()->has($sClassName))
+        if($bIsUsed)
         {
-            $this->jaxon->di()->auto($sClassName);
+            if(!$this->jaxon->di()->has($sClassName))
+            {
+                $this->jaxon->di()->auto($sClassName);
+            }
+            return;
         }
-
-        if(!$bIsUsed)
-        {
-            $sMessage = $this->xTranslator->trans('errors.register.invalid', ['name' => $sClassName]);
-            throw new SetupException($sMessage);
-        }
+        // The class is invalid.
+        $sMessage = $this->xTranslator->trans('errors.register.invalid', ['name' => $sClassName]);
+        throw new SetupException($sMessage);
     }
 
     /**
@@ -190,15 +190,7 @@ class Manager
         $aPackageConfig = $this->jaxon->readConfig($sConfigFile);
         // Add the package name to the config
         $aPackageConfig['package'] = $sClassName;
-        try
-        {
-            return $this->jaxon->di()->newConfig($aPackageConfig);
-        }
-        catch(DataDepth $e)
-        {
-            $sMessage = $this->xTranslator->trans('errors.data.depth', ['key' => $e->sPrefix, 'depth' => $e->nDepth]);
-            throw new SetupException($sMessage);
-        }
+        return $this->jaxon->di()->newConfig($aPackageConfig);
     }
 
     /**
@@ -209,7 +201,6 @@ class Manager
      *
      * @return void
      * @throws SetupException
-     * @throws DataDepth
      */
     public function registerPackage(string $sClassName, array $aAppOptions)
     {
@@ -327,7 +318,6 @@ class Manager
      *
      * @return void
      * @throws SetupException
-     * @throws DataDepth
      */
     public function registerFromConfig(Config $xAppConfig)
     {

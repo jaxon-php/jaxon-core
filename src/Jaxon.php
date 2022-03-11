@@ -45,7 +45,7 @@ use Jaxon\Utils\Config\Exception\FileExtension;
 use Jaxon\Utils\Config\Exception\YamlExtension;
 use Jaxon\Utils\Template\Engine;
 use Jaxon\Utils\Translation\Translator;
-use Jaxon\Utils\Config\Exception\DataDepth as DataDepthException;
+use Jaxon\Utils\Config\Exception\DataDepth;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
@@ -264,7 +264,7 @@ class Jaxon implements LoggerAwareInterface
             // Set up the lib config options.
             $this->config()->setOptions($aConfigOptions, $sConfigSection);
         }
-        catch(DataDepthException $e)
+        catch(DataDepth $e)
         {
             $sMessage = $this->xTranslator->trans('errors.data.depth', ['key' => $e->sPrefix, 'depth' => $e->nDepth]);
             throw new SetupException($sMessage);
@@ -313,7 +313,7 @@ class Jaxon implements LoggerAwareInterface
      * Create a new the config set
      *
      * @return Config            The config manager
-     * @throws DataDepthException
+     * @throws SetupException
      */
     public function newConfig(): Config
     {
@@ -396,7 +396,6 @@ class Jaxon implements LoggerAwareInterface
      *
      * @return void
      * @throws SetupException
-     * @throws DataDepthException
      */
     public function registerPackage(string $sClassName, array $aOptions = [])
     {

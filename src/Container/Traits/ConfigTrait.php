@@ -2,9 +2,11 @@
 
 namespace Jaxon\Container\Traits;
 
+use Jaxon\Exception\SetupException;
 use Jaxon\Utils\Config\Config;
 use Jaxon\Utils\Config\Reader;
 use Jaxon\Utils\Config\Exception\DataDepth;
+use Jaxon\Utils\Translation\Translator;
 
 trait ConfigTrait
 {
@@ -44,16 +46,25 @@ trait ConfigTrait
     }
 
     /**
-     * Create a new the config manager
+     * Create a new the config object
      *
      * @param array $aOptions    The options array
-     * @param string $sKeys    The key prefix of the config options
+     * @param string $sKeys    The prefix of key of the config options
      *
      * @return Config
-     * @throws DataDepth
+     * @throws SetupException
      */
     public function newConfig(array $aOptions = [], string $sKeys = ''): Config
     {
-        return new Config($aOptions, $sKeys);
+        try
+        {
+            return new Config($aOptions, $sKeys);
+        }
+        catch(DataDepth $e)
+        {
+            $xTranslator = $this->g(Translator::class);
+            $sMessage = $xTranslator->trans('errors.data.depth', ['key' => $e->sPrefix, 'depth' => $e->nDepth]);
+            throw new SetupException($sMessage);
+        }
     }
 }

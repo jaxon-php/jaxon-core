@@ -176,7 +176,7 @@ trait RegisterTrait
      * @param array $aAppOptions    The package options defined in the app section of the config file
      *
      * @return Config
-     * @throws DataDepth
+     * @throws SetupException
      */
     public function registerPackage(string $sClassName, array $aAppOptions): Config
     {

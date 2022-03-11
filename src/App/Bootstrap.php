@@ -201,17 +201,12 @@ class Bootstrap
     public function setup()
     {
         $di = $this->jaxon->di();
+        $xLibConfig = $di->getConfig();
 
         // Setup the lib config options.
         try
         {
-            $di->getConfig()->setOptions($this->aLibOptions);
-
-            // Get the app config options.
-            $xAppConfig = $di->newConfig($this->aAppOptions);
-            $xAppConfig->setOption('options.views.default', 'default');
-            // Setup the app.
-            $this->setupApp($xAppConfig);
+            $xLibConfig->setOptions($this->aLibOptions);
         }
         catch(DataDepth $e)
         {
@@ -219,39 +214,33 @@ class Bootstrap
             throw new SetupException($sMessage);
         }
 
+        // Get the app config options.
+        $xAppConfig = $di->newConfig($this->aAppOptions);
+        $xAppConfig->setOption('options.views.default', 'default');
+        // Setup the app.
+        $this->setupApp($xAppConfig);
+
         // Jaxon library settings
-        $xConfig = $this->jaxon->config();
-        if(!$xConfig->hasOption('js.app.export'))
+        if(!$xLibConfig->hasOption('js.app.export'))
         {
-            $xConfig->setOption('js.app.export', $this->bExportJs);
+            $xLibConfig->setOption('js.app.export', $this->bExportJs);
         }
-        if(!$xConfig->hasOption('js.app.minify'))
+        if(!$xLibConfig->hasOption('js.app.minify'))
         {
-            $xConfig->setOption('js.app.minify', $this->bMinifyJs);
+            $xLibConfig->setOption('js.app.minify', $this->bMinifyJs);
         }
-        if(!$xConfig->hasOption('js.app.uri') && $this->sJsUri != '')
+        if(!$xLibConfig->hasOption('js.app.uri') && $this->sJsUri != '')
         {
-            $xConfig->setOption('js.app.uri', $this->sJsUri);
+            $xLibConfig->setOption('js.app.uri', $this->sJsUri);
         }
-        if(!$xConfig->hasOption('js.app.dir') && $this->sJsDir != '')
+        if(!$xLibConfig->hasOption('js.app.dir') && $this->sJsDir != '')
         {
-            $xConfig->setOption('js.app.dir', $this->sJsDir);
+            $xLibConfig->setOption('js.app.dir', $this->sJsDir);
         }
         // Set the request URI
-        if(!$xConfig->hasOption('core.request.uri') && $this->sUri != '')
+        if(!$xLibConfig->hasOption('core.request.uri') && $this->sUri != '')
         {
-            $xConfig->setOption('core.request.uri', $this->sUri);
+            $xLibConfig->setOption('core.request.uri', $this->sUri);
         }
-    }
-
-    /**
-     * Wraps the module/package/bundle setup method.
-     *
-     * @return void
-     * @throws SetupException
-     */
-    public function run()
-    {
-        $this->setup();
     }
 }
