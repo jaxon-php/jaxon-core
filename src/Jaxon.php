@@ -30,34 +30,33 @@ use Jaxon\Container\Container;
 use Jaxon\Contracts\Session;
 use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;
-use Jaxon\Plugin\Response as ResponsePlugin;
-use Jaxon\Plugin\Package;
 use Jaxon\Plugin\Code\Generator as CodeGenerator;
 use Jaxon\Plugin\Manager as PluginManager;
+use Jaxon\Plugin\Package;
+use Jaxon\Plugin\Response as ResponsePlugin;
 use Jaxon\Request\Factory\Factory;
 use Jaxon\Request\Factory\RequestFactory;
 use Jaxon\Request\Handler\Callback;
 use Jaxon\Request\Handler\Handler as RequestHandler;
-use Jaxon\Request\Plugin\FileUpload;
 use Jaxon\Request\Support\CallableRegistry;
+use Jaxon\Request\Upload\Plugin as UploadPlugin;
 use Jaxon\Response\Manager as ResponseManager;
 use Jaxon\Response\Response;
 use Jaxon\Ui\Dialogs\Dialog;
 use Jaxon\Ui\View\Renderer;
 use Jaxon\Utils\Config\Config;
-use Jaxon\Utils\Config\Reader as ConfigReader;
+use Jaxon\Utils\Config\Exception\DataDepth;
 use Jaxon\Utils\Config\Exception\FileAccess;
 use Jaxon\Utils\Config\Exception\FileContent;
 use Jaxon\Utils\Config\Exception\FileExtension;
 use Jaxon\Utils\Config\Exception\YamlExtension;
+use Jaxon\Utils\Config\Reader as ConfigReader;
 use Jaxon\Utils\Template\Engine as TemplateEngine;
 use Jaxon\Utils\Translation\Translator;
-use Jaxon\Utils\Config\Exception\DataDepth;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
-
 use function headers_sent;
 
 class Jaxon implements LoggerAwareInterface
@@ -77,8 +76,6 @@ class Jaxon implements LoggerAwareInterface
     const CALLABLE_CLASS = 'CallableClass';
     const CALLABLE_DIR = 'CallableDir';
     const CALLABLE_FUNCTION = 'CallableFunction';
-    // For uploaded files.
-    const FILE_UPLOAD = 'FileUpload';
 
     /**
      * A static instance on this class
@@ -631,9 +628,9 @@ class Jaxon implements LoggerAwareInterface
     /**
      * Get the upload plugin
      *
-     * @return FileUpload
+     * @return UploadPlugin
      */
-    public function upload(): FileUpload
+    public function upload(): UploadPlugin
     {
         return $this->di()->getUploadPlugin();
     }

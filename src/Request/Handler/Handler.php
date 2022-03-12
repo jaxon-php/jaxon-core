@@ -23,10 +23,10 @@ namespace Jaxon\Request\Handler;
 use Jaxon\Jaxon;
 use Jaxon\Plugin\Manager as PluginManager;
 use Jaxon\Plugin\Request;
-use Jaxon\Response\Manager as ResponseManager;
-use Jaxon\Request\Plugin\FileUpload;
-use Jaxon\Response\Plugin\DataBag;
+use Jaxon\Request\Upload\Plugin as UploadPlugin;
 use Jaxon\Response\AbstractResponse;
+use Jaxon\Response\Manager as ResponseManager;
+use Jaxon\Response\Plugin\DataBag;
 use Jaxon\Utils\Config\Config;
 use Jaxon\Exception\RequestException;
 
@@ -35,8 +35,8 @@ use Exception;
 use function call_user_func;
 use function call_user_func_array;
 use function error_reporting;
-use function ob_get_level;
 use function ob_end_clean;
+use function ob_get_level;
 
 class Handler
 {
@@ -88,7 +88,7 @@ class Handler
     /**
      * The file upload request plugin
      *
-     * @var FileUpload
+     * @var UploadPlugin
      */
     private $xUploadPlugin = null;
 
@@ -107,11 +107,11 @@ class Handler
      * @param Argument $xArgument
      * @param PluginManager  $xPluginManager
      * @param ResponseManager  $xResponseManager
-     * @param FileUpload  $xUploadPlugin
+     * @param UploadPlugin  $xUploadPlugin
      * @param DataBag  $xDataBagPlugin
      */
     public function __construct(Jaxon $jaxon, Config $xConfig, Argument $xArgument, PluginManager $xPluginManager,
-        ResponseManager $xResponseManager, FileUpload $xUploadPlugin, DataBag $xDataBagPlugin)
+        ResponseManager $xResponseManager, UploadPlugin $xUploadPlugin, DataBag $xDataBagPlugin)
     {
         $this->jaxon = $jaxon;
         $this->xConfig = $xConfig;
@@ -179,11 +179,15 @@ class Handler
      */
     public function onBefore(bool &$bEndRequest)
     {
+        $xTarget = $this->xTargetRequestPlugin->getTarget();
         // Call the user defined callback
         foreach($this->xCallbackManager->getBeforeCallbacks() as $xCallback)
         {
-            $xReturn = call_user_func_array($xCallback,
-                [$this->xTargetRequestPlugin->getTarget(), &$bEndRequest]);
+            $xReturn = call_user_func_array($xCallback, [$xTarget, &$bEndRequest]);
+            if($bEndRequest)
+            {
+                return;
+            }
             if($xReturn instanceof AbstractResponse)
             {
                 $this->xResponseManager->append($xReturn);
@@ -264,7 +268,7 @@ class Handler
         foreach($this->xPluginManager->getRequestPlugins() as $sClassName)
         {
             $xPlugin = $this->jaxon->di()->get($sClassName);
-            if($xPlugin->getName() != Jaxon::FILE_UPLOAD && $xPlugin->canProcessRequest())
+            if($xPlugin->canProcessRequest())
             {
                 $this->xTargetRequestPlugin = $xPlugin;
                 return true;
@@ -278,8 +282,8 @@ class Handler
         }
 
         // If no other plugin than the upload plugin can process the request,
-        // then it is a HTTP (not ajax) upload request
-        $this->xUploadPlugin->noRequestPluginFound();
+        // then it is an HTTP (not ajax) upload request
+        $this->xUploadPlugin->isHttpUpload();
         return $this->xUploadPlugin->canProcessRequest();
     }
 

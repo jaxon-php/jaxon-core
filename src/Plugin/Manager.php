@@ -21,26 +21,24 @@
 
 namespace Jaxon\Plugin;
 
-use Jaxon\Jaxon;
 use Jaxon\Contracts\Dialogs\Message;
 use Jaxon\Contracts\Dialogs\Question;
+use Jaxon\Exception\SetupException;
+use Jaxon\Jaxon;
 use Jaxon\Plugin\Code\Generator as CodeGenerator;
 use Jaxon\Request\Plugin\CallableClass;
 use Jaxon\Request\Plugin\CallableDir;
 use Jaxon\Request\Plugin\CallableFunction;
-use Jaxon\Request\Plugin\FileUpload;
-use Jaxon\Response\Plugin\JQuery as JQueryPlugin;
 use Jaxon\Response\Plugin\DataBag;
+use Jaxon\Response\Plugin\JQuery as JQueryPlugin;
 use Jaxon\Response\Response as JaxonResponse;
-use Jaxon\Exception\SetupException;
 use Jaxon\Utils\Config\Config;
 use Jaxon\Utils\Translation\Translator;
-
-use function trim;
+use function is_array;
 use function is_integer;
 use function is_string;
-use function is_array;
 use function is_subclass_of;
+use function trim;
 
 class Manager
 {
@@ -380,8 +378,7 @@ class Manager
     {
         $this->registerPlugin(CallableClass::class, Jaxon::CALLABLE_CLASS, 101);
         $this->registerPlugin(CallableFunction::class, Jaxon::CALLABLE_FUNCTION, 102);
-        $this->registerPlugin(FileUpload::class, Jaxon::FILE_UPLOAD, 103);
-        $this->registerPlugin(CallableDir::class, Jaxon::CALLABLE_DIR, 104);
+        $this->registerPlugin(CallableDir::class, Jaxon::CALLABLE_DIR, 103);
     }
 
     /**

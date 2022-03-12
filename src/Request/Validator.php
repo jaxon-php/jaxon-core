@@ -111,6 +111,19 @@ class Validator
     }
 
     /**
+     * Validate a temp file name
+     *
+     * @param string $sName    The temp file name
+     *
+     * @return bool
+     */
+    public function validateTempFileName(string $sName): bool
+    {
+        $this->sErrorMessage = '';
+        return (preg_match('/^[a-zA-Z0-9_\x7f-\xff]*$/', $sName) > 0);
+    }
+
+    /**
      * Validate a property of an uploaded file
      *
      * @param string $sName    The uploaded file variable name

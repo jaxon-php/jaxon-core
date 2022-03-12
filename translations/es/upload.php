@@ -11,6 +11,7 @@ return [
             'min-size' => "No se pueden subir archivos con peso :size. Muy pequeño.",
             'plugin' => "No se ha encontrado el plugin upload.",
             'request' => "No hay datos de subida en la petición.",
+            'invalid' => "Los datos de subida no son válidos.",
         ],
     ],
 ];

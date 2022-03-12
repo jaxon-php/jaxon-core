@@ -9,8 +9,9 @@ return [
             'extension' => "Upload is not allowed for file with extension :extension.",
             'max-size' => "Upload is not allowed for file of size :size. Too big.",
             'min-size' => "Upload is not allowed for file of size :size. Too small.",
-            'plugin' => "Upload plugin not found",
-            'request' => "Upload data not available in the request",
+            'plugin' => "Upload plugin not found.",
+            'request' => "Upload data not available in the request.",
+            'invalid' => "Upload data are invalid.",
         ],
     ],
 ];

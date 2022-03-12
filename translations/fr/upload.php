@@ -9,8 +9,9 @@ return [
             'extension' => "L'upload n'est pas autorisé pour les fichiers avec l'extension :extension.",
             'max-size' => "L'upload n'est pas autorisé pour les fichiers de taille :size. Trop grand.",
             'min-size' => "L'upload n'est pas autorisé pour les fichiers de taille :size. Trop petit.",
-            'plugin' => "Le plugin Upload est introuvable",
-            'request' => "La requête ne contient pas de données d'upload",
+            'plugin' => "Le plugin Upload est introuvable.",
+            'request' => "La requête ne contient pas de données d'upload.",
+            'invalid' => "Les données d'upload sont invalides.",
         ],
     ],
 ];
