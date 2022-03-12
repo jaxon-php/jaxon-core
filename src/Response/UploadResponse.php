@@ -93,9 +93,16 @@ class UploadResponse extends AbstractResponse
         });
 
         return '
+<!DOCTYPE html>
+<html>
+<body>
+<h1>HTTP Upload for Jaxon</h1>
+<p>No real data.</p>
+</body>
 <script>
-    let res = ' . json_encode($aResponse) . ';' . $sConsoleLog . '
+    res = ' . json_encode($aResponse) . ';' . $sConsoleLog . '
 </script>
+</html>
 ';
     }
 }

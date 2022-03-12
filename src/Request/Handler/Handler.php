@@ -23,7 +23,6 @@ namespace Jaxon\Request\Handler;
 use Jaxon\Jaxon;
 use Jaxon\Plugin\Manager as PluginManager;
 use Jaxon\Plugin\Request;
-use Jaxon\Request\Upload\Plugin as UploadPlugin;
 use Jaxon\Response\AbstractResponse;
 use Jaxon\Response\Manager as ResponseManager;
 use Jaxon\Response\Plugin\DataBag;
@@ -86,13 +85,6 @@ class Handler
     private $xTargetRequestPlugin = null;
 
     /**
-     * The file upload request plugin
-     *
-     * @var UploadPlugin
-     */
-    private $xUploadPlugin = null;
-
-    /**
      * The data bag response plugin
      *
      * @var DataBag
@@ -107,17 +99,15 @@ class Handler
      * @param Argument $xArgument
      * @param PluginManager  $xPluginManager
      * @param ResponseManager  $xResponseManager
-     * @param UploadPlugin  $xUploadPlugin
      * @param DataBag  $xDataBagPlugin
      */
-    public function __construct(Jaxon $jaxon, Config $xConfig, Argument $xArgument, PluginManager $xPluginManager,
-        ResponseManager $xResponseManager, UploadPlugin $xUploadPlugin, DataBag $xDataBagPlugin)
+    public function __construct(Jaxon $jaxon, Config $xConfig, Argument $xArgument,
+        PluginManager $xPluginManager, ResponseManager $xResponseManager, DataBag $xDataBagPlugin)
     {
         $this->jaxon = $jaxon;
         $this->xConfig = $xConfig;
         $this->xPluginManager = $xPluginManager;
         $this->xResponseManager = $xResponseManager;
-        $this->xUploadPlugin = $xUploadPlugin;
         $this->xDataBagPlugin = $xDataBagPlugin;
         $this->xArgumentManager = $xArgument;
 
@@ -276,15 +266,15 @@ class Handler
         }
 
         // Check if the upload plugin is enabled
-        if(!$this->xConfig->getOption('core.upload.enabled'))
+        if(!($xUploadPlugin = $this->jaxon->di()->getUploadPlugin()))
         {
             return false;
         }
 
         // If no other plugin than the upload plugin can process the request,
         // then it is an HTTP (not ajax) upload request
-        $this->xUploadPlugin->isHttpUpload();
-        return $this->xUploadPlugin->canProcessRequest();
+        $xUploadPlugin->isHttpUpload();
+        return $xUploadPlugin->canProcessRequest();
     }
 
     /**
@@ -298,9 +288,9 @@ class Handler
         try
         {
             // Process uploaded files, if the upload plugin is enabled
-            if($this->xConfig->getOption('core.upload.enabled'))
+            if(($xUploadPlugin = $this->jaxon->di()->getUploadPlugin()))
             {
-                $this->xUploadPlugin->processRequest();
+                $xUploadPlugin->processRequest();
             }
 
             // Process the request

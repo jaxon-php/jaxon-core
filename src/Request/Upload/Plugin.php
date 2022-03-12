@@ -96,7 +96,7 @@ class Plugin extends RequestPlugin
      */
     public function getName(): string
     {
-        return Jaxon::FILE_UPLOAD;
+        return 'UploadPlugin';
     }
 
     /**

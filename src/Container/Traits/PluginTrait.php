@@ -34,6 +34,11 @@ trait PluginTrait
         });
         // File upload plugin
         $this->set(UploadPlugin::class, function($c) {
+            $xConfig = $c->g(Config::class);
+            if(!$xConfig->getOption('core.upload.enabled'))
+            {
+                return null;
+            }
             return new UploadPlugin($c->g(UploadSupport::class), $c->g(Translator::class), $c->g(ResponseManager::class));
         });
         // JQuery response plugin
@@ -59,9 +64,9 @@ trait PluginTrait
     /**
      * Get the upload plugin
      *
-     * @return UploadPlugin
+     * @return UploadPlugin|null
      */
-    public function getUploadPlugin(): UploadPlugin
+    public function getUploadPlugin(): ?UploadPlugin
     {
         return $this->g(UploadPlugin::class);
     }

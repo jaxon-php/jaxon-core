@@ -101,9 +101,9 @@ class Manager
     /**
      * Get the response to the Jaxon request
      *
-     * @return Response
+     * @return AbstractResponse
      */
-    public function getResponse(): ?Response
+    public function getResponse(): ?AbstractResponse
     {
         return $this->xResponse;
     }
