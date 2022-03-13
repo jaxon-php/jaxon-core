@@ -22,17 +22,23 @@ namespace Jaxon\Request\Call;
 
 use Jaxon\Request\Call\Contracts\Parameter as ParameterContract;
 use Jaxon\Response\Plugin\JQuery\Dom\Element as DomElement;
+use Jaxon\Ui\Dialogs\Dialog;
 use Jaxon\Ui\Pagination\Paginator;
 use Jaxon\Ui\View\Store;
 
 use function array_map;
 use function array_shift;
 use function count;
+use function implode;
 use function func_get_args;
-use function jaxon;
 
 class Call extends JsCall
 {
+    /**
+     * @var Dialog
+     */
+    protected $xDialog;
+
     /**
      * @var Paginator
      */
@@ -56,11 +62,13 @@ class Call extends JsCall
      * The constructor.
      *
      * @param string $sName    The javascript function or method name
+     * @param Dialog $xDialog
      * @param Paginator $xPaginator
      */
-    public function __construct(string $sName, Paginator $xPaginator)
+    public function __construct(string $sName, Dialog $xDialog, Paginator $xPaginator)
     {
         parent::__construct($sName);
+        $this->xDialog = $xDialog;
         $this->xPaginator = $xPaginator;
     }
 
@@ -298,18 +306,18 @@ class Call extends JsCall
         }
 
         $sScript = parent::getScript();
-        $xDialog = jaxon()->dialog();
-        if($this->sCondition == '__confirm__')
+        if($this->sCondition === '__confirm__')
         {
-            $sScript = $xDialog->confirm($sPhrase, $sScript, '');
+            $sScript = $this->xDialog->confirm($sPhrase, $sScript, '');
         }
         elseif($this->sCondition !== null)
         {
             $sScript = 'if(' . $this->sCondition . '){' . $sScript . ';}';
             if(($sPhrase))
             {
-                $xDialog->getMessage()->setReturn(true);
-                $sScript .= 'else{' . $xDialog->warning($sPhrase) . ';}';
+                $this->xDialog->getMessage()->setReturn(true);
+                $sScript .= 'else{' . $this->xDialog->warning($sPhrase) . ';}';
+                $this->xDialog->getMessage()->setReturn(false);
             }
         }
         return $sVars . $sScript;

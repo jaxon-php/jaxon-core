@@ -6,6 +6,7 @@ use Jaxon\Jaxon;
 use Jaxon\Request\Factory\RequestFactory;
 use Jaxon\Request\Support\CallableObject;
 use Jaxon\Request\Support\CallableFunction;
+use Jaxon\Ui\Dialogs\Dialog;
 use Jaxon\Ui\Pagination\Paginator;
 use Jaxon\Ui\View\Renderer;
 use Jaxon\Utils\Config\Config;
@@ -114,7 +115,7 @@ trait RegisterTrait
             $xConfig = $c->g(Config::class);
             $xCallable = $c->g($sCallableName);
             $sJsClass = $xConfig->getOption('core.prefix.class') . $xCallable->getJsName() . '.';
-            return new RequestFactory($sJsClass, $c->g(Paginator::class));
+            return new RequestFactory($sJsClass, $c->g(Dialog::class), $c->g(Paginator::class));
         });
 
         // Register the user class
