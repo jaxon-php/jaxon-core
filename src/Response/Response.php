@@ -69,6 +69,21 @@ class Response extends AbstractResponse
     protected $xPluginManager;
 
     /**
+     * The commands that will be sent to the browser in the response
+     *
+     * @var array
+     */
+    protected $aCommands = [];
+
+    /**
+     * A string, array or integer value to be returned to the caller when using 'synchronous' mode requests.
+     * See <jaxon->setMode> for details.
+     *
+     * @var mixed
+     */
+    protected $xReturnValue;
+
+    /**
      * The constructor
      *
      * @param Config $xConfig
@@ -83,19 +98,14 @@ class Response extends AbstractResponse
     }
 
     /**
-     * The commands that will be sent to the browser in the response
+     * Create a new Jaxon response object
      *
-     * @var array
+     * @return Response
      */
-    protected $aCommands = [];
-
-    /**
-     * A string, array or integer value to be returned to the caller when using 'synchronous' mode requests.
-     * See <jaxon->setMode> for details.
-     *
-     * @var mixed
-     */
-    protected $xReturnValue;
+    public function newResponse(): Response
+    {
+        return new Response($this->xConfig, $this->xTranslator, $this->xPluginManager);
+    }
 
     /**
      * Get the content type, which is always set to 'application/json'

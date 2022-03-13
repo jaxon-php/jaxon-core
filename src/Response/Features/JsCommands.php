@@ -10,16 +10,19 @@
 
 namespace Jaxon\Response\Features;
 
-use Jaxon\Exception\SetupException;
 use Jaxon\Response\Response;
+use Jaxon\Exception\RequestException;
 
 use function strpos;
+use function strrpos;
+use function strlen;
 use function substr;
 use function parse_str;
 use function rawurlencode;
 use function str_replace;
 use function call_user_func;
-use function jaxon;
+use function func_get_args;
+use function array_shift;
 
 trait JsCommands
 {
@@ -79,15 +82,15 @@ trait JsCommands
      * If the user clicks cancel, the specified number of response commands
      * following this one, will be skipped.
      *
-     * @param string $sMessage    The message to display to the user
-     * @param callable $xCallable    The function
+     * @param string $sMessage The message to display to the user
+     * @param callable $xCallable The function
      *
-     * @return JsCommands
-     * @throws SetupException
+     * @return Response
+     * @throws RequestException
      */
-    public function confirm(string $sMessage, callable $xCallable): JsCommands
+    public function confirm(string $sMessage, callable $xCallable): Response
     {
-        $xResponse = jaxon()->newResponse();
+        $xResponse = $this->newResponse();
         call_user_func($xCallable, $xResponse);
         $nCommandCount = $xResponse->getCommandCount();
         if($nCommandCount > 0)
@@ -183,9 +186,9 @@ trait JsCommands
     /**
      * Add a command to execute a portion of javascript on the browser
      *
-     * The script runs in it's own context, so variables declared locally, using the 'var' keyword,
+     * The script runs in its own context, so variables declared locally, using the 'var' keyword,
      * will no longer be available after the call.
-     * To construct a variable that will be accessable globally, even after the script has executed,
+     * To construct a variable that will be accessible globally, even after the script has executed,
      * leave off the 'var' keyword.
      *
      * @param string $sJS    The script to execute
@@ -389,7 +392,8 @@ trait JsCommands
      *
      * This causes the browser to unload the style sheet, effectively removing the style changes it caused.
      *
-     * @param string $sFileName    The relative or fully qualified URI of the css file
+     * @param string $sFileName The relative or fully qualified URI of the css file
+     * @param string $sMedia
      *
      * @return Response
      */
