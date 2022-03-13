@@ -18,7 +18,7 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Request\Support;
+namespace Jaxon\Request\Plugin\CallableFunction;
 
 class CallableFunction
 {

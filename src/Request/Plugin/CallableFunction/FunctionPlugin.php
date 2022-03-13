@@ -1,7 +1,7 @@
 <?php
 
 /**
- * CallableFunction.php - Jaxon user function plugin
+ * FunctionPlugin.php - Jaxon user function plugin
  *
  * This class registers user defined functions, generates client side javascript code,
  * and calls them on user request
@@ -19,29 +19,27 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Request\Plugin;
+namespace Jaxon\Request\Plugin\CallableFunction;
 
-use Jaxon\Jaxon;
-use Jaxon\Plugin\Request as RequestPlugin;
-use Jaxon\Request\Target;
-use Jaxon\Request\Handler\Handler as RequestHandler;
-use Jaxon\Request\Validator;
-use Jaxon\Response\Manager as ResponseManager;
-use Jaxon\Request\Support\CallableFunction as CallableFunctionSupport;
 use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;
+use Jaxon\Jaxon;
+use Jaxon\Plugin\Request as RequestPlugin;
+use Jaxon\Request\Handler\Handler as RequestHandler;
+use Jaxon\Request\Target;
+use Jaxon\Request\Validator;
+use Jaxon\Response\Manager as ResponseManager;
 use Jaxon\Utils\Config\Config;
 use Jaxon\Utils\Template\Engine as TemplateEngine;
 use Jaxon\Utils\Translation\Translator;
-
-use function trim;
-use function is_string;
-use function is_array;
-use function md5;
-use function implode;
 use function array_keys;
+use function implode;
+use function is_array;
+use function is_string;
+use function md5;
+use function trim;
 
-class CallableFunction extends RequestPlugin
+class FunctionPlugin extends RequestPlugin
 {
     /**
      * @var Jaxon
@@ -202,11 +200,11 @@ class CallableFunction extends RequestPlugin
     /**
      * Generate the javascript function stub that is sent to the browser on initial page load
      *
-     * @param CallableFunctionSupport $xFunction
+     * @param CallableFunction $xFunction
      *
      * @return string
      */
-    private function getCallableScript(CallableFunctionSupport $xFunction): string
+    private function getCallableScript(CallableFunction $xFunction): string
     {
         $sPrefix = $this->xConfig->getOption('core.prefix.function');
         $sJsFunction = $xFunction->getName();

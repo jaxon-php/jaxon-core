@@ -4,8 +4,8 @@ namespace Jaxon\Container\Traits;
 
 use Jaxon\Jaxon;
 use Jaxon\Request\Factory\RequestFactory;
+use Jaxon\Request\Plugin\CallableFunction\CallableFunction;
 use Jaxon\Request\Support\CallableObject;
-use Jaxon\Request\Support\CallableFunction;
 use Jaxon\Ui\Dialogs\Dialog;
 use Jaxon\Ui\Pagination\Paginator;
 use Jaxon\Ui\View\Renderer;
@@ -14,9 +14,9 @@ use Jaxon\Exception\SetupException;
 
 use ReflectionClass;
 
-use function substr;
-use function explode;
 use function call_user_func;
+use function explode;
+use function substr;
 
 trait RegisterTrait
 {

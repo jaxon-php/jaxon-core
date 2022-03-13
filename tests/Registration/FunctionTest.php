@@ -36,9 +36,9 @@ final class FunctionTest extends TestCase
         $xAliasCallable = jaxon()->di()->get('my_alias_function');
         $xThirdCallable = jaxon()->di()->get('my_third_function');
         // Test callables classes
-        $this->assertEquals(get_class($xFirstCallable), \Jaxon\Request\Support\CallableFunction::class);
-        $this->assertEquals(get_class($xAliasCallable), \Jaxon\Request\Support\CallableFunction::class);
-        $this->assertEquals(get_class($xThirdCallable), \Jaxon\Request\Support\CallableFunction::class);
+        $this->assertEquals(get_class($xFirstCallable), \Jaxon\Request\Plugin\CallableFunction\CallableFunction::class);
+        $this->assertEquals(get_class($xAliasCallable), \Jaxon\Request\Plugin\CallableFunction\CallableFunction::class);
+        $this->assertEquals(get_class($xThirdCallable), \Jaxon\Request\Plugin\CallableFunction\CallableFunction::class);
     }
 
     public function testRegisteredFunctionExportedName()

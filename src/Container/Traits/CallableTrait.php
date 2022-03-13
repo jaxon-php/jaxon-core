@@ -7,7 +7,7 @@ use Jaxon\Plugin\Code\Generator as CodeGenerator;
 use Jaxon\Request\Handler\Handler as RequestHandler;
 use Jaxon\Request\Plugin\CallableClass;
 use Jaxon\Request\Plugin\CallableDir;
-use Jaxon\Request\Plugin\CallableFunction;
+use Jaxon\Request\Plugin\CallableFunction\FunctionPlugin;
 use Jaxon\Request\Support\CallableRegistry;
 use Jaxon\Request\Support\CallableRepository;
 use Jaxon\Request\Validator;
@@ -50,8 +50,8 @@ trait CallableTrait
             return new CallableDir($c->g(CallableRegistry::class), $c->g(Translator::class));
         });
         // Callable function plugin
-        $this->set(CallableFunction::class, function($c) {
-            return new CallableFunction($c->g(Jaxon::class), $c->g(Config::class),
+        $this->set(FunctionPlugin::class, function($c) {
+            return new FunctionPlugin($c->g(Jaxon::class), $c->g(Config::class),
                 $c->g(RequestHandler::class), $c->g(ResponseManager::class),
                 $c->g(TemplateEngine::class), $c->g(Translator::class), $c->g(Validator::class));
         });
