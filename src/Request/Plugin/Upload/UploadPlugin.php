@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Plugin.php - This class implements file upload with Ajax.
+ * UploadPlugin.php - This class implements file upload with Ajax.
  *
  * @package jaxon-core
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
@@ -10,9 +10,8 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Request\Upload;
+namespace Jaxon\Request\Plugin\Upload;
 
-use Jaxon\Jaxon;
 use Jaxon\Plugin\Request as RequestPlugin;
 use Jaxon\Response\Manager as ResponseManager;
 use Jaxon\Response\UploadResponse;
@@ -25,7 +24,7 @@ use Exception;
 use function count;
 use function trim;
 
-class Plugin extends RequestPlugin
+class UploadPlugin extends RequestPlugin
 {
     /**
      * The response manager
@@ -37,9 +36,9 @@ class Plugin extends RequestPlugin
     /**
      * HTTP file upload support
      *
-     * @var Upload
+     * @var Manager
      */
-    protected $xUpload = null;
+    protected $xUploadManager = null;
 
     /**
      * @var Translator
@@ -70,15 +69,14 @@ class Plugin extends RequestPlugin
     /**
      * The constructor
      *
-     * @param Upload $xUpload    HTTP file upload support
+     * @param Manager $xUploadManager    HTTP file upload manager
      * @param Translator $xTranslator
      * @param ResponseManager $xResponseManager
      */
-    public function __construct(Upload $xUpload,
-        Translator $xTranslator, ResponseManager $xResponseManager)
+    public function __construct(Manager $xUploadManager, Translator $xTranslator, ResponseManager $xResponseManager)
     {
         $this->xResponseManager = $xResponseManager;
-        $this->xUpload = $xUpload;
+        $this->xUploadManager = $xUploadManager;
         $this->xTranslator = $xTranslator;
 
         if(isset($_POST['jxnupl']))
@@ -116,7 +114,7 @@ class Plugin extends RequestPlugin
      */
     public function sanitizer(Closure $cSanitizer)
     {
-        $this->xUpload->setNameSanitizer($cSanitizer);
+        $this->xUploadManager->setNameSanitizer($cSanitizer);
     }
 
     /**
@@ -164,12 +162,12 @@ class Plugin extends RequestPlugin
         {
             // Ajax request following a normal HTTP upload.
             // Copy the previously uploaded files' location from the temp file.
-            $this->aUserFiles = $this->xUpload->readFromTempFile($this->sTempFile);
+            $this->aUserFiles = $this->xUploadManager->readFromTempFile($this->sTempFile);
             return true;
         }
 
         // Ajax or Http request with upload; copy the uploaded files.
-        $this->aUserFiles = $this->xUpload->readFromHttpData();
+        $this->aUserFiles = $this->xUploadManager->readFromHttpData();
 
         // For Ajax requests, there is nothing else to do here.
         if($this->bIsAjaxRequest)
@@ -181,7 +179,7 @@ class Plugin extends RequestPlugin
         $xResponse = new UploadResponse();
         try
         {
-            $sTempFile = $this->xUpload->saveToTempFile($this->aUserFiles);
+            $sTempFile = $this->xUploadManager->saveToTempFile($this->aUserFiles);
             $xResponse->setUploadedFile($sTempFile);
         }
         catch(Exception $e)

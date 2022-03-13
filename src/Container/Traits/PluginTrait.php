@@ -5,8 +5,8 @@ namespace Jaxon\Container\Traits;
 use Jaxon\Jaxon;
 use Jaxon\Plugin\Code\Generator as CodeGenerator;
 use Jaxon\Plugin\Manager as PluginManager;
-use Jaxon\Request\Upload\Plugin as UploadPlugin;
-use Jaxon\Request\Upload\Upload as UploadSupport;
+use Jaxon\Request\Plugin\Upload\UploadPlugin;
+use Jaxon\Request\Plugin\Upload\Manager as UploadManager;
 use Jaxon\Request\Validator;
 use Jaxon\Response\Manager as ResponseManager;
 use Jaxon\Response\Plugin\DataBag;
@@ -23,14 +23,14 @@ trait PluginTrait
      */
     private function registerPlugins()
     {
-        // Plugin Manager
+        // UploadPlugin Manager
         $this->set(PluginManager::class, function($c) {
             return new PluginManager($c->g(Jaxon::class), $c->g(Config::class),
                 $c->g(Translator::class), $c->g(CodeGenerator::class));
         });
         // File upload support
-        $this->set(UploadSupport::class, function($c) {
-            return new UploadSupport($c->g(Config::class), $c->g(Validator::class), $c->g(Translator::class));
+        $this->set(UploadManager::class, function($c) {
+            return new UploadManager($c->g(Config::class), $c->g(Validator::class), $c->g(Translator::class));
         });
         // File upload plugin
         $this->set(UploadPlugin::class, function($c) {
@@ -39,7 +39,7 @@ trait PluginTrait
             {
                 return null;
             }
-            return new UploadPlugin($c->g(UploadSupport::class), $c->g(Translator::class), $c->g(ResponseManager::class));
+            return new UploadPlugin($c->g(UploadManager::class), $c->g(Translator::class), $c->g(ResponseManager::class));
         });
         // JQuery response plugin
         $this->set(JQueryPlugin::class, function($c) {

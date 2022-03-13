@@ -10,7 +10,7 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Request\Upload;
+namespace Jaxon\Request\Plugin\Upload;
 
 class File
 {

@@ -39,7 +39,7 @@ use Jaxon\Request\Factory\RequestFactory;
 use Jaxon\Request\Handler\Callback;
 use Jaxon\Request\Handler\Handler as RequestHandler;
 use Jaxon\Request\Plugin\CallableClass\CallableRegistry;
-use Jaxon\Request\Upload\Plugin as UploadPlugin;
+use Jaxon\Request\Plugin\Upload\UploadPlugin;
 use Jaxon\Response\AbstractResponse;
 use Jaxon\Response\Manager as ResponseManager;
 use Jaxon\Response\Response;

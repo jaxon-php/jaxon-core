@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Plugin.php - This class handles HTTP file upload.
+ * UploadPlugin.php - This class handles HTTP file upload.
  *
  * @package jaxon-core
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
@@ -9,7 +9,7 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Request\Upload;
+namespace Jaxon\Request\Plugin\Upload;
 
 use Jaxon\Request\Validator;
 use Jaxon\Utils\Config\Config;
@@ -42,7 +42,7 @@ use function random_bytes;
 use function bin2hex;
 use function call_user_func_array;
 
-class Upload
+class Manager
 {
     /**
      * @var Config
