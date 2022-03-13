@@ -38,7 +38,7 @@ class DirPlugin extends RequestPlugin
     /**
      * The callable registrar
      *
-     * @var CallableRegistry
+     * @var Registry
      */
     protected $xRegistry;
 
@@ -50,10 +50,10 @@ class DirPlugin extends RequestPlugin
     /**
      * The class constructor
      *
-     * @param CallableRegistry  $xRegistry
+     * @param Registry  $xRegistry
      * @param Translator  $xTranslator
      */
-    public function __construct(CallableRegistry $xRegistry, Translator $xTranslator)
+    public function __construct(Registry $xRegistry, Translator $xTranslator)
     {
         $this->xRegistry = $xRegistry;
         $this->xTranslator = $xTranslator;

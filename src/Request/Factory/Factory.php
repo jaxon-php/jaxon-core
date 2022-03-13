@@ -14,16 +14,16 @@ namespace Jaxon\Request\Factory;
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-use Jaxon\Request\Plugin\CallableClass\CallableRegistry;
+use Jaxon\Request\Plugin\CallableClass\Registry;
 
 use function trim;
 
 class Factory
 {
     /**
-     * @var CallableRegistry
+     * @var Registry
      */
-    private $xCallableRegistry;
+    private $xClassRegistry;
 
     /**
      * @var RequestFactory
@@ -38,14 +38,14 @@ class Factory
     /**
      * The constructor.
      *
-     * @param CallableRegistry $xCallableRegistry
+     * @param Registry $xClassRegistry
      * @param RequestFactory $xRequestFactory
      * @param ParameterFactory $xParameterFactory
      */
-    public function __construct(CallableRegistry $xCallableRegistry,
+    public function __construct(Registry $xClassRegistry,
         RequestFactory $xRequestFactory, ParameterFactory $xParameterFactory)
     {
-        $this->xCallableRegistry = $xCallableRegistry;
+        $this->xClassRegistry = $xClassRegistry;
         $this->xRequestFactory = $xRequestFactory;
         $this->xParameterFactory = $xParameterFactory;
     }
@@ -66,7 +66,7 @@ class Factory
             return $this->xRequestFactory;
         }
         // While each callable class has it own request factory.
-        return $this->xCallableRegistry->getRequestFactory($sClassName);
+        return $this->xClassRegistry->getRequestFactory($sClassName);
     }
 
     /**

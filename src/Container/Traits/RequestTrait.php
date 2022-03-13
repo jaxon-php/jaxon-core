@@ -9,7 +9,7 @@ use Jaxon\Request\Factory\ParameterFactory;
 use Jaxon\Request\Factory\RequestFactory;
 use Jaxon\Request\Handler\Argument as RequestArgument;
 use Jaxon\Request\Handler\Handler as RequestHandler;
-use Jaxon\Request\Plugin\CallableClass\CallableRegistry;
+use Jaxon\Request\Plugin\CallableClass\Registry;
 use Jaxon\Response\Manager as ResponseManager;
 use Jaxon\Response\Plugin\DataBag;
 use Jaxon\Ui\Dialogs\Dialog;
@@ -38,7 +38,7 @@ trait RequestTrait
         });
         // Request Factory
         $this->set(Factory::class, function($c) {
-            return new Factory($c->g(CallableRegistry::class),
+            return new Factory($c->g(Registry::class),
                 $c->g(RequestFactory::class), $c->g(ParameterFactory::class));
         });
         // Factory for requests to functions

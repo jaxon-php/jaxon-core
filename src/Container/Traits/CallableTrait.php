@@ -5,8 +5,8 @@ namespace Jaxon\Container\Traits;
 use Jaxon\Jaxon;
 use Jaxon\Plugin\Code\Generator as CodeGenerator;
 use Jaxon\Request\Handler\Handler as RequestHandler;
-use Jaxon\Request\Plugin\CallableClass\CallableRegistry;
-use Jaxon\Request\Plugin\CallableClass\CallableRepository;
+use Jaxon\Request\Plugin\CallableClass\Registry;
+use Jaxon\Request\Plugin\CallableClass\Repository;
 use Jaxon\Request\Plugin\CallableClass\ClassPlugin;
 use Jaxon\Request\Plugin\CallableClass\DirPlugin;
 use Jaxon\Request\Plugin\CallableFunction\FunctionPlugin;
@@ -32,22 +32,22 @@ trait CallableTrait
             return new Validator($c->g(Translator::class), $c->g(Config::class));
         });
         // Callable objects repository
-        $this->set(CallableRepository::class, function() {
-            return new CallableRepository($this);
+        $this->set(Repository::class, function() {
+            return new Repository($this);
         });
         // Callable objects registry
-        $this->set(CallableRegistry::class, function($c) {
-            return new CallableRegistry($this, $c->g(CallableRepository::class));
+        $this->set(Registry::class, function($c) {
+            return new Registry($this, $c->g(Repository::class));
         });
         // Callable class plugin
         $this->set(ClassPlugin::class, function($c) {
             return new ClassPlugin($c->g(Config::class), $c->g(RequestHandler::class),
-                $c->g(ResponseManager::class), $c->g(CallableRegistry::class), $c->g(CallableRepository::class),
+                $c->g(ResponseManager::class), $c->g(Registry::class), $c->g(Repository::class),
                 $c->g(TemplateEngine::class), $c->g(Translator::class), $c->g(Validator::class));
         });
         // Callable dir plugin
         $this->set(DirPlugin::class, function($c) {
-            return new DirPlugin($c->g(CallableRegistry::class), $c->g(Translator::class));
+            return new DirPlugin($c->g(Registry::class), $c->g(Translator::class));
         });
         // Callable function plugin
         $this->set(FunctionPlugin::class, function($c) {
@@ -65,11 +65,11 @@ trait CallableTrait
     /**
      * Get the callable registry
      *
-     * @return CallableRegistry
+     * @return Registry
      */
-    public function getCallableRegistry(): CallableRegistry
+    public function getClassRegistry(): Registry
     {
-        return $this->g(CallableRegistry::class);
+        return $this->g(Registry::class);
     }
 
     /**

@@ -71,14 +71,14 @@ class ClassPlugin extends RequestPlugin
     /**
      * The callable registry
      *
-     * @var CallableRegistry
+     * @var Registry
      */
     protected $xRegistry;
 
     /**
      * The callable repository
      *
-     * @var CallableRepository
+     * @var Repository
      */
     protected $xRepository;
 
@@ -119,15 +119,15 @@ class ClassPlugin extends RequestPlugin
      * @param Config  $xConfig
      * @param RequestHandler  $xRequestHandler
      * @param ResponseManager  $xResponseManager
-     * @param CallableRegistry $xRegistry    The callable class registry
-     * @param CallableRepository $xRepository    The callable object repository
+     * @param Registry $xRegistry    The callable class registry
+     * @param Repository $xRepository    The callable object repository
      * @param TemplateEngine  $xTemplateEngine
      * @param Translator  $xTranslator
      * @param Validator  $xValidator
      */
     public function __construct(Config $xConfig, RequestHandler $xRequestHandler,
-        ResponseManager $xResponseManager, CallableRegistry $xRegistry, CallableRepository $xRepository,
-        TemplateEngine $xTemplateEngine, Translator $xTranslator, Validator $xValidator)
+        ResponseManager $xResponseManager, Registry $xRegistry, Repository $xRepository,
+        TemplateEngine  $xTemplateEngine, Translator $xTranslator, Validator $xValidator)
     {
         $this->xConfig = $xConfig;
         $this->xRequestHandler = $xRequestHandler;

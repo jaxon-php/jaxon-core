@@ -1,7 +1,7 @@
 <?php
 
 /**
- * CallableRepository.php - Jaxon callable object repository
+ * Repository.php - Jaxon callable object repository
  *
  * This class stores all the callable object already created.
  *
@@ -27,7 +27,7 @@ use function strncmp;
 use function substr;
 use function trim;
 
-class CallableRepository
+class Repository
 {
     /**
      * The DI container
