@@ -213,7 +213,7 @@ class Registry
         {
             return $aOptions;
         }
-        $sMessage = $this->xTranslator->trans('errors.register.invalid', ['name' => $sClassName]);
+        $sMessage = $this->xTranslator->trans('errors.class.invalid', ['name' => $sClassName]);
         throw new SetupException($sMessage);
     }
 

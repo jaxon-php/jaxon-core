@@ -110,7 +110,7 @@ trait RegisterTrait
         catch(ReflectionException $e)
         {
             $xTranslator = $this->g(Translator::class);
-            $sMessage = $xTranslator->trans('errors.register.invalid', ['name' => $sClassName]);
+            $sMessage = $xTranslator->trans('errors.class.invalid', ['name' => $sClassName]);
             throw new SetupException($sMessage);
         }
 

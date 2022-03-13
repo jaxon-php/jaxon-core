@@ -7,6 +7,9 @@ return [
             'write-log' => "Jaxon was unable to write to the error log file: :file",
             'message' => "PHP Error Messages: :message",
         ],
+        'class' => [
+            'invalid' => "Unable to find class with name :name.",
+        ],
         'response' => [
             'result.invalid' => "An invalid response was returned while processing this request.",
             'data.invalid' => "The Jaxon response object could not load commands as the data provided was not valid.",

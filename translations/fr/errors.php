@@ -7,6 +7,9 @@ return [
             'write-log' => "Jaxon n'a pas pu écrire dans le fichier de log: :file",
             'message' => "Messages d'erreur PHP: :message",
         ],
+        'class' => [
+            'invalid' => "La classe :name n'existe pas.",
+        ],
         'response' => [
             'result.invalid' => "Une réponse invalide a été renvoyée lors du traitement de la requête.",
             'data.invalid' => "La réponse Jaxon ne peut traiter les commandes car les données fournies sont invalides.",
