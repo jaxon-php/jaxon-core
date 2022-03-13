@@ -24,7 +24,9 @@ use function rtrim;
 use function trim;
 use function substr;
 use function str_shuffle;
+use function is_string;
 use function is_array;
+use function is_dir;
 use function mkdir;
 use function is_readable;
 use function is_writable;
@@ -261,6 +263,10 @@ class Upload
         // Default upload dir
         $sDefaultUploadDir = $this->xConfig->getOption('upload.default.dir');
         $sUploadDir = $this->xConfig->getOption('upload.files.' . $sFieldId . '.dir', $sDefaultUploadDir);
+        if(!is_string($sUploadDir) || !is_dir($sUploadDir))
+        {
+            throw new RequestException($this->xTranslator->trans('errors.upload.access'));
+        }
         return $this->_makeUploadDir($sUploadDir, $this->sUploadSubdir);
     }
 
@@ -274,6 +280,10 @@ class Upload
     {
         // Default upload dir
         $sUploadDir = $this->xConfig->getOption('upload.default.dir');
+        if(!is_string($sUploadDir) || !is_dir($sUploadDir))
+        {
+            throw new RequestException($this->xTranslator->trans('errors.upload.access'));
+        }
         return $this->_makeUploadDir($sUploadDir, 'tmp' . DIRECTORY_SEPARATOR);
     }
 
