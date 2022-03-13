@@ -25,10 +25,17 @@
 namespace Jaxon\Request\Plugin\CallableClass;
 
 use Jaxon\Container\Container;
-use Jaxon\Request\Request;
 use Jaxon\Response\Response;
+
 use ReflectionClass;
 use ReflectionException;
+
+use function array_map;
+use function array_merge;
+use function in_array;
+use function is_array;
+use function is_string;
+use function strlen;
 
 class CallableObject
 {
@@ -261,11 +268,13 @@ class CallableObject
     }
 
     /**
-     * Return a list of methods of the callable object to export to javascript
+     * Return a list of methods of the callable object
+     *
+     * @param array $aProtectedMethods    The protected methods
      *
      * @return array
      */
-    public function getMethods(): array
+    private function _getMethods(array $aProtectedMethods): array
     {
         $aMethods = [];
         foreach($this->xReflectionClass->getMethods(\ReflectionMethod::IS_PUBLIC) as $xMethod)
@@ -276,12 +285,43 @@ class CallableObject
             {
                 continue;
             }
-            // Don't take excluded methods
-            if(in_array($sMethodName, $this->aProtectedMethods))
+            // Don't take protected methods
+            if(in_array($sMethodName, $aProtectedMethods) || in_array($sMethodName, $this->aProtectedMethods))
             {
                 continue;
             }
             $aMethods[] = $sMethodName;
+        }
+        return $aMethods;
+    }
+
+    /**
+     * Return a list of methods of the callable object to export to javascript
+     *
+     * @param array $aProtectedMethods    The protected methods
+     *
+     * @return array
+     */
+    public function getMethods(array $aProtectedMethods): array
+    {
+        $aConfig = $this->getOptions();
+
+        // Convert an option to string, to be displayed in the js script template.
+        $fConvertOption = function($xOption) {
+            return is_array($xOption) ? json_encode($xOption) : $xOption;
+        };
+        $aCommonConfig = isset($aConfig['*']) ? array_map($fConvertOption, $aConfig['*']) : [];
+
+        $aMethods = [];
+        foreach($this->_getMethods($aProtectedMethods) as $sMethodName)
+        {
+            // Specific options for this method
+            $aMethodConfig = isset($aConfig[$sMethodName]) ?
+                array_map($fConvertOption, $aConfig[$sMethodName]) : [];
+            $aMethods[] = [
+                'name' => $sMethodName,
+                'config' => array_merge($aCommonConfig, $aMethodConfig),
+            ];
         }
         return $aMethods;
     }
@@ -311,7 +351,7 @@ class CallableObject
     /**
      * Call the specified method of the registered callable object using the specified array of arguments
      *
-     * @param array $aClassMethods    The methods config options
+     * @param array $aClassMethods    The method config options
      * @param string $sMethod    The method called by the request
      *
      * @return void

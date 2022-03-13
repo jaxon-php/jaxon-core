@@ -22,7 +22,7 @@
 namespace Jaxon\Request\Plugin\CallableClass;
 
 use Jaxon\Jaxon;
-use Jaxon\CallableClass as UserCallableClass;
+use Jaxon\CallableClass;
 use Jaxon\Plugin\Request as RequestPlugin;
 use Jaxon\Request\Handler\Handler as RequestHandler;
 use Jaxon\Request\Target;
@@ -36,9 +36,6 @@ use Jaxon\Exception\SetupException;
 
 use ReflectionException;
 
-use function array_map;
-use function array_merge;
-use function in_array;
 use function is_array;
 use function is_string;
 use function is_subclass_of;
@@ -114,6 +111,13 @@ class ClassPlugin extends RequestPlugin
     protected $sRequestedMethod = '';
 
     /**
+     * The methods that must not be exported to js
+     *
+     * @var array
+     */
+    protected $aProtectedMethods = [];
+
+    /**
      * The class constructor
      *
      * @param Config  $xConfig
@@ -153,6 +157,13 @@ class ClassPlugin extends RequestPlugin
         if(isset($_POST['jxnmthd']))
         {
             $this->sRequestedMethod = trim($_POST['jxnmthd']);
+        }
+
+        // The methods of the \Jaxon\ClassPlugin class must not be exported
+        $xCallableClass = new \ReflectionClass(CallableClass::class);
+        foreach($xCallableClass->getMethods(\ReflectionMethod::IS_PUBLIC) as $xMethod)
+        {
+            $this->aProtectedMethods[] = $xMethod->getName();
         }
     }
 
@@ -269,45 +280,18 @@ class ClassPlugin extends RequestPlugin
     /**
      * Generate client side javascript code for a callable class
      *
-     * @param CallableObject $xCallableObject    The corresponding callable object
-     * @param string $sClassName    The class name
-     * @param array $aProtectedMethods    The protected methods
+     * @param string $sClassName
+     * @param CallableObject $xCallableObject The corresponding callable object
      *
      * @return string
      */
-    private function getCallableScript(CallableObject $xCallableObject, string $sClassName, array $aProtectedMethods): string
+    private function getCallableScript(string $sClassName, CallableObject $xCallableObject): string
     {
-        $aConfig = $xCallableObject->getOptions();
-
-        // Convert an option to string, to be displayed in the js script template.
-        $fConvertOption = function($xOption) {
-            return is_array($xOption) ? json_encode($xOption) : $xOption;
-        };
-        $aCommonConfig = isset($aConfig['*']) ? array_map($fConvertOption, $aConfig['*']) : [];
-
-        $_aProtectedMethods = is_subclass_of($sClassName, UserCallableClass::class) ? $aProtectedMethods : [];
-        $aMethods = [];
-        foreach($xCallableObject->getMethods() as $sMethodName)
-        {
-            // Don't export methods of the ClassPlugin class
-            if(in_array($sMethodName, $_aProtectedMethods))
-            {
-                continue;
-            }
-            // Specific options for this method
-            $aMethodConfig = isset($aConfig[$sMethodName]) ?
-                array_map($fConvertOption, $aConfig[$sMethodName]) : [];
-            $aMethods[] = [
-                'name' => $sMethodName,
-                'config' => array_merge($aCommonConfig, $aMethodConfig),
-            ];
-        }
-
-        $sPrefix = $this->xConfig->getOption('core.prefix.class');
+        $aProtectedMethods = is_subclass_of($sClassName, CallableClass::class) ? $this->aProtectedMethods : [];
         return $this->xTemplateEngine->render('jaxon::support/object.js', [
-            'sPrefix' => $sPrefix,
+            'sPrefix' => $this->xConfig->getOption('core.prefix.class'),
             'sClass' => $xCallableObject->getJsName(),
-            'aMethods' => $aMethods,
+            'aMethods' => $xCallableObject->getMethods($aProtectedMethods),
         ]);
     }
 
@@ -320,14 +304,6 @@ class ClassPlugin extends RequestPlugin
     {
         $this->xRegistry->registerCallableObjects();
 
-        // The methods of the \Jaxon\ClassPlugin class must not be exported
-        $xCallableClass = new \ReflectionClass(UserCallableClass::class);
-        $aProtectedMethods = [];
-        foreach($xCallableClass->getMethods(\ReflectionMethod::IS_PUBLIC) as $xMethod)
-        {
-            $aProtectedMethods[] = $xMethod->getName();
-        }
-
         $sCode = $this->getNamespacesScript();
 
         $aClassNames = $this->xRepository->getClassNames();
@@ -338,7 +314,7 @@ class ClassPlugin extends RequestPlugin
         foreach($aClassNames as $sClassName)
         {
             $xCallableObject = $this->xRegistry->getCallableObject($sClassName);
-            $sCode .= $this->getCallableScript($xCallableObject, $sClassName, $aProtectedMethods);
+            $sCode .= $this->getCallableScript($sClassName, $xCallableObject);
         }
 
         return $sCode;
