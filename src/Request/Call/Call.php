@@ -24,7 +24,6 @@ use Jaxon\Request\Call\Contracts\Parameter as ParameterContract;
 use Jaxon\Response\Plugin\JQuery\Dom\Element as DomElement;
 use Jaxon\Ui\Pagination\Paginator;
 use Jaxon\Ui\View\Store;
-use Jaxon\Exception\SetupException;
 
 use function array_map;
 use function array_shift;
@@ -260,7 +259,6 @@ class Call extends JsCall
      * Returns a string representation of the script output (javascript) from this request object
      *
      * @return string
-     * @throws SetupException
      */
     public function getScript(): string
     {
@@ -321,7 +319,6 @@ class Call extends JsCall
      * Prints a string representation of the script output (javascript) from this request object
      *
      * @return void
-     * @throws SetupException
      */
     public function printScript()
     {
@@ -374,7 +371,6 @@ class Call extends JsCall
      * @param integer $nItemsTotal    The total number of items
      *
      * @return Store|null
-     * @throws SetupException
      */
     public function paginate(int $nCurrentPage, int $nItemsPerPage, int $nItemsTotal): ?Store
     {
@@ -389,7 +385,6 @@ class Call extends JsCall
      * @param integer $nItemsTotal    The total number of items
      *
      * @return Store|null
-     * @throws SetupException
      */
     public function pg(int $nCurrentPage, int $nItemsPerPage, int $nItemsTotal): ?Store
     {
@@ -404,7 +399,6 @@ class Call extends JsCall
      * @param integer $nItemsTotal    The total number of items
      *
      * @return array
-     * @throws SetupException
      */
     public function pages(int $nCurrentPage, int $nItemsPerPage, int $nItemsTotal): array
     {

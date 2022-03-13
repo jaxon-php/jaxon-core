@@ -18,7 +18,6 @@ use Jaxon\Request\Call\Call;
 use Jaxon\Request\Call\Parameter;
 use Jaxon\Ui\View\Renderer as ViewRenderer;
 use Jaxon\Ui\View\Store;
-use Jaxon\Exception\SetupException;
 
 use function array_map;
 use function array_pop;
@@ -159,7 +158,6 @@ class Renderer
      * @param int $pageNum    The page number
      *
      * @return string
-     * @throws SetupException
      */
     protected function getPageCall(int $pageNum): string
     {
@@ -187,7 +185,6 @@ class Renderer
      * Get the previous page data.
      *
      * @return array
-     * @throws SetupException
      */
     protected function getPrevLink(): array
     {
@@ -202,7 +199,6 @@ class Renderer
      * Get the next page data.
      *
      * @return array
-     * @throws SetupException
      */
     protected function getNextLink(): array
     {
@@ -219,7 +215,6 @@ class Renderer
      * @param integer $nNumber    The page number
      *
      * @return array
-     * @throws SetupException
      */
     protected function getPageLink(int $nNumber): array
     {
@@ -296,7 +291,6 @@ class Renderer
      * @param integer $nTotalPages    The total number of pages
      *
      * @return array
-     * @throws SetupException
      */
     public function getPages(int $nTotalPages): array
     {
@@ -318,7 +312,6 @@ class Renderer
      * @param integer $nTotalPages    The total number of pages
      *
      * @return null|Store
-     * @throws SetupException
      */
     public function render(int $nTotalPages): ?Store
     {

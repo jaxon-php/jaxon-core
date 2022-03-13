@@ -42,7 +42,6 @@ namespace Jaxon\Ui\Pagination;
 
 use Jaxon\Request\Call\Call;
 use Jaxon\Ui\View\Store;
-use Jaxon\Exception\SetupException;
 
 use function array_map;
 use function ceil;
@@ -191,7 +190,6 @@ class Paginator
      * Get the pages.
      *
      * @return array
-     * @throws SetupException
      */
     public function getPages(): array
     {
@@ -204,7 +202,6 @@ class Paginator
      * Render an HTML pagination control.
      *
      * @return null|Store
-     * @throws SetupException
      */
     public function render(): ?Store
     {
