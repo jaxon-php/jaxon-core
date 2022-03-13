@@ -24,7 +24,6 @@ use Jaxon\Exception\SetupException;
  * Return the singleton instance of the Jaxon/Jaxon class
  *
  * @return Jaxon
- * @throws SetupException
  */
 function jaxon(): Jaxon
 {
@@ -37,7 +36,6 @@ function jaxon(): Jaxon
  * @param string $sClassName
  *
  * @return RequestFactory|null
- * @throws SetupException
  */
 function rq(string $sClassName = ''): ?RequestFactory
 {
@@ -48,7 +46,6 @@ function rq(string $sClassName = ''): ?RequestFactory
  * Get the single instance of the parameter factory
  *
  * @return ParameterFactory
- * @throws SetupException
  */
 function pm(): ParameterFactory
 {
@@ -59,13 +56,12 @@ function pm(): ParameterFactory
  * Create a JQuery Element with a given selector
  *
  * The returned element is not linked to any Jaxon response, so this function shall be used
- * to insert jQuery code into a javascript function, or as a parameter of a Jaxon function call.
+ * to insert jQuery's code into a javascript function, or as a parameter of a Jaxon function call.
  *
  * @param string $sSelector    The jQuery selector
  * @param string $sContext    A context associated to the selector
  *
  * @return DomElement
- * @throws SetupException
  */
 function jq(string $sSelector = '', string $sContext = ''): DomElement
 {
@@ -78,15 +74,18 @@ function jq(string $sSelector = '', string $sContext = ''): DomElement
  * Create a JQuery Element with a given selector
  *
  * The returned element is not linked to any Jaxon response, so this function shall be used
- * to insert jQuery code into a javascript function, or as a parameter of a Jaxon function call.
+ * to insert jQuery's code into a javascript function, or as a parameter of a Jaxon function call.
  *
  * @param string $sSelector    The jQuery selector
  * @param string $sContext    A context associated to the selector
  *
  * @return DomElement
- * @throws SetupException
  */
 function jQuery(string $sSelector = '', string $sContext = ''): DomElement
 {
     return jq($sSelector, $sContext);
 }
+
+// Register the Jaxon request and response plugins
+jaxon()->di()->getPluginManager()->registerRequestPlugins();
+jaxon()->di()->getPluginManager()->registerResponsePlugins();

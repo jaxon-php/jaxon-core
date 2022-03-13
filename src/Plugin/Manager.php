@@ -120,9 +120,9 @@ class Manager
      * Register a plugin
      *
      * Below is a table for priorities and their description:
-     * - 0 thru 999: Plugins that are part of or extensions to the jaxon core
-     * - 1000 thru 8999: User created plugins, typically, these plugins don't care about order
-     * - 9000 thru 9999: Plugins that generally need to be last or near the end of the plugin list
+     * - 0 to 999: Plugins that are part of or extensions to the jaxon core
+     * - 1000 to 8999: User created plugins, typically, these plugins don't care about order
+     * - 9000 to 9999: Plugins that generally need to be last or near the end of the plugin list
      *
      * @param string $sClassName    The plugin class
      * @param string $sPluginName    The plugin name
@@ -160,18 +160,18 @@ class Manager
             $bIsUsed = true;
         }
 
-        // Register the plugin in the DI container, if necessary
-        if($bIsUsed)
+        if(!$bIsUsed)
         {
-            if(!$this->jaxon->di()->has($sClassName))
-            {
-                $this->jaxon->di()->auto($sClassName);
-            }
-            return;
+            // The class is invalid.
+            $sMessage = $this->xTranslator->trans('errors.register.invalid', ['name' => $sClassName]);
+            throw new SetupException($sMessage);
         }
-        // The class is invalid.
-        $sMessage = $this->xTranslator->trans('errors.register.invalid', ['name' => $sClassName]);
-        throw new SetupException($sMessage);
+
+        // Register the plugin in the DI container, if necessary
+        if(!$this->jaxon->di()->has($sClassName))
+        {
+            $this->jaxon->di()->auto($sClassName);
+        }
     }
 
     /**

@@ -41,6 +41,7 @@ use Jaxon\Request\Handler\Handler as RequestHandler;
 use Jaxon\Request\Support\CallableRegistry;
 use Jaxon\Request\Upload\Plugin as UploadPlugin;
 use Jaxon\Response\Manager as ResponseManager;
+use Jaxon\Response\AbstractResponse;
 use Jaxon\Response\Response;
 use Jaxon\Ui\Dialogs\Dialog;
 use Jaxon\Ui\View\Renderer;
@@ -53,6 +54,7 @@ use Jaxon\Utils\Config\Exception\YamlExtension;
 use Jaxon\Utils\Config\Reader as ConfigReader;
 use Jaxon\Utils\Template\Engine as TemplateEngine;
 use Jaxon\Utils\Translation\Translator;
+use Jaxon\Utils\Http\UriException;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
@@ -132,10 +134,27 @@ class Jaxon implements LoggerAwareInterface
     protected $xResponseManager;
 
     /**
+     * @return void
+     */
+    private static function initInstance()
+    {
+        // Save the Jaxon instance in the DI
+        self::$xContainer->val(Jaxon::class, self::$xInstance);
+        // Set the attributes from the container
+        self::$xInstance->xConfig = self::$xContainer->g(Config::class);
+        self::$xInstance->xTranslator = self::$xContainer->g(Translator::class);
+        self::$xInstance->xConfigReader = self::$xContainer->g(ConfigReader::class);
+        self::$xInstance->xPluginManager = self::$xContainer->g(PluginManager::class);
+        self::$xInstance->xCodeGenerator = self::$xContainer->g(CodeGenerator::class);
+        self::$xInstance->xCallableRegistry = self::$xContainer->g(CallableRegistry::class);
+        self::$xInstance->xRequestHandler = self::$xContainer->g(RequestHandler::class);
+        self::$xInstance->xResponseManager = self::$xContainer->g(ResponseManager::class);
+    }
+
+    /**
      * Get the static instance
      *
      * @return Jaxon
-     * @throws SetupException
      */
     public static function getInstance(): ?Jaxon
     {
@@ -143,20 +162,7 @@ class Jaxon implements LoggerAwareInterface
         {
             self::$xContainer = new Container(self::getDefaultOptions());
             self::$xInstance = new Jaxon();
-            // Save the Jaxon instance in the DI
-            self::$xContainer->val(Jaxon::class, self::$xInstance);
-            // Set the attributes from the container
-            self::$xInstance->xConfig = self::$xContainer->g(Config::class);
-            self::$xInstance->xTranslator = self::$xContainer->g(Translator::class);
-            self::$xInstance->xConfigReader = self::$xContainer->g(ConfigReader::class);
-            self::$xInstance->xPluginManager = self::$xContainer->g(PluginManager::class);
-            self::$xInstance->xCodeGenerator = self::$xContainer->g(CodeGenerator::class);
-            self::$xInstance->xCallableRegistry = self::$xContainer->g(CallableRegistry::class);
-            self::$xInstance->xRequestHandler = self::$xContainer->g(RequestHandler::class);
-            self::$xInstance->xResponseManager = self::$xContainer->g(ResponseManager::class);
-            // Register the Jaxon request and response plugins
-            self::$xInstance->xPluginManager->registerRequestPlugins();
-            self::$xInstance->xPluginManager->registerResponsePlugins();
+            self::initInstance();
         }
         return self::$xInstance;
     }
@@ -387,9 +393,9 @@ class Jaxon implements LoggerAwareInterface
     /**
      * Get the Global Response object
      *
-     * @return Response
+     * @return AbstractResponse
      */
-    public function getResponse(): Response
+    public function getResponse(): AbstractResponse
     {
         if(($xResponse = $this->xResponseManager->getResponse()))
         {
@@ -412,9 +418,9 @@ class Jaxon implements LoggerAwareInterface
      * Register a plugin
      *
      * Below is a table for priorities and their description:
-     * - 0 thru 999: Plugins that are part of or extensions to the jaxon core
-     * - 1000 thru 8999: User created plugins, typically, these plugins don't care about order
-     * - 9000 thru 9999: Plugins that generally need to be last or near the end of the plugin list
+     * - 0 to 999: Plugins that are part of or extensions to the jaxon core
+     * - 1000 to 8999: User created plugins, typically, these plugins don't care about order
+     * - 9000 to 9999: Plugins that generally need to be last or near the end of the plugin list
      *
      * @param string $sClassName    The plugin class
      * @param string $sPluginName    The plugin name
@@ -509,7 +515,7 @@ class Jaxon implements LoggerAwareInterface
      * @param bool $bIncludeCss    Also get the CSS files
      *
      * @return string
-     * @throws Utils\Http\UriException
+     * @throws UriException
      */
     public function getScript(bool $bIncludeJs = false, bool $bIncludeCss = false): string
     {
@@ -526,7 +532,7 @@ class Jaxon implements LoggerAwareInterface
      * @param bool $bIncludeCss    Also print the CSS files
      *
      * @return void
-     * @throws Utils\Http\UriException
+     * @throws UriException
      */
     public function printScript(bool $bIncludeJs = false, bool $bIncludeCss = false)
     {
