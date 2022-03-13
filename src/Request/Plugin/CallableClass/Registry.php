@@ -86,7 +86,7 @@ class Registry
         $this->xRepository = $xRepository;
 
         // Set the composer autoloader
-        $sAutoloadFile = __DIR__ . '/../../../../../autoload.php';
+        $sAutoloadFile = __DIR__ . '/../../../../../../autoload.php';
         if(file_exists($sAutoloadFile))
         {
             $this->xAutoloader = require($sAutoloadFile);
