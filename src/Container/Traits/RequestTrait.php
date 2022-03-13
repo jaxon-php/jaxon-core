@@ -11,7 +11,7 @@ use Jaxon\Request\Handler\Argument as RequestArgument;
 use Jaxon\Request\Handler\Handler as RequestHandler;
 use Jaxon\Request\Plugin\CallableClass\Registry;
 use Jaxon\Response\Manager as ResponseManager;
-use Jaxon\Response\Plugin\DataBag;
+use Jaxon\Response\Plugin\DataBag\DataBagPlugin;
 use Jaxon\Ui\Dialogs\Dialog;
 use Jaxon\Ui\Pagination\Paginator;
 use Jaxon\Utils\Config\Config;
@@ -34,7 +34,7 @@ trait RequestTrait
         $this->set(RequestHandler::class, function($c) {
             return new RequestHandler($c->g(Jaxon::class), $c->g(Config::class),
                 $c->g(RequestArgument::class), $c->g(PluginManager::class),
-                $c->g(ResponseManager::class), $c->g(DataBag::class));
+                $c->g(ResponseManager::class), $c->g(DataBagPlugin::class));
         });
         // Request Factory
         $this->set(Factory::class, function($c) {

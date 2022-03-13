@@ -1,11 +1,11 @@
 <?php
 
-namespace Jaxon\Response\Plugin;
+namespace Jaxon\Response\Plugin\JQuery;
 
 use Jaxon\Response\Plugin\JQuery\Dom\Element;
 use Jaxon\Utils\Config\Config;
 
-class JQuery extends \Jaxon\Plugin\Response
+class JQueryPlugin extends \Jaxon\Plugin\Response
 {
     /**
      * @var Config
@@ -52,7 +52,7 @@ class JQuery extends \Jaxon\Plugin\Response
     }
 
     /**
-     * Create a JQuery Element with a given selector, and link it to the current response.
+     * Create a JQueryPlugin Element with a given selector, and link it to the current response.
      *
      * Since this element is linked to a response, its code will be automatically sent to the client.
      * The returned object can be used to call jQuery functions on the selected elements.

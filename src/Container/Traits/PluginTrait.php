@@ -5,12 +5,12 @@ namespace Jaxon\Container\Traits;
 use Jaxon\Jaxon;
 use Jaxon\Plugin\Code\Generator as CodeGenerator;
 use Jaxon\Plugin\Manager as PluginManager;
-use Jaxon\Request\Plugin\Upload\UploadPlugin;
 use Jaxon\Request\Plugin\Upload\Manager as UploadManager;
+use Jaxon\Request\Plugin\Upload\UploadPlugin;
 use Jaxon\Request\Validator;
 use Jaxon\Response\Manager as ResponseManager;
-use Jaxon\Response\Plugin\DataBag;
-use Jaxon\Response\Plugin\JQuery as JQueryPlugin;
+use Jaxon\Response\Plugin\DataBag\DataBagPlugin;
+use Jaxon\Response\Plugin\JQuery\JQueryPlugin;
 use Jaxon\Utils\Config\Config;
 use Jaxon\Utils\Translation\Translator;
 
@@ -45,9 +45,9 @@ trait PluginTrait
         $this->set(JQueryPlugin::class, function($c) {
             return new JQueryPlugin($c->g(Config::class));
         });
-        // DataBag response plugin
-        $this->set(DataBag::class, function() {
-            return new DataBag();
+        // DataBagPlugin response plugin
+        $this->set(DataBagPlugin::class, function() {
+            return new DataBagPlugin();
         });
     }
 

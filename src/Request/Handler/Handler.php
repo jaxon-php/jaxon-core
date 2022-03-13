@@ -25,7 +25,7 @@ use Jaxon\Plugin\Manager as PluginManager;
 use Jaxon\Plugin\Request;
 use Jaxon\Response\AbstractResponse;
 use Jaxon\Response\Manager as ResponseManager;
-use Jaxon\Response\Plugin\DataBag;
+use Jaxon\Response\Plugin\DataBag\DataBagPlugin;
 use Jaxon\Utils\Config\Config;
 use Jaxon\Exception\RequestException;
 
@@ -87,7 +87,7 @@ class Handler
     /**
      * The data bag response plugin
      *
-     * @var DataBag
+     * @var DataBagPlugin
      */
     private $xDataBagPlugin = null;
 
@@ -99,17 +99,17 @@ class Handler
      * @param Argument $xArgument
      * @param PluginManager  $xPluginManager
      * @param ResponseManager  $xResponseManager
-     * @param DataBag  $xDataBagPlugin
+     * @param DataBagPlugin  $xDataBagPlugin
      */
     public function __construct(Jaxon $jaxon, Config $xConfig, Argument $xArgument,
-        PluginManager $xPluginManager, ResponseManager $xResponseManager, DataBag $xDataBagPlugin)
+        PluginManager $xPluginManager, ResponseManager $xResponseManager, DataBagPlugin $xDataBagPlugin)
     {
         $this->jaxon = $jaxon;
         $this->xConfig = $xConfig;
         $this->xPluginManager = $xPluginManager;
         $this->xResponseManager = $xResponseManager;
-        $this->xDataBagPlugin = $xDataBagPlugin;
         $this->xArgumentManager = $xArgument;
+        $this->xDataBagPlugin = $xDataBagPlugin;
 
         $this->xCallbackManager = new Callback();
     }

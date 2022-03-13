@@ -1,15 +1,15 @@
 <?php
 
-namespace Jaxon\Response\Plugin;
+namespace Jaxon\Response\Plugin\DataBag;
 
+use function is_array;
 use function is_string;
 use function json_decode;
-use function is_array;
 
-class DataBag extends \Jaxon\Plugin\Response
+class DataBagPlugin extends \Jaxon\Plugin\Response
 {
     /**
-     * @var DataBag\Bag
+     * @var Bag
      */
     protected $xBag;
 
@@ -20,7 +20,7 @@ class DataBag extends \Jaxon\Plugin\Response
     {
         $aData = isset($_POST['jxnbags']) ? $this->readData($_POST) :
             (isset($_GET['jxnbags']) ? $this->readData($_GET) : []);
-        $this->xBag = new DataBag\Bag($aData);
+        $this->xBag = new Bag($aData);
     }
 
     /**
@@ -87,10 +87,10 @@ class DataBag extends \Jaxon\Plugin\Response
     /**
      * @param string $sName
      *
-     * @return DataBag\Context
+     * @return Context
      */
-    public function bag(string $sName): DataBag\Context
+    public function bag(string $sName): Context
     {
-        return new DataBag\Context($this->xBag, $sName);
+        return new Context($this->xBag, $sName);
     }
 }

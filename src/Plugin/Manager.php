@@ -29,8 +29,8 @@ use Jaxon\Plugin\Code\Generator as CodeGenerator;
 use Jaxon\Request\Plugin\CallableClass\ClassPlugin;
 use Jaxon\Request\Plugin\CallableClass\DirPlugin;
 use Jaxon\Request\Plugin\CallableFunction\FunctionPlugin;
-use Jaxon\Response\Plugin\DataBag;
-use Jaxon\Response\Plugin\JQuery as JQueryPlugin;
+use Jaxon\Response\Plugin\DataBag\DataBagPlugin;
+use Jaxon\Response\Plugin\JQuery\JQueryPlugin;
 use Jaxon\Response\Response as JaxonResponse;
 use Jaxon\Utils\Config\Config;
 use Jaxon\Utils\Translation\Translator;
@@ -392,6 +392,6 @@ class Manager
         // Register an instance of the JQuery plugin
         $this->registerPlugin(JQueryPlugin::class, 'jquery', 700);
         // Register an instance of the DataBag plugin
-        $this->registerPlugin(DataBag::class, 'bags', 700);
+        $this->registerPlugin(DataBagPlugin::class, 'bags', 700);
     }
 }
