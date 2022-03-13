@@ -34,6 +34,8 @@ use Jaxon\Utils\Translation\Translator;
 use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;
 
+use ReflectionClass;
+use ReflectionMethod;
 use ReflectionException;
 
 use function is_array;
@@ -159,9 +161,9 @@ class ClassPlugin extends RequestPlugin
             $this->sRequestedMethod = trim($_POST['jxnmthd']);
         }
 
-        // The methods of the \Jaxon\ClassPlugin class must not be exported
-        $xCallableClass = new \ReflectionClass(CallableClass::class);
-        foreach($xCallableClass->getMethods(\ReflectionMethod::IS_PUBLIC) as $xMethod)
+        // The methods of the CallableClass class must not be exported
+        $xCallableClass = new ReflectionClass(CallableClass::class);
+        foreach($xCallableClass->getMethods(ReflectionMethod::IS_PUBLIC) as $xMethod)
         {
             $this->aProtectedMethods[] = $xMethod->getName();
         }
@@ -299,6 +301,7 @@ class ClassPlugin extends RequestPlugin
      * Generate client side javascript code for the registered callable objects
      *
      * @return string
+     * @throws SetupException
      */
     public function getScript(): string
     {
@@ -338,6 +341,7 @@ class ClassPlugin extends RequestPlugin
     /**
      * @inheritDoc
      * @throws RequestException
+     * @throws SetupException
      */
     public function processRequest(): bool
     {

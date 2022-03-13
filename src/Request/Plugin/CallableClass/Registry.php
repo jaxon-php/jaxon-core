@@ -16,6 +16,7 @@ namespace Jaxon\Request\Plugin\CallableClass;
 
 use Jaxon\Container\Container;
 use Jaxon\Request\Factory\RequestFactory;
+use Jaxon\Utils\Translation\Translator;
 use Jaxon\Exception\SetupException;
 
 use Composer\Autoload\ClassLoader;
@@ -41,7 +42,12 @@ class Registry
      *
      * @var Repository
      */
-    public $xRepository;
+    protected $xRepository;
+
+    /**
+     * @var Translator
+     */
+    protected $xTranslator;
 
     /**
      * The registered directories
@@ -80,10 +86,12 @@ class Registry
      *
      * @param Container $di
      * @param Repository $xRepository
+     * @param Translator $xTranslator
      */
-    public function __construct(Container $di, Repository $xRepository)
+    public function __construct(Container $di, Repository $xRepository, Translator $xTranslator)
     {
         $this->di = $di;
+        $this->xTranslator = $xTranslator;
         $this->xRepository = $xRepository;
 
         // Set the composer autoloader
@@ -184,11 +192,12 @@ class Registry
     /**
      * Find the options associated with a registered class name
      *
-     * @param string $sClassName    The class name
+     * @param string $sClassName The class name
      *
-     * @return array|null
+     * @return array
+     * @throws SetupException
      */
-    protected function getClassOptions(string $sClassName): ?array
+    protected function getClassOptions(string $sClassName): array
     {
         // Find options for a class registered with namespace.
         $aOptions = $this->getClassOptionsFromNamespaces($sClassName);
@@ -196,12 +205,16 @@ class Registry
         {
             return $aOptions;
         }
-
         // Without a namespace, we need to parse all classes to be able to find one.
         $this->xRepository->parseDirectories($this->aDirectories);
-
         // Find options for a class registered without namespace.
-        return $this->xRepository->getClassOptions($sClassName);
+        $aOptions = $this->xRepository->getClassOptions($sClassName);
+        if($aOptions !== null)
+        {
+            return $aOptions;
+        }
+        $sMessage = $this->xTranslator->trans('errors.register.invalid', ['name' => $sClassName]);
+        throw new SetupException($sMessage);
     }
 
     /**
@@ -223,10 +236,6 @@ class Registry
         if(!$this->di->h($sClassName))
         {
             $aOptions = $this->getClassOptions($sClassName);
-            if($aOptions === null)
-            {
-                return '';
-            }
             $this->xRepository->registerCallableClass($sClassName, $aOptions);
         }
         return $sClassName;
