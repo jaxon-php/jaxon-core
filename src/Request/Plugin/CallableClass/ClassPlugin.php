@@ -1,7 +1,7 @@
 <?php
 
 /**
- * CallableClass.php - Jaxon callable class plugin
+ * ClassPlugin.php - Jaxon callable class plugin
  *
  * This class registers user defined callable classes, generates client side javascript code,
  * and calls their methods on user request
@@ -19,37 +19,35 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Request\Plugin;
+namespace Jaxon\Request\Plugin\CallableClass;
 
 use Jaxon\Jaxon;
-use Jaxon\Request\Handler\Handler as RequestHandler;
-use Jaxon\Response\Manager as ResponseManager;
 use Jaxon\CallableClass as UserCallableClass;
 use Jaxon\Plugin\Request as RequestPlugin;
-use Jaxon\Request\Support\CallableObject;
-use Jaxon\Request\Support\CallableRegistry;
-use Jaxon\Request\Support\CallableRepository;
+use Jaxon\Request\Handler\Handler as RequestHandler;
 use Jaxon\Request\Target;
 use Jaxon\Request\Validator;
-use Jaxon\Exception\RequestException;
-use Jaxon\Exception\SetupException;
+use Jaxon\Response\Manager as ResponseManager;
 use Jaxon\Utils\Config\Config;
 use Jaxon\Utils\Template\Engine as TemplateEngine;
 use Jaxon\Utils\Translation\Translator;
+use Jaxon\Exception\RequestException;
+use Jaxon\Exception\SetupException;
+
 use ReflectionException;
 
-use function trim;
-use function strlen;
-use function is_string;
-use function is_array;
-use function in_array;
-use function uksort;
-use function md5;
 use function array_map;
 use function array_merge;
+use function in_array;
+use function is_array;
+use function is_string;
 use function is_subclass_of;
+use function md5;
+use function strlen;
+use function trim;
+use function uksort;
 
-class CallableClass extends RequestPlugin
+class ClassPlugin extends RequestPlugin
 {
     /**
      * @var Config
@@ -291,7 +289,7 @@ class CallableClass extends RequestPlugin
         $aMethods = [];
         foreach($xCallableObject->getMethods() as $sMethodName)
         {
-            // Don't export methods of the CallableClass class
+            // Don't export methods of the ClassPlugin class
             if(in_array($sMethodName, $_aProtectedMethods))
             {
                 continue;
@@ -322,7 +320,7 @@ class CallableClass extends RequestPlugin
     {
         $this->xRegistry->registerCallableObjects();
 
-        // The methods of the \Jaxon\CallableClass class must not be exported
+        // The methods of the \Jaxon\ClassPlugin class must not be exported
         $xCallableClass = new \ReflectionClass(UserCallableClass::class);
         $aProtectedMethods = [];
         foreach($xCallableClass->getMethods(\ReflectionMethod::IS_PUBLIC) as $xMethod)

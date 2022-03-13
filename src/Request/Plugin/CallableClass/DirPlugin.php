@@ -1,7 +1,7 @@
 <?php
 
 /**
- * CallableDir.php - Jaxon callable dir plugin
+ * DirPlugin.php - Jaxon callable dir plugin
  *
  * This class registers directories containing user defined callable classes,
  * and generates client side javascript code.
@@ -19,22 +19,21 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Request\Plugin;
+namespace Jaxon\Request\Plugin\CallableClass;
 
 use Jaxon\Jaxon;
 use Jaxon\Plugin\Request as RequestPlugin;
-use Jaxon\Request\Support\CallableRegistry;
-use Jaxon\Exception\SetupException;
 use Jaxon\Utils\Translation\Translator;
+use Jaxon\Exception\SetupException;
 
-use function is_string;
 use function is_array;
+use function is_dir;
+use function is_string;
+use function realpath;
 use function rtrim;
 use function trim;
-use function is_dir;
-use function realpath;
 
-class CallableDir extends RequestPlugin
+class DirPlugin extends RequestPlugin
 {
     /**
      * The callable registrar

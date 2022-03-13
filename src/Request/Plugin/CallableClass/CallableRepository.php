@@ -12,20 +12,20 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Request\Support;
+namespace Jaxon\Request\Plugin\CallableClass;
 
 use Jaxon\Container\Container;
 
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 
-use function substr;
-use function strlen;
-use function trim;
-use function str_replace;
-use function strncmp;
 use function array_merge;
 use function class_exists;
+use function str_replace;
+use function strlen;
+use function strncmp;
+use function substr;
+use function trim;
 
 class CallableRepository
 {

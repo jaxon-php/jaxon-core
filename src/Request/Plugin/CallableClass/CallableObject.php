@@ -22,12 +22,11 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Request\Support;
+namespace Jaxon\Request\Plugin\CallableClass;
 
 use Jaxon\Container\Container;
 use Jaxon\Request\Request;
 use Jaxon\Response\Response;
-
 use ReflectionClass;
 use ReflectionException;
 

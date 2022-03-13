@@ -9,7 +9,7 @@ use Jaxon\Request\Factory\ParameterFactory;
 use Jaxon\Request\Factory\RequestFactory;
 use Jaxon\Request\Handler\Argument as RequestArgument;
 use Jaxon\Request\Handler\Handler as RequestHandler;
-use Jaxon\Request\Support\CallableRegistry;
+use Jaxon\Request\Plugin\CallableClass\CallableRegistry;
 use Jaxon\Response\Manager as ResponseManager;
 use Jaxon\Response\Plugin\DataBag;
 use Jaxon\Ui\Dialogs\Dialog;

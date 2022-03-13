@@ -26,8 +26,8 @@ use Jaxon\Contracts\Dialogs\Question;
 use Jaxon\Exception\SetupException;
 use Jaxon\Jaxon;
 use Jaxon\Plugin\Code\Generator as CodeGenerator;
-use Jaxon\Request\Plugin\CallableClass;
-use Jaxon\Request\Plugin\CallableDir;
+use Jaxon\Request\Plugin\CallableClass\ClassPlugin;
+use Jaxon\Request\Plugin\CallableClass\DirPlugin;
 use Jaxon\Request\Plugin\CallableFunction\FunctionPlugin;
 use Jaxon\Response\Plugin\DataBag;
 use Jaxon\Response\Plugin\JQuery as JQueryPlugin;
@@ -376,9 +376,9 @@ class Manager
      */
     public function registerRequestPlugins()
     {
-        $this->registerPlugin(CallableClass::class, Jaxon::CALLABLE_CLASS, 101);
+        $this->registerPlugin(ClassPlugin::class, Jaxon::CALLABLE_CLASS, 101);
         $this->registerPlugin(FunctionPlugin::class, Jaxon::CALLABLE_FUNCTION, 102);
-        $this->registerPlugin(CallableDir::class, Jaxon::CALLABLE_DIR, 103);
+        $this->registerPlugin(DirPlugin::class, Jaxon::CALLABLE_DIR, 103);
     }
 
     /**

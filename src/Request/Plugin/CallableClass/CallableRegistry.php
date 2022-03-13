@@ -12,17 +12,19 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Request\Support;
+namespace Jaxon\Request\Plugin\CallableClass;
 
 use Jaxon\Container\Container;
 use Jaxon\Request\Factory\RequestFactory;
 
+use Composer\Autoload\ClassLoader;
+
+use function file_exists;
+use function in_array;
+use function str_replace;
+use function strlen;
 use function strncmp;
 use function trim;
-use function in_array;
-use function strlen;
-use function str_replace;
-use function file_exists;
 
 class CallableRegistry
 {
@@ -68,7 +70,7 @@ class CallableRegistry
     /**
      * The Composer autoloader
      *
-     * @var Autoloader
+     * @var ClassLoader
      */
     private $xAutoloader = null;
 

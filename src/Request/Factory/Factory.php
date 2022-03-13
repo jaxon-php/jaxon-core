@@ -2,10 +2,6 @@
 
 namespace Jaxon\Request\Factory;
 
-use Jaxon\Request\Support\CallableRegistry;
-
-use function trim;
-
 /**
  * Factory.php
  *
@@ -17,6 +13,10 @@ use function trim;
  * @license https://opensource.org/licenses/BSD-3-Clause BSD 3-Clause License
  * @link https://github.com/jaxon-php/jaxon-core
  */
+
+use Jaxon\Request\Plugin\CallableClass\CallableRegistry;
+
+use function trim;
 
 class Factory
 {

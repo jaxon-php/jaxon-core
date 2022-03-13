@@ -5,11 +5,11 @@ namespace Jaxon\Container\Traits;
 use Jaxon\Jaxon;
 use Jaxon\Plugin\Code\Generator as CodeGenerator;
 use Jaxon\Request\Handler\Handler as RequestHandler;
-use Jaxon\Request\Plugin\CallableClass;
-use Jaxon\Request\Plugin\CallableDir;
+use Jaxon\Request\Plugin\CallableClass\CallableRegistry;
+use Jaxon\Request\Plugin\CallableClass\CallableRepository;
+use Jaxon\Request\Plugin\CallableClass\ClassPlugin;
+use Jaxon\Request\Plugin\CallableClass\DirPlugin;
 use Jaxon\Request\Plugin\CallableFunction\FunctionPlugin;
-use Jaxon\Request\Support\CallableRegistry;
-use Jaxon\Request\Support\CallableRepository;
 use Jaxon\Request\Validator;
 use Jaxon\Response\Manager as ResponseManager;
 use Jaxon\Utils\Config\Config;
@@ -40,14 +40,14 @@ trait CallableTrait
             return new CallableRegistry($this, $c->g(CallableRepository::class));
         });
         // Callable class plugin
-        $this->set(CallableClass::class, function($c) {
-            return new CallableClass($c->g(Config::class), $c->g(RequestHandler::class),
+        $this->set(ClassPlugin::class, function($c) {
+            return new ClassPlugin($c->g(Config::class), $c->g(RequestHandler::class),
                 $c->g(ResponseManager::class), $c->g(CallableRegistry::class), $c->g(CallableRepository::class),
                 $c->g(TemplateEngine::class), $c->g(Translator::class), $c->g(Validator::class));
         });
         // Callable dir plugin
-        $this->set(CallableDir::class, function($c) {
-            return new CallableDir($c->g(CallableRegistry::class), $c->g(Translator::class));
+        $this->set(DirPlugin::class, function($c) {
+            return new DirPlugin($c->g(CallableRegistry::class), $c->g(Translator::class));
         });
         // Callable function plugin
         $this->set(FunctionPlugin::class, function($c) {
