@@ -36,6 +36,7 @@ function jaxon(): Jaxon
  * @param string $sClassName
  *
  * @return RequestFactory|null
+ * @throws SetupException
  */
 function rq(string $sClassName = ''): ?RequestFactory
 {

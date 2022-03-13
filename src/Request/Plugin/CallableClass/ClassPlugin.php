@@ -302,7 +302,7 @@ class ClassPlugin extends RequestPlugin
      */
     public function getScript(): string
     {
-        $this->xRegistry->registerCallableObjects();
+        $this->xRegistry->registerCallableClasses();
 
         $sCode = $this->getNamespacesScript();
 

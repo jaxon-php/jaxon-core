@@ -15,12 +15,12 @@
 namespace Jaxon\Request\Plugin\CallableClass;
 
 use Jaxon\Container\Container;
+use Jaxon\Exception\SetupException;
 
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 
 use function array_merge;
-use function class_exists;
 use function str_replace;
 use function strlen;
 use function strncmp;
@@ -270,7 +270,7 @@ class Repository
                 $sClassPath = $sNamespace;
                 $sRelativePath = substr($xFile->getPath(), strlen($sDirectory));
                 $sRelativePath = trim(str_replace($sDS, '\\', $sRelativePath), '\\');
-                if($sRelativePath != '')
+                if($sRelativePath !== '')
                 {
                     $sClassPath .= '\\' . $sRelativePath;
                 }
@@ -285,25 +285,22 @@ class Repository
     }
 
     /**
-     * Create a new callable object
+     * Register a callable class
      *
-     * @param string $sClassName    The class name of the callable object
-     * @param array $aOptions    The callable object options
+     * @param string $sClassName The class name of the callable object
+     * @param array $aOptions The callable object options
      *
      * @return void
+     * @throws SetupException
      */
-    public function registerCallableObject(string $sClassName, array $aOptions)
+    public function registerCallableClass(string $sClassName, array $aOptions)
     {
         // Make sure the registered class exists
         if(isset($aOptions['include']))
         {
             require_once($aOptions['include']);
         }
-        if(!class_exists($sClassName))
-        {
-            return null;
-        }
         // Register the callable object
-        $this->di->registerCallableObject($sClassName, $aOptions);
+        $this->di->registerCallableClass($sClassName, $aOptions);
     }
 }

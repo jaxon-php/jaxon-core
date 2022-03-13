@@ -3,6 +3,7 @@
 namespace Jaxon\Container\Traits;
 
 use Jaxon\Jaxon;
+use Jaxon\CallableClass;
 use Jaxon\Request\Factory\RequestFactory;
 use Jaxon\Request\Plugin\CallableClass\CallableObject;
 use Jaxon\Request\Plugin\CallableFunction\CallableFunction;
@@ -11,8 +12,10 @@ use Jaxon\Ui\Pagination\Paginator;
 use Jaxon\Ui\View\Renderer;
 use Jaxon\Utils\Config\Config;
 use Jaxon\Exception\SetupException;
+use Jaxon\Utils\Translation\Translator;
 
 use ReflectionClass;
+use ReflectionException;
 
 use function call_user_func;
 use function explode;
@@ -85,44 +88,52 @@ trait RegisterTrait
     }
 
     /**
-     * Create a new callable object
+     * Register a callable class
      *
-     * @param string $sClassName    The callable class name
-     * @param array $aOptions    The callable object options
+     * @param string $sClassName The callable class name
+     * @param array $aOptions The callable object options
      *
      * @return void
+     * @throws SetupException
      */
-    public function registerCallableObject(string $sClassName, array $aOptions)
+    public function registerCallableClass(string $sClassName, array $aOptions)
     {
-        $sFactoryName = $sClassName . '_RequestFactory';
-        $sCallableName = $sClassName . '_CallableObject';
-        $sReflectionName = $sClassName . '_ReflectionClass';
+        $sRequestFactory = $sClassName . '_RequestFactory';
+        $sCallableObject = $sClassName . '_CallableObject';
+        $sReflectionClass = $sClassName . '_ReflectionClass';
 
         // Register the reflection class
-        $this->set($sReflectionName, function() use($sClassName) {
-            return new ReflectionClass($sClassName);
-        });
+        try
+        {
+            $this->val($sReflectionClass, new ReflectionClass($sClassName));
+        }
+        catch(ReflectionException $e)
+        {
+            $xTranslator = $this->g(Translator::class);
+            $sMessage = $xTranslator->trans('errors.register.invalid', ['name' => $sClassName]);
+            throw new SetupException($sMessage);
+        }
 
         // Register the callable object
-        $this->set($sCallableName, function($c) use($sReflectionName, $aOptions) {
-            $xCallableObject = new CallableObject($this, $c->g($sReflectionName));
+        $this->set($sCallableObject, function($c) use($sReflectionClass, $aOptions) {
+            $xCallableObject = new CallableObject($this, $c->g($sReflectionClass));
             $this->setCallableObjectOptions($xCallableObject, $aOptions);
             return $xCallableObject;
         });
 
         // Register the request factory
-        $this->set($sFactoryName, function($c) use($sCallableName) {
+        $this->set($sRequestFactory, function($c) use($sCallableObject) {
             $xConfig = $c->g(Config::class);
-            $xCallable = $c->g($sCallableName);
+            $xCallable = $c->g($sCallableObject);
             $sJsClass = $xConfig->getOption('core.prefix.class') . $xCallable->getJsName() . '.';
             return new RequestFactory($sJsClass, $c->g(Dialog::class), $c->g(Paginator::class));
         });
 
         // Register the user class
-        $this->set($sClassName, function($c) use($sClassName, $sReflectionName) {
-            $xRegisteredObject = $this->make($c->g($sReflectionName));
+        $this->set($sClassName, function($c) use($sClassName, $sReflectionClass) {
+            $xRegisteredObject = $this->make($c->g($sReflectionClass));
             // Initialize the object
-            if($xRegisteredObject instanceof \Jaxon\CallableClass)
+            if($xRegisteredObject instanceof CallableClass)
             {
                 $xResponse = $this->getResponse();
                 // Set the members of the object

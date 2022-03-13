@@ -16,6 +16,7 @@ namespace Jaxon\Request\Plugin\CallableClass;
 
 use Jaxon\Container\Container;
 use Jaxon\Request\Factory\RequestFactory;
+use Jaxon\Exception\SetupException;
 
 use Composer\Autoload\ClassLoader;
 
@@ -206,9 +207,10 @@ class Registry
     /**
      * Check if a callable object is already in the DI, and register if not
      *
-     * @param string $sClassName    The class name of the callable object
+     * @param string $sClassName The class name of the callable object
      *
      * @return string
+     * @throws SetupException
      */
     private function checkCallableObject(string $sClassName): string
     {
@@ -225,7 +227,7 @@ class Registry
             {
                 return '';
             }
-            $this->xRepository->registerCallableObject($sClassName, $aOptions);
+            $this->xRepository->registerCallableClass($sClassName, $aOptions);
         }
         return $sClassName;
     }
@@ -233,9 +235,10 @@ class Registry
     /**
      * Get the callable object for a given class
      *
-     * @param string $sClassName    The class name of the callable object
+     * @param string $sClassName The class name of the callable object
      *
      * @return CallableObject|null
+     * @throws SetupException
      */
     public function getCallableObject(string $sClassName): ?CallableObject
     {
@@ -245,9 +248,10 @@ class Registry
     /**
      * Get the request factory for a given class
      *
-     * @param string $sClassName    The class name of the callable object
+     * @param string $sClassName The class name of the callable object
      *
      * @return RequestFactory|null
+     * @throws SetupException
      */
     public function getRequestFactory(string $sClassName): ?RequestFactory
     {
@@ -269,8 +273,9 @@ class Registry
      * Create callable objects for all registered classes
      *
      * @return void
+     * @throws SetupException
      */
-    public function registerCallableObjects()
+    public function registerCallableClasses()
     {
         $this->parseCallableClasses();
 
@@ -280,7 +285,7 @@ class Registry
             // Make sure we create each callable object only once.
             if(!$this->di->h($sClassName))
             {
-                $this->xRepository->registerCallableObject($sClassName, $aClassOptions);
+                $this->xRepository->registerCallableClass($sClassName, $aClassOptions);
             }
         }
     }

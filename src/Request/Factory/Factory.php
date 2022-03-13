@@ -15,6 +15,7 @@ namespace Jaxon\Request\Factory;
  */
 
 use Jaxon\Request\Plugin\CallableClass\Registry;
+use Jaxon\Exception\SetupException;
 
 use function trim;
 
@@ -56,6 +57,7 @@ class Factory
      * @param string $sClassName
      *
      * @return RequestFactory|null
+     * @throws SetupException
      */
     public function request(string $sClassName = ''): ?RequestFactory
     {
