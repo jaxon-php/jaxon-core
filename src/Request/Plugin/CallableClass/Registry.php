@@ -291,11 +291,7 @@ class Registry
         $aClasses = $this->xRepository->getClasses();
         foreach($aClasses as $sClassName => $aClassOptions)
         {
-            // Make sure we create each callable object only once.
-            if(!$this->di->h($sClassName))
-            {
-                $this->xRepository->registerCallableClass($sClassName, $aClassOptions);
-            }
+            $this->xRepository->registerCallableClass($sClassName, $aClassOptions);
         }
     }
 }

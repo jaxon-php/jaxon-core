@@ -32,12 +32,12 @@ class JsCall implements JsonSerializable
     /**
      * @var string
      */
-    public $sQuoteCharacter;
+    public $sQuoteCharacter = '"';
 
     /**
      * @var array
      */
-    protected $aParameters;
+    protected $aParameters = [];
 
     /**
      * The constructor.
@@ -46,8 +46,6 @@ class JsCall implements JsonSerializable
      */
     public function __construct(string $sFunction)
     {
-        $this->aParameters = [];
-        $this->sQuoteCharacter = '"';
         $this->sFunction = $sFunction;
     }
 

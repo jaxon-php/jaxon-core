@@ -31,11 +31,12 @@ use ReflectionClass;
 use ReflectionException;
 
 use function array_map;
+use function array_filter;
 use function array_merge;
 use function in_array;
 use function is_array;
 use function is_string;
-use function strlen;
+use function substr;
 
 class CallableObject
 {
@@ -82,13 +83,6 @@ class CallableObject
     private $aOptions = [];
 
     /**
-     * The namespace the callable class was registered from
-     *
-     * @var string
-     */
-    private $sNamespace = '';
-
-    /**
      * The character to use as separator in javascript class names
      *
      * @var string
@@ -121,77 +115,13 @@ class CallableObject
     }
 
     /**
-     * Get callable object options
-     *
-     * @return array
-     */
-    public function getOptions(): array
-    {
-        return $this->aOptions;
-    }
-
-    /**
-     * Get the reflection class
-     *
-     * @return ReflectionClass
-     */
-    public function getReflectionClass(): ReflectionClass
-    {
-        return $this->xReflectionClass;
-    }
-
-    /**
-     * Get the class name of this callable object, without the namespace if any
-     *
-     * @return string
-     */
-    public function getClassName(): string
-    {
-        // Get the class name without the namespace.
-        return $this->xReflectionClass->getShortName();
-    }
-
-    /**
-     * Get the name of this callable object
-     *
-     * @return string
-     */
-    public function getName(): string
-    {
-        // Get the class name with the namespace.
-        return $this->xReflectionClass->getName();
-    }
-
-    /**
      * Get the name of the corresponding javascript class
      *
      * @return string
      */
     public function getJsName(): string
     {
-        return str_replace('\\', $this->sSeparator, $this->getName());
-    }
-
-    /**
-     * Get the namespace of this callable object
-     *
-     * @return string
-     */
-    public function getNamespace(): string
-    {
-        // The namespace of the registered class.
-        return $this->xReflectionClass->getNamespaceName();
-    }
-
-    /**
-     * Get the namespace the callable class was registered from
-     *
-     * @return string
-     */
-    public function getRootNamespace(): string
-    {
-        // The namespace the callable class was registered from.
-        return $this->sNamespace;
+        return str_replace('\\', $this->sSeparator, $this->xReflectionClass->getName());
     }
 
     /**
@@ -202,7 +132,7 @@ class CallableObject
      *
      * @return void
      */
-    public function setHookMethods(array &$aHookMethods, $xValue)
+    private function setHookMethods(array &$aHookMethods, $xValue)
     {
         foreach($xValue as $sCalledMethod => $xMethodToCall)
         {
@@ -231,16 +161,9 @@ class CallableObject
         {
         // Set the separator
         case 'separator':
-            if($xValue == '_' || $xValue == '.')
+            if($xValue === '_' || $xValue === '.')
             {
                 $this->sSeparator = $xValue;
-            }
-            break;
-        // Set the namespace
-        case 'namespace':
-            if(is_string($xValue))
-            {
-                $this->sNamespace = $xValue;
             }
             break;
         // Set the protected methods
@@ -276,23 +199,16 @@ class CallableObject
      */
     private function _getMethods(array $aProtectedMethods): array
     {
-        $aMethods = [];
-        foreach($this->xReflectionClass->getMethods(\ReflectionMethod::IS_PUBLIC) as $xMethod)
-        {
-            $sMethodName = $xMethod->getShortName();
+        $aMethods = array_map(function($xMethod) {
+            return $xMethod->getShortName();
+        }, $this->xReflectionClass->getMethods(\ReflectionMethod::IS_PUBLIC));
+        return array_filter($aMethods, function($sMethodName) use($aProtectedMethods) {
             // Don't take magic __call, __construct, __destruct methods
-            if(strlen($sMethodName) > 2 && substr($sMethodName, 0, 2) == '__')
-            {
-                continue;
-            }
             // Don't take protected methods
-            if(in_array($sMethodName, $aProtectedMethods) || in_array($sMethodName, $this->aProtectedMethods))
-            {
-                continue;
-            }
-            $aMethods[] = $sMethodName;
-        }
-        return $aMethods;
+            return !(substr($sMethodName, 0, 2) === '__' ||
+                in_array($sMethodName, $aProtectedMethods) ||
+                in_array($sMethodName, $this->aProtectedMethods));
+        });
     }
 
     /**
@@ -304,26 +220,21 @@ class CallableObject
      */
     public function getMethods(array $aProtectedMethods): array
     {
-        $aConfig = $this->getOptions();
-
-        // Convert an option to string, to be displayed in the js script template.
+        // Convert an option to a string to be displayed in the js script template.
         $fConvertOption = function($xOption) {
             return is_array($xOption) ? json_encode($xOption) : $xOption;
         };
-        $aCommonConfig = isset($aConfig['*']) ? array_map($fConvertOption, $aConfig['*']) : [];
+        $aCommonConfig = isset($this->aOptions['*']) ? array_map($fConvertOption, $this->aOptions['*']) : [];
 
-        $aMethods = [];
-        foreach($this->_getMethods($aProtectedMethods) as $sMethodName)
-        {
+        return array_map(function($sMethodName) use($fConvertOption, $aCommonConfig) {
             // Specific options for this method
-            $aMethodConfig = isset($aConfig[$sMethodName]) ?
-                array_map($fConvertOption, $aConfig[$sMethodName]) : [];
-            $aMethods[] = [
+            $aMethodConfig = isset($this->aOptions[$sMethodName]) ?
+                array_map($fConvertOption, $this->aOptions[$sMethodName]) : [];
+            return [
                 'name' => $sMethodName,
                 'config' => array_merge($aCommonConfig, $aMethodConfig),
             ];
-        }
-        return $aMethods;
+        }, $this->_getMethods($aProtectedMethods));
     }
 
     /**
@@ -346,6 +257,23 @@ class CallableObject
     public function hasMethod(string $sMethod): bool
     {
         return $this->xReflectionClass->hasMethod($sMethod);
+    }
+
+    /**
+     * Call the specified method of the registered callable object using the specified array of arguments
+     *
+     * @param string $sMethod    The method name
+     * @param array $aArgs    The method arguments
+     * @param bool $bAccessible    If false, only calls to public method are allowed
+     *
+     * @return mixed
+     * @throws ReflectionException
+     */
+    private function callMethod(string $sMethod, array $aArgs, bool $bAccessible)
+    {
+        $reflectionMethod = $this->xReflectionClass->getMethod($sMethod);
+        $reflectionMethod->setAccessible($bAccessible); // Make it possible to call protected methods
+        return $reflectionMethod->invokeArgs($this->getRegisteredObject(), $aArgs);
     }
 
     /**
@@ -377,13 +305,7 @@ class CallableObject
                 $sMethodName = $xKey;
                 $aMethodArgs = is_array($xValue) ? $xValue : [$xValue];
             }
-            if(!$this->xReflectionClass->hasMethod($sMethodName))
-            {
-                continue;
-            }
-            $reflectionMethod = $this->xReflectionClass->getMethod($sMethodName);
-            $reflectionMethod->setAccessible(true); // Make it possible to call protected methods
-            $reflectionMethod->invokeArgs($this->getRegisteredObject(), $aMethodArgs);
+            $this->callMethod($sMethodName, $aMethodArgs, true);
         }
     }
 
@@ -398,20 +320,12 @@ class CallableObject
      */
     public function call(string $sMethod, array $aArgs): ?Response
     {
-        if(!$this->hasMethod($sMethod))
-        {
-            return null;
-        }
-
         // Methods to call before processing the request
         $this->callHookMethods($this->aBeforeMethods, $sMethod);
-
-        $reflectionMethod = $this->xReflectionClass->getMethod($sMethod);
-        $xResponse = $reflectionMethod->invokeArgs($this->getRegisteredObject(), $aArgs);
-
+        // Call the request method
+        $xResponse = $this->callMethod($sMethod, $aArgs, false);
         // Methods to call after processing the request
         $this->callHookMethods($this->aAfterMethods, $sMethod);
-
         return $xResponse;
     }
 }

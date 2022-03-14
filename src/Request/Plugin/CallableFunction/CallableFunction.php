@@ -119,14 +119,12 @@ class CallableFunction
         {
             require_once $this->sInclude;
         }
-
-        // If the function is an alias for a class method, then instanciate the class
+        // If the function is an alias for a class method, then instantiate the class
         if(is_array($this->xCallableFunction) && is_string($this->xCallableFunction[0]))
         {
             $sClassName = $this->xCallableFunction[0];
             $this->xCallableFunction[0] = new $sClassName;
         }
-
         return call_user_func_array($this->xCallableFunction, $aArgs);
     }
 }

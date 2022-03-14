@@ -52,14 +52,13 @@ trait RegisterTrait
      */
     private function setCallableObjectOptions($xCallableObject, array $aOptions)
     {
-        foreach(['namespace', 'separator', 'protected'] as $sName)
+        foreach(['separator', 'protected'] as $sName)
         {
             if(isset($aOptions[$sName]))
             {
                 $xCallableObject->configure($sName, $aOptions[$sName]);
             }
         }
-
         if(!isset($aOptions['functions']))
         {
             return;

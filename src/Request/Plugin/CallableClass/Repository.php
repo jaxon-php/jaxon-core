@@ -295,6 +295,11 @@ class Repository
      */
     public function registerCallableClass(string $sClassName, array $aOptions)
     {
+        // Make sure we create each callable object only once.
+        if($this->di->h($sClassName))
+        {
+            return;
+        }
         // Make sure the registered class exists
         if(isset($aOptions['include']))
         {
