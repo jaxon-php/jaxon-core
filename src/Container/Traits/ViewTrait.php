@@ -5,10 +5,10 @@ namespace Jaxon\Container\Traits;
 use Jaxon\Jaxon;
 use Jaxon\Ui\Dialogs\Dialog;
 use Jaxon\Ui\Pagination\Paginator;
-use Jaxon\Ui\Pagination\Renderer as PaginationRenderer;
+use Jaxon\Ui\Pagination\PaginationRenderer;
 use Jaxon\Ui\Template\View as TemplateView;
-use Jaxon\Ui\View\Manager as ViewManager;
-use Jaxon\Ui\View\Renderer as ViewRenderer;
+use Jaxon\Ui\View\ViewManager;
+use Jaxon\Ui\View\ViewRenderer;
 use Jaxon\Utils\Template\Engine as TemplateEngine;
 
 trait ViewTrait
@@ -24,7 +24,7 @@ trait ViewTrait
         $this->set(Dialog::class, function($c) {
             return new Dialog($c->g(Jaxon::class));
         });
-        // View Manager
+        // View ResponseManager
         $this->set(ViewManager::class, function($c) {
             $xViewManager = new ViewManager($this);
             // Add the default view renderer

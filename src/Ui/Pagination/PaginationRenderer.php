@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Renderer.php - Paginator renderer
+ * PaginationRenderer.php - Paginator renderer
  *
  * Render pagination links.
  *
@@ -16,7 +16,7 @@ namespace Jaxon\Ui\Pagination;
 
 use Jaxon\Request\Call\Call;
 use Jaxon\Request\Call\Parameter;
-use Jaxon\Ui\View\Renderer as ViewRenderer;
+use Jaxon\Ui\View\ViewRenderer;
 use Jaxon\Ui\View\Store;
 
 use function array_map;
@@ -25,7 +25,7 @@ use function array_shift;
 use function array_walk;
 use function floor;
 
-class Renderer
+class PaginationRenderer
 {
     /**
      * The template renderer.

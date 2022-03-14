@@ -5,10 +5,10 @@ namespace Jaxon\Container\Traits;
 use Jaxon\Jaxon;
 use Jaxon\App\App;
 use Jaxon\App\Bootstrap;
-use Jaxon\Plugin\Manager as PluginManager;
-use Jaxon\Request\Handler\Handler as RequestHandler;
-use Jaxon\Response\Manager as ResponseManager;
-use Jaxon\Ui\View\Manager as ViewManager;
+use Jaxon\Plugin\PluginManager;
+use Jaxon\Request\Handler\RequestHandler;
+use Jaxon\Response\ResponseManager;
+use Jaxon\Ui\View\ViewManager;
 use Jaxon\Utils\Config\Reader as ConfigReader;
 use Jaxon\Utils\Translation\Translator;
 

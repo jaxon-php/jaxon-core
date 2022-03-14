@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Manager.php - Jaxon Request Manager
+ * ArgumentManager.php
  *
  * This class processes the input arguments from the GET or POST data of the request.
  * If this is a request for the initial page load, no arguments will be processed.
@@ -42,7 +42,7 @@ use function iconv;
 use function mb_convert_encoding;
 use function utf8_decode;
 
-class Argument
+class ArgumentManager
 {
     /*
      * Request methods

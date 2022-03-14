@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Manager.php - Jaxon plugin manager
+ * ResponseManager.php - Jaxon plugin manager
  *
  * Register Jaxon plugins, generate corresponding code, handle request
  * and redirect them to the right plugin.
@@ -22,9 +22,9 @@
 namespace Jaxon\Plugin;
 
 use Jaxon\Jaxon;
-use Jaxon\Plugin\Code\Generator as CodeGenerator;
-use Jaxon\Plugin\Request as RequestPlugin;
-use Jaxon\Plugin\Response as ResponsePlugin;
+use Jaxon\Plugin\Code\CodeGenerator;
+use Jaxon\Plugin\RequestPlugin;
+use Jaxon\Plugin\ResponsePlugin;
 use Jaxon\Request\Plugin\CallableClass\ClassPlugin;
 use Jaxon\Request\Plugin\CallableClass\DirPlugin;
 use Jaxon\Request\Plugin\CallableFunction\FunctionPlugin;
@@ -43,7 +43,7 @@ use function is_string;
 use function is_subclass_of;
 use function trim;
 
-class Manager
+class PluginManager
 {
     /**
      * @var Jaxon

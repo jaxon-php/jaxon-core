@@ -7,9 +7,9 @@ use Jaxon\App\Bootstrap;
 use Jaxon\Contracts\Session;
 use Jaxon\Plugin\Package;
 use Jaxon\Request\Factory\RequestFactory;
-use Jaxon\Request\Handler\Callback;
+use Jaxon\Request\Handler\CallbackManager;
 use Jaxon\Response\AbstractResponse;
-use Jaxon\Ui\View\Renderer;
+use Jaxon\Ui\View\ViewRenderer;
 use Jaxon\Utils\Http\UriException;
 use Jaxon\Exception\SetupException;
 use Psr\Container\ContainerInterface;
@@ -83,9 +83,9 @@ trait App
     /**
      * Get the request callback manager
      *
-     * @return Callback
+     * @return CallbackManager
      */
-    public function callback(): Callback
+    public function callback(): CallbackManager
     {
         return $this->jaxon->callback();
     }
@@ -193,9 +193,9 @@ trait App
     /**
      * Get the view renderer
      *
-     * @return Renderer
+     * @return ViewRenderer
      */
-    public function view(): Renderer
+    public function view(): ViewRenderer
     {
         return $this->jaxon->view();
     }

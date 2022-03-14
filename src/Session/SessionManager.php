@@ -4,7 +4,7 @@ namespace Jaxon\Session;
 
 use Jaxon\Contracts\Session as SessionContract;
 
-class Manager implements SessionContract
+class SessionManager implements SessionContract
 {
     /**
      * Get the current session id

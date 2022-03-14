@@ -3,15 +3,15 @@
 namespace Jaxon\Container\Traits;
 
 use Jaxon\Jaxon;
-use Jaxon\Plugin\Code\Generator as CodeGenerator;
-use Jaxon\Request\Handler\Handler as RequestHandler;
+use Jaxon\Plugin\Code\CodeGenerator;
+use Jaxon\Request\Handler\RequestHandler;
 use Jaxon\Request\Plugin\CallableClass\Registry;
 use Jaxon\Request\Plugin\CallableClass\Repository;
 use Jaxon\Request\Plugin\CallableClass\ClassPlugin;
 use Jaxon\Request\Plugin\CallableClass\DirPlugin;
 use Jaxon\Request\Plugin\CallableFunction\FunctionPlugin;
 use Jaxon\Request\Validator;
-use Jaxon\Response\Manager as ResponseManager;
+use Jaxon\Response\ResponseManager;
 use Jaxon\Utils\Config\Config;
 use Jaxon\Utils\File\Minifier;
 use Jaxon\Utils\Http\UriDetector;

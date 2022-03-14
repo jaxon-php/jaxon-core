@@ -6,7 +6,7 @@ use PHPUnit\Framework\TestCase;
 use Exception;
 
 /**
- * @covers Jaxon\Request
+ * @covers Jaxon\RequestPlugin
  */
 final class FunctionTest extends TestCase
 {

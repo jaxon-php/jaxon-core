@@ -21,16 +21,15 @@
 namespace Jaxon\Request\Call;
 
 use Jaxon\Request\Call\Contracts\Parameter as ParameterContract;
-use Jaxon\Response\Plugin\JQuery\Dom\Element as DomElement;
+use Jaxon\Response\Plugin\JQuery\DomSelector;
 use Jaxon\Ui\Dialogs\Dialog;
 use Jaxon\Ui\Pagination\Paginator;
 use Jaxon\Ui\View\Store;
-
 use function array_map;
 use function array_shift;
 use function count;
-use function implode;
 use function func_get_args;
+use function implode;
 
 class Call extends JsCall
 {
@@ -231,7 +230,7 @@ class Call extends JsCall
     }
 
     /**
-     * Make unique js vars for parameters of type DomElement
+     * Make unique js vars for parameters of type DomSelector
      *
      * @param ParameterContract $xParameter
      * @param array $aVariables
@@ -242,7 +241,7 @@ class Call extends JsCall
      */
     private function _makeUniqueJsVar(ParameterContract $xParameter, array &$aVariables, string &$sVars, int &$nVarId): ParameterContract
     {
-        if($xParameter instanceof DomElement)
+        if($xParameter instanceof DomSelector)
         {
             $sParameterStr = $xParameter->getScript();
             if(!isset($aVariables[$sParameterStr]))

@@ -30,22 +30,22 @@
 
 namespace Jaxon\Response;
 
-use Jaxon\Plugin\Manager as PluginManager;
-use Jaxon\Plugin\Response as ResponsePlugin;
-use Jaxon\Response\Plugin\JQuery\Dom\Element;
+use Jaxon\Plugin\PluginManager;
+use Jaxon\Plugin\ResponsePlugin;
+use Jaxon\Response\Plugin\JQuery\DomSelector;
 use Jaxon\Utils\Config\Config;
 use Jaxon\Utils\Translation\Translator;
 use Jaxon\Exception\RequestException;
 
-use function json_encode;
-use function array_merge;
-use function array_map;
-use function array_pop;
-use function is_integer;
-use function trim;
-use function is_array;
 use function array_keys;
+use function array_map;
+use function array_merge;
+use function array_pop;
 use function count;
+use function is_array;
+use function is_integer;
+use function json_encode;
+use function trim;
 
 class Response extends AbstractResponse
 {
@@ -134,7 +134,7 @@ class Response extends AbstractResponse
     /**
      * Magic PHP function
      *
-     * Used to permit plugins to be called as if they where native members of the Response instance.
+     * Used to permit plugins to be called as if they were native members of the Response instance.
      *
      * @param string $sPluginName    The name of the plugin
      *
@@ -146,33 +146,18 @@ class Response extends AbstractResponse
     }
 
     /**
-     * Create a JQuery Element with a given selector, and link it to the current response.
+     * Create a JQuery DomSelector, and link it to the current response.
      *
      * This is a shortcut to the JQuery plugin.
      *
-     * @param string $sSelector    The jQuery selector
+     * @param string $sPath    The jQuery selector path
      * @param string $sContext    A context associated to the selector
      *
-     * @return Element
+     * @return DomSelector
      */
-    public function jq(string $sSelector = '', string $sContext = ''): Element
+    public function jq(string $sPath = '', string $sContext = ''): DomSelector
     {
-        return $this->plugin('jquery')->element($sSelector, $sContext);
-    }
-
-    /**
-     * Create a JQuery Element with a given selector, and link it to the current response.
-     *
-     * This is a shortcut to the JQuery plugin.
-     *
-     * @param string $sSelector    The jQuery selector
-     * @param string $sContext    A context associated to the selector
-     *
-     * @return Element
-     */
-    public function jQuery(string $sSelector = '', string $sContext = ''): Element
-    {
-        return $this->jq($sSelector, $sContext);
+        return $this->plugin('jquery')->selector($sPath, $sContext);
     }
 
     /**

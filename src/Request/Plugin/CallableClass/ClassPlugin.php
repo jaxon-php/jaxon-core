@@ -23,11 +23,11 @@ namespace Jaxon\Request\Plugin\CallableClass;
 
 use Jaxon\Jaxon;
 use Jaxon\CallableClass;
-use Jaxon\Plugin\Request as RequestPlugin;
-use Jaxon\Request\Handler\Handler as RequestHandler;
+use Jaxon\Plugin\RequestPlugin;
+use Jaxon\Request\Handler\RequestHandler;
 use Jaxon\Request\Target;
 use Jaxon\Request\Validator;
-use Jaxon\Response\Manager as ResponseManager;
+use Jaxon\Response\ResponseManager;
 use Jaxon\Utils\Config\Config;
 use Jaxon\Utils\Template\Engine as TemplateEngine;
 use Jaxon\Utils\Translation\Translator;

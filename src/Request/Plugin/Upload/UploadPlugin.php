@@ -12,8 +12,8 @@
 
 namespace Jaxon\Request\Plugin\Upload;
 
-use Jaxon\Plugin\Request as RequestPlugin;
-use Jaxon\Response\Manager as ResponseManager;
+use Jaxon\Plugin\RequestPlugin;
+use Jaxon\Response\ResponseManager;
 use Jaxon\Response\UploadResponse;
 use Jaxon\Utils\Translation\Translator;
 use Jaxon\Exception\RequestException;
@@ -36,7 +36,7 @@ class UploadPlugin extends RequestPlugin
     /**
      * HTTP file upload support
      *
-     * @var Manager
+     * @var UploadManager
      */
     protected $xUploadManager = null;
 
@@ -69,11 +69,11 @@ class UploadPlugin extends RequestPlugin
     /**
      * The constructor
      *
-     * @param Manager $xUploadManager    HTTP file upload manager
+     * @param UploadManager $xUploadManager    HTTP file upload manager
      * @param Translator $xTranslator
      * @param ResponseManager $xResponseManager
      */
-    public function __construct(Manager $xUploadManager, Translator $xTranslator, ResponseManager $xResponseManager)
+    public function __construct(UploadManager $xUploadManager, Translator $xTranslator, ResponseManager $xResponseManager)
     {
         $this->xResponseManager = $xResponseManager;
         $this->xUploadManager = $xUploadManager;

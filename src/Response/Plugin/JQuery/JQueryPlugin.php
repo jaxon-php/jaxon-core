@@ -2,10 +2,9 @@
 
 namespace Jaxon\Response\Plugin\JQuery;
 
-use Jaxon\Response\Plugin\JQuery\Dom\Element;
 use Jaxon\Utils\Config\Config;
 
-class JQueryPlugin extends \Jaxon\Plugin\Response
+class JQueryPlugin extends \Jaxon\Plugin\ResponsePlugin
 {
     /**
      * @var Config
@@ -52,21 +51,21 @@ class JQueryPlugin extends \Jaxon\Plugin\Response
     }
 
     /**
-     * Create a JQueryPlugin Element with a given selector, and link it to the current response.
+     * Create a JQueryPlugin DomSelector, and link it to the current response.
      *
      * Since this element is linked to a response, its code will be automatically sent to the client.
      * The returned object can be used to call jQuery functions on the selected elements.
      *
-     * @param string $sSelector    The jQuery selector
+     * @param string $sPath    The jQuery selector path
      * @param string $sContext    A context associated to the selector
      *
-     * @return Element
+     * @return DomSelector
      */
-    public function element(string $sSelector = '', string $sContext = ''): Element
+    public function selector(string $sPath = '', string $sContext = ''): DomSelector
     {
         $jQueryNs = $this->xConfig->getOption('core.jquery.no_conflict', false) ? 'jQuery' : '$';
-        $xElement = new Element($jQueryNs, $sSelector, $sContext);
-        $this->addCommand(['cmd' => 'jquery'], $xElement);
-        return $xElement;
+        $xSelector = new DomSelector($jQueryNs, $sPath, $sContext);
+        $this->addCommand(['cmd' => 'jquery'], $xSelector);
+        return $xSelector;
     }
 }

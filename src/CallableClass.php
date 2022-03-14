@@ -3,12 +3,14 @@
 namespace Jaxon;
 
 use Jaxon\Contracts\Session;
-use Jaxon\Request\Factory\RequestFactory;
 use Jaxon\Request\Factory\ParameterFactory;
+use Jaxon\Request\Factory\RequestFactory;
 use Jaxon\Response\Plugin\DataBag\Context as DataBagContext;
-use Jaxon\Response\Plugin\JQuery\Dom\Element as DomElement;
+use Jaxon\Response\Plugin\JQuery\DomSelector;
 use Jaxon\Response\Response;
-use Jaxon\Ui\View\Renderer;
+use Jaxon\Ui\View\ViewRenderer;
+use Jaxon\Exception\SetupException;
+
 use Psr\Log\LoggerInterface;
 
 class CallableClass
@@ -35,9 +37,9 @@ class CallableClass
     /**
      * Get the view renderer
      *
-     * @return Renderer
+     * @return ViewRenderer
      */
-    public function view(): Renderer
+    public function view(): ViewRenderer
     {
         return $this->jaxon->view();
     }
@@ -83,24 +85,25 @@ class CallableClass
     }
 
     /**
-     * Create a JQuery Element with a given selector, and link it to the response attribute.
+     * Create a JQuery DomSelector, and link it to the response attribute.
      *
-     * @param string $sSelector    The jQuery selector
+     * @param string $sPath    The jQuery selector path
      * @param string $sContext    A context associated to the selector
      *
-     * @return DomElement
+     * @return DomSelector
      */
-    public function jq(string $sSelector = '', string $sContext = ''): DomElement
+    public function jq(string $sPath = '', string $sContext = ''): DomSelector
     {
-        return $this->response->plugin('jquery')->element($sSelector, $sContext);
+        return $this->response->plugin('jquery')->selector($sPath, $sContext);
     }
 
     /**
      * Get an instance of a Jaxon class by name
      *
-     * @param string $sName    the class name
+     * @param string $sName the class name
      *
      * @return object
+     * @throws SetupException
      */
     public function cl(string $sName)
     {

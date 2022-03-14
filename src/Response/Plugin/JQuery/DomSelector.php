@@ -1,15 +1,15 @@
 <?php
 
 /**
- * Element.php - A jQuery selector
+ * DomSelector.php - A jQuery selector
  *
  * This class is used to create client side requests to the Jaxon functions and callable objects.
  *
- * When inserted into a Jaxon response, an Element object must be converted to the corresponding jQuery code.
- * Therefore, the Element class implements the JsonSerializable interface.
+ * When inserted into a Jaxon response, a DomSelector object must be converted to the corresponding jQuery code.
+ * Therefore, the DomSelector class implements the JsonSerializable interface.
  *
- * When used as a parameter of a Jaxon call, the Element must be converted to Jaxon request parameter.
- * Therefore, the Element class also implements the Jaxon\Request\Contracts\Parameter interface.
+ * When used as a parameter of a Jaxon call, the DomSelector must be converted to Jaxon request parameter.
+ * Therefore, the DomSelector class also implements the Jaxon\Request\Contracts\Parameter interface.
  *
  * @package jaxon-jquery
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
@@ -18,7 +18,7 @@
  * @link https://github.com/jaxon-php/jaxon-jquery
  */
 
-namespace Jaxon\Response\Plugin\JQuery\Dom;
+namespace Jaxon\Response\Plugin\JQuery;
 
 use Jaxon\Request\Call\Contracts\Parameter;
 use Jaxon\Response\Plugin\JQuery\Call\AttrGet;
@@ -31,14 +31,14 @@ use function count;
 use function implode;
 use function trim;
 
-class Element implements JsonSerializable, Parameter
+class DomSelector implements JsonSerializable, Parameter
 {
     /**
-     * The jQuery selector
+     * The jQuery selector path
      *
      * @var string
      */
-    protected $sSelector;
+    protected $sPath;
 
     /**
      * The actions to be applied on the selected element
@@ -51,26 +51,26 @@ class Element implements JsonSerializable, Parameter
      * The constructor.
      *
      * @param string $jQueryNs    The jQuery symbol
-     * @param string $sSelector    The jQuery selector
+     * @param string $sPath    The jQuery selector path
      * @param string $sContext    A context associated to the selector
      */
-    public function __construct(string $jQueryNs, string $sSelector, string $sContext)
+    public function __construct(string $jQueryNs, string $sPath, string $sContext)
     {
-        $sSelector = trim($sSelector, " \t");
+        $sPath = trim($sPath, " \t");
         $sContext = trim($sContext, " \t");
         $this->aCalls = [];
 
-        if(!$sSelector)
+        if(!$sPath)
         {
-            $this->sSelector = "$jQueryNs(this)"; // If an empty selector is given, use javascript "this" instead
+            $this->sPath = "$jQueryNs(this)"; // If an empty selector is given, use javascript "this" instead
         }
         elseif(($sContext))
         {
-            $this->sSelector = "$jQueryNs('" . $sSelector . "', $jQueryNs('" . $sContext . "'))";
+            $this->sPath = "$jQueryNs('" . $sPath . "', $jQueryNs('" . $sContext . "'))";
         }
         else
         {
-            $this->sSelector = "$jQueryNs('" . $sSelector . "')";
+            $this->sPath = "$jQueryNs('" . $sPath . "')";
         }
     }
 
@@ -80,7 +80,7 @@ class Element implements JsonSerializable, Parameter
      * @param string  $sMethod
      * @param array  $aArguments
      *
-     * @return Element
+     * @return DomSelector
      */
     public function __call(string $sMethod, array $aArguments)
     {
@@ -95,7 +95,7 @@ class Element implements JsonSerializable, Parameter
      *
      * @param string  $sAttribute
      *
-     * @return Element
+     * @return DomSelector
      */
     public function __get(string $sAttribute)
     {
@@ -108,7 +108,8 @@ class Element implements JsonSerializable, Parameter
     /**
      * Set the value of an attribute on the first selected element
      *
-     * @param string  $sAttribute
+     * @param string $sAttribute
+     * @param $xValue
      *
      * @return void
      */
@@ -129,9 +130,9 @@ class Element implements JsonSerializable, Parameter
     {
         if(count($this->aCalls) === 0)
         {
-            return $this->sSelector;
+            return $this->sPath;
         }
-        return $this->sSelector . '.' . implode('.', $this->aCalls);
+        return $this->sPath . '.' . implode('.', $this->aCalls);
     }
 
     /**

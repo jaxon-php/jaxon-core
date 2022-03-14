@@ -10,7 +10,7 @@ use function pr;
 use function pm;
 
 /**
- * @covers Jaxon\Request
+ * @covers Jaxon\RequestPlugin
  */
 final class RequestTest extends TestCase
 {

@@ -9,7 +9,7 @@ use Jaxon\Request\Plugin\CallableClass\CallableObject;
 use Jaxon\Request\Plugin\CallableFunction\CallableFunction;
 use Jaxon\Ui\Dialogs\Dialog;
 use Jaxon\Ui\Pagination\Paginator;
-use Jaxon\Ui\View\Renderer;
+use Jaxon\Ui\View\ViewRenderer;
 use Jaxon\Utils\Config\Config;
 use Jaxon\Exception\SetupException;
 use Jaxon\Utils\Translation\Translator;
@@ -198,7 +198,7 @@ trait RegisterTrait
             // Set the package options
             $cSetter = function($c, $sClassName) {
                 $this->xPkgConfig = $c->g($sClassName . '_config');
-                $this->xRenderer = $c->g(Renderer::class);
+                $this->xRenderer = $c->g(ViewRenderer::class);
             };
             // Can now access protected attributes
             call_user_func($cSetter->bindTo($xPackage, $xPackage), $c, $sClassName);

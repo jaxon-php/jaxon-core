@@ -42,7 +42,7 @@ use function random_bytes;
 use function bin2hex;
 use function call_user_func_array;
 
-class Manager
+class UploadManager
 {
     /**
      * @var Config

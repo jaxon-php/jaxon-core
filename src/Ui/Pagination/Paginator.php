@@ -66,16 +66,16 @@ class Paginator
     /**
      * The pagination renderer
      *
-     * @var Renderer
+     * @var PaginationRenderer
      */
     protected $xRenderer = null;
 
     /**
      * The constructor
      *
-     * @param Renderer $xRenderer
+     * @param PaginationRenderer $xRenderer
      */
-    public function __construct(Renderer $xRenderer)
+    public function __construct(PaginationRenderer $xRenderer)
     {
         $this->xRenderer = $xRenderer;
     }

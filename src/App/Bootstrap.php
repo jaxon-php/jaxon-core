@@ -13,9 +13,9 @@
 namespace Jaxon\App;
 
 use Jaxon\Jaxon;
-use Jaxon\Plugin\Manager as PluginManager;
-use Jaxon\Request\Handler\Handler as RequestHandler;
-use Jaxon\Ui\View\Manager as ViewManager;
+use Jaxon\Plugin\PluginManager;
+use Jaxon\Request\Handler\RequestHandler;
+use Jaxon\Ui\View\ViewManager;
 use Jaxon\Utils\Config\Config;
 use Jaxon\Utils\Translation\Translator;
 use Jaxon\Exception\SetupException;

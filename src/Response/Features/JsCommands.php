@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Js.php - Provides javascript related commands for the Response
+ * JsCommands.php - Provides javascript related commands for the Response
  *
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
  * @license https://opensource.org/licenses/BSD-3-Clause BSD 3-Clause License

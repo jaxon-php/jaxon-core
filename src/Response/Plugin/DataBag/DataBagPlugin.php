@@ -6,7 +6,7 @@ use function is_array;
 use function is_string;
 use function json_decode;
 
-class DataBagPlugin extends \Jaxon\Plugin\Response
+class DataBagPlugin extends \Jaxon\Plugin\ResponsePlugin
 {
     /**
      * @var Bag

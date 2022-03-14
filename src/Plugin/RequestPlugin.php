@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Request.php - Jaxon Request interface
+ * RequestPlugin.php - Jaxon Request interface
  *
  * Interface for Jaxon Request plugins.
  *
@@ -28,7 +28,7 @@ namespace Jaxon\Plugin;
 
 use Jaxon\Request\Target;
 
-abstract class Request extends Plugin
+abstract class RequestPlugin extends Plugin
 {
     /**
      * Check if the provided options are correct, and convert them into an array.
@@ -43,7 +43,7 @@ abstract class Request extends Plugin
     /**
      * Register a function, an event or an object.
      *
-     * Called by the <Jaxon\Plugin\Manager> when a user script
+     * Called by the <Jaxon\Plugin\PluginManager> when a user script
      * when a function or callable object is to be registered.
      * Additional plugins may support other registration types.
      *
@@ -71,7 +71,7 @@ abstract class Request extends Plugin
     /**
      * Check if this plugin can process the current request
      *
-     * Called by the <Jaxon\Plugin\Manager> when a request has been received to determine
+     * Called by the <Jaxon\Plugin\PluginManager> when a request has been received to determine
      * if the request is destinated to this request plugin.
      *
      * @return bool
@@ -81,7 +81,7 @@ abstract class Request extends Plugin
     /**
      * Process the current request
      *
-     * Called by the <Jaxon\Plugin\Manager> when a request is being processed.
+     * Called by the <Jaxon\Plugin\PluginManager> when a request is being processed.
      * This will only occur when <Jaxon> has determined that the current request
      * is a valid (registered) jaxon enabled function via <jaxon->canProcessRequest>.
      *

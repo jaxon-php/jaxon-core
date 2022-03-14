@@ -3,10 +3,10 @@
 namespace Jaxon\Container\Traits;
 
 use Jaxon\Jaxon;
-use Jaxon\Plugin\Manager as PluginManager;
-use Jaxon\Request\Handler\Argument as RequestArgument;
+use Jaxon\Plugin\PluginManager;
+use Jaxon\Request\Handler\ArgumentManager;
 use Jaxon\Response\Response;
-use Jaxon\Response\Manager as ResponseManager;
+use Jaxon\Response\ResponseManager;
 use Jaxon\Utils\Config\Config;
 use Jaxon\Utils\Translation\Translator;
 
@@ -30,7 +30,7 @@ trait ResponseTrait
         // Response Manager
         $this->set(ResponseManager::class, function($c) {
             return new ResponseManager($c->g(Jaxon::class), $c->g(Config::class),
-                $c->g(RequestArgument::class), $c->g(Translator::class));
+                $c->g(ArgumentManager::class), $c->g(Translator::class));
         });
     }
 

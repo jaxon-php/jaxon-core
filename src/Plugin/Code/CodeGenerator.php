@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Generator.php - Jaxon code generator
+ * CodeGenerator.php - Jaxon code generator
  *
  * Generate HTML, CSS and Javascript code for Jaxon.
  *
@@ -29,7 +29,7 @@ use function is_file;
 use function file_put_contents;
 use function is_subclass_of;
 
-class Generator
+class CodeGenerator
 {
     /**
      * @var Jaxon

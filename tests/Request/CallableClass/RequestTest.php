@@ -5,7 +5,7 @@ use Jaxon\Jaxon;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers Jaxon\Request
+ * @covers Jaxon\RequestPlugin
  */
 final class RequestTest extends TestCase
 {

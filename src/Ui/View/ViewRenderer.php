@@ -6,7 +6,7 @@ use function strrpos;
 use function substr;
 use function array_merge;
 
-class Renderer
+class ViewRenderer
 {
     /**
      * The view data store
@@ -25,16 +25,16 @@ class Renderer
     /**
      * The view manager
      *
-     * @var Manager
+     * @var ViewManager
      */
-    protected $xManager;
+    protected $xViewManager;
 
     /**
      * The constructor
      */
-    public function __construct(Manager $xManager)
+    public function __construct(ViewManager $xViewManager)
     {
-        $this->xManager = $xManager;
+        $this->xViewManager = $xViewManager;
     }
 
     /**
@@ -57,9 +57,9 @@ class Renderer
      * @param string $sName    The data name
      * @param mixed $xValue    The data value
      *
-     * @return Renderer
+     * @return ViewRenderer
      */
-    public function set(string $sName, $xValue): Renderer
+    public function set(string $sName, $xValue): ViewRenderer
     {
         $this->store()->with($sName, $xValue);
         return $this;
@@ -71,9 +71,9 @@ class Renderer
      * @param string $sName    The data name
      * @param mixed $xValue    The data value
      *
-     * @return Renderer
+     * @return ViewRenderer
      */
-    public function share(string $sName, $xValue): Renderer
+    public function share(string $sName, $xValue): ViewRenderer
     {
         $this->aViewData[$sName] = $xValue;
         return $this;
@@ -84,9 +84,9 @@ class Renderer
      *
      * @param array $aValues    The data values
      *
-     * @return Renderer
+     * @return ViewRenderer
      */
-    public function shareValues(array $aValues): Renderer
+    public function shareValues(array $aValues): ViewRenderer
     {
         foreach($aValues as $sName => $xValue)
         {
@@ -111,7 +111,7 @@ class Renderer
         $xStore = $this->store();
 
         // Get the default view namespace
-        $sNamespace = $this->xManager->getDefaultNamespace();
+        $sNamespace = $this->xViewManager->getDefaultNamespace();
         // Get the namespace from the view name
         $nSeparatorPosition = strrpos($sViewName, '::');
         if($nSeparatorPosition !== false)
@@ -119,7 +119,7 @@ class Renderer
             $sNamespace = substr($sViewName, 0, $nSeparatorPosition);
         }
 
-        $xRenderer = $this->xManager->getNamespaceRenderer($sNamespace);
+        $xRenderer = $this->xViewManager->getNamespaceRenderer($sNamespace);
         if(!$xRenderer)
         {
             // Cannot render a view if there's no renderer corresponding to the namespace.

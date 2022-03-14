@@ -3,12 +3,12 @@
 namespace Jaxon\Container\Traits;
 
 use Jaxon\Jaxon;
-use Jaxon\Plugin\Code\Generator as CodeGenerator;
-use Jaxon\Plugin\Manager as PluginManager;
-use Jaxon\Request\Plugin\Upload\Manager as UploadManager;
+use Jaxon\Plugin\Code\CodeGenerator;
+use Jaxon\Plugin\PluginManager;
+use Jaxon\Request\Plugin\Upload\UploadManager;
 use Jaxon\Request\Plugin\Upload\UploadPlugin;
 use Jaxon\Request\Validator;
-use Jaxon\Response\Manager as ResponseManager;
+use Jaxon\Response\ResponseManager;
 use Jaxon\Response\Plugin\DataBag\DataBagPlugin;
 use Jaxon\Response\Plugin\JQuery\JQueryPlugin;
 use Jaxon\Utils\Config\Config;
@@ -23,12 +23,12 @@ trait PluginTrait
      */
     private function registerPlugins()
     {
-        // UploadPlugin Manager
+        // Plugin manager
         $this->set(PluginManager::class, function($c) {
             return new PluginManager($c->g(Jaxon::class), $c->g(Config::class),
                 $c->g(Translator::class), $c->g(CodeGenerator::class));
         });
-        // File upload support
+        // File upload manager
         $this->set(UploadManager::class, function($c) {
             return new UploadManager($c->g(Config::class), $c->g(Validator::class), $c->g(Translator::class));
         });

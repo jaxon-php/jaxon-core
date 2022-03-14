@@ -30,21 +30,21 @@ use Jaxon\Container\Container;
 use Jaxon\Contracts\Session;
 use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;
-use Jaxon\Plugin\Code\Generator as CodeGenerator;
-use Jaxon\Plugin\Manager as PluginManager;
+use Jaxon\Plugin\Code\CodeGenerator;
 use Jaxon\Plugin\Package;
-use Jaxon\Plugin\Response as ResponsePlugin;
+use Jaxon\Plugin\PluginManager;
+use Jaxon\Plugin\ResponsePlugin;
 use Jaxon\Request\Factory\Factory;
 use Jaxon\Request\Factory\RequestFactory;
-use Jaxon\Request\Handler\Callback;
-use Jaxon\Request\Handler\Handler as RequestHandler;
+use Jaxon\Request\Handler\CallbackManager;
+use Jaxon\Request\Handler\RequestHandler;
 use Jaxon\Request\Plugin\CallableClass\Registry;
 use Jaxon\Request\Plugin\Upload\UploadPlugin;
 use Jaxon\Response\AbstractResponse;
-use Jaxon\Response\Manager as ResponseManager;
+use Jaxon\Response\ResponseManager;
 use Jaxon\Response\Response;
 use Jaxon\Ui\Dialogs\Dialog;
-use Jaxon\Ui\View\Renderer;
+use Jaxon\Ui\View\ViewRenderer;
 use Jaxon\Utils\Config\Config;
 use Jaxon\Utils\Config\Exception\DataDepth;
 use Jaxon\Utils\Config\Exception\FileAccess;
@@ -647,9 +647,9 @@ class Jaxon implements LoggerAwareInterface
     /**
      * Get the request callback manager
      *
-     * @return Callback
+     * @return CallbackManager
      */
-    public function callback(): Callback
+    public function callback(): CallbackManager
     {
         return $this->xRequestHandler->getCallbackManager();
     }
@@ -687,9 +687,9 @@ class Jaxon implements LoggerAwareInterface
     /**
      * Get the view renderer
      *
-     * @return Renderer
+     * @return ViewRenderer
      */
-    public function view(): Renderer
+    public function view(): ViewRenderer
     {
         return $this->di()->getViewRenderer();
     }

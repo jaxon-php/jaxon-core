@@ -11,7 +11,7 @@ use function array_filter;
 use function is_array;
 use function rtrim;
 
-class Manager
+class ViewManager
 {
     /**
      * @var Container

@@ -14,8 +14,8 @@
 namespace Jaxon\Request;
 
 use Jaxon\Jaxon;
-use Jaxon\Plugin\Manager as PluginManager;
-use Jaxon\Response\Manager as ResponseManager;
+use Jaxon\Plugin\PluginManager;
+use Jaxon\Response\ResponseManager;
 
 class Target
 {

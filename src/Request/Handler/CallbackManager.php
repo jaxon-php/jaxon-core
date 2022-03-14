@@ -12,7 +12,7 @@
 
 namespace Jaxon\Request\Handler;
 
-class Callback
+class CallbackManager
 {
     /**
      * The callbacks to run after booting the library
@@ -121,9 +121,9 @@ class Callback
      *
      * @param callable $xCallable    The callback function
      *
-     * @return Callback
+     * @return CallbackManager
      */
-    public function boot(callable $xCallable): Callback
+    public function boot(callable $xCallable): CallbackManager
     {
         $this->xBootCallbacks[] = $xCallable;
         return $this;
@@ -134,9 +134,9 @@ class Callback
      *
      * @param callable $xCallable    The callback function
      *
-     * @return Callback
+     * @return CallbackManager
      */
-    public function before(callable $xCallable): Callback
+    public function before(callable $xCallable): CallbackManager
     {
         $this->xBeforeCallbacks[] = $xCallable;
         return $this;
@@ -147,9 +147,9 @@ class Callback
      *
      * @param callable $xCallable    The callback function
      *
-     * @return Callback
+     * @return CallbackManager
      */
-    public function after(callable $xCallable): Callback
+    public function after(callable $xCallable): CallbackManager
     {
         $this->xAfterCallbacks[] = $xCallable;
         return $this;
@@ -160,9 +160,9 @@ class Callback
      *
      * @param callable $xCallable    The callback function
      *
-     * @return Callback
+     * @return CallbackManager
      */
-    public function invalid(callable $xCallable): Callback
+    public function invalid(callable $xCallable): CallbackManager
     {
         $this->xInvalidCallbacks[] = $xCallable;
         return $this;
@@ -173,9 +173,9 @@ class Callback
      *
      * @param callable $xCallable    The callback function
      *
-     * @return Callback
+     * @return CallbackManager
      */
-    public function error(callable $xCallable): Callback
+    public function error(callable $xCallable): CallbackManager
     {
         $this->xErrorCallbacks[] = $xCallable;
         return $this;
@@ -186,9 +186,9 @@ class Callback
      *
      * @param callable $xCallable    The callback function
      *
-     * @return Callback
+     * @return CallbackManager
      */
-    public function init(callable $xCallable): Callback
+    public function init(callable $xCallable): CallbackManager
     {
         $this->xInitCallbacks[] = $xCallable;
         return $this;

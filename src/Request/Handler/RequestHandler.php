@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Handler.php - Jaxon Request Handler
+ * RequestHandler.php - Jaxon RequestPlugin Handler
  *
  * This class processes an incoming jaxon request.
  *
@@ -21,10 +21,10 @@
 namespace Jaxon\Request\Handler;
 
 use Jaxon\Jaxon;
-use Jaxon\Plugin\Manager as PluginManager;
-use Jaxon\Plugin\Request;
+use Jaxon\Plugin\PluginManager;
+use Jaxon\Plugin\RequestPlugin;
 use Jaxon\Response\AbstractResponse;
-use Jaxon\Response\Manager as ResponseManager;
+use Jaxon\Response\ResponseManager;
 use Jaxon\Response\Plugin\DataBag\DataBagPlugin;
 use Jaxon\Utils\Config\Config;
 use Jaxon\Exception\RequestException;
@@ -37,7 +37,7 @@ use function error_reporting;
 use function ob_end_clean;
 use function ob_get_level;
 
-class Handler
+class RequestHandler
 {
     /**
      * @var Jaxon
@@ -66,21 +66,21 @@ class Handler
     /**
      * The arguments handler.
      *
-     * @var Argument
+     * @var ArgumentManager
      */
     private $xArgumentManager;
 
     /**
      * The callbacks to run while processing the request
      *
-     * @var Callback
+     * @var CallbackManager
      */
     private $xCallbackManager;
 
     /**
      * The request plugin that is able to process the current request
      *
-     * @var Request
+     * @var RequestPlugin
      */
     private $xTargetRequestPlugin = null;
 
@@ -96,12 +96,12 @@ class Handler
      *
      * @param Jaxon $jaxon
      * @param Config $xConfig
-     * @param Argument $xArgument
+     * @param ArgumentManager $xArgument
      * @param PluginManager  $xPluginManager
      * @param ResponseManager  $xResponseManager
      * @param DataBagPlugin  $xDataBagPlugin
      */
-    public function __construct(Jaxon $jaxon, Config $xConfig, Argument $xArgument,
+    public function __construct(Jaxon $jaxon, Config $xConfig, ArgumentManager $xArgument,
         PluginManager $xPluginManager, ResponseManager $xResponseManager, DataBagPlugin $xDataBagPlugin)
     {
         $this->jaxon = $jaxon;
@@ -111,13 +111,13 @@ class Handler
         $this->xArgumentManager = $xArgument;
         $this->xDataBagPlugin = $xDataBagPlugin;
 
-        $this->xCallbackManager = new Callback();
+        $this->xCallbackManager = new CallbackManager();
     }
 
     /**
      * Return the method that was used to send the arguments from the client
      *
-     * The method is one of: Argument::METHOD_UNKNOWN, Argument::METHOD_GET, Argument::METHOD_POST.
+     * The method is one of: ArgumentManager::METHOD_UNKNOWN, ArgumentManager::METHOD_GET, ArgumentManager::METHOD_POST.
      *
      * @return int
      */
@@ -140,9 +140,9 @@ class Handler
     /**
      * Get the callback handler
      *
-     * @return Callback
+     * @return CallbackManager
      */
-    public function getCallbackManager(): Callback
+    public function getCallbackManager(): CallbackManager
     {
         return $this->xCallbackManager;
     }

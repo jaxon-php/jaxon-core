@@ -1,9 +1,9 @@
 <?php
 
 /**
- * Generator.php - Code generator interface
+ * Package.php
  *
- * Any class generating css or js code must implement this interface.
+ * Package.
  *
  * @package jaxon-core
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
@@ -13,10 +13,10 @@
 
 namespace Jaxon\Plugin;
 
-use Jaxon\Ui\View\Renderer;
+use Jaxon\Ui\View\ViewRenderer;
 use Jaxon\Utils\Config\Config;
 
-abstract class Package implements Code\Contracts\Generator
+abstract class Package implements Code\Contracts\CodeGenerator
 {
     /**
      * The configuration options of the package
@@ -28,7 +28,7 @@ abstract class Package implements Code\Contracts\Generator
     /**
      * The view renderer
      *
-     * @var Renderer
+     * @var ViewRenderer
      */
     protected $xRenderer;
 
@@ -65,9 +65,9 @@ abstract class Package implements Code\Contracts\Generator
     /**
      * Get the view renderer
      *
-     * @return Renderer
+     * @return ViewRenderer
      */
-    public function view(): Renderer
+    public function view(): ViewRenderer
     {
         return $this->xRenderer;
     }

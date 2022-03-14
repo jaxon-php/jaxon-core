@@ -1,10 +1,10 @@
 <?php
 
 /**
- * Manager.php - Jaxon Response Manager
+ * ResponseManager.php - Jaxon ResponsePlugin PluginManager
  *
  * This class stores and tracks the response that will be returned after processing a request.
- * The Response Manager represents a single point of contact for working with <Response> objects.
+ * The Response Manager represents a single point of contact for working with <ResponsePlugin> objects.
  *
  * @package jaxon-core
  * @author Jared White
@@ -22,7 +22,7 @@
 namespace Jaxon\Response;
 
 use Jaxon\Jaxon;
-use Jaxon\Request\Handler\Argument;
+use Jaxon\Request\Handler\ArgumentManager;
 use Jaxon\Utils\Config\Config;
 use Jaxon\Utils\Translation\Translator;
 
@@ -32,7 +32,7 @@ use function strlen;
 use function gmdate;
 use function get_class;
 
-class Manager
+class ResponseManager
 {
     /**
      * @var Jaxon
@@ -45,7 +45,7 @@ class Manager
     private $xConfig;
 
     /**
-     * @var Argument
+     * @var ArgumentManager
      */
     private $xArgumentManager;
 
@@ -74,10 +74,10 @@ class Manager
      *
      * @param Jaxon $jaxon
      * @param Config $xConfig
-     * @param Argument $xArgumentManager
+     * @param ArgumentManager $xArgumentManager
      * @param Translator $xTranslator
      */
-    public function __construct(Jaxon $jaxon, Config $xConfig, Argument $xArgumentManager, Translator $xTranslator)
+    public function __construct(Jaxon $jaxon, Config $xConfig, ArgumentManager $xArgumentManager, Translator $xTranslator)
     {
         $this->jaxon = $jaxon;
         $this->xConfig = $xConfig;
@@ -142,7 +142,7 @@ class Manager
      * Appends a debug message on the end of the debug message queue
      *
      * Debug messages will be sent to the client with the normal response
-     * (if the response object supports the sending of debug messages, see: <Response>)
+     * (if the response object supports the sending of debug messages, see: <ResponsePlugin>)
      *
      * @param string $sMessage    The debug message
      *

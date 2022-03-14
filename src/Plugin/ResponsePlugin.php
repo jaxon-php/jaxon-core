@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Response.php - Jaxon Response interface
+ * ResponsePlugin.php
  *
  * Interface for Jaxon Response plugins.
  *
@@ -27,7 +27,7 @@ namespace Jaxon\Plugin;
 
 use Jaxon\Response\Response as JaxonResponse;
 
-abstract class Response extends Plugin
+abstract class ResponsePlugin extends Plugin
 {
     /**
      * The object used to build the response that will be sent to the client browser

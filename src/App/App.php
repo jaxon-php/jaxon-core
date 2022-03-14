@@ -14,7 +14,7 @@ namespace Jaxon\App;
 
 use Jaxon\Jaxon;
 use Jaxon\Exception\SetupException;
-use Jaxon\Response\Manager as ResponseManager;
+use Jaxon\Response\ResponseManager;
 use Jaxon\Utils\Config\Reader as ConfigReader;
 use Jaxon\Utils\Translation\Translator;
 

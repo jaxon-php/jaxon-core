@@ -4,7 +4,7 @@ namespace Jaxon\Container\Traits;
 
 use Closure;
 use Jaxon\Contracts\Session as SessionContract;
-use Jaxon\Session\Manager as SessionManager;
+use Jaxon\Session\SessionManager;
 
 trait SessionTrait
 {
