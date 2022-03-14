@@ -173,11 +173,7 @@ class Generator
      */
     protected function shallIncludeAllAssets(): bool
     {
-        if($this->xConfig->hasOption('assets.include.all'))
-        {
-            return ($this->xConfig->getOption('assets.include.all'));
-        }
-        return true;
+        return $this->xConfig->getOption('assets.include.all', true);
     }
 
     /**
@@ -190,11 +186,7 @@ class Generator
     protected function shallIncludeAssets(Plugin $xPlugin): bool
     {
         $sPluginOptionName = 'assets.include.' . $xPlugin->getName();
-        if($this->xConfig->hasOption($sPluginOptionName))
-        {
-            return ($this->xConfig->getOption($sPluginOptionName));
-        }
-        return true;
+        return $this->xConfig->getOption($sPluginOptionName, true);
     }
 
     /**
@@ -315,16 +307,15 @@ class Generator
         // Check config options
         // - The js.app.export option must be set to true
         // - The js.app.uri and js.app.dir options must be set to non null values
-        if(!$this->xConfig->getOption('js.app.export') ||
-            !$this->xConfig->getOption('js.app.uri') ||
-            !$this->xConfig->getOption('js.app.dir'))
+        if(!$this->xConfig->getOption('js.app.export', false) ||
+            !$this->xConfig->getOption('js.app.uri', false) ||
+            !$this->xConfig->getOption('js.app.dir', false))
         {
             return '';
         }
 
         // The file name
-        return $this->xConfig->hasOption('js.app.file') ?
-            $this->xConfig->getOption('js.app.file') : $this->getHash();
+        return $this->xConfig->getOption('js.app.file', $this->getHash());
     }
 
     /**

@@ -34,7 +34,7 @@ trait RegisterTrait
      */
     public function registerCallableFunction(string $sJsFunction, string $sFunctionName, array $aOptions)
     {
-        $this->set($sJsFunction, function() use($sJsFunction, $sFunctionName, $aOptions) {
+        $this->set($sJsFunction, function() use($sFunctionName, $aOptions) {
             $xCallableFunction = new CallableFunction($sFunctionName);
             foreach($aOptions as $sName => $sValue)
             {

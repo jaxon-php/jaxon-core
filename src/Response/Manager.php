@@ -200,7 +200,7 @@ class Manager
         }
 
         $sCharacterSet = '';
-        $sCharacterEncoding = trim($this->xConfig->getOption('core.encoding'));
+        $sCharacterEncoding = trim($this->xConfig->getOption('core.encoding', ''));
         if(strlen($sCharacterEncoding) > 0)
         {
             $sCharacterSet = '; charset="' . $sCharacterEncoding . '"';

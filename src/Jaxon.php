@@ -374,7 +374,7 @@ class Jaxon implements LoggerAwareInterface
      */
     public function getCharacterEncoding(): string
     {
-        return trim($this->xConfig->getOption('core.encoding'));
+        return trim($this->xConfig->getOption('core.encoding', ''));
     }
 
     /**
@@ -474,9 +474,10 @@ class Jaxon implements LoggerAwareInterface
     /**
      * Get an instance of a registered class
      *
-     * @param string $sClassName    The class name
+     * @param string $sClassName The class name
      *
      * @return null|object
+     * @throws SetupException
      */
     public function instance(string $sClassName)
     {
@@ -497,9 +498,10 @@ class Jaxon implements LoggerAwareInterface
     /**
      * Get a request to a registered class
      *
-     * @param string $sClassName    The class name
+     * @param string $sClassName The class name
      *
      * @return RequestFactory|null
+     * @throws SetupException
      */
     public function request(string $sClassName): ?RequestFactory
     {
@@ -613,9 +615,9 @@ class Jaxon implements LoggerAwareInterface
      *
      * @param string $sName    The name of the plugin
      *
-     * @return ResponsePlugin
+     * @return ResponsePlugin|null
      */
-    public function plugin(string $sName): ResponsePlugin
+    public function plugin(string $sName): ?ResponsePlugin
     {
         return $this->xPluginManager->getResponsePlugin($sName);
     }
@@ -625,9 +627,9 @@ class Jaxon implements LoggerAwareInterface
      *
      * @param string $sClassName    The package class name
      *
-     * @return Package
+     * @return Package|null
      */
-    public function package(string $sClassName): Package
+    public function package(string $sClassName): ?Package
     {
         return $this->xPluginManager->getPackage($sClassName);
     }

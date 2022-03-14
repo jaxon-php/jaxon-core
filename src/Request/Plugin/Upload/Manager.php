@@ -302,7 +302,7 @@ class Manager
         {
             throw new RequestException($this->xTranslator->trans('errors.upload.invalid'));
         }
-        $sUploadDir = $this->xConfig->getOption('upload.default.dir');
+        $sUploadDir = $this->xConfig->getOption('upload.default.dir', '');
         $sUploadDir = rtrim(trim($sUploadDir), '/\\') . DIRECTORY_SEPARATOR;
         $sUploadDir .= 'tmp' . DIRECTORY_SEPARATOR;
         $sUploadTempFile = $sUploadDir . $sTempFile . '.json';

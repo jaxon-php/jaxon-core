@@ -21,19 +21,22 @@
 
 namespace Jaxon\Plugin;
 
-use Jaxon\Contracts\Dialogs\Message;
-use Jaxon\Contracts\Dialogs\Question;
-use Jaxon\Exception\SetupException;
 use Jaxon\Jaxon;
 use Jaxon\Plugin\Code\Generator as CodeGenerator;
+use Jaxon\Plugin\Request as RequestPlugin;
+use Jaxon\Plugin\Response as ResponsePlugin;
 use Jaxon\Request\Plugin\CallableClass\ClassPlugin;
 use Jaxon\Request\Plugin\CallableClass\DirPlugin;
 use Jaxon\Request\Plugin\CallableFunction\FunctionPlugin;
 use Jaxon\Response\Plugin\DataBag\DataBagPlugin;
 use Jaxon\Response\Plugin\JQuery\JQueryPlugin;
-use Jaxon\Response\Response as JaxonResponse;
+use Jaxon\Response\Response;
 use Jaxon\Utils\Config\Config;
 use Jaxon\Utils\Translation\Translator;
+use Jaxon\Contracts\Dialogs\Message;
+use Jaxon\Contracts\Dialogs\Question;
+use Jaxon\Exception\SetupException;
+
 use function is_array;
 use function is_integer;
 use function is_string;
@@ -109,9 +112,9 @@ class Manager
      *
      * @param string $sClassName    The package class name
      *
-     * @return Package
+     * @return Package|null
      */
-    public function getPackage(string $sClassName): Package
+    public function getPackage(string $sClassName): ?Package
     {
         return $this->jaxon->di()->get(trim($sClassName, '\\ '));
     }
@@ -134,13 +137,13 @@ class Manager
     public function registerPlugin(string $sClassName, string $sPluginName, int $nPriority = 1000)
     {
         $bIsUsed = false;
-        if(is_subclass_of($sClassName, Request::class))
+        if(is_subclass_of($sClassName, RequestPlugin::class))
         {
             $this->aRequestPlugins[$sPluginName] = $sClassName;
             $this->xCodeGenerator->addGenerator($sClassName, $nPriority);
             $bIsUsed = true;
         }
-        elseif(is_subclass_of($sClassName, Response::class))
+        elseif(is_subclass_of($sClassName, ResponsePlugin::class))
         {
             $this->aResponsePlugins[$sPluginName] = $sClassName;
             $this->xCodeGenerator->addGenerator($sClassName, $nPriority);
@@ -334,11 +337,11 @@ class Manager
      * Find the specified response plugin by name and return a reference to it if one exists
      *
      * @param string $sName    The name of the plugin
-     * @param JaxonResponse|null $xResponse    The response to attach the plugin to
+     * @param Response|null $xResponse    The response to attach the plugin to
      *
-     * @return Response
+     * @return ResponsePlugin|null
      */
-    public function getResponsePlugin(string $sName, ?JaxonResponse $xResponse = null): ?Response
+    public function getResponsePlugin(string $sName, ?Response $xResponse = null): ?ResponsePlugin
     {
         if(!isset($this->aResponsePlugins[$sName]))
         {
@@ -357,9 +360,9 @@ class Manager
      *
      * @param string $sName    The name of the plugin
      *
-     * @return Request
+     * @return RequestPlugin|null
      */
-    public function getRequestPlugin(string $sName): ?Request
+    public function getRequestPlugin(string $sName): ?RequestPlugin
     {
         if(!isset($this->aRequestPlugins[$sName]))
         {
@@ -374,24 +377,16 @@ class Manager
      * @return void
      * @throws SetupException
      */
-    public function registerRequestPlugins()
+    public function registerPlugins()
     {
+        // Request plugins
         $this->registerPlugin(ClassPlugin::class, Jaxon::CALLABLE_CLASS, 101);
         $this->registerPlugin(FunctionPlugin::class, Jaxon::CALLABLE_FUNCTION, 102);
         $this->registerPlugin(DirPlugin::class, Jaxon::CALLABLE_DIR, 103);
-    }
 
-    /**
-     * Register the Jaxon response plugins
-     *
-     * @return void
-     * @throws SetupException
-     */
-    public function registerResponsePlugins()
-    {
-        // Register an instance of the JQuery plugin
+        // Register the JQuery response plugin
         $this->registerPlugin(JQueryPlugin::class, 'jquery', 700);
-        // Register an instance of the DataBag plugin
+        // Register the DataBag response plugin
         $this->registerPlugin(DataBagPlugin::class, 'bags', 700);
     }
 }

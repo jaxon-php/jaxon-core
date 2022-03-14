@@ -172,7 +172,7 @@ class Argument
         switch($cType)
         {
         case 'S':
-            $value = ($sValue == false ? '' : $sValue);
+            $value = !$sValue ? '' : $sValue;
             break;
         case 'B':
             $value = $this->__convertStringToBool($sValue);
@@ -282,19 +282,20 @@ class Argument
         $this->cUtf8Decoder = function($sStr) {
             return $sStr;
         };
+        $sEncoding = $this->xConfig->getOption('core.encoding', '');
         if(function_exists('iconv'))
         {
-            $this->cUtf8Decoder = function($sStr) {
-                return iconv("UTF-8", $this->xConfig->getOption('core.encoding') . '//TRANSLIT', $sStr);
+            $this->cUtf8Decoder = function($sStr) use($sEncoding) {
+                return iconv("UTF-8", $sEncoding . '//TRANSLIT', $sStr);
             };
         }
         elseif(function_exists('mb_convert_encoding'))
         {
-            $this->cUtf8Decoder = function($sStr) {
-                return mb_convert_encoding($sStr, $this->xConfig->getOption('core.encoding'), "UTF-8");
+            $this->cUtf8Decoder = function($sStr) use($sEncoding) {
+                return mb_convert_encoding($sStr, $sEncoding, "UTF-8");
             };
         }
-        elseif($this->xConfig->getOption('core.encoding') == "ISO-8859-1")
+        elseif($sEncoding == "ISO-8859-1")
         {
             $this->cUtf8Decoder = function($sStr) {
                 return utf8_decode($sStr);
