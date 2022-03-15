@@ -1,7 +1,7 @@
 <?php
 
 /**
- * CodeGenerator.php - Code generator interface
+ * CodeGeneratorInterface.php - Code generator interface
  *
  * Any class generating css or js code must implement this interface.
  *
@@ -11,9 +11,9 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Plugin\Code\Contracts;
+namespace Jaxon\Plugin\Code;
 
-interface CodeGenerator
+interface CodeGeneratorInterface
 {
     /**
      * Get the value to be hashed

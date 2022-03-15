@@ -12,7 +12,7 @@
 
 namespace Jaxon\Ui\Dialogs;
 
-class Message implements \Jaxon\Contracts\Dialogs\Message
+class Message implements MessageInterface
 {
     use \Jaxon\Features\Dialogs\Message;
 

@@ -4,11 +4,11 @@ namespace Jaxon\Features;
 
 use Jaxon\Jaxon;
 use Jaxon\App\Bootstrap;
-use Jaxon\Contracts\Session;
 use Jaxon\Plugin\Package;
 use Jaxon\Request\Factory\RequestFactory;
 use Jaxon\Request\Handler\CallbackManager;
 use Jaxon\Response\AbstractResponse;
+use Jaxon\Session\SessionInterface;
 use Jaxon\Ui\View\ViewRenderer;
 use Jaxon\Utils\Http\UriException;
 use Jaxon\Exception\RequestException;
@@ -206,9 +206,9 @@ trait App
     /**
      * Get the session manager
      *
-     * @return Session
+     * @return SessionInterface
      */
-    public function session(): Session
+    public function session(): SessionInterface
     {
         return $this->jaxon->session();
     }

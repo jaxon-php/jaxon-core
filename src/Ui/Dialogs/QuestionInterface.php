@@ -11,9 +11,9 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Contracts\Dialogs;
+namespace Jaxon\Ui\Dialogs;
 
-interface Question
+interface QuestionInterface
 {
     /**
      * Return a script which makes a call only if the user answers yes to the given question

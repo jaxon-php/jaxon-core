@@ -10,9 +10,9 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Contracts\Dialogs;
+namespace Jaxon\Ui\Dialogs;
 
-interface Message
+interface MessageInterface
 {
     /**
      * Tells if the library should return the javascript code or run it in the browser.

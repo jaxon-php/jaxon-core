@@ -2,11 +2,11 @@
 
 namespace Jaxon\Ui\Template;
 
-use Jaxon\Contracts\View as ViewContract;
 use Jaxon\Ui\View\Store;
+use Jaxon\Ui\View\ViewInterface;
 use Jaxon\Utils\Template\Engine;
 
-class View implements ViewContract
+class View implements ViewInterface
 {
     /**
      * The Jaxon template engine

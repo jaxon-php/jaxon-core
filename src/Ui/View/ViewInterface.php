@@ -1,10 +1,8 @@
 <?php
 
-namespace Jaxon\Contracts;
+namespace Jaxon\Ui\View;
 
-use Jaxon\Ui\View\Store;
-
-interface View
+interface ViewInterface
 {
     /**
      * Add a namespace to the view renderer

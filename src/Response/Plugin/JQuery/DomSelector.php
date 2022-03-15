@@ -9,7 +9,7 @@
  * Therefore, the DomSelector class implements the JsonSerializable interface.
  *
  * When used as a parameter of a Jaxon call, the DomSelector must be converted to Jaxon request parameter.
- * Therefore, the DomSelector class also implements the Jaxon\Request\Contracts\Parameter interface.
+ * Therefore, the DomSelector class also implements the Jaxon\Request\Call\ParameterInterface interface.
  *
  * @package jaxon-jquery
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
@@ -20,7 +20,7 @@
 
 namespace Jaxon\Response\Plugin\JQuery;
 
-use Jaxon\Request\Call\Contracts\Parameter;
+use Jaxon\Request\Call\ParameterInterface;
 use Jaxon\Response\Plugin\JQuery\Call\AttrGet;
 use Jaxon\Response\Plugin\JQuery\Call\AttrSet;
 use Jaxon\Response\Plugin\JQuery\Call\Method;
@@ -31,7 +31,7 @@ use function count;
 use function implode;
 use function trim;
 
-class DomSelector implements JsonSerializable, Parameter
+class DomSelector implements JsonSerializable, ParameterInterface
 {
     /**
      * The jQuery selector path

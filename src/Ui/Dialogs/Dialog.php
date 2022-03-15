@@ -12,8 +12,8 @@
 namespace Jaxon\Ui\Dialogs;
 
 use Jaxon\Jaxon;
-use Jaxon\Contracts\Dialogs\Message as MessageContract;
-use Jaxon\Contracts\Dialogs\Question as QuestionContract;
+use Jaxon\Ui\Dialogs\MessageInterface;
+use Jaxon\Ui\Dialogs\QuestionInterface;
 
 class Dialog
 {
@@ -23,7 +23,7 @@ class Dialog
     private $jaxon;
 
     /**
-     * The QuestionContract class name (javascript confirm function)
+     * The QuestionInterface class name (javascript confirm function)
      *
      * @var string
      */
@@ -32,12 +32,12 @@ class Dialog
     /**
      * Default javascript confirm function
      *
-     * @var QuestionContract
+     * @var QuestionInterface
      */
     private $xDefaultQuestion;
 
     /**
-     * The MessageContract class name (javascript alert function)
+     * The MessageInterface class name (javascript alert function)
      *
      * @var string
      */
@@ -46,7 +46,7 @@ class Dialog
     /**
      * Default javascript alert function
      *
-     * @var MessageContract
+     * @var MessageInterface
      */
     private $xDefaultMessage;
 
@@ -65,9 +65,9 @@ class Dialog
     }
 
     /**
-     * Set the QuestionContract class name
+     * Set the QuestionInterface class name
      *
-     * @param string $sQuestion    The QuestionContract class name
+     * @param string $sQuestion    The QuestionInterface class name
      *
      * @return void
      */
@@ -77,9 +77,9 @@ class Dialog
     }
 
     /**
-     * Get the QuestionContract class name (javascript question function)
+     * Get the QuestionInterface class name (javascript question function)
      *
-     * @return QuestionContract
+     * @return QuestionInterface
      */
     public function getQuestion()
     {
@@ -87,19 +87,19 @@ class Dialog
     }
 
     /**
-     * Get the default QuestionContract class name (javascript confirm function)
+     * Get the default QuestionInterface class name (javascript confirm function)
      *
-     * @return QuestionContract
+     * @return QuestionInterface
      */
-    public function getDefaultQuestion(): QuestionContract
+    public function getDefaultQuestion(): QuestionInterface
     {
         return $this->xDefaultQuestion;
     }
 
     /**
-     * Set MessageContract class name
+     * Set MessageInterface class name
      *
-     * @param string $sMessage    The MessageContract class name
+     * @param string $sMessage    The MessageInterface class name
      *
      * @return void
      */
@@ -109,21 +109,21 @@ class Dialog
     }
 
     /**
-     * Get the MessageContract class name (javascript alert function)
+     * Get the MessageInterface class name (javascript alert function)
      *
-     * @return MessageContract
+     * @return MessageInterface
      */
-    public function getMessage(): MessageContract
+    public function getMessage(): MessageInterface
     {
         return ($this->sMessage) ? $this->jaxon->di()->get($this->sMessage) : $this->xDefaultMessage;
     }
 
     /**
-     * Get the default MessageContract class name (javascript alert function)
+     * Get the default MessageInterface class name (javascript alert function)
      *
-     * @return MessageContract
+     * @return MessageInterface
      */
-    public function getDefaultMessage(): MessageContract
+    public function getDefaultMessage(): MessageInterface
     {
         return $this->xDefaultMessage;
     }

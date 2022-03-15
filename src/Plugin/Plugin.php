@@ -20,7 +20,7 @@
 
 namespace Jaxon\Plugin;
 
-abstract class Plugin implements Code\Contracts\CodeGenerator
+abstract class Plugin implements Code\CodeGeneratorInterface
 {
     /**
      * Get a unique name to identify the plugin.

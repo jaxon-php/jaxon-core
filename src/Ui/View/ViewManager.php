@@ -2,10 +2,10 @@
 
 namespace Jaxon\Ui\View;
 
-use Closure;
 use Jaxon\Container\Container;
-use Jaxon\Contracts\View;
 use Jaxon\Utils\Config\Config;
+
+use Closure;
 
 use function array_filter;
 use function is_array;
@@ -158,9 +158,9 @@ class ViewManager
      *
      * @param string $sId    The unique identifier of the view renderer
      *
-     * @return View
+     * @return ViewInterface
      */
-    public function getRenderer(string $sId): View
+    public function getRenderer(string $sId): ViewInterface
     {
         // Return the view renderer with the given id
         return $this->di->get('jaxon.app.view.' . $sId);
@@ -197,9 +197,9 @@ class ViewManager
      *
      * @param string $sNamespace    The namespace name
      *
-     * @return View|null
+     * @return ViewInterface|null
      */
-    public function getNamespaceRenderer(string $sNamespace): ?View
+    public function getNamespaceRenderer(string $sNamespace): ?ViewInterface
     {
         $aNamespace = $this->getNamespace($sNamespace);
         if(!$aNamespace)

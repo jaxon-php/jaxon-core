@@ -13,7 +13,7 @@
 
 namespace Jaxon\Ui\Dialogs;
 
-class Question implements \Jaxon\Contracts\Dialogs\Question
+class Question implements QuestionInterface
 {
     /**
      * Get the script which makes a call only if the user answers yes to the given question

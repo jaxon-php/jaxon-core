@@ -1,9 +1,9 @@
 <?php
 
 /**
- * Parameter.php - A parameter of a Jaxon request
+ * ParameterInterface.php
  *
- * This class is used to create client side requests to the Jaxon functions and callable objects.
+ * An interface for parameters to calls to Jaxon classes or functions.
  *
  * @package jaxon-core
  * @copyright 2016 Thierry Feuzeu <thierry.feuzeu@gmail.com>
@@ -11,9 +11,9 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Request\Call\Contracts;
+namespace Jaxon\Request\Call;
 
-interface Parameter
+interface ParameterInterface
 {
     /**
      * Generate the javascript code of the parameter.

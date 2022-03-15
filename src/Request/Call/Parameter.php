@@ -22,7 +22,7 @@ use function json_encode;
 use function method_exists;
 use function str_replace;
 
-class Parameter implements Contracts\Parameter
+class Parameter implements ParameterInterface
 {
     /*
      * Request parameters
@@ -110,11 +110,11 @@ class Parameter implements Contracts\Parameter
      *
      * @param mixed $xValue    The parameter value
      *
-     * @return Contracts\Parameter
+     * @return ParameterInterface
      */
-    public static function make($xValue): Contracts\Parameter
+    public static function make($xValue): ParameterInterface
     {
-        if($xValue instanceof Contracts\Parameter)
+        if($xValue instanceof ParameterInterface)
         {
             return $xValue;
         }

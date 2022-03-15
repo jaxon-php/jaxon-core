@@ -2,12 +2,12 @@
 
 namespace Jaxon;
 
-use Jaxon\Contracts\Session;
 use Jaxon\Request\Factory\ParameterFactory;
 use Jaxon\Request\Factory\RequestFactory;
 use Jaxon\Response\Plugin\DataBag\Context as DataBagContext;
 use Jaxon\Response\Plugin\JQuery\DomSelector;
 use Jaxon\Response\Response;
+use Jaxon\Session\SessionInterface;
 use Jaxon\Ui\View\ViewRenderer;
 use Jaxon\Exception\SetupException;
 
@@ -47,9 +47,9 @@ class CallableClass
     /**
      * Get the session manager
      *
-     * @return Session
+     * @return SessionInterface
      */
-    public function session(): Session
+    public function session(): SessionInterface
     {
         return $this->jaxon->session();
     }

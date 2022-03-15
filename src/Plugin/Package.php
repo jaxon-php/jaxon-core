@@ -16,7 +16,7 @@ namespace Jaxon\Plugin;
 use Jaxon\Ui\View\ViewRenderer;
 use Jaxon\Utils\Config\Config;
 
-abstract class Package implements Code\Contracts\CodeGenerator
+abstract class Package implements Code\CodeGeneratorInterface
 {
     /**
      * The configuration options of the package

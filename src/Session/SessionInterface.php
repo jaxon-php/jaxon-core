@@ -1,8 +1,8 @@
 <?php
 
-namespace Jaxon\Contracts;
+namespace Jaxon\Session;
 
-interface Session
+interface SessionInterface
 {
     /**
      * Get the current session id

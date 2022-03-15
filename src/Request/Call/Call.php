@@ -20,11 +20,11 @@
 
 namespace Jaxon\Request\Call;
 
-use Jaxon\Request\Call\Contracts\Parameter as ParameterContract;
 use Jaxon\Response\Plugin\JQuery\DomSelector;
 use Jaxon\Ui\Dialogs\Dialog;
 use Jaxon\Ui\Pagination\Paginator;
 use Jaxon\Ui\View\Store;
+
 use function array_map;
 use function array_shift;
 use function count;
@@ -232,14 +232,14 @@ class Call extends JsCall
     /**
      * Make unique js vars for parameters of type DomSelector
      *
-     * @param ParameterContract $xParameter
+     * @param ParameterInterface $xParameter
      * @param array $aVariables
      * @param string $sVars
      * @param int $nVarId
      *
-     * @return ParameterContract
+     * @return ParameterInterface
      */
-    private function _makeUniqueJsVar(ParameterContract $xParameter, array &$aVariables, string &$sVars, int &$nVarId): ParameterContract
+    private function _makeUniqueJsVar(ParameterInterface $xParameter, array &$aVariables, string &$sVars, int &$nVarId): ParameterInterface
     {
         if($xParameter instanceof DomSelector)
         {

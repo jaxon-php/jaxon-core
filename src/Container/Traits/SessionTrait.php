@@ -3,7 +3,7 @@
 namespace Jaxon\Container\Traits;
 
 use Closure;
-use Jaxon\Contracts\Session as SessionContract;
+use Jaxon\Session\SessionInterface;
 use Jaxon\Session\SessionManager;
 
 trait SessionTrait
@@ -16,7 +16,7 @@ trait SessionTrait
     private function registerSessions()
     {
         // Set the default session manager
-        $this->set(SessionContract::class, function() {
+        $this->set(SessionInterface::class, function() {
             return new SessionManager();
         });
     }
@@ -24,11 +24,11 @@ trait SessionTrait
     /**
      * Get the session manager
      *
-     * @return SessionContract
+     * @return SessionInterface
      */
-    public function getSessionManager(): SessionContract
+    public function getSessionManager(): SessionInterface
     {
-        return $this->g(SessionContract::class);
+        return $this->g(SessionInterface::class);
     }
 
     /**
@@ -40,6 +40,6 @@ trait SessionTrait
      */
     public function setSessionManager(Closure $xClosure)
     {
-        $this->set(SessionContract::class, $xClosure);
+        $this->set(SessionInterface::class, $xClosure);
     }
 }

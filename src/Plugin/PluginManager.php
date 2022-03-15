@@ -23,18 +23,16 @@ namespace Jaxon\Plugin;
 
 use Jaxon\Jaxon;
 use Jaxon\Plugin\Code\CodeGenerator;
-use Jaxon\Plugin\RequestPlugin;
-use Jaxon\Plugin\ResponsePlugin;
 use Jaxon\Request\Plugin\CallableClass\ClassPlugin;
 use Jaxon\Request\Plugin\CallableClass\DirPlugin;
 use Jaxon\Request\Plugin\CallableFunction\FunctionPlugin;
 use Jaxon\Response\Plugin\DataBag\DataBagPlugin;
 use Jaxon\Response\Plugin\JQuery\JQueryPlugin;
 use Jaxon\Response\Response;
+use Jaxon\Ui\Dialogs\MessageInterface;
+use Jaxon\Ui\Dialogs\QuestionInterface;
 use Jaxon\Utils\Config\Config;
 use Jaxon\Utils\Translation\Translator;
-use Jaxon\Contracts\Dialogs\Message;
-use Jaxon\Contracts\Dialogs\Question;
 use Jaxon\Exception\SetupException;
 
 use function is_array;
@@ -151,13 +149,13 @@ class PluginManager
         }
 
         // This plugin implements the Message interface
-        if(is_subclass_of($sClassName, Message::class))
+        if(is_subclass_of($sClassName, MessageInterface::class))
         {
             $this->jaxon->dialog()->setMessage($sClassName);
             $bIsUsed = true;
         }
         // This plugin implements the Question interface
-        if(is_subclass_of($sClassName, Question::class))
+        if(is_subclass_of($sClassName, QuestionInterface::class))
         {
             $this->jaxon->dialog()->setQuestion($sClassName);
             $bIsUsed = true;

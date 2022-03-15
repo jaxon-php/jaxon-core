@@ -2,8 +2,6 @@
 
 namespace Jaxon\Ui\View;
 
-use Jaxon\Contracts\View as ViewContract;
-
 use function array_merge;
 
 class Store
@@ -11,7 +9,7 @@ class Store
     /**
      * The view renderer
      *
-     * @var ViewContract
+     * @var ViewInterface
      */
     protected $xRenderer;
 
@@ -66,14 +64,14 @@ class Store
     /**
      * Set the view to be rendered, with optional data
      *
-     * @param ViewContract $xRenderer    The view renderer
+     * @param ViewInterface $xRenderer    The view renderer
      * @param string $sNamespace    The view namespace
      * @param string $sViewName    The view name
      * @param array $aViewData    The view data
      *
      * @return Store
      */
-    public function setView(ViewContract $xRenderer, string $sNamespace, string $sViewName, array $aViewData = []): Store
+    public function setView(ViewInterface $xRenderer, string $sNamespace, string $sViewName, array $aViewData = []): Store
     {
         $this->xRenderer = $xRenderer;
         $this->sNamespace = trim($sNamespace);

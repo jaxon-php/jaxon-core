@@ -27,7 +27,6 @@ namespace Jaxon;
 
 use Jaxon\App\App;
 use Jaxon\Container\Container;
-use Jaxon\Contracts\Session;
 use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\Code\CodeGenerator;
@@ -41,8 +40,9 @@ use Jaxon\Request\Handler\RequestHandler;
 use Jaxon\Request\Plugin\CallableClass\Registry;
 use Jaxon\Request\Plugin\Upload\UploadPlugin;
 use Jaxon\Response\AbstractResponse;
-use Jaxon\Response\ResponseManager;
 use Jaxon\Response\Response;
+use Jaxon\Response\ResponseManager;
+use Jaxon\Session\SessionInterface;
 use Jaxon\Ui\Dialogs\Dialog;
 use Jaxon\Ui\View\ViewRenderer;
 use Jaxon\Utils\Config\Config;
@@ -55,6 +55,7 @@ use Jaxon\Utils\Config\Reader as ConfigReader;
 use Jaxon\Utils\Http\UriException;
 use Jaxon\Utils\Template\Engine as TemplateEngine;
 use Jaxon\Utils\Translation\Translator;
+
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
@@ -697,9 +698,9 @@ class Jaxon implements LoggerAwareInterface
     /**
      * Get the session manager
      *
-     * @return Session
+     * @return SessionInterface
      */
-    public function session(): Session
+    public function session(): SessionInterface
     {
         return $this->di()->getSessionManager();
     }
