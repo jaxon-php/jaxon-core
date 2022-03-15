@@ -200,13 +200,11 @@ class CodeGenerator
         $this->sJsInlineScript = trim($this->sJsInlineScript, " \n");
         if(($this->sJsReadyScript))
         {
-            $sScript = rtrim($this->sJsReadyScript, ";\n") . ";\n";
-            $this->sJsReadyScript = $this->render('ready.js', ['sScript' => $sScript]);
+            $this->sJsReadyScript = $this->render('ready.js', ['sScript' => $this->sJsReadyScript . "\n"]);
         }
         if(($this->sJsInlineScript))
         {
-            $sScript = rtrim($this->sJsInlineScript, ";\n") . ";\n";
-            $this->sJsInlineScript = $this->render('ready.js', ['sScript' => $sScript]);
+            $this->sJsInlineScript = $this->render('ready.js', ['sScript' => $this->sJsInlineScript . "\n"]);
         }
         // Prepend Jaxon javascript files to HTML tags for Js
         $aJsFiles = $this->xAssetManager->getJsLibFiles();
