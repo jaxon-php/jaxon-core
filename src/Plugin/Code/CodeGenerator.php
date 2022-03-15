@@ -172,16 +172,8 @@ class CodeGenerator
         $this->sJsScript .= trim($xGenerator->getScript(), " \n") . "\n";
         if($xGenerator->readyEnabled())
         {
-            if($xGenerator->readyInlined())
-            {
-                // Ready code which must be inlined in HTML.
-                $this->sJsInlineScript .= trim($xGenerator->getReadyScript(), " \n") . "\n";
-            }
-            else
-            {
-                // Ready code which can be exported to an external file.
-                $this->sJsReadyScript .= trim($xGenerator->getReadyScript(), " \n") . "\n";
-            }
+            $sScriptAttr = $xGenerator->readyInlined() ? 'sJsInlineScript' : 'sJsReadyScript';
+            $this->$sScriptAttr .= trim($xGenerator->getReadyScript(), " \n") . "\n";
         }
     }
 

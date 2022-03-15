@@ -9,7 +9,9 @@ use Jaxon\Utils\Http\UriDetector;
 use Jaxon\Utils\Http\UriException;
 
 use function rtrim;
+use function is_dir;
 use function is_file;
+use function is_writable;
 use function file_put_contents;
 
 class AssetManager
@@ -146,8 +148,8 @@ class AssetManager
         // - The js.app.export option must be set to true
         // - The js.app.uri and js.app.dir options must be set to non null values
         if(!$this->xConfig->getOption('js.app.export', false) ||
-            !$this->xConfig->getOption('js.app.uri', false) ||
-            !$this->xConfig->getOption('js.app.dir', false))
+            !$this->xConfig->hasOption('js.app.uri') ||
+            !$this->xConfig->hasOption('js.app.dir'))
         {
             return false;
         }
@@ -166,32 +168,29 @@ class AssetManager
     {
         // Check dir access
         $sJsFileName = $this->xConfig->getOption('js.app.file', $sHash);
-        $sJsDirectory = rtrim($this->xConfig->getOption('js.app.dir'), '/') . '/';
+        $sJsDirectory = rtrim($this->xConfig->getOption('js.app.dir'), '\/') . DIRECTORY_SEPARATOR;
         // - The js.app.dir must be writable
         if(!$sJsFileName || !is_dir($sJsDirectory) || !is_writable($sJsDirectory))
         {
             return '';
         }
 
-        $sOutFile = $sJsFileName . '.js';
-        $sMinFile = $sJsFileName . '.min.js';
-        if(!is_file($sJsDirectory . $sOutFile))
+        $sJsFilePath = $sJsDirectory . $sJsFileName . '.js';
+        $sJsMinFilePath = $sJsDirectory . $sJsFileName . '.min.js';
+        $sJsFileUri = rtrim($this->xConfig->getOption('js.app.uri'), '/') . "/$sJsFileName";
+        if(!is_file($sJsFilePath) && !file_put_contents($sJsFilePath, $sJsCode))
         {
-            if(!file_put_contents($sJsDirectory . $sOutFile, $sJsCode))
-            {
-                return '';
-            }
+            return '';
         }
-        if(($this->xConfig->getOption('js.app.minify')) && !is_file($sJsDirectory . $sMinFile))
+        if(!$this->xConfig->getOption('js.app.minify', false))
         {
-            if(!$this->xMinifier->minify($sJsDirectory . $sOutFile, $sJsDirectory . $sMinFile))
-            {
-                return '';
-            }
+            return $sJsFileUri . '.js';
         }
-
-        $sJsAppUri = rtrim($this->xConfig->getOption('js.app.uri'), '/') . '/';
-        $sJsExtension = $this->xConfig->getOption('js.app.minify') ? '.min.js' : '.js';
-        return $sJsAppUri . $sJsFileName . $sJsExtension;
+        if(!is_file($sJsMinFilePath) && !$this->xMinifier->minify($sJsFilePath, $sJsMinFilePath))
+        {
+            // If the file cannot be minified, return the plain js file.
+            return $sJsFileUri . '.js';
+        }
+        return $sJsFileUri . '.min.js';
     }
 }
