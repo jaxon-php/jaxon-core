@@ -11,6 +11,7 @@ use Jaxon\Request\Handler\CallbackManager;
 use Jaxon\Response\AbstractResponse;
 use Jaxon\Ui\View\ViewRenderer;
 use Jaxon\Utils\Http\UriException;
+use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
@@ -47,9 +48,10 @@ trait App
     /**
      * Get an instance of a registered class
      *
-     * @param string $sClassName    The class name
+     * @param string $sClassName The class name
      *
      * @return object|null
+     * @throws SetupException
      */
     public function instance(string $sClassName)
     {
@@ -59,9 +61,10 @@ trait App
     /**
      * Get a request to a registered class
      *
-     * @param string $sClassName    The class name
+     * @param string $sClassName The class name
      *
      * @return RequestFactory|null
+     * @throws SetupException
      */
     public function request(string $sClassName): ?RequestFactory
     {
@@ -73,9 +76,9 @@ trait App
      *
      * @param string $sClassName    The package class name
      *
-     * @return Package
+     * @return Package|null
      */
-    public function package(string $sClassName): Package
+    public function package(string $sClassName): ?Package
     {
         return $this->jaxon->package($sClassName);
     }
@@ -113,7 +116,7 @@ trait App
      * Process an incoming Jaxon request, and return the response.
      *
      * @return mixed
-     * @throws SetupException
+     * @throws RequestException
      */
     public function processRequest()
     {

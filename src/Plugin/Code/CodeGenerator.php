@@ -16,17 +16,13 @@ namespace Jaxon\Plugin\Code;
 
 use Jaxon\Jaxon;
 use Jaxon\Plugin\Plugin;
-use Jaxon\Utils\Config\Config;
-use Jaxon\Utils\File\Minifier;
-use Jaxon\Utils\Http\UriDetector;
 use Jaxon\Utils\Http\UriException;
 use Jaxon\Utils\Template\Engine as TemplateEngine;
 
 use function ksort;
 use function md5;
+use function trim;
 use function rtrim;
-use function is_file;
-use function file_put_contents;
 use function is_subclass_of;
 
 class CodeGenerator
@@ -37,26 +33,16 @@ class CodeGenerator
     private $jaxon;
 
     /**
-     * @var Config
-     */
-    protected $xConfig;
-
-    /**
-     * @var UriDetector
-     */
-    private $xUriDetector;
-
-    /**
-     * @var Minifier
-     */
-    private $xMinifier;
-
-    /**
-     * Default library URL
+     * The Jaxon template engine
      *
-     * @var string
+     * @var TemplateEngine
      */
-    const JS_LIB_URL = 'https://cdn.jsdelivr.net/gh/jaxon-php/jaxon-js@3.3/dist';
+    protected $xTemplateEngine;
+
+    /**
+     * @var AssetManager
+     */
+    private $xAssetManager;
 
     /**
      * The class names of objects that generate code
@@ -66,69 +52,53 @@ class CodeGenerator
     protected $aClassNames = [];
 
     /**
-     * The Jaxon template engine
-     *
-     * @var TemplateEngine
+     * @var string
      */
-    protected $xTemplateEngine;
+    protected $sJsOptions;
+
+    /**
+     * @var string
+     */
+    protected $sCss = '';
+
+    /**
+     * @var string
+     */
+    protected $sJs = '';
+
+    /**
+     * @var string
+     */
+    protected $sJsScript = '';
+
+    /**
+     * @var string
+     */
+    protected $sJsReadyScript = '';
+
+    /**
+     * @var string
+     */
+    protected $sJsInlineScript = '';
+
+    /**
+     * @var string
+     */
+    protected $bGenerated = false;
 
     /**
      * The constructor
      *
      * @param Jaxon $jaxon
-     * @param Config $xConfig
-     * @param UriDetector $xUriDetector
-     * @param TemplateEngine $xTemplateEngine    The template engine
-     * @param Minifier $xMinifier
+     * @param TemplateEngine $xTemplateEngine
+     * @param AssetManager $xAssetManager
      */
-    public function __construct(Jaxon $jaxon, Config $xConfig, UriDetector $xUriDetector,
-        TemplateEngine $xTemplateEngine, Minifier $xMinifier)
+    public function __construct(Jaxon $jaxon, TemplateEngine $xTemplateEngine, AssetManager $xAssetManager)
     {
         $this->jaxon = $jaxon;
-        $this->xConfig = $xConfig;
-        $this->xUriDetector = $xUriDetector;
         $this->xTemplateEngine = $xTemplateEngine;
-        $this->xMinifier = $xMinifier;
-    }
-
-    /**
-     * Get the mappings between previous and current config options
-     *
-     * @return array
-     */
-    private function getOptionVars(): array
-    {
-        return [
-            'sResponseType'             => 'JSON',
-            'sVersion'                  => $this->xConfig->getOption('core.version'),
-            'sLanguage'                 => $this->xConfig->getOption('core.language'),
-            'bLanguage'                 => $this->xConfig->hasOption('core.language'),
-            'sRequestURI'               => $this->xConfig->getOption('core.request.uri'),
-            'sDefaultMode'              => $this->xConfig->getOption('core.request.mode'),
-            'sDefaultMethod'            => $this->xConfig->getOption('core.request.method'),
-            'sCsrfMetaName'             => $this->xConfig->getOption('core.request.csrf_meta'),
-            'bDebug'                    => $this->xConfig->getOption('core.debug.on'),
-            'bVerboseDebug'             => $this->xConfig->getOption('core.debug.verbose'),
-            'sDebugOutputID'            => $this->xConfig->getOption('core.debug.output_id'),
-            'nResponseQueueSize'        => $this->xConfig->getOption('js.lib.queue_size'),
-            'sStatusMessages'           => $this->xConfig->getOption('js.lib.show_status') ? 'true' : 'false',
-            'sWaitCursor'               => $this->xConfig->getOption('js.lib.show_cursor') ? 'true' : 'false',
-            'sDefer'                    => $this->xConfig->getOption('js.app.options', ''),
-        ];
-    }
-
-    /**
-     * Render a template in the 'plugins' subdir
-     *
-     * @param string $sTemplate    The template filename
-     * @param array $aVars    The template variables
-     *
-     * @return string
-     */
-    private function _render(string $sTemplate, array $aVars = []): string
-    {
-        $aVars['sJsOptions'] = $this->xConfig->getOption('js.app.options', '');
-        return $this->xTemplateEngine->render("jaxon::plugins/$sTemplate", $aVars);
+        $this->xAssetManager = $xAssetManager;
+        $this->sJsOptions = $xAssetManager->getJsOptions();
     }
 
     /**
@@ -167,212 +137,144 @@ class CodeGenerator
     }
 
     /**
-     * Check if all plugins assets shall be included in Jaxon generated code.
+     * Render a template in the 'plugins' subdir
      *
-     * @return bool
+     * @param string $sTemplate    The template filename
+     * @param array $aVars    The template variables
+     *
+     * @return string
      */
-    protected function shallIncludeAllAssets(): bool
+    private function render(string $sTemplate, array $aVars = []): string
     {
-        return $this->xConfig->getOption('assets.include.all', true);
+        $aVars['sJsOptions'] = $this->sJsOptions;
+        return $this->xTemplateEngine->render("jaxon::plugins/$sTemplate", $aVars);
     }
 
     /**
-     * Check if the assets of this plugin shall be included in Jaxon generated code.
+     * Generate the Jaxon CSS and js codes for a given plugin
      *
-     * @param Plugin $xPlugin
+     * @param string $sClassName
      *
-     * @return bool
+     * @return void
+     * @throws UriException
      */
-    protected function shallIncludeAssets(Plugin $xPlugin): bool
+    private function generatePluginCodes(string $sClassName)
     {
-        $sPluginOptionName = 'assets.include.' . $xPlugin->getName();
-        return $this->xConfig->getOption($sPluginOptionName, true);
+        $xGenerator = $this->jaxon->di()->get($sClassName);
+        if(!is_subclass_of($xGenerator, Plugin::class) || $this->xAssetManager->shallIncludeAssets($xGenerator))
+        {
+            // HTML tags for CSS
+            $this->sCss .= trim($xGenerator->getCss(), " \n") . "\n";
+            // HTML tags for js
+            $this->sJs .= trim($xGenerator->getJs(), " \n") . "\n";
+        }
+        // Javascript code
+        $this->sJsScript .= trim($xGenerator->getScript(), " \n") . "\n";
+        if($xGenerator->readyEnabled())
+        {
+            if($xGenerator->readyInlined())
+            {
+                // Ready code which must be inlined in HTML.
+                $this->sJsInlineScript .= trim($xGenerator->getReadyScript(), " \n") . "\n";
+            }
+            else
+            {
+                // Ready code which can be exported to an external file.
+                $this->sJsReadyScript .= trim($xGenerator->getReadyScript(), " \n") . "\n";
+            }
+        }
+    }
+
+    /**
+     * Render the generated CSS ans js codes
+     *
+     * @return void
+     * @throws UriException
+     */
+    private function renderCodes()
+    {
+        $this->sCss = trim($this->sCss, " \n");
+        $this->sJs = trim($this->sJs, " \n");
+        $this->sJsScript = trim($this->sJsScript, " \n");
+        $this->sJsReadyScript = trim($this->sJsReadyScript, " \n");
+        $this->sJsInlineScript = trim($this->sJsInlineScript, " \n");
+        if(($this->sJsReadyScript))
+        {
+            $sScript = rtrim($this->sJsReadyScript, ";\n") . ";\n";
+            $this->sJsReadyScript = $this->render('ready.js', ['sScript' => $sScript]);
+        }
+        if(($this->sJsInlineScript))
+        {
+            $sScript = rtrim($this->sJsInlineScript, ";\n") . ";\n";
+            $this->sJsInlineScript = $this->render('ready.js', ['sScript' => $sScript]);
+        }
+        // Prepend Jaxon javascript files to HTML tags for Js
+        $aJsFiles = $this->xAssetManager->getJsLibFiles();
+        $this->sJs = $this->render('includes.js', ['aUrls' => $aJsFiles]) . "\n" . $this->sJs;
+        $sJsConfigVars = $this->render('config.js', $this->xAssetManager->getOptionVars());
+        // These three parts are always rendered together
+        $this->sJsScript = $sJsConfigVars . "\n" . $this->sJsScript . "\n" . $this->sJsReadyScript;
+    }
+
+    /**
+     * Generate the Jaxon CSS ans js codes
+     *
+     * @return void
+     * @throws UriException
+     */
+    private function generateCodes()
+    {
+        if($this->bGenerated)
+        {
+            return;
+        }
+
+        foreach($this->aClassNames as $sClassName)
+        {
+            $this->generatePluginCodes($sClassName);
+        }
+        $this->renderCodes();
+
+        // The codes are already generated.
+        $this->bGenerated = true;
     }
 
     /**
      * Get the HTML tags to include Jaxon CSS code and files into the page
      *
      * @return string
+     * @throws UriException
      */
     public function getCss(): string
     {
-        $bIncludeAllAssets = $this->shallIncludeAllAssets();
-        $sCssCode = '';
-        foreach($this->aClassNames as $sClassName)
-        {
-            $xGenerator = $this->jaxon->di()->get($sClassName);
-            if(is_subclass_of($xGenerator, Plugin::class) &&
-                (!$this->shallIncludeAssets($xGenerator) || !$bIncludeAllAssets))
-            {
-                continue;
-            }
-            $sCssCode = rtrim($sCssCode, " \n") . "\n" . $xGenerator->getCss();
-        }
-        return rtrim($sCssCode, " \n") . "\n";
+        $this->generateCodes();
+        return $this->sCss;
     }
 
     /**
      * Get the HTML tags to include Jaxon javascript files into the page
      *
      * @return string
+     * @throws UriException
      */
     public function getJs(): string
     {
-        $sJsExtension = $this->xConfig->getOption('js.app.minify') ? '.min.js' : '.js';
-
-        // The URI for the javascript library files
-        $sJsLibUri = rtrim($this->xConfig->getOption('js.lib.uri', self::JS_LIB_URL), '/') . '/';
-        // Add component files to the javascript file array;
-        $aJsFiles = [$sJsLibUri . 'jaxon.core' . $sJsExtension];
-        if($this->xConfig->getOption('core.debug.on'))
-        {
-            $sLanguage = $this->xConfig->getOption('core.language');
-            $aJsFiles[] = $sJsLibUri . 'jaxon.debug' . $sJsExtension;
-            $aJsFiles[] = $sJsLibUri . 'lang/jaxon.' . $sLanguage . $sJsExtension;
-            /*if($this->xConfig->getOption('core.debug.verbose'))
-            {
-                $aJsFiles[] = $sJsLibUri . 'jaxon.verbose' . $sJsExtension;
-            }*/
-        }
-        $sJsFiles = $this->_render('includes.js', ['aUrls' => $aJsFiles]);
-
-        $bIncludeAllAssets = $this->shallIncludeAllAssets();
-        $sJsCode = '';
-        foreach($this->aClassNames as $sClassName)
-        {
-            $xGenerator = $this->jaxon->di()->get($sClassName);
-            if(is_subclass_of($xGenerator, Plugin::class) &&
-                (!$this->shallIncludeAssets($xGenerator) || !$bIncludeAllAssets))
-            {
-                continue;
-            }
-            $sJsCode = rtrim($sJsCode, " \n") . "\n" . $xGenerator->getJs();
-        }
-        return $sJsFiles . "\n" . rtrim($sJsCode, " \n") . "\n";
+        $this->generateCodes();
+        return $this->sJs;
     }
 
     /**
      * Get the javascript code to be sent to the browser
      *
-     * @return string
-     */
-    private function _getScript(): string
-    {
-        $sScript = '';
-        $sReadyScript = '';
-        foreach($this->aClassNames as $sClassName)
-        {
-            $xGenerator = $this->jaxon->di()->get($sClassName);
-            $sScript .= rtrim($xGenerator->getScript(), " \n") . "\n";
-            if($xGenerator->readyEnabled() && !$xGenerator->readyInlined())
-            {
-                // Ready code which can nbe exported to an external file.
-                $sReadyScript .= rtrim($xGenerator->getReadyScript(), " \n") . "\n";
-            }
-        }
-
-        // These three parts are always rendered together
-        $aConfigVars = $this->getOptionVars();
-        return $this->_render('config.js', $aConfigVars) . "\n" . $sScript . "\n" .
-            $this->_render('ready.js', ['sScript' => $sReadyScript]);
-    }
-
-    /**
-     * Get the javascript code to include directly in HTML
-     *
-     * @return string
-     */
-    private function _getInlineScript(): string
-    {
-        $sScript = '';
-        foreach($this->aClassNames as $sClassName)
-        {
-            $xGenerator = $this->jaxon->di()->get($sClassName);
-            if($xGenerator->readyEnabled() && $xGenerator->readyInlined())
-            {
-                // Ready code which must be inlined in HTML.
-                $sScript .= rtrim($xGenerator->getReadyScript(), " \n") . "\n";
-            }
-        }
-        return $this->_render('ready.js', ['sScript' => $sScript]);
-    }
-
-    /**
-     * Get the javascript file name
-     *
-     * @return string
-     */
-    private function getJsFileName(): string
-    {
-        // Check config options
-        // - The js.app.export option must be set to true
-        // - The js.app.uri and js.app.dir options must be set to non null values
-        if(!$this->xConfig->getOption('js.app.export', false) ||
-            !$this->xConfig->getOption('js.app.uri', false) ||
-            !$this->xConfig->getOption('js.app.dir', false))
-        {
-            return '';
-        }
-
-        // The file name
-        return $this->xConfig->getOption('js.app.file', $this->getHash());
-    }
-
-    /**
-     * Write javascript files and return the corresponding URI
-     *
-     * @param string $sJsDirectory
-     * @param string $sJsFileName
-     *
-     * @return string
-     */
-    public function createFiles(string $sJsDirectory, string $sJsFileName): string
-    {
-        // Check dir access
-        // - The js.app.dir must be writable
-        if(!$sJsFileName || !is_dir($sJsDirectory) || !is_writable($sJsDirectory))
-        {
-            return '';
-        }
-
-        $sOutFile = $sJsFileName . '.js';
-        $sMinFile = $sJsFileName . '.min.js';
-        if(!is_file($sJsDirectory . $sOutFile))
-        {
-            if(!file_put_contents($sJsDirectory . $sOutFile, $this->_getScript()))
-            {
-                return '';
-            }
-        }
-        if(($this->xConfig->getOption('js.app.minify')) && !is_file($sJsDirectory . $sMinFile))
-        {
-            if(!$this->xMinifier->minify($sJsDirectory . $sOutFile, $sJsDirectory . $sMinFile))
-            {
-                return '';
-            }
-        }
-
-        $sJsAppUri = rtrim($this->xConfig->getOption('js.app.uri'), '/') . '/';
-        $sJsExtension = $this->xConfig->getOption('js.app.minify') ? '.min.js' : '.js';
-        return $sJsAppUri . $sJsFileName . $sJsExtension;
-    }
-
-    /**
-     * Get the javascript code to be sent to the browser
-     *
-     * @param bool $bIncludeJs    Also get the JS files
-     * @param bool $bIncludeCss    Also get the CSS files
+     * @param bool $bIncludeJs Also get the JS files
+     * @param bool $bIncludeCss Also get the CSS files
      *
      * @return string
      * @throws UriException
      */
     public function getScript(bool $bIncludeJs, bool $bIncludeCss): string
     {
-        if(!$this->xConfig->getOption('core.request.uri'))
-        {
-            $this->xConfig->setOption('core.request.uri', $this->xUriDetector->detect($_SERVER));
-        }
-
+        $this->generateCodes();
         $sScript = '';
         if(($bIncludeCss))
         {
@@ -383,16 +285,13 @@ class CodeGenerator
             $sScript .= $this->getJs() . "\n";
         }
 
-        $sJsDirectory = rtrim($this->xConfig->getOption('js.app.dir'), '/') . '/';
-        $sUrl = $this->createFiles($sJsDirectory, $this->getJsFileName());
-        if(($sUrl))
+        if($this->xAssetManager->shallCreateJsFiles() &&
+            ($sUrl = $this->xAssetManager->createJsFiles($this->getHash(), $this->sJsScript)))
         {
-            return $sScript . $this->_render('include.js', ['sUrl' => $sUrl]) . "\n" .
-                $this->_render('wrapper.js', ['sScript' => $this->_getInlineScript()]);
+            return $sScript . $this->render('include.js', ['sUrl' => $sUrl]) . "\n" .
+                $this->render('wrapper.js', ['sScript' => $this->sJsInlineScript]);
         }
-
-        return $sScript . $this->_render('wrapper.js', [
-            'sScript' => $this->_getScript() . "\n" . $this->_getInlineScript()
-        ]);
+        return $sScript . $this->render('wrapper.js',
+            ['sScript' => $this->sJsScript . "\n" . $this->sJsInlineScript]);
     }
 }
