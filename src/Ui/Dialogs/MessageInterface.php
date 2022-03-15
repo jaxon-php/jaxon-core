@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Message.php - Interface for alert messages.
+ * MessageInterface.php - Interface for alert messages.
  *
  * @package jaxon-dialogs
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>

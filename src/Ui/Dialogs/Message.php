@@ -14,7 +14,7 @@ namespace Jaxon\Ui\Dialogs;
 
 class Message implements MessageInterface
 {
-    use \Jaxon\Features\Dialogs\Message;
+    use MessageTrait;
 
     /**
      * Print an alert message.

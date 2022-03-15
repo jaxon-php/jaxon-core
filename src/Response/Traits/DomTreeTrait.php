@@ -1,18 +1,18 @@
 <?php
 
 /**
- * DomTreeCommands.php - Provides DOM (HTML) related commands for the Response
+ * DomTreeTrait.php - Provides DOM (HTML) related commands for the Response
  *
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
  * @license https://opensource.org/licenses/BSD-3-Clause BSD 3-Clause License
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Response\Features;
+namespace Jaxon\Response\Traits;
 
 use Jaxon\Response\Response;
 
-trait DomTreeCommands
+trait DomTreeTrait
 {
     /**
      * Add a response command to the array of commands that will be sent to the browser

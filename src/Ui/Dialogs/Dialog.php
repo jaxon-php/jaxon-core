@@ -12,8 +12,6 @@
 namespace Jaxon\Ui\Dialogs;
 
 use Jaxon\Jaxon;
-use Jaxon\Ui\Dialogs\MessageInterface;
-use Jaxon\Ui\Dialogs\QuestionInterface;
 
 class Dialog
 {

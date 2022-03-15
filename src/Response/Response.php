@@ -49,9 +49,9 @@ use function trim;
 
 class Response extends AbstractResponse
 {
-    use Features\DomCommands;
-    use Features\JsCommands;
-    use Features\DomTreeCommands;
+    use Traits\DomTrait;
+    use Traits\JsTrait;
+    use Traits\DomTreeTrait;
 
     /**
      * @var Config

@@ -13,19 +13,19 @@
 namespace Jaxon\App;
 
 use Jaxon\Jaxon;
-use Jaxon\Exception\SetupException;
 use Jaxon\Response\ResponseManager;
 use Jaxon\Utils\Config\Reader as ConfigReader;
 use Jaxon\Utils\Translation\Translator;
+use Jaxon\Exception\SetupException;
 
-use function intval;
 use function file_exists;
-use function is_array;
 use function http_response_code;
+use function intval;
+use function is_array;
 
 class App
 {
-    use \Jaxon\Features\App;
+    use AppTrait;
 
     /**
      * @var ResponseManager

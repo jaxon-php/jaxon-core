@@ -1,14 +1,14 @@
 <?php
 
 /**
- * JsCommands.php - Provides javascript related commands for the Response
+ * JsTrait.php - Provides javascript related commands for the Response
  *
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
  * @license https://opensource.org/licenses/BSD-3-Clause BSD 3-Clause License
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Response\Features;
+namespace Jaxon\Response\Traits;
 
 use Jaxon\Response\Response;
 use Jaxon\Exception\RequestException;
@@ -24,7 +24,7 @@ use function call_user_func;
 use function func_get_args;
 use function array_shift;
 
-trait JsCommands
+trait JsTrait
 {
     /**
      * Add a response command to the array of commands that will be sent to the browser

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Question.php - A confirmation question for a Jaxon request
+ * QuestionInterface.php - A confirmation question for a Jaxon request
  *
  * Interface for adding a confirmation question which is asked before calling a Jaxon function.
  *

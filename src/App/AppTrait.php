@@ -1,9 +1,8 @@
 <?php
 
-namespace Jaxon\Features;
+namespace Jaxon\App;
 
 use Jaxon\Jaxon;
-use Jaxon\App\Bootstrap;
 use Jaxon\Plugin\Package;
 use Jaxon\Request\Factory\RequestFactory;
 use Jaxon\Request\Handler\CallbackManager;
@@ -13,12 +12,13 @@ use Jaxon\Ui\View\ViewRenderer;
 use Jaxon\Utils\Http\UriException;
 use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;
+
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 
 use Closure;
 
-trait App
+trait AppTrait
 {
     /**
      * @var Jaxon
