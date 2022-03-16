@@ -34,7 +34,7 @@ class UploadPlugin extends RequestPlugin
     protected $xResponseManager;
 
     /**
-     * HTTP file upload support
+     * HTTP file upload manager
      *
      * @var UploadManager
      */

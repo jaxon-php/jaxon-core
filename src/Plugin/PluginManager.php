@@ -23,9 +23,9 @@ namespace Jaxon\Plugin;
 
 use Jaxon\Jaxon;
 use Jaxon\Plugin\Code\CodeGenerator;
-use Jaxon\Request\Plugin\CallableClass\ClassPlugin;
-use Jaxon\Request\Plugin\CallableClass\DirPlugin;
-use Jaxon\Request\Plugin\CallableFunction\FunctionPlugin;
+use Jaxon\Request\Plugin\CallableClass\CallableClassPlugin;
+use Jaxon\Request\Plugin\CallableClass\CallableDirPlugin;
+use Jaxon\Request\Plugin\CallableFunction\CallableFunctionPlugin;
 use Jaxon\Response\Plugin\DataBag\DataBagPlugin;
 use Jaxon\Response\Plugin\JQuery\JQueryPlugin;
 use Jaxon\Response\Response;
@@ -378,9 +378,9 @@ class PluginManager
     public function registerPlugins()
     {
         // Request plugins
-        $this->registerPlugin(ClassPlugin::class, Jaxon::CALLABLE_CLASS, 101);
-        $this->registerPlugin(FunctionPlugin::class, Jaxon::CALLABLE_FUNCTION, 102);
-        $this->registerPlugin(DirPlugin::class, Jaxon::CALLABLE_DIR, 103);
+        $this->registerPlugin(CallableClassPlugin::class, Jaxon::CALLABLE_CLASS, 101);
+        $this->registerPlugin(CallableFunctionPlugin::class, Jaxon::CALLABLE_FUNCTION, 102);
+        $this->registerPlugin(CallableDirPlugin::class, Jaxon::CALLABLE_DIR, 103);
 
         // Register the JQuery response plugin
         $this->registerPlugin(JQueryPlugin::class, 'jquery', 700);

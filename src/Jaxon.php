@@ -37,7 +37,7 @@ use Jaxon\Request\Factory\Factory;
 use Jaxon\Request\Factory\RequestFactory;
 use Jaxon\Request\Handler\CallbackManager;
 use Jaxon\Request\Handler\RequestHandler;
-use Jaxon\Request\Plugin\CallableClass\Registry;
+use Jaxon\Request\Plugin\CallableClass\CallableRegistry;
 use Jaxon\Request\Plugin\Upload\UploadPlugin;
 use Jaxon\Response\AbstractResponse;
 use Jaxon\Response\Response;
@@ -121,7 +121,7 @@ class Jaxon implements LoggerAwareInterface
     protected $xCodeGenerator;
 
     /**
-     * @var Registry
+     * @var CallableRegistry
      */
     protected $xClassRegistry;
 
@@ -148,7 +148,7 @@ class Jaxon implements LoggerAwareInterface
         self::$xInstance->xConfigReader = self::$xContainer->g(ConfigReader::class);
         self::$xInstance->xPluginManager = self::$xContainer->g(PluginManager::class);
         self::$xInstance->xCodeGenerator = self::$xContainer->g(CodeGenerator::class);
-        self::$xInstance->xClassRegistry = self::$xContainer->g(Registry::class);
+        self::$xInstance->xClassRegistry = self::$xContainer->g(CallableRegistry::class);
         self::$xInstance->xRequestHandler = self::$xContainer->g(RequestHandler::class);
         self::$xInstance->xResponseManager = self::$xContainer->g(ResponseManager::class);
     }

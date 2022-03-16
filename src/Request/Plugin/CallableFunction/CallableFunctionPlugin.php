@@ -1,7 +1,7 @@
 <?php
 
 /**
- * FunctionPlugin.php - Jaxon user function plugin
+ * CallableFunctionPlugin.php - Jaxon user function plugin
  *
  * This class registers user defined functions, generates client side javascript code,
  * and calls them on user request
@@ -39,7 +39,7 @@ use function is_string;
 use function md5;
 use function trim;
 
-class FunctionPlugin extends RequestPlugin
+class CallableFunctionPlugin extends RequestPlugin
 {
     /**
      * @var Container
@@ -203,7 +203,7 @@ class FunctionPlugin extends RequestPlugin
      */
     private function getCallableScript(CallableFunction $xFunction): string
     {
-        return $this->xTemplateEngine->render('jaxon::support/function.js', [
+        return $this->xTemplateEngine->render('jaxon::callables/function.js', [
             'sName' => $xFunction->getName(),
             'sJsName' => $xFunction->getJsName(),
             'aOptions' => $xFunction->getOptions(),

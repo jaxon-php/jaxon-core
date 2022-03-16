@@ -14,7 +14,7 @@ namespace Jaxon\Request\Factory;
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-use Jaxon\Request\Plugin\CallableClass\Registry;
+use Jaxon\Request\Plugin\CallableClass\CallableRegistry;
 use Jaxon\Exception\SetupException;
 
 use function trim;
@@ -22,7 +22,7 @@ use function trim;
 class Factory
 {
     /**
-     * @var Registry
+     * @var CallableRegistry
      */
     private $xClassRegistry;
 
@@ -39,11 +39,11 @@ class Factory
     /**
      * The constructor.
      *
-     * @param Registry $xClassRegistry
+     * @param CallableRegistry $xClassRegistry
      * @param RequestFactory $xRequestFactory
      * @param ParameterFactory $xParameterFactory
      */
-    public function __construct(Registry $xClassRegistry,
+    public function __construct(CallableRegistry $xClassRegistry,
         RequestFactory $xRequestFactory, ParameterFactory $xParameterFactory)
     {
         $this->xClassRegistry = $xClassRegistry;

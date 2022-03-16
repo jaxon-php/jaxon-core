@@ -1,7 +1,7 @@
 <?php
 
 /**
- * DirPlugin.php - Jaxon callable dir plugin
+ * CallableDirPlugin.php - Jaxon callable dir plugin
  *
  * This class registers directories containing user defined callable classes,
  * and generates client side javascript code.
@@ -33,12 +33,12 @@ use function realpath;
 use function rtrim;
 use function trim;
 
-class DirPlugin extends RequestPlugin
+class CallableDirPlugin extends RequestPlugin
 {
     /**
      * The callable registrar
      *
-     * @var Registry
+     * @var CallableRegistry
      */
     protected $xRegistry;
 
@@ -50,10 +50,10 @@ class DirPlugin extends RequestPlugin
     /**
      * The class constructor
      *
-     * @param Registry  $xRegistry
+     * @param CallableRegistry  $xRegistry
      * @param Translator  $xTranslator
      */
-    public function __construct(Registry $xRegistry, Translator $xTranslator)
+    public function __construct(CallableRegistry $xRegistry, Translator $xTranslator)
     {
         $this->xRegistry = $xRegistry;
         $this->xTranslator = $xTranslator;

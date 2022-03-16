@@ -1,7 +1,7 @@
 <?php
 
 /**
- * ClassPlugin.php - Jaxon callable class plugin
+ * CallableClassPlugin.php - Jaxon callable class plugin
  *
  * This class registers user defined callable classes, generates client side javascript code,
  * and calls their methods on user request
@@ -46,7 +46,7 @@ use function strlen;
 use function trim;
 use function uksort;
 
-class ClassPlugin extends RequestPlugin
+class CallableClassPlugin extends RequestPlugin
 {
     /**
      * @var Config
@@ -70,14 +70,14 @@ class ClassPlugin extends RequestPlugin
     /**
      * The callable registry
      *
-     * @var Registry
+     * @var CallableRegistry
      */
     protected $xRegistry;
 
     /**
      * The callable repository
      *
-     * @var Repository
+     * @var CallableRepository
      */
     protected $xRepository;
 
@@ -125,14 +125,14 @@ class ClassPlugin extends RequestPlugin
      * @param Config  $xConfig
      * @param RequestHandler  $xRequestHandler
      * @param ResponseManager  $xResponseManager
-     * @param Registry $xRegistry    The callable class registry
-     * @param Repository $xRepository    The callable object repository
+     * @param CallableRegistry $xRegistry    The callable class registry
+     * @param CallableRepository $xRepository    The callable object repository
      * @param TemplateEngine  $xTemplateEngine
      * @param Translator  $xTranslator
      * @param Validator  $xValidator
      */
     public function __construct(Config $xConfig, RequestHandler $xRequestHandler,
-        ResponseManager $xResponseManager, Registry $xRegistry, Repository $xRepository,
+        ResponseManager $xResponseManager, CallableRegistry $xRegistry, CallableRepository $xRepository,
         TemplateEngine  $xTemplateEngine, Translator $xTranslator, Validator $xValidator)
     {
         $this->xConfig = $xConfig;
@@ -290,7 +290,7 @@ class ClassPlugin extends RequestPlugin
     private function getCallableScript(string $sClassName, CallableObject $xCallableObject): string
     {
         $aProtectedMethods = is_subclass_of($sClassName, CallableClass::class) ? $this->aProtectedMethods : [];
-        return $this->xTemplateEngine->render('jaxon::support/object.js', [
+        return $this->xTemplateEngine->render('jaxon::callables/object.js', [
             'sPrefix' => $this->xConfig->getOption('core.prefix.class'),
             'sClass' => $xCallableObject->getJsName(),
             'aMethods' => $xCallableObject->getMethods($aProtectedMethods),

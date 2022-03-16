@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Registry.php - Jaxon callable class registry
+ * CallableRegistry.php - Jaxon callable class registry
  *
  * This class is the entry point for class, directory and namespace registration.
  *
@@ -28,7 +28,7 @@ use function strlen;
 use function strncmp;
 use function trim;
 
-class Registry
+class CallableRegistry
 {
     /**
      * The DI container
@@ -40,7 +40,7 @@ class Registry
     /**
      * The callable repository
      *
-     * @var Repository
+     * @var CallableRepository
      */
     protected $xRepository;
 
@@ -85,10 +85,10 @@ class Registry
      * The class constructor
      *
      * @param Container $di
-     * @param Repository $xRepository
+     * @param CallableRepository $xRepository
      * @param Translator $xTranslator
      */
-    public function __construct(Container $di, Repository $xRepository, Translator $xTranslator)
+    public function __construct(Container $di, CallableRepository $xRepository, Translator $xTranslator)
     {
         $this->di = $di;
         $this->xTranslator = $xTranslator;
