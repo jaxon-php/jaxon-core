@@ -6,12 +6,12 @@ use Jaxon\Jaxon;
 use Jaxon\Plugin\Code\AssetManager;
 use Jaxon\Plugin\Code\CodeGenerator;
 use Jaxon\Plugin\PluginManager;
-use Jaxon\Request\Plugin\Upload\UploadManager;
-use Jaxon\Request\Plugin\Upload\UploadPlugin;
+use Jaxon\Request\Handler\UploadHandler;
+use Jaxon\Request\Upload\UploadManager;
 use Jaxon\Request\Validator;
-use Jaxon\Response\ResponseManager;
 use Jaxon\Response\Plugin\DataBag\DataBagPlugin;
 use Jaxon\Response\Plugin\JQuery\JQueryPlugin;
+use Jaxon\Response\ResponseManager;
 use Jaxon\Utils\Config\Config;
 use Jaxon\Utils\File\Minifier;
 use Jaxon\Utils\Http\UriDetector;
@@ -44,9 +44,9 @@ trait PluginTrait
             return new UploadManager($c->g(Config::class), $c->g(Validator::class), $c->g(Translator::class));
         });
         // File upload plugin
-        $this->set(UploadPlugin::class, function($c) {
+        $this->set(UploadHandler::class, function($c) {
             return !$c->g(Config::class)->getOption('core.upload.enabled') ? null :
-                new UploadPlugin($c->g(UploadManager::class), $c->g(Translator::class), $c->g(ResponseManager::class));
+                new UploadHandler($c->g(UploadManager::class), $c->g(Translator::class), $c->g(ResponseManager::class));
         });
         // JQuery response plugin
         $this->set(JQueryPlugin::class, function($c) {
@@ -81,10 +81,10 @@ trait PluginTrait
     /**
      * Get the upload plugin
      *
-     * @return UploadPlugin|null
+     * @return UploadHandler|null
      */
-    public function getUploadPlugin(): ?UploadPlugin
+    public function getUploadHandler(): ?UploadHandler
     {
-        return $this->g(UploadPlugin::class);
+        return $this->g(UploadHandler::class);
     }
 }

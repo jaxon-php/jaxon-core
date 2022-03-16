@@ -266,15 +266,15 @@ class RequestHandler
         }
 
         // Check if the upload plugin is enabled
-        if(!($xUploadPlugin = $this->jaxon->di()->getUploadPlugin()))
+        if(!($xUploadHandler = $this->jaxon->di()->getUploadHandler()))
         {
             return false;
         }
 
         // If no other plugin than the upload plugin can process the request,
         // then it is an HTTP (not ajax) upload request
-        $xUploadPlugin->isHttpUpload();
-        return $xUploadPlugin->canProcessRequest();
+        $xUploadHandler->isHttpUpload();
+        return $xUploadHandler->canProcessRequest();
     }
 
     /**
@@ -288,9 +288,9 @@ class RequestHandler
         try
         {
             // Process uploaded files, if the upload plugin is enabled
-            if(($xUploadPlugin = $this->jaxon->di()->getUploadPlugin()))
+            if(($xUploadHandler = $this->jaxon->di()->getUploadHandler()))
             {
-                $xUploadPlugin->processRequest();
+                $xUploadHandler->processRequest();
             }
 
             // Process the request

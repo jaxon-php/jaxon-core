@@ -1,7 +1,7 @@
 <?php
 
 /**
- * UploadPlugin.php - This class implements file upload with Ajax.
+ * UploadHandler.php - This class implements file upload with Ajax.
  *
  * @package jaxon-core
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
@@ -10,9 +10,9 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Request\Plugin\Upload;
+namespace Jaxon\Request\Handler;
 
-use Jaxon\Plugin\RequestPlugin;
+use Jaxon\Request\Upload\UploadManager;
 use Jaxon\Response\ResponseManager;
 use Jaxon\Response\UploadResponse;
 use Jaxon\Utils\Translation\Translator;
@@ -24,7 +24,7 @@ use Exception;
 use function count;
 use function trim;
 
-class UploadPlugin extends RequestPlugin
+class UploadHandler
 {
     /**
      * The response manager
@@ -90,22 +90,6 @@ class UploadPlugin extends RequestPlugin
     }
 
     /**
-     * @inheritDoc
-     */
-    public function getName(): string
-    {
-        return 'UploadPlugin';
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function checkOptions(string $sCallable, $xOptions): array
-    {
-        return [];
-    }
-
-    /**
      * Set the uploaded file name sanitizer
      *
      * @param Closure $cSanitizer    The closure
@@ -138,7 +122,9 @@ class UploadPlugin extends RequestPlugin
     }
 
     /**
-     * @inheritDoc
+     * Check if the current request contains uploaded files
+     *
+     * @return bool
      */
     public function canProcessRequest(): bool
     {
@@ -153,11 +139,6 @@ class UploadPlugin extends RequestPlugin
      */
     public function processRequest(): bool
     {
-        if(!$this->canProcessRequest())
-        {
-            return false;
-        }
-
         if(($this->sTempFile))
         {
             // Ajax request following a normal HTTP upload.

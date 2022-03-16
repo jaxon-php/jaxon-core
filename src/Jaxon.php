@@ -37,8 +37,8 @@ use Jaxon\Request\Factory\Factory;
 use Jaxon\Request\Factory\RequestFactory;
 use Jaxon\Request\Handler\CallbackManager;
 use Jaxon\Request\Handler\RequestHandler;
+use Jaxon\Request\Handler\UploadHandler;
 use Jaxon\Request\Plugin\CallableClass\CallableRegistry;
-use Jaxon\Request\Plugin\Upload\UploadPlugin;
 use Jaxon\Response\AbstractResponse;
 use Jaxon\Response\Response;
 use Jaxon\Response\ResponseManager;
@@ -638,11 +638,11 @@ class Jaxon implements LoggerAwareInterface
     /**
      * Get the upload plugin
      *
-     * @return UploadPlugin|null
+     * @return UploadHandler|null
      */
-    public function upload(): ?UploadPlugin
+    public function upload(): ?UploadHandler
     {
-        return $this->di()->getUploadPlugin();
+        return $this->di()->getUploadHandler();
     }
 
     /**

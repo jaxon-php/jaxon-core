@@ -1,7 +1,7 @@
 <?php
 
 /**
- * UploadPlugin.php - This class handles HTTP file upload.
+ * UploadManager.php - This class processes uploaded files.
  *
  * @package jaxon-core
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
@@ -9,7 +9,7 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Request\Plugin\Upload;
+namespace Jaxon\Request\Upload;
 
 use Jaxon\Request\Validator;
 use Jaxon\Utils\Config\Config;
@@ -19,28 +19,28 @@ use Jaxon\Exception\RequestException;
 use Closure;
 use Exception;
 
+use function bin2hex;
+use function call_user_func_array;
 use function count;
-use function rtrim;
-use function trim;
-use function substr;
-use function str_shuffle;
-use function is_string;
-use function is_array;
-use function is_dir;
-use function mkdir;
-use function is_readable;
-use function is_writable;
-use function json_encode;
-use function json_decode;
 use function file_exists;
 use function file_get_contents;
 use function file_put_contents;
+use function is_array;
+use function is_dir;
+use function is_readable;
+use function is_string;
+use function is_writable;
+use function json_decode;
+use function json_encode;
+use function mkdir;
 use function move_uploaded_file;
-use function unlink;
 use function pathinfo;
 use function random_bytes;
-use function bin2hex;
-use function call_user_func_array;
+use function rtrim;
+use function str_shuffle;
+use function substr;
+use function trim;
+use function unlink;
 
 class UploadManager
 {
