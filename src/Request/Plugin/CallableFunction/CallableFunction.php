@@ -23,6 +23,13 @@ namespace Jaxon\Request\Plugin\CallableFunction;
 class CallableFunction
 {
     /**
+     * The name of the function
+     *
+     * @var string
+     */
+    private $sFunctionName;
+
+    /**
      * The name of the corresponding javascript function
      *
      * @var string
@@ -30,11 +37,11 @@ class CallableFunction
     private $sJsFunction;
 
     /**
-     * A string or an array which defines the function to be registered
+     * A string or an array which defines the registered PHP function
      *
      * @var string|array
      */
-    private $xCallableFunction;
+    private $xPhpFunction;
 
     /**
      * The path and file name of the include file where the function is defined
@@ -49,13 +56,19 @@ class CallableFunction
      *
      * @var array
      */
-    private $aConfiguration;
+    private $aOptions = [];
 
-    public function __construct(string $sCallableFunction)
+    /**
+     * The constructor
+     *
+     * @param string $sFunctionName
+     * @param string $sJsFunction
+     */
+    public function __construct(string $sFunctionName, string $sJsFunction)
     {
-        $this->aConfiguration = [];
-        $this->sJsFunction = $sCallableFunction;
-        $this->xCallableFunction = $sCallableFunction;
+        $this->sFunctionName = $sFunctionName;
+        $this->sJsFunction = $sJsFunction;
+        $this->xPhpFunction = $sFunctionName;
     }
 
     /**
@@ -65,6 +78,16 @@ class CallableFunction
      */
     public function getName(): string
     {
+        return $this->sFunctionName;
+    }
+
+    /**
+     * Get name of the corresponding javascript function
+     *
+     * @return string
+     */
+    public function getJsName(): string
+    {
         return $this->sJsFunction;
     }
 
@@ -73,9 +96,9 @@ class CallableFunction
      *
      * @return array
      */
-    public function getConfigOptions(): array
+    public function getOptions(): array
     {
-        return $this->aConfiguration;
+        return $this->aOptions;
     }
 
     /**
@@ -91,16 +114,13 @@ class CallableFunction
         switch($sName)
         {
         case 'class': // The user function is a method in the given class
-            $this->xCallableFunction = [$sValue, $this->xCallableFunction];
-            break;
-        case 'alias':
-            $this->sJsFunction = $sValue;
+            $this->xPhpFunction = [$sValue, $this->xPhpFunction];
             break;
         case 'include':
             $this->sInclude = $sValue;
             break;
         default:
-            $this->aConfiguration[$sName] = $sValue;
+            $this->aOptions[$sName] = $sValue;
             break;
         }
     }
@@ -111,7 +131,7 @@ class CallableFunction
      *
      * @param array $aArgs    The function arguments
      *
-     * @return void
+     * @return mixed
      */
     public function call(array $aArgs = [])
     {
@@ -120,11 +140,11 @@ class CallableFunction
             require_once $this->sInclude;
         }
         // If the function is an alias for a class method, then instantiate the class
-        if(is_array($this->xCallableFunction) && is_string($this->xCallableFunction[0]))
+        if(is_array($this->xPhpFunction) && is_string($this->xPhpFunction[0]))
         {
-            $sClassName = $this->xCallableFunction[0];
-            $this->xCallableFunction[0] = new $sClassName;
+            $sClassName = $this->xPhpFunction[0];
+            $this->xPhpFunction[0] = new $sClassName;
         }
-        return call_user_func_array($this->xCallableFunction, $aArgs);
+        return call_user_func_array($this->xPhpFunction, $aArgs);
     }
 }

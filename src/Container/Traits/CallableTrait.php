@@ -3,6 +3,7 @@
 namespace Jaxon\Container\Traits;
 
 use Jaxon\Jaxon;
+use Jaxon\Container\Container;
 use Jaxon\Request\Handler\RequestHandler;
 use Jaxon\Request\Plugin\CallableClass\Registry;
 use Jaxon\Request\Plugin\CallableClass\Repository;
@@ -48,9 +49,9 @@ trait CallableTrait
         });
         // Callable function plugin
         $this->set(FunctionPlugin::class, function($c) {
-            return new FunctionPlugin($c->g(Jaxon::class), $c->g(Config::class),
-                $c->g(RequestHandler::class), $c->g(ResponseManager::class),
-                $c->g(TemplateEngine::class), $c->g(Translator::class), $c->g(Validator::class));
+            return new FunctionPlugin($c->g(Container::class), $c->g(RequestHandler::class),
+                $c->g(ResponseManager::class), $c->g(TemplateEngine::class),
+                $c->g(Translator::class), $c->g(Validator::class));
         });
     }
 

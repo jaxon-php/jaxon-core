@@ -21,18 +21,18 @@
 
 namespace Jaxon\Request\Plugin\CallableFunction;
 
-use Jaxon\Exception\RequestException;
-use Jaxon\Exception\SetupException;
 use Jaxon\Jaxon;
+use Jaxon\Container\Container;
 use Jaxon\Plugin\RequestPlugin;
 use Jaxon\Request\Handler\RequestHandler;
 use Jaxon\Request\Target;
 use Jaxon\Request\Validator;
 use Jaxon\Response\ResponseManager;
-use Jaxon\Utils\Config\Config;
 use Jaxon\Utils\Template\Engine as TemplateEngine;
 use Jaxon\Utils\Translation\Translator;
-use function array_keys;
+use Jaxon\Exception\RequestException;
+use Jaxon\Exception\SetupException;
+
 use function implode;
 use function is_array;
 use function is_string;
@@ -42,14 +42,9 @@ use function trim;
 class FunctionPlugin extends RequestPlugin
 {
     /**
-     * @var Jaxon
+     * @var Container
      */
-    private $jaxon;
-
-    /**
-     * @var Config
-     */
-    protected $xConfig;
+    private $di;
 
     /**
      * The request handler
@@ -99,20 +94,17 @@ class FunctionPlugin extends RequestPlugin
     /**
      * The constructor
      *
-     * @param Jaxon  $jaxon
-     * @param Config  $xConfig
+     * @param Container  $di
      * @param RequestHandler  $xRequestHandler
      * @param ResponseManager  $xResponseManager
      * @param TemplateEngine  $xTemplateEngine
      * @param Translator  $xTranslator
      * @param Validator  $xValidator
      */
-    public function __construct(Jaxon $jaxon, Config $xConfig,
-        RequestHandler $xRequestHandler, ResponseManager $xResponseManager,
+    public function __construct(Container $di, RequestHandler $xRequestHandler, ResponseManager $xResponseManager,
         TemplateEngine $xTemplateEngine, Translator $xTranslator, Validator $xValidator)
     {
-        $this->jaxon = $jaxon;
-        $this->xConfig = $xConfig;
+        $this->di = $di;
         $this->xRequestHandler = $xRequestHandler;
         $this->xResponseManager = $xResponseManager;
         $this->xTemplateEngine = $xTemplateEngine;
@@ -183,9 +175,14 @@ class FunctionPlugin extends RequestPlugin
     {
         $sFunctionName = trim($sCallable);
         // Check if an alias is defined
-        $sJsFunction = $aOptions['alias'] ?? $sFunctionName;
-        $this->aFunctions[$sJsFunction] = $aOptions;
-        $this->jaxon->di()->registerCallableFunction($sJsFunction, $sFunctionName, $aOptions);
+        $sJsFunction = $sFunctionName;
+        if(isset($aOptions['alias']))
+        {
+            $sJsFunction = (string)$aOptions['alias'];
+            unset($aOptions['alias']);
+        }
+        $this->aFunctions[$sFunctionName] = $sFunctionName;
+        $this->di->registerCallableFunction($sFunctionName, $sJsFunction, $aOptions);
         return true;
     }
 
@@ -194,7 +191,7 @@ class FunctionPlugin extends RequestPlugin
      */
     public function getHash(): string
     {
-        return md5(implode('', array_keys($this->aFunctions)));
+        return md5(implode('', $this->aFunctions));
     }
 
     /**
@@ -206,14 +203,10 @@ class FunctionPlugin extends RequestPlugin
      */
     private function getCallableScript(CallableFunction $xFunction): string
     {
-        $sPrefix = $this->xConfig->getOption('core.prefix.function');
-        $sJsFunction = $xFunction->getName();
-
         return $this->xTemplateEngine->render('jaxon::support/function.js', [
-            'sPrefix' => $sPrefix,
-            'sAlias' => $sJsFunction,
-            'sFunction' => $sJsFunction, // sAlias is the same as sFunction
-            'aConfig' => $xFunction->getConfigOptions(),
+            'sName' => $xFunction->getName(),
+            'sJsName' => $xFunction->getJsName(),
+            'aOptions' => $xFunction->getOptions(),
         ]);
     }
 
@@ -223,9 +216,9 @@ class FunctionPlugin extends RequestPlugin
     public function getScript(): string
     {
         $code = '';
-        foreach(array_keys($this->aFunctions) as $sName)
+        foreach($this->aFunctions as $sName)
         {
-            $xFunction = $this->jaxon->di()->get($sName);
+            $xFunction = $this->di->getCallableFunction($sName);
             $code .= $this->getCallableScript($xFunction);
         }
         return $code;
@@ -250,11 +243,6 @@ class FunctionPlugin extends RequestPlugin
      */
     public function processRequest(): bool
     {
-        if(!$this->canProcessRequest())
-        {
-            return false;
-        }
-
         // Security check: make sure the requested function was registered.
         if(!isset($this->aFunctions[$this->sRequestedFunction]))
         {
@@ -263,7 +251,7 @@ class FunctionPlugin extends RequestPlugin
                 ['name' => $this->sRequestedFunction]));
         }
 
-        $xFunction = $this->jaxon->di()->get($this->sRequestedFunction);
+        $xFunction = $this->di->getCallableFunction($this->sRequestedFunction);
         $aArgs = $this->xRequestHandler->processArguments();
         $xResponse = $xFunction->call($aArgs);
         if(($xResponse))
