@@ -22,7 +22,7 @@
 namespace Jaxon\Request\Plugin\CallableClass;
 
 use Jaxon\Jaxon;
-use Jaxon\Plugin\RequestPlugin;
+use Jaxon\Plugin\RegistryPlugin;
 use Jaxon\Utils\Translation\Translator;
 use Jaxon\Exception\SetupException;
 
@@ -33,7 +33,7 @@ use function realpath;
 use function rtrim;
 use function trim;
 
-class CallableDirPlugin extends RequestPlugin
+class CallableDirPlugin extends RegistryPlugin
 {
     /**
      * The callable registrar
@@ -136,23 +136,5 @@ class CallableDirPlugin extends RequestPlugin
         }
         $this->xRegistry->addDirectory($aOptions['directory'], $aOptions);
         return true;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function canProcessRequest(): bool
-    {
-        return false;
-    }
-
-    /**
-     * Process the incoming Jaxon request
-     *
-     * @return bool
-     */
-    public function processRequest(): bool
-    {
-        return false;
     }
 }

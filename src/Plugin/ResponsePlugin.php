@@ -8,7 +8,7 @@
  * A response plugin provides additional services not already provided by the
  * <Jaxon\Response\Response> class with regard to sending response commands to the client.
  * In addition, a response command may send javascript to the browser at page load
- * to aid in the processing of it's response commands.
+ * to aid in the processing of its response commands.
  *
  * @package jaxon-core
  * @author Jared White
@@ -27,7 +27,7 @@ namespace Jaxon\Plugin;
 
 use Jaxon\Response\Response as JaxonResponse;
 
-abstract class ResponsePlugin extends Plugin
+abstract class ResponsePlugin extends Plugin implements ResponsePluginInterface
 {
     /**
      * The object used to build the response that will be sent to the client browser
@@ -37,11 +37,7 @@ abstract class ResponsePlugin extends Plugin
     protected $xResponse = null;
 
     /**
-     * Set the <Jaxon\Response\Response> object
-     *
-     * @param JaxonResponse $xResponse    The response
-     *
-     * @return void
+     * @inheritDoc
      */
     public function setResponse(JaxonResponse $xResponse)
     {
@@ -49,9 +45,7 @@ abstract class ResponsePlugin extends Plugin
     }
 
     /**
-     * Get the <Jaxon\Response\Response> object
-     *
-     * @return JaxonResponse|null
+     * @inheritDoc
      */
     public function response(): ?JaxonResponse
     {

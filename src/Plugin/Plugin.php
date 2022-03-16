@@ -20,15 +20,8 @@
 
 namespace Jaxon\Plugin;
 
-abstract class Plugin implements Code\CodeGeneratorInterface
+abstract class Plugin implements PluginInterface, CodeGeneratorInterface
 {
-    /**
-     * Get a unique name to identify the plugin.
-     *
-     * @return string
-     */
-    abstract public function getName(): string;
-
     /**
      * @inheritDoc
      */

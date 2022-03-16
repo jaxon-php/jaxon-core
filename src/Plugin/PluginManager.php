@@ -35,6 +35,8 @@ use Jaxon\Utils\Config\Config;
 use Jaxon\Utils\Translation\Translator;
 use Jaxon\Exception\SetupException;
 
+use function class_implements;
+use function in_array;
 use function is_array;
 use function is_integer;
 use function is_string;
@@ -57,6 +59,13 @@ class PluginManager
      * @var Translator
      */
     protected $xTranslator;
+
+    /**
+     * Request plugins, indexed by name
+     *
+     * @var array
+     */
+    private $aRegistryPlugins = [];
 
     /**
      * Request plugins, indexed by name
@@ -135,27 +144,36 @@ class PluginManager
     public function registerPlugin(string $sClassName, string $sPluginName, int $nPriority = 1000)
     {
         $bIsUsed = false;
-        if(is_subclass_of($sClassName, RequestPlugin::class))
+        $aInterfaces = class_implements($sClassName);
+        if(in_array(CodeGeneratorInterface::class, $aInterfaces))
         {
-            $this->aRequestPlugins[$sPluginName] = $sClassName;
             $this->xCodeGenerator->addGenerator($sClassName, $nPriority);
             $bIsUsed = true;
         }
-        elseif(is_subclass_of($sClassName, ResponsePlugin::class))
+        if(in_array(CallableRegistryInterface::class, $aInterfaces))
+        {
+            $this->aRegistryPlugins[$sPluginName] = $sClassName;
+            $bIsUsed = true;
+        }
+        if(in_array(RequestHandlerInterface::class, $aInterfaces))
+        {
+            $this->aRequestPlugins[$sPluginName] = $sClassName;
+            $bIsUsed = true;
+        }
+        if(in_array(ResponsePluginInterface::class, $aInterfaces))
         {
             $this->aResponsePlugins[$sPluginName] = $sClassName;
-            $this->xCodeGenerator->addGenerator($sClassName, $nPriority);
             $bIsUsed = true;
         }
 
         // This plugin implements the Message interface
-        if(is_subclass_of($sClassName, MessageInterface::class))
+        if(in_array(MessageInterface::class, $aInterfaces))
         {
             $this->jaxon->dialog()->setMessage($sClassName);
             $bIsUsed = true;
         }
         // This plugin implements the Question interface
-        if(is_subclass_of($sClassName, QuestionInterface::class))
+        if(in_array(QuestionInterface::class, $aInterfaces))
         {
             $this->jaxon->dialog()->setQuestion($sClassName);
             $bIsUsed = true;
@@ -239,8 +257,8 @@ class PluginManager
      */
     public function registerCallable(string $sType, string $sCallable, $xOptions = [])
     {
-        if(isset($this->aRequestPlugins[$sType]) &&
-            ($xPlugin = $this->jaxon->di()->g($this->aRequestPlugins[$sType])))
+        if(isset($this->aRegistryPlugins[$sType]) &&
+            ($xPlugin = $this->jaxon->di()->g($this->aRegistryPlugins[$sType])))
         {
             $xPlugin->register($sType, $sCallable, $xPlugin->checkOptions($sCallable, $xOptions));
             return;

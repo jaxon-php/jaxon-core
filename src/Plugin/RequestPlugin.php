@@ -26,66 +26,6 @@
 
 namespace Jaxon\Plugin;
 
-use Jaxon\Request\Target;
-
-abstract class RequestPlugin extends Plugin
+abstract class RequestPlugin extends RegistryPlugin implements RequestHandlerInterface
 {
-    /**
-     * Check if the provided options are correct, and convert them into an array.
-     *
-     * @param string $sCallable
-     * @param mixed $xOptions
-     *
-     * @return array
-     */
-    abstract public function checkOptions(string $sCallable, $xOptions): array;
-
-    /**
-     * Register a function, an event or an object.
-     *
-     * Called by the <Jaxon\Plugin\PluginManager> when a user script
-     * when a function or callable object is to be registered.
-     * Additional plugins may support other registration types.
-     *
-     * @param string $sType    The type of request handler being registered
-     * @param string $sCallable    The callable entity being registered
-     * @param array $aOptions    The associated options
-     *
-     * @return bool
-     */
-    public function register(string $sType, string $sCallable, array $aOptions): bool
-    {
-        return false;
-    }
-
-    /**
-     * Get the target function or class and method
-     *
-     * @return Target|null
-     */
-    public function getTarget(): ?Target
-    {
-        return null;
-    }
-
-    /**
-     * Check if this plugin can process the current request
-     *
-     * Called by the <Jaxon\Plugin\PluginManager> when a request has been received to determine
-     * if the request is destinated to this request plugin.
-     *
-     * @return bool
-     */
-    abstract public function canProcessRequest(): bool;
-
-    /**
-     * Process the current request
-     *
-     * Called by the <Jaxon\Plugin\PluginManager> when a request is being processed.
-     * This will only occur when <Jaxon> has determined that the current request
-     * is a valid (registered) jaxon enabled function via <jaxon->canProcessRequest>.
-     *
-     * @return bool
-     */
-    abstract public function processRequest(): bool;
 }

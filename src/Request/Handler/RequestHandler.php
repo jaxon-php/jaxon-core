@@ -64,7 +64,7 @@ class RequestHandler
     private $xResponseManager;
 
     /**
-     * The arguments handler.
+     * The argument manager.
      *
      * @var ArgumentManager
      */

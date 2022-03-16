@@ -345,11 +345,6 @@ class CallableClassPlugin extends RequestPlugin
      */
     public function processRequest(): bool
     {
-        if(!$this->canProcessRequest())
-        {
-            return false;
-        }
-
         // Find the requested method
         $xCallableObject = $this->xRegistry->getCallableObject($this->sRequestedClass);
         if(!$xCallableObject || !$xCallableObject->hasMethod($this->sRequestedMethod))
