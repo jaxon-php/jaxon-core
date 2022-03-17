@@ -27,14 +27,14 @@ final class FunctionTest extends TestCase
     public function testNonRegisteredFunction()
     {
         $this->expectException(Exception::class);
-        $xCallable = jaxon()->di()->get('my_second_function');
+        $xCallable = jaxon()->di()->get('my_alias_function');
     }
 
     public function testRegisteredFunctionSupportClass()
     {
-        $xFirstCallable = jaxon()->di()->get('my_first_function');
-        $xAliasCallable = jaxon()->di()->get('my_alias_function');
-        $xThirdCallable = jaxon()->di()->get('my_third_function');
+        $xFirstCallable = jaxon()->di()->getCallableFunction('my_first_function');
+        $xAliasCallable = jaxon()->di()->getCallableFunction('my_second_function');
+        $xThirdCallable = jaxon()->di()->getCallableFunction('my_third_function');
         // Test callables classes
         $this->assertEquals(get_class($xFirstCallable), \Jaxon\Request\Plugin\CallableFunction\CallableFunction::class);
         $this->assertEquals(get_class($xAliasCallable), \Jaxon\Request\Plugin\CallableFunction\CallableFunction::class);
@@ -43,12 +43,12 @@ final class FunctionTest extends TestCase
 
     public function testRegisteredFunctionExportedName()
     {
-        $xFirstCallable = jaxon()->di()->get('my_first_function');
-        $xAliasCallable = jaxon()->di()->get('my_alias_function');
-        $xThirdCallable = jaxon()->di()->get('my_third_function');
+        $xFirstCallable = jaxon()->di()->getCallableFunction('my_first_function');
+        $xAliasCallable = jaxon()->di()->getCallableFunction('my_second_function');
+        $xThirdCallable = jaxon()->di()->getCallableFunction('my_third_function');
         // Test callables classes
         $this->assertEquals($xFirstCallable->getName(), 'my_first_function');
-        $this->assertEquals($xAliasCallable->getName(), 'my_alias_function');
+        $this->assertEquals($xAliasCallable->getName(), 'my_second_function');
         $this->assertEquals($xThirdCallable->getName(), 'my_third_function');
     }
 }

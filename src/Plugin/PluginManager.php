@@ -358,7 +358,6 @@ class PluginManager
         }
     }
 
-
     /**
      * Find the specified response plugin by name and return a reference to it if one exists
      *
