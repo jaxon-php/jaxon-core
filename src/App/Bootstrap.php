@@ -13,6 +13,7 @@
 namespace Jaxon\App;
 
 use Jaxon\Jaxon;
+use Jaxon\Config\ConfigManager;
 use Jaxon\Plugin\PluginManager;
 use Jaxon\Request\Handler\RequestHandler;
 use Jaxon\Ui\View\ViewManager;
@@ -24,9 +25,9 @@ use Jaxon\Utils\Config\Exception\DataDepth;
 class Bootstrap
 {
     /**
-     * @var Jaxon
+     * @var ConfigManager
      */
-    private $jaxon;
+    private $xConfigManager;
 
     /**
      * @var PluginManager
@@ -100,16 +101,16 @@ class Bootstrap
     /**
      * The class constructor
      *
-     * @param Jaxon $jaxon
+     * @param ConfigManager $xConfigManager
      * @param PluginManager $xPluginManager
      * @param ViewManager $xViewManager
      * @param RequestHandler $xRequestHandler
      * @param Translator $xTranslator
      */
-    public function __construct(Jaxon $jaxon, PluginManager $xPluginManager,
+    public function __construct(ConfigManager $xConfigManager, PluginManager $xPluginManager,
         ViewManager $xViewManager, RequestHandler $xRequestHandler, Translator $xTranslator)
     {
-        $this->jaxon = $jaxon;
+        $this->xConfigManager = $xConfigManager;
         $this->xPluginManager = $xPluginManager;
         $this->xViewManager = $xViewManager;
         $this->xRequestHandler = $xRequestHandler;
@@ -200,26 +201,16 @@ class Bootstrap
      */
     public function setup()
     {
-        $di = $this->jaxon->di();
-        $xLibConfig = $di->getConfig();
-
         // Setup the lib config options.
-        try
-        {
-            $xLibConfig->setOptions($this->aLibOptions);
-        }
-        catch(DataDepth $e)
-        {
-            $sMessage = $this->xTranslator->trans('errors.data.depth', ['key' => $e->sPrefix, 'depth' => $e->nDepth]);
-            throw new SetupException($sMessage);
-        }
+        $this->xConfigManager->setOptions($this->aLibOptions);
 
         // Get the app config options.
-        $xAppConfig = $di->newConfig($this->aAppOptions);
+        $xAppConfig = $this->xConfigManager->newConfig($this->aAppOptions);
         $xAppConfig->setOption('options.views.default', 'default');
         // Setup the app.
         $this->setupApp($xAppConfig);
 
+        $xLibConfig = $this->xConfigManager->getConfig();
         // Jaxon library settings
         if(!$xLibConfig->hasOption('js.app.export'))
         {

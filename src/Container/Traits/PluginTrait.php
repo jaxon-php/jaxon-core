@@ -3,6 +3,7 @@
 namespace Jaxon\Container\Traits;
 
 use Jaxon\Jaxon;
+use Jaxon\Config\ConfigManager;
 use Jaxon\Container\Container;
 use Jaxon\Plugin\Code\AssetManager;
 use Jaxon\Plugin\Code\CodeGenerator;
@@ -30,8 +31,8 @@ trait PluginTrait
     {
         // Plugin manager
         $this->set(PluginManager::class, function($c) {
-            return new PluginManager($c->g(Jaxon::class), $c->g(Container::class), $c->g(Config::class),
-                $c->g(Translator::class), $c->g(CodeGenerator::class));
+            return new PluginManager($c->g(Container::class), $c->g(Config::class),
+                $c->g(Translator::class), $c->g(ConfigManager::class), $c->g(CodeGenerator::class));
         });
         // Code Generation
         $this->set(AssetManager::class, function($c) {

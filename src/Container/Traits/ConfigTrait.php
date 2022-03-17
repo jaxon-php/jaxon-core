@@ -2,9 +2,9 @@
 
 namespace Jaxon\Container\Traits;
 
+use Jaxon\Config\ConfigManager;
 use Jaxon\Exception\SetupException;
 use Jaxon\Utils\Config\Config;
-use Jaxon\Utils\Config\Reader;
 use Jaxon\Utils\Config\Exception\DataDepth;
 use Jaxon\Utils\Translation\Translator;
 
@@ -17,8 +17,8 @@ trait ConfigTrait
      */
     private function registerConfigs()
     {
-        $this->set(Reader::class, function($c) {
-            return new Reader($c->g(Config::class));
+        $this->set(ConfigManager::class, function($c) {
+            return new ConfigManager($c->g(Config::class), $c->g(Translator::class));
         });
         $this->set(Config::class, function($c) {
             return new Config($c->g('jaxon.core.options'));
@@ -38,11 +38,11 @@ trait ConfigTrait
     /**
      * Get the config reader
      *
-     * @return Reader
+     * @return ConfigManager
      */
-    public function getConfigReader(): Reader
+    public function getConfigManager(): ConfigManager
     {
-        return $this->g(Reader::class);
+        return $this->g(ConfigManager::class);
     }
 
     /**

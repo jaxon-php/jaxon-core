@@ -26,6 +26,7 @@
 namespace Jaxon;
 
 use Jaxon\App\App;
+use Jaxon\Config\ConfigManager;
 use Jaxon\Container\Container;
 use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;
@@ -47,11 +48,6 @@ use Jaxon\Ui\Dialogs\Dialog;
 use Jaxon\Ui\View\ViewRenderer;
 use Jaxon\Utils\Config\Config;
 use Jaxon\Utils\Config\Exception\DataDepth;
-use Jaxon\Utils\Config\Exception\FileAccess;
-use Jaxon\Utils\Config\Exception\FileContent;
-use Jaxon\Utils\Config\Exception\FileExtension;
-use Jaxon\Utils\Config\Exception\YamlExtension;
-use Jaxon\Utils\Config\Reader as ConfigReader;
 use Jaxon\Utils\Http\UriException;
 use Jaxon\Utils\Template\Engine as TemplateEngine;
 use Jaxon\Utils\Translation\Translator;
@@ -106,9 +102,9 @@ class Jaxon implements LoggerAwareInterface
     protected $xTranslator;
 
     /**
-     * @var ConfigReader
+     * @var ConfigManager
      */
-    protected $xConfigReader;
+    protected $xConfigManager;
 
     /**
      * @var PluginManager
@@ -145,7 +141,7 @@ class Jaxon implements LoggerAwareInterface
         // Set the attributes from the container
         self::$xInstance->xConfig = self::$xContainer->g(Config::class);
         self::$xInstance->xTranslator = self::$xContainer->g(Translator::class);
-        self::$xInstance->xConfigReader = self::$xContainer->g(ConfigReader::class);
+        self::$xInstance->xConfigManager = self::$xContainer->g(ConfigManager::class);
         self::$xInstance->xPluginManager = self::$xContainer->g(PluginManager::class);
         self::$xInstance->xCodeGenerator = self::$xContainer->g(CodeGenerator::class);
         self::$xInstance->xClassRegistry = self::$xContainer->g(CallableRegistry::class);
@@ -269,30 +265,7 @@ class Jaxon implements LoggerAwareInterface
      */
     public function readConfig(string $sConfigFile): array
     {
-        try
-        {
-            return $this->xConfigReader->read($sConfigFile);
-        }
-        catch(YamlExtension $e)
-        {
-            $sMessage = $this->xTranslator->trans('errors.yaml.install');
-            throw new SetupException($sMessage);
-        }
-        catch(FileExtension $e)
-        {
-            $sMessage = $this->xTranslator->trans('errors.file.extension', ['path' => $sConfigFile]);
-            throw new SetupException($sMessage);
-        }
-        catch(FileAccess $e)
-        {
-            $sMessage = $this->xTranslator->trans('errors.file.access', ['path' => $sConfigFile]);
-            throw new SetupException($sMessage);
-        }
-        catch(FileContent $e)
-        {
-            $sMessage = $this->xTranslator->trans('errors.file.content', ['path' => $sConfigFile]);
-            throw new SetupException($sMessage);
-        }
+        return $this->xConfigManager->read($sConfigFile);
     }
 
     /**
@@ -365,7 +338,7 @@ class Jaxon implements LoggerAwareInterface
      */
     public function newConfig(): Config
     {
-        return $this->di()->newConfig();
+        return $this->xConfigManager->newConfig();
     }
 
     /**

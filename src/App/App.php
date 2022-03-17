@@ -13,8 +13,8 @@
 namespace Jaxon\App;
 
 use Jaxon\Jaxon;
+use Jaxon\Config\ConfigManager;
 use Jaxon\Response\ResponseManager;
-use Jaxon\Utils\Config\Reader as ConfigReader;
 use Jaxon\Utils\Translation\Translator;
 use Jaxon\Exception\SetupException;
 
@@ -33,9 +33,9 @@ class App
     private $xResponseManager;
 
     /**
-     * @var ConfigReader
+     * @var ConfigManager
      */
-    private $xConfigReader;
+    private $xConfigManager;
 
     /**
      * @var Translator
@@ -46,16 +46,16 @@ class App
      * The class constructor
      *
      * @param Jaxon $jaxon
+     * @param ConfigManager $xConfigManager
      * @param ResponseManager $xResponseManager
-     * @param ConfigReader $xConfigReader
      * @param Translator $xTranslator
      */
-    public function __construct(Jaxon $jaxon, ResponseManager $xResponseManager,
-        ConfigReader $xConfigReader, Translator $xTranslator)
+    public function __construct(Jaxon $jaxon, ConfigManager $xConfigManager,
+        ResponseManager $xResponseManager, Translator $xTranslator)
     {
         $this->jaxon = $jaxon;
         $this->xResponseManager = $xResponseManager;
-        $this->xConfigReader = $xConfigReader;
+        $this->xConfigManager = $xConfigManager;
         $this->xTranslator = $xTranslator;
     }
 
@@ -84,7 +84,7 @@ class App
         }
 
         // Read the config options.
-        $aOptions = $this->jaxon->readConfig($sConfigFile);
+        $aOptions = $this->xConfigManager->read($sConfigFile);
         $aLibOptions = $aOptions['lib'] ?? [];
         $aAppOptions = $aOptions['app'] ?? [];
         if(!is_array($aLibOptions) || !is_array($aAppOptions))

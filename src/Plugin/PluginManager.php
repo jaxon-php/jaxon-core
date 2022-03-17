@@ -22,6 +22,7 @@
 namespace Jaxon\Plugin;
 
 use Jaxon\Jaxon;
+use Jaxon\Config\ConfigManager;
 use Jaxon\Container\Container;
 use Jaxon\Plugin\Code\CodeGenerator;
 use Jaxon\Request\Plugin\CallableClass\CallableClassPlugin;
@@ -47,11 +48,6 @@ use function trim;
 class PluginManager
 {
     /**
-     * @var Jaxon
-     */
-    protected $jaxon;
-
-    /**
      * @var Container
      */
     protected $di;
@@ -65,6 +61,11 @@ class PluginManager
      * @var Translator
      */
     protected $xTranslator;
+
+    /**
+     * @var ConfigManager
+     */
+    protected $xConfigManager;
 
     /**
      * Request plugins, indexed by name
@@ -97,19 +98,19 @@ class PluginManager
     /**
      * The constructor
      *
-     * @param Jaxon $jaxon
      * @param Container $di
      * @param Config $xConfig
      * @param Translator $xTranslator
+     * @param ConfigManager $xConfigManager
      * @param CodeGenerator $xCodeGenerator
      */
-    public function __construct(Jaxon $jaxon, Container $di, Config $xConfig,
-        Translator $xTranslator, CodeGenerator $xCodeGenerator)
+    public function __construct(Container $di, Config $xConfig, Translator $xTranslator,
+        ConfigManager $xConfigManager, CodeGenerator $xCodeGenerator)
     {
-        $this->jaxon = $jaxon;
         $this->di = $di;
         $this->xConfig = $xConfig;
         $this->xTranslator = $xTranslator;
+        $this->xConfigManager = $xConfigManager;
         $this->xCodeGenerator = $xCodeGenerator;
     }
 
@@ -303,7 +304,7 @@ class PluginManager
         $aLibOptions = $sClassName::config();
         if(is_string($aLibOptions))
         {
-            $aLibOptions = $this->jaxon->readConfig($aLibOptions);
+            $aLibOptions = $this->xConfigManager->read($aLibOptions);
         }
         if(!is_array($aLibOptions))
         {
@@ -328,8 +329,8 @@ class PluginManager
         $aLibOptions = $this->getPackageOptions($sClassName);
         // Add the package name to the config
         $aLibOptions['package'] = $sClassName;
-        $xLibConfig = $this->di->newConfig($aLibOptions);
-        $xPkgConfig = $this->di->newConfig($aPkgOptions);
+        $xLibConfig = $this->xConfigManager->newConfig($aLibOptions);
+        $xPkgConfig = $this->xConfigManager->newConfig($aPkgOptions);
         $this->di->registerPackage($sClassName, $xPkgConfig);
         // Register the declarations in the package config.
         $this->_registerFromConfig($xLibConfig, $xPkgConfig);
