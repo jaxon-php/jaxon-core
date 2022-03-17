@@ -40,14 +40,11 @@ abstract class Package implements CodeGeneratorInterface
     protected $bReadyEnabled = false;
 
     /**
-     * Get the package options in a Config object.
+     * Get the path to the config file, or the config options in an array.
      *
-     * @return Config
+     * @return string|array
      */
-    public function getConfig(): Config
-    {
-        return $this->xPkgConfig;
-    }
+    abstract public static function config();
 
     /**
      * Get the value of a given package option
@@ -71,13 +68,6 @@ abstract class Package implements CodeGeneratorInterface
     {
         return $this->xRenderer;
     }
-
-    /**
-     * Get the path to the config file
-     *
-     * @return string
-     */
-    abstract public static function getConfigFile(): string;
 
     /**
      * Include the getReadyScript() in the generated code.

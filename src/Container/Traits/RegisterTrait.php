@@ -195,18 +195,17 @@ trait RegisterTrait
     }
 
     /**
-     * Get a package instance
+     * Register a package
      *
      * @param string $sClassName    The package class name
-     * @param array $aAppOptions    The package options defined in the app section of the config file
+     * @param Config $xPkgConfig    The user provided package options
      *
-     * @return Config
+     * @return void
      * @throws SetupException
      */
-    public function registerPackage(string $sClassName, array $aAppOptions): Config
+    public function registerPackage(string $sClassName, Config $xPkgConfig)
     {
-        $xAppConfig = $this->newConfig($aAppOptions);
-        $this->val($sClassName . '_config', $xAppConfig);
+        $this->val($sClassName . '_config', $xPkgConfig);
         $this->set($sClassName, function($c) use($sClassName) {
             $xPackage = $this->make($sClassName);
             // Set the package options
@@ -218,8 +217,6 @@ trait RegisterTrait
             call_user_func($cSetter->bindTo($xPackage, $xPackage), $c, $sClassName);
             return $xPackage;
         });
-
-        return $xAppConfig;
     }
 
     /**

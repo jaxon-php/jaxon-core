@@ -111,11 +111,11 @@ class ViewManager
      * Set the view namespaces.
      *
      * @param Config $xLibConfig    The config options provided in the library
-     * @param Config|null $xAppConfig    The config options provided in the app section of the global config file.
+     * @param Config|null $xPkgConfig    The config options provided in the app section of the global config file.
      *
      * @return void
      */
-    public function addNamespaces(Config $xLibConfig, ?Config $xAppConfig = null)
+    public function addNamespaces(Config $xLibConfig, ?Config $xPkgConfig = null)
     {
         $this->sDefaultNamespace = $xLibConfig->getOption('options.views.default', '');
 
@@ -126,7 +126,7 @@ class ViewManager
             foreach($aNamespaces as $sNamespace => $sOption)
             {
                 // If no default namespace is defined, use the first one as default.
-                if($this->sDefaultNamespace == '')
+                if($this->sDefaultNamespace === '')
                 {
                     $this->sDefaultNamespace = (string)$sNamespace;
                 }
@@ -140,11 +140,11 @@ class ViewManager
 
                 // If the lib config has defined a template option, then its value must be
                 // read from the app config.
-                if($xAppConfig !== null && isset($aNamespace['template']))
+                if($xPkgConfig !== null && isset($aNamespace['template']))
                 {
                     $sTemplateOption = $xLibConfig->getOption($sOption . '.template.option');
                     $sTemplateDefault = $xLibConfig->getOption($sOption . '.template.default');
-                    $sTemplate = $xAppConfig->getOption($sTemplateOption, $sTemplateDefault);
+                    $sTemplate = $xPkgConfig->getOption($sTemplateOption, $sTemplateDefault);
                     $aNamespace['directory'] = rtrim($aNamespace['directory'], '/') . '/' . $sTemplate;
                 }
 

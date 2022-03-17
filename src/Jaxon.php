@@ -440,14 +440,14 @@ class Jaxon implements LoggerAwareInterface
      * Register a package
      *
      * @param string $sClassName    The package class
-     * @param array $aOptions    The package options
+     * @param array $xPkgOptions    The user provided package options
      *
      * @return void
      * @throws SetupException
      */
-    public function registerPackage(string $sClassName, array $aOptions = [])
+    public function registerPackage(string $sClassName, array $xPkgOptions = [])
     {
-        $this->xPluginManager->registerPackage($sClassName, $aOptions);
+        $this->xPluginManager->registerPackage($sClassName, $xPkgOptions);
     }
 
     /**
@@ -547,6 +547,7 @@ class Jaxon implements LoggerAwareInterface
      * Return the javascript header code and file includes
      *
      * @return string
+     * @throws UriException
      */
     public function getJs(): string
     {
@@ -557,6 +558,7 @@ class Jaxon implements LoggerAwareInterface
      * Return the CSS header code and file includes
      *
      * @return string
+     * @throws UriException
      */
     public function getCss(): string
     {

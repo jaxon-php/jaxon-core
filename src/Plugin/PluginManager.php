@@ -22,6 +22,7 @@
 namespace Jaxon\Plugin;
 
 use Jaxon\Jaxon;
+use Jaxon\Container\Container;
 use Jaxon\Plugin\Code\CodeGenerator;
 use Jaxon\Request\Plugin\CallableClass\CallableClassPlugin;
 use Jaxon\Request\Plugin\CallableClass\CallableDirPlugin;
@@ -48,7 +49,12 @@ class PluginManager
     /**
      * @var Jaxon
      */
-    private $jaxon;
+    protected $jaxon;
+
+    /**
+     * @var Container
+     */
+    protected $di;
 
     /**
      * @var Config
@@ -92,13 +98,16 @@ class PluginManager
      * The constructor
      *
      * @param Jaxon $jaxon
+     * @param Container $di
      * @param Config $xConfig
      * @param Translator $xTranslator
      * @param CodeGenerator $xCodeGenerator
      */
-    public function __construct(Jaxon $jaxon, Config $xConfig, Translator $xTranslator, CodeGenerator $xCodeGenerator)
+    public function __construct(Jaxon $jaxon, Container $di, Config $xConfig,
+        Translator $xTranslator, CodeGenerator $xCodeGenerator)
     {
         $this->jaxon = $jaxon;
+        $this->di = $di;
         $this->xConfig = $xConfig;
         $this->xTranslator = $xTranslator;
         $this->xCodeGenerator = $xCodeGenerator;
@@ -123,7 +132,7 @@ class PluginManager
      */
     public function getPackage(string $sClassName): ?Package
     {
-        return $this->jaxon->di()->get(trim($sClassName, '\\ '));
+        return $this->di->get(trim($sClassName, '\\ '));
     }
 
     /**
@@ -169,13 +178,13 @@ class PluginManager
         // This plugin implements the Message interface
         if(in_array(MessageInterface::class, $aInterfaces))
         {
-            $this->jaxon->dialog()->setMessage($sClassName);
+            $this->di->getDialog()->setMessage($sClassName);
             $bIsUsed = true;
         }
         // This plugin implements the Question interface
         if(in_array(QuestionInterface::class, $aInterfaces))
         {
-            $this->jaxon->dialog()->setQuestion($sClassName);
+            $this->di->getDialog()->setQuestion($sClassName);
             $bIsUsed = true;
         }
 
@@ -187,60 +196,10 @@ class PluginManager
         }
 
         // Register the plugin in the DI container, if necessary
-        if(!$this->jaxon->di()->has($sClassName))
+        if(!$this->di->has($sClassName))
         {
-            $this->jaxon->di()->auto($sClassName);
+            $this->di->auto($sClassName);
         }
-    }
-
-    /**
-     * Register a package
-     *
-     * @param string $sClassName    The package class name
-     *
-     * @return Config
-     * @throws SetupException
-     */
-    private function readPackageConfig(string $sClassName): Config
-    {
-        $sConfigFile = $sClassName::getConfigFile();
-        $aPackageConfig = $this->jaxon->readConfig($sConfigFile);
-        // Add the package name to the config
-        $aPackageConfig['package'] = $sClassName;
-        return $this->jaxon->di()->newConfig($aPackageConfig);
-    }
-
-    /**
-     * Register a package
-     *
-     * @param string $sClassName    The package class name
-     * @param array $aAppOptions    The package options defined in the app section of the config file
-     *
-     * @return void
-     * @throws SetupException
-     */
-    public function registerPackage(string $sClassName, array $aAppOptions)
-    {
-        $sClassName = trim($sClassName, '\\ ');
-        if(!is_subclass_of($sClassName, Package::class))
-        {
-            $sMessage = $this->xTranslator->trans('errors.register.invalid', ['name' => $sClassName]);
-            throw new SetupException($sMessage);
-        }
-        $di = $this->jaxon->di();
-        $xAppConfig = $di->registerPackage($sClassName, $aAppOptions);
-
-        // Read the package config.
-        $xPackageConfig = $this->readPackageConfig($sClassName);
-
-        // Register the declarations in the package config.
-        $this->_registerFromConfig($xPackageConfig);
-
-        // Register the view namespaces
-        $di->getViewManager()->addNamespaces($xPackageConfig, $xAppConfig);
-
-        // Register the package as a code generator.
-        $this->xCodeGenerator->addGenerator($sClassName, 500);
     }
 
     /**
@@ -258,7 +217,7 @@ class PluginManager
     public function registerCallable(string $sType, string $sCallable, $xOptions = [])
     {
         if(isset($this->aRegistryPlugins[$sType]) &&
-            ($xPlugin = $this->jaxon->di()->g($this->aRegistryPlugins[$sType])))
+            ($xPlugin = $this->di->g($this->aRegistryPlugins[$sType])))
         {
             $xPlugin->register($sType, $sCallable, $xPlugin->checkOptions($sCallable, $xOptions));
             return;
@@ -292,40 +251,90 @@ class PluginManager
                 // Register a function with options
                 $this->registerCallable($sCallableType, $xKey, $xValue);
             }
-            else
-            {
-                continue;
-                // Todo: throw an exception
-            }
         }
     }
 
     /**
      * Read and set Jaxon options from a JSON config file
      *
-     * @param Config $xAppConfig    The config options
+     * @param Config $xConfig The config options
+     * @param Config|null $xPkgConfig The user provided package options
      *
      * @return void
      * @throws SetupException
      */
-    private function _registerFromConfig(Config $xAppConfig)
+    private function _registerFromConfig(Config $xConfig, ?Config $xPkgConfig = null)
     {
         // Register functions
-        $this->registerCallablesFromConfig($xAppConfig, 'functions', Jaxon::CALLABLE_FUNCTION);
-
+        $this->registerCallablesFromConfig($xConfig, 'functions', Jaxon::CALLABLE_FUNCTION);
         // Register classes
-        $this->registerCallablesFromConfig($xAppConfig, 'classes', Jaxon::CALLABLE_CLASS);
-
+        $this->registerCallablesFromConfig($xConfig, 'classes', Jaxon::CALLABLE_CLASS);
         // Register directories
-        $this->registerCallablesFromConfig($xAppConfig, 'directories', Jaxon::CALLABLE_DIR);
+        $this->registerCallablesFromConfig($xConfig, 'directories', Jaxon::CALLABLE_DIR);
+        // Register the view namespaces
+        // Note: the $xPkgConfig can provide a "template" option, which is used to customize
+        // the user defined view namespaces. That's why it is needed here.
+        $this->di->getViewManager()->addNamespaces($xConfig, $xPkgConfig);
 
         // Register classes in DI container
-        $di = $this->jaxon->di();
-        $aContainerConfig = $xAppConfig->getOption('container', []);
+        $aContainerConfig = $xConfig->getOption('container', []);
         foreach($aContainerConfig as $sClassName => $xClosure)
         {
-            $di->set($sClassName, $xClosure);
+            $this->di->set($sClassName, $xClosure);
         }
+    }
+
+    /**
+     * Get package options
+     *
+     * @param string $sClassName    The package class
+     *
+     * @return array
+     * @throws SetupException
+     */
+    private function getPackageOptions(string $sClassName): array
+    {
+        if(!is_subclass_of($sClassName, Package::class))
+        {
+            $sMessage = $this->xTranslator->trans('errors.register.invalid', ['name' => $sClassName]);
+            throw new SetupException($sMessage);
+        }
+        // $this->aPackages contains packages config file paths.
+        $aLibOptions = $sClassName::config();
+        if(is_string($aLibOptions))
+        {
+            $aLibOptions = $this->jaxon->readConfig($aLibOptions);
+        }
+        if(!is_array($aLibOptions))
+        {
+            $sMessage = $this->xTranslator->trans('errors.register.invalid', ['name' => $sClassName]);
+            throw new SetupException($sMessage);
+        }
+        return $aLibOptions;
+    }
+
+    /**
+     * Register a package
+     *
+     * @param string $sClassName    The package class
+     * @param array $aPkgOptions    The user provided package options
+     *
+     * @return void
+     * @throws SetupException
+     */
+    public function registerPackage(string $sClassName, array $aPkgOptions)
+    {
+        $sClassName = trim($sClassName, '\\ ');
+        $aLibOptions = $this->getPackageOptions($sClassName);
+        // Add the package name to the config
+        $aLibOptions['package'] = $sClassName;
+        $xLibConfig = $this->di->newConfig($aLibOptions);
+        $xPkgConfig = $this->di->newConfig($aPkgOptions);
+        $this->di->registerPackage($sClassName, $xPkgConfig);
+        // Register the declarations in the package config.
+        $this->_registerFromConfig($xLibConfig, $xPkgConfig);
+        // Register the package as a code generator.
+        $this->xCodeGenerator->addGenerator($sClassName, 500);
     }
 
     /**
@@ -342,9 +351,9 @@ class PluginManager
 
         // Register packages
         $aPackageConfig = $xAppConfig->getOption('packages', []);
-        foreach($aPackageConfig as $sClassName => $aOptions)
+        foreach($aPackageConfig as $sClassName => $aPkgOptions)
         {
-            $this->registerPackage($sClassName, $aOptions);
+            $this->registerPackage($sClassName, $aPkgOptions);
         }
     }
 
@@ -363,28 +372,12 @@ class PluginManager
         {
             return null;
         }
-        $xPlugin = $this->jaxon->di()->g($this->aResponsePlugins[$sName]);
+        $xPlugin = $this->di->g($this->aResponsePlugins[$sName]);
         if(($xResponse))
         {
             $xPlugin->setResponse($xResponse);
         }
         return $xPlugin;
-    }
-
-    /**
-     * Find the specified request plugin by name and return a reference to it if one exists
-     *
-     * @param string $sName    The name of the plugin
-     *
-     * @return RequestPlugin|null
-     */
-    public function getRequestPlugin(string $sName): ?RequestPlugin
-    {
-        if(!isset($this->aRequestPlugins[$sName]))
-        {
-            return null;
-        }
-        return $this->jaxon->di()->g($this->aRequestPlugins[$sName]);
     }
 
     /**
