@@ -7,7 +7,7 @@ use Jaxon\Response\Plugin\JQuery\DomSelector;
 use Jaxon\Exception\SetupException;
 
 /**
- * start.php -
+ * start.php
  *
  * This file is automatically loaded by the Composer autoloader
  *
@@ -66,10 +66,8 @@ function pm(): ParameterFactory
  */
 function jq(string $sPath = '', string $sContext = ''): DomSelector
 {
-    $xConfig = Jaxon::getInstance()->config();
-    $jQueryNs = $xConfig->getOption('core.jquery.no_conflict', false) ? 'jQuery' : '$';
-    return new DomSelector($jQueryNs, $sPath, $sContext);
+    return Jaxon::getInstance()->di()->getJQueryPlugin()->selector($sPath, $sContext);
 }
 
 // Register the Jaxon request and response plugins
-jaxon()->di()->getPluginManager()->registerPlugins();
+Jaxon::getInstance()->di()->getPluginManager()->registerPlugins();

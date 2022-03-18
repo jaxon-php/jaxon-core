@@ -2,9 +2,10 @@
 
 namespace Jaxon\Response\Plugin\JQuery;
 
+use Jaxon\Plugin\ResponsePlugin;
 use Jaxon\Utils\Config\Config;
 
-class JQueryPlugin extends \Jaxon\Plugin\ResponsePlugin
+class JQueryPlugin extends ResponsePlugin
 {
     /**
      * @var Config

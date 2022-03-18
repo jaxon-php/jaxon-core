@@ -2,11 +2,13 @@
 
 namespace Jaxon\Response\Plugin\DataBag;
 
+use Jaxon\Plugin\ResponsePlugin;
+
 use function is_array;
 use function is_string;
 use function json_decode;
 
-class DataBagPlugin extends \Jaxon\Plugin\ResponsePlugin
+class DataBagPlugin extends ResponsePlugin
 {
     /**
      * @var Bag

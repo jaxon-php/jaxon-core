@@ -18,6 +18,8 @@ use Psr\Log\LoggerInterface;
 
 use Closure;
 
+use function trim;
+
 trait AppTrait
 {
     /**
@@ -43,6 +45,16 @@ trait AppTrait
     public function ajaxResponse(): AbstractResponse
     {
         return $this->jaxon->getResponse();
+    }
+
+    /**
+     * Get the configured character encoding
+     *
+     * @return string
+     */
+    public function getCharacterEncoding(): string
+    {
+        return trim($this->jaxon->getOption('core.encoding', ''));
     }
 
     /**
@@ -121,8 +133,8 @@ trait AppTrait
     public function processRequest()
     {
         // Prevent the Jaxon library from sending the response or exiting
-        $this->jaxon->config()->setOption('core.response.send', false);
-        $this->jaxon->config()->setOption('core.process.exit', false);
+        $this->jaxon->setOption('core.response.send', false);
+        $this->jaxon->setOption('core.process.exit', false);
 
         // Process the jaxon request
         $this->jaxon->processRequest();

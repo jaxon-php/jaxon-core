@@ -46,7 +46,6 @@ use Jaxon\Response\ResponseManager;
 use Jaxon\Session\SessionInterface;
 use Jaxon\Ui\Dialogs\Dialog;
 use Jaxon\Ui\View\ViewRenderer;
-use Jaxon\Utils\Config\Config;
 use Jaxon\Utils\Http\UriException;
 use Jaxon\Utils\Template\Engine as TemplateEngine;
 use Jaxon\Utils\Translation\Translator;
@@ -240,43 +239,6 @@ class Jaxon implements LoggerAwareInterface
     }
 
     /**
-     * Get the library config
-     *
-     * @return Config
-     */
-    public function config(): Config
-    {
-        return $this->xConfig;
-    }
-
-    /**
-     * Read a config file
-     *
-     * @param string $sConfigFile
-     *
-     * @return array
-     * @throws SetupException
-     */
-    public function readConfig(string $sConfigFile): array
-    {
-        return $this->xConfigManager->read($sConfigFile);
-    }
-
-    /**
-     * Load a config file
-     *
-     * @param string $sConfigFile
-     * @param string $sConfigSection
-     *
-     * @return void
-     * @throws SetupException
-     */
-    public function loadConfig(string $sConfigFile, string $sConfigSection = '')
-    {
-        $this->xConfigManager->load($sConfigFile, $sConfigSection);
-    }
-
-    /**
      * Set the value of a config option
      *
      * @param string $sName    The option name
@@ -312,27 +274,6 @@ class Jaxon implements LoggerAwareInterface
     public function hasOption(string $sName): bool
     {
         return $this->xConfigManager->hasOption($sName);
-    }
-
-    /**
-     * Create a new the config set
-     *
-     * @return Config            The config manager
-     * @throws SetupException
-     */
-    public function newConfig(): Config
-    {
-        return $this->xConfigManager->newConfig();
-    }
-
-    /**
-     * Get the configured character encoding
-     *
-     * @return string
-     */
-    public function getCharacterEncoding(): string
-    {
-        return trim($this->xConfigManager->getOption('core.encoding', ''));
     }
 
     /**
@@ -504,7 +445,6 @@ class Jaxon implements LoggerAwareInterface
      * Return the javascript header code and file includes
      *
      * @return string
-     * @throws UriException
      */
     public function getJs(): string
     {
@@ -515,7 +455,6 @@ class Jaxon implements LoggerAwareInterface
      * Return the CSS header code and file includes
      *
      * @return string
-     * @throws UriException
      */
     public function getCss(): string
     {

@@ -12,15 +12,11 @@
 
 namespace Jaxon\App;
 
-use Jaxon\Jaxon;
 use Jaxon\Config\ConfigManager;
 use Jaxon\Plugin\PluginManager;
 use Jaxon\Request\Handler\RequestHandler;
-use Jaxon\Ui\View\ViewManager;
 use Jaxon\Utils\Config\Config;
-use Jaxon\Utils\Translation\Translator;
 use Jaxon\Exception\SetupException;
-use Jaxon\Utils\Config\Exception\DataDepth;
 
 class Bootstrap
 {
@@ -35,19 +31,9 @@ class Bootstrap
     private $xPluginManager;
 
     /**
-     * @var ViewManager
-     */
-    private $xViewManager;
-
-    /**
      * @var RequestHandler
      */
     private $xRequestHandler;
-
-    /**
-     * @var Translator
-     */
-    private $xTranslator;
 
     /**
      * The library options
@@ -103,18 +89,13 @@ class Bootstrap
      *
      * @param ConfigManager $xConfigManager
      * @param PluginManager $xPluginManager
-     * @param ViewManager $xViewManager
      * @param RequestHandler $xRequestHandler
-     * @param Translator $xTranslator
      */
-    public function __construct(ConfigManager $xConfigManager, PluginManager $xPluginManager,
-        ViewManager $xViewManager, RequestHandler $xRequestHandler, Translator $xTranslator)
+    public function __construct(ConfigManager $xConfigManager, PluginManager $xPluginManager, RequestHandler $xRequestHandler)
     {
         $this->xConfigManager = $xConfigManager;
         $this->xPluginManager = $xPluginManager;
-        $this->xViewManager = $xViewManager;
         $this->xRequestHandler = $xRequestHandler;
-        $this->xTranslator = $xTranslator;
     }
 
     /**
@@ -187,8 +168,6 @@ class Bootstrap
     {
         // Register user functions and classes
         $this->xPluginManager->registerFromConfig($xAppConfig);
-        // Save the view namespaces
-        $this->xViewManager->addNamespaces($xAppConfig);
         // Call the on boot callbacks
         $this->xRequestHandler->onBoot();
     }

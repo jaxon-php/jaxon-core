@@ -22,7 +22,6 @@ use Jaxon\Utils\Template\Engine as TemplateEngine;
 use function ksort;
 use function md5;
 use function trim;
-use function rtrim;
 use function is_subclass_of;
 
 class CodeGenerator
@@ -156,7 +155,6 @@ class CodeGenerator
      * @param string $sClassName
      *
      * @return void
-     * @throws UriException
      */
     private function generatePluginCodes(string $sClassName)
     {
@@ -181,7 +179,6 @@ class CodeGenerator
      * Render the generated CSS ans js codes
      *
      * @return void
-     * @throws UriException
      */
     private function renderCodes()
     {
@@ -201,16 +198,12 @@ class CodeGenerator
         // Prepend Jaxon javascript files to HTML tags for Js
         $aJsFiles = $this->xAssetManager->getJsLibFiles();
         $this->sJs = $this->render('includes.js', ['aUrls' => $aJsFiles]) . "\n" . $this->sJs;
-        $sJsConfigVars = $this->render('config.js', $this->xAssetManager->getOptionVars());
-        // These three parts are always rendered together
-        $this->sJsScript = $sJsConfigVars . "\n" . $this->sJsScript . "\n" . $this->sJsReadyScript;
     }
 
     /**
      * Generate the Jaxon CSS ans js codes
      *
      * @return void
-     * @throws UriException
      */
     private function generateCodes()
     {
@@ -233,7 +226,6 @@ class CodeGenerator
      * Get the HTML tags to include Jaxon CSS code and files into the page
      *
      * @return string
-     * @throws UriException
      */
     public function getCss(): string
     {
@@ -245,7 +237,6 @@ class CodeGenerator
      * Get the HTML tags to include Jaxon javascript files into the page
      *
      * @return string
-     * @throws UriException
      */
     public function getJs(): string
     {
@@ -275,13 +266,16 @@ class CodeGenerator
             $sScript .= $this->getJs() . "\n";
         }
 
+        $sJsConfigVars = $this->render('config.js', $this->xAssetManager->getOptionVars());
+        // These three parts are always rendered together
+        $sJsScript = $sJsConfigVars . "\n" . $this->sJsScript . "\n" . $this->sJsReadyScript;
         if($this->xAssetManager->shallCreateJsFiles() &&
-            ($sUrl = $this->xAssetManager->createJsFiles($this->getHash(), $this->sJsScript)))
+            ($sUrl = $this->xAssetManager->createJsFiles($this->getHash(), $sJsScript)))
         {
             return $sScript . $this->render('include.js', ['sUrl' => $sUrl]) . "\n" .
                 $this->render('wrapper.js', ['sScript' => $this->sJsInlineScript]);
         }
         return $sScript . $this->render('wrapper.js',
-            ['sScript' => $this->sJsScript . "\n" . $this->sJsInlineScript]);
+            ['sScript' => $sJsScript . "\n" . $this->sJsInlineScript]);
     }
 }

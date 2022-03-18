@@ -81,12 +81,22 @@ trait PluginTrait
     }
 
     /**
-     * Get the upload plugin
+     * Get the upload handler
      *
      * @return UploadHandler|null
      */
     public function getUploadHandler(): ?UploadHandler
     {
         return $this->g(UploadHandler::class);
+    }
+
+    /**
+     * Get the jQuery plugin
+     *
+     * @return JQueryPlugin
+     */
+    public function getJQueryPlugin(): JQueryPlugin
+    {
+        return $this->g(JQueryPlugin::class);
     }
 }
