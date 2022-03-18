@@ -14,18 +14,28 @@
 
 namespace Jaxon\Config;
 
-use Jaxon\Exception\SetupException;
 use Jaxon\Utils\Config\Config;
+use Jaxon\Utils\Config\Reader;
+use Jaxon\Utils\Translation\Translator;
+use Jaxon\Exception\SetupException;
 use Jaxon\Utils\Config\Exception\DataDepth;
 use Jaxon\Utils\Config\Exception\FileAccess;
 use Jaxon\Utils\Config\Exception\FileContent;
 use Jaxon\Utils\Config\Exception\FileExtension;
 use Jaxon\Utils\Config\Exception\YamlExtension;
-use Jaxon\Utils\Config\Reader;
-use Jaxon\Utils\Translation\Translator;
 
-class ConfigManager extends Reader
+class ConfigManager
 {
+    /**
+     * @var Config
+     */
+    protected $xConfig;
+
+    /**
+     * @var Reader
+     */
+    protected $xReader;
+
     /**
      * @var Translator
      */
@@ -35,11 +45,13 @@ class ConfigManager extends Reader
      * The constructor
      *
      * @param Config $xConfig
+     * @param Reader $xReader
      * @param Translator $xTranslator
      */
-    public function __construct(Config $xConfig, Translator $xTranslator)
+    public function __construct(Config $xConfig, Reader $xReader, Translator $xTranslator)
     {
-        parent::__construct($xConfig);
+        $this->xConfig = $xConfig;
+        $this->xReader = $xReader;
         $this->xTranslator = $xTranslator;
     }
 
@@ -55,7 +67,7 @@ class ConfigManager extends Reader
     {
         try
         {
-            return parent::read($sConfigFile);
+            return $this->xReader->read($sConfigFile);
         }
         catch(YamlExtension $e)
         {
@@ -80,6 +92,49 @@ class ConfigManager extends Reader
     }
 
     /**
+     * Read options from a config file and set the library config
+     *
+     * @param string $sConfigFile The full path to the config file
+     * @param string $sConfigSection The section of the config file to be loaded
+     *
+     * @return void
+     * @throws SetupException
+     */
+    public function load(string $sConfigFile, string $sConfigSection = '')
+    {
+        try
+        {
+            $this->xReader->load($this->xConfig, $sConfigFile, $sConfigSection);
+        }
+        catch(YamlExtension $e)
+        {
+            $sMessage = $this->xTranslator->trans('errors.yaml.install');
+            throw new SetupException($sMessage);
+        }
+        catch(FileExtension $e)
+        {
+            $sMessage = $this->xTranslator->trans('errors.file.extension', ['path' => $sConfigFile]);
+            throw new SetupException($sMessage);
+        }
+        catch(FileAccess $e)
+        {
+            $sMessage = $this->xTranslator->trans('errors.file.access', ['path' => $sConfigFile]);
+            throw new SetupException($sMessage);
+        }
+        catch(FileContent $e)
+        {
+            $sMessage = $this->xTranslator->trans('errors.file.content', ['path' => $sConfigFile]);
+            throw new SetupException($sMessage);
+        }
+        catch(DataDepth $e)
+        {
+            $sMessage = $this->xTranslator->trans('errors.data.depth',
+                ['key' => $e->sPrefix, 'depth' => $e->nDepth]);
+            throw new SetupException($sMessage);
+        }
+    }
+
+    /**
      * Set the config options of the library
      *
      * @param array $aOptions
@@ -99,6 +154,44 @@ class ConfigManager extends Reader
                 ['key' => $e->sPrefix, 'depth' => $e->nDepth]);
             throw new SetupException($sMessage);
         }
+    }
+
+    /**
+     * Set the value of a config option
+     *
+     * @param string $sName The option name
+     * @param mixed $xValue The option value
+     *
+     * @return void
+     */
+    public function setOption(string $sName, $xValue)
+    {
+        $this->xConfig->setOption($sName, $xValue);
+    }
+
+    /**
+     * Get the value of a config option
+     *
+     * @param string $sName The option name
+     * @param mixed $xDefault The default value, to be returned if the option is not defined
+     *
+     * @return mixed
+     */
+    public function getOption(string $sName, $xDefault = null)
+    {
+        return $this->xConfig->getOption($sName, $xDefault);
+    }
+
+    /**
+     * Check the presence of a config option
+     *
+     * @param string $sName The option name
+     *
+     * @return bool
+     */
+    public function hasOption(string $sName): bool
+    {
+        return $this->xConfig->hasOption($sName);
     }
 
     /**

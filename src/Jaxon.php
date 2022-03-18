@@ -47,7 +47,6 @@ use Jaxon\Session\SessionInterface;
 use Jaxon\Ui\Dialogs\Dialog;
 use Jaxon\Ui\View\ViewRenderer;
 use Jaxon\Utils\Config\Config;
-use Jaxon\Utils\Config\Exception\DataDepth;
 use Jaxon\Utils\Http\UriException;
 use Jaxon\Utils\Template\Engine as TemplateEngine;
 use Jaxon\Utils\Translation\Translator;
@@ -92,11 +91,6 @@ class Jaxon implements LoggerAwareInterface
     private static $xContainer = null;
 
     /**
-     * @var Config
-     */
-    protected $xConfig;
-
-    /**
      * @var Translator
      */
     protected $xTranslator;
@@ -136,10 +130,10 @@ class Jaxon implements LoggerAwareInterface
      */
     private static function initInstance()
     {
-        // Save the Jaxon instance in the DI
+        // Save the Jaxon and container instances in the DI
         self::$xContainer->val(Jaxon::class, self::$xInstance);
+        self::$xContainer->val(Container::class, self::$xContainer);
         // Set the attributes from the container
-        self::$xInstance->xConfig = self::$xContainer->g(Config::class);
         self::$xInstance->xTranslator = self::$xContainer->g(Translator::class);
         self::$xInstance->xConfigManager = self::$xContainer->g(ConfigManager::class);
         self::$xInstance->xPluginManager = self::$xContainer->g(PluginManager::class);
@@ -279,17 +273,7 @@ class Jaxon implements LoggerAwareInterface
      */
     public function loadConfig(string $sConfigFile, string $sConfigSection = '')
     {
-        $aConfigOptions = $this->readConfig($sConfigFile);
-        try
-        {
-            // Set up the lib config options.
-            $this->xConfig->setOptions($aConfigOptions, $sConfigSection);
-        }
-        catch(DataDepth $e)
-        {
-            $sMessage = $this->xTranslator->trans('errors.data.depth', ['key' => $e->sPrefix, 'depth' => $e->nDepth]);
-            throw new SetupException($sMessage);
-        }
+        $this->xConfigManager->load($sConfigFile, $sConfigSection);
     }
 
     /**
@@ -302,7 +286,7 @@ class Jaxon implements LoggerAwareInterface
      */
     public function setOption(string $sName, $sValue)
     {
-        $this->xConfig->setOption($sName, $sValue);
+        $this->xConfigManager->setOption($sName, $sValue);
     }
 
     /**
@@ -315,7 +299,7 @@ class Jaxon implements LoggerAwareInterface
      */
     public function getOption(string $sName, $xDefault = null)
     {
-        return $this->xConfig->getOption($sName, $xDefault);
+        return $this->xConfigManager->getOption($sName, $xDefault);
     }
 
     /**
@@ -327,7 +311,7 @@ class Jaxon implements LoggerAwareInterface
      */
     public function hasOption(string $sName): bool
     {
-        return $this->xConfig->hasOption($sName);
+        return $this->xConfigManager->hasOption($sName);
     }
 
     /**
@@ -348,7 +332,7 @@ class Jaxon implements LoggerAwareInterface
      */
     public function getCharacterEncoding(): string
     {
-        return trim($this->xConfig->getOption('core.encoding', ''));
+        return trim($this->xConfigManager->getOption('core.encoding', ''));
     }
 
     /**
@@ -477,7 +461,7 @@ class Jaxon implements LoggerAwareInterface
      * @return RequestFactory|null
      * @throws SetupException
      */
-    public function request(string $sClassName): ?RequestFactory
+    public function request(string $sClassName = ''): ?RequestFactory
     {
         return $this->factory()->request($sClassName);
     }
@@ -566,20 +550,20 @@ class Jaxon implements LoggerAwareInterface
     public function processRequest()
     {
         // Check to see if headers have already been sent out, in which case we can't do our job
-        if(headers_sent($filename, $linenumber))
+        if(headers_sent($sFilename, $nLineNumber))
         {
             echo $this->xTranslator->trans('errors.output.already-sent', [
-                'location' => $filename . ':' . $linenumber
+                'location' => $sFilename . ':' . $nLineNumber
             ]), "\n", $this->xTranslator->trans('errors.output.advice');
             exit();
         }
 
         $this->xRequestHandler->processRequest();
 
-        if(($this->xConfig->getOption('core.response.send')))
+        if(($this->xConfigManager->getOption('core.response.send')))
         {
             $this->xResponseManager->sendOutput();
-            if(($this->xConfig->getOption('core.process.exit')))
+            if(($this->xConfigManager->getOption('core.process.exit')))
             {
                 exit();
             }
