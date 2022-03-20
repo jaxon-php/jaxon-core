@@ -2,14 +2,16 @@
 
 namespace Jaxon\Container\Traits;
 
-use Jaxon\Jaxon;
 use Jaxon\Config\ConfigManager;
+use Jaxon\Container\Container;
 use Jaxon\Plugin\PluginManager;
 use Jaxon\Request\Factory\Factory;
 use Jaxon\Request\Factory\ParameterFactory;
 use Jaxon\Request\Factory\RequestFactory;
 use Jaxon\Request\Handler\ArgumentManager;
+use Jaxon\Request\Handler\CallbackManager;
 use Jaxon\Request\Handler\RequestHandler;
+use Jaxon\Request\Handler\UploadHandler;
 use Jaxon\Request\Plugin\CallableClass\CallableRegistry;
 use Jaxon\Response\ResponseManager;
 use Jaxon\Response\Plugin\DataBag\DataBagPlugin;
@@ -30,16 +32,21 @@ trait RequestTrait
         $this->set(ArgumentManager::class, function($c) {
             return new ArgumentManager($c->g(ConfigManager::class), $c->g(Translator::class));
         });
+        // Callback Manager
+        $this->set(CallbackManager::class, function() {
+            return new CallbackManager();
+        });
         // Request Handler
         $this->set(RequestHandler::class, function($c) {
-            return new RequestHandler($c->g(Jaxon::class), $c->g(ConfigManager::class),
-                $c->g(ArgumentManager::class), $c->g(PluginManager::class),
-                $c->g(ResponseManager::class), $c->g(DataBagPlugin::class));
+            return new RequestHandler($c->g(Container::class), $c->g(ConfigManager::class),
+                $c->g(ArgumentManager::class), $c->g(PluginManager::class), $c->g(ResponseManager::class),
+                $c->g(CallbackManager::class), $c->g(UploadHandler::class), $c->g(DataBagPlugin::class),
+                $c->g(Translator::class));
         });
         // Request Factory
         $this->set(Factory::class, function($c) {
-            return new Factory($c->g(CallableRegistry::class),
-                $c->g(RequestFactory::class), $c->g(ParameterFactory::class));
+            return new Factory($c->g(CallableRegistry::class), $c->g(RequestFactory::class),
+                $c->g(ParameterFactory::class));
         });
         // Factory for requests to functions
         $this->set(RequestFactory::class, function($c) {

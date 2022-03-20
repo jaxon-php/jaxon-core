@@ -55,7 +55,6 @@ use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
-use function headers_sent;
 use function trim;
 
 class Jaxon implements LoggerAwareInterface
@@ -503,29 +502,12 @@ class Jaxon implements LoggerAwareInterface
      * @return void
      *
      * @throws RequestException
+     * @throws SetupException
      * @see <Jaxon\Jaxon->canProcessRequest>
      */
     public function processRequest()
     {
-        // Check to see if headers have already been sent out, in which case we can't do our job
-        if(headers_sent($sFilename, $nLineNumber))
-        {
-            echo $this->xTranslator->trans('errors.output.already-sent', [
-                'location' => $sFilename . ':' . $nLineNumber
-            ]), "\n", $this->xTranslator->trans('errors.output.advice');
-            exit();
-        }
-
         $this->xRequestHandler->processRequest();
-
-        if(($this->xConfigManager->getOption('core.response.send')))
-        {
-            $this->xResponseManager->sendOutput();
-            if(($this->xConfigManager->getOption('core.process.exit')))
-            {
-                exit();
-            }
-        }
     }
 
     /**

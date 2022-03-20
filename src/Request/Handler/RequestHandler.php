@@ -20,7 +20,7 @@
 
 namespace Jaxon\Request\Handler;
 
-use Jaxon\Jaxon;
+use Jaxon\Container\Container;
 use Jaxon\Config\ConfigManager;
 use Jaxon\Plugin\PluginManager;
 use Jaxon\Plugin\RequestPlugin;
@@ -29,21 +29,23 @@ use Jaxon\Response\ResponseManager;
 use Jaxon\Response\Plugin\DataBag\DataBagPlugin;
 use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;
+use Jaxon\Utils\Translation\Translator;
 
 use Exception;
 
 use function call_user_func;
 use function call_user_func_array;
 use function error_reporting;
+use function headers_sent;
 use function ob_end_clean;
 use function ob_get_level;
 
 class RequestHandler
 {
     /**
-     * @var Jaxon
+     * @var Container
      */
-    private $jaxon;
+    private $di;
 
     /**
      * @var ConfigManager
@@ -79,11 +81,9 @@ class RequestHandler
     private $xCallbackManager;
 
     /**
-     * The request plugin that is able to process the current request
-     *
-     * @var RequestPlugin
+     * @var UploadHandler
      */
-    private $xTargetRequestPlugin = null;
+    private $xUploadHandler;
 
     /**
      * The data bag response plugin
@@ -93,26 +93,43 @@ class RequestHandler
     private $xDataBagPlugin;
 
     /**
+     * @var Translator
+     */
+    private $xTranslator;
+
+    /**
+     * The request plugin that is able to process the current request
+     *
+     * @var RequestPlugin
+     */
+    private $xTargetRequestPlugin = null;
+
+    /**
      * The constructor
      *
-     * @param Jaxon $jaxon
+     * @param Container $di
      * @param ConfigManager $xConfigManager
      * @param ArgumentManager $xArgument
-     * @param PluginManager  $xPluginManager
-     * @param ResponseManager  $xResponseManager
-     * @param DataBagPlugin  $xDataBagPlugin
+     * @param PluginManager $xPluginManager
+     * @param ResponseManager $xResponseManager
+     * @param CallbackManager $xCallbackManager
+     * @param UploadHandler|null $xUploadHandler
+     * @param DataBagPlugin $xDataBagPlugin
+     * @param Translator $xTranslator
      */
-    public function __construct(Jaxon $jaxon, ConfigManager $xConfigManager, ArgumentManager $xArgument,
-        PluginManager $xPluginManager, ResponseManager $xResponseManager, DataBagPlugin $xDataBagPlugin)
+    public function __construct(Container $di, ConfigManager $xConfigManager, ArgumentManager $xArgument,
+        PluginManager $xPluginManager, ResponseManager $xResponseManager, CallbackManager $xCallbackManager,
+        ?UploadHandler $xUploadHandler, DataBagPlugin $xDataBagPlugin, Translator $xTranslator)
     {
-        $this->jaxon = $jaxon;
+        $this->di = $di;
         $this->xConfigManager = $xConfigManager;
         $this->xPluginManager = $xPluginManager;
         $this->xResponseManager = $xResponseManager;
         $this->xArgumentManager = $xArgument;
+        $this->xCallbackManager = $xCallbackManager;
+        $this->xUploadHandler = $xUploadHandler;
         $this->xDataBagPlugin = $xDataBagPlugin;
-
-        $this->xCallbackManager = new CallbackManager();
+        $this->xTranslator = $xTranslator;
     }
 
     /**
@@ -260,21 +277,21 @@ class RequestHandler
         {
             if($sClassName::canProcessRequest())
             {
-                $this->xTargetRequestPlugin = $this->jaxon->di()->get($sClassName);
+                $this->xTargetRequestPlugin = $this->di->get($sClassName);
                 return true;
             }
         }
 
         // Check if the upload plugin is enabled
-        if(!($xUploadHandler = $this->jaxon->di()->getUploadHandler()))
+        if($this->xUploadHandler === null)
         {
             return false;
         }
 
         // If no other plugin than the upload plugin can process the request,
         // then it is an HTTP (not ajax) upload request
-        $xUploadHandler->isHttpUpload();
-        return $xUploadHandler->canProcessRequest();
+        $this->xUploadHandler->isHttpUpload();
+        return $this->xUploadHandler->canProcessRequest();
     }
 
     /**
@@ -286,14 +303,24 @@ class RequestHandler
      */
     private function _processRequest()
     {
+        $bEndRequest = false;
+        // Handle before processing event
+        if(($this->xTargetRequestPlugin))
+        {
+            $this->onBefore($bEndRequest);
+        }
+        if($bEndRequest)
+        {
+            return;
+        }
+
         try
         {
             // Process uploaded files, if the upload plugin is enabled
-            if(($xUploadHandler = $this->jaxon->di()->getUploadHandler()))
+            if($this->xUploadHandler !== null)
             {
-                $xUploadHandler->processRequest();
+                $this->xUploadHandler->processRequest();
             }
-
             // Process the request
             if(($this->xTargetRequestPlugin))
             {
@@ -315,6 +342,12 @@ class RequestHandler
                 $this->onError($e);
             }
             throw $e;
+        }
+
+        // Handle after processing event
+        if(($this->xTargetRequestPlugin))
+        {
+            $this->onAfter($bEndRequest);
         }
     }
 
@@ -345,26 +378,25 @@ class RequestHandler
      */
     public function processRequest()
     {
+        // Check to see if headers have already been sent out, in which case we can't do our job
+        if(headers_sent($sFilename, $nLineNumber))
+        {
+            echo $this->xTranslator->trans('errors.output.already-sent', [
+                'location' => $sFilename . ':' . $nLineNumber
+            ]), "\n", $this->xTranslator->trans('errors.output.advice');
+            exit();
+        }
+
         // Check if there is a plugin to process this request
         if(!$this->canProcessRequest())
         {
             return;
         }
 
-        $bEndRequest = false;
+        $this->_processRequest();
 
-        // Handle before processing event
-        if(($this->xTargetRequestPlugin))
-        {
-            $this->onBefore($bEndRequest);
-        }
-
-        if(!$bEndRequest)
-        {
-            $this->_processRequest();
-            // Process the databag
-            $this->xDataBagPlugin->writeCommand();
-        }
+        // Process the databag
+        $this->xDataBagPlugin->writeCommand();
 
         // Clean the processing buffer
         if(($this->xConfigManager->getOption('core.process.clean')))
@@ -372,18 +404,21 @@ class RequestHandler
             $this->_cleanOutputBuffers();
         }
 
-        if(($this->xTargetRequestPlugin))
-        {
-            // Handle after processing event
-            $this->onAfter($bEndRequest);
-        }
-
         // If the called function returned no response, take the global response
         if(!$this->xResponseManager->getResponse())
         {
-            $this->xResponseManager->append($this->jaxon->getResponse());
+            $this->xResponseManager->append($this->di->getResponse());
         }
 
         $this->xResponseManager->printDebug();
+
+        if(($this->xConfigManager->getOption('core.response.send')))
+        {
+            $this->xResponseManager->sendOutput();
+            if(($this->xConfigManager->getOption('core.process.exit')))
+            {
+                exit();
+            }
+        }
     }
 }
