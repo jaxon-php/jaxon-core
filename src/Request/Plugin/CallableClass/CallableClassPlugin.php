@@ -28,7 +28,6 @@ use Jaxon\Request\Handler\RequestHandler;
 use Jaxon\Request\Target;
 use Jaxon\Request\Validator;
 use Jaxon\Response\ResponseManager;
-use Jaxon\Utils\Config\Config;
 use Jaxon\Utils\Template\Engine as TemplateEngine;
 use Jaxon\Utils\Translation\Translator;
 use Jaxon\Exception\RequestException;
@@ -49,9 +48,9 @@ use function uksort;
 class CallableClassPlugin extends RequestPlugin
 {
     /**
-     * @var Config
+     * @var string
      */
-    protected $xConfig;
+    protected $sPrefix;
 
     /**
      * The request handler
@@ -122,7 +121,7 @@ class CallableClassPlugin extends RequestPlugin
     /**
      * The class constructor
      *
-     * @param Config  $xConfig
+     * @param string  $sPrefix
      * @param RequestHandler  $xRequestHandler
      * @param ResponseManager  $xResponseManager
      * @param CallableRegistry $xRegistry    The callable class registry
@@ -131,11 +130,11 @@ class CallableClassPlugin extends RequestPlugin
      * @param Translator  $xTranslator
      * @param Validator  $xValidator
      */
-    public function __construct(Config $xConfig, RequestHandler $xRequestHandler,
+    public function __construct(string $sPrefix, RequestHandler $xRequestHandler,
         ResponseManager $xResponseManager, CallableRegistry $xRegistry, CallableRepository $xRepository,
         TemplateEngine  $xTemplateEngine, Translator $xTranslator, Validator $xValidator)
     {
-        $this->xConfig = $xConfig;
+        $this->sPrefix = $sPrefix;
         $this->xRequestHandler = $xRequestHandler;
         $this->xResponseManager = $xResponseManager;
         $this->xRegistry = $xRegistry;
@@ -256,7 +255,6 @@ class CallableClassPlugin extends RequestPlugin
     private function getNamespacesScript(): string
     {
         $sCode = '';
-        $sPrefix = $this->xConfig->getOption('core.prefix.class');
         $aJsClasses = [];
         $aNamespaces = array_keys($this->xRepository->getNamespaces());
         foreach($aNamespaces as $sNamespace)
@@ -270,7 +268,7 @@ class CallableClassPlugin extends RequestPlugin
                 // Generate code for this object
                 if(!isset($aJsClasses[$sJsClass]))
                 {
-                    $sCode .= "$sPrefix$sJsClass = {};\n";
+                    $sCode .= $this->sPrefix . "$sJsClass = {};\n";
                     $aJsClasses[$sJsClass] = $sJsClass;
                 }
                 $offset = $dotPosition + 1;
@@ -291,7 +289,7 @@ class CallableClassPlugin extends RequestPlugin
     {
         $aProtectedMethods = is_subclass_of($sClassName, CallableClass::class) ? $this->aProtectedMethods : [];
         return $this->xTemplateEngine->render('jaxon::callables/object.js', [
-            'sPrefix' => $this->xConfig->getOption('core.prefix.class'),
+            'sPrefix' => $this->sPrefix,
             'sClass' => $xCallableObject->getJsName(),
             'aMethods' => $xCallableObject->getMethods($aProtectedMethods),
         ]);

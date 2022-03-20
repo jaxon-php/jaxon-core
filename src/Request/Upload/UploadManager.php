@@ -11,8 +11,8 @@
 
 namespace Jaxon\Request\Upload;
 
+use Jaxon\Config\ConfigManager;
 use Jaxon\Request\Validator;
-use Jaxon\Utils\Config\Config;
 use Jaxon\Utils\Translation\Translator;
 use Jaxon\Exception\RequestException;
 
@@ -45,9 +45,9 @@ use function unlink;
 class UploadManager
 {
     /**
-     * @var Config
+     * @var ConfigManager
      */
-    protected $xConfig;
+    protected $xConfigManager;
 
     /**
      * The request data validator
@@ -78,13 +78,13 @@ class UploadManager
     /**
      * The constructor
      *
-     * @param Config $xConfig
+     * @param ConfigManager $xConfigManager
      * @param Validator $xValidator
      * @param Translator $xTranslator
      */
-    public function __construct(Config $xConfig, Validator $xValidator, Translator $xTranslator)
+    public function __construct(ConfigManager $xConfigManager, Validator $xValidator, Translator $xTranslator)
     {
-        $this->xConfig = $xConfig;
+        $this->xConfigManager = $xConfigManager;
         $this->xValidator = $xValidator;
         $this->xTranslator = $xTranslator;
         $this->sUploadSubdir = $this->randomName() . DIRECTORY_SEPARATOR;
@@ -261,8 +261,8 @@ class UploadManager
     protected function getUploadDir(string $sFieldId): string
     {
         // Default upload dir
-        $sDefaultUploadDir = $this->xConfig->getOption('upload.default.dir');
-        $sUploadDir = $this->xConfig->getOption('upload.files.' . $sFieldId . '.dir', $sDefaultUploadDir);
+        $sDefaultUploadDir = $this->xConfigManager->getOption('upload.default.dir');
+        $sUploadDir = $this->xConfigManager->getOption('upload.files.' . $sFieldId . '.dir', $sDefaultUploadDir);
         if(!is_string($sUploadDir) || !is_dir($sUploadDir))
         {
             throw new RequestException($this->xTranslator->trans('errors.upload.access'));
@@ -279,7 +279,7 @@ class UploadManager
     protected function getUploadTempDir(): string
     {
         // Default upload dir
-        $sUploadDir = $this->xConfig->getOption('upload.default.dir');
+        $sUploadDir = $this->xConfigManager->getOption('upload.default.dir');
         if(!is_string($sUploadDir) || !is_dir($sUploadDir))
         {
             throw new RequestException($this->xTranslator->trans('errors.upload.access'));
@@ -302,7 +302,7 @@ class UploadManager
         {
             throw new RequestException($this->xTranslator->trans('errors.upload.invalid'));
         }
-        $sUploadDir = $this->xConfig->getOption('upload.default.dir', '');
+        $sUploadDir = $this->xConfigManager->getOption('upload.default.dir', '');
         $sUploadDir = rtrim(trim($sUploadDir), '/\\') . DIRECTORY_SEPARATOR;
         $sUploadDir .= 'tmp' . DIRECTORY_SEPARATOR;
         $sUploadTempFile = $sUploadDir . $sTempFile . '.json';

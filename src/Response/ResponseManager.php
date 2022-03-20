@@ -21,12 +21,10 @@
 
 namespace Jaxon\Response;
 
-use Jaxon\Jaxon;
+use Jaxon\Container\Container;
 use Jaxon\Request\Handler\ArgumentManager;
-use Jaxon\Utils\Config\Config;
 use Jaxon\Utils\Translation\Translator;
 
-use function trim;
 use function header;
 use function strlen;
 use function gmdate;
@@ -35,14 +33,14 @@ use function get_class;
 class ResponseManager
 {
     /**
-     * @var Jaxon
+     * @var Container
      */
-    private $jaxon;
+    private $di;
 
     /**
-     * @var Config
+     * @var string
      */
-    private $xConfig;
+    private $sCharacterEncoding;
 
     /**
      * @var ArgumentManager
@@ -72,15 +70,16 @@ class ResponseManager
     /**
      * The class constructor
      *
-     * @param Jaxon $jaxon
-     * @param Config $xConfig
+     * @param string $sCharacterEncoding
+     * @param Container $di
      * @param ArgumentManager $xArgumentManager
      * @param Translator $xTranslator
      */
-    public function __construct(Jaxon $jaxon, Config $xConfig, ArgumentManager $xArgumentManager, Translator $xTranslator)
+    public function __construct(string $sCharacterEncoding, Container $di,
+        ArgumentManager $xArgumentManager, Translator $xTranslator)
     {
-        $this->jaxon = $jaxon;
-        $this->xConfig = $xConfig;
+        $this->di = $di;
+        $this->sCharacterEncoding = $sCharacterEncoding;
         $this->xArgumentManager = $xArgumentManager;
         $this->xTranslator = $xTranslator;
         $this->aDebugMessages = [];
@@ -163,7 +162,7 @@ class ResponseManager
     public function error(string $sMessage)
     {
         $this->clear();
-        $this->append($this->jaxon->newResponse());
+        $this->append($this->di->newResponse());
         $this->debug($sMessage);
     }
 
@@ -200,10 +199,9 @@ class ResponseManager
         }
 
         $sCharacterSet = '';
-        $sCharacterEncoding = trim($this->xConfig->getOption('core.encoding', ''));
-        if(strlen($sCharacterEncoding) > 0)
+        if(strlen($this->sCharacterEncoding) > 0)
         {
-            $sCharacterSet = '; charset="' . $sCharacterEncoding . '"';
+            $sCharacterSet = '; charset="' . $this->sCharacterEncoding . '"';
         }
 
         header('content-type: ' . $this->xResponse->getContentType() . ' ' . $sCharacterSet);

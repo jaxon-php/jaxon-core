@@ -14,7 +14,7 @@
 
 namespace Jaxon\Plugin\Code;
 
-use Jaxon\Jaxon;
+use Jaxon\Container\Container;
 use Jaxon\Plugin\Plugin;
 use Jaxon\Utils\Http\UriException;
 use Jaxon\Utils\Template\Engine as TemplateEngine;
@@ -27,9 +27,14 @@ use function is_subclass_of;
 class CodeGenerator
 {
     /**
-     * @var Jaxon
+     * @var string
      */
-    private $jaxon;
+    private $sVersion;
+
+    /**
+     * @var Container
+     */
+    private $di;
 
     /**
      * The Jaxon template engine
@@ -88,13 +93,16 @@ class CodeGenerator
     /**
      * The constructor
      *
-     * @param Jaxon $jaxon
+     * @param string $sVersion
+     * @param Container $di
      * @param TemplateEngine $xTemplateEngine
      * @param AssetManager $xAssetManager
      */
-    public function __construct(Jaxon $jaxon, TemplateEngine $xTemplateEngine, AssetManager $xAssetManager)
+    public function __construct(string $sVersion, Container $di,
+        TemplateEngine $xTemplateEngine, AssetManager $xAssetManager)
     {
-        $this->jaxon = $jaxon;
+        $this->sVersion = $sVersion;
+        $this->di = $di;
         $this->xTemplateEngine = $xTemplateEngine;
         $this->xAssetManager = $xAssetManager;
         $this->sJsOptions = $xAssetManager->getJsOptions();
@@ -126,10 +134,10 @@ class CodeGenerator
      */
     private function getHash(): string
     {
-        $sHash = $this->jaxon->getVersion();
+        $sHash = $this->sVersion;
         foreach($this->aClassNames as $sClassName)
         {
-            $xGenerator = $this->jaxon->di()->get($sClassName);
+            $xGenerator = $this->di->get($sClassName);
             $sHash .= $xGenerator->getHash();
         }
         return md5($sHash);
@@ -158,7 +166,7 @@ class CodeGenerator
      */
     private function generatePluginCodes(string $sClassName)
     {
-        $xGenerator = $this->jaxon->di()->get($sClassName);
+        $xGenerator = $this->di->get($sClassName);
         if(!is_subclass_of($xGenerator, Plugin::class) || $this->xAssetManager->shallIncludeAssets($xGenerator))
         {
             // HTML tags for CSS

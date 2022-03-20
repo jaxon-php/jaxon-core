@@ -2,7 +2,7 @@
 
 namespace Jaxon\Container\Traits;
 
-use Jaxon\Jaxon;
+use Jaxon\Container\Container;
 use Jaxon\Ui\Dialogs\Dialog;
 use Jaxon\Ui\Pagination\Paginator;
 use Jaxon\Ui\Pagination\PaginationRenderer;
@@ -22,7 +22,7 @@ trait ViewTrait
     {
         // Dialog
         $this->set(Dialog::class, function($c) {
-            return new Dialog($c->g(Jaxon::class));
+            return new Dialog($c->g(Container::class));
         });
         // View ResponseManager
         $this->set(ViewManager::class, function($c) {

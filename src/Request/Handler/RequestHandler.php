@@ -21,12 +21,12 @@
 namespace Jaxon\Request\Handler;
 
 use Jaxon\Jaxon;
+use Jaxon\Config\ConfigManager;
 use Jaxon\Plugin\PluginManager;
 use Jaxon\Plugin\RequestPlugin;
 use Jaxon\Response\AbstractResponse;
 use Jaxon\Response\ResponseManager;
 use Jaxon\Response\Plugin\DataBag\DataBagPlugin;
-use Jaxon\Utils\Config\Config;
 use Jaxon\Exception\RequestException;
 
 use Exception;
@@ -45,9 +45,9 @@ class RequestHandler
     private $jaxon;
 
     /**
-     * @var Config
+     * @var ConfigManager
      */
-    protected $xConfig;
+    protected $xConfigManager;
 
     /**
      * The plugin manager.
@@ -89,23 +89,23 @@ class RequestHandler
      *
      * @var DataBagPlugin
      */
-    private $xDataBagPlugin = null;
+    private $xDataBagPlugin;
 
     /**
      * The constructor
      *
      * @param Jaxon $jaxon
-     * @param Config $xConfig
+     * @param ConfigManager $xConfigManager
      * @param ArgumentManager $xArgument
      * @param PluginManager  $xPluginManager
      * @param ResponseManager  $xResponseManager
      * @param DataBagPlugin  $xDataBagPlugin
      */
-    public function __construct(Jaxon $jaxon, Config $xConfig, ArgumentManager $xArgument,
+    public function __construct(Jaxon $jaxon, ConfigManager $xConfigManager, ArgumentManager $xArgument,
         PluginManager $xPluginManager, ResponseManager $xResponseManager, DataBagPlugin $xDataBagPlugin)
     {
         $this->jaxon = $jaxon;
-        $this->xConfig = $xConfig;
+        $this->xConfigManager = $xConfigManager;
         $this->xPluginManager = $xPluginManager;
         $this->xResponseManager = $xResponseManager;
         $this->xArgumentManager = $xArgument;
@@ -365,7 +365,7 @@ class RequestHandler
         }
 
         // Clean the processing buffer
-        if(($this->xConfig->getOption('core.process.clean')))
+        if(($this->xConfigManager->getOption('core.process.clean')))
         {
             $this->_cleanOutputBuffers();
         }

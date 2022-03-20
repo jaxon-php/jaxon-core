@@ -22,7 +22,7 @@
 
 namespace Jaxon\Request\Handler;
 
-use Jaxon\Utils\Config\Config;
+use Jaxon\Config\ConfigManager;
 use Jaxon\Utils\Translation\Translator;
 use Jaxon\Exception\RequestException;
 
@@ -52,9 +52,9 @@ class ArgumentManager
     const METHOD_POST = 2;
 
     /**
-     * @var Config
+     * @var ConfigManager
      */
-    protected $xConfig;
+    protected $xConfigManager;
 
     /**
      * @var Translator
@@ -88,12 +88,12 @@ class ArgumentManager
      *
      * Get and decode the arguments of the HTTP request
      *
-     * @param Config $xConfig
+     * @param ConfigManager $xConfigManager
      * @param Translator $xTranslator
      */
-    public function __construct(Config $xConfig, Translator $xTranslator)
+    public function __construct(ConfigManager $xConfigManager, Translator $xTranslator)
     {
-        $this->xConfig = $xConfig;
+        $this->xConfigManager = $xConfigManager;
         $this->xTranslator = $xTranslator;
         $this->aArgs = [];
         $this->nMethod = self::METHOD_UNKNOWN;
@@ -274,7 +274,7 @@ class ArgumentManager
 
         array_walk($this->aArgs, [$this, '__argumentDecode']);
 
-        if(!$this->xConfig->getOption('core.decode_utf8'))
+        if(!$this->xConfigManager->getOption('core.decode_utf8'))
         {
             return $this->aArgs;
         }
@@ -282,7 +282,7 @@ class ArgumentManager
         $this->cUtf8Decoder = function($sStr) {
             return $sStr;
         };
-        $sEncoding = $this->xConfig->getOption('core.encoding', '');
+        $sEncoding = $this->xConfigManager->getOption('core.encoding', '');
         if(function_exists('iconv'))
         {
             $this->cUtf8Decoder = function($sStr) use($sEncoding) {
@@ -313,7 +313,7 @@ class ArgumentManager
         };
         $this->aArgs = $aDst;
 
-        $this->xConfig->setOption('core.decode_utf8', false);
+        $this->xConfigManager->setOption('core.decode_utf8', false);
 
         return $this->aArgs;
     }

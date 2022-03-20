@@ -70,10 +70,10 @@ class UploadHandler
      * The constructor
      *
      * @param UploadManager $xUploadManager    HTTP file upload manager
-     * @param Translator $xTranslator
      * @param ResponseManager $xResponseManager
+     * @param Translator $xTranslator
      */
-    public function __construct(UploadManager $xUploadManager, Translator $xTranslator, ResponseManager $xResponseManager)
+    public function __construct(UploadManager $xUploadManager, ResponseManager $xResponseManager, Translator $xTranslator)
     {
         $this->xResponseManager = $xResponseManager;
         $this->xUploadManager = $xUploadManager;

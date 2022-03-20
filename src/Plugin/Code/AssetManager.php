@@ -2,8 +2,8 @@
 
 namespace Jaxon\Plugin\Code;
 
+use Jaxon\Config\ConfigManager;
 use Jaxon\Plugin\Plugin;
-use Jaxon\Utils\Config\Config;
 use Jaxon\Utils\File\Minifier;
 use Jaxon\Utils\Http\UriDetector;
 use Jaxon\Utils\Http\UriException;
@@ -17,9 +17,9 @@ use function file_put_contents;
 class AssetManager
 {
     /**
-     * @var Config
+     * @var ConfigManager
      */
-    protected $xConfig;
+    protected $xConfigManager;
 
     /**
      * @var UriDetector
@@ -46,16 +46,16 @@ class AssetManager
     /**
      * The constructor
      *
-     * @param Config $xConfig
+     * @param ConfigManager $xConfigManager
      * @param UriDetector $xUriDetector
      * @param Minifier $xMinifier
      */
-    public function __construct(Config $xConfig, UriDetector $xUriDetector, Minifier $xMinifier)
+    public function __construct(ConfigManager $xConfigManager, UriDetector $xUriDetector, Minifier $xMinifier)
     {
-        $this->xConfig = $xConfig;
+        $this->xConfigManager = $xConfigManager;
         $this->xUriDetector = $xUriDetector;
         $this->xMinifier = $xMinifier;
-        $this->bIncludeAllAssets = $xConfig->getOption('assets.include.all', true);
+        $this->bIncludeAllAssets = $xConfigManager->getOption('assets.include.all', true);
     }
 
     /**
@@ -65,7 +65,7 @@ class AssetManager
      */
     public function getJsOptions(): string
     {
-        return $this->xConfig->getOption('js.app.options', '');
+        return $this->xConfigManager->getOption('js.app.options', '');
     }
 
     /**
@@ -82,7 +82,7 @@ class AssetManager
             return true;
         }
         $sPluginOptionName = 'assets.include.' . $xPlugin->getName();
-        return $this->xConfig->getOption($sPluginOptionName, true);
+        return $this->xConfigManager->getOption($sPluginOptionName, true);
     }
 
     /**
@@ -92,14 +92,14 @@ class AssetManager
      */
     public function getJsLibFiles(): array
     {
-        $sJsExtension = $this->xConfig->getOption('js.app.minify') ? '.min.js' : '.js';
+        $sJsExtension = $this->xConfigManager->getOption('js.app.minify') ? '.min.js' : '.js';
         // The URI for the javascript library files
-        $sJsLibUri = rtrim($this->xConfig->getOption('js.lib.uri', self::JS_LIB_URL), '/') . '/';
+        $sJsLibUri = rtrim($this->xConfigManager->getOption('js.lib.uri', self::JS_LIB_URL), '/') . '/';
         // Add component files to the javascript file array;
         $aJsFiles = [$sJsLibUri . 'jaxon.core' . $sJsExtension];
-        if($this->xConfig->getOption('core.debug.on'))
+        if($this->xConfigManager->getOption('core.debug.on'))
         {
-            $sLanguage = $this->xConfig->getOption('core.language');
+            $sLanguage = $this->xConfigManager->getOption('core.language');
             $aJsFiles[] = $sJsLibUri . 'jaxon.debug' . $sJsExtension;
             $aJsFiles[] = $sJsLibUri . 'lang/jaxon.' . $sLanguage . $sJsExtension;
         }
@@ -114,26 +114,26 @@ class AssetManager
      */
     public function getOptionVars(): array
     {
-        if(!$this->xConfig->hasOption('core.request.uri'))
+        if(!$this->xConfigManager->hasOption('core.request.uri'))
         {
-            $this->xConfig->setOption('core.request.uri', $this->xUriDetector->detect($_SERVER));
+            $this->xConfigManager->setOption('core.request.uri', $this->xUriDetector->detect($_SERVER));
         }
         return [
             'sResponseType'         => 'JSON',
-            'sVersion'              => $this->xConfig->getOption('core.version'),
-            'sLanguage'             => $this->xConfig->getOption('core.language'),
-            'bLanguage'             => $this->xConfig->hasOption('core.language'),
-            'sRequestURI'           => $this->xConfig->getOption('core.request.uri'),
-            'sDefaultMode'          => $this->xConfig->getOption('core.request.mode'),
-            'sDefaultMethod'        => $this->xConfig->getOption('core.request.method'),
-            'sCsrfMetaName'         => $this->xConfig->getOption('core.request.csrf_meta'),
-            'bDebug'                => $this->xConfig->getOption('core.debug.on'),
-            'bVerboseDebug'         => $this->xConfig->getOption('core.debug.verbose'),
-            'sDebugOutputID'        => $this->xConfig->getOption('core.debug.output_id'),
-            'nResponseQueueSize'    => $this->xConfig->getOption('js.lib.queue_size'),
-            'sStatusMessages'       => $this->xConfig->getOption('js.lib.show_status') ? 'true' : 'false',
-            'sWaitCursor'           => $this->xConfig->getOption('js.lib.show_cursor') ? 'true' : 'false',
-            'sDefer'                => $this->xConfig->getOption('js.app.options', ''),
+            'sVersion'              => $this->xConfigManager->getOption('core.version'),
+            'sLanguage'             => $this->xConfigManager->getOption('core.language'),
+            'bLanguage'             => $this->xConfigManager->hasOption('core.language'),
+            'sRequestURI'           => $this->xConfigManager->getOption('core.request.uri'),
+            'sDefaultMode'          => $this->xConfigManager->getOption('core.request.mode'),
+            'sDefaultMethod'        => $this->xConfigManager->getOption('core.request.method'),
+            'sCsrfMetaName'         => $this->xConfigManager->getOption('core.request.csrf_meta'),
+            'bDebug'                => $this->xConfigManager->getOption('core.debug.on'),
+            'bVerboseDebug'         => $this->xConfigManager->getOption('core.debug.verbose'),
+            'sDebugOutputID'        => $this->xConfigManager->getOption('core.debug.output_id'),
+            'nResponseQueueSize'    => $this->xConfigManager->getOption('js.lib.queue_size'),
+            'sStatusMessages'       => $this->xConfigManager->getOption('js.lib.show_status') ? 'true' : 'false',
+            'sWaitCursor'           => $this->xConfigManager->getOption('js.lib.show_cursor') ? 'true' : 'false',
+            'sDefer'                => $this->xConfigManager->getOption('js.app.options', ''),
         ];
     }
 
@@ -147,9 +147,9 @@ class AssetManager
         // Check config options
         // - The js.app.export option must be set to true
         // - The js.app.uri and js.app.dir options must be set to non null values
-        if(!$this->xConfig->getOption('js.app.export', false) ||
-            !$this->xConfig->hasOption('js.app.uri') ||
-            !$this->xConfig->hasOption('js.app.dir'))
+        if(!$this->xConfigManager->getOption('js.app.export', false) ||
+            !$this->xConfigManager->hasOption('js.app.uri') ||
+            !$this->xConfigManager->hasOption('js.app.dir'))
         {
             return false;
         }
@@ -167,8 +167,8 @@ class AssetManager
     public function createJsFiles(string $sHash, string $sJsCode): string
     {
         // Check dir access
-        $sJsFileName = $this->xConfig->getOption('js.app.file', $sHash);
-        $sJsDirectory = rtrim($this->xConfig->getOption('js.app.dir'), '\/') . DIRECTORY_SEPARATOR;
+        $sJsFileName = $this->xConfigManager->getOption('js.app.file', $sHash);
+        $sJsDirectory = rtrim($this->xConfigManager->getOption('js.app.dir'), '\/') . DIRECTORY_SEPARATOR;
         // - The js.app.dir must be writable
         if(!$sJsFileName || !is_dir($sJsDirectory) || !is_writable($sJsDirectory))
         {
@@ -177,12 +177,12 @@ class AssetManager
 
         $sJsFilePath = $sJsDirectory . $sJsFileName . '.js';
         $sJsMinFilePath = $sJsDirectory . $sJsFileName . '.min.js';
-        $sJsFileUri = rtrim($this->xConfig->getOption('js.app.uri'), '/') . "/$sJsFileName";
+        $sJsFileUri = rtrim($this->xConfigManager->getOption('js.app.uri'), '/') . "/$sJsFileName";
         if(!is_file($sJsFilePath) && !file_put_contents($sJsFilePath, $sJsCode))
         {
             return '';
         }
-        if(!$this->xConfig->getOption('js.app.minify', false))
+        if(!$this->xConfigManager->getOption('js.app.minify', false))
         {
             return $sJsFileUri . '.js';
         }

@@ -53,11 +53,6 @@ class PluginManager
     protected $di;
 
     /**
-     * @var Config
-     */
-    protected $xConfig;
-
-    /**
      * @var Translator
      */
     protected $xTranslator;
@@ -99,16 +94,14 @@ class PluginManager
      * The constructor
      *
      * @param Container $di
-     * @param Config $xConfig
      * @param Translator $xTranslator
      * @param ConfigManager $xConfigManager
      * @param CodeGenerator $xCodeGenerator
      */
-    public function __construct(Container $di, Config $xConfig, Translator $xTranslator,
+    public function __construct(Container $di, Translator $xTranslator,
         ConfigManager $xConfigManager, CodeGenerator $xCodeGenerator)
     {
         $this->di = $di;
-        $this->xConfig = $xConfig;
         $this->xTranslator = $xTranslator;
         $this->xConfigManager = $xConfigManager;
         $this->xCodeGenerator = $xCodeGenerator;

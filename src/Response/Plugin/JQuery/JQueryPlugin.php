@@ -3,23 +3,22 @@
 namespace Jaxon\Response\Plugin\JQuery;
 
 use Jaxon\Plugin\ResponsePlugin;
-use Jaxon\Utils\Config\Config;
 
 class JQueryPlugin extends ResponsePlugin
 {
     /**
-     * @var Config
+     * @var string
      */
-    protected $xConfig;
+    protected $jQueryNs;
 
     /**
      * The class constructor
      *
-     * @param Config $xConfig
+     * @param string $jQueryNs
      */
-    public function __construct(Config $xConfig)
+    public function __construct(string $jQueryNs)
     {
-        $this->xConfig = $xConfig;
+        $this->jQueryNs = $jQueryNs;
     }
 
     /**
@@ -64,8 +63,7 @@ class JQueryPlugin extends ResponsePlugin
      */
     public function selector(string $sPath = '', string $sContext = ''): DomSelector
     {
-        $jQueryNs = $this->xConfig->getOption('core.jquery.no_conflict', false) ? 'jQuery' : '$';
-        $xSelector = new DomSelector($jQueryNs, $sPath, $sContext);
+        $xSelector = new DomSelector($this->jQueryNs, $sPath, $sContext);
         if($this->xResponse !== null)
         {
             $this->addCommand(['cmd' => 'jquery'], $xSelector);

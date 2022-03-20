@@ -11,14 +11,14 @@
 
 namespace Jaxon\Ui\Dialogs;
 
-use Jaxon\Jaxon;
+use Jaxon\Container\Container;
 
 class Dialog
 {
     /**
-     * @var Jaxon
+     * @var Container
      */
-    private $jaxon;
+    private $di;
 
     /**
      * The QuestionInterface class name (javascript confirm function)
@@ -51,11 +51,11 @@ class Dialog
     /**
      * The constructor
      *
-     * @param Jaxon $jaxon
+     * @param Container $di
      */
-    public function __construct(Jaxon $jaxon)
+    public function __construct(Container $di)
     {
-        $this->jaxon = $jaxon;
+        $this->di = $di;
         // Javascript confirm function
         $this->xDefaultQuestion = new Question();
         // Javascript alert function
@@ -81,7 +81,7 @@ class Dialog
      */
     public function getQuestion()
     {
-        return ($this->sQuestion) ? $this->jaxon->di()->get($this->sQuestion) : $this->xDefaultQuestion;
+        return ($this->sQuestion) ? $this->di->get($this->sQuestion) : $this->xDefaultQuestion;
     }
 
     /**
@@ -113,7 +113,7 @@ class Dialog
      */
     public function getMessage(): MessageInterface
     {
-        return ($this->sMessage) ? $this->jaxon->di()->get($this->sMessage) : $this->xDefaultMessage;
+        return ($this->sMessage) ? $this->di->get($this->sMessage) : $this->xDefaultMessage;
     }
 
     /**

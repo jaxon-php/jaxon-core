@@ -3,6 +3,7 @@
 namespace Jaxon\Container\Traits;
 
 use Jaxon\Jaxon;
+use Jaxon\Config\ConfigManager;
 use Jaxon\Plugin\PluginManager;
 use Jaxon\Request\Factory\Factory;
 use Jaxon\Request\Factory\ParameterFactory;
@@ -14,7 +15,6 @@ use Jaxon\Response\ResponseManager;
 use Jaxon\Response\Plugin\DataBag\DataBagPlugin;
 use Jaxon\Ui\Dialogs\Dialog;
 use Jaxon\Ui\Pagination\Paginator;
-use Jaxon\Utils\Config\Config;
 use Jaxon\Utils\Translation\Translator;
 
 trait RequestTrait
@@ -28,11 +28,11 @@ trait RequestTrait
     {
         // Argument Manager
         $this->set(ArgumentManager::class, function($c) {
-            return new ArgumentManager($c->g(Config::class), $c->g(Translator::class));
+            return new ArgumentManager($c->g(ConfigManager::class), $c->g(Translator::class));
         });
         // Request Handler
         $this->set(RequestHandler::class, function($c) {
-            return new RequestHandler($c->g(Jaxon::class), $c->g(Config::class),
+            return new RequestHandler($c->g(Jaxon::class), $c->g(ConfigManager::class),
                 $c->g(ArgumentManager::class), $c->g(PluginManager::class),
                 $c->g(ResponseManager::class), $c->g(DataBagPlugin::class));
         });
@@ -43,7 +43,7 @@ trait RequestTrait
         });
         // Factory for requests to functions
         $this->set(RequestFactory::class, function($c) {
-            $sPrefix = $c->g(Config::class)->getOption('core.prefix.function');
+            $sPrefix = $c->g(ConfigManager::class)->getOption('core.prefix.function');
             return new RequestFactory($sPrefix, $c->g(Dialog::class), $c->g(Paginator::class));
         });
         // Parameter Factory

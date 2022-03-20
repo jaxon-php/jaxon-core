@@ -2,6 +2,7 @@
 
 namespace Jaxon\Container\Traits;
 
+use Jaxon\Config\ConfigManager;
 use Jaxon\Jaxon;
 use Jaxon\Container\Container;
 use Jaxon\Request\Handler\RequestHandler;
@@ -40,7 +41,8 @@ trait CallableTrait
         });
         // Callable class plugin
         $this->set(CallableClassPlugin::class, function($c) {
-            return new CallableClassPlugin($c->g(Config::class), $c->g(RequestHandler::class),
+            $sPrefix = $c->g(ConfigManager::class)->getOption('core.prefix.class');
+            return new CallableClassPlugin($sPrefix, $c->g(RequestHandler::class),
                 $c->g(ResponseManager::class), $c->g(CallableRegistry::class), $c->g(CallableRepository::class),
                 $c->g(TemplateEngine::class), $c->g(Translator::class), $c->g(Validator::class));
         });
@@ -50,7 +52,7 @@ trait CallableTrait
         });
         // Callable function plugin
         $this->set(CallableFunctionPlugin::class, function($c) {
-            $sPrefix = $c->g(Config::class)->getOption('core.prefix.function');
+            $sPrefix = $c->g(ConfigManager::class)->getOption('core.prefix.function');
             return new CallableFunctionPlugin($sPrefix, $c->g(RequestHandler::class),
                 $c->g(ResponseManager::class), $c->g(TemplateEngine::class),
                 $c->g(Translator::class), $c->g(Validator::class));
