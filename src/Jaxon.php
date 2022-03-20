@@ -44,8 +44,8 @@ use Jaxon\Response\AbstractResponse;
 use Jaxon\Response\Response;
 use Jaxon\Response\ResponseManager;
 use Jaxon\Session\SessionInterface;
-use Jaxon\Ui\Dialogs\Dialog;
 use Jaxon\Ui\View\ViewRenderer;
+use Jaxon\Utils\Config\Config;
 use Jaxon\Utils\Http\UriException;
 use Jaxon\Utils\Template\Engine as TemplateEngine;
 use Jaxon\Utils\Translation\Translator;
@@ -56,6 +56,7 @@ use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
 use function headers_sent;
+use function trim;
 
 class Jaxon implements LoggerAwareInterface
 {
@@ -274,6 +275,24 @@ class Jaxon implements LoggerAwareInterface
     public function hasOption(string $sName): bool
     {
         return $this->xConfigManager->hasOption($sName);
+    }
+
+    /**
+     * Read the options from the file, if provided, and return the config
+     *
+     * @param string $sConfigFile The full path to the config file
+     * @param string $sConfigSection The section of the config file to be loaded
+     *
+     * @return Config
+     * @throws SetupException
+     */
+    public function config(string $sConfigFile = '', string $sConfigSection = ''): Config
+    {
+        if(!empty(($sConfigFile = trim($sConfigFile))))
+        {
+            $this->xConfigManager->load($sConfigFile, trim($sConfigSection));
+        }
+        return $this->xConfigManager->getConfig();
     }
 
     /**
@@ -551,16 +570,6 @@ class Jaxon implements LoggerAwareInterface
     public function callback(): CallbackManager
     {
         return $this->xRequestHandler->getCallbackManager();
-    }
-
-    /**
-     * Get the dialog wrapper
-     *
-     * @return Dialog
-     */
-    public function dialog(): Dialog
-    {
-        return $this->di()->getDialog();
     }
 
     /**

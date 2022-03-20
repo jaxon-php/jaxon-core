@@ -66,7 +66,10 @@ class JQueryPlugin extends ResponsePlugin
     {
         $jQueryNs = $this->xConfig->getOption('core.jquery.no_conflict', false) ? 'jQuery' : '$';
         $xSelector = new DomSelector($jQueryNs, $sPath, $sContext);
-        $this->addCommand(['cmd' => 'jquery'], $xSelector);
+        if($this->xResponse !== null)
+        {
+            $this->addCommand(['cmd' => 'jquery'], $xSelector);
+        }
         return $xSelector;
     }
 }
