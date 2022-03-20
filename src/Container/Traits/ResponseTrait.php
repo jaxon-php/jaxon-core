@@ -8,7 +8,6 @@ use Jaxon\Plugin\PluginManager;
 use Jaxon\Request\Handler\ArgumentManager;
 use Jaxon\Response\Response;
 use Jaxon\Response\ResponseManager;
-use Jaxon\Utils\Config\Config;
 use Jaxon\Utils\Translation\Translator;
 
 use function trim;
@@ -27,8 +26,7 @@ trait ResponseTrait
          */
         // Global Response
         $this->set(Response::class, function($c) {
-            return new Response($c->g(Config::class),
-                $c->g(Translator::class), $c->g(PluginManager::class));
+            return new Response($c->g(Translator::class), $c->g(PluginManager::class));
         });
         // Response Manager
         $this->set(ResponseManager::class, function($c) {
@@ -65,7 +63,6 @@ trait ResponseTrait
      */
     public function newResponse(): Response
     {
-        return new Response($this->g(Config::class),
-            $this->g(Translator::class), $this->g(PluginManager::class));
+        return new Response($this->g(Translator::class), $this->g(PluginManager::class));
     }
 }

@@ -33,14 +33,12 @@ namespace Jaxon\Response;
 use Jaxon\Plugin\PluginManager;
 use Jaxon\Plugin\ResponsePlugin;
 use Jaxon\Response\Plugin\JQuery\DomSelector;
-use Jaxon\Utils\Config\Config;
 use Jaxon\Utils\Translation\Translator;
 use Jaxon\Exception\RequestException;
 
 use function array_keys;
 use function array_map;
 use function array_merge;
-use function array_pop;
 use function count;
 use function is_array;
 use function is_integer;
@@ -52,11 +50,6 @@ class Response extends AbstractResponse
     use Traits\DomTrait;
     use Traits\JsTrait;
     use Traits\DomTreeTrait;
-
-    /**
-     * @var Config
-     */
-    protected $xConfig;
 
     /**
      * @var Translator
@@ -86,13 +79,11 @@ class Response extends AbstractResponse
     /**
      * The constructor
      *
-     * @param Config $xConfig
      * @param Translator $xTranslator
      * @param PluginManager $xPluginManager
      */
-    public function __construct(Config $xConfig, Translator $xTranslator, PluginManager $xPluginManager)
+    public function __construct(Translator $xTranslator, PluginManager $xPluginManager)
     {
-        $this->xConfig = $xConfig;
         $this->xTranslator = $xTranslator;
         $this->xPluginManager = $xPluginManager;
     }
@@ -104,7 +95,7 @@ class Response extends AbstractResponse
      */
     public function newResponse(): Response
     {
-        return new Response($this->xConfig, $this->xTranslator, $this->xPluginManager);
+        return new Response($this->xTranslator, $this->xPluginManager);
     }
 
     /**
@@ -161,45 +152,6 @@ class Response extends AbstractResponse
     }
 
     /**
-     * Get the command data, merged with the last one if possible.
-     *
-     * @param array $aAttributes    Associative array of attributes that will describe the command
-     * @param mixed $mData    The data to be associated with this command
-     *
-     * @return array
-     */
-    private function getCommandData(array $aAttributes, $mData): array
-    {
-        if(!$this->xConfig->getOption('core.response.merge') ||
-            !in_array($aAttributes['cmd'], ['js', 'ap']) || ($count = count($this->aCommands)) === 0)
-        {
-            return [false, $mData];
-        }
-        $aLastCommand = $this->aCommands[$count - 1];
-        if($aLastCommand['cmd'] !== $aAttributes['cmd'])
-        {
-            return [false, $mData];
-        }
-        if($aLastCommand['cmd'] === 'js')
-        {
-            if($this->xConfig->getOption('core.response.merge.js'))
-            {
-                return [true, $aLastCommand['data'] . '; ' . $mData];
-            }
-        }
-        elseif($aLastCommand['cmd'] === 'ap')
-        {
-            if($this->xConfig->getOption('core.response.merge.ap') &&
-                $aLastCommand['id'] === $aAttributes['id'] &&
-                $aLastCommand['prop'] === $aAttributes['prop'])
-            {
-                return [true, $aLastCommand['data'] . ' ' . $mData];
-            }
-        }
-        return [false, $mData];
-    }
-
-    /**
      * Add a response command to the array of commands that will be sent to the browser
      *
      * @param array $aAttributes    Associative array of attributes that will describe the command
@@ -213,11 +165,6 @@ class Response extends AbstractResponse
             return is_integer($xAttribute) ? $xAttribute : trim((string)$xAttribute, " \t");
         }, $aAttributes);
 
-        [$bMerged, $mData] = $this->getCommandData($aAttributes, $mData);
-        if($bMerged)
-        {
-            array_pop($this->aCommands);
-        }
         $aAttributes['data'] = $mData;
         $this->aCommands[] = $aAttributes;
 
@@ -355,9 +302,7 @@ class Response extends AbstractResponse
      */
     public function getOutput(): string
     {
-        $aResponse = [
-            'jxnobj' => [],
-        ];
+        $aResponse = ['jxnobj' => []];
         if(($this->xReturnValue))
         {
             $aResponse['jxnrv'] = $this->xReturnValue;
