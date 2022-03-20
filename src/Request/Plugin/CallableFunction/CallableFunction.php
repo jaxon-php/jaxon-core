@@ -23,14 +23,14 @@ namespace Jaxon\Request\Plugin\CallableFunction;
 class CallableFunction
 {
     /**
-     * The name of the function
+     * The name of the function in the ajax call
      *
      * @var string
      */
-    private $sFunctionName;
+    private $sFunction;
 
     /**
-     * The name of the corresponding javascript function
+     * The name of the generated javascript function
      *
      * @var string
      */
@@ -61,14 +61,15 @@ class CallableFunction
     /**
      * The constructor
      *
-     * @param string $sFunctionName
+     * @param string $sFunction
      * @param string $sJsFunction
+     * @param string $sPhpFunction
      */
-    public function __construct(string $sFunctionName, string $sJsFunction)
+    public function __construct(string $sFunction, string $sJsFunction, string $sPhpFunction)
     {
-        $this->sFunctionName = $sFunctionName;
+        $this->sFunction = $sFunction;
         $this->sJsFunction = $sJsFunction;
-        $this->xPhpFunction = $sFunctionName;
+        $this->xPhpFunction = $sPhpFunction;
     }
 
     /**
@@ -78,7 +79,7 @@ class CallableFunction
      */
     public function getName(): string
     {
-        return $this->sFunctionName;
+        return $this->sFunction;
     }
 
     /**

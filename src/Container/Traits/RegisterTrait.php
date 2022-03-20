@@ -24,41 +24,6 @@ use function substr;
 trait RegisterTrait
 {
     /**
-     * Register a callable function
-     *
-     * @param string $sFunctionName    The callable function name
-     * @param string $sJsFunction    The name of the js function
-     * @param array $aOptions    The function options
-     *
-     * @return void
-     */
-    public function registerCallableFunction(string $sFunctionName, string $sJsFunction, array $aOptions)
-    {
-        $this->set('CallableFunction_' . $sFunctionName, function($c) use($sFunctionName, $sJsFunction, $aOptions) {
-            $xConfig = $c->g(Config::class);
-            $sPrefix = $xConfig->getOption('core.prefix.function');
-            $xCallableFunction = new CallableFunction($sFunctionName, $sPrefix . $sJsFunction);
-            foreach($aOptions as $sName => $sValue)
-            {
-                $xCallableFunction->configure($sName, $sValue);
-            }
-            return $xCallableFunction;
-        });
-    }
-
-    /**
-     * Get a registered callable function
-     *
-     * @param string $sFunctionName    The callable function name
-     *
-     * @return CallableFunction
-     */
-    public function getCallableFunction(string $sFunctionName): CallableFunction
-    {
-        return $this->g('CallableFunction_' . $sFunctionName);
-    }
-
-    /**
      * @param mixed $xCallableObject
      * @param array $aOptions
      *

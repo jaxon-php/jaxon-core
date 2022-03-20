@@ -33,6 +33,7 @@ use Jaxon\Utils\Translation\Translator;
 use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;
 
+use function array_keys;
 use function implode;
 use function is_array;
 use function is_string;
@@ -42,9 +43,9 @@ use function trim;
 class CallableFunctionPlugin extends RequestPlugin
 {
     /**
-     * @var Container
+     * @var string
      */
-    private $di;
+    private $sPrefix;
 
     /**
      * The request handler
@@ -78,11 +79,18 @@ class CallableFunctionPlugin extends RequestPlugin
     protected $xTranslator;
 
     /**
-     * The registered user functions names
+     * The registered functions names
      *
      * @var array
      */
     protected $aFunctions = [];
+
+    /**
+     * The registered functions options
+     *
+     * @var array
+     */
+    protected $aOptions = [];
 
     /**
      * The name of the function that is being requested (during the request processing phase)
@@ -94,17 +102,18 @@ class CallableFunctionPlugin extends RequestPlugin
     /**
      * The constructor
      *
-     * @param Container  $di
+     * @param string  $sPrefix
      * @param RequestHandler  $xRequestHandler
      * @param ResponseManager  $xResponseManager
      * @param TemplateEngine  $xTemplateEngine
      * @param Translator  $xTranslator
      * @param Validator  $xValidator
      */
-    public function __construct(Container $di, RequestHandler $xRequestHandler, ResponseManager $xResponseManager,
-        TemplateEngine $xTemplateEngine, Translator $xTranslator, Validator $xValidator)
+    public function __construct(string $sPrefix, RequestHandler $xRequestHandler,
+        ResponseManager $xResponseManager, TemplateEngine $xTemplateEngine,
+        Translator $xTranslator, Validator $xValidator)
     {
-        $this->di = $di;
+        $this->sPrefix = $sPrefix;
         $this->xRequestHandler = $xRequestHandler;
         $this->xResponseManager = $xResponseManager;
         $this->xTemplateEngine = $xTemplateEngine;
@@ -173,16 +182,16 @@ class CallableFunctionPlugin extends RequestPlugin
      */
     public function register(string $sType, string $sCallable, array $aOptions): bool
     {
-        $sFunctionName = trim($sCallable);
+        $sPhpFunction = trim($sCallable);
+        $sFunction = $sPhpFunction;
         // Check if an alias is defined
-        $sJsFunction = $sFunctionName;
         if(isset($aOptions['alias']))
         {
-            $sJsFunction = (string)$aOptions['alias'];
+            $sFunction = (string)$aOptions['alias'];
             unset($aOptions['alias']);
         }
-        $this->aFunctions[$sFunctionName] = $sFunctionName;
-        $this->di->registerCallableFunction($sFunctionName, $sJsFunction, $aOptions);
+        $this->aFunctions[$sFunction] = $sPhpFunction;
+        $this->aOptions[$sFunction] = $aOptions;
         return true;
     }
 
@@ -191,7 +200,28 @@ class CallableFunctionPlugin extends RequestPlugin
      */
     public function getHash(): string
     {
-        return md5(implode('', $this->aFunctions));
+        return md5(implode('', array_keys($this->aFunctions)));
+    }
+
+    /**
+     * Get the callable object for a registered function
+     *
+     * @param string $sFunction
+     *
+     * @return CallableFunction|null
+     */
+    public function getCallable(string $sFunction): ?CallableFunction
+    {
+        if(!isset($this->aFunctions[$sFunction]))
+        {
+            return null;
+        }
+        $xCallable = new CallableFunction($sFunction, $this->sPrefix . $sFunction, $this->aFunctions[$sFunction]);
+        foreach($this->aOptions[$sFunction] as $sName => $sValue)
+        {
+            $xCallable->configure($sName, $sValue);
+        }
+        return $xCallable;
     }
 
     /**
@@ -216,9 +246,9 @@ class CallableFunctionPlugin extends RequestPlugin
     public function getScript(): string
     {
         $code = '';
-        foreach($this->aFunctions as $sName)
+        foreach(array_keys($this->aFunctions) as $sFunction)
         {
-            $xFunction = $this->di->getCallableFunction($sName);
+            $xFunction = $this->getCallable($sFunction);
             $code .= $this->getCallableScript($xFunction);
         }
         return $code;
@@ -251,7 +281,7 @@ class CallableFunctionPlugin extends RequestPlugin
                 ['name' => $this->sRequestedFunction]));
         }
 
-        $xFunction = $this->di->getCallableFunction($this->sRequestedFunction);
+        $xFunction = $this->getCallable($this->sRequestedFunction);
         $aArgs = $this->xRequestHandler->processArguments();
         $xResponse = $xFunction->call($aArgs);
         if(($xResponse))

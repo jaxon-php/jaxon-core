@@ -30,12 +30,13 @@ trait CallableTrait
             return new Validator($c->g(Translator::class), $c->g(Config::class));
         });
         // Callable objects repository
-        $this->set(CallableRepository::class, function() {
-            return new CallableRepository($this);
+        $this->set(CallableRepository::class, function($c) {
+            return new CallableRepository($c->g(Container::class));
         });
         // Callable objects registry
         $this->set(CallableRegistry::class, function($c) {
-            return new CallableRegistry($this, $c->g(CallableRepository::class), $c->g(Translator::class));
+            return new CallableRegistry($c->g(Container::class),
+                $c->g(CallableRepository::class), $c->g(Translator::class));
         });
         // Callable class plugin
         $this->set(CallableClassPlugin::class, function($c) {
@@ -49,7 +50,8 @@ trait CallableTrait
         });
         // Callable function plugin
         $this->set(CallableFunctionPlugin::class, function($c) {
-            return new CallableFunctionPlugin($c->g(Container::class), $c->g(RequestHandler::class),
+            $sPrefix = $c->g(Config::class)->getOption('core.prefix.function');
+            return new CallableFunctionPlugin($sPrefix, $c->g(RequestHandler::class),
                 $c->g(ResponseManager::class), $c->g(TemplateEngine::class),
                 $c->g(Translator::class), $c->g(Validator::class));
         });
@@ -63,5 +65,15 @@ trait CallableTrait
     public function getClassRegistry(): CallableRegistry
     {
         return $this->g(CallableRegistry::class);
+    }
+
+    /**
+     * Get the callable function plugin
+     *
+     * @return CallableFunctionPlugin
+     */
+    public function getCallableFunctionPlugin(): CallableFunctionPlugin
+    {
+        return $this->g(CallableFunctionPlugin::class);
     }
 }
