@@ -5,7 +5,7 @@ namespace Jaxon\Response\Plugin\DataBag;
 use function is_array;
 use function array_map;
 
-class Bag
+class DataBag
 {
     /**
      * @var array

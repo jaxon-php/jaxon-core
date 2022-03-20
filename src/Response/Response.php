@@ -32,6 +32,7 @@ namespace Jaxon\Response;
 
 use Jaxon\Plugin\PluginManager;
 use Jaxon\Plugin\ResponsePlugin;
+use Jaxon\Response\Plugin\DataBag\DataBagContext;
 use Jaxon\Response\Plugin\JQuery\DomSelector;
 use Jaxon\Utils\Translation\Translator;
 use Jaxon\Exception\RequestException;
@@ -149,6 +150,16 @@ class Response extends AbstractResponse
     public function jq(string $sPath = '', string $sContext = ''): DomSelector
     {
         return $this->plugin('jquery')->selector($sPath, $sContext);
+    }
+
+    /**
+     * @param string $sName
+     *
+     * @return DataBagContext
+     */
+    public function bag(string $sName): DataBagContext
+    {
+        return $this->plugin('bags')->bag($sName);;
     }
 
     /**

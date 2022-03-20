@@ -4,7 +4,7 @@ namespace Jaxon;
 
 use Jaxon\Request\Factory\ParameterFactory;
 use Jaxon\Request\Factory\RequestFactory;
-use Jaxon\Response\Plugin\DataBag\Context as DataBagContext;
+use Jaxon\Response\Plugin\DataBag\DataBagContext;
 use Jaxon\Response\Plugin\JQuery\DomSelector;
 use Jaxon\Response\Response;
 use Jaxon\Session\SessionInterface;
@@ -65,9 +65,24 @@ class CallableClass
     }
 
     /**
+     * Get an instance of a Jaxon class by name
+     *
+     * @param string $sName the class name
+     *
+     * @return object
+     * @throws SetupException
+     */
+    public function cl(string $sName)
+    {
+        // Find the class instance
+        return $this->jaxon->instance($sName);
+    }
+
+    /**
      * Get the request factory.
      *
      * @return RequestFactory
+     * @throws SetupException
      */
     public function rq(): RequestFactory
     {
@@ -85,6 +100,16 @@ class CallableClass
     }
 
     /**
+     * Get the uploaded files
+     *
+     * @return array
+     */
+    public function files(): array
+    {
+        return $this->jaxon->upload()->files();
+    }
+
+    /**
      * Create a JQuery DomSelector, and link it to the response attribute.
      *
      * @param string $sPath    The jQuery selector path
@@ -94,31 +119,7 @@ class CallableClass
      */
     public function jq(string $sPath = '', string $sContext = ''): DomSelector
     {
-        return $this->response->plugin('jquery')->selector($sPath, $sContext);
-    }
-
-    /**
-     * Get an instance of a Jaxon class by name
-     *
-     * @param string $sName the class name
-     *
-     * @return object
-     * @throws SetupException
-     */
-    public function cl(string $sName)
-    {
-        // Find the class instance
-        return $this->jaxon->instance($sName);
-    }
-
-    /**
-     * Get the uploaded files
-     *
-     * @return array
-     */
-    public function files(): array
-    {
-        return $this->jaxon->upload()->files();
+        return $this->response->jq($sPath, $sContext);
     }
 
     /**
@@ -130,6 +131,6 @@ class CallableClass
      */
     public function bag(string $sName): DataBagContext
     {
-        return $this->response->plugin('bags')->bag($sName);
+        return $this->response->bag($sName);
     }
 }

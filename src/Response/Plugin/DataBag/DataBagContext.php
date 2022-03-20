@@ -5,28 +5,28 @@ namespace Jaxon\Response\Plugin\DataBag;
 use function is_array;
 use function array_map;
 
-class Context
+class DataBagContext
 {
     /**
-     * @var Bag
+     * @var DataBag
      */
-    protected $xBag = '';
+    protected $xDataBag;
 
     /**
      * @var string
      */
-    protected $sBagName;
+    protected $sName;
 
     /**
      * The constructor
      *
-     * @param Bag $xBag
-     * @param string $sBagName
+     * @param DataBag $xDataBag
+     * @param string $sName
      */
-    public function __construct(Bag $xBag, string $sBagName)
+    public function __construct(DataBag $xDataBag, string $sName)
     {
-        $this->xBag = $xBag;
-        $this->sBagName = $sBagName;
+        $this->xDataBag = $xDataBag;
+        $this->sName = $sName;
     }
 
     /**
@@ -37,7 +37,7 @@ class Context
      */
     public function set(string $sKey, $xValue)
     {
-        $this->xBag->set($this->sBagName, $sKey, $xValue);
+        $this->xDataBag->set($this->sName, $sKey, $xValue);
     }
 
     /**
@@ -48,6 +48,6 @@ class Context
      */
     public function get(string $sKey, $xValue = null)
     {
-        return $this->xBag->get($this->sBagName, $sKey, $xValue);
+        return $this->xDataBag->get($this->sName, $sKey, $xValue);
     }
 }

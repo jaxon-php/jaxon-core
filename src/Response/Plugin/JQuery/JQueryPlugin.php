@@ -35,7 +35,7 @@ class JQueryPlugin extends ResponsePlugin
     public function getHash(): string
     {
         // Use the version number as hash
-        return '3.3.0';
+        return '4.0.0';
     }
 
     /**

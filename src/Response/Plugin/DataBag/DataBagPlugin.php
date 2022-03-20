@@ -11,9 +11,9 @@ use function json_decode;
 class DataBagPlugin extends ResponsePlugin
 {
     /**
-     * @var Bag
+     * @var DataBag
      */
-    protected $xBag;
+    protected $xDataBag;
 
     /**
      * The constructor
@@ -22,7 +22,7 @@ class DataBagPlugin extends ResponsePlugin
     {
         $aData = isset($_POST['jxnbags']) ? $this->readData($_POST) :
             (isset($_GET['jxnbags']) ? $this->readData($_GET) : []);
-        $this->xBag = new Bag($aData);
+        $this->xDataBag = new DataBag($aData);
     }
 
     /**
@@ -58,7 +58,7 @@ class DataBagPlugin extends ResponsePlugin
     public function getHash(): string
     {
         // Use the version number as hash
-        return '1.0.0';
+        return '4.0.0';
     }
 
     /**
@@ -80,19 +80,19 @@ class DataBagPlugin extends ResponsePlugin
      */
     public function writeCommand()
     {
-        if($this->xBag->touched())
+        if($this->xDataBag->touched())
         {
-            $this->addCommand(['cmd' => 'bags.set'], $this->xBag->getAll());
+            $this->addCommand(['cmd' => 'bags.set'], $this->xDataBag->getAll());
         }
     }
 
     /**
      * @param string $sName
      *
-     * @return Context
+     * @return DataBagContext
      */
-    public function bag(string $sName): Context
+    public function bag(string $sName): DataBagContext
     {
-        return new Context($this->xBag, $sName);
+        return new DataBagContext($this->xDataBag, $sName);
     }
 }
