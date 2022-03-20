@@ -102,14 +102,14 @@ class CallableClassPlugin extends RequestPlugin
      *
      * @var string
      */
-    protected $sRequestedClass = '';
+    protected static $sRequestedClass = '';
 
     /**
      * The value of the method parameter of the incoming Jaxon request
      *
      * @var string
      */
-    protected $sRequestedMethod = '';
+    protected static $sRequestedMethod = '';
 
     /**
      * The methods that must not be exported to js
@@ -143,23 +143,6 @@ class CallableClassPlugin extends RequestPlugin
         $this->xTranslator = $xTranslator;
         $this->xValidator = $xValidator;
 
-        if(isset($_GET['jxncls']))
-        {
-            $this->sRequestedClass = trim($_GET['jxncls']);
-        }
-        if(isset($_GET['jxnmthd']))
-        {
-            $this->sRequestedMethod = trim($_GET['jxnmthd']);
-        }
-        if(isset($_POST['jxncls']))
-        {
-            $this->sRequestedClass = trim($_POST['jxncls']);
-        }
-        if(isset($_POST['jxnmthd']))
-        {
-            $this->sRequestedMethod = trim($_POST['jxnmthd']);
-        }
-
         // The methods of the CallableClass class must not be exported
         $xCallableClass = new ReflectionClass(CallableClass::class);
         foreach($xCallableClass->getMethods(ReflectionMethod::IS_PUBLIC) as $xMethod)
@@ -174,18 +157,6 @@ class CallableClassPlugin extends RequestPlugin
     public function getName(): string
     {
         return Jaxon::CALLABLE_CLASS;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getTarget(): ?Target
-    {
-        if(!$this->sRequestedClass || !$this->sRequestedMethod)
-        {
-            return null;
-        }
-        return Target::makeClass($this->sRequestedClass, $this->sRequestedMethod);
     }
 
     /**
@@ -324,16 +295,37 @@ class CallableClassPlugin extends RequestPlugin
     /**
      * @inheritDoc
      */
-    public function canProcessRequest(): bool
+    public static function canProcessRequest(): bool
     {
-        // Check the validity of the class name
-        if(($this->sRequestedClass !== null && !$this->xValidator->validateClass($this->sRequestedClass)) ||
-            ($this->sRequestedMethod !== null && !$this->xValidator->validateMethod($this->sRequestedMethod)))
+        if(isset($_POST['jxncls']))
         {
-            $this->sRequestedClass = null;
-            $this->sRequestedMethod = null;
+            self::$sRequestedClass = trim($_POST['jxncls']);
         }
-        return ($this->sRequestedClass !== null && $this->sRequestedMethod !== null);
+        elseif(isset($_GET['jxncls']))
+        {
+            self::$sRequestedClass = trim($_GET['jxncls']);
+        }
+        if(isset($_POST['jxnmthd']))
+        {
+            self::$sRequestedMethod = trim($_POST['jxnmthd']);
+        }
+        elseif(isset($_GET['jxnmthd']))
+        {
+            self::$sRequestedMethod = trim($_GET['jxnmthd']);
+        }
+        return (self::$sRequestedClass !== '' && self::$sRequestedMethod !== '');
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getTarget(): ?Target
+    {
+        if(!self::$sRequestedClass || !self::$sRequestedMethod)
+        {
+            return null;
+        }
+        return Target::makeClass(self::$sRequestedClass, self::$sRequestedMethod);
     }
 
     /**
@@ -343,20 +335,27 @@ class CallableClassPlugin extends RequestPlugin
      */
     public function processRequest(): bool
     {
-        // Find the requested method
-        $xCallableObject = $this->xRegistry->getCallableObject($this->sRequestedClass);
-        if(!$xCallableObject || !$xCallableObject->hasMethod($this->sRequestedMethod))
+        if(!$this->xValidator->validateClass(self::$sRequestedClass) ||
+            !$this->xValidator->validateMethod(self::$sRequestedMethod))
         {
             // Unable to find the requested object or method
             throw new RequestException($this->xTranslator->trans('errors.objects.invalid',
-                ['class' => $this->sRequestedClass, 'method' => $this->sRequestedMethod]));
+                ['class' => self::$sRequestedClass, 'method' => self::$sRequestedMethod]));
+        }
+        // Find the requested method
+        $xCallableObject = $this->xRegistry->getCallableObject(self::$sRequestedClass);
+        if(!$xCallableObject || !$xCallableObject->hasMethod(self::$sRequestedMethod))
+        {
+            // Unable to find the requested object or method
+            throw new RequestException($this->xTranslator->trans('errors.objects.invalid',
+                ['class' => self::$sRequestedClass, 'method' => self::$sRequestedMethod]));
         }
 
         // Call the requested method
         $aArgs = $this->xRequestHandler->processArguments();
         try
         {
-            $xResponse = $xCallableObject->call($this->sRequestedMethod, $aArgs);
+            $xResponse = $xCallableObject->call(self::$sRequestedMethod, $aArgs);
             if(($xResponse))
             {
                 $this->xResponseManager->append($xResponse);
@@ -366,7 +365,7 @@ class CallableClassPlugin extends RequestPlugin
         {
             // Unable to find the requested class
             throw new RequestException($this->xTranslator->trans('errors.objects.invalid',
-                ['class' => $this->sRequestedClass, 'method' => $this->sRequestedMethod]));
+                ['class' => self::$sRequestedClass, 'method' => self::$sRequestedMethod]));
         }
         return true;
     }

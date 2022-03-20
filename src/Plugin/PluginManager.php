@@ -110,7 +110,7 @@ class PluginManager
     /**
      * Get the request plugins
      *
-     * @return array
+     * @return array<RequestPlugin>
      */
     public function getRequestPlugins(): array
     {

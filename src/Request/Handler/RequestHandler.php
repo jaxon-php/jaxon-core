@@ -28,6 +28,7 @@ use Jaxon\Response\AbstractResponse;
 use Jaxon\Response\ResponseManager;
 use Jaxon\Response\Plugin\DataBag\DataBagPlugin;
 use Jaxon\Exception\RequestException;
+use Jaxon\Exception\SetupException;
 
 use Exception;
 
@@ -249,7 +250,7 @@ class RequestHandler
     public function canProcessRequest(): bool
     {
         // Return true if the request plugin was already found
-        if(($this->xTargetRequestPlugin))
+        if($this->xTargetRequestPlugin !== null)
         {
             return true;
         }
@@ -257,10 +258,9 @@ class RequestHandler
         // Find a plugin to process the request
         foreach($this->xPluginManager->getRequestPlugins() as $sClassName)
         {
-            $xPlugin = $this->jaxon->di()->get($sClassName);
-            if($xPlugin->canProcessRequest())
+            if($sClassName::canProcessRequest())
             {
-                $this->xTargetRequestPlugin = $xPlugin;
+                $this->xTargetRequestPlugin = $this->jaxon->di()->get($sClassName);
                 return true;
             }
         }
@@ -282,6 +282,7 @@ class RequestHandler
      *
      * @return void
      * @throws RequestException
+     * @throws SetupException
      */
     private function _processRequest()
     {
@@ -305,7 +306,7 @@ class RequestHandler
             // The request missed the corresponding handler function,
             // or an error occurred while attempting to execute the handler.
             $this->xResponseManager->error($e->getMessage());
-            if($e instanceof RequestException)
+            if($e instanceof RequestException || $e instanceof SetupException)
             {
                 $this->onInvalid($e->getMessage());
             }
@@ -340,6 +341,7 @@ class RequestHandler
      *
      * @return void
      * @throws RequestException
+     * @throws SetupException
      */
     public function processRequest()
     {

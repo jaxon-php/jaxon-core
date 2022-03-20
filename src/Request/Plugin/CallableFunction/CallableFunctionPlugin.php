@@ -22,7 +22,6 @@
 namespace Jaxon\Request\Plugin\CallableFunction;
 
 use Jaxon\Jaxon;
-use Jaxon\Container\Container;
 use Jaxon\Plugin\RequestPlugin;
 use Jaxon\Request\Handler\RequestHandler;
 use Jaxon\Request\Target;
@@ -97,7 +96,7 @@ class CallableFunctionPlugin extends RequestPlugin
      *
      * @var string
      */
-    protected $sRequestedFunction = null;
+    protected static $sRequestedFunction = '';
 
     /**
      * The constructor
@@ -119,15 +118,6 @@ class CallableFunctionPlugin extends RequestPlugin
         $this->xTemplateEngine = $xTemplateEngine;
         $this->xTranslator = $xTranslator;
         $this->xValidator = $xValidator;
-
-        if(isset($_GET['jxnfun']))
-        {
-            $this->sRequestedFunction = $_GET['jxnfun'];
-        }
-        if(isset($_POST['jxnfun']))
-        {
-            $this->sRequestedFunction = $_POST['jxnfun'];
-        }
     }
 
     /**
@@ -136,18 +126,6 @@ class CallableFunctionPlugin extends RequestPlugin
     public function getName(): string
     {
         return Jaxon::CALLABLE_FUNCTION;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getTarget(): ?Target
-    {
-        if(!$this->sRequestedFunction)
-        {
-            return null;
-        }
-        return Target::makeFunction($this->sRequestedFunction);
     }
 
     /**
@@ -257,14 +235,29 @@ class CallableFunctionPlugin extends RequestPlugin
     /**
      * @inheritDoc
      */
-    public function canProcessRequest(): bool
+    public static function canProcessRequest(): bool
     {
-        // Check the validity of the function name
-        if(($this->sRequestedFunction) && !$this->xValidator->validateFunction($this->sRequestedFunction))
+        if(isset($_POST['jxnfun']))
         {
-            $this->sRequestedFunction = null;
+            self::$sRequestedFunction = trim($_POST['jxnfun']);
         }
-        return ($this->sRequestedFunction != null);
+        elseif(isset($_GET['jxnfun']))
+        {
+            self::$sRequestedFunction = trim($_GET['jxnfun']);
+        }
+        return (self::$sRequestedFunction !== '');
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getTarget(): ?Target
+    {
+        if(!self::$sRequestedFunction)
+        {
+            return null;
+        }
+        return Target::makeFunction(self::$sRequestedFunction);
     }
 
     /**
@@ -274,14 +267,15 @@ class CallableFunctionPlugin extends RequestPlugin
     public function processRequest(): bool
     {
         // Security check: make sure the requested function was registered.
-        if(!isset($this->aFunctions[$this->sRequestedFunction]))
+        if(!$this->xValidator->validateFunction(self::$sRequestedFunction) ||
+            !isset($this->aFunctions[self::$sRequestedFunction]))
         {
             // Unable to find the requested function
             throw new RequestException($this->xTranslator->trans('errors.functions.invalid',
-                ['name' => $this->sRequestedFunction]));
+                ['name' => self::$sRequestedFunction]));
         }
 
-        $xFunction = $this->getCallable($this->sRequestedFunction);
+        $xFunction = $this->getCallable(self::$sRequestedFunction);
         $aArgs = $this->xRequestHandler->processArguments();
         $xResponse = $xFunction->call($aArgs);
         if(($xResponse))

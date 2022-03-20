@@ -36,7 +36,7 @@ use function trim;
 class CallableDirPlugin extends RegistryPlugin
 {
     /**
-     * The callable registrar
+     * The callable registry
      *
      * @var CallableRegistry
      */

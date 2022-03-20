@@ -21,7 +21,7 @@ interface RequestHandlerInterface
      *
      * @return bool
      */
-    public function canProcessRequest(): bool;
+    public static function canProcessRequest(): bool;
 
     /**
      * Process the current request
