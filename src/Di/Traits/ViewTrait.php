@@ -1,8 +1,8 @@
 <?php
 
-namespace Jaxon\Container\Traits;
+namespace Jaxon\Di\Traits;
 
-use Jaxon\Container\Container;
+use Jaxon\Di\Container;
 use Jaxon\Ui\Dialogs\DialogFacade;
 use Jaxon\Ui\Pagination\Paginator;
 use Jaxon\Ui\Pagination\PaginationRenderer;

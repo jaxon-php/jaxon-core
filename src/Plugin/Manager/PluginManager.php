@@ -23,7 +23,7 @@ namespace Jaxon\Plugin\Manager;
 
 use Jaxon\Jaxon;
 use Jaxon\Config\ConfigManager;
-use Jaxon\Container\Container;
+use Jaxon\Di\Container;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\Code\CodeGenerator;
 use Jaxon\Plugin\Contract\CallableRegistryInterface;

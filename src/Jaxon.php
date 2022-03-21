@@ -27,7 +27,7 @@ namespace Jaxon;
 
 use Jaxon\App\App;
 use Jaxon\Config\ConfigManager;
-use Jaxon\Container\Container;
+use Jaxon\Di\Container;
 use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\Code\CodeGenerator;

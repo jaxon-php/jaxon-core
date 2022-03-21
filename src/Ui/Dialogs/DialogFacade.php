@@ -11,7 +11,7 @@
 
 namespace Jaxon\Ui\Dialogs;
 
-use Jaxon\Container\Container;
+use Jaxon\Di\Container;
 
 class DialogFacade
 {

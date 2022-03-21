@@ -1,10 +1,10 @@
 <?php
 
-namespace Jaxon\Container\Traits;
+namespace Jaxon\Di\Traits;
 
 use Jaxon\Jaxon;
 use Jaxon\Config\ConfigManager;
-use Jaxon\Container\Container;
+use Jaxon\Di\Container;
 use Jaxon\Plugin\Code\AssetManager;
 use Jaxon\Plugin\Code\CodeGenerator;
 use Jaxon\Plugin\Manager\PluginManager;

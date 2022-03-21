@@ -21,7 +21,7 @@
 
 namespace Jaxon\Response;
 
-use Jaxon\Container\Container;
+use Jaxon\Di\Container;
 use Jaxon\Request\Handler\ArgumentManager;
 use Jaxon\Utils\Translation\Translator;
 

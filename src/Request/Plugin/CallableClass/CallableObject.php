@@ -24,7 +24,7 @@
 
 namespace Jaxon\Request\Plugin\CallableClass;
 
-use Jaxon\Container\Container;
+use Jaxon\Di\Container;
 use Jaxon\Response\Response;
 
 use ReflectionClass;

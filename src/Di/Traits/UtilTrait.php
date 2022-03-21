@@ -1,6 +1,6 @@
 <?php
 
-namespace Jaxon\Container\Traits;
+namespace Jaxon\Di\Traits;
 
 use Jaxon\Utils\Config\ConfigReader;
 use Jaxon\Utils\File\FileMinifier;

@@ -12,7 +12,7 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Container;
+namespace Jaxon\Di;
 
 use Jaxon\Jaxon;
 use Pimple\Container as PimpleContainer;

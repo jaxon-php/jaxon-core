@@ -1,9 +1,9 @@
 <?php
 
-namespace Jaxon\Container\Traits;
+namespace Jaxon\Di\Traits;
 
 use Jaxon\Config\ConfigManager;
-use Jaxon\Container\Container;
+use Jaxon\Di\Container;
 use Jaxon\Request\Handler\RequestHandler;
 use Jaxon\Request\Plugin\CallableClass\CallableRegistry;
 use Jaxon\Request\Plugin\CallableClass\CallableRepository;

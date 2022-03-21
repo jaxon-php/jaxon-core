@@ -14,7 +14,7 @@
 
 namespace Jaxon\Request\Plugin\CallableClass;
 
-use Jaxon\Container\Container;
+use Jaxon\Di\Container;
 use Jaxon\Request\Factory\RequestFactory;
 use Jaxon\Utils\Translation\Translator;
 use Jaxon\Exception\SetupException;

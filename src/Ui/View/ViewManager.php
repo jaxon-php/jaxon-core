@@ -2,7 +2,7 @@
 
 namespace Jaxon\Ui\View;
 
-use Jaxon\Container\Container;
+use Jaxon\Di\Container;
 use Jaxon\Utils\Config\Config;
 
 use Closure;
