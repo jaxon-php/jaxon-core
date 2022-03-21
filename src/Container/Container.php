@@ -32,7 +32,6 @@ class Container extends PimpleContainer
     use Traits\RequestTrait;
     use Traits\ResponseTrait;
     use Traits\PluginTrait;
-    use Traits\ConfigTrait;
     use Traits\CallableTrait;
     use Traits\RegisterTrait;
     use Traits\ViewTrait;
@@ -78,7 +77,6 @@ class Container extends PimpleContainer
         $this->registerRequests();
         $this->registerResponses();
         $this->registerPlugins();
-        $this->registerConfigs();
         $this->registerCallables();
         $this->registerViews();
         $this->registerUtils();

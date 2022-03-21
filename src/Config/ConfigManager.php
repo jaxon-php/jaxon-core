@@ -15,7 +15,7 @@
 namespace Jaxon\Config;
 
 use Jaxon\Utils\Config\Config;
-use Jaxon\Utils\Config\Reader;
+use Jaxon\Utils\Config\ConfigReader;
 use Jaxon\Utils\Translation\Translator;
 use Jaxon\Exception\SetupException;
 use Jaxon\Utils\Config\Exception\DataDepth;
@@ -32,9 +32,9 @@ class ConfigManager
     protected $xConfig;
 
     /**
-     * @var Reader
+     * @var ConfigReader
      */
-    protected $xReader;
+    protected $xConfigReader;
 
     /**
      * @var Translator
@@ -45,13 +45,13 @@ class ConfigManager
      * The constructor
      *
      * @param Config $xConfig
-     * @param Reader $xReader
+     * @param ConfigReader $xConfigReader
      * @param Translator $xTranslator
      */
-    public function __construct(Config $xConfig, Reader $xReader, Translator $xTranslator)
+    public function __construct(Config $xConfig, ConfigReader $xConfigReader, Translator $xTranslator)
     {
         $this->xConfig = $xConfig;
-        $this->xReader = $xReader;
+        $this->xConfigReader = $xConfigReader;
         $this->xTranslator = $xTranslator;
     }
 
@@ -67,7 +67,7 @@ class ConfigManager
     {
         try
         {
-            return $this->xReader->read($sConfigFile);
+            return $this->xConfigReader->read($sConfigFile);
         }
         catch(YamlExtension $e)
         {
@@ -104,7 +104,7 @@ class ConfigManager
     {
         try
         {
-            $this->xReader->load($this->xConfig, $sConfigFile, $sConfigSection);
+            $this->xConfigReader->load($this->xConfig, $sConfigFile, $sConfigSection);
         }
         catch(YamlExtension $e)
         {
@@ -192,6 +192,18 @@ class ConfigManager
     public function hasOption(string $sName): bool
     {
         return $this->xConfig->hasOption($sName);
+    }
+
+    /**
+     * Get the names of the options matching a given prefix
+     *
+     * @param string $sPrefix The prefix to match
+     *
+     * @return array
+     */
+    public function getOptionNames(string $sPrefix): array
+    {
+        return $this->xConfig->getOptionNames($sPrefix);
     }
 
     /**

@@ -4,23 +4,23 @@ namespace Jaxon\Ui\Template;
 
 use Jaxon\Ui\View\Store;
 use Jaxon\Ui\View\ViewInterface;
-use Jaxon\Utils\Template\Engine;
+use Jaxon\Utils\Template\TemplateEngine;
 
-class View implements ViewInterface
+class TemplateView implements ViewInterface
 {
     /**
      * The Jaxon template engine
      *
-     * @var Engine
+     * @var TemplateEngine
      */
-    protected $xEngine;
+    protected $xTemplateEngine;
 
     /**
      * The class constructor
      */
-    public function __construct(Engine $xEngine)
+    public function __construct(TemplateEngine $xTemplateEngine)
     {
-        $this->xEngine = $xEngine;
+        $this->xTemplateEngine = $xTemplateEngine;
     }
 
     /**
@@ -34,7 +34,7 @@ class View implements ViewInterface
      */
     public function addNamespace(string $sNamespace, string $sDirectory, string $sExtension = '')
     {
-        $this->xEngine->addNamespace($sNamespace, $sDirectory, $sExtension);
+        $this->xTemplateEngine->addNamespace($sNamespace, $sDirectory, $sExtension);
     }
 
     /**
@@ -54,6 +54,6 @@ class View implements ViewInterface
             $sViewName = $sNamespace . '::' . $sViewName;
         }
         // Render the template
-        return trim($this->xEngine->render($sViewName, $store->getViewData()), " \t\n");
+        return trim($this->xTemplateEngine->render($sViewName, $store->getViewData()), " \t\n");
     }
 }

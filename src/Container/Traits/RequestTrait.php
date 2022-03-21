@@ -15,7 +15,7 @@ use Jaxon\Request\Handler\UploadHandler;
 use Jaxon\Request\Plugin\CallableClass\CallableRegistry;
 use Jaxon\Response\Plugin\DataBag\DataBagPlugin;
 use Jaxon\Response\ResponseManager;
-use Jaxon\Ui\Dialogs\Dialog;
+use Jaxon\Ui\Dialogs\DialogFacade;
 use Jaxon\Ui\Pagination\Paginator;
 use Jaxon\Utils\Translation\Translator;
 
@@ -51,7 +51,7 @@ trait RequestTrait
         // Factory for requests to functions
         $this->set(RequestFactory::class, function($c) {
             $sPrefix = $c->g(ConfigManager::class)->getOption('core.prefix.function');
-            return new RequestFactory($sPrefix, $c->g(Dialog::class), $c->g(Paginator::class));
+            return new RequestFactory($sPrefix, $c->g(DialogFacade::class), $c->g(Paginator::class));
         });
         // Parameter Factory
         $this->set(ParameterFactory::class, function() {

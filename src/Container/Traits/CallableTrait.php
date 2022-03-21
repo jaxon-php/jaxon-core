@@ -14,7 +14,7 @@ use Jaxon\Request\Plugin\CallableFunction\CallableFunctionPlugin;
 use Jaxon\Request\Validator;
 use Jaxon\Response\ResponseManager;
 use Jaxon\Utils\Config\Config;
-use Jaxon\Utils\Template\Engine as TemplateEngine;
+use Jaxon\Utils\Template\TemplateEngine;
 use Jaxon\Utils\Translation\Translator;
 
 trait CallableTrait

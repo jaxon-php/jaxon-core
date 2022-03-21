@@ -16,7 +16,7 @@ namespace Jaxon\Request\Factory;
  */
 
 use Jaxon\Request\Call\Call;
-use Jaxon\Ui\Dialogs\Dialog;
+use Jaxon\Ui\Dialogs\DialogFacade;
 use Jaxon\Ui\Pagination\Paginator;
 
 use function array_shift;
@@ -32,9 +32,9 @@ class RequestFactory
     protected $sPrefix;
 
     /**
-     * @var Dialog
+     * @var DialogFacade
      */
-    protected $xDialog;
+    protected $xDialogFacade;
 
     /**
      * @var Paginator
@@ -45,13 +45,13 @@ class RequestFactory
      * The class constructor
      *
      * @param string $sPrefix
-     * @param Dialog $xDialog
+     * @param DialogFacade $xDialogFacade
      * @param Paginator $xPaginator
      */
-    public function __construct(string $sPrefix, Dialog $xDialog, Paginator $xPaginator)
+    public function __construct(string $sPrefix, DialogFacade $xDialogFacade, Paginator $xPaginator)
     {
         $this->sPrefix = $sPrefix;
-        $this->xDialog = $xDialog;
+        $this->xDialogFacade = $xDialogFacade;
         $this->xPaginator = $xPaginator;
     }
 
@@ -66,7 +66,7 @@ class RequestFactory
     public function __call(string $sFunction, array $aArguments): Call
     {
         // Make the request
-        $xCall = new Call($this->sPrefix . $sFunction, $this->xDialog, $this->xPaginator);
+        $xCall = new Call($this->sPrefix . $sFunction, $this->xDialogFacade, $this->xPaginator);
         $xCall->useSingleQuote();
         $xCall->addParameters($aArguments);
         return $xCall;

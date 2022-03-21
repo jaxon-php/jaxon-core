@@ -3,13 +3,13 @@
 namespace Jaxon\Container\Traits;
 
 use Jaxon\Container\Container;
-use Jaxon\Ui\Dialogs\Dialog;
+use Jaxon\Ui\Dialogs\DialogFacade;
 use Jaxon\Ui\Pagination\Paginator;
 use Jaxon\Ui\Pagination\PaginationRenderer;
-use Jaxon\Ui\Template\View as TemplateView;
+use Jaxon\Ui\Template\TemplateView;
 use Jaxon\Ui\View\ViewManager;
 use Jaxon\Ui\View\ViewRenderer;
-use Jaxon\Utils\Template\Engine as TemplateEngine;
+use Jaxon\Utils\Template\TemplateEngine;
 
 trait ViewTrait
 {
@@ -20,11 +20,11 @@ trait ViewTrait
      */
     private function registerViews()
     {
-        // Dialog
-        $this->set(Dialog::class, function($c) {
-            return new Dialog($c->g(Container::class));
+        // Dialog Facade
+        $this->set(DialogFacade::class, function($c) {
+            return new DialogFacade($c->g(Container::class));
         });
-        // View ResponseManager
+        // View Manager
         $this->set(ViewManager::class, function($c) {
             $xViewManager = new ViewManager($this);
             // Add the default view renderer
@@ -55,11 +55,11 @@ trait ViewTrait
     /**
      * Get the dialog wrapper
      *
-     * @return Dialog
+     * @return DialogFacade
      */
-    public function getDialog(): Dialog
+    public function getDialog(): DialogFacade
     {
-        return $this->g(Dialog::class);
+        return $this->g(DialogFacade::class);
     }
 
     /**

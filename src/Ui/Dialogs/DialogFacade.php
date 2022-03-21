@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Dialog.php - Shows alert and confirm dialogs
+ * DialogFacade.php - Shows alert and confirm dialogs
  *
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
  * @copyright 2019 Thierry Feuzeu <thierry.feuzeu@gmail.com>
@@ -13,7 +13,7 @@ namespace Jaxon\Ui\Dialogs;
 
 use Jaxon\Container\Container;
 
-class Dialog
+class DialogFacade
 {
     /**
      * @var Container

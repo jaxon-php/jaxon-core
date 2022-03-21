@@ -21,7 +21,7 @@
 namespace Jaxon\Request\Call;
 
 use Jaxon\Response\Plugin\JQuery\DomSelector;
-use Jaxon\Ui\Dialogs\Dialog;
+use Jaxon\Ui\Dialogs\DialogFacade;
 use Jaxon\Ui\Pagination\Paginator;
 use Jaxon\Ui\View\Store;
 
@@ -34,9 +34,9 @@ use function implode;
 class Call extends JsCall
 {
     /**
-     * @var Dialog
+     * @var DialogFacade
      */
-    protected $xDialog;
+    protected $xDialogFacade;
 
     /**
      * @var Paginator
@@ -61,13 +61,13 @@ class Call extends JsCall
      * The constructor.
      *
      * @param string $sName    The javascript function or method name
-     * @param Dialog $xDialog
+     * @param DialogFacade $xDialogFacade
      * @param Paginator $xPaginator
      */
-    public function __construct(string $sName, Dialog $xDialog, Paginator $xPaginator)
+    public function __construct(string $sName, DialogFacade $xDialogFacade, Paginator $xPaginator)
     {
         parent::__construct($sName);
-        $this->xDialog = $xDialog;
+        $this->xDialogFacade = $xDialogFacade;
         $this->xPaginator = $xPaginator;
     }
 
@@ -307,16 +307,16 @@ class Call extends JsCall
         $sScript = parent::getScript();
         if($this->sCondition === '__confirm__')
         {
-            $sScript = $this->xDialog->confirm($sPhrase, $sScript, '');
+            $sScript = $this->xDialogFacade->confirm($sPhrase, $sScript, '');
         }
         elseif($this->sCondition !== null)
         {
             $sScript = 'if(' . $this->sCondition . '){' . $sScript . ';}';
             if(($sPhrase))
             {
-                $this->xDialog->getMessage()->setReturn(true);
-                $sScript .= 'else{' . $this->xDialog->warning($sPhrase) . ';}';
-                $this->xDialog->getMessage()->setReturn(false);
+                $this->xDialogFacade->getMessage()->setReturn(true);
+                $sScript .= 'else{' . $this->xDialogFacade->warning($sPhrase) . ';}';
+                $this->xDialogFacade->getMessage()->setReturn(false);
             }
         }
         return $sVars . $sScript;

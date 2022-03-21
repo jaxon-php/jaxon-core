@@ -3,9 +3,10 @@
 namespace Jaxon\Container\Traits;
 
 use Jaxon\Utils\Config\Config;
-use Jaxon\Utils\File\Minifier;
+use Jaxon\Utils\Config\ConfigReader;
+use Jaxon\Utils\File\FileMinifier;
 use Jaxon\Utils\Http\UriDetector;
-use Jaxon\Utils\Template\Engine as TemplateEngine;
+use Jaxon\Utils\Template\TemplateEngine;
 use Jaxon\Utils\Translation\Translator;
 
 use function rtrim;
@@ -20,6 +21,9 @@ trait UtilTrait
      */
     private function registerUtils()
     {
+        $this->set(ConfigReader::class, function() {
+            return new ConfigReader();
+        });
         // Translator
         $this->set(Translator::class, function($c) {
             $xTranslator = new Translator($c->g(Config::class)->getOption('language', ''));
@@ -47,9 +51,9 @@ trait UtilTrait
             $xTemplateEngine->addNamespace('pagination', $sPaginationDir, '.php');
             return $xTemplateEngine;
         });
-        // Minifier
-        $this->set(Minifier::class, function() {
-            return new Minifier();
+        // File Minifier
+        $this->set(FileMinifier::class, function() {
+            return new FileMinifier();
         });
         // URI decoder
         $this->set(UriDetector::class, function() {
@@ -85,15 +89,5 @@ trait UtilTrait
     public function getTemplateEngine(): TemplateEngine
     {
         return $this->g(TemplateEngine::class);
-    }
-
-    /**
-     * Get the minifier
-     *
-     * @return Minifier
-     */
-    public function getMinifier(): Minifier
-    {
-        return $this->g(Minifier::class);
     }
 }

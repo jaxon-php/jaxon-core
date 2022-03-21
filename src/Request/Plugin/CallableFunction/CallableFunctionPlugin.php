@@ -27,7 +27,7 @@ use Jaxon\Request\Handler\RequestHandler;
 use Jaxon\Request\Target;
 use Jaxon\Request\Validator;
 use Jaxon\Response\ResponseManager;
-use Jaxon\Utils\Template\Engine as TemplateEngine;
+use Jaxon\Utils\Template\TemplateEngine;
 use Jaxon\Utils\Translation\Translator;
 use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;

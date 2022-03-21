@@ -15,9 +15,9 @@ use Jaxon\Response\Plugin\DataBag\DataBagPlugin;
 use Jaxon\Response\Plugin\JQuery\JQueryPlugin;
 use Jaxon\Response\ResponseManager;
 use Jaxon\Ui\View\ViewManager;
-use Jaxon\Utils\File\Minifier;
+use Jaxon\Utils\File\FileMinifier;
 use Jaxon\Utils\Http\UriDetector;
-use Jaxon\Utils\Template\Engine as TemplateEngine;
+use Jaxon\Utils\Template\TemplateEngine;
 use Jaxon\Utils\Translation\Translator;
 
 trait PluginTrait
@@ -36,7 +36,7 @@ trait PluginTrait
         });
         // Code Generation
         $this->set(AssetManager::class, function($c) {
-            return new AssetManager($c->g(ConfigManager::class), $c->g(UriDetector::class), $c->g(Minifier::class));
+            return new AssetManager($c->g(ConfigManager::class), $c->g(UriDetector::class), $c->g(FileMinifier::class));
         });
         $this->set(CodeGenerator::class, function($c) {
             $sVersion = $c->g(Jaxon::class)->getVersion();

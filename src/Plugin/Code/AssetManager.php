@@ -4,7 +4,7 @@ namespace Jaxon\Plugin\Code;
 
 use Jaxon\Config\ConfigManager;
 use Jaxon\Plugin\Plugin;
-use Jaxon\Utils\File\Minifier;
+use Jaxon\Utils\File\FileMinifier;
 use Jaxon\Utils\Http\UriDetector;
 use Jaxon\Utils\Http\UriException;
 
@@ -27,9 +27,9 @@ class AssetManager
     private $xUriDetector;
 
     /**
-     * @var Minifier
+     * @var FileMinifier
      */
-    private $xMinifier;
+    private $xFileMinifier;
 
     /**
      * @var bool
@@ -48,13 +48,13 @@ class AssetManager
      *
      * @param ConfigManager $xConfigManager
      * @param UriDetector $xUriDetector
-     * @param Minifier $xMinifier
+     * @param FileMinifier $xFileMinifier
      */
-    public function __construct(ConfigManager $xConfigManager, UriDetector $xUriDetector, Minifier $xMinifier)
+    public function __construct(ConfigManager $xConfigManager, UriDetector $xUriDetector, FileMinifier $xFileMinifier)
     {
         $this->xConfigManager = $xConfigManager;
         $this->xUriDetector = $xUriDetector;
-        $this->xMinifier = $xMinifier;
+        $this->xFileMinifier = $xFileMinifier;
         $this->bIncludeAllAssets = $xConfigManager->getOption('assets.include.all', true);
     }
 
@@ -186,7 +186,7 @@ class AssetManager
         {
             return $sJsFileUri . '.js';
         }
-        if(!is_file($sJsMinFilePath) && !$this->xMinifier->minify($sJsFilePath, $sJsMinFilePath))
+        if(!is_file($sJsMinFilePath) && !$this->xFileMinifier->minify($sJsFilePath, $sJsMinFilePath))
         {
             // If the file cannot be minified, return the plain js file.
             return $sJsFileUri . '.js';
