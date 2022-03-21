@@ -272,24 +272,29 @@ class PluginManager
      */
     private function updateContainer(Config $xConfig)
     {
-        $aOptions = $xConfig->getOption('container', []);
+        $aOptions = $xConfig->getOption('container.set', []);
         foreach($aOptions as $xKey => $xValue)
         {
-            if(is_integer($xKey) && is_string($xValue))
-            {
-                // The value of the entry is the class name
-                $this->di->auto($xValue);
-            }
-            elseif($xValue instanceof Closure)
-            {
-                // The key is the class name. It must be a string.
-                $this->di->set((string)$xKey, $xValue);
-            }
-            else
-            {
-                // The key is the class name. It must be a string.
-                $this->di->val((string)$xKey, $xValue);
-            }
+            // The key is the class name. It must be a string.
+            $this->di->set((string)$xKey, $xValue);
+        }
+        $aOptions = $xConfig->getOption('container.val', []);
+        foreach($aOptions as $xKey => $xValue)
+        {
+            // The key is the class name. It must be a string.
+            $this->di->val((string)$xKey, $xValue);
+        }
+        $aOptions = $xConfig->getOption('container.auto', []);
+        foreach($aOptions as $xValue)
+        {
+            // The key is the class name. It must be a string.
+            $this->di->auto((string)$xValue);
+        }
+        $aOptions = $xConfig->getOption('container.alias', []);
+        foreach($aOptions as $xKey => $xValue)
+        {
+            // The key is the class name. It must be a string.
+            $this->di->alias((string)$xKey, (string)$xValue);
         }
     }
 
