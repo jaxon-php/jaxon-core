@@ -4,7 +4,7 @@ namespace Jaxon\Container\Traits;
 
 use Jaxon\Config\ConfigManager;
 use Jaxon\Container\Container;
-use Jaxon\Plugin\PluginManager;
+use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Request\Handler\ArgumentManager;
 use Jaxon\Response\Response;
 use Jaxon\Response\ResponseManager;

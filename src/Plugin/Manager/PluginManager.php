@@ -19,12 +19,20 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Plugin;
+namespace Jaxon\Plugin\Manager;
 
 use Jaxon\Jaxon;
 use Jaxon\Config\ConfigManager;
 use Jaxon\Container\Container;
+use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\Code\CodeGenerator;
+use Jaxon\Plugin\Contract\CallableRegistryInterface;
+use Jaxon\Plugin\Contract\CodeGeneratorInterface;
+use Jaxon\Plugin\Contract\RequestHandlerInterface;
+use Jaxon\Plugin\Contract\ResponsePluginInterface;
+use Jaxon\Plugin\Package;
+use Jaxon\Plugin\RequestPlugin;
+use Jaxon\Plugin\ResponsePlugin;
 use Jaxon\Request\Plugin\CallableClass\CallableClassPlugin;
 use Jaxon\Request\Plugin\CallableClass\CallableDirPlugin;
 use Jaxon\Request\Plugin\CallableFunction\CallableFunctionPlugin;
@@ -35,7 +43,6 @@ use Jaxon\Ui\Dialogs\MessageInterface;
 use Jaxon\Ui\Dialogs\QuestionInterface;
 use Jaxon\Utils\Config\Config;
 use Jaxon\Utils\Translation\Translator;
-use Jaxon\Exception\SetupException;
 
 use function class_implements;
 use function in_array;
@@ -65,21 +72,21 @@ class PluginManager
     /**
      * Request plugins, indexed by name
      *
-     * @var array
+     * @var array<CallableRegistryInterface>
      */
     private $aRegistryPlugins = [];
 
     /**
-     * Request plugins, indexed by name
+     * Request handlers, indexed by name
      *
-     * @var array
+     * @var array<RequestHandlerInterface>
      */
-    private $aRequestPlugins = [];
+    private $aRequestHandlers = [];
 
     /**
      * Response plugins, indexed by name
      *
-     * @var array
+     * @var array<ResponsePluginInterface>
      */
     private $aResponsePlugins = [];
 
@@ -112,9 +119,9 @@ class PluginManager
      *
      * @return array<RequestPlugin>
      */
-    public function getRequestPlugins(): array
+    public function getRequestHandlers(): array
     {
-        return $this->aRequestPlugins;
+        return $this->aRequestHandlers;
     }
 
     /**
@@ -160,7 +167,7 @@ class PluginManager
         }
         if(in_array(RequestHandlerInterface::class, $aInterfaces))
         {
-            $this->aRequestPlugins[$sPluginName] = $sClassName;
+            $this->aRequestHandlers[$sPluginName] = $sClassName;
             $bIsUsed = true;
         }
         if(in_array(ResponsePluginInterface::class, $aInterfaces))

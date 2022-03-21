@@ -26,6 +26,9 @@
 
 namespace Jaxon\Plugin;
 
-abstract class RequestPlugin extends RegistryPlugin implements RequestHandlerInterface
+use Jaxon\Plugin\Contract\CallableRegistryInterface;
+use Jaxon\Plugin\Contract\RequestHandlerInterface;
+
+abstract class RequestPlugin extends Plugin implements CallableRegistryInterface, RequestHandlerInterface
 {
 }

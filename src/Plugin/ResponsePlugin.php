@@ -25,6 +25,7 @@
 
 namespace Jaxon\Plugin;
 
+use Jaxon\Plugin\Contract\ResponsePluginInterface;
 use Jaxon\Response\Response as JaxonResponse;
 
 abstract class ResponsePlugin extends Plugin implements ResponsePluginInterface

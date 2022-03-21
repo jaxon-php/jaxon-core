@@ -6,10 +6,9 @@ use Jaxon\Jaxon;
 use Jaxon\App\App;
 use Jaxon\App\Bootstrap;
 use Jaxon\Config\ConfigManager;
-use Jaxon\Plugin\PluginManager;
+use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Request\Handler\RequestHandler;
 use Jaxon\Response\ResponseManager;
-use Jaxon\Ui\View\ViewManager;
 use Jaxon\Utils\Translation\Translator;
 
 trait AppTrait

@@ -11,7 +11,7 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Plugin;
+namespace Jaxon\Plugin\Contract;
 
 interface CodeGeneratorInterface
 {

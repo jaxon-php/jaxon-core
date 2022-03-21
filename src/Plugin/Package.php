@@ -13,6 +13,7 @@
 
 namespace Jaxon\Plugin;
 
+use Jaxon\Plugin\Contract\CodeGeneratorInterface;
 use Jaxon\Ui\View\ViewRenderer;
 use Jaxon\Utils\Config\Config;
 

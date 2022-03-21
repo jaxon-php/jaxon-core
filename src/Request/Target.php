@@ -13,10 +13,6 @@
 
 namespace Jaxon\Request;
 
-use Jaxon\Jaxon;
-use Jaxon\Plugin\PluginManager;
-use Jaxon\Response\ResponseManager;
-
 class Target
 {
     /**

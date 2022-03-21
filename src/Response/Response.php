@@ -30,12 +30,12 @@
 
 namespace Jaxon\Response;
 
-use Jaxon\Plugin\PluginManager;
+use Jaxon\Exception\RequestException;
+use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Plugin\ResponsePlugin;
 use Jaxon\Response\Plugin\DataBag\DataBagContext;
 use Jaxon\Response\Plugin\JQuery\DomSelector;
 use Jaxon\Utils\Translation\Translator;
-use Jaxon\Exception\RequestException;
 
 use function array_keys;
 use function array_map;

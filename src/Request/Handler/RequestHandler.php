@@ -20,15 +20,15 @@
 
 namespace Jaxon\Request\Handler;
 
-use Jaxon\Container\Container;
 use Jaxon\Config\ConfigManager;
-use Jaxon\Plugin\PluginManager;
-use Jaxon\Plugin\RequestPlugin;
-use Jaxon\Response\AbstractResponse;
-use Jaxon\Response\ResponseManager;
-use Jaxon\Response\Plugin\DataBag\DataBagPlugin;
+use Jaxon\Container\Container;
 use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;
+use Jaxon\Plugin\Contract\RequestHandlerInterface;
+use Jaxon\Plugin\Manager\PluginManager;
+use Jaxon\Response\AbstractResponse;
+use Jaxon\Response\Plugin\DataBag\DataBagPlugin;
+use Jaxon\Response\ResponseManager;
 use Jaxon\Utils\Translation\Translator;
 
 use Exception;
@@ -100,9 +100,9 @@ class RequestHandler
     /**
      * The request plugin that is able to process the current request
      *
-     * @var RequestPlugin
+     * @var RequestHandlerInterface
      */
-    private $xTargetRequestPlugin = null;
+    private $xRequestPlugin = null;
 
     /**
      * The constructor
@@ -187,7 +187,7 @@ class RequestHandler
      */
     public function onBefore(bool &$bEndRequest)
     {
-        $xTarget = $this->xTargetRequestPlugin->getTarget();
+        $xTarget = $this->xRequestPlugin->getTarget();
         // Call the user defined callback
         foreach($this->xCallbackManager->getBeforeCallbacks() as $xCallback)
         {
@@ -213,7 +213,7 @@ class RequestHandler
         foreach($this->xCallbackManager->getAfterCallbacks() as $xCallback)
         {
             $xReturn = call_user_func_array($xCallback,
-                [$this->xTargetRequestPlugin->getTarget(), $bEndRequest]);
+                [$this->xRequestPlugin->getTarget(), $bEndRequest]);
             if($xReturn instanceof AbstractResponse)
             {
                 $this->xResponseManager->append($xReturn);
@@ -267,17 +267,17 @@ class RequestHandler
     public function canProcessRequest(): bool
     {
         // Return true if the request plugin was already found
-        if($this->xTargetRequestPlugin !== null)
+        if($this->xRequestPlugin !== null)
         {
             return true;
         }
 
         // Find a plugin to process the request
-        foreach($this->xPluginManager->getRequestPlugins() as $sClassName)
+        foreach($this->xPluginManager->getRequestHandlers() as $sClassName)
         {
             if($sClassName::canProcessRequest())
             {
-                $this->xTargetRequestPlugin = $this->di->get($sClassName);
+                $this->xRequestPlugin = $this->di->get($sClassName);
                 return true;
             }
         }
@@ -303,28 +303,34 @@ class RequestHandler
      */
     private function _processRequest()
     {
-        $bEndRequest = false;
-        // Handle before processing event
-        if(($this->xTargetRequestPlugin))
-        {
-            $this->onBefore($bEndRequest);
-        }
-        if($bEndRequest)
-        {
-            return;
-        }
-
         try
         {
+            $bEndRequest = false;
+            // Handle before processing event
+            if(($this->xRequestPlugin))
+            {
+                $this->onBefore($bEndRequest);
+            }
+            if($bEndRequest)
+            {
+                return;
+            }
+
             // Process uploaded files, if the upload plugin is enabled
             if($this->xUploadHandler !== null)
             {
                 $this->xUploadHandler->processRequest();
             }
             // Process the request
-            if(($this->xTargetRequestPlugin))
+            if(($this->xRequestPlugin))
             {
-                $this->xTargetRequestPlugin->processRequest();
+                $this->xRequestPlugin->processRequest();
+            }
+
+            // Handle after processing event
+            if(($this->xRequestPlugin))
+            {
+                $this->onAfter($bEndRequest);
             }
         }
         catch(Exception $e)
@@ -342,12 +348,6 @@ class RequestHandler
                 $this->onError($e);
             }
             throw $e;
-        }
-
-        // Handle after processing event
-        if(($this->xTargetRequestPlugin))
-        {
-            $this->onAfter($bEndRequest);
         }
     }
 

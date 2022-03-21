@@ -7,7 +7,7 @@ use Jaxon\Config\ConfigManager;
 use Jaxon\Container\Container;
 use Jaxon\Plugin\Code\AssetManager;
 use Jaxon\Plugin\Code\CodeGenerator;
-use Jaxon\Plugin\PluginManager;
+use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Request\Handler\UploadHandler;
 use Jaxon\Request\Upload\UploadManager;
 use Jaxon\Request\Validator;

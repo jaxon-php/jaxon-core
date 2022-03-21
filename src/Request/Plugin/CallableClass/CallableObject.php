@@ -29,6 +29,7 @@ use Jaxon\Response\Response;
 
 use ReflectionClass;
 use ReflectionException;
+use ReflectionMethod;
 
 use function array_map;
 use function array_filter;
@@ -36,7 +37,9 @@ use function array_merge;
 use function in_array;
 use function is_array;
 use function is_string;
+use function json_encode;
 use function substr;
+use function str_replace;
 
 class CallableObject
 {
@@ -201,7 +204,7 @@ class CallableObject
     {
         $aMethods = array_map(function($xMethod) {
             return $xMethod->getShortName();
-        }, $this->xReflectionClass->getMethods(\ReflectionMethod::IS_PUBLIC));
+        }, $this->xReflectionClass->getMethods(ReflectionMethod::IS_PUBLIC));
         return array_filter($aMethods, function($sMethodName) use($aProtectedMethods) {
             // Don't take magic __call, __construct, __destruct methods
             // Don't take protected methods

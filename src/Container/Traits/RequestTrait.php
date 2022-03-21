@@ -4,7 +4,7 @@ namespace Jaxon\Container\Traits;
 
 use Jaxon\Config\ConfigManager;
 use Jaxon\Container\Container;
-use Jaxon\Plugin\PluginManager;
+use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Request\Factory\Factory;
 use Jaxon\Request\Factory\ParameterFactory;
 use Jaxon\Request\Factory\RequestFactory;
@@ -13,8 +13,8 @@ use Jaxon\Request\Handler\CallbackManager;
 use Jaxon\Request\Handler\RequestHandler;
 use Jaxon\Request\Handler\UploadHandler;
 use Jaxon\Request\Plugin\CallableClass\CallableRegistry;
-use Jaxon\Response\ResponseManager;
 use Jaxon\Response\Plugin\DataBag\DataBagPlugin;
+use Jaxon\Response\ResponseManager;
 use Jaxon\Ui\Dialogs\Dialog;
 use Jaxon\Ui\Pagination\Paginator;
 use Jaxon\Utils\Translation\Translator;

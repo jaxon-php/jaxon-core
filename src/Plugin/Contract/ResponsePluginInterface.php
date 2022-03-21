@@ -1,6 +1,6 @@
 <?php
 
-namespace Jaxon\Plugin;
+namespace Jaxon\Plugin\Contract;
 
 use Jaxon\Response\Response as JaxonResponse;
 

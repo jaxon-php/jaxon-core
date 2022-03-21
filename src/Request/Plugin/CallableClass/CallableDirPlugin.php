@@ -22,7 +22,8 @@
 namespace Jaxon\Request\Plugin\CallableClass;
 
 use Jaxon\Jaxon;
-use Jaxon\Plugin\RegistryPlugin;
+use Jaxon\Plugin\Contract\CallableRegistryInterface;
+use Jaxon\Plugin\Contract\PluginInterface;
 use Jaxon\Utils\Translation\Translator;
 use Jaxon\Exception\SetupException;
 
@@ -33,7 +34,7 @@ use function realpath;
 use function rtrim;
 use function trim;
 
-class CallableDirPlugin extends RegistryPlugin
+class CallableDirPlugin implements PluginInterface, CallableRegistryInterface
 {
     /**
      * The callable registry

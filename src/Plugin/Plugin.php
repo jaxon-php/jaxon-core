@@ -20,6 +20,9 @@
 
 namespace Jaxon\Plugin;
 
+use Jaxon\Plugin\Contract\CodeGeneratorInterface;
+use Jaxon\Plugin\Contract\PluginInterface;
+
 abstract class Plugin implements PluginInterface, CodeGeneratorInterface
 {
     /**

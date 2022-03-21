@@ -13,7 +13,7 @@
 namespace Jaxon\App;
 
 use Jaxon\Config\ConfigManager;
-use Jaxon\Plugin\PluginManager;
+use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Request\Handler\RequestHandler;
 use Jaxon\Utils\Config\Config;
 use Jaxon\Exception\SetupException;
