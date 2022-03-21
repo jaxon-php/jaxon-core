@@ -68,14 +68,4 @@ trait RequestTrait
     {
         return $this->g(RequestHandler::class);
     }
-
-    /**
-     * Get the parameter factory
-     *
-     * @return ParameterFactory
-     */
-    public function getParameterFactory(): ParameterFactory
-    {
-        return $this->g(ParameterFactory::class);
-    }
 }

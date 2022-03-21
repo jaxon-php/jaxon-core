@@ -14,10 +14,11 @@
 
 namespace Jaxon\Config;
 
+use Jaxon\Jaxon;
+use Jaxon\Exception\SetupException;
 use Jaxon\Utils\Config\Config;
 use Jaxon\Utils\Config\ConfigReader;
 use Jaxon\Utils\Translation\Translator;
-use Jaxon\Exception\SetupException;
 use Jaxon\Utils\Config\Exception\DataDepth;
 use Jaxon\Utils\Config\Exception\FileAccess;
 use Jaxon\Utils\Config\Exception\FileContent;
@@ -42,17 +43,55 @@ class ConfigManager
     protected $xTranslator;
 
     /**
+     * @var array The default config options
+     */
+    protected $aConfig =  [
+        'core.version'                      => Jaxon::VERSION,
+        'core.language'                     => 'en',
+        'core.encoding'                     => 'utf-8',
+        'core.decode_utf8'                  => false,
+        'core.prefix.function'              => 'jaxon_',
+        'core.prefix.class'                 => 'Jaxon',
+        // 'core.request.uri'               => '',
+        'core.request.mode'                 => 'asynchronous',
+        'core.request.method'               => 'POST', // W3C: Method is case sensitive
+        'core.response.send'                => true,
+        'core.response.merge.ap'            => true,
+        'core.response.merge.js'            => true,
+        'core.debug.on'                     => false,
+        'core.debug.verbose'                => false,
+        'core.process.exit'                 => true,
+        'core.process.clean'                => false,
+        'core.process.timeout'              => 6000,
+        'core.error.handle'                 => false,
+        'core.error.log_file'               => '',
+        'core.jquery.no_conflict'           => false,
+        'core.upload.enabled'               => true,
+        'js.lib.output_id'                  => 0,
+        'js.lib.queue_size'                 => 0,
+        'js.lib.load_timeout'               => 2000,
+        'js.lib.show_status'                => false,
+        'js.lib.show_cursor'                => true,
+        'js.app.dir'                        => '',
+        'js.app.minify'                     => true,
+        'js.app.options'                    => '',
+    ];
+
+    /**
      * The constructor
      *
-     * @param Config $xConfig
      * @param ConfigReader $xConfigReader
      * @param Translator $xTranslator
      */
-    public function __construct(Config $xConfig, ConfigReader $xConfigReader, Translator $xTranslator)
+    public function __construct(ConfigReader $xConfigReader, Translator $xTranslator)
     {
-        $this->xConfig = $xConfig;
         $this->xConfigReader = $xConfigReader;
         $this->xTranslator = $xTranslator;
+        try
+        {
+            $this->xConfig = new Config($this->aConfig);
+        }
+        catch(DataDepth $e){} // This exception cannot actually be raised.
     }
 
     /**
@@ -105,6 +144,8 @@ class ConfigManager
         try
         {
             $this->xConfigReader->load($this->xConfig, $sConfigFile, $sConfigSection);
+            // Set the library language any time the config is changed.
+            $this->xTranslator->setLocale($this->xConfig->getOption('core.language'));
         }
         catch(YamlExtension $e)
         {
@@ -147,6 +188,8 @@ class ConfigManager
         try
         {
             $this->xConfig->setOptions($aOptions);
+            // Set the library language any time the config is changed.
+            $this->xTranslator->setLocale($this->xConfig->getOption('core.language'));
         }
         catch(DataDepth $e)
         {
@@ -167,6 +210,8 @@ class ConfigManager
     public function setOption(string $sName, $xValue)
     {
         $this->xConfig->setOption($sName, $xValue);
+        // Set the library language any time the config is changed.
+        $this->xTranslator->setLocale($this->xConfig->getOption('core.language'));
     }
 
     /**

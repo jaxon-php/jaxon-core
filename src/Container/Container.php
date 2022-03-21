@@ -14,6 +14,7 @@
 
 namespace Jaxon\Container;
 
+use Jaxon\Jaxon;
 use Pimple\Container as PimpleContainer;
 use Pimple\Exception\UnknownIdentifierException;
 use Psr\Container\ContainerInterface;
@@ -47,15 +48,14 @@ class Container extends PimpleContainer
 
     /**
      * The class constructor
-     *
-     * @param array $aOptions    The default options
      */
-    public function __construct(array $aOptions)
+    public function __construct(Jaxon $jaxon)
     {
         parent::__construct();
 
-        // Library options
-        $this->val('jaxon.core.options', $aOptions);
+        // Save the Jaxon and Container instances
+        $this->val(Jaxon::class, $jaxon);
+        $this->val(Container::class, $this);
         // Template directory
         $sTemplateDir = realpath(__DIR__ . '/../../templates');
         $this->val('jaxon.core.dir.template', $sTemplateDir);

@@ -3,7 +3,6 @@
 namespace Jaxon\Container\Traits;
 
 use Jaxon\Config\ConfigManager;
-use Jaxon\Jaxon;
 use Jaxon\Container\Container;
 use Jaxon\Request\Handler\RequestHandler;
 use Jaxon\Request\Plugin\CallableClass\CallableRegistry;
@@ -13,7 +12,6 @@ use Jaxon\Request\Plugin\CallableClass\CallableDirPlugin;
 use Jaxon\Request\Plugin\CallableFunction\CallableFunctionPlugin;
 use Jaxon\Request\Validator;
 use Jaxon\Response\ResponseManager;
-use Jaxon\Utils\Config\Config;
 use Jaxon\Utils\Template\TemplateEngine;
 use Jaxon\Utils\Translation\Translator;
 
@@ -28,7 +26,7 @@ trait CallableTrait
     {
         // Validator
         $this->set(Validator::class, function($c) {
-            return new Validator($c->g(Translator::class), $c->g(Config::class));
+            return new Validator($c->g(ConfigManager::class), $c->g(Translator::class));
         });
         // Callable objects repository
         $this->set(CallableRepository::class, function($c) {

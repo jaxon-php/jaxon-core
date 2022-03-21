@@ -2,7 +2,6 @@
 
 namespace Jaxon\Container\Traits;
 
-use Jaxon\Utils\Config\Config;
 use Jaxon\Utils\Config\ConfigReader;
 use Jaxon\Utils\File\FileMinifier;
 use Jaxon\Utils\Http\UriDetector;
@@ -21,12 +20,9 @@ trait UtilTrait
      */
     private function registerUtils()
     {
-        $this->set(ConfigReader::class, function() {
-            return new ConfigReader();
-        });
         // Translator
         $this->set(Translator::class, function($c) {
-            $xTranslator = new Translator($c->g(Config::class)->getOption('language', ''));
+            $xTranslator = new Translator();
             $sResourceDir = rtrim(trim($c->g('jaxon.core.dir.translation')), '/\\');
             // Load the Jaxon package translations
             $xTranslator->loadTranslations($sResourceDir . '/en/errors.php', 'en');
@@ -42,6 +38,10 @@ trait UtilTrait
             $xTranslator->loadTranslations($sResourceDir . '/es/upload.php', 'es');
             return $xTranslator;
         });
+        // Config reader
+        $this->set(ConfigReader::class, function() {
+            return new ConfigReader();
+        });
         // Template engine
         $this->set(TemplateEngine::class, function($c) {
             $xTemplateEngine = new TemplateEngine();
@@ -51,34 +51,14 @@ trait UtilTrait
             $xTemplateEngine->addNamespace('pagination', $sPaginationDir, '.php');
             return $xTemplateEngine;
         });
-        // File Minifier
+        // File minifier
         $this->set(FileMinifier::class, function() {
             return new FileMinifier();
         });
-        // URI decoder
+        // URI detector
         $this->set(UriDetector::class, function() {
             return new UriDetector();
         });
-    }
-
-    /**
-     * Get the translator
-     *
-     * @return Translator
-     */
-    public function getTranslator(): Translator
-    {
-        return $this->g(Translator::class);
-    }
-
-    /**
-     * Get the validator
-     *
-     * @return Validator
-     */
-    public function getValidator(): Validator
-    {
-        return $this->g(Validator::class);
     }
 
     /**

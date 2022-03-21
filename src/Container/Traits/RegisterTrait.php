@@ -4,9 +4,9 @@ namespace Jaxon\Container\Traits;
 
 use Jaxon\Jaxon;
 use Jaxon\CallableClass;
+use Jaxon\Config\ConfigManager;
 use Jaxon\Request\Factory\RequestFactory;
 use Jaxon\Request\Plugin\CallableClass\CallableObject;
-use Jaxon\Request\Plugin\CallableFunction\CallableFunction;
 use Jaxon\Ui\Dialogs\DialogFacade;
 use Jaxon\Ui\Pagination\Paginator;
 use Jaxon\Ui\View\ViewRenderer;
@@ -101,9 +101,9 @@ trait RegisterTrait
 
         // Register the request factory
         $this->set($sRequestFactory, function($c) use($sCallableObject) {
-            $xConfig = $c->g(Config::class);
+            $xConfigManager = $c->g(ConfigManager::class);
             $xCallable = $c->g($sCallableObject);
-            $sJsClass = $xConfig->getOption('core.prefix.class') . $xCallable->getJsName() . '.';
+            $sJsClass = $xConfigManager->getOption('core.prefix.class') . $xCallable->getJsName() . '.';
             return new RequestFactory($sJsClass, $c->g(DialogFacade::class), $c->g(Paginator::class));
         });
 

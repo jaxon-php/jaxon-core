@@ -129,9 +129,6 @@ class Jaxon implements LoggerAwareInterface
      */
     private static function initInstance()
     {
-        // Save the Jaxon and container instances in the DI
-        self::$xContainer->val(Jaxon::class, self::$xInstance);
-        self::$xContainer->val(Container::class, self::$xContainer);
         // Set the attributes from the container
         self::$xInstance->xTranslator = self::$xContainer->g(Translator::class);
         self::$xInstance->xConfigManager = self::$xContainer->g(ConfigManager::class);
@@ -151,8 +148,8 @@ class Jaxon implements LoggerAwareInterface
     {
         if(self::$xInstance === null)
         {
-            self::$xContainer = new Container(self::getDefaultOptions());
             self::$xInstance = new Jaxon();
+            self::$xContainer = new Container(self::$xInstance);
             self::initInstance();
         }
         return self::$xInstance;
@@ -175,47 +172,6 @@ class Jaxon implements LoggerAwareInterface
     public function getVersion(): string
     {
         return self::VERSION;
-    }
-
-    /**
-     * Get the default options of all components of the library
-     *
-     * @return array<string,string|bool|integer>
-     */
-    private static function getDefaultOptions(): array
-    {
-        // The default configuration settings.
-        return [
-            'core.version'                      => self::VERSION,
-            'core.language'                     => 'en',
-            'core.encoding'                     => 'utf-8',
-            'core.decode_utf8'                  => false,
-            'core.prefix.function'              => 'jaxon_',
-            'core.prefix.class'                 => 'Jaxon',
-            // 'core.request.uri'               => '',
-            'core.request.mode'                 => 'asynchronous',
-            'core.request.method'               => 'POST', // W3C: Method is case sensitive
-            'core.response.send'                => true,
-            'core.response.merge.ap'            => true,
-            'core.response.merge.js'            => true,
-            'core.debug.on'                     => false,
-            'core.debug.verbose'                => false,
-            'core.process.exit'                 => true,
-            'core.process.clean'                => false,
-            'core.process.timeout'              => 6000,
-            'core.error.handle'                 => false,
-            'core.error.log_file'               => '',
-            'core.jquery.no_conflict'           => false,
-            'core.upload.enabled'               => true,
-            'js.lib.output_id'                  => 0,
-            'js.lib.queue_size'                 => 0,
-            'js.lib.load_timeout'               => 2000,
-            'js.lib.show_status'                => false,
-            'js.lib.show_cursor'                => true,
-            'js.app.dir'                        => '',
-            'js.app.minify'                     => true,
-            'js.app.options'                    => '',
-        ];
     }
 
     /**

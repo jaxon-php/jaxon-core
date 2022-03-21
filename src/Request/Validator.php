@@ -22,7 +22,7 @@ namespace Jaxon\Request;
  * http://www.w3schools.com/charsets/ref_utf_latin1_supplement.asp
  */
 
-use Jaxon\Utils\Config\Config;
+use Jaxon\Config\ConfigManager;
 use Jaxon\Utils\Translation\Translator;
 
 use function preg_match;
@@ -32,18 +32,18 @@ use function in_array;
 class Validator
 {
     /**
+     * The config manager
+     *
+     * @var ConfigManager
+     */
+    protected $xConfigManager;
+
+    /**
      * The translator
      *
      * @var Translator
      */
     protected $xTranslator;
-
-    /**
-     * The config manager
-     *
-     * @var Config
-     */
-    protected $xConfig;
 
     /**
      * The last error message
@@ -52,12 +52,12 @@ class Validator
      */
     protected $sErrorMessage;
 
-    public function __construct(Translator $xTranslator, Config $xConfig)
+    public function __construct(ConfigManager $xConfigManager, Translator $xTranslator)
     {
+        // Set the config manager
+        $this->xConfigManager = $xConfigManager;
         // Set the translator
         $this->xTranslator = $xTranslator;
-        // Set the config manager
-        $this->xConfig = $xConfig;
     }
 
     /**
@@ -135,8 +135,8 @@ class Validator
      */
     private function validateFileProperty(string $sName, string $sValue, string $sProperty, string $sField): bool
     {
-        $xDefault = $this->xConfig->getOption('upload.default.' . $sProperty);
-        $aAllowed = $this->xConfig->getOption('upload.files.' . $sName . '.' . $sProperty, $xDefault);
+        $xDefault = $this->xConfigManager->getOption('upload.default.' . $sProperty);
+        $aAllowed = $this->xConfigManager->getOption('upload.files.' . $sName . '.' . $sProperty, $xDefault);
         if(is_array($aAllowed) && !in_array($sValue, $aAllowed))
         {
             $this->sErrorMessage = $this->xTranslator->trans('errors.upload.' . $sField, [$sField => $sValue]);
@@ -156,8 +156,8 @@ class Validator
      */
     private function validateFileSize(string $sName, int $nFileSize, string $sProperty): bool
     {
-        $xDefault = $this->xConfig->getOption('upload.default.' . $sProperty, 0);
-        $nSize = $this->xConfig->getOption('upload.files.' . $sName . '.' . $sProperty, $xDefault);
+        $xDefault = $this->xConfigManager->getOption('upload.default.' . $sProperty, 0);
+        $nSize = $this->xConfigManager->getOption('upload.files.' . $sName . '.' . $sProperty, $xDefault);
         if($nSize > 0 && (
             ($sProperty == 'max-size' && $nFileSize > $nSize) ||
             ($sProperty == 'min-size' && $nFileSize < $nSize)))
