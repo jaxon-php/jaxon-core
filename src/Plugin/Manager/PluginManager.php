@@ -41,8 +41,11 @@ use Jaxon\Response\Plugin\JQuery\JQueryPlugin;
 use Jaxon\Response\Response;
 use Jaxon\Ui\Dialogs\MessageInterface;
 use Jaxon\Ui\Dialogs\QuestionInterface;
+use Jaxon\Ui\View\ViewManager;
 use Jaxon\Utils\Config\Config;
 use Jaxon\Utils\Translation\Translator;
+
+use Closure;
 
 use function class_implements;
 use function in_array;
@@ -70,6 +73,18 @@ class PluginManager
     protected $xConfigManager;
 
     /**
+     * @var ViewManager
+     */
+    protected $xViewManager;
+
+    /**
+     * The code generator
+     *
+     * @var CodeGenerator
+     */
+    private $xCodeGenerator;
+
+    /**
      * Request plugins, indexed by name
      *
      * @var array<CallableRegistryInterface>
@@ -91,27 +106,22 @@ class PluginManager
     private $aResponsePlugins = [];
 
     /**
-     * The code generator
-     *
-     * @var CodeGenerator
-     */
-    private $xCodeGenerator;
-
-    /**
      * The constructor
      *
      * @param Container $di
-     * @param Translator $xTranslator
      * @param ConfigManager $xConfigManager
+     * @param ViewManager $xViewManager
      * @param CodeGenerator $xCodeGenerator
+     * @param Translator $xTranslator
      */
-    public function __construct(Container $di, Translator $xTranslator,
-        ConfigManager $xConfigManager, CodeGenerator $xCodeGenerator)
+    public function __construct(Container $di, ConfigManager $xConfigManager,
+        ViewManager $xViewManager, CodeGenerator $xCodeGenerator, Translator $xTranslator)
     {
         $this->di = $di;
-        $this->xTranslator = $xTranslator;
         $this->xConfigManager = $xConfigManager;
+        $this->xViewManager = $xViewManager;
         $this->xCodeGenerator = $xCodeGenerator;
+        $this->xTranslator = $xTranslator;
     }
 
     /**
@@ -230,17 +240,15 @@ class PluginManager
     /**
      * Register callables from a section of the config
      *
-     * @param Config $xAppConfig    The config options
-     * @param string $sSection    The config section name
+     * @param array $aOptions    The content of the config section
      * @param string $sCallableType    The type of callable to register
      *
      * @return void
      * @throws SetupException
      */
-    private function registerCallablesFromConfig(Config $xAppConfig, string $sSection, string $sCallableType)
+    private function registerCallablesFromOptions(array $aOptions, string $sCallableType)
     {
-        $aConfig = $xAppConfig->getOption($sSection, []);
-        foreach($aConfig as $xKey => $xValue)
+        foreach($aOptions as $xKey => $xValue)
         {
             if(is_integer($xKey) && is_string($xValue))
             {
@@ -256,6 +264,36 @@ class PluginManager
     }
 
     /**
+     * Save items in the DI container
+     *
+     * @param Config $xConfig
+     *
+     * @return void
+     */
+    private function updateContainer(Config $xConfig)
+    {
+        $aOptions = $xConfig->getOption('container', []);
+        foreach($aOptions as $xKey => $xValue)
+        {
+            if(is_integer($xKey) && is_string($xValue))
+            {
+                // The value of the entry is the class name
+                $this->di->auto($xValue);
+            }
+            elseif($xValue instanceof Closure)
+            {
+                // The key is the class name. It must be a string.
+                $this->di->set((string)$xKey, $xValue);
+            }
+            else
+            {
+                // The key is the class name. It must be a string.
+                $this->di->val((string)$xKey, $xValue);
+            }
+        }
+    }
+
+    /**
      * Read and set Jaxon options from a JSON config file
      *
      * @param Config $xConfig The config options
@@ -264,25 +302,24 @@ class PluginManager
      * @return void
      * @throws SetupException
      */
-    private function _registerFromConfig(Config $xConfig, ?Config $xPkgConfig = null)
+    private function registerItemsFromConfig(Config $xConfig, ?Config $xPkgConfig = null)
     {
-        // Register functions
-        $this->registerCallablesFromConfig($xConfig, 'functions', Jaxon::CALLABLE_FUNCTION);
-        // Register classes
-        $this->registerCallablesFromConfig($xConfig, 'classes', Jaxon::CALLABLE_CLASS);
-        // Register directories
-        $this->registerCallablesFromConfig($xConfig, 'directories', Jaxon::CALLABLE_DIR);
+        $aSections = [
+            'functions' => Jaxon::CALLABLE_FUNCTION,
+            'classes' => Jaxon::CALLABLE_CLASS,
+            'directories' => Jaxon::CALLABLE_DIR,
+        ];
+        // Register functions, classes and directories
+        foreach($aSections as $sSection => $sCallableType)
+        {
+            $this->registerCallablesFromOptions($xConfig->getOption($sSection, []), $sCallableType);
+        }
         // Register the view namespaces
         // Note: the $xPkgConfig can provide a "template" option, which is used to customize
         // the user defined view namespaces. That's why it is needed here.
-        $this->di->getViewManager()->addNamespaces($xConfig, $xPkgConfig);
-
-        // Register classes in DI container
-        $aContainerConfig = $xConfig->getOption('container', []);
-        foreach($aContainerConfig as $sClassName => $xClosure)
-        {
-            $this->di->set($sClassName, $xClosure);
-        }
+        $this->xViewManager->addNamespaces($xConfig, $xPkgConfig);
+        // Save items in the DI container
+        $this->updateContainer($xConfig);
     }
 
     /**
@@ -333,7 +370,7 @@ class PluginManager
         $xPkgConfig = $this->xConfigManager->newConfig($aPkgOptions);
         $this->di->registerPackage($sClassName, $xPkgConfig);
         // Register the declarations in the package config.
-        $this->_registerFromConfig($xLibConfig, $xPkgConfig);
+        $this->registerItemsFromConfig($xLibConfig, $xPkgConfig);
         // Register the package as a code generator.
         $this->xCodeGenerator->addGenerator($sClassName, 500);
     }
@@ -348,7 +385,7 @@ class PluginManager
      */
     public function registerFromConfig(Config $xAppConfig)
     {
-        $this->_registerFromConfig($xAppConfig);
+        $this->registerItemsFromConfig($xAppConfig);
 
         // Register packages
         $aPackageConfig = $xAppConfig->getOption('packages', []);

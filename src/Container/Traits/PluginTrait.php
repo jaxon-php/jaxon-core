@@ -14,6 +14,7 @@ use Jaxon\Request\Validator;
 use Jaxon\Response\Plugin\DataBag\DataBagPlugin;
 use Jaxon\Response\Plugin\JQuery\JQueryPlugin;
 use Jaxon\Response\ResponseManager;
+use Jaxon\Ui\View\ViewManager;
 use Jaxon\Utils\File\Minifier;
 use Jaxon\Utils\Http\UriDetector;
 use Jaxon\Utils\Template\Engine as TemplateEngine;
@@ -30,8 +31,8 @@ trait PluginTrait
     {
         // Plugin manager
         $this->set(PluginManager::class, function($c) {
-            return new PluginManager($c->g(Container::class), $c->g(Translator::class),
-                $c->g(ConfigManager::class), $c->g(CodeGenerator::class));
+            return new PluginManager($c->g(Container::class), $c->g(ConfigManager::class),
+                $c->g(ViewManager::class), $c->g(CodeGenerator::class), $c->g(Translator::class));
         });
         // Code Generation
         $this->set(AssetManager::class, function($c) {
