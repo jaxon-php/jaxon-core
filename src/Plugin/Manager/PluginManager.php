@@ -431,8 +431,8 @@ class PluginManager
         $this->registerPlugin(CallableDirPlugin::class, Jaxon::CALLABLE_DIR, 103);
 
         // Register the JQuery response plugin
-        $this->registerPlugin(JQueryPlugin::class, 'jquery', 700);
+        $this->registerPlugin(JQueryPlugin::class, JQueryPlugin::NAME, 700);
         // Register the DataBag response plugin
-        $this->registerPlugin(DataBagPlugin::class, 'bags', 700);
+        $this->registerPlugin(DataBagPlugin::class, DataBagPlugin::NAME, 700);
     }
 }

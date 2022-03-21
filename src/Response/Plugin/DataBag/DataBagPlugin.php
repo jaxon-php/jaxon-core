@@ -11,6 +11,11 @@ use function json_decode;
 class DataBagPlugin extends ResponsePlugin
 {
     /**
+     * @const The plugin name
+     */
+    const NAME = 'bags';
+
+    /**
      * @var DataBag
      */
     protected $xDataBag;
@@ -23,6 +28,14 @@ class DataBagPlugin extends ResponsePlugin
         $aData = isset($_POST['jxnbags']) ? $this->readData($_POST) :
             (isset($_GET['jxnbags']) ? $this->readData($_GET) : []);
         $this->xDataBag = new DataBag($aData);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getName(): string
+    {
+        return self::NAME;
     }
 
     /**
@@ -42,14 +55,6 @@ class DataBagPlugin extends ResponsePlugin
             return $aFrom['jxnbags'];
         }
         return [];
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getName(): string
-    {
-        return 'bags';
     }
 
     /**

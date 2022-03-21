@@ -7,6 +7,11 @@ use Jaxon\Plugin\ResponsePlugin;
 class JQueryPlugin extends ResponsePlugin
 {
     /**
+     * @const The plugin name
+     */
+    const NAME = 'jquery';
+
+    /**
      * @var string
      */
     protected $jQueryNs;
@@ -26,7 +31,7 @@ class JQueryPlugin extends ResponsePlugin
      */
     public function getName(): string
     {
-        return 'jquery';
+        return self::NAME;
     }
 
     /**
