@@ -25,7 +25,9 @@
         "jaxon-php/jaxon-utils": "^0.1"
     },
     "require-dev": {
-        "phpunit/phpunit": "^8.5"
+        "phpunit/phpunit": "^8.5",
+        "php-coveralls/php-coveralls": "^2.5",
+        "phpunit/phpcov": "6.*"
     },
     "autoload": {
         "psr-4": {

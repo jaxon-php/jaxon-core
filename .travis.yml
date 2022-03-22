@@ -30,7 +30,7 @@ install:
     - composer install --no-interaction --prefer-dist -o
 
 script:
-    - vendor/bin/phpunit
+    - XDEBUG_MODE=coverage vendor/bin/phpunit
 
 after_script:
-    - if [[ "$PHPUNIT_FLAGS" != "" ]]; then php vendor/bin/coveralls -v; fi;
+    - travis_retry php vendor/bin/php-coveralls -v
