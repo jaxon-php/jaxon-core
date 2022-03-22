@@ -4,9 +4,6 @@ namespace Jaxon\Tests\CallableClass\Request;
 use Jaxon\Jaxon;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @covers Jaxon\RequestPlugin
- */
 final class RequestTest extends TestCase
 {
     public static function setUpBeforeClass(): void

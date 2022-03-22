@@ -6,10 +6,6 @@ use Jaxon\Request\Plugin\CallableFunction\CallableFunction;
 use Jaxon\Request\Plugin\CallableFunction\CallableFunctionPlugin;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @covers CallableFunction
- * @covers CallableFunctionPlugin
- */
 final class FunctionTest extends TestCase
 {
     /**
