@@ -22,7 +22,7 @@
         "psr/log": ">=1.0.0",
         "psr/container": ">=1.0.0",
         "pimple/pimple": "^3.0",
-        "jaxon-php/jaxon-utils": "^0.1"
+        "jaxon-php/jaxon-utils": "^1.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^8.5",
