@@ -9,9 +9,6 @@ use function jaxon;
 use function pr;
 use function pm;
 
-/**
- * @covers Jaxon\RequestPlugin
- */
 final class RequestTest extends TestCase
 {
     public static function setUpBeforeClass(): void
