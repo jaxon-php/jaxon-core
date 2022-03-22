@@ -48,6 +48,11 @@ class TemplateView implements ViewInterface
     {
         $sViewName = $store->getViewName();
         $sNamespace = $store->getNamespace();
+        // The default namespace is 'jaxon'
+        if(!($sNamespace = trim($sNamespace)))
+        {
+            $sNamespace = 'jaxon';
+        }
         // In this view renderer, the namespace must always be prepended to the view name.
         if(substr($sViewName, 0, strlen($sNamespace) + 2) != $sNamespace . '::')
         {

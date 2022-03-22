@@ -45,8 +45,6 @@ use Jaxon\Ui\View\ViewManager;
 use Jaxon\Utils\Config\Config;
 use Jaxon\Utils\Translation\Translator;
 
-use Closure;
-
 use function class_implements;
 use function in_array;
 use function is_array;
