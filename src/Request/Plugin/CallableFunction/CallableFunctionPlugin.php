@@ -182,14 +182,11 @@ class CallableFunctionPlugin extends RequestPlugin
     }
 
     /**
-     * Get the callable object for a registered function
-     *
-     * @param string $sFunction
-     *
-     * @return CallableFunction|null
+     * @inheritDoc
      */
-    public function getCallable(string $sFunction): ?CallableFunction
+    public function getCallable(string $sCallable)
     {
+        $sFunction = trim($sCallable);
         if(!isset($this->aFunctions[$sFunction]))
         {
             return null;

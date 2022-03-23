@@ -76,4 +76,24 @@ trait CallableTrait
     {
         return $this->g(CallableFunctionPlugin::class);
     }
+
+    /**
+     * Get the callable class plugin
+     *
+     * @return CallableClassPlugin
+     */
+    public function getCallableClassPlugin(): CallableClassPlugin
+    {
+        return $this->g(CallableClassPlugin::class);
+    }
+
+    /**
+     * Get the callable dir plugin
+     *
+     * @return CallableDirPlugin
+     */
+    public function getCallableDirPlugin(): CallableDirPlugin
+    {
+        return $this->g(CallableDirPlugin::class);
+    }
 }

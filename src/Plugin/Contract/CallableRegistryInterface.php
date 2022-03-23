@@ -28,4 +28,13 @@ interface CallableRegistryInterface
      * @return bool
      */
     public function register(string $sType, string $sCallable, array $aOptions): bool;
+
+    /**
+     * Get the callable object for a registered item
+     *
+     * @param string $sCallable
+     *
+     * @return mixed
+     */
+    public function getCallable(string $sCallable);
 }

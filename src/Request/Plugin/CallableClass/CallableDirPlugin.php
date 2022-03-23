@@ -120,13 +120,7 @@ class CallableDirPlugin implements PluginInterface, CallableRegistryInterface
     }
 
     /**
-     * Register a callable class
-     *
-     * @param string $sType    The type of request handler being registered
-     * @param string $sCallable    The path of the directory being registered
-     * @param array $aOptions    The associated options
-     *
-     * @return bool
+     * @inheritDoc
      */
     public function register(string $sType, string $sCallable, array $aOptions): bool
     {
@@ -137,5 +131,14 @@ class CallableDirPlugin implements PluginInterface, CallableRegistryInterface
         }
         $this->xRegistry->addDirectory($aOptions['directory'], $aOptions);
         return true;
+    }
+
+    /**
+     * @inheritDoc
+     * @throws SetupException
+     */
+    public function getCallable(string $sCallable)
+    {
+        return $this->xRegistry->getCallableObject($sCallable);
     }
 }
