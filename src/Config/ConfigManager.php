@@ -46,35 +46,59 @@ class ConfigManager
      * @var array The default config options
      */
     protected $aConfig =  [
-        'core.version'                      => Jaxon::VERSION,
-        'core.language'                     => 'en',
-        'core.encoding'                     => 'utf-8',
-        'core.decode_utf8'                  => false,
-        'core.prefix.function'              => 'jaxon_',
-        'core.prefix.class'                 => 'Jaxon',
-        // 'core.request.uri'               => '',
-        'core.request.mode'                 => 'asynchronous',
-        'core.request.method'               => 'POST', // W3C: Method is case sensitive
-        'core.response.send'                => true,
-        'core.response.merge.ap'            => true,
-        'core.response.merge.js'            => true,
-        'core.debug.on'                     => false,
-        'core.debug.verbose'                => false,
-        'core.process.exit'                 => true,
-        'core.process.clean'                => false,
-        'core.process.timeout'              => 6000,
-        'core.error.handle'                 => false,
-        'core.error.log_file'               => '',
-        'core.jquery.no_conflict'           => false,
-        'core.upload.enabled'               => true,
-        'js.lib.output_id'                  => 0,
-        'js.lib.queue_size'                 => 0,
-        'js.lib.load_timeout'               => 2000,
-        'js.lib.show_status'                => false,
-        'js.lib.show_cursor'                => true,
-        'js.app.dir'                        => '',
-        'js.app.minify'                     => true,
-        'js.app.options'                    => '',
+        'core' => [
+            'version'               => Jaxon::VERSION,
+            'language'              => 'en',
+            'encoding'              => 'utf-8',
+            'decode_utf8'           => false,
+            'prefix' => [
+                'function'          => 'jaxon_',
+                'class'             => 'Jaxon',
+            ],
+            'request' => [
+                // 'uri'            => '',
+                'mode'              => 'asynchronous',
+                'method'            => 'POST', // W3C: Method is case sensitive
+            ],
+            'response' => [
+                'send'              => true,
+                'merge.ap'          => true,
+                'merge.js'          => true,
+            ],
+            'debug' => [
+                'on'                => false,
+                'verbose'           => false,
+            ],
+            'process' => [
+                'exit'              => true,
+                'clean'             => false,
+                'timeout'           => 6000,
+            ],
+            'error' => [
+                'handle'            => false,
+                'log_file'          => '',
+            ],
+            'jquery' => [
+                'no_conflict'       => false,
+            ],
+            'upload' => [
+                'enabled'           => true,
+            ],
+        ],
+        'js' => [
+            'lib' => [
+                'output_id'         => 0,
+                'queue_size'        => 0,
+                'load_timeout'      => 2000,
+                'show_status'       => false,
+                'show_cursor'       => true,
+            ],
+            'app' => [
+                'dir'               => '',
+                'minify'            => true,
+                'options'           => '',
+            ],
+        ],
     ];
 
     /**
@@ -249,16 +273,6 @@ class ConfigManager
     public function getOptionNames(string $sPrefix): array
     {
         return $this->xConfig->getOptionNames($sPrefix);
-    }
-
-    /**
-     * Get the library config
-     *
-     * @return Config
-     */
-    public function getConfig(): Config
-    {
-        return $this->xConfig;
     }
 
     /**

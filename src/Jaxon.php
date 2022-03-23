@@ -238,16 +238,16 @@ class Jaxon implements LoggerAwareInterface
      * @param string $sConfigFile The full path to the config file
      * @param string $sConfigSection The section of the config file to be loaded
      *
-     * @return Config
+     * @return ConfigManager
      * @throws SetupException
      */
-    public function config(string $sConfigFile = '', string $sConfigSection = ''): Config
+    public function config(string $sConfigFile = '', string $sConfigSection = ''): ConfigManager
     {
         if(!empty(($sConfigFile = trim($sConfigFile))))
         {
             $this->xConfigManager->load($sConfigFile, trim($sConfigSection));
         }
-        return $this->xConfigManager->getConfig();
+        return $this->xConfigManager;
     }
 
     /**

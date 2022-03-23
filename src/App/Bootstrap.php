@@ -189,28 +189,27 @@ class Bootstrap
         // Setup the app.
         $this->setupApp($xAppConfig);
 
-        $xLibConfig = $this->xConfigManager->getConfig();
         // Jaxon library settings
-        if(!$xLibConfig->hasOption('js.app.export'))
+        if(!$this->xConfigManager->hasOption('js.app.export'))
         {
-            $xLibConfig->setOption('js.app.export', $this->bExportJs);
+            $this->xConfigManager->setOption('js.app.export', $this->bExportJs);
         }
-        if(!$xLibConfig->hasOption('js.app.minify'))
+        if(!$this->xConfigManager->hasOption('js.app.minify'))
         {
-            $xLibConfig->setOption('js.app.minify', $this->bMinifyJs);
+            $this->xConfigManager->setOption('js.app.minify', $this->bMinifyJs);
         }
-        if(!$xLibConfig->hasOption('js.app.uri') && $this->sJsUri != '')
+        if(!$this->xConfigManager->hasOption('js.app.uri') && $this->sJsUri != '')
         {
-            $xLibConfig->setOption('js.app.uri', $this->sJsUri);
+            $this->xConfigManager->setOption('js.app.uri', $this->sJsUri);
         }
-        if(!$xLibConfig->hasOption('js.app.dir') && $this->sJsDir != '')
+        if(!$this->xConfigManager->hasOption('js.app.dir') && $this->sJsDir != '')
         {
-            $xLibConfig->setOption('js.app.dir', $this->sJsDir);
+            $this->xConfigManager->setOption('js.app.dir', $this->sJsDir);
         }
         // Set the request URI
-        if(!$xLibConfig->hasOption('core.request.uri') && $this->sUri != '')
+        if(!$this->xConfigManager->hasOption('core.request.uri') && $this->sUri != '')
         {
-            $xLibConfig->setOption('core.request.uri', $this->sUri);
+            $this->xConfigManager->setOption('core.request.uri', $this->sUri);
         }
     }
 }
