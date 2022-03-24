@@ -10,6 +10,7 @@
 
 namespace Jaxon\Response\Traits;
 
+use Jaxon\Response\AbstractResponse;
 use Jaxon\Response\Response;
 use Jaxon\Exception\RequestException;
 
@@ -118,9 +119,9 @@ trait JsTrait
      *
      * @param string $sMessage    The message to be displayed
      *
-     * @return Response
+     * @return AbstractResponse
      */
-    public function debug(string $sMessage): Response
+    public function debug(string $sMessage): AbstractResponse
     {
         return $this->_addCommand('dbg', [], $sMessage);
     }
