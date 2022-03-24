@@ -17,6 +17,7 @@ namespace Jaxon\Request\Plugin\CallableClass;
 use Jaxon\Di\Container;
 use Jaxon\Exception\SetupException;
 
+use Composer\Autoload\ClassLoader;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 
@@ -55,18 +56,11 @@ class CallableRepository
     protected $aNamespaces = [];
 
     /**
-     * Indicate if the registered directories are already parsed
+     * The Composer autoloader
      *
-     * @var bool
+     * @var ClassLoader
      */
-    protected $bParsedDirectories = false;
-
-    /**
-     * Indicate if the registered namespaces are already parsed
-     *
-     * @var bool
-     */
-    protected $bParsedNamespaces = false;
+    private $xAutoloader = null;
 
     /**
      * The constructor
@@ -76,6 +70,13 @@ class CallableRepository
     public function __construct(Container $di)
     {
         $this->di = $di;
+
+        // Set the composer autoloader
+        if(file_exists(($sAutoloadFile = __DIR__ . '/../../../../../../autoload.php')) ||
+            file_exists(($sAutoloadFile = __DIR__ . '/../../../../vendor/autoload.php')))
+        {
+            $this->xAutoloader = require($sAutoloadFile);
+        }
     }
 
     /**
@@ -183,12 +184,7 @@ class CallableRepository
      */
     public function getClassOptions(string $sClassName): ?array
     {
-        if(!isset($this->aClasses[$sClassName]))
-        {
-            // Class not found
-            return null;
-        }
-        return $this->aClasses[$sClassName];
+        return $this->aClasses[$sClassName] ?? null;
     }
 
     /**
@@ -198,19 +194,19 @@ class CallableRepository
      *
      * @return void
      */
-    public function parseDirectories(array $aDirectories)
+    public function parseDirectories(array &$aDirectories)
     {
         // Browse directories without namespaces and read all the files.
-        // This is to be done only once.
-        if($this->bParsedDirectories)
+        $aClassMap = [];
+        foreach($aDirectories as $sDirectory => &$aOptions)
         {
-            return;
-        }
-        $this->bParsedDirectories = true;
+            // This is to be done only once.
+            if($aOptions['parsed'])
+            {
+                continue;
+            }
+            $aOptions['parsed'] = true;
 
-        // Browse directories without namespaces and read all the files.
-        foreach($aDirectories as $sDirectory => $aOptions)
-        {
             $itFile = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($sDirectory));
             // Iterate on dir content
             foreach($itFile as $xFile)
@@ -226,10 +222,15 @@ class CallableRepository
                 // No more classmap autoloading. The file will be included when needed.
                 if(($aOptions['autoload']))
                 {
-                    $aClassOptions['include'] = $xFile->getPathname();
+                    $aClassMap[$sClassName] = $xFile->getPathname();
                 }
                 $this->addClass($sClassName, $aClassOptions, $aOptions);
             }
+        }
+        // Set classmap autoloading
+        if(($aClassMap) && $this->xAutoloader !== null)
+        {
+            $this->xAutoloader->addClassMap($aClassMap);
         }
     }
 
@@ -240,19 +241,19 @@ class CallableRepository
      *
      * @return void
      */
-    public function parseNamespaces(array $aNamespaces)
+    public function parseNamespaces(array &$aNamespaces)
     {
-        // This is to be done only once.
-        if($this->bParsedNamespaces)
-        {
-            return;
-        }
-        $this->bParsedNamespaces = true;
-
         // Browse directories with namespaces and read all the files.
         $sDS = DIRECTORY_SEPARATOR;
-        foreach($aNamespaces as $sNamespace => $aOptions)
+        foreach($aNamespaces as $sNamespace => &$aOptions)
         {
+            // This is to be done only once.
+            if($aOptions['parsed'])
+            {
+                continue;
+            }
+            $aOptions['parsed'] = true;
+
             $this->addNamespace($sNamespace, ['separator' => $aOptions['separator']]);
 
             // Iterate on dir content

@@ -549,4 +549,18 @@ class Jaxon implements LoggerAwareInterface
     {
         return $this->di()->getSessionManager();
     }
+
+    /**
+     * Reset the library and container instances
+     *
+     * @return void
+     * @throws SetupException
+     */
+    public function reset()
+    {
+        self::$xInstance = null;
+        self::$xContainer = null;
+        // Need to register the default plugins.
+        self::getInstance()->di()->getPluginManager()->registerPlugins();
+    }
 }

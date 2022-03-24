@@ -116,6 +116,8 @@ class CallableDirPlugin implements PluginInterface, CallableRegistryInterface
             $sName = trim(str_replace('.', '\\', $sName), ' \\');
             $_aOptions[$sName] = $aOption;
         }
+        // Boolean to check if the dir is already parsed
+        $_aOptions['parsed'] = false;
         return $_aOptions;
     }
 

@@ -247,7 +247,7 @@ class CallableObject
      */
     public function getRegisteredObject()
     {
-        return $this->di->get($this->xReflectionClass->getName());
+        return $this->di->g($this->xReflectionClass->getName());
     }
 
     /**
