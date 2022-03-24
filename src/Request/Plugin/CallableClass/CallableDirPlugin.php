@@ -116,17 +116,13 @@ class CallableDirPlugin implements PluginInterface, CallableRegistryInterface
             $sName = trim(str_replace('.', '\\', $sName), ' \\');
             $_aOptions[$sName] = $aOption;
         }
+        // Boolean to check if the dir is already parsed
+        $_aOptions['parsed'] = false;
         return $_aOptions;
     }
 
     /**
-     * Register a callable class
-     *
-     * @param string $sType    The type of request handler being registered
-     * @param string $sCallable    The path of the directory being registered
-     * @param array $aOptions    The associated options
-     *
-     * @return bool
+     * @inheritDoc
      */
     public function register(string $sType, string $sCallable, array $aOptions): bool
     {
@@ -137,5 +133,14 @@ class CallableDirPlugin implements PluginInterface, CallableRegistryInterface
         }
         $this->xRegistry->addDirectory($aOptions['directory'], $aOptions);
         return true;
+    }
+
+    /**
+     * @inheritDoc
+     * @throws SetupException
+     */
+    public function getCallable(string $sCallable)
+    {
+        return $this->xRegistry->getCallableObject($sCallable);
     }
 }

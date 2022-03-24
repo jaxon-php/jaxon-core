@@ -137,7 +137,7 @@ class CodeGenerator
         $sHash = $this->sVersion;
         foreach($this->aClassNames as $sClassName)
         {
-            $xGenerator = $this->di->get($sClassName);
+            $xGenerator = $this->di->g($sClassName);
             $sHash .= $xGenerator->getHash();
         }
         return md5($sHash);
@@ -166,7 +166,7 @@ class CodeGenerator
      */
     private function generatePluginCodes(string $sClassName)
     {
-        $xGenerator = $this->di->get($sClassName);
+        $xGenerator = $this->di->g($sClassName);
         if(!is_subclass_of($xGenerator, Plugin::class) || $this->xAssetManager->shallIncludeAssets($xGenerator))
         {
             // HTML tags for CSS

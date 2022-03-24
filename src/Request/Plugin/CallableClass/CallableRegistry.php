@@ -95,8 +95,8 @@ class CallableRegistry
         $this->xRepository = $xRepository;
 
         // Set the composer autoloader
-        $sAutoloadFile = __DIR__ . '/../../../../../../autoload.php';
-        if(file_exists($sAutoloadFile))
+        if(file_exists(($sAutoloadFile = __DIR__ . '/../../../../../../autoload.php')) ||
+            file_exists(($sAutoloadFile = __DIR__ . '/../../../../vendor/autoload.php')))
         {
             $this->xAutoloader = require($sAutoloadFile);
         }

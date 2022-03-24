@@ -181,19 +181,22 @@ class CallableClassPlugin extends RequestPlugin
     }
 
     /**
-     * Register a callable class
-     *
-     * @param string $sType    The type of request handler being registered
-     * @param string $sCallable    The name of the class being registered
-     * @param array $aOptions    The associated options
-     *
-     * @return bool
+     * @inheritDoc
      */
     public function register(string $sType, string $sCallable, array $aOptions): bool
     {
         $sClassName = trim($sCallable);
         $this->xRepository->addClass($sClassName, $aOptions);
         return true;
+    }
+
+    /**
+     * @inheritDoc
+     * @throws SetupException
+     */
+    public function getCallable(string $sCallable)
+    {
+        return $this->xRegistry->getCallableObject($sCallable);
     }
 
     /**
