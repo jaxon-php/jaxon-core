@@ -44,9 +44,14 @@ trait RegisterTrait
         }
         // Functions options
         $aCallableOptions = [];
-        foreach($aOptions['functions'] as $sFunctionNames => $aFunctionOptions)
+        foreach($aOptions['functions'] as $sNames => $aFunctionOptions)
         {
-            $aNames = explode(',', $sFunctionNames); // Names are in comma-separated list.
+            if($sNames === 'protected')
+            {
+                $xCallableObject->configure('protected', $aFunctionOptions);
+                continue;
+            }
+            $aNames = explode(',', $sNames); // Names are in comma-separated list.
             foreach($aNames as $sFunctionName)
             {
                 foreach($aFunctionOptions as $sOptionName => $xOptionValue)

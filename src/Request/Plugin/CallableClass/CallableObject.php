@@ -106,6 +106,16 @@ class CallableObject
     }
 
     /**
+     * Get callable object options
+     *
+     * @return array
+     */
+    public function getOptions(): array
+    {
+        return $this->aOptions;
+    }
+
+    /**
      * Set callable object options
      *
      * @param array  $aOptions

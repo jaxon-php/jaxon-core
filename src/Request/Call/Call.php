@@ -111,7 +111,7 @@ class Call extends JsCall
      */
     public function ifeq($xValue1, $xValue2): Call
     {
-        $this->sCondition = '(' . Parameter::make($xValue1) . '==' . Parameter::make($xValue2) . ')';
+        $this->sCondition = Parameter::make($xValue1) . '==' . Parameter::make($xValue2);
         return $this;
     }
 
@@ -125,7 +125,7 @@ class Call extends JsCall
      */
     public function ifne($xValue1, $xValue2): Call
     {
-        $this->sCondition = '(' . Parameter::make($xValue1) . '!=' . Parameter::make($xValue2) . ')';
+        $this->sCondition = Parameter::make($xValue1) . '!=' . Parameter::make($xValue2);
         return $this;
     }
 
@@ -139,7 +139,7 @@ class Call extends JsCall
      */
     public function ifgt($xValue1, $xValue2): Call
     {
-        $this->sCondition = '(' . Parameter::make($xValue1) . '>' . Parameter::make($xValue2) . ')';
+        $this->sCondition = Parameter::make($xValue1) . '>' . Parameter::make($xValue2);
         return $this;
     }
 
@@ -153,7 +153,7 @@ class Call extends JsCall
      */
     public function ifge($xValue1, $xValue2): Call
     {
-        $this->sCondition = '(' . Parameter::make($xValue1) . '>=' . Parameter::make($xValue2) . ')';
+        $this->sCondition = Parameter::make($xValue1) . '>=' . Parameter::make($xValue2);
         return $this;
     }
 
@@ -167,7 +167,7 @@ class Call extends JsCall
      */
     public function iflt($xValue1, $xValue2): Call
     {
-        $this->sCondition = '(' . Parameter::make($xValue1) . '<' . Parameter::make($xValue2) . ')';
+        $this->sCondition = Parameter::make($xValue1) . '<' . Parameter::make($xValue2);
         return $this;
     }
 
@@ -181,7 +181,7 @@ class Call extends JsCall
      */
     public function ifle($xValue1, $xValue2): Call
     {
-        $this->sCondition = '(' . Parameter::make($xValue1) . '<=' . Parameter::make($xValue2) . ')';
+        $this->sCondition = Parameter::make($xValue1) . '<=' . Parameter::make($xValue2);
         return $this;
     }
 
