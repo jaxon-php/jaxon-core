@@ -25,6 +25,7 @@ namespace Jaxon\Request\Handler;
 use Jaxon\Config\ConfigManager;
 use Jaxon\Utils\Translation\Translator;
 use Jaxon\Exception\RequestException;
+use Psr\Http\Message\ServerRequestInterface;
 
 use function strcasecmp;
 use function is_numeric;
@@ -88,25 +89,26 @@ class ArgumentManager
      *
      * Get and decode the arguments of the HTTP request
      *
+     * @param ServerRequestInterface $xRequest
      * @param ConfigManager $xConfigManager
      * @param Translator $xTranslator
      */
-    public function __construct(ConfigManager $xConfigManager, Translator $xTranslator)
+    public function __construct(ServerRequestInterface $xRequest, ConfigManager $xConfigManager, Translator $xTranslator)
     {
         $this->xConfigManager = $xConfigManager;
         $this->xTranslator = $xTranslator;
         $this->aArgs = [];
         $this->nMethod = self::METHOD_UNKNOWN;
 
-        if(isset($_POST['jxnargs']))
+        if(is_array(($aBody = $xRequest->getParsedBody())) && isset($aBody['jxnargs']))
         {
             $this->nMethod = self::METHOD_POST;
-            $this->aArgs = $_POST['jxnargs'];
+            $this->aArgs = $aBody['jxnargs'];
         }
-        elseif(isset($_GET['jxnargs']))
+        elseif(is_array(($aParams = $xRequest->getQueryParams())) && isset($aParams['jxnargs']))
         {
             $this->nMethod = self::METHOD_GET;
-            $this->aArgs = $_GET['jxnargs'];
+            $this->aArgs = $aParams['jxnargs'];
         }
     }
 

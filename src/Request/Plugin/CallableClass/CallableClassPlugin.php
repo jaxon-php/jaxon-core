@@ -32,6 +32,7 @@ use Jaxon\Utils\Template\TemplateEngine;
 use Jaxon\Utils\Translation\Translator;
 use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;
+use Psr\Http\Message\ServerRequestInterface;
 
 use ReflectionClass;
 use ReflectionMethod;
@@ -298,23 +299,23 @@ class CallableClassPlugin extends RequestPlugin
     /**
      * @inheritDoc
      */
-    public static function canProcessRequest(): bool
+    public static function canProcessRequest(ServerRequestInterface $xRequest): bool
     {
-        if(isset($_POST['jxncls']))
+        if(is_array(($aBody = $xRequest->getParsedBody())) && isset($aBody['jxncls']))
         {
-            self::$sRequestedClass = trim($_POST['jxncls']);
+            self::$sRequestedClass = trim($aBody['jxncls']);
         }
-        elseif(isset($_GET['jxncls']))
+        elseif(is_array(($aParams = $xRequest->getQueryParams())) && isset($aParams['jxncls']))
         {
-            self::$sRequestedClass = trim($_GET['jxncls']);
+            self::$sRequestedClass = trim($aParams['jxncls']);
         }
-        if(isset($_POST['jxnmthd']))
+        if(is_array(($aBody = $xRequest->getParsedBody())) && isset($aBody['jxnmthd']))
         {
-            self::$sRequestedMethod = trim($_POST['jxnmthd']);
+            self::$sRequestedMethod = trim($aBody['jxnmthd']);
         }
-        elseif(isset($_GET['jxnmthd']))
+        elseif(is_array(($aParams = $xRequest->getQueryParams())) && isset($aParams['jxnmthd']))
         {
-            self::$sRequestedMethod = trim($_GET['jxnmthd']);
+            self::$sRequestedMethod = trim($aParams['jxnmthd']);
         }
         return (self::$sRequestedClass !== '' && self::$sRequestedMethod !== '');
     }

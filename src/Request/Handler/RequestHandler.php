@@ -30,6 +30,7 @@ use Jaxon\Response\AbstractResponse;
 use Jaxon\Response\Plugin\DataBag\DataBagPlugin;
 use Jaxon\Response\ResponseManager;
 use Jaxon\Utils\Translation\Translator;
+use Psr\Http\Message\ServerRequestInterface;
 
 use Exception;
 
@@ -105,43 +106,39 @@ class RequestHandler
     private $xRequestPlugin = null;
 
     /**
+     * @var ServerRequestInterface
+     */
+    private $xRequest;
+
+    /**
      * The constructor
      *
      * @param Container $di
      * @param ConfigManager $xConfigManager
-     * @param ArgumentManager $xArgument
+     * @param ArgumentManager $xArgumentManager
      * @param PluginManager $xPluginManager
      * @param ResponseManager $xResponseManager
      * @param CallbackManager $xCallbackManager
+     * @param ServerRequestInterface $xRequest
      * @param UploadHandler|null $xUploadHandler
      * @param DataBagPlugin $xDataBagPlugin
      * @param Translator $xTranslator
      */
-    public function __construct(Container $di, ConfigManager $xConfigManager, ArgumentManager $xArgument,
+    public function __construct(Container $di, ConfigManager $xConfigManager, ArgumentManager $xArgumentManager,
         PluginManager $xPluginManager, ResponseManager $xResponseManager, CallbackManager $xCallbackManager,
-        ?UploadHandler $xUploadHandler, DataBagPlugin $xDataBagPlugin, Translator $xTranslator)
+        ServerRequestInterface $xRequest, ?UploadHandler $xUploadHandler, DataBagPlugin $xDataBagPlugin,
+        Translator $xTranslator)
     {
         $this->di = $di;
         $this->xConfigManager = $xConfigManager;
         $this->xPluginManager = $xPluginManager;
         $this->xResponseManager = $xResponseManager;
-        $this->xArgumentManager = $xArgument;
+        $this->xArgumentManager = $xArgumentManager;
         $this->xCallbackManager = $xCallbackManager;
+        $this->xRequest = $xRequest;
         $this->xUploadHandler = $xUploadHandler;
         $this->xDataBagPlugin = $xDataBagPlugin;
         $this->xTranslator = $xTranslator;
-    }
-
-    /**
-     * Return the method that was used to send the arguments from the client
-     *
-     * The method is one of: ArgumentManager::METHOD_UNKNOWN, ArgumentManager::METHOD_GET, ArgumentManager::METHOD_POST.
-     *
-     * @return int
-     */
-    public function getRequestMethod(): int
-    {
-        return $this->xArgumentManager->getRequestMethod();
     }
 
     /**
@@ -275,9 +272,9 @@ class RequestHandler
         // Find a plugin to process the request
         foreach($this->xPluginManager->getRequestHandlers() as $sClassName)
         {
-            if($sClassName::canProcessRequest())
+            if($sClassName::canProcessRequest($this->xRequest))
             {
-                $this->xRequestPlugin = $this->di->get($sClassName);
+                $this->xRequestPlugin = $this->di->g($sClassName);
                 return true;
             }
         }

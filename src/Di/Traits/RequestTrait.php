@@ -18,6 +18,9 @@ use Jaxon\Response\ResponseManager;
 use Jaxon\Ui\Dialogs\DialogFacade;
 use Jaxon\Ui\Pagination\Paginator;
 use Jaxon\Utils\Translation\Translator;
+use Nyholm\Psr7\Factory\Psr17Factory;
+use Nyholm\Psr7Server\ServerRequestCreator;
+use Psr\Http\Message\ServerRequestInterface;
 
 trait RequestTrait
 {
@@ -28,9 +31,20 @@ trait RequestTrait
      */
     private function registerRequests()
     {
+        // The server request
+        $this->set(ServerRequestInterface::class, function() {
+            $xRequestFactory = new Psr17Factory();
+            $xRequestCreator = new ServerRequestCreator(
+                $xRequestFactory, // ServerRequestFactory
+                $xRequestFactory, // UriFactory
+                $xRequestFactory, // UploadedFileFactory
+                $xRequestFactory  // StreamFactory
+            );
+            return $xRequestCreator->fromGlobals();
+        });
         // Argument Manager
         $this->set(ArgumentManager::class, function($c) {
-            return new ArgumentManager($c->g(ConfigManager::class), $c->g(Translator::class));
+            return new ArgumentManager($c->g(ServerRequestInterface::class), $c->g(ConfigManager::class), $c->g(Translator::class));
         });
         // Callback Manager
         $this->set(CallbackManager::class, function() {
@@ -40,8 +54,8 @@ trait RequestTrait
         $this->set(RequestHandler::class, function($c) {
             return new RequestHandler($c->g(Container::class), $c->g(ConfigManager::class),
                 $c->g(ArgumentManager::class), $c->g(PluginManager::class), $c->g(ResponseManager::class),
-                $c->g(CallbackManager::class), $c->g(UploadHandler::class), $c->g(DataBagPlugin::class),
-                $c->g(Translator::class));
+                $c->g(CallbackManager::class), $c->g(ServerRequestInterface::class), $c->g(UploadHandler::class),
+                $c->g(DataBagPlugin::class), $c->g(Translator::class));
         });
         // Request Factory
         $this->set(Factory::class, function($c) {

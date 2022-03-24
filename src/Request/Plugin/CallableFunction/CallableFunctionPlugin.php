@@ -31,6 +31,7 @@ use Jaxon\Utils\Template\TemplateEngine;
 use Jaxon\Utils\Translation\Translator;
 use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;
+use Psr\Http\Message\ServerRequestInterface;
 
 use function array_keys;
 use function implode;
@@ -232,15 +233,15 @@ class CallableFunctionPlugin extends RequestPlugin
     /**
      * @inheritDoc
      */
-    public static function canProcessRequest(): bool
+    public static function canProcessRequest(ServerRequestInterface $xRequest): bool
     {
-        if(isset($_POST['jxnfun']))
+        if(is_array(($aBody = $xRequest->getParsedBody())) && isset($aBody['jxnfun']))
         {
-            self::$sRequestedFunction = trim($_POST['jxnfun']);
+            self::$sRequestedFunction = trim($aBody['jxnfun']);
         }
-        elseif(isset($_GET['jxnfun']))
+        elseif(is_array(($aParams = $xRequest->getQueryParams())) && isset($aParams['jxnfun']))
         {
-            self::$sRequestedFunction = trim($_GET['jxnfun']);
+            self::$sRequestedFunction = trim($aParams['jxnfun']);
         }
         return (self::$sRequestedFunction !== '');
     }
