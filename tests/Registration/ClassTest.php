@@ -9,6 +9,10 @@ use Jaxon\Exception\SetupException;
 use PHPUnit\Framework\TestCase;
 use TheClass;
 
+use function strlen;
+use function file_get_contents;
+use function jaxon;
+
 require_once __DIR__ . '/../defs/classes.php';
 
 class ClassTest extends TestCase
@@ -55,7 +59,8 @@ class ClassTest extends TestCase
     {
         $this->assertEquals(32, strlen($this->xPlugin->getHash()));
         // $this->assertEquals('927202fb3aaa987a88d943939c3efe36', $this->xPlugin->getHash());
-        $this->assertEquals(file_get_contents(__DIR__ . '/../script/class.js'), $this->xPlugin->getScript());
+        $this->assertEquals(strlen(file_get_contents(__DIR__ . '/../script/class.js')),
+            strlen($this->xPlugin->getScript()));
     }
 
     public function testClassNotFound()

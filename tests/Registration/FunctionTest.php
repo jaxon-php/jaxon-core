@@ -11,6 +11,8 @@ use Jaxon\Exception\SetupException;
 use PHPUnit\Framework\TestCase;
 use Sample;
 
+use function strlen;
+use function file_get_contents;
 use function jaxon;
 
 final class FunctionTest extends TestCase
@@ -112,7 +114,8 @@ final class FunctionTest extends TestCase
     {
         $this->assertEquals(32, strlen($this->xPlugin->getHash()));
         // $this->assertEquals('34608e208fda374f8761041969acf96e', $this->xPlugin->getHash());
-        $this->assertEquals(file_get_contents(__DIR__ . '/../script/function.js'), $this->xPlugin->getScript());
+        $this->assertEquals(strlen(file_get_contents(__DIR__ . '/../script/function.js')),
+            strlen($this->xPlugin->getScript()));
     }
 
     public function testCallableFunctionIncorrectName()
