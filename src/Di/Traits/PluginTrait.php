@@ -58,8 +58,8 @@ trait PluginTrait
             return new JQueryPlugin($jQueryNs);
         });
         // DataBagPlugin response plugin
-        $this->set(DataBagPlugin::class, function() {
-            return new DataBagPlugin();
+        $this->set(DataBagPlugin::class, function($c) {
+            return new DataBagPlugin($c->g(Container::class));
         });
     }
 
