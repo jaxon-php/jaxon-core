@@ -17,6 +17,7 @@ use Jaxon\Response\Plugin\DataBag\DataBagPlugin;
 use Jaxon\Response\ResponseManager;
 use Jaxon\Ui\Dialogs\DialogFacade;
 use Jaxon\Ui\Pagination\Paginator;
+use Jaxon\Utils\Http\UriDetector;
 use Jaxon\Utils\Translation\Translator;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7Server\ServerRequestCreator;
@@ -44,7 +45,8 @@ trait RequestTrait
         });
         // The parameter reader
         $this->set(ParameterReader::class, function($c) {
-            return new ParameterReader($c->g(Container::class), $c->g(ConfigManager::class), $c->g(Translator::class));
+            return new ParameterReader($c->g(Container::class), $c->g(ConfigManager::class),
+                $c->g(Translator::class), $c->g(UriDetector::class));
         });
         // Callback Manager
         $this->set(CallbackManager::class, function() {

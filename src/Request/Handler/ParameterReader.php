@@ -24,13 +24,13 @@ namespace Jaxon\Request\Handler;
 
 use Jaxon\Di\Container;
 use Jaxon\Config\ConfigManager;
-use Jaxon\Utils\Translation\Translator;
 use Jaxon\Exception\RequestException;
+use Jaxon\Utils\Http\UriDetector;
+use Jaxon\Utils\Http\UriException;
+use Jaxon\Utils\Translation\Translator;
 
 use function strcasecmp;
 use function is_array;
-use function is_bool;
-use function is_numeric;
 use function is_string;
 use function substr;
 use function strlen;
@@ -43,6 +43,11 @@ use function iconv;
 use function intval;
 use function mb_convert_encoding;
 use function utf8_decode;
+use function strpos;
+use function strrpos;
+use function parse_str;
+use function rawurlencode;
+use function str_replace;
 
 class ParameterReader
 {
@@ -60,6 +65,11 @@ class ParameterReader
      * @var Translator
      */
     protected $xTranslator;
+
+    /**
+     * @var UriDetector
+     */
+    private $xUriDetector;
 
     /**
      * The function which decodes input parameters.
@@ -81,12 +91,15 @@ class ParameterReader
      * @param Container $di
      * @param ConfigManager $xConfigManager
      * @param Translator $xTranslator
+     * @param UriDetector $xUriDetector
      */
-    public function __construct(Container $di, ConfigManager $xConfigManager, Translator $xTranslator)
+    public function __construct(Container $di, ConfigManager $xConfigManager,
+        Translator $xTranslator, UriDetector $xUriDetector)
     {
         $this->di = $di;
         $this->xConfigManager = $xConfigManager;
         $this->xTranslator = $xTranslator;
+        $this->xUriDetector = $xUriDetector;
     }
 
     /**
@@ -314,6 +327,16 @@ class ParameterReader
         $this->setUtf8Decoder();
         $this->xConfigManager->setOption('core.decode_utf8', false);
         return $this->decodeUtf8Parameters($aParams);
+    }
+
+    /**
+     * Get the URI of the current request
+     *
+     * @throws UriException
+     */
+    public function uri(): string
+    {
+        return $this->xUriDetector->detect($this->di->getRequest()->getServerParams());
     }
 
     /**
