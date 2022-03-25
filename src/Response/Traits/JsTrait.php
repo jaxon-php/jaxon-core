@@ -14,13 +14,6 @@ use Jaxon\Response\AbstractResponse;
 use Jaxon\Response\Response;
 use Jaxon\Exception\RequestException;
 
-use function strpos;
-use function strrpos;
-use function strlen;
-use function substr;
-use function parse_str;
-use function rawurlencode;
-use function str_replace;
 use function call_user_func;
 use function func_get_args;
 use function array_shift;
@@ -136,52 +129,13 @@ trait JsTrait
      */
     public function redirect(string $sURL, int $nDelay = 0): Response
     {
-        // we need to parse the query part so that the values are rawurlencode()'ed
-        // can't just use parse_url() cos we could be dealing with a relative URL which
-        // parse_url() can't deal with.
-        $queryStart = strpos($sURL, '?', strrpos($sURL, '/'));
-        if($queryStart !== false)
+        $sURL = $this->xParameterReader->parseUrl($sURL);
+        if($nDelay <= 0)
         {
-            $queryStart++;
-            $queryEnd = strpos($sURL, '#', $queryStart);
-            if($queryEnd === false)
-            {
-                $queryEnd = strlen($sURL);
-            }
-            $queryPart = substr($sURL, $queryStart, $queryEnd - $queryStart);
-            parse_str($queryPart, $queryParts);
-            $newQueryPart = "";
-            if($queryParts)
-            {
-                $first = true;
-                foreach($queryParts as $key => $value)
-                {
-                    if($first)
-                    {
-                        $first = false;
-                    }
-                    else
-                    {
-                        $newQueryPart .= '&';
-                    }
-                    $newQueryPart .= rawurlencode($key) . '=' . rawurlencode($value);
-                }
-            }
-            elseif($_SERVER['QUERY_STRING'])
-            {
-                //couldn't break up the query, but there's one there
-                //possibly "http://url/page.html?query1234" type of query?
-                //just encode it and hope it works
-                $newQueryPart = rawurlencode($_SERVER['QUERY_STRING']);
-            }
-            $sURL = str_replace($queryPart, $newQueryPart, $sURL);
+            return $this->script("window.location = '$sURL';");
         }
-
-        if($nDelay > 0)
-        {
-            return $this->script('window.setTimeout("window.location = \'' . $sURL . '\';",' . ($nDelay * 1000) . ');');
-        }
-        return $this->script('window.location = "' . $sURL . '";');
+        $nDelay *= 1000;
+        return $this->script("window.setTimeout(function() { window.location = '$sURL'; }, $nDelay);");
     }
 
     /**

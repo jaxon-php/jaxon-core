@@ -5,6 +5,7 @@ namespace Jaxon\Di\Traits;
 use Jaxon\Config\ConfigManager;
 use Jaxon\Di\Container;
 use Jaxon\Plugin\Manager\PluginManager;
+use Jaxon\Request\Handler\ParameterReader;
 use Jaxon\Response\Response;
 use Jaxon\Response\ResponseManager;
 use Jaxon\Utils\Translation\Translator;
@@ -25,7 +26,7 @@ trait ResponseTrait
          */
         // Global Response
         $this->set(Response::class, function($c) {
-            return new Response($c->g(Translator::class), $c->g(PluginManager::class));
+            return new Response($c->g(Translator::class), $c->g(PluginManager::class), $c->g(ParameterReader::class));
         });
         // Response Manager
         $this->set(ResponseManager::class, function($c) {
@@ -61,6 +62,7 @@ trait ResponseTrait
      */
     public function newResponse(): Response
     {
-        return new Response($this->g(Translator::class), $this->g(PluginManager::class));
+        return new Response($this->g(Translator::class),
+            $this->g(PluginManager::class), $this->g(ParameterReader::class));
     }
 }
