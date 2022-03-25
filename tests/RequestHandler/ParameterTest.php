@@ -54,7 +54,7 @@ class ParameterTest extends TestCase
                 ])->withMethod('GET');
         });
 
-        $aParameter = jaxon()->di()->getParameterReader()->read();
+        $aParameter = jaxon()->di()->getParameterReader()->args();
 
         $this->assertIsArray($aParameter);
 
@@ -104,7 +104,7 @@ class ParameterTest extends TestCase
                 ])->withMethod('POST');
         });
 
-        $aParameter = jaxon()->di()->getParameterReader()->read();
+        $aParameter = jaxon()->di()->getParameterReader()->args();
 
         $this->assertIsArray($aParameter);
 
@@ -155,7 +155,7 @@ class ParameterTest extends TestCase
                 ])->withMethod('POST');
         });
 
-        $aParameter = jaxon()->di()->getParameterReader()->read();
+        $aParameter = jaxon()->di()->getParameterReader()->args();
 
         $this->assertIsArray($aParameter);
 
@@ -208,7 +208,7 @@ class ParameterTest extends TestCase
                 ])->withMethod('POST');
         });
 
-        $aParameter = jaxon()->di()->getParameterReader()->read();
+        $aParameter = jaxon()->di()->getParameterReader()->args();
 
         $this->assertIsArray($aParameter);
 
@@ -261,7 +261,7 @@ class ParameterTest extends TestCase
                 ])->withMethod('POST');
         });
 
-        $aParameter = jaxon()->di()->getParameterReader()->read();
+        $aParameter = jaxon()->di()->getParameterReader()->args();
 
         $this->assertIsArray($aParameter);
 
