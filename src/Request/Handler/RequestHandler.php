@@ -68,13 +68,6 @@ class RequestHandler
     private $xResponseManager;
 
     /**
-     * The argument manager.
-     *
-     * @var ArgumentManager
-     */
-    private $xArgumentManager;
-
-    /**
      * The callbacks to run while processing the request
      *
      * @var CallbackManager

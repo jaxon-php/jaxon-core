@@ -23,7 +23,7 @@ namespace Jaxon\Request\Plugin\CallableFunction;
 
 use Jaxon\Jaxon;
 use Jaxon\Plugin\RequestPlugin;
-use Jaxon\Request\Handler\ArgumentManager;
+use Jaxon\Request\Handler\ParameterReader;
 use Jaxon\Request\Target;
 use Jaxon\Request\Validator;
 use Jaxon\Response\ResponseManager;
@@ -48,11 +48,11 @@ class CallableFunctionPlugin extends RequestPlugin
     private $sPrefix;
 
     /**
-     * The argument manager
+     * The parameter reader
      *
-     * @var ArgumentManager
+     * @var ParameterReader
      */
-    protected $xArgumentManager;
+    protected $xParameterReader;
 
     /**
      * The response manager
@@ -102,19 +102,18 @@ class CallableFunctionPlugin extends RequestPlugin
     /**
      * The constructor
      *
-     * @param string  $sPrefix
-     * @param ArgumentManager  $xArgumentManager
-     * @param ResponseManager  $xResponseManager
-     * @param TemplateEngine  $xTemplateEngine
-     * @param Translator  $xTranslator
-     * @param Validator  $xValidator
+     * @param string $sPrefix
+     * @param ParameterReader $xParameterReader
+     * @param ResponseManager $xResponseManager
+     * @param TemplateEngine $xTemplateEngine
+     * @param Translator $xTranslator
+     * @param Validator $xValidator
      */
-    public function __construct(string $sPrefix, ArgumentManager $xArgumentManager,
-        ResponseManager $xResponseManager, TemplateEngine $xTemplateEngine,
-        Translator $xTranslator, Validator $xValidator)
+    public function __construct(string $sPrefix, ParameterReader $xParameterReader, ResponseManager $xResponseManager,
+        TemplateEngine $xTemplateEngine, Translator $xTranslator, Validator $xValidator)
     {
         $this->sPrefix = $sPrefix;
-        $this->xArgumentManager = $xArgumentManager;
+        $this->xParameterReader = $xParameterReader;
         $this->xResponseManager = $xResponseManager;
         $this->xTemplateEngine = $xTemplateEngine;
         $this->xTranslator = $xTranslator;
@@ -283,7 +282,7 @@ class CallableFunctionPlugin extends RequestPlugin
         }
 
         $xFunction = $this->getCallable(self::$sRequestedFunction);
-        $xResponse = $xFunction->call($this->xArgumentManager->arguments());
+        $xResponse = $xFunction->call($this->xParameterReader->args());
         if(($xResponse))
         {
             $this->xResponseManager->append($xResponse);

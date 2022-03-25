@@ -8,7 +8,7 @@ use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Request\Factory\Factory;
 use Jaxon\Request\Factory\ParameterFactory;
 use Jaxon\Request\Factory\RequestFactory;
-use Jaxon\Request\Handler\ArgumentManager;
+use Jaxon\Request\Handler\ParameterReader;
 use Jaxon\Request\Handler\CallbackManager;
 use Jaxon\Request\Handler\RequestHandler;
 use Jaxon\Request\Handler\UploadHandler;
@@ -42,9 +42,9 @@ trait RequestTrait
             );
             return $xRequestCreator->fromGlobals();
         });
-        // Argument Manager
-        $this->set(ArgumentManager::class, function($c) {
-            return new ArgumentManager($c->g(Container::class), $c->g(ConfigManager::class), $c->g(Translator::class));
+        // The parameter reader
+        $this->set(ParameterReader::class, function($c) {
+            return new ParameterReader($c->g(Container::class), $c->g(ConfigManager::class), $c->g(Translator::class));
         });
         // Callback Manager
         $this->set(CallbackManager::class, function() {
@@ -101,5 +101,15 @@ trait RequestTrait
     public function getCallbackManager(): CallbackManager
     {
         return $this->g(CallbackManager::class);
+    }
+
+    /**
+     * Get the parameter reader
+     *
+     * @return ParameterReader
+     */
+    public function getParameterReader(): ParameterReader
+    {
+        return $this->g(ParameterReader::class);
     }
 }

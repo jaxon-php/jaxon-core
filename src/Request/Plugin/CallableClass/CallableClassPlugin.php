@@ -24,7 +24,7 @@ namespace Jaxon\Request\Plugin\CallableClass;
 use Jaxon\Jaxon;
 use Jaxon\CallableClass;
 use Jaxon\Plugin\RequestPlugin;
-use Jaxon\Request\Handler\ArgumentManager;
+use Jaxon\Request\Handler\ParameterReader;
 use Jaxon\Request\Target;
 use Jaxon\Request\Validator;
 use Jaxon\Response\ResponseManager;
@@ -54,11 +54,11 @@ class CallableClassPlugin extends RequestPlugin
     protected $sPrefix;
 
     /**
-     * The argument manager
+     * The parameter reader
      *
-     * @var ArgumentManager
+     * @var ParameterReader
      */
-    protected $xArgumentManager;
+    protected $xParameterReader;
 
     /**
      * The response manager
@@ -123,20 +123,20 @@ class CallableClassPlugin extends RequestPlugin
      * The class constructor
      *
      * @param string  $sPrefix
-     * @param ArgumentManager  $xArgumentManager
-     * @param ResponseManager  $xResponseManager
+     * @param ParameterReader $xParameterReader
+     * @param ResponseManager $xResponseManager
      * @param CallableRegistry $xRegistry    The callable class registry
      * @param CallableRepository $xRepository    The callable object repository
-     * @param TemplateEngine  $xTemplateEngine
-     * @param Translator  $xTranslator
-     * @param Validator  $xValidator
+     * @param TemplateEngine $xTemplateEngine
+     * @param Translator $xTranslator
+     * @param Validator $xValidator
      */
-    public function __construct(string $sPrefix, ArgumentManager $xArgumentManager,
+    public function __construct(string $sPrefix, ParameterReader $xParameterReader,
         ResponseManager $xResponseManager, CallableRegistry $xRegistry, CallableRepository $xRepository,
-        TemplateEngine  $xTemplateEngine, Translator $xTranslator, Validator $xValidator)
+        TemplateEngine $xTemplateEngine, Translator $xTranslator, Validator $xValidator)
     {
         $this->sPrefix = $sPrefix;
-        $this->xArgumentManager = $xArgumentManager;
+        $this->xParameterReader = $xParameterReader;
         $this->xResponseManager = $xResponseManager;
         $this->xRegistry = $xRegistry;
         $this->xRepository = $xRepository;
@@ -368,7 +368,7 @@ class CallableClassPlugin extends RequestPlugin
         // Call the requested method
         try
         {
-            $xResponse = $xCallableObject->call(self::$sRequestedMethod, $this->xArgumentManager->arguments());
+            $xResponse = $xCallableObject->call(self::$sRequestedMethod, $this->xParameterReader->args());
             if(($xResponse))
             {
                 $this->xResponseManager->append($xResponse);
