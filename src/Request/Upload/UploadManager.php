@@ -15,13 +15,13 @@ use Jaxon\Config\ConfigManager;
 use Jaxon\Request\Validator;
 use Jaxon\Utils\Translation\Translator;
 use Jaxon\Exception\RequestException;
+use Nyholm\Psr7\UploadedFile;
+use Psr\Http\Message\ServerRequestInterface;
 
 use Closure;
 use Exception;
 
 use function bin2hex;
-use function call_user_func_array;
-use function count;
 use function file_exists;
 use function file_get_contents;
 use function file_put_contents;
@@ -33,8 +33,6 @@ use function is_writable;
 use function json_decode;
 use function json_encode;
 use function mkdir;
-use function move_uploaded_file;
-use function pathinfo;
 use function random_bytes;
 use function rtrim;
 use function str_shuffle;
@@ -60,13 +58,6 @@ class UploadManager
      * @var Translator
      */
     protected $xTranslator;
-
-    /**
-     * A user defined function to transform uploaded file names
-     *
-     * @var Closure
-     */
-    protected $cNameSanitizer = null;
 
     /**
      * The subdir where uploaded files are stored
@@ -116,113 +107,7 @@ class UploadManager
      */
     public function setNameSanitizer(Closure $cNameSanitizer)
     {
-        $this->cNameSanitizer = $cNameSanitizer;
-    }
-
-    /**
-     * Check uploaded files
-     *
-     * @param array $aFiles    The uploaded files
-     *
-     * @return void
-     * @throws RequestException
-     */
-    private function checkFiles(array $aFiles)
-    {
-        foreach($aFiles as $sVarName => $aVarFiles)
-        {
-            foreach($aVarFiles as $aFile)
-            {
-                // Verify upload result
-                if($aFile['error'] != 0)
-                {
-                    throw new RequestException($this->xTranslator->trans('errors.upload.failed', $aFile));
-                }
-                // Verify file validity (format, size)
-                if(!$this->xValidator->validateUploadedFile($sVarName, $aFile))
-                {
-                    throw new RequestException($this->xValidator->getErrorMessage());
-                }
-            }
-        }
-    }
-
-    /**
-     * Get a file from upload entry
-     *
-     * @param string $sVarName    The corresponding variable
-     * @param array $aVarFiles    An entry in the PHP $_FILES array
-     * @param integer $nPosition    The position of the file to be processed
-     *
-     * @return null|array
-     */
-    private function getUploadedFile(string $sVarName, array $aVarFiles, int $nPosition): ?array
-    {
-        if(!$aVarFiles['name'][$nPosition])
-        {
-            return null;
-        }
-
-        // Filename without the extension
-        $sFilename = pathinfo($aVarFiles['name'][$nPosition], PATHINFO_FILENAME);
-        if(($this->cNameSanitizer))
-        {
-            $sFilename = (string)call_user_func_array($this->cNameSanitizer, [$sFilename, $sVarName]);
-        }
-
-        return [
-            'name' => $aVarFiles['name'][$nPosition],
-            'type' => $aVarFiles['type'][$nPosition],
-            'tmp_name' => $aVarFiles['tmp_name'][$nPosition],
-            'error' => $aVarFiles['error'][$nPosition],
-            'size' => $aVarFiles['size'][$nPosition],
-            'filename' => $sFilename,
-            'extension' => pathinfo($aVarFiles['name'][$nPosition], PATHINFO_EXTENSION),
-        ];
-    }
-
-    /**
-     * Read uploaded files info from HTTP request data
-     *
-     * @return array
-     * @throws RequestException
-     */
-    public function getUploadedFiles(): array
-    {
-        // Check validity of the uploaded files
-        $aUploadedFiles = [];
-        foreach($_FILES as $sVarName => $aVarFiles)
-        {
-            // If there is only one file, transform each entry into an array,
-            // so the same processing for multiple files can be applied.
-            if(!is_array($aVarFiles['name']))
-            {
-                $aVarFiles['name'] = [$aVarFiles['name']];
-                $aVarFiles['type'] = [$aVarFiles['type']];
-                $aVarFiles['tmp_name'] = [$aVarFiles['tmp_name']];
-                $aVarFiles['error'] = [$aVarFiles['error']];
-                $aVarFiles['size'] = [$aVarFiles['size']];
-            }
-
-            $nFileCount = count($aVarFiles['name']);
-            for($i = 0; $i < $nFileCount; $i++)
-            {
-                $aUploadedFile = $this->getUploadedFile($sVarName, $aVarFiles, $i);
-                if(is_array($aUploadedFile))
-                {
-                    if(!isset($aUploadedFiles[$sVarName]))
-                    {
-                        $aUploadedFiles[$sVarName] = [];
-                    }
-                    $aUploadedFiles[$sVarName][] = $aUploadedFile;
-                }
-            }
-        }
-
-        // Check uploaded files validity
-        $this->checkFiles($aUploadedFiles);
-
-        return $aUploadedFiles;
+        File::setNameSanitizer($cNameSanitizer);
     }
 
     /**
@@ -314,32 +199,70 @@ class UploadManager
     }
 
     /**
+     * Check uploaded files
+     *
+     * @param string $sVarName
+     * @param UploadedFile $xHttpFile    The uploaded file
+     * @param File $xFile    The uploaded file
+     *
+     * @return void
+     * @throws RequestException
+     */
+    private function checkFile(string $sVarName, UploadedFile $xHttpFile, File $xFile)
+    {
+        // Verify upload result
+        if($xHttpFile->getError())
+        {
+            throw new RequestException($this->xTranslator->trans('errors.upload.failed',
+                ['name' => $xHttpFile->getClientFilename()]));
+        }
+        // Verify file validity (format, size)
+        if(!$this->xValidator->validateUploadedFile($sVarName, $xFile))
+        {
+            throw new RequestException($this->xValidator->getErrorMessage());
+        }
+    }
+
+    /**
      * Read uploaded files info from HTTP request data
+     *
+     * @param ServerRequestInterface $xRequest
      *
      * @return array
      * @throws RequestException
      */
-    public function readFromHttpData(): array
+    public function readFromHttpData(ServerRequestInterface $xRequest): array
     {
-        // Check validity of the uploaded files
-        $aTempFiles = $this->getUploadedFiles();
+        // Get the uploaded files
+        $aTempFiles = $xRequest->getUploadedFiles();
 
-        // Copy the uploaded files from the temp dir to the user dir
         $aUserFiles = [];
+        $aAllFiles = []; // A flat list of all uploaded files
         foreach($aTempFiles as $sVarName => $aFiles)
         {
             $aUserFiles[$sVarName] = [];
             // Get the path to the upload dir
             $sUploadDir = $this->getUploadDir($sVarName);
 
-            foreach($aFiles as $aFile)
+            if(!is_array($aFiles))
+            {
+                $aFiles = [$aFiles];
+            }
+            foreach($aFiles as $xFile)
             {
                 // Set the user file data
-                $xUploadedFile = File::fromHttpData($sUploadDir, $aFile);
-                // All's right, move the file to the user dir.
-                move_uploaded_file($aFile["tmp_name"], $xUploadedFile->path());
+                $xUploadedFile = File::fromHttpFile($sVarName, $sUploadDir, $xFile);
+                // Check the uploaded file validity
+                $this->checkFile($sVarName, $xFile, $xUploadedFile);
+                // All's right, save the file for copy.
+                $aAllFiles[] = ['temp' => $xFile, 'user' => $xUploadedFile];
                 $aUserFiles[$sVarName][] = $xUploadedFile;
             }
+        }
+        // Copy the uploaded files from the temp dir to the user dir
+        foreach($aAllFiles as $aFiles)
+        {
+            $aFiles['temp']->moveTo($aFiles['user']->path());
         }
         return $aUserFiles;
     }
@@ -390,7 +313,7 @@ class UploadManager
             $aUserFiles[$sVarName] = [];
             foreach($aVarFiles as $aVarFile)
             {
-                $aUserFiles[$sVarName][] = File::fromTempData($aVarFile);
+                $aUserFiles[$sVarName][] = File::fromTempFile($aVarFile);
             }
         }
         @unlink($sUploadTempFile);

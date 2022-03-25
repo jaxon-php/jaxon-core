@@ -257,7 +257,7 @@ class RequestHandler
         // If no other plugin than the upload plugin can process the request,
         // then it is an HTTP (not ajax) upload request
         $this->xUploadHandler->isHttpUpload();
-        return $this->xUploadHandler->canProcessRequest();
+        return $this->xUploadHandler->canProcessRequest($this->xRequest);
     }
 
     /**
@@ -283,9 +283,9 @@ class RequestHandler
             }
 
             // Process uploaded files, if the upload plugin is enabled
-            if($this->xUploadHandler !== null)
+            if($this->xUploadHandler !== null && $this->xUploadHandler->canProcessRequest($this->xRequest))
             {
-                $this->xUploadHandler->processRequest();
+                $this->xUploadHandler->processRequest($this->xRequest);
             }
             // Process the request
             if(($this->xRequestPlugin))

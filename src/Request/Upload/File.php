@@ -12,6 +12,13 @@
 
 namespace Jaxon\Request\Upload;
 
+use Nyholm\Psr7\UploadedFile;
+
+use Closure;
+
+use function call_user_func_array;
+use function pathinfo;
+
 class File
 {
     /**
@@ -57,6 +64,25 @@ class File
     protected $sExtension;
 
     /**
+     * A user defined function to transform uploaded file names
+     *
+     * @var Closure
+     */
+    protected static $cNameSanitizer = null;
+
+    /**
+     * Filter uploaded file name
+     *
+     * @param Closure $cNameSanitizer    The closure which filters filenames
+     *
+     * @return void
+     */
+    public static function setNameSanitizer(Closure $cNameSanitizer)
+    {
+        self::$cNameSanitizer = $cNameSanitizer;
+    }
+
+    /**
      * Slugify a text
      *
      * @param string  $sText
@@ -70,33 +96,41 @@ class File
     }
 
     /**
-     * Create an instance of this class using data from the $_FILES global var.
+     * Create an instance of this class using data from an uploaded file.
      *
+     * @param string $sVarName
      * @param string $sUploadDir    The directory where to save the uploaded file
-     * @param array $aFile    The uploaded file data
+     * @param UploadedFile $xHttpFile    The uploaded file
      *
      * @return File
      */
-    public static function fromHttpData(string $sUploadDir, array $aFile): File
+    public static function fromHttpFile(string $sVarName, string $sUploadDir, UploadedFile $xHttpFile): File
     {
+        // Filename without the extension
+        $sName = pathinfo($xHttpFile->getClientFilename(), PATHINFO_FILENAME);
+        if(self::$cNameSanitizer !== null)
+        {
+            $sName = (string)call_user_func_array(self::$cNameSanitizer, [$sName, $sVarName]);
+        }
+
         $xFile = new File();
-        $xFile->sType = $aFile['type'];
-        $xFile->sName = self::slugify($aFile['filename']);
-        $xFile->sFilename = $aFile['name'];
-        $xFile->sExtension = $aFile['extension'];
-        $xFile->sSize = $aFile['size'];
+        $xFile->sType = $xHttpFile->getClientMediaType();
+        $xFile->sName = self::slugify($sName);
+        $xFile->sFilename = $xHttpFile->getClientFilename();
+        $xFile->sExtension = pathinfo($xHttpFile->getClientFilename(), PATHINFO_EXTENSION);
+        $xFile->sSize = $xHttpFile->getSize();
         $xFile->sPath = $sUploadDir . $xFile->sName . '.' . $xFile->sExtension;
         return $xFile;
     }
 
     /**
-     * Create an instance of this class using data from an array.
+     * Create an instance of this class using data from a temp file
      *
      * @param array $aFile    The uploaded file data
      *
      * @return File
      */
-    public static function fromTempData(array $aFile): File
+    public static function fromTempFile(array $aFile): File
     {
         $xFile = new File();
         $xFile->sType = $aFile['type'];

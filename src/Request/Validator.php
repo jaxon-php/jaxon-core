@@ -23,6 +23,7 @@ namespace Jaxon\Request;
  */
 
 use Jaxon\Config\ConfigManager;
+use Jaxon\Request\Upload\File;
 use Jaxon\Utils\Translation\Translator;
 
 use function preg_match;
@@ -172,33 +173,33 @@ class Validator
      * Validate an uploaded file
      *
      * @param string $sName    The uploaded file variable name
-     * @param array $aUploadedFile    The file data received in the $_FILES array
+     * @param File $xFile    The uploaded file
      *
      * @return bool
      */
-    public function validateUploadedFile(string $sName, array $aUploadedFile): bool
+    public function validateUploadedFile(string $sName, File $xFile): bool
     {
         $this->sErrorMessage = '';
         // Verify the file extension
-        if(!$this->validateFileProperty($sName, $aUploadedFile['type'], 'types', 'type'))
+        if(!$this->validateFileProperty($sName, $xFile->type(), 'types', 'type'))
         {
             return false;
         }
 
         // Verify the file extension
-        if(!$this->validateFileProperty($sName, $aUploadedFile['extension'], 'extensions', 'extension'))
+        if(!$this->validateFileProperty($sName, $xFile->extension(), 'extensions', 'extension'))
         {
             return false;
         }
 
         // Verify the max size
-        if(!$this->validateFileSize($sName, $aUploadedFile['size'], 'max-size'))
+        if(!$this->validateFileSize($sName, $xFile->size(), 'max-size'))
         {
             return false;
         }
 
         // Verify the min size
-        if(!$this->validateFileSize($sName, $aUploadedFile['size'], 'min-size'))
+        if(!$this->validateFileSize($sName, $xFile->size(), 'min-size'))
         {
             return false;
         }

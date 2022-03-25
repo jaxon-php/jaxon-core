@@ -17,6 +17,7 @@ use Jaxon\Response\ResponseManager;
 use Jaxon\Response\UploadResponse;
 use Jaxon\Utils\Translation\Translator;
 use Jaxon\Exception\RequestException;
+use Psr\Http\Message\ServerRequestInterface;
 
 use Closure;
 use Exception;
@@ -69,7 +70,7 @@ class UploadHandler
     /**
      * The constructor
      *
-     * @param UploadManager $xUploadManager    HTTP file upload manager
+     * @param UploadManager $xUploadManager
      * @param ResponseManager $xResponseManager
      * @param Translator $xTranslator
      */
@@ -78,15 +79,6 @@ class UploadHandler
         $this->xResponseManager = $xResponseManager;
         $this->xUploadManager = $xUploadManager;
         $this->xTranslator = $xTranslator;
-
-        if(isset($_POST['jxnupl']))
-        {
-            $this->sTempFile = trim($_POST['jxnupl']);
-        }
-        elseif(isset($_GET['jxnupl']))
-        {
-            $this->sTempFile = trim($_GET['jxnupl']);
-        }
     }
 
     /**
@@ -124,20 +116,45 @@ class UploadHandler
     /**
      * Check if the current request contains uploaded files
      *
+     * @param ServerRequestInterface $xRequest
+     *
      * @return bool
      */
-    public function canProcessRequest(): bool
+    public function canProcessRequest(ServerRequestInterface $xRequest): bool
     {
-        return (count($_FILES) > 0 || ($this->sTempFile));
+        if(count($xRequest->getUploadedFiles()) > 0)
+        {
+            return true;
+        }
+        $this->sTempFile = '';
+        $aBody = $xRequest->getParsedBody();
+        if(is_array($aBody))
+        {
+            if(isset($aBody['jxnupl']))
+            {
+                $this->sTempFile = trim($aBody['jxnupl']);
+            }
+        }
+        else
+        {
+            $aParams = $xRequest->getQueryParams();
+            if(isset($aParams['jxnupl']))
+            {
+                $this->sTempFile = trim($aParams['jxnupl']);
+            }
+        }
+        return $this->sTempFile !== '';
     }
 
     /**
      * Process the uploaded files in the HTTP request
      *
+     * @param ServerRequestInterface $xRequest
+     *
      * @return bool
      * @throws RequestException
      */
-    public function processRequest(): bool
+    public function processRequest(ServerRequestInterface $xRequest): bool
     {
         if(($this->sTempFile))
         {
@@ -148,7 +165,7 @@ class UploadHandler
         }
 
         // Ajax or Http request with upload; copy the uploaded files.
-        $this->aUserFiles = $this->xUploadManager->readFromHttpData();
+        $this->aUserFiles = $this->xUploadManager->readFromHttpData($xRequest);
 
         // For Ajax requests, there is nothing else to do here.
         if($this->bIsAjaxRequest)
