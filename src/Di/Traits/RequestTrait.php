@@ -44,7 +44,7 @@ trait RequestTrait
         });
         // Argument Manager
         $this->set(ArgumentManager::class, function($c) {
-            return new ArgumentManager($c->g(ServerRequestInterface::class), $c->g(ConfigManager::class), $c->g(Translator::class));
+            return new ArgumentManager($c->g(Container::class), $c->g(ConfigManager::class), $c->g(Translator::class));
         });
         // Callback Manager
         $this->set(CallbackManager::class, function() {
@@ -53,8 +53,8 @@ trait RequestTrait
         // Request Handler
         $this->set(RequestHandler::class, function($c) {
             return new RequestHandler($c->g(Container::class), $c->g(ConfigManager::class),
-                $c->g(ArgumentManager::class), $c->g(PluginManager::class), $c->g(ResponseManager::class),
-                $c->g(CallbackManager::class), $c->g(ServerRequestInterface::class), $c->g(UploadHandler::class),
+                $c->g(PluginManager::class), $c->g(ResponseManager::class), $c->g(CallbackManager::class),
+                $c->g(ServerRequestInterface::class), $c->g(UploadHandler::class),
                 $c->g(DataBagPlugin::class), $c->g(Translator::class));
         });
         // Request Factory
@@ -74,6 +74,16 @@ trait RequestTrait
     }
 
     /**
+     * Get the request
+     *
+     * @return ServerRequestInterface
+     */
+    public function getRequest(): ServerRequestInterface
+    {
+        return $this->g(ServerRequestInterface::class);
+    }
+
+    /**
      * Get the request handler
      *
      * @return RequestHandler
@@ -81,5 +91,15 @@ trait RequestTrait
     public function getRequestHandler(): RequestHandler
     {
         return $this->g(RequestHandler::class);
+    }
+
+    /**
+     * Get the callback manager
+     *
+     * @return CallbackManager
+     */
+    public function getCallbackManager(): CallbackManager
+    {
+        return $this->g(CallbackManager::class);
     }
 }

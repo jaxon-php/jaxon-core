@@ -4,7 +4,7 @@ namespace Jaxon\Di\Traits;
 
 use Jaxon\Config\ConfigManager;
 use Jaxon\Di\Container;
-use Jaxon\Request\Handler\RequestHandler;
+use Jaxon\Request\Handler\ArgumentManager;
 use Jaxon\Request\Plugin\CallableClass\CallableRegistry;
 use Jaxon\Request\Plugin\CallableClass\CallableRepository;
 use Jaxon\Request\Plugin\CallableClass\CallableClassPlugin;
@@ -40,7 +40,7 @@ trait CallableTrait
         // Callable class plugin
         $this->set(CallableClassPlugin::class, function($c) {
             $sPrefix = $c->g(ConfigManager::class)->getOption('core.prefix.class');
-            return new CallableClassPlugin($sPrefix, $c->g(RequestHandler::class),
+            return new CallableClassPlugin($sPrefix, $c->g(ArgumentManager::class),
                 $c->g(ResponseManager::class), $c->g(CallableRegistry::class), $c->g(CallableRepository::class),
                 $c->g(TemplateEngine::class), $c->g(Translator::class), $c->g(Validator::class));
         });
@@ -51,7 +51,7 @@ trait CallableTrait
         // Callable function plugin
         $this->set(CallableFunctionPlugin::class, function($c) {
             $sPrefix = $c->g(ConfigManager::class)->getOption('core.prefix.function');
-            return new CallableFunctionPlugin($sPrefix, $c->g(RequestHandler::class),
+            return new CallableFunctionPlugin($sPrefix, $c->g(ArgumentManager::class),
                 $c->g(ResponseManager::class), $c->g(TemplateEngine::class),
                 $c->g(Translator::class), $c->g(Validator::class));
         });

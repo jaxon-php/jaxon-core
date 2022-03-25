@@ -115,7 +115,6 @@ class RequestHandler
      *
      * @param Container $di
      * @param ConfigManager $xConfigManager
-     * @param ArgumentManager $xArgumentManager
      * @param PluginManager $xPluginManager
      * @param ResponseManager $xResponseManager
      * @param CallbackManager $xCallbackManager
@@ -124,42 +123,19 @@ class RequestHandler
      * @param DataBagPlugin $xDataBagPlugin
      * @param Translator $xTranslator
      */
-    public function __construct(Container $di, ConfigManager $xConfigManager, ArgumentManager $xArgumentManager,
-        PluginManager $xPluginManager, ResponseManager $xResponseManager, CallbackManager $xCallbackManager,
-        ServerRequestInterface $xRequest, ?UploadHandler $xUploadHandler, DataBagPlugin $xDataBagPlugin,
-        Translator $xTranslator)
+    public function __construct(Container $di, ConfigManager $xConfigManager, PluginManager $xPluginManager,
+        ResponseManager $xResponseManager, CallbackManager $xCallbackManager, ServerRequestInterface $xRequest,
+        ?UploadHandler $xUploadHandler, DataBagPlugin $xDataBagPlugin, Translator $xTranslator)
     {
         $this->di = $di;
         $this->xConfigManager = $xConfigManager;
         $this->xPluginManager = $xPluginManager;
         $this->xResponseManager = $xResponseManager;
-        $this->xArgumentManager = $xArgumentManager;
         $this->xCallbackManager = $xCallbackManager;
         $this->xRequest = $xRequest;
         $this->xUploadHandler = $xUploadHandler;
         $this->xDataBagPlugin = $xDataBagPlugin;
         $this->xTranslator = $xTranslator;
-    }
-
-    /**
-     * Return the array of arguments that were extracted and parsed from the GET or POST data
-     *
-     * @return array
-     * @throws RequestException
-     */
-    public function processArguments(): array
-    {
-        return $this->xArgumentManager->process();
-    }
-
-    /**
-     * Get the callback handler
-     *
-     * @return CallbackManager
-     */
-    public function getCallbackManager(): CallbackManager
-    {
-        return $this->xCallbackManager;
     }
 
     /**

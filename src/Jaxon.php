@@ -45,7 +45,6 @@ use Jaxon\Response\Response;
 use Jaxon\Response\ResponseManager;
 use Jaxon\Session\SessionInterface;
 use Jaxon\Ui\View\ViewRenderer;
-use Jaxon\Utils\Config\Config;
 use Jaxon\Utils\Http\UriException;
 use Jaxon\Utils\Template\TemplateEngine;
 use Jaxon\Utils\Translation\Translator;
@@ -115,9 +114,9 @@ class Jaxon implements LoggerAwareInterface
     protected $xClassRegistry;
 
     /**
-     * @var RequestHandler
+     * @var CallbackManager
      */
-    protected $xRequestHandler;
+    protected $xCallbackManager;
 
     /**
      * @var ResponseManager
@@ -135,7 +134,7 @@ class Jaxon implements LoggerAwareInterface
         self::$xInstance->xPluginManager = self::$xContainer->g(PluginManager::class);
         self::$xInstance->xCodeGenerator = self::$xContainer->g(CodeGenerator::class);
         self::$xInstance->xClassRegistry = self::$xContainer->g(CallableRegistry::class);
-        self::$xInstance->xRequestHandler = self::$xContainer->g(RequestHandler::class);
+        self::$xInstance->xCallbackManager = self::$xContainer->g(CallbackManager::class);
         self::$xInstance->xResponseManager = self::$xContainer->g(ResponseManager::class);
     }
 
@@ -267,9 +266,9 @@ class Jaxon implements LoggerAwareInterface
     /**
      * Get the Global Response object
      *
-     * @return AbstractResponse
+     * @return Response
      */
-    public function getResponse(): AbstractResponse
+    public function getResponse(): Response
     {
         if(($xResponse = $this->xResponseManager->getResponse()))
         {
@@ -442,7 +441,7 @@ class Jaxon implements LoggerAwareInterface
      */
     public function canProcessRequest(): bool
     {
-        return $this->xRequestHandler->canProcessRequest();
+        return $this->di()->getRequestHandler()->canProcessRequest();
     }
 
     /**
@@ -463,7 +462,7 @@ class Jaxon implements LoggerAwareInterface
      */
     public function processRequest()
     {
-        $this->xRequestHandler->processRequest();
+        $this->di()->getRequestHandler()->processRequest();
     }
 
     /**
@@ -507,7 +506,7 @@ class Jaxon implements LoggerAwareInterface
      */
     public function callback(): CallbackManager
     {
-        return $this->xRequestHandler->getCallbackManager();
+        return $this->di()->getCallbackManager();
     }
 
     /**

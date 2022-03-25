@@ -23,7 +23,7 @@ namespace Jaxon\Request\Plugin\CallableFunction;
 
 use Jaxon\Jaxon;
 use Jaxon\Plugin\RequestPlugin;
-use Jaxon\Request\Handler\RequestHandler;
+use Jaxon\Request\Handler\ArgumentManager;
 use Jaxon\Request\Target;
 use Jaxon\Request\Validator;
 use Jaxon\Response\ResponseManager;
@@ -48,11 +48,11 @@ class CallableFunctionPlugin extends RequestPlugin
     private $sPrefix;
 
     /**
-     * The request handler
+     * The argument manager
      *
-     * @var RequestHandler
+     * @var ArgumentManager
      */
-    protected $xRequestHandler;
+    protected $xArgumentManager;
 
     /**
      * The response manager
@@ -103,18 +103,18 @@ class CallableFunctionPlugin extends RequestPlugin
      * The constructor
      *
      * @param string  $sPrefix
-     * @param RequestHandler  $xRequestHandler
+     * @param ArgumentManager  $xArgumentManager
      * @param ResponseManager  $xResponseManager
      * @param TemplateEngine  $xTemplateEngine
      * @param Translator  $xTranslator
      * @param Validator  $xValidator
      */
-    public function __construct(string $sPrefix, RequestHandler $xRequestHandler,
+    public function __construct(string $sPrefix, ArgumentManager $xArgumentManager,
         ResponseManager $xResponseManager, TemplateEngine $xTemplateEngine,
         Translator $xTranslator, Validator $xValidator)
     {
         $this->sPrefix = $sPrefix;
-        $this->xRequestHandler = $xRequestHandler;
+        $this->xArgumentManager = $xArgumentManager;
         $this->xResponseManager = $xResponseManager;
         $this->xTemplateEngine = $xTemplateEngine;
         $this->xTranslator = $xTranslator;
@@ -235,13 +235,22 @@ class CallableFunctionPlugin extends RequestPlugin
      */
     public static function canProcessRequest(ServerRequestInterface $xRequest): bool
     {
-        if(is_array(($aBody = $xRequest->getParsedBody())) && isset($aBody['jxnfun']))
+        self::$sRequestedFunction = '';
+        $aBody = $xRequest->getParsedBody();
+        if(is_array($aBody))
         {
-            self::$sRequestedFunction = trim($aBody['jxnfun']);
+            if(isset($aBody['jxnfun']))
+            {
+                self::$sRequestedFunction = trim($aBody['jxnfun']);
+            }
         }
-        elseif(is_array(($aParams = $xRequest->getQueryParams())) && isset($aParams['jxnfun']))
+        else
         {
-            self::$sRequestedFunction = trim($aParams['jxnfun']);
+            $aParams = $xRequest->getQueryParams();
+            if(isset($aParams['jxnfun']))
+            {
+                self::$sRequestedFunction = trim($aParams['jxnfun']);
+            }
         }
         return (self::$sRequestedFunction !== '');
     }
@@ -274,8 +283,7 @@ class CallableFunctionPlugin extends RequestPlugin
         }
 
         $xFunction = $this->getCallable(self::$sRequestedFunction);
-        $aArgs = $this->xRequestHandler->processArguments();
-        $xResponse = $xFunction->call($aArgs);
+        $xResponse = $xFunction->call($this->xArgumentManager->arguments());
         if(($xResponse))
         {
             $this->xResponseManager->append($xResponse);

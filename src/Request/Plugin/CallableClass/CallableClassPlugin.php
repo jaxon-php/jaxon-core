@@ -24,7 +24,7 @@ namespace Jaxon\Request\Plugin\CallableClass;
 use Jaxon\Jaxon;
 use Jaxon\CallableClass;
 use Jaxon\Plugin\RequestPlugin;
-use Jaxon\Request\Handler\RequestHandler;
+use Jaxon\Request\Handler\ArgumentManager;
 use Jaxon\Request\Target;
 use Jaxon\Request\Validator;
 use Jaxon\Response\ResponseManager;
@@ -54,11 +54,11 @@ class CallableClassPlugin extends RequestPlugin
     protected $sPrefix;
 
     /**
-     * The request handler
+     * The argument manager
      *
-     * @var RequestHandler
+     * @var ArgumentManager
      */
-    protected $xRequestHandler;
+    protected $xArgumentManager;
 
     /**
      * The response manager
@@ -123,7 +123,7 @@ class CallableClassPlugin extends RequestPlugin
      * The class constructor
      *
      * @param string  $sPrefix
-     * @param RequestHandler  $xRequestHandler
+     * @param ArgumentManager  $xArgumentManager
      * @param ResponseManager  $xResponseManager
      * @param CallableRegistry $xRegistry    The callable class registry
      * @param CallableRepository $xRepository    The callable object repository
@@ -131,12 +131,12 @@ class CallableClassPlugin extends RequestPlugin
      * @param Translator  $xTranslator
      * @param Validator  $xValidator
      */
-    public function __construct(string $sPrefix, RequestHandler $xRequestHandler,
+    public function __construct(string $sPrefix, ArgumentManager $xArgumentManager,
         ResponseManager $xResponseManager, CallableRegistry $xRegistry, CallableRepository $xRepository,
         TemplateEngine  $xTemplateEngine, Translator $xTranslator, Validator $xValidator)
     {
         $this->sPrefix = $sPrefix;
-        $this->xRequestHandler = $xRequestHandler;
+        $this->xArgumentManager = $xArgumentManager;
         $this->xResponseManager = $xResponseManager;
         $this->xRegistry = $xRegistry;
         $this->xRepository = $xRepository;
@@ -301,21 +301,31 @@ class CallableClassPlugin extends RequestPlugin
      */
     public static function canProcessRequest(ServerRequestInterface $xRequest): bool
     {
-        if(is_array(($aBody = $xRequest->getParsedBody())) && isset($aBody['jxncls']))
+        self::$sRequestedClass = '';
+        self::$sRequestedMethod = '';
+        $aBody = $xRequest->getParsedBody();
+        if(is_array($aBody))
         {
-            self::$sRequestedClass = trim($aBody['jxncls']);
+            if(isset($aBody['jxncls']))
+            {
+                self::$sRequestedClass = trim($aBody['jxncls']);
+            }
+            if(isset($aBody['jxnmthd']))
+            {
+                self::$sRequestedMethod = trim($aBody['jxnmthd']);
+            }
         }
-        elseif(is_array(($aParams = $xRequest->getQueryParams())) && isset($aParams['jxncls']))
+        else
         {
-            self::$sRequestedClass = trim($aParams['jxncls']);
-        }
-        if(is_array(($aBody = $xRequest->getParsedBody())) && isset($aBody['jxnmthd']))
-        {
-            self::$sRequestedMethod = trim($aBody['jxnmthd']);
-        }
-        elseif(is_array(($aParams = $xRequest->getQueryParams())) && isset($aParams['jxnmthd']))
-        {
-            self::$sRequestedMethod = trim($aParams['jxnmthd']);
+            $aParams = $xRequest->getQueryParams();
+            if(isset($aParams['jxncls']))
+            {
+                self::$sRequestedClass = trim($aParams['jxncls']);
+            }
+            if(isset($aParams['jxnmthd']))
+            {
+                self::$sRequestedMethod = trim($aParams['jxnmthd']);
+            }
         }
         return (self::$sRequestedClass !== '' && self::$sRequestedMethod !== '');
     }
@@ -356,10 +366,9 @@ class CallableClassPlugin extends RequestPlugin
         }
 
         // Call the requested method
-        $aArgs = $this->xRequestHandler->processArguments();
         try
         {
-            $xResponse = $xCallableObject->call(self::$sRequestedMethod, $aArgs);
+            $xResponse = $xCallableObject->call(self::$sRequestedMethod, $this->xArgumentManager->arguments());
             if(($xResponse))
             {
                 $this->xResponseManager->append($xResponse);

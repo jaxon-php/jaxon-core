@@ -22,6 +22,7 @@
 
 namespace Jaxon\Request\Handler;
 
+use Jaxon\Di\Container;
 use Jaxon\Config\ConfigManager;
 use Jaxon\Utils\Translation\Translator;
 use Jaxon\Exception\RequestException;
@@ -45,12 +46,10 @@ use function utf8_decode;
 
 class ArgumentManager
 {
-    /*
-     * Request methods
+    /**
+     * @var Container
      */
-    const METHOD_UNKNOWN = 0;
-    const METHOD_GET = 1;
-    const METHOD_POST = 2;
+    protected $di;
 
     /**
      * @var ConfigManager
@@ -63,21 +62,6 @@ class ArgumentManager
     protected $xTranslator;
 
     /**
-     * An array of arguments received via the GET or POST parameter jxnargs.
-     *
-     * @var array
-     */
-    private $aArgs;
-
-    /**
-     * Stores the method that was used to send the arguments from the client.
-     * Will be one of: self::METHOD_UNKNOWN, self::METHOD_GET, self::METHOD_POST.
-     *
-     * @var integer
-     */
-    private $nMethod;
-
-    /**
      * The function which decodes utf8 string.
      *
      * @var callable
@@ -87,51 +71,15 @@ class ArgumentManager
     /**
      * The constructor
      *
-     * Get and decode the arguments of the HTTP request
-     *
-     * @param ServerRequestInterface $xRequest
+     * @param Container $di
      * @param ConfigManager $xConfigManager
      * @param Translator $xTranslator
      */
-    public function __construct(ServerRequestInterface $xRequest, ConfigManager $xConfigManager, Translator $xTranslator)
+    public function __construct(Container $di, ConfigManager $xConfigManager, Translator $xTranslator)
     {
+        $this->di = $di;
         $this->xConfigManager = $xConfigManager;
         $this->xTranslator = $xTranslator;
-        $this->aArgs = [];
-        $this->nMethod = self::METHOD_UNKNOWN;
-
-        if(is_array(($aBody = $xRequest->getParsedBody())) && isset($aBody['jxnargs']))
-        {
-            $this->nMethod = self::METHOD_POST;
-            $this->aArgs = $aBody['jxnargs'];
-        }
-        elseif(is_array(($aParams = $xRequest->getQueryParams())) && isset($aParams['jxnargs']))
-        {
-            $this->nMethod = self::METHOD_GET;
-            $this->aArgs = $aParams['jxnargs'];
-        }
-    }
-
-    /**
-     * Return the method that was used to send the arguments from the client
-     *
-     * The method is one of: self::METHOD_UNKNOWN, self::METHOD_GET, self::METHOD_POST.
-     *
-     * @return int
-     */
-    public function getRequestMethod(): int
-    {
-        return $this->nMethod;
-    }
-
-    /**
-     * Return true if the current request method is GET
-     *
-     * @return bool
-     */
-    public function requestMethodIsGet(): bool
-    {
-        return ($this->getRequestMethod() === self::METHOD_GET);
     }
 
     /**
@@ -191,7 +139,7 @@ class ArgumentManager
     }
 
     /**
-     * Decode and convert an Jaxon request argument from JSON
+     * Decode and convert Jaxon request arguments from JSON
      *
      * @param string $sArg    The Jaxon request argument
      *
@@ -266,19 +214,29 @@ class ArgumentManager
     }
 
     /**
-     * Return the array of arguments that were extracted and parsed from the GET or POST data
+     * Return the array of arguments from the GET or POST data
      *
      * @return array
      * @throws RequestException
      */
-    public function process(): array
+    public function arguments(): array
     {
+        $aArgs = [];
+        $xRequest = $this->di->getRequest();
+        if(is_array(($aBody = $xRequest->getParsedBody())) && isset($aBody['jxnargs']))
+        {
+            $aArgs = $aBody['jxnargs'];
+        }
+        elseif(is_array(($aParams = $xRequest->getQueryParams())) && isset($aParams['jxnargs']))
+        {
+            $aArgs = $aParams['jxnargs'];
+        }
 
-        array_walk($this->aArgs, [$this, '__argumentDecode']);
+        array_walk($aArgs, [$this, '__argumentDecode']);
 
         if(!$this->xConfigManager->getOption('core.decode_utf8'))
         {
-            return $this->aArgs;
+            return $aArgs;
         }
         // By default, no decoding
         $this->cUtf8Decoder = function($sStr) {
@@ -309,14 +267,14 @@ class ArgumentManager
         }
 
         $aDst = [];
-        foreach($this->aArgs as $sKey => &$mValue)
+        foreach($aArgs as $sKey => &$mValue)
         {
             $this->_decode_utf8_argument($aDst, $sKey, $mValue);
         };
-        $this->aArgs = $aDst;
+        $aArgs = $aDst;
 
         $this->xConfigManager->setOption('core.decode_utf8', false);
 
-        return $this->aArgs;
+        return $aArgs;
     }
 }
