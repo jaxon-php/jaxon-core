@@ -12,6 +12,7 @@
     <testsuite name="Jaxon Core">
       <directory>tests/Registration</directory>
       <directory>tests/RequestFactory</directory>
+      <directory>tests/RequestHandler</directory>
     </testsuite>
   </testsuites>
 </phpunit>
