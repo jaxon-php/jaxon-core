@@ -22,7 +22,6 @@
 namespace Jaxon\Response;
 
 use Jaxon\Di\Container;
-use Jaxon\Request\Handler\ArgumentManager;
 use Jaxon\Utils\Translation\Translator;
 
 use function header;
@@ -41,11 +40,6 @@ class ResponseManager
      * @var string
      */
     private $sCharacterEncoding;
-
-    /**
-     * @var ArgumentManager
-     */
-    private $xArgumentManager;
 
     /**
      * @var Translator
@@ -72,15 +66,12 @@ class ResponseManager
      *
      * @param string $sCharacterEncoding
      * @param Container $di
-     * @param ArgumentManager $xArgumentManager
      * @param Translator $xTranslator
      */
-    public function __construct(string $sCharacterEncoding, Container $di,
-        ArgumentManager $xArgumentManager, Translator $xTranslator)
+    public function __construct(string $sCharacterEncoding, Container $di, Translator $xTranslator)
     {
         $this->di = $di;
         $this->sCharacterEncoding = $sCharacterEncoding;
-        $this->xArgumentManager = $xArgumentManager;
         $this->xTranslator = $xTranslator;
         $this->aDebugMessages = [];
     }
@@ -190,7 +181,7 @@ class ResponseManager
      */
     private function _sendHeaders()
     {
-        if($this->xArgumentManager->requestMethodIsGet())
+        if($this->di->getRequest()->getMethod() === 'GET')
         {
             header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
             header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");

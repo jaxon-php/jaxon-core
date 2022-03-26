@@ -37,15 +37,12 @@ use Jaxon\Plugin\ResponsePlugin;
 use Jaxon\Request\Factory\Factory;
 use Jaxon\Request\Factory\RequestFactory;
 use Jaxon\Request\Handler\CallbackManager;
-use Jaxon\Request\Handler\RequestHandler;
 use Jaxon\Request\Handler\UploadHandler;
 use Jaxon\Request\Plugin\CallableClass\CallableRegistry;
-use Jaxon\Response\AbstractResponse;
 use Jaxon\Response\Response;
 use Jaxon\Response\ResponseManager;
 use Jaxon\Session\SessionInterface;
 use Jaxon\Ui\View\ViewRenderer;
-use Jaxon\Utils\Config\Config;
 use Jaxon\Utils\Http\UriException;
 use Jaxon\Utils\Template\TemplateEngine;
 use Jaxon\Utils\Translation\Translator;
@@ -55,6 +52,7 @@ use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
+use function headers_sent;
 use function trim;
 
 class Jaxon implements LoggerAwareInterface
@@ -115,9 +113,9 @@ class Jaxon implements LoggerAwareInterface
     protected $xClassRegistry;
 
     /**
-     * @var RequestHandler
+     * @var CallbackManager
      */
-    protected $xRequestHandler;
+    protected $xCallbackManager;
 
     /**
      * @var ResponseManager
@@ -135,7 +133,7 @@ class Jaxon implements LoggerAwareInterface
         self::$xInstance->xPluginManager = self::$xContainer->g(PluginManager::class);
         self::$xInstance->xCodeGenerator = self::$xContainer->g(CodeGenerator::class);
         self::$xInstance->xClassRegistry = self::$xContainer->g(CallableRegistry::class);
-        self::$xInstance->xRequestHandler = self::$xContainer->g(RequestHandler::class);
+        self::$xInstance->xCallbackManager = self::$xContainer->g(CallbackManager::class);
         self::$xInstance->xResponseManager = self::$xContainer->g(ResponseManager::class);
     }
 
@@ -267,9 +265,9 @@ class Jaxon implements LoggerAwareInterface
     /**
      * Get the Global Response object
      *
-     * @return AbstractResponse
+     * @return Response
      */
-    public function getResponse(): AbstractResponse
+    public function getResponse(): Response
     {
         if(($xResponse = $this->xResponseManager->getResponse()))
         {
@@ -442,7 +440,7 @@ class Jaxon implements LoggerAwareInterface
      */
     public function canProcessRequest(): bool
     {
-        return $this->xRequestHandler->canProcessRequest();
+        return $this->di()->getRequestHandler()->canProcessRequest();
     }
 
     /**
@@ -463,7 +461,25 @@ class Jaxon implements LoggerAwareInterface
      */
     public function processRequest()
     {
-        $this->xRequestHandler->processRequest();
+        // Check to see if headers have already been sent out, in which case we can't do our job
+        if(headers_sent($sFilename, $nLineNumber))
+        {
+            echo $this->xTranslator->trans('errors.output.already-sent', [
+                'location' => $sFilename . ':' . $nLineNumber
+            ]), "\n", $this->xTranslator->trans('errors.output.advice');
+            exit();
+        }
+
+        $this->di()->getRequestHandler()->processRequest();
+
+        if(($this->xConfigManager->getOption('core.response.send')))
+        {
+            $this->xResponseManager->sendOutput();
+            if(($this->xConfigManager->getOption('core.process.exit')))
+            {
+                exit();
+            }
+        }
     }
 
     /**
@@ -507,7 +523,7 @@ class Jaxon implements LoggerAwareInterface
      */
     public function callback(): CallbackManager
     {
-        return $this->xRequestHandler->getCallbackManager();
+        return $this->di()->getCallbackManager();
     }
 
     /**

@@ -23,7 +23,7 @@ namespace Jaxon\Request\Plugin\CallableFunction;
 
 use Jaxon\Jaxon;
 use Jaxon\Plugin\RequestPlugin;
-use Jaxon\Request\Handler\RequestHandler;
+use Jaxon\Request\Handler\ParameterReader;
 use Jaxon\Request\Target;
 use Jaxon\Request\Validator;
 use Jaxon\Response\ResponseManager;
@@ -31,6 +31,7 @@ use Jaxon\Utils\Template\TemplateEngine;
 use Jaxon\Utils\Translation\Translator;
 use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;
+use Psr\Http\Message\ServerRequestInterface;
 
 use function array_keys;
 use function implode;
@@ -47,11 +48,11 @@ class CallableFunctionPlugin extends RequestPlugin
     private $sPrefix;
 
     /**
-     * The request handler
+     * The parameter reader
      *
-     * @var RequestHandler
+     * @var ParameterReader
      */
-    protected $xRequestHandler;
+    protected $xParameterReader;
 
     /**
      * The response manager
@@ -101,19 +102,18 @@ class CallableFunctionPlugin extends RequestPlugin
     /**
      * The constructor
      *
-     * @param string  $sPrefix
-     * @param RequestHandler  $xRequestHandler
-     * @param ResponseManager  $xResponseManager
-     * @param TemplateEngine  $xTemplateEngine
-     * @param Translator  $xTranslator
-     * @param Validator  $xValidator
+     * @param string $sPrefix
+     * @param ParameterReader $xParameterReader
+     * @param ResponseManager $xResponseManager
+     * @param TemplateEngine $xTemplateEngine
+     * @param Translator $xTranslator
+     * @param Validator $xValidator
      */
-    public function __construct(string $sPrefix, RequestHandler $xRequestHandler,
-        ResponseManager $xResponseManager, TemplateEngine $xTemplateEngine,
-        Translator $xTranslator, Validator $xValidator)
+    public function __construct(string $sPrefix, ParameterReader $xParameterReader, ResponseManager $xResponseManager,
+        TemplateEngine $xTemplateEngine, Translator $xTranslator, Validator $xValidator)
     {
         $this->sPrefix = $sPrefix;
-        $this->xRequestHandler = $xRequestHandler;
+        $this->xParameterReader = $xParameterReader;
         $this->xResponseManager = $xResponseManager;
         $this->xTemplateEngine = $xTemplateEngine;
         $this->xTranslator = $xTranslator;
@@ -232,15 +232,24 @@ class CallableFunctionPlugin extends RequestPlugin
     /**
      * @inheritDoc
      */
-    public static function canProcessRequest(): bool
+    public static function canProcessRequest(ServerRequestInterface $xRequest): bool
     {
-        if(isset($_POST['jxnfun']))
+        self::$sRequestedFunction = '';
+        $aBody = $xRequest->getParsedBody();
+        if(is_array($aBody))
         {
-            self::$sRequestedFunction = trim($_POST['jxnfun']);
+            if(isset($aBody['jxnfun']))
+            {
+                self::$sRequestedFunction = trim($aBody['jxnfun']);
+            }
         }
-        elseif(isset($_GET['jxnfun']))
+        else
         {
-            self::$sRequestedFunction = trim($_GET['jxnfun']);
+            $aParams = $xRequest->getQueryParams();
+            if(isset($aParams['jxnfun']))
+            {
+                self::$sRequestedFunction = trim($aParams['jxnfun']);
+            }
         }
         return (self::$sRequestedFunction !== '');
     }
@@ -273,8 +282,7 @@ class CallableFunctionPlugin extends RequestPlugin
         }
 
         $xFunction = $this->getCallable(self::$sRequestedFunction);
-        $aArgs = $this->xRequestHandler->processArguments();
-        $xResponse = $xFunction->call($aArgs);
+        $xResponse = $xFunction->call($this->xParameterReader->args());
         if(($xResponse))
         {
             $this->xResponseManager->append($xResponse);

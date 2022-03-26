@@ -2,6 +2,7 @@
 
 namespace Jaxon\Response\Plugin\DataBag;
 
+use Jaxon\Di\Container;
 use Jaxon\Plugin\ResponsePlugin;
 
 use function is_array;
@@ -23,10 +24,14 @@ class DataBagPlugin extends ResponsePlugin
     /**
      * The constructor
      */
-    public function __construct()
+    public function __construct(Container $di)
     {
-        $aData = isset($_POST['jxnbags']) ? $this->readData($_POST) :
-            (isset($_GET['jxnbags']) ? $this->readData($_GET) : []);
+        $xRequest = $di->getRequest();
+        $aBody = $xRequest->getParsedBody();
+        $aParams = $xRequest->getQueryParams();
+        $aData = is_array($aBody) ?
+            $this->readData($aBody['jxnbags'] ?? []) :
+            $this->readData($aParams['jxnbags'] ?? []);
         $this->xDataBag = new DataBag($aData);
     }
 
@@ -39,20 +44,20 @@ class DataBagPlugin extends ResponsePlugin
     }
 
     /**
-     * @param array $aFrom
+     * @param mixed $xData
      *
      * @return array
      */
-    private function readData(array $aFrom): array
+    private function readData($xData): array
     {
         // Todo: clean input data.
-        if(is_string($aFrom['jxnbags']))
+        if(is_string($xData))
         {
-            return json_decode($aFrom['jxnbags'], true) ?: [];
+            return json_decode($xData, true) ?: [];
         }
-        if(is_array($aFrom['jxnbags']))
+        if(is_array($xData))
         {
-            return $aFrom['jxnbags'];
+            return $xData;
         }
         return [];
     }

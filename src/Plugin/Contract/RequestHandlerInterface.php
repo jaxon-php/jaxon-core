@@ -3,6 +3,7 @@
 namespace Jaxon\Plugin\Contract;
 
 use Jaxon\Request\Target;
+use Psr\Http\Message\ServerRequestInterface;
 
 interface RequestHandlerInterface
 {
@@ -19,9 +20,11 @@ interface RequestHandlerInterface
      * Called by the <Jaxon\Plugin\PluginManager> when a request has been received to determine
      * if the request is targeted to this request plugin.
      *
+     * @param ServerRequestInterface $xRequest
+     *
      * @return bool
      */
-    public static function canProcessRequest(): bool;
+    public static function canProcessRequest(ServerRequestInterface $xRequest): bool;
 
     /**
      * Process the current request

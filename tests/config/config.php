@@ -1,0 +1,18 @@
+<?php
+
+return [
+    'jaxon' => [
+        'core' => [
+            'debug' => [
+                'on' => false,
+            ],
+            'prefix' => [
+                'class' => 'Jaxon',
+            ],
+            'request' => [
+                'uri' => 'ajax.php',
+                'csrf_meta' => 'csrf-token'
+            ],
+        ],
+    ],
+];

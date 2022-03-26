@@ -24,7 +24,7 @@ namespace Jaxon\Request\Plugin\CallableClass;
 use Jaxon\Jaxon;
 use Jaxon\CallableClass;
 use Jaxon\Plugin\RequestPlugin;
-use Jaxon\Request\Handler\RequestHandler;
+use Jaxon\Request\Handler\ParameterReader;
 use Jaxon\Request\Target;
 use Jaxon\Request\Validator;
 use Jaxon\Response\ResponseManager;
@@ -32,6 +32,7 @@ use Jaxon\Utils\Template\TemplateEngine;
 use Jaxon\Utils\Translation\Translator;
 use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;
+use Psr\Http\Message\ServerRequestInterface;
 
 use ReflectionClass;
 use ReflectionMethod;
@@ -53,11 +54,11 @@ class CallableClassPlugin extends RequestPlugin
     protected $sPrefix;
 
     /**
-     * The request handler
+     * The parameter reader
      *
-     * @var RequestHandler
+     * @var ParameterReader
      */
-    protected $xRequestHandler;
+    protected $xParameterReader;
 
     /**
      * The response manager
@@ -122,20 +123,20 @@ class CallableClassPlugin extends RequestPlugin
      * The class constructor
      *
      * @param string  $sPrefix
-     * @param RequestHandler  $xRequestHandler
-     * @param ResponseManager  $xResponseManager
+     * @param ParameterReader $xParameterReader
+     * @param ResponseManager $xResponseManager
      * @param CallableRegistry $xRegistry    The callable class registry
      * @param CallableRepository $xRepository    The callable object repository
-     * @param TemplateEngine  $xTemplateEngine
-     * @param Translator  $xTranslator
-     * @param Validator  $xValidator
+     * @param TemplateEngine $xTemplateEngine
+     * @param Translator $xTranslator
+     * @param Validator $xValidator
      */
-    public function __construct(string $sPrefix, RequestHandler $xRequestHandler,
+    public function __construct(string $sPrefix, ParameterReader $xParameterReader,
         ResponseManager $xResponseManager, CallableRegistry $xRegistry, CallableRepository $xRepository,
-        TemplateEngine  $xTemplateEngine, Translator $xTranslator, Validator $xValidator)
+        TemplateEngine $xTemplateEngine, Translator $xTranslator, Validator $xValidator)
     {
         $this->sPrefix = $sPrefix;
-        $this->xRequestHandler = $xRequestHandler;
+        $this->xParameterReader = $xParameterReader;
         $this->xResponseManager = $xResponseManager;
         $this->xRegistry = $xRegistry;
         $this->xRepository = $xRepository;
@@ -298,23 +299,33 @@ class CallableClassPlugin extends RequestPlugin
     /**
      * @inheritDoc
      */
-    public static function canProcessRequest(): bool
+    public static function canProcessRequest(ServerRequestInterface $xRequest): bool
     {
-        if(isset($_POST['jxncls']))
+        self::$sRequestedClass = '';
+        self::$sRequestedMethod = '';
+        $aBody = $xRequest->getParsedBody();
+        if(is_array($aBody))
         {
-            self::$sRequestedClass = trim($_POST['jxncls']);
+            if(isset($aBody['jxncls']))
+            {
+                self::$sRequestedClass = trim($aBody['jxncls']);
+            }
+            if(isset($aBody['jxnmthd']))
+            {
+                self::$sRequestedMethod = trim($aBody['jxnmthd']);
+            }
         }
-        elseif(isset($_GET['jxncls']))
+        else
         {
-            self::$sRequestedClass = trim($_GET['jxncls']);
-        }
-        if(isset($_POST['jxnmthd']))
-        {
-            self::$sRequestedMethod = trim($_POST['jxnmthd']);
-        }
-        elseif(isset($_GET['jxnmthd']))
-        {
-            self::$sRequestedMethod = trim($_GET['jxnmthd']);
+            $aParams = $xRequest->getQueryParams();
+            if(isset($aParams['jxncls']))
+            {
+                self::$sRequestedClass = trim($aParams['jxncls']);
+            }
+            if(isset($aParams['jxnmthd']))
+            {
+                self::$sRequestedMethod = trim($aParams['jxnmthd']);
+            }
         }
         return (self::$sRequestedClass !== '' && self::$sRequestedMethod !== '');
     }
@@ -355,10 +366,9 @@ class CallableClassPlugin extends RequestPlugin
         }
 
         // Call the requested method
-        $aArgs = $this->xRequestHandler->processArguments();
         try
         {
-            $xResponse = $xCallableObject->call(self::$sRequestedMethod, $aArgs);
+            $xResponse = $xCallableObject->call(self::$sRequestedMethod, $this->xParameterReader->args());
             if(($xResponse))
             {
                 $this->xResponseManager->append($xResponse);

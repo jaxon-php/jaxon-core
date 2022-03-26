@@ -4,8 +4,8 @@ namespace Jaxon\Plugin\Code;
 
 use Jaxon\Config\ConfigManager;
 use Jaxon\Plugin\Plugin;
+use Jaxon\Request\Handler\ParameterReader;
 use Jaxon\Utils\File\FileMinifier;
-use Jaxon\Utils\Http\UriDetector;
 use Jaxon\Utils\Http\UriException;
 
 use function rtrim;
@@ -22,9 +22,9 @@ class AssetManager
     protected $xConfigManager;
 
     /**
-     * @var UriDetector
+     * @var ParameterReader
      */
-    private $xUriDetector;
+    private $xParameterReader;
 
     /**
      * @var FileMinifier
@@ -47,13 +47,13 @@ class AssetManager
      * The constructor
      *
      * @param ConfigManager $xConfigManager
-     * @param UriDetector $xUriDetector
+     * @param ParameterReader $xParameterReader
      * @param FileMinifier $xFileMinifier
      */
-    public function __construct(ConfigManager $xConfigManager, UriDetector $xUriDetector, FileMinifier $xFileMinifier)
+    public function __construct(ConfigManager $xConfigManager, ParameterReader $xParameterReader, FileMinifier $xFileMinifier)
     {
         $this->xConfigManager = $xConfigManager;
-        $this->xUriDetector = $xUriDetector;
+        $this->xParameterReader = $xParameterReader;
         $this->xFileMinifier = $xFileMinifier;
         $this->bIncludeAllAssets = $xConfigManager->getOption('assets.include.all', true);
     }
@@ -116,7 +116,7 @@ class AssetManager
     {
         if(!$this->xConfigManager->hasOption('core.request.uri'))
         {
-            $this->xConfigManager->setOption('core.request.uri', $this->xUriDetector->detect($_SERVER));
+            $this->xConfigManager->setOption('core.request.uri', $this->xParameterReader->uri());
         }
         return [
             'sResponseType'         => 'JSON',

@@ -34,7 +34,7 @@ final class FunctionTest extends TestCase
             'upload' => "'html_field_id'",
         ]);
         // Register a class method as a function
-        jaxon()->register(Jaxon::CALLABLE_FUNCTION, 'myFunction', [
+        jaxon()->register(Jaxon::CALLABLE_FUNCTION, 'myMethod', [
             'alias' => 'my_third_function',
             'class' => Sample::class,
             'include' => __DIR__ . '/../defs/classes.php',
