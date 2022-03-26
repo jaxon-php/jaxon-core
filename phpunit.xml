@@ -10,9 +10,7 @@
   </logging>
   <testsuites>
     <testsuite name="Jaxon Core">
-      <directory>tests/Registration</directory>
-      <directory>tests/RequestFactory</directory>
-      <directory>tests/RequestHandler</directory>
+      <directory>tests</directory>
     </testsuite>
   </testsuites>
 </phpunit>

@@ -167,29 +167,10 @@ class ConfigManager
     {
         try
         {
-            $this->xConfigReader->load($this->xConfig, $sConfigFile, $sConfigSection);
+            // Read the options and save in the config.
+            $this->xConfig->setOptions($this->read($sConfigFile), $sConfigSection);
             // Set the library language any time the config is changed.
             $this->xTranslator->setLocale($this->xConfig->getOption('core.language'));
-        }
-        catch(YamlExtension $e)
-        {
-            $sMessage = $this->xTranslator->trans('errors.yaml.install');
-            throw new SetupException($sMessage);
-        }
-        catch(FileExtension $e)
-        {
-            $sMessage = $this->xTranslator->trans('errors.file.extension', ['path' => $sConfigFile]);
-            throw new SetupException($sMessage);
-        }
-        catch(FileAccess $e)
-        {
-            $sMessage = $this->xTranslator->trans('errors.file.access', ['path' => $sConfigFile]);
-            throw new SetupException($sMessage);
-        }
-        catch(FileContent $e)
-        {
-            $sMessage = $this->xTranslator->trans('errors.file.content', ['path' => $sConfigFile]);
-            throw new SetupException($sMessage);
         }
         catch(DataDepth $e)
         {
@@ -203,17 +184,22 @@ class ConfigManager
      * Set the config options of the library
      *
      * @param array $aOptions
+     * @param string $sKeys
      *
-     * @return void
+     * @return bool
      * @throws SetupException
      */
-    public function setOptions(array $aOptions): void
+    public function setOptions(array $aOptions, string $sKeys = ''): bool
     {
         try
         {
-            $this->xConfig->setOptions($aOptions);
+            if(!$this->xConfig->setOptions($aOptions, $sKeys))
+            {
+                return false;
+            }
             // Set the library language any time the config is changed.
             $this->xTranslator->setLocale($this->xConfig->getOption('core.language'));
+            return true;
         }
         catch(DataDepth $e)
         {
