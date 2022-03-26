@@ -67,7 +67,6 @@ class RequestFactory
     {
         // Make the request
         $xCall = new Call($this->sPrefix . $sFunction, $this->xDialogFacade, $this->xPaginator);
-        $xCall->useSingleQuote();
         $xCall->addParameters($aArguments);
         return $xCall;
     }

@@ -32,7 +32,7 @@ class JsCall implements JsonSerializable
     /**
      * @var string
      */
-    public $sQuoteCharacter = '"';
+    private $sQuoteCharacter = "'";
 
     /**
      * @var array
@@ -47,50 +47,6 @@ class JsCall implements JsonSerializable
     public function __construct(string $sFunction)
     {
         $this->sFunction = $sFunction;
-    }
-
-    /**
-     * Instruct the request to use single quotes when generating the javascript
-     *
-     * @return JsCall
-     */
-    public function useSingleQuote(): JsCall
-    {
-        $this->sQuoteCharacter = "'";
-        return $this;
-    }
-
-    /**
-     * Instruct the request to use single quotes when generating the javascript
-     *
-     * @return JsCall
-     */
-    public function useSingleQuotes(): JsCall
-    {
-        $this->sQuoteCharacter = "'";
-        return $this;
-    }
-
-    /**
-     * Instruct the request to use double quotes while generating the javascript
-     *
-     * @return JsCall
-     */
-    public function useDoubleQuote(): JsCall
-    {
-        $this->sQuoteCharacter = '"';
-        return $this;
-    }
-
-    /**
-     * Instruct the request to use double quotes while generating the javascript
-     *
-     * @return JsCall
-     */
-    public function useDoubleQuotes(): JsCall
-    {
-        $this->sQuoteCharacter = '"';
-        return $this;
     }
 
     /**

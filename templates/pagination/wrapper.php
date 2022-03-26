@@ -1,5 +1,4 @@
-<ul class="pagination">
-<?php
+<ul class="pagination"><?php
     if(($this->prev))
     {
         echo $this->prev;
@@ -12,5 +11,4 @@
     {
         echo $this->next;
     }
-?>
-</ul>
+?></ul>

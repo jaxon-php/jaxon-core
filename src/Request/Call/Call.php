@@ -23,7 +23,6 @@ namespace Jaxon\Request\Call;
 use Jaxon\Response\Plugin\JQuery\DomSelector;
 use Jaxon\Ui\Dialogs\DialogFacade;
 use Jaxon\Ui\Pagination\Paginator;
-use Jaxon\Ui\View\Store;
 
 use function array_map;
 use function array_shift;
@@ -290,7 +289,6 @@ class Call extends JsCall
         if(count($this->aMessageArgs) > 0)
         {
             $sPhrase = array_shift($this->aMessageArgs); // The first array entry is the question.
-            // $sPhrase = "'" . addslashes($sPhrase) . "'"; // Wrap the phrase with single quotes
             if(count($this->aMessageArgs) > 0)
             {
                 $nParamId = 1;
@@ -320,16 +318,6 @@ class Call extends JsCall
             }
         }
         return $sVars . $sScript;
-    }
-
-    /**
-     * Prints a string representation of the script output (javascript) from this request object
-     *
-     * @return void
-     */
-    public function printScript()
-    {
-        print $this->getScript();
     }
 
     /**
@@ -377,11 +365,11 @@ class Call extends JsCall
      * @param integer $nItemsPerPage    The number of items per page
      * @param integer $nItemsTotal    The total number of items
      *
-     * @return Store|null
+     * @return Paginator
      */
-    public function paginate(int $nCurrentPage, int $nItemsPerPage, int $nItemsTotal): ?Store
+    public function paginate(int $nCurrentPage, int $nItemsPerPage, int $nItemsTotal): Paginator
     {
-        return $this->xPaginator->setup($this, $nCurrentPage, $nItemsPerPage, $nItemsTotal)->render();
+        return $this->xPaginator->setup($this, $nCurrentPage, $nItemsPerPage, $nItemsTotal);
     }
 
     /**
@@ -391,9 +379,9 @@ class Call extends JsCall
      * @param integer $nItemsPerPage    The number of items per page
      * @param integer $nItemsTotal    The total number of items
      *
-     * @return Store|null
+     * @return Paginator
      */
-    public function pg(int $nCurrentPage, int $nItemsPerPage, int $nItemsTotal): ?Store
+    public function pg(int $nCurrentPage, int $nItemsPerPage, int $nItemsTotal): Paginator
     {
         return $this->paginate($nCurrentPage, $nItemsPerPage, $nItemsTotal);
     }
