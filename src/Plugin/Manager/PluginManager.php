@@ -141,7 +141,7 @@ class PluginManager
      */
     public function getPackage(string $sClassName): ?Package
     {
-        return $this->di->get(trim($sClassName, '\\ '));
+        return $this->di->g(trim($sClassName, '\\ '));
     }
 
     /**
