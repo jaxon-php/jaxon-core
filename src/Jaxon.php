@@ -37,10 +37,8 @@ use Jaxon\Plugin\ResponsePlugin;
 use Jaxon\Request\Factory\Factory;
 use Jaxon\Request\Factory\RequestFactory;
 use Jaxon\Request\Handler\CallbackManager;
-use Jaxon\Request\Handler\RequestHandler;
 use Jaxon\Request\Handler\UploadHandler;
 use Jaxon\Request\Plugin\CallableClass\CallableRegistry;
-use Jaxon\Response\AbstractResponse;
 use Jaxon\Response\Response;
 use Jaxon\Response\ResponseManager;
 use Jaxon\Session\SessionInterface;
@@ -54,6 +52,7 @@ use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
+use function headers_sent;
 use function trim;
 
 class Jaxon implements LoggerAwareInterface
@@ -462,7 +461,25 @@ class Jaxon implements LoggerAwareInterface
      */
     public function processRequest()
     {
+        // Check to see if headers have already been sent out, in which case we can't do our job
+        if(headers_sent($sFilename, $nLineNumber))
+        {
+            echo $this->xTranslator->trans('errors.output.already-sent', [
+                'location' => $sFilename . ':' . $nLineNumber
+            ]), "\n", $this->xTranslator->trans('errors.output.advice');
+            exit();
+        }
+
         $this->di()->getRequestHandler()->processRequest();
+
+        if(($this->xConfigManager->getOption('core.response.send')))
+        {
+            $this->xResponseManager->sendOutput();
+            if(($this->xConfigManager->getOption('core.process.exit')))
+            {
+                exit();
+            }
+        }
     }
 
     /**

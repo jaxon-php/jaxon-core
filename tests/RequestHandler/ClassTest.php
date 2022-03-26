@@ -54,6 +54,8 @@ class ClassTest extends TestCase
         $this->assertFalse(jaxon()->di()->getCallableFunctionPlugin()->canProcessRequest(jaxon()->di()->getRequest()));
         $this->assertTrue(jaxon()->di()->getCallableClassPlugin()->canProcessRequest(jaxon()->di()->getRequest()));
         $this->assertNull(jaxon()->di()->getCallableFunctionPlugin()->getTarget());
+        // One more time
+        $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
     }
 
     public function testPostRequestToJaxonClass()
@@ -103,7 +105,9 @@ class ClassTest extends TestCase
             ]);
         });
 
-        $this->assertTrue(jaxon()->di()->getCallableClassPlugin()->canProcessRequest(jaxon()->di()->getRequest()));
-        $this->assertTrue(jaxon()->di()->getCallableClassPlugin()->processRequest());
+        $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
+        jaxon()->di()->getRequestHandler()->processRequest();
+        $this->assertNotNull(jaxon()->getResponse());
+        $this->assertEquals(1, jaxon()->getResponse()->getCommandCount());
     }
 }

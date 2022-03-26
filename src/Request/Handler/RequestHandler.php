@@ -37,7 +37,6 @@ use Exception;
 use function call_user_func;
 use function call_user_func_array;
 use function error_reporting;
-use function headers_sent;
 use function ob_end_clean;
 use function ob_get_level;
 
@@ -344,15 +343,6 @@ class RequestHandler
      */
     public function processRequest()
     {
-        // Check to see if headers have already been sent out, in which case we can't do our job
-        if(headers_sent($sFilename, $nLineNumber))
-        {
-            echo $this->xTranslator->trans('errors.output.already-sent', [
-                'location' => $sFilename . ':' . $nLineNumber
-            ]), "\n", $this->xTranslator->trans('errors.output.advice');
-            exit();
-        }
-
         // Check if there is a plugin to process this request
         if(!$this->canProcessRequest())
         {
@@ -377,14 +367,5 @@ class RequestHandler
         }
 
         $this->xResponseManager->printDebug();
-
-        if(($this->xConfigManager->getOption('core.response.send')))
-        {
-            $this->xResponseManager->sendOutput();
-            if(($this->xConfigManager->getOption('core.process.exit')))
-            {
-                exit();
-            }
-        }
     }
 }

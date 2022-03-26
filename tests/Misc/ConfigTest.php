@@ -69,18 +69,6 @@ final class ConfigTest extends TestCase
     /**
      * @throws SetupException
      */
-    public function testYamlConfigReader()
-    {
-        jaxon()->config()->load(__DIR__ . '/../config/config.yaml', 'jaxon');
-        $this->assertEquals('en', jaxon()->getOption('core.language'));
-        $this->assertEquals('jaxon_', jaxon()->getOption('core.prefix.function'));
-        $this->assertFalse(jaxon()->getOption('core.debug.on'));
-        $this->assertFalse(jaxon()->hasOption('core.debug.off'));
-    }
-
-    /**
-     * @throws SetupException
-     */
     public function testJsonConfigReader()
     {
         jaxon()->config()->load(__DIR__ . '/../config/config.json', 'jaxon');
