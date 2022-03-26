@@ -33,6 +33,7 @@ namespace Jaxon\Response;
 use Jaxon\Exception\RequestException;
 use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Plugin\ResponsePlugin;
+use Jaxon\Request\Handler\ParameterReader;
 use Jaxon\Response\Plugin\DataBag\DataBagContext;
 use Jaxon\Response\Plugin\JQuery\DomSelector;
 use Jaxon\Utils\Translation\Translator;
@@ -63,6 +64,13 @@ class Response extends AbstractResponse
     protected $xPluginManager;
 
     /**
+     * The parameter reader
+     *
+     * @var ParameterReader
+     */
+    protected $xParameterReader;
+
+    /**
      * The commands that will be sent to the browser in the response
      *
      * @var array
@@ -82,11 +90,13 @@ class Response extends AbstractResponse
      *
      * @param Translator $xTranslator
      * @param PluginManager $xPluginManager
+     * @param ParameterReader $xParameterReader
      */
-    public function __construct(Translator $xTranslator, PluginManager $xPluginManager)
+    public function __construct(Translator $xTranslator, PluginManager $xPluginManager, ParameterReader $xParameterReader)
     {
         $this->xTranslator = $xTranslator;
         $this->xPluginManager = $xPluginManager;
+        $this->xParameterReader = $xParameterReader;
     }
 
     /**
@@ -96,7 +106,7 @@ class Response extends AbstractResponse
      */
     public function newResponse(): Response
     {
-        return new Response($this->xTranslator, $this->xPluginManager);
+        return new Response($this->xTranslator, $this->xPluginManager, $this->xParameterReader);
     }
 
     /**

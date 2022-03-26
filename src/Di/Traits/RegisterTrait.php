@@ -6,6 +6,7 @@ use Jaxon\Jaxon;
 use Jaxon\CallableClass;
 use Jaxon\Config\ConfigManager;
 use Jaxon\Request\Factory\RequestFactory;
+use Jaxon\Request\Handler\CallbackManager;
 use Jaxon\Request\Plugin\CallableClass\CallableObject;
 use Jaxon\Ui\Dialogs\DialogFacade;
 use Jaxon\Ui\Pagination\Paginator;
@@ -131,7 +132,7 @@ trait RegisterTrait
             }
 
             // Run the callback for class initialisation
-            $aCallbacks = $this->getRequestHandler()->getCallbackManager()->getInitCallbacks();
+            $aCallbacks = $c->g(CallbackManager::class)->getInitCallbacks();
             foreach($aCallbacks as $xCallback)
             {
                 call_user_func($xCallback, $xRegisteredObject);

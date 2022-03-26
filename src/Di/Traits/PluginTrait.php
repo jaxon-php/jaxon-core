@@ -8,6 +8,7 @@ use Jaxon\Di\Container;
 use Jaxon\Plugin\Code\AssetManager;
 use Jaxon\Plugin\Code\CodeGenerator;
 use Jaxon\Plugin\Manager\PluginManager;
+use Jaxon\Request\Handler\ParameterReader;
 use Jaxon\Request\Handler\UploadHandler;
 use Jaxon\Request\Upload\UploadManager;
 use Jaxon\Request\Validator;
@@ -16,7 +17,6 @@ use Jaxon\Response\Plugin\JQuery\JQueryPlugin;
 use Jaxon\Response\ResponseManager;
 use Jaxon\Ui\View\ViewManager;
 use Jaxon\Utils\File\FileMinifier;
-use Jaxon\Utils\Http\UriDetector;
 use Jaxon\Utils\Template\TemplateEngine;
 use Jaxon\Utils\Translation\Translator;
 
@@ -36,7 +36,7 @@ trait PluginTrait
         });
         // Code Generation
         $this->set(AssetManager::class, function($c) {
-            return new AssetManager($c->g(ConfigManager::class), $c->g(UriDetector::class), $c->g(FileMinifier::class));
+            return new AssetManager($c->g(ConfigManager::class), $c->g(ParameterReader::class), $c->g(FileMinifier::class));
         });
         $this->set(CodeGenerator::class, function($c) {
             $sVersion = $c->g(Jaxon::class)->getVersion();
@@ -58,8 +58,8 @@ trait PluginTrait
             return new JQueryPlugin($jQueryNs);
         });
         // DataBagPlugin response plugin
-        $this->set(DataBagPlugin::class, function() {
-            return new DataBagPlugin();
+        $this->set(DataBagPlugin::class, function($c) {
+            return new DataBagPlugin($c->g(Container::class));
         });
     }
 

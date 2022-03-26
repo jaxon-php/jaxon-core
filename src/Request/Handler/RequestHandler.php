@@ -30,6 +30,7 @@ use Jaxon\Response\AbstractResponse;
 use Jaxon\Response\Plugin\DataBag\DataBagPlugin;
 use Jaxon\Response\ResponseManager;
 use Jaxon\Utils\Translation\Translator;
+use Psr\Http\Message\ServerRequestInterface;
 
 use Exception;
 
@@ -67,13 +68,6 @@ class RequestHandler
     private $xResponseManager;
 
     /**
-     * The argument manager.
-     *
-     * @var ArgumentManager
-     */
-    private $xArgumentManager;
-
-    /**
      * The callbacks to run while processing the request
      *
      * @var CallbackManager
@@ -105,64 +99,36 @@ class RequestHandler
     private $xRequestPlugin = null;
 
     /**
+     * @var ServerRequestInterface
+     */
+    private $xRequest;
+
+    /**
      * The constructor
      *
      * @param Container $di
      * @param ConfigManager $xConfigManager
-     * @param ArgumentManager $xArgument
      * @param PluginManager $xPluginManager
      * @param ResponseManager $xResponseManager
      * @param CallbackManager $xCallbackManager
+     * @param ServerRequestInterface $xRequest
      * @param UploadHandler|null $xUploadHandler
      * @param DataBagPlugin $xDataBagPlugin
      * @param Translator $xTranslator
      */
-    public function __construct(Container $di, ConfigManager $xConfigManager, ArgumentManager $xArgument,
-        PluginManager $xPluginManager, ResponseManager $xResponseManager, CallbackManager $xCallbackManager,
+    public function __construct(Container $di, ConfigManager $xConfigManager, PluginManager $xPluginManager,
+        ResponseManager $xResponseManager, CallbackManager $xCallbackManager, ServerRequestInterface $xRequest,
         ?UploadHandler $xUploadHandler, DataBagPlugin $xDataBagPlugin, Translator $xTranslator)
     {
         $this->di = $di;
         $this->xConfigManager = $xConfigManager;
         $this->xPluginManager = $xPluginManager;
         $this->xResponseManager = $xResponseManager;
-        $this->xArgumentManager = $xArgument;
         $this->xCallbackManager = $xCallbackManager;
+        $this->xRequest = $xRequest;
         $this->xUploadHandler = $xUploadHandler;
         $this->xDataBagPlugin = $xDataBagPlugin;
         $this->xTranslator = $xTranslator;
-    }
-
-    /**
-     * Return the method that was used to send the arguments from the client
-     *
-     * The method is one of: ArgumentManager::METHOD_UNKNOWN, ArgumentManager::METHOD_GET, ArgumentManager::METHOD_POST.
-     *
-     * @return int
-     */
-    public function getRequestMethod(): int
-    {
-        return $this->xArgumentManager->getRequestMethod();
-    }
-
-    /**
-     * Return the array of arguments that were extracted and parsed from the GET or POST data
-     *
-     * @return array
-     * @throws RequestException
-     */
-    public function processArguments(): array
-    {
-        return $this->xArgumentManager->process();
-    }
-
-    /**
-     * Get the callback handler
-     *
-     * @return CallbackManager
-     */
-    public function getCallbackManager(): CallbackManager
-    {
-        return $this->xCallbackManager;
     }
 
     /**
@@ -275,9 +241,9 @@ class RequestHandler
         // Find a plugin to process the request
         foreach($this->xPluginManager->getRequestHandlers() as $sClassName)
         {
-            if($sClassName::canProcessRequest())
+            if($sClassName::canProcessRequest($this->xRequest))
             {
-                $this->xRequestPlugin = $this->di->get($sClassName);
+                $this->xRequestPlugin = $this->di->g($sClassName);
                 return true;
             }
         }
@@ -291,7 +257,7 @@ class RequestHandler
         // If no other plugin than the upload plugin can process the request,
         // then it is an HTTP (not ajax) upload request
         $this->xUploadHandler->isHttpUpload();
-        return $this->xUploadHandler->canProcessRequest();
+        return $this->xUploadHandler->canProcessRequest($this->xRequest);
     }
 
     /**
@@ -317,9 +283,9 @@ class RequestHandler
             }
 
             // Process uploaded files, if the upload plugin is enabled
-            if($this->xUploadHandler !== null)
+            if($this->xUploadHandler !== null && $this->xUploadHandler->canProcessRequest($this->xRequest))
             {
-                $this->xUploadHandler->processRequest();
+                $this->xUploadHandler->processRequest($this->xRequest);
             }
             // Process the request
             if(($this->xRequestPlugin))
