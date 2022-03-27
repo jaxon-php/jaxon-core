@@ -206,20 +206,7 @@ class CallableClassPlugin extends RequestPlugin
     public function getHash(): string
     {
         $this->xRegistry->parseCallableClasses();
-        $aNamespaces = $this->xRepository->getNamespaces();
-        $aClasses = $this->xRepository->getClasses();
-        $sHash = '';
-
-        foreach($aNamespaces as $sNamespace => $aOptions)
-        {
-            $sHash .= $sNamespace . $aOptions['separator'];
-        }
-        foreach($aClasses as $sClassName => $aOptions)
-        {
-            $sHash .= $sClassName . $aOptions['timestamp'];
-        }
-
-        return md5($sHash);
+        return md5($this->xRepository->getHash());
     }
 
     /**
@@ -231,7 +218,7 @@ class CallableClassPlugin extends RequestPlugin
     {
         $sCode = '';
         $aJsClasses = [];
-        $aNamespaces = array_keys($this->xRepository->getNamespaces());
+        $aNamespaces = $this->xRepository->getNamespaces();
         foreach($aNamespaces as $sNamespace)
         {
             $offset = 0;
@@ -278,21 +265,18 @@ class CallableClassPlugin extends RequestPlugin
      */
     public function getScript(): string
     {
-        $this->xRegistry->registerCallableClasses();
-
-        $sCode = $this->getNamespacesScript();
-
-        $aClassNames = $this->xRepository->getClassNames();
+        $this->xRegistry->parseCallableClasses();
+        $aCallableObjects = $this->xRepository->getCallableObjects();
         // Sort the options by key length asc
-        uksort($aClassNames, function($name1, $name2) {
+        uksort($aCallableObjects, function($name1, $name2) {
             return strlen($name1) - strlen($name2);
         });
-        foreach($aClassNames as $sClassName)
+
+        $sCode = $this->getNamespacesScript();
+        foreach($aCallableObjects as $sClassName => $xCallableObject)
         {
-            $xCallableObject = $this->xRegistry->getCallableObject($sClassName);
             $sCode .= $this->getCallableScript($sClassName, $xCallableObject);
         }
-
         return $sCode;
     }
 
@@ -345,7 +329,6 @@ class CallableClassPlugin extends RequestPlugin
     /**
      * @inheritDoc
      * @throws RequestException
-     * @throws SetupException
      */
     public function processRequest(): bool
     {
@@ -356,18 +339,11 @@ class CallableClassPlugin extends RequestPlugin
             throw new RequestException($this->xTranslator->trans('errors.objects.invalid',
                 ['class' => self::$sRequestedClass, 'method' => self::$sRequestedMethod]));
         }
-        // Find the requested method
-        $xCallableObject = $this->xRegistry->getCallableObject(self::$sRequestedClass);
-        if(!$xCallableObject || !$xCallableObject->hasMethod(self::$sRequestedMethod))
-        {
-            // Unable to find the requested object or method
-            throw new RequestException($this->xTranslator->trans('errors.objects.invalid',
-                ['class' => self::$sRequestedClass, 'method' => self::$sRequestedMethod]));
-        }
 
         // Call the requested method
         try
         {
+            $xCallableObject = $this->xRegistry->getCallableObject(self::$sRequestedClass);
             $xResponse = $xCallableObject->call(self::$sRequestedMethod, $this->xParameterReader->args());
             if(($xResponse))
             {
@@ -376,7 +352,13 @@ class CallableClassPlugin extends RequestPlugin
         }
         catch(ReflectionException $e)
         {
-            // Unable to find the requested class
+            // Unable to find the requested class or method
+            throw new RequestException($this->xTranslator->trans('errors.objects.invalid',
+                ['class' => self::$sRequestedClass, 'method' => self::$sRequestedMethod]));
+        }
+        catch(SetupException $e)
+        {
+            // Unable to get the callable object
             throw new RequestException($this->xTranslator->trans('errors.objects.invalid',
                 ['class' => self::$sRequestedClass, 'method' => self::$sRequestedMethod]));
         }
