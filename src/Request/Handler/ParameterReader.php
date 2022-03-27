@@ -340,34 +340,6 @@ class ParameterReader
     }
 
     /**
-     * @param string $sQueryPart
-     *
-     * @return string
-     */
-    private function parseQueryPart(string $sQueryPart): string
-    {
-        parse_str($sQueryPart, $aQueryParts);
-        if(($aQueryParts))
-        {
-            $sNewQueryPart = '';
-            foreach($aQueryParts as $key => $value)
-            {
-                $sNewQueryPart .= rawurlencode($key) . '=' . rawurlencode($value);
-            }
-            return ($sNewQueryPart) ? '&' . $sNewQueryPart : $sNewQueryPart;
-        }
-        //couldn't break up the query, but there's one there
-        //possibly "http://url/page.html?query1234" type of query?
-        //just encode it and hope it works
-        $aServerParams = $this->di->getRequest()->getServerParams();
-        if($aServerParams['QUERY_STRING'])
-        {
-            return rawurlencode($aServerParams['QUERY_STRING']);
-        }
-        return $sQueryPart;
-    }
-
-    /**
      * Make the specified URL suitable for redirect
      *
      * @param string $sURL    The relative or fully qualified URL
@@ -376,21 +348,6 @@ class ParameterReader
      */
     public function parseUrl(string $sURL): string
     {
-        // we need to parse the query part so that the values are rawurlencode()'ed
-        // can't just use parse_url() cos we could be dealing with a relative URL which
-        // parse_url() can't deal with.
-        $nQueryStart = strpos($sURL, '?', strrpos($sURL, '/'));
-        if($nQueryStart === false)
-        {
-            return $sURL;
-        }
-        $nQueryStart++;
-        $nQueryEnd = strpos($sURL, '#', $nQueryStart);
-        if($nQueryEnd === false)
-        {
-            $nQueryEnd = strlen($sURL);
-        }
-        $sQueryPart = substr($sURL, $nQueryStart, $nQueryEnd - $nQueryStart);
-        return str_replace($sQueryPart, $this->parseQueryPart($sQueryPart), $sURL);
+        return $this->xUriDetector->redirect($sURL, $this->di->getRequest()->getServerParams());
     }
 }
