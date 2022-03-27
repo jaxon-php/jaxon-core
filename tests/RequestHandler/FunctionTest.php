@@ -81,8 +81,14 @@ class FunctionTest extends TestCase
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
         $this->assertTrue(jaxon()->di()->getCallableFunctionPlugin()->canProcessRequest(jaxon()->di()->getRequest()));
         $this->assertFalse(jaxon()->di()->getCallableClassPlugin()->canProcessRequest(jaxon()->di()->getRequest()));
+
         $xTarget = jaxon()->di()->getCallableFunctionPlugin()->getTarget();
         $this->assertNotNull($xTarget);
+        $this->assertFalse($xTarget->isClass());
+        $this->assertTrue($xTarget->isFunction());
+        $this->assertEquals('', $xTarget->getClassName());
+        $this->assertEquals('', $xTarget->getMethodName());
+        $this->assertEquals('my_first_function', $xTarget->getFunctionName());
     }
 
     /**

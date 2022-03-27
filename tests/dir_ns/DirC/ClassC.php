@@ -1,6 +1,6 @@
 <?php
 
-namespace Jaxon\Tests\Ns;
+namespace Jaxon\NsTests\DirC;
 
 class ClassC
 {

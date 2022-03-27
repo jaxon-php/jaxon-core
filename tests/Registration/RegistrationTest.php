@@ -41,12 +41,14 @@ class RegistrationTest extends TestCase
                     'protected' => ['methodAa'],
                     'methodAb' => [
                         '__before' => 'methodAa',
+                        '__after' => ['methodBb' => 'after'],
                     ],
                 ],
                 'ClassB' => [
                     'protected' => 'methodBb',
                     'methodBa' => [
-                        '__after' => 'methodBb',
+                        '__before' => ['methodBb' => ['before', 'one']],
+                        '__after' => ['methodBb'],
                     ],
                 ],
                 'ClassC' => [
