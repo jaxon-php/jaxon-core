@@ -32,6 +32,9 @@ class ClassTest extends TestCase
         parent::tearDown();
     }
 
+    /**
+     * @throws RequestException
+     */
     public function testGetRequestToJaxonClass()
     {
         // The server request
@@ -53,11 +56,13 @@ class ClassTest extends TestCase
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
         $this->assertFalse(jaxon()->di()->getCallableFunctionPlugin()->canProcessRequest(jaxon()->di()->getRequest()));
         $this->assertTrue(jaxon()->di()->getCallableClassPlugin()->canProcessRequest(jaxon()->di()->getRequest()));
-        $this->assertNull(jaxon()->di()->getCallableFunctionPlugin()->getTarget());
-        // One more time
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
+        $this->assertTrue(jaxon()->di()->getCallableClassPlugin()->processRequest(jaxon()->di()->getRequest()));
     }
 
+    /**
+     * @throws RequestException
+     */
     public function testPostRequestToJaxonClass()
     {
         // The server request
@@ -79,14 +84,8 @@ class ClassTest extends TestCase
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
         $this->assertFalse(jaxon()->di()->getCallableFunctionPlugin()->canProcessRequest(jaxon()->di()->getRequest()));
         $this->assertTrue(jaxon()->di()->getCallableClassPlugin()->canProcessRequest(jaxon()->di()->getRequest()));
-
-        $xTarget = jaxon()->di()->getCallableClassPlugin()->getTarget();
-        $this->assertNotNull($xTarget);
-        $this->assertTrue($xTarget->isClass());
-        $this->assertFalse($xTarget->isFunction());
-        $this->assertEquals('Sample', $xTarget->getClassName());
-        $this->assertEquals('myMethod', $xTarget->getMethodName());
-        $this->assertEquals('', $xTarget->getFunctionName());
+        $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
+        $this->assertTrue(jaxon()->di()->getCallableClassPlugin()->processRequest(jaxon()->di()->getRequest()));
     }
 
     /**
@@ -117,6 +116,14 @@ class ClassTest extends TestCase
         $this->assertEquals(1, jaxon()->getResponse()->getCommandCount());
         $xCallableObject = jaxon()->di()->getCallableClassPlugin()->getCallable('Sample');
         $this->assertEquals('Sample', get_class($xCallableObject->getRegisteredObject()));
+
+        $xTarget = jaxon()->di()->getCallableClassPlugin()->getTarget();
+        $this->assertNotNull($xTarget);
+        $this->assertTrue($xTarget->isClass());
+        $this->assertFalse($xTarget->isFunction());
+        $this->assertEquals('Sample', $xTarget->getClassName());
+        $this->assertEquals('myMethod', $xTarget->getMethodName());
+        $this->assertEquals('', $xTarget->getFunctionName());
     }
 
     /**
