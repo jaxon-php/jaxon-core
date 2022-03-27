@@ -43,11 +43,6 @@ use function iconv;
 use function intval;
 use function mb_convert_encoding;
 use function utf8_decode;
-use function strpos;
-use function strrpos;
-use function parse_str;
-use function rawurlencode;
-use function str_replace;
 
 class ParameterReader
 {

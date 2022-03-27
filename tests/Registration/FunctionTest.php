@@ -8,6 +8,7 @@ use Jaxon\Jaxon;
 use Jaxon\Request\Plugin\CallableFunction\CallableFunction;
 use Jaxon\Request\Plugin\CallableFunction\CallableFunctionPlugin;
 use Jaxon\Exception\SetupException;
+use Jaxon\Utils\Http\UriException;
 use PHPUnit\Framework\TestCase;
 use Sample;
 
@@ -114,8 +115,21 @@ final class FunctionTest extends TestCase
     {
         $this->assertEquals(32, strlen($this->xPlugin->getHash()));
         // $this->assertEquals('34608e208fda374f8761041969acf96e', $this->xPlugin->getHash());
-        $this->assertEquals(strlen(file_get_contents(__DIR__ . '/../script/function.js')),
-            strlen($this->xPlugin->getScript()));
+        $this->assertEquals(403, strlen($this->xPlugin->getScript()));
+        // $this->assertEquals(file_get_contents(__DIR__ . '/../script/function.js'), $this->xPlugin->getScript());
+    }
+
+    /**
+     * @throws UriException
+     */
+    public function testLibraryJsCode()
+    {
+        // This URI will be parsed by the URI detector
+        $_SERVER['REQUEST_URI'] = 'http://example.test/path';
+        $sJsCode = jaxon()->getScript(true, false);
+        $this->assertEquals(1359, strlen($sJsCode));
+        // $this->assertEquals(file_get_contents(__DIR__ . '/../script/lib.js'), $sJsCode);
+        unset($_SERVER['REQUEST_URI']);
     }
 
     public function testCallableFunctionIncorrectName()
