@@ -71,31 +71,6 @@ trait JsTrait
     }
 
     /**
-     * Response command that prompts user with [ok] [cancel] style message box
-     *
-     * If the user clicks cancel, the specified number of response commands
-     * following this one, will be skipped.
-     *
-     * @param string $sMessage The message to display to the user
-     * @param callable $xCallable The function
-     *
-     * @return Response
-     * @throws RequestException
-     */
-    public function confirm(string $sMessage, callable $xCallable): Response
-    {
-        $xResponse = $this->newResponse();
-        call_user_func($xCallable, $xResponse);
-        $nCommandCount = $xResponse->getCommandCount();
-        if($nCommandCount > 0)
-        {
-            $this->confirmCommands($nCommandCount, $sMessage);
-            $this->appendResponse($xResponse);
-        }
-        return $this;
-    }
-
-    /**
      * Add a command to display an alert message to the user
      *
      * @param string $sMessage    The message to be displayed
