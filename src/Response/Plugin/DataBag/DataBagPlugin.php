@@ -55,11 +55,7 @@ class DataBagPlugin extends ResponsePlugin
         {
             return json_decode($xData, true) ?: [];
         }
-        if(is_array($xData))
-        {
-            return $xData;
-        }
-        return [];
+        return is_array($xData) ? $xData : [];
     }
 
     /**
