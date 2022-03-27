@@ -289,7 +289,7 @@ class RequestHandler
             // Process the request
             if(($this->xRequestPlugin))
             {
-                $this->xRequestPlugin->processRequest();
+                $this->xRequestPlugin->processRequest($this->xRequest);
             }
 
             // Handle after processing event

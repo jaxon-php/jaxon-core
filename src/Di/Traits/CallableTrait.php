@@ -30,7 +30,7 @@ trait CallableTrait
         });
         // Callable objects repository
         $this->set(CallableRepository::class, function($c) {
-            return new CallableRepository($c->g(Container::class));
+            return new CallableRepository($c->g(Container::class), $c->g(Translator::class));
         });
         // Callable objects registry
         $this->set(CallableRegistry::class, function($c) {

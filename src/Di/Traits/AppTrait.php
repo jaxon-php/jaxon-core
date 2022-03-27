@@ -15,6 +15,65 @@ use Jaxon\Utils\Translation\Translator;
 trait AppTrait
 {
     /**
+     * @var array The default config options
+     */
+    protected $aConfig =  [
+        'core' => [
+            'version'               => Jaxon::VERSION,
+            'language'              => 'en',
+            'encoding'              => 'utf-8',
+            'decode_utf8'           => false,
+            'prefix' => [
+                'function'          => 'jaxon_',
+                'class'             => 'Jaxon',
+            ],
+            'request' => [
+                // 'uri'            => '',
+                'mode'              => 'asynchronous',
+                'method'            => 'POST', // W3C: Method is case sensitive
+            ],
+            'response' => [
+                'send'              => true,
+                'merge.ap'          => true,
+                'merge.js'          => true,
+            ],
+            'debug' => [
+                'on'                => false,
+                'verbose'           => false,
+            ],
+            'process' => [
+                'exit'              => true,
+                'clean'             => false,
+                'timeout'           => 6000,
+            ],
+            'error' => [
+                'handle'            => false,
+                'log_file'          => '',
+            ],
+            'jquery' => [
+                'no_conflict'       => false,
+            ],
+            'upload' => [
+                'enabled'           => true,
+            ],
+        ],
+        'js' => [
+            'lib' => [
+                'output_id'         => 0,
+                'queue_size'        => 0,
+                'load_timeout'      => 2000,
+                'show_status'       => false,
+                'show_cursor'       => true,
+            ],
+            'app' => [
+                'dir'               => '',
+                'minify'            => true,
+                'options'           => '',
+            ],
+        ],
+    ];
+
+    /**
      * Register the values into the container
      *
      * @return void
@@ -22,7 +81,9 @@ trait AppTrait
     private function registerApp()
     {
         $this->set(ConfigManager::class, function($c) {
-            return new ConfigManager($c->g(ConfigReader::class), $c->g(Translator::class));
+            $xConfigManager = new ConfigManager($c->g(ConfigReader::class), $c->g(Translator::class));
+            $xConfigManager->setOptions($this->aConfig);
+            return $xConfigManager;
         });
         // Jaxon App
         $this->set(App::class, function($c) {

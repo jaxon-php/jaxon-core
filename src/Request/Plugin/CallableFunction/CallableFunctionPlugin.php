@@ -93,11 +93,9 @@ class CallableFunctionPlugin extends RequestPlugin
     protected $aOptions = [];
 
     /**
-     * The name of the function that is being requested (during the request processing phase)
-     *
-     * @var string
+     * @var Target
      */
-    protected static $sRequestedFunction = '';
+    protected $xTarget = null;
 
     /**
      * The constructor
@@ -234,24 +232,13 @@ class CallableFunctionPlugin extends RequestPlugin
      */
     public static function canProcessRequest(ServerRequestInterface $xRequest): bool
     {
-        self::$sRequestedFunction = '';
         $aBody = $xRequest->getParsedBody();
         if(is_array($aBody))
         {
-            if(isset($aBody['jxnfun']))
-            {
-                self::$sRequestedFunction = trim($aBody['jxnfun']);
-            }
+            return isset($aBody['jxnfun']);
         }
-        else
-        {
-            $aParams = $xRequest->getQueryParams();
-            if(isset($aParams['jxnfun']))
-            {
-                self::$sRequestedFunction = trim($aParams['jxnfun']);
-            }
-        }
-        return (self::$sRequestedFunction !== '');
+        $aParams = $xRequest->getQueryParams();
+        return isset($aParams['jxnfun']);
     }
 
     /**
@@ -259,29 +246,45 @@ class CallableFunctionPlugin extends RequestPlugin
      */
     public function getTarget(): ?Target
     {
-        if(!self::$sRequestedFunction)
+        return $this->xTarget;
+    }
+
+    /**
+     * @param ServerRequestInterface $xRequest
+     *
+     * @return void
+     */
+    private function setTarget(ServerRequestInterface $xRequest)
+    {
+        $aBody = $xRequest->getParsedBody();
+        if(is_array($aBody))
         {
-            return null;
+            $this->xTarget = Target::makeFunction(trim($aBody['jxnfun']));
+            return;
         }
-        return Target::makeFunction(self::$sRequestedFunction);
+        $aParams = $xRequest->getQueryParams();
+        $this->xTarget = Target::makeFunction(trim($aParams['jxnfun']));
     }
 
     /**
      * @inheritDoc
      * @throws RequestException
      */
-    public function processRequest(): bool
+    public function processRequest(ServerRequestInterface $xRequest): bool
     {
+        $this->setTarget($xRequest);
+        $sRequestedFunction = $this->xTarget->getFunctionName();
+
         // Security check: make sure the requested function was registered.
-        if(!$this->xValidator->validateFunction(self::$sRequestedFunction) ||
-            !isset($this->aFunctions[self::$sRequestedFunction]))
+        if(!$this->xValidator->validateFunction($sRequestedFunction) ||
+            !isset($this->aFunctions[$sRequestedFunction]))
         {
             // Unable to find the requested function
             throw new RequestException($this->xTranslator->trans('errors.functions.invalid',
-                ['name' => self::$sRequestedFunction]));
+                ['name' => $sRequestedFunction]));
         }
 
-        $xFunction = $this->getCallable(self::$sRequestedFunction);
+        $xFunction = $this->getCallable($sRequestedFunction);
         $xResponse = $xFunction->call($this->xParameterReader->args());
         if(($xResponse))
         {

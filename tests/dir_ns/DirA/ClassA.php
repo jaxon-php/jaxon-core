@@ -1,6 +1,6 @@
 <?php
 
-namespace Jaxon\Tests\Ns;
+namespace Jaxon\NsTests\DirA;
 
 class ClassA
 {

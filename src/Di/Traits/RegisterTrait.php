@@ -86,6 +86,11 @@ trait RegisterTrait
         $sCallableObject = $sClassName . '_CallableObject';
         $sReflectionClass = $sClassName . '_ReflectionClass';
 
+        // Make sure the registered class exists
+        if(isset($aOptions['include']))
+        {
+            require_once($aOptions['include']);
+        }
         // Register the reflection class
         try
         {

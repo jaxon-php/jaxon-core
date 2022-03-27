@@ -113,7 +113,7 @@ class Paginator
      */
     protected function updateTotalPages(): Paginator
     {
-        $this->nTotalPages = ($this->nItemsPerPage == 0 ? 0 : (int)ceil($this->nTotalItems / $this->nItemsPerPage));
+        $this->nTotalPages = ($this->nItemsPerPage === 0 ? 0 : (int)ceil($this->nTotalItems / $this->nItemsPerPage));
         return $this;
     }
 
@@ -206,5 +206,19 @@ class Paginator
     public function render(): ?Store
     {
         return $this->xRenderer->render($this->nTotalPages);
+    }
+
+    /**
+     * Render an HTML pagination control.
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        if($this->nTotalPages < 2)
+        {
+            return '';
+        }
+        return $this->render()->__toString();
     }
 }

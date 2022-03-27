@@ -33,7 +33,9 @@ interface RequestHandlerInterface
      * This will only occur when <Jaxon> has determined that the current request
      * is a valid (registered) jaxon enabled function via <jaxon->canProcessRequest>.
      *
+     * @param ServerRequestInterface $xRequest
+     *
      * @return bool
      */
-    public function processRequest(): bool;
+    public function processRequest(ServerRequestInterface $xRequest): bool;
 }
