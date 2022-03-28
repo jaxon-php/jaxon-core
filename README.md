@@ -1,7 +1,7 @@
 [![Build Status](https://api.travis-ci.com/jaxon-php/jaxon-core.svg?branch=master)](https://app.travis-ci.com/github/jaxon-php/jaxon-core)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/jaxon-php/jaxon-core/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/jaxon-php/jaxon-core/?branch=master)
 [![StyleCI](https://styleci.io/repos/60390067/shield?branch=master)](https://styleci.io/repos/60390067)
-[![Coverage Status](https://coveralls.io/repos/github/jaxon-php/jaxon-core/badge.svg?branch=master)](https://coveralls.io/github/jaxon-php/jaxon-core?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/jaxon-php/jaxon-core/badge.svg?branch=master&service=github)](https://coveralls.io/github/jaxon-php/jaxon-core?branch=master)
 
 [![Latest Stable Version](https://poser.pugx.org/jaxon-php/jaxon-core/v/stable)](https://packagist.org/packages/jaxon-php/jaxon-core)
 [![Total Downloads](https://poser.pugx.org/jaxon-php/jaxon-core/downloads)](https://packagist.org/packages/jaxon-php/jaxon-core)
