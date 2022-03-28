@@ -175,11 +175,11 @@ class ResponseManager
     }
 
     /**
-     * Used internally to generate the response headers
+     * Sends the HTTP headers back to the browser
      *
      * @return void
      */
-    private function _sendHeaders()
+    public function sendHeaders()
     {
         if($this->di->getRequest()->getMethod() === 'GET')
         {
@@ -199,30 +199,13 @@ class ResponseManager
     }
 
     /**
-     * Sends the HTTP headers back to the browser
-     *
-     * @return void
-     */
-    public function sendHeaders()
-    {
-        if(($this->xResponse))
-        {
-            $this->_sendHeaders();
-        }
-    }
-
-    /**
      * Get the JSON output of the response
      *
      * @return string
      */
     public function getOutput(): string
     {
-        if(($this->xResponse))
-        {
-            return $this->xResponse->getOutput();
-        }
-        return '';
+        return ($this->xResponse) ? $this->xResponse->getOutput() : '';
     }
 
     /**
@@ -234,7 +217,7 @@ class ResponseManager
     {
         if(($this->xResponse))
         {
-            $this->_sendHeaders();
+            $this->sendHeaders();
             $this->xResponse->printOutput();
         }
     }

@@ -51,7 +51,6 @@ class Response extends AbstractResponse
 {
     use Traits\DomTrait;
     use Traits\JsTrait;
-    use Traits\DomTreeTrait;
 
     /**
      * @var Translator

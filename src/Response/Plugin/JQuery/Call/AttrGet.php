@@ -2,9 +2,7 @@
 
 namespace Jaxon\Response\Plugin\JQuery\Call;
 
-use JsonSerializable;
-
-class AttrGet implements JsonSerializable
+class AttrGet
 {
     /**
      * The attribute name
@@ -39,18 +37,6 @@ class AttrGet implements JsonSerializable
      * @return string
      */
     public function __toString()
-    {
-        return $this->getScript();
-    }
-
-    /**
-     * Convert this call to string, when converting the response into json.
-     *
-     * This is a method of the JsonSerializable interface.
-     *
-     * @return string
-     */
-    public function jsonSerialize(): string
     {
         return $this->getScript();
     }
