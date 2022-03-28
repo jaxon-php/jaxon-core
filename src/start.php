@@ -66,7 +66,7 @@ function pm(): ParameterFactory
  */
 function jq(string $sPath = '', string $sContext = ''): DomSelector
 {
-    return Jaxon::getInstance()->di()->getJQueryPlugin()->selector($sPath, $sContext);
+    return Jaxon::getInstance()->di()->getJQueryPlugin()->command(false)->selector($sPath, $sContext);
 }
 
 // Register the Jaxon request and response plugins

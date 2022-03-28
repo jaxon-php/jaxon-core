@@ -2,6 +2,7 @@
 
 namespace Jaxon\Response\Plugin\JQuery\Call;
 
+use Jaxon\Request\Call\Parameter;
 use JsonSerializable;
 
 class AttrSet implements JsonSerializable
@@ -29,7 +30,7 @@ class AttrSet implements JsonSerializable
     public function __construct(string $sAttrName, $xAttrValue)
     {
         $this->sAttrName = $sAttrName;
-        $this->xAttrValue = (string)$xAttrValue;
+        $this->xAttrValue = Parameter::make($xAttrValue);
     }
 
     /**

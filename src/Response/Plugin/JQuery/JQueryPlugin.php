@@ -17,6 +17,13 @@ class JQueryPlugin extends ResponsePlugin
     protected $jQueryNs;
 
     /**
+     * True if the next selector is a command
+     *
+     * @var bool
+     */
+    protected $bCommand = true;
+
+    /**
      * The class constructor
      *
      * @param string $jQueryNs
@@ -24,6 +31,17 @@ class JQueryPlugin extends ResponsePlugin
     public function __construct(string $jQueryNs)
     {
         $this->jQueryNs = $jQueryNs;
+    }
+
+    /**
+     * @param bool $bCommand
+     *
+     * @return JQueryPlugin
+     */
+    public function command(bool $bCommand): JQueryPlugin
+    {
+        $this->bCommand = $bCommand;
+        return $this;
     }
 
     /**
@@ -69,10 +87,12 @@ class JQueryPlugin extends ResponsePlugin
     public function selector(string $sPath = '', string $sContext = ''): DomSelector
     {
         $xSelector = new DomSelector($this->jQueryNs, $sPath, $sContext);
-        if($this->xResponse !== null)
+        if($this->bCommand && $this->xResponse !== null)
         {
             $this->addCommand(['cmd' => 'jquery'], $xSelector);
         }
+        // Reset the command value.
+        $this->bCommand = true;
         return $xSelector;
     }
 }
