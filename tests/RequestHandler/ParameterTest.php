@@ -28,6 +28,27 @@ class ParameterTest extends TestCase
         parent::tearDown();
     }
 
+    /**
+     * @throws RequestException
+     */
+    public function testRequestWithNoPlugin()
+    {
+        // Send a request to the registered class
+        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
+            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
+                'jxnwho' => 'Nobody',
+                'jxnargs' => [],
+            ])->withMethod('POST');
+        });
+
+        $this->assertFalse(jaxon()->di()->getRequestHandler()->canProcessRequest());
+        // Process the request and get the response
+        jaxon()->di()->getRequestHandler()->processRequest();
+
+        $xResponse = jaxon()->getResponse();
+        $this->assertEquals(0, $xResponse->getCommandCount());
+    }
+
     public function testGetParameterProcessing()
     {
         // The server request
