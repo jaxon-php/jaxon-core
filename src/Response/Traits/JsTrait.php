@@ -10,7 +10,7 @@
 
 namespace Jaxon\Response\Traits;
 
-use Jaxon\Response\AbstractResponse;
+use Jaxon\Response\ResponseInterface;
 use Jaxon\Response\Response;
 use Jaxon\Exception\RequestException;
 
@@ -41,17 +41,6 @@ trait JsTrait
      * @return Response
      */
     abstract protected function _addCommand(string $sName, array $aAttributes, $mData, bool $bRemoveEmpty = false): Response;
-
-    /**
-     * Merge the response commands from the specified <Response> object with
-     * the response commands in this <Response> object
-     *
-     * @param Response|array $mCommands    The <Response> object
-     * @param bool $bBefore    Add the new commands to the beginning of the list
-     *
-     * @return void
-     */
-    abstract public function appendResponse($mCommands, bool $bBefore = false);
 
     /**
      * Response command that prompts user with [ok] [cancel] style message box
@@ -87,9 +76,9 @@ trait JsTrait
      *
      * @param string $sMessage    The message to be displayed
      *
-     * @return AbstractResponse
+     * @return ResponseInterface
      */
-    public function debug(string $sMessage): AbstractResponse
+    public function debug(string $sMessage): ResponseInterface
     {
         return $this->_addCommand('dbg', [], $sMessage);
     }

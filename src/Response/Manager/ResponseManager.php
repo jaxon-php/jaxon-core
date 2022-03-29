@@ -23,7 +23,7 @@ namespace Jaxon\Response\Manager;
 
 use Jaxon\Di\Container;
 use Jaxon\Exception\RequestException;
-use Jaxon\Response\AbstractResponse;
+use Jaxon\Response\ResponseInterface;
 use Jaxon\Utils\Translation\Translator;
 
 use function get_class;
@@ -49,7 +49,7 @@ class ResponseManager
      * The current response object that will be sent back to the browser
      * once the request processing phase is complete
      *
-     * @var AbstractResponse
+     * @var ResponseInterface
      */
     private $xResponse;
 
@@ -89,9 +89,9 @@ class ResponseManager
     /**
      * Get the response to the Jaxon request
      *
-     * @return AbstractResponse
+     * @return ResponseInterface
      */
-    public function getResponse(): AbstractResponse
+    public function getResponse(): ResponseInterface
     {
         return $this->xResponse;
     }
@@ -103,12 +103,11 @@ class ResponseManager
      * If no prior response has been appended, this response becomes the main response
      * object to which other response objects will be appended.
      *
-     * @param AbstractResponse $xResponse The response object to be appended
+     * @param ResponseInterface $xResponse The response object to be appended
      *
      * @return void
-     * @throws RequestException
      */
-    public function append(AbstractResponse $xResponse)
+    public function append(ResponseInterface $xResponse)
     {
         if($this->xResponse->getCommandCount() === 0)
         {

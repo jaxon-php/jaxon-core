@@ -6,8 +6,10 @@ use function array_walk;
 use function addslashes;
 use function json_encode;
 
-class UploadResponse extends AbstractResponse
+class UploadResponse implements ResponseInterface
 {
+    use Traits\CommandTrait;
+
     /**
      * The path to the uploaded file
      *
@@ -30,9 +32,7 @@ class UploadResponse extends AbstractResponse
     private $aDebugMessages = [];
 
     /**
-     * Get the content type, which is always set to 'text/json'
-     *
-     * @return string
+     * @inheritDoc
      */
     public function getContentType(): string
     {
@@ -64,22 +64,16 @@ class UploadResponse extends AbstractResponse
     }
 
     /**
-     * Add a command to display a debug message to the user
-     *
-     * @param string $sMessage    The message to be displayed
-     *
-     * @return AbstractResponse
+     * @inheritDoc
      */
-    public function debug(string $sMessage): AbstractResponse
+    public function debug(string $sMessage): ResponseInterface
     {
         $this->aDebugMessages[] = $sMessage;
         return $this;
     }
 
     /**
-     * Return the output, generated from the commands added to the response, that will be sent to the browser
-     *
-     * @return string
+     * @inheritDoc
      */
     public function getOutput(): string
     {

@@ -27,7 +27,7 @@ use Jaxon\Plugin\RequestPlugin;
 use Jaxon\Request\Handler\ParameterReader;
 use Jaxon\Request\Target;
 use Jaxon\Request\Validator;
-use Jaxon\Response\AbstractResponse;
+use Jaxon\Response\ResponseInterface;
 use Jaxon\Utils\Template\TemplateEngine;
 use Jaxon\Utils\Translation\Translator;
 use Jaxon\Exception\RequestException;
@@ -305,7 +305,7 @@ class CallableClassPlugin extends RequestPlugin
      * @inheritDoc
      * @throws RequestException
      */
-    public function processRequest(ServerRequestInterface $xRequest): ?AbstractResponse
+    public function processRequest(ServerRequestInterface $xRequest): ?ResponseInterface
     {
         $this->setTarget($xRequest);
         $sRequestedClass = $this->xTarget->getClassName();

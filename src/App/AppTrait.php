@@ -6,7 +6,7 @@ use Jaxon\Jaxon;
 use Jaxon\Plugin\Package;
 use Jaxon\Request\Factory\RequestFactory;
 use Jaxon\Request\Handler\CallbackManager;
-use Jaxon\Response\AbstractResponse;
+use Jaxon\Response\ResponseInterface;
 use Jaxon\Session\SessionInterface;
 use Jaxon\Ui\View\ViewRenderer;
 use Jaxon\Utils\Http\UriException;
@@ -40,9 +40,9 @@ trait AppTrait
     /**
      * Get the Jaxon response.
      *
-     * @return AbstractResponse
+     * @return ResponseInterface
      */
-    public function ajaxResponse(): AbstractResponse
+    public function ajaxResponse(): ResponseInterface
     {
         return $this->jaxon->getResponse();
     }

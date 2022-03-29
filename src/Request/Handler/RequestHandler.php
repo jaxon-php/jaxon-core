@@ -26,7 +26,7 @@ use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\Contract\RequestHandlerInterface;
 use Jaxon\Plugin\Manager\PluginManager;
-use Jaxon\Response\AbstractResponse;
+use Jaxon\Response\ResponseInterface;
 use Jaxon\Response\Manager\ResponseManager;
 use Jaxon\Response\Plugin\DataBag\DataBagPlugin;
 use Jaxon\Utils\Translation\Translator;
@@ -157,13 +157,13 @@ class RequestHandler
         foreach($this->xCallbackManager->getBeforeCallbacks() as $xCallback)
         {
             $xReturn = call_user_func_array($xCallback, [$xTarget, &$bEndRequest]);
+            if($xReturn instanceof ResponseInterface)
+            {
+                $this->xResponseManager->append($xReturn);
+            }
             if($bEndRequest)
             {
                 return;
-            }
-            if($xReturn instanceof AbstractResponse)
-            {
-                $this->xResponseManager->append($xReturn);
             }
         }
     }
@@ -179,7 +179,7 @@ class RequestHandler
         {
             $xReturn = call_user_func_array($xCallback,
                 [$this->xRequestPlugin->getTarget(), $bEndRequest]);
-            if($xReturn instanceof AbstractResponse)
+            if($xReturn instanceof ResponseInterface)
             {
                 $this->xResponseManager->append($xReturn);
             }
@@ -196,7 +196,7 @@ class RequestHandler
         foreach($this->xCallbackManager->getInvalidCallbacks() as $xCallback)
         {
             $xReturn = call_user_func($xCallback, $sMessage);
-            if($xReturn instanceof AbstractResponse)
+            if($xReturn instanceof ResponseInterface)
             {
                 $this->xResponseManager->append($xReturn);
             }
@@ -216,7 +216,7 @@ class RequestHandler
         foreach($this->xCallbackManager->getErrorCallbacks() as $xCallback)
         {
             $xReturn = call_user_func($xCallback, $xException);
-            if($xReturn instanceof AbstractResponse)
+            if($xReturn instanceof ResponseInterface)
             {
                 $this->xResponseManager->append($xReturn);
             }

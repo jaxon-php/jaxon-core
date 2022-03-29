@@ -265,7 +265,7 @@ class Jaxon implements LoggerAwareInterface
     }
 
     /**
-     * Get the Global Response object
+     * Get the Response object
      *
      * @return Response
      */
@@ -396,23 +396,6 @@ class Jaxon implements LoggerAwareInterface
     public function getScript(bool $bIncludeJs = false, bool $bIncludeCss = false): string
     {
         return $this->xCodeGenerator->getScript($bIncludeJs, $bIncludeCss);
-    }
-
-    /**
-     * Print the jaxon Javascript header and wrapper code into your page
-     *
-     * The javascript code returned by this function is dependent on the plugins
-     * that are included and the functions and classes that are registered.
-     *
-     * @param bool $bIncludeJs    Also print the JS files
-     * @param bool $bIncludeCss    Also print the CSS files
-     *
-     * @return void
-     * @throws UriException
-     */
-    public function printScript(bool $bIncludeJs = false, bool $bIncludeCss = false)
-    {
-        print $this->getScript($bIncludeJs, $bIncludeCss);
     }
 
     /**
