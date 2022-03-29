@@ -12,8 +12,18 @@
 
 namespace Jaxon\Request\Handler;
 
+use function call_user_func;
+use function count;
+
 class CallbackManager
 {
+    /**
+     * Number of on boot callbacks already called.
+     *
+     * @var int
+     */
+    protected $nOnBootCalledCount = 0;
+
     /**
      * The callbacks to run after booting the library
      *
@@ -55,16 +65,6 @@ class CallbackManager
      * @var callable[]
      */
     protected $xInitCallbacks = [];
-
-    /**
-     * Get the library booting callbacks.
-     *
-     * @return callable[]
-     */
-    public function getBootCallbacks(): array
-    {
-        return $this->xBootCallbacks;
-    }
 
     /**
      * Get the pre-request processing callbacks.
@@ -192,5 +192,21 @@ class CallbackManager
     {
         $this->xInitCallbacks[] = $xCallable;
         return $this;
+    }
+
+    /**
+     * These callbacks are called right after the library is initialized.
+     *
+     * @return void
+     */
+    public function onBoot()
+    {
+        // Only call the callbacks that aren't called yet.
+        $nOnBootCallbackTotal = count($this->xBootCallbacks);
+        for($n = $this->nOnBootCalledCount; $n < $nOnBootCallbackTotal; $n++)
+        {
+            call_user_func($this->xBootCallbacks[$n]);
+        }
+        $this->nOnBootCalledCount = $nOnBootCallbackTotal;
     }
 }

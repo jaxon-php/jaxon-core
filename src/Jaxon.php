@@ -155,6 +155,8 @@ class Jaxon implements LoggerAwareInterface
             self::$xContainer = new Container(self::$xInstance);
             self::initInstance();
         }
+        // Call the on boot callbacks on any call to the jaxon() function.
+        self::$xInstance->xCallbackManager->onBoot();
         return self::$xInstance;
     }
 

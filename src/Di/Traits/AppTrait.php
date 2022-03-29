@@ -87,8 +87,7 @@ trait AppTrait
         });
         // Jaxon App
         $this->set(App::class, function($c) {
-            return new App($c->g(Jaxon::class), $c->g(ConfigManager::class),
-                $c->g(ResponseManager::class), $c->g(Translator::class));
+            return new App($c->g(Jaxon::class), $c->g(ConfigManager::class), $c->g(Translator::class));
         });
         // Jaxon App bootstrap
         $this->set(Bootstrap::class, function($c) {

@@ -168,8 +168,6 @@ class Bootstrap
     {
         // Register user functions and classes
         $this->xPluginManager->registerFromConfig($xAppConfig);
-        // Call the on boot callbacks
-        $this->xRequestHandler->onBoot();
     }
 
     /**

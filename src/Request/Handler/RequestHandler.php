@@ -102,19 +102,6 @@ class RequestHandler
     }
 
     /**
-     * These callbacks are called whenever an invalid request is processed.
-     *
-     * @return void
-     */
-    public function onBoot()
-    {
-        foreach($this->xCallbackManager->getBootCallbacks() as $xCallback)
-        {
-            call_user_func($xCallback);
-        }
-    }
-
-    /**
      * These are the pre-request processing callbacks passed to the Jaxon library.
      *
      * @param bool $bEndRequest If set to true, the request processing is interrupted.
