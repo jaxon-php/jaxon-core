@@ -3,6 +3,7 @@
 namespace Jaxon\Plugin\Contract;
 
 use Jaxon\Request\Target;
+use Jaxon\Response\AbstractResponse;
 use Psr\Http\Message\ServerRequestInterface;
 
 interface RequestHandlerInterface
@@ -35,7 +36,7 @@ interface RequestHandlerInterface
      *
      * @param ServerRequestInterface $xRequest
      *
-     * @return bool
+     * @return AbstractResponse|null
      */
-    public function processRequest(ServerRequestInterface $xRequest): bool;
+    public function processRequest(ServerRequestInterface $xRequest): ?AbstractResponse;
 }

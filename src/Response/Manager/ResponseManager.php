@@ -22,6 +22,7 @@
 namespace Jaxon\Response\Manager;
 
 use Jaxon\Di\Container;
+use Jaxon\Exception\RequestException;
 use Jaxon\Response\AbstractResponse;
 use Jaxon\Utils\Translation\Translator;
 
@@ -50,7 +51,7 @@ class ResponseManager
      *
      * @var AbstractResponse
      */
-    private $xResponse = null;
+    private $xResponse;
 
     /**
      * The debug messages
@@ -71,18 +72,18 @@ class ResponseManager
         $this->di = $di;
         $this->sCharacterEncoding = $sCharacterEncoding;
         $this->xTranslator = $xTranslator;
+        // By default, use the global response;
+        $this->xResponse = $di->getResponse();
     }
 
     /**
      * Clear the current response
      *
-     * A new response will need to be appended before the request processing is complete.
-     *
      * @return void
      */
     public function clear()
     {
-        $this->xResponse = null;
+        $this->xResponse->clearCommands();
     }
 
     /**
@@ -90,7 +91,7 @@ class ResponseManager
      *
      * @return AbstractResponse
      */
-    public function getResponse(): ?AbstractResponse
+    public function getResponse(): AbstractResponse
     {
         return $this->xResponse;
     }
@@ -102,13 +103,14 @@ class ResponseManager
      * If no prior response has been appended, this response becomes the main response
      * object to which other response objects will be appended.
      *
-     * @param AbstractResponse $xResponse    The response object to be appended
+     * @param AbstractResponse $xResponse The response object to be appended
      *
      * @return void
+     * @throws RequestException
      */
     public function append(AbstractResponse $xResponse)
     {
-        if(!$this->xResponse)
+        if($this->xResponse->getCommandCount() === 0)
         {
             $this->xResponse = $xResponse;
             return;
@@ -142,14 +144,13 @@ class ResponseManager
     /**
      * Clear the response and appends a debug message on the end of the debug message queue
      *
-     * @param string $sMessage    The debug message
+     * @param string $sMessage The debug message
      *
      * @return void
      */
     public function error(string $sMessage)
     {
         $this->clear();
-        $this->append($this->di->newResponse());
         $this->debug($sMessage);
     }
 
@@ -160,14 +161,11 @@ class ResponseManager
      */
     public function printDebug()
     {
-        if(($this->xResponse))
+        foreach($this->aDebugMessages as $sMessage)
         {
-            foreach($this->aDebugMessages as $sMessage)
-            {
-                $this->xResponse->debug($sMessage);
-            }
-            $this->aDebugMessages = [];
+            $this->xResponse->debug($sMessage);
         }
+        $this->aDebugMessages = [];
     }
 
     /**
@@ -177,7 +175,7 @@ class ResponseManager
      */
     public function getResponseContent(): array
     {
-        if(!$this->xResponse)
+        if($this->xResponse->getCommandCount() === 0)
         {
             return [];
         }

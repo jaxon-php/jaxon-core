@@ -26,7 +26,7 @@ use Jaxon\Plugin\RequestPlugin;
 use Jaxon\Request\Handler\ParameterReader;
 use Jaxon\Request\Target;
 use Jaxon\Request\Validator;
-use Jaxon\Response\Manager\ResponseManager;
+use Jaxon\Response\AbstractResponse;
 use Jaxon\Utils\Template\TemplateEngine;
 use Jaxon\Utils\Translation\Translator;
 use Jaxon\Exception\RequestException;
@@ -53,13 +53,6 @@ class CallableFunctionPlugin extends RequestPlugin
      * @var ParameterReader
      */
     protected $xParameterReader;
-
-    /**
-     * The response manager
-     *
-     * @var ResponseManager
-     */
-    protected $xResponseManager;
 
     /**
      * The request data validator
@@ -102,17 +95,15 @@ class CallableFunctionPlugin extends RequestPlugin
      *
      * @param string $sPrefix
      * @param ParameterReader $xParameterReader
-     * @param ResponseManager $xResponseManager
      * @param TemplateEngine $xTemplateEngine
      * @param Translator $xTranslator
      * @param Validator $xValidator
      */
-    public function __construct(string $sPrefix, ParameterReader $xParameterReader, ResponseManager $xResponseManager,
+    public function __construct(string $sPrefix, ParameterReader $xParameterReader,
         TemplateEngine $xTemplateEngine, Translator $xTranslator, Validator $xValidator)
     {
         $this->sPrefix = $sPrefix;
         $this->xParameterReader = $xParameterReader;
-        $this->xResponseManager = $xResponseManager;
         $this->xTemplateEngine = $xTemplateEngine;
         $this->xTranslator = $xTranslator;
         $this->xValidator = $xValidator;
@@ -270,7 +261,7 @@ class CallableFunctionPlugin extends RequestPlugin
      * @inheritDoc
      * @throws RequestException
      */
-    public function processRequest(ServerRequestInterface $xRequest): bool
+    public function processRequest(ServerRequestInterface $xRequest): ?AbstractResponse
     {
         $this->setTarget($xRequest);
         $sRequestedFunction = $this->xTarget->getFunctionName();
@@ -285,11 +276,6 @@ class CallableFunctionPlugin extends RequestPlugin
         }
 
         $xFunction = $this->getCallable($sRequestedFunction);
-        $xResponse = $xFunction->call($this->xParameterReader->args());
-        if(($xResponse))
-        {
-            $this->xResponseManager->append($xResponse);
-        }
-        return true;
+        return $xFunction->call($this->xParameterReader->args());
     }
 }

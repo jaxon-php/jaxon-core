@@ -41,7 +41,7 @@ trait CallableTrait
         $this->set(CallableClassPlugin::class, function($c) {
             $sPrefix = $c->g(ConfigManager::class)->getOption('core.prefix.class');
             return new CallableClassPlugin($sPrefix, $c->g(ParameterReader::class),
-                $c->g(ResponseManager::class), $c->g(CallableRegistry::class), $c->g(CallableRepository::class),
+                $c->g(CallableRegistry::class), $c->g(CallableRepository::class),
                 $c->g(TemplateEngine::class), $c->g(Translator::class), $c->g(Validator::class));
         });
         // Callable dir plugin
@@ -52,8 +52,7 @@ trait CallableTrait
         $this->set(CallableFunctionPlugin::class, function($c) {
             $sPrefix = $c->g(ConfigManager::class)->getOption('core.prefix.function');
             return new CallableFunctionPlugin($sPrefix, $c->g(ParameterReader::class),
-                $c->g(ResponseManager::class), $c->g(TemplateEngine::class),
-                $c->g(Translator::class), $c->g(Validator::class));
+                $c->g(TemplateEngine::class), $c->g(Translator::class), $c->g(Validator::class));
         });
     }
 

@@ -206,9 +206,10 @@ class RequestHandler
     /**
      * These callbacks are called whenever an invalid request is processed.
      *
-     * @var Exception $xException
+     * @param Exception $xException
      *
      * @return void
+     * @throws RequestException
      */
     public function onError(Exception $xException)
     {
@@ -289,7 +290,11 @@ class RequestHandler
             // Process the request
             if(($this->xRequestPlugin))
             {
-                $this->xRequestPlugin->processRequest($this->xRequest);
+                $xResponse = $this->xRequestPlugin->processRequest($this->xRequest);
+                if(($xResponse))
+                {
+                    $this->xResponseManager->append($xResponse);
+                }
             }
 
             // Handle after processing event
@@ -350,22 +355,15 @@ class RequestHandler
         }
 
         $this->_processRequest();
-
         // Process the databag
         $this->xDataBagPlugin->writeCommand();
+        // Print the debug messages
+        $this->xResponseManager->printDebug();
 
         // Clean the processing buffer
         if(($this->xConfigManager->getOption('core.process.clean')))
         {
             $this->_cleanOutputBuffers();
         }
-
-        // If the called function returned no response, take the global response
-        if(!$this->xResponseManager->getResponse())
-        {
-            $this->xResponseManager->append($this->di->getResponse());
-        }
-
-        $this->xResponseManager->printDebug();
     }
 }

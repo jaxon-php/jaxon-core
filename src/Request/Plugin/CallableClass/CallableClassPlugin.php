@@ -27,10 +27,9 @@ use Jaxon\Plugin\RequestPlugin;
 use Jaxon\Request\Handler\ParameterReader;
 use Jaxon\Request\Target;
 use Jaxon\Request\Validator;
-use Jaxon\Response\Manager\ResponseManager;
+use Jaxon\Response\AbstractResponse;
 use Jaxon\Utils\Template\TemplateEngine;
 use Jaxon\Utils\Translation\Translator;
-
 use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;
 use Psr\Http\Message\ServerRequestInterface;
@@ -60,13 +59,6 @@ class CallableClassPlugin extends RequestPlugin
      * @var ParameterReader
      */
     protected $xParameterReader;
-
-    /**
-     * The response manager
-     *
-     * @var ResponseManager
-     */
-    protected $xResponseManager;
 
     /**
      * The callable registry
@@ -116,7 +108,6 @@ class CallableClassPlugin extends RequestPlugin
      *
      * @param string  $sPrefix
      * @param ParameterReader $xParameterReader
-     * @param ResponseManager $xResponseManager
      * @param CallableRegistry $xRegistry    The callable class registry
      * @param CallableRepository $xRepository    The callable object repository
      * @param TemplateEngine $xTemplateEngine
@@ -124,12 +115,11 @@ class CallableClassPlugin extends RequestPlugin
      * @param Validator $xValidator
      */
     public function __construct(string $sPrefix, ParameterReader $xParameterReader,
-        ResponseManager $xResponseManager, CallableRegistry $xRegistry, CallableRepository $xRepository,
+        CallableRegistry $xRegistry, CallableRepository $xRepository,
         TemplateEngine $xTemplateEngine, Translator $xTranslator, Validator $xValidator)
     {
         $this->sPrefix = $sPrefix;
         $this->xParameterReader = $xParameterReader;
-        $this->xResponseManager = $xResponseManager;
         $this->xRegistry = $xRegistry;
         $this->xRepository = $xRepository;
         $this->xTemplateEngine = $xTemplateEngine;
@@ -315,7 +305,7 @@ class CallableClassPlugin extends RequestPlugin
      * @inheritDoc
      * @throws RequestException
      */
-    public function processRequest(ServerRequestInterface $xRequest): bool
+    public function processRequest(ServerRequestInterface $xRequest): ?AbstractResponse
     {
         $this->setTarget($xRequest);
         $sRequestedClass = $this->xTarget->getClassName();
@@ -333,11 +323,7 @@ class CallableClassPlugin extends RequestPlugin
         try
         {
             $xCallableObject = $this->xRegistry->getCallableObject($sRequestedClass);
-            $xResponse = $xCallableObject->call($sRequestedMethod, $this->xParameterReader->args());
-            if(($xResponse))
-            {
-                $this->xResponseManager->append($xResponse);
-            }
+            return $xCallableObject->call($sRequestedMethod, $this->xParameterReader->args());
         }
         catch(ReflectionException $e)
         {
@@ -351,6 +337,5 @@ class CallableClassPlugin extends RequestPlugin
             throw new RequestException($this->xTranslator->trans('errors.objects.invalid',
                 ['class' => $sRequestedClass, 'method' => $sRequestedMethod]));
         }
-        return true;
     }
 }
