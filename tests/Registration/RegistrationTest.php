@@ -20,7 +20,9 @@ class RegistrationTest extends TestCase
      */
     protected $xPlugin;
 
-
+    /**
+     * @throws SetupException
+     */
     public function setUp(): void
     {
         jaxon()->setOption('core.prefix.class', 'Jxn');
@@ -62,6 +64,9 @@ class RegistrationTest extends TestCase
         $this->xPlugin = jaxon()->di()->getCallableClassPlugin();
     }
 
+    /**
+     * @throws SetupException
+     */
     public function tearDown(): void
     {
         jaxon()->reset();

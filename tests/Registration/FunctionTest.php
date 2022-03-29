@@ -23,6 +23,9 @@ final class FunctionTest extends TestCase
      */
     protected $xPlugin;
 
+    /**
+     * @throws SetupException
+     */
     public function setUp(): void
     {
         jaxon()->setOption('core.prefix.function', 'jxn_');
@@ -44,6 +47,9 @@ final class FunctionTest extends TestCase
         $this->xPlugin = jaxon()->di()->getCallableFunctionPlugin();
     }
 
+    /**
+     * @throws SetupException
+     */
     public function tearDown(): void
     {
         jaxon()->reset();
