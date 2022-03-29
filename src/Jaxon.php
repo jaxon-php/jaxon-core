@@ -53,6 +53,8 @@ use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
 use function headers_sent;
+use function header;
+use function gmdate;
 use function trim;
 
 class Jaxon implements LoggerAwareInterface
@@ -474,12 +476,34 @@ class Jaxon implements LoggerAwareInterface
 
         if(($this->xConfigManager->getOption('core.response.send')))
         {
-            $this->xResponseManager->sendOutput();
+            $this->sendResponse();
             if(($this->xConfigManager->getOption('core.process.exit')))
             {
                 exit();
             }
         }
+    }
+
+    /**
+     * Prints the response to the output stream, thus sending the response to the browser
+     *
+     * @return void
+     */
+    protected function sendResponse()
+    {
+        if(empty($aContent = $this->xResponseManager->getResponseContent()))
+        {
+            return;
+        }
+        if($this->di()->getRequest()->getMethod() === 'GET')
+        {
+            header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
+            header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
+            header("Cache-Control: no-cache, must-revalidate");
+            header("Pragma: no-cache");
+        }
+        header('content-type: ' . $aContent['type']);
+        print $aContent['content'];
     }
 
     /**

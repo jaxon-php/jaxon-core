@@ -26,21 +26,21 @@
 namespace Jaxon\Plugin;
 
 use Jaxon\Plugin\Contract\ResponsePluginInterface;
-use Jaxon\Response\Response as JaxonResponse;
+use Jaxon\Response\Response;
 
 abstract class ResponsePlugin extends Plugin implements ResponsePluginInterface
 {
     /**
      * The object used to build the response that will be sent to the client browser
      *
-     * @var JaxonResponse
+     * @var Response
      */
     protected $xResponse = null;
 
     /**
      * @inheritDoc
      */
-    public function setResponse(JaxonResponse $xResponse)
+    public function setResponse(Response $xResponse)
     {
         $this->xResponse = $xResponse;
     }
@@ -48,7 +48,7 @@ abstract class ResponsePlugin extends Plugin implements ResponsePluginInterface
     /**
      * @inheritDoc
      */
-    public function response(): ?JaxonResponse
+    public function response(): ?Response
     {
         return $this->xResponse;
     }

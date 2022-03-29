@@ -24,9 +24,6 @@ namespace Jaxon\Response;
 use Jaxon\Di\Container;
 use Jaxon\Utils\Translation\Translator;
 
-use function header;
-use function strlen;
-use function gmdate;
 use function get_class;
 
 class ResponseManager
@@ -37,14 +34,14 @@ class ResponseManager
     private $di;
 
     /**
-     * @var string
-     */
-    private $sCharacterEncoding;
-
-    /**
      * @var Translator
      */
     protected $xTranslator;
+
+    /**
+     * @var string
+     */
+    private $sCharacterEncoding;
 
     /**
      * The current response object that will be sent back to the browser
@@ -59,7 +56,7 @@ class ResponseManager
      *
      * @var array
      */
-    private $aDebugMessages;
+    private $aDebugMessages = [];
 
     /**
      * The class constructor
@@ -73,7 +70,6 @@ class ResponseManager
         $this->di = $di;
         $this->sCharacterEncoding = $sCharacterEncoding;
         $this->xTranslator = $xTranslator;
-        $this->aDebugMessages = [];
     }
 
     /**
@@ -114,17 +110,16 @@ class ResponseManager
         if(!$this->xResponse)
         {
             $this->xResponse = $xResponse;
+            return;
         }
-        elseif(get_class($this->xResponse) === get_class($xResponse))
-        {
-            if($this->xResponse !== $xResponse)
-            {
-                $this->xResponse->appendResponse($xResponse);
-            }
-        }
-        else
+        if(get_class($this->xResponse) !== get_class($xResponse))
         {
             $this->debug($this->xTranslator->trans('errors.mismatch.types', ['class' => get_class($xResponse)]));
+            return;
+        }
+        if($this->xResponse !== $xResponse)
+        {
+            $this->xResponse->appendResponse($xResponse);
         }
     }
 
@@ -175,50 +170,21 @@ class ResponseManager
     }
 
     /**
-     * Sends the HTTP headers back to the browser
+     * Get the type and content of the HTTP response
      *
-     * @return void
+     * @return array
      */
-    public function sendHeaders()
+    public function getResponseContent(): array
     {
-        if($this->di->getRequest()->getMethod() === 'GET')
+        if(!$this->xResponse)
         {
-            header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
-            header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
-            header("Cache-Control: no-cache, must-revalidate");
-            header("Pragma: no-cache");
+            return [];
         }
-
-        $sCharacterSet = '';
-        if(strlen($this->sCharacterEncoding) > 0)
+        $sType = $this->xResponse->getContentType();
+        if(!empty($this->sCharacterEncoding))
         {
-            $sCharacterSet = '; charset="' . $this->sCharacterEncoding . '"';
+            $sType .= '; charset="' . $this->sCharacterEncoding . '"';
         }
-
-        header('content-type: ' . $this->xResponse->getContentType() . ' ' . $sCharacterSet);
-    }
-
-    /**
-     * Get the JSON output of the response
-     *
-     * @return string
-     */
-    public function getOutput(): string
-    {
-        return ($this->xResponse) ? $this->xResponse->getOutput() : '';
-    }
-
-    /**
-     * Prints the response object to the output stream, thus sending the response to the browser
-     *
-     * @return void
-     */
-    public function sendOutput()
-    {
-        if(($this->xResponse))
-        {
-            $this->sendHeaders();
-            $this->xResponse->printOutput();
-        }
+        return ['type' => $sType, 'content' => $this->xResponse->getOutput()];
     }
 }
