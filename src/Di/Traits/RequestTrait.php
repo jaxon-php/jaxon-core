@@ -56,10 +56,9 @@ trait RequestTrait
         });
         // Request Handler
         $this->set(RequestHandler::class, function($c) {
-            return new RequestHandler($c->g(Container::class), $c->g(ConfigManager::class),
-                $c->g(PluginManager::class), $c->g(ResponseManager::class), $c->g(CallbackManager::class),
-                $c->g(ServerRequestInterface::class), $c->g(UploadHandler::class),
-                $c->g(DataBagPlugin::class), $c->g(Translator::class));
+            return new RequestHandler($c->g(Container::class), $c->g(PluginManager::class),
+                $c->g(ResponseManager::class), $c->g(CallbackManager::class),
+                $c->g(UploadHandler::class), $c->g(DataBagPlugin::class));
         });
         // Request Factory
         $this->set(Factory::class, function($c) {

@@ -86,11 +86,6 @@ class CallableFunctionPlugin extends RequestPlugin
     protected $aOptions = [];
 
     /**
-     * @var Target
-     */
-    protected $xTarget = null;
-
-    /**
      * The constructor
      *
      * @param string $sPrefix
@@ -235,17 +230,7 @@ class CallableFunctionPlugin extends RequestPlugin
     /**
      * @inheritDoc
      */
-    public function getTarget(): ?Target
-    {
-        return $this->xTarget;
-    }
-
-    /**
-     * @param ServerRequestInterface $xRequest
-     *
-     * @return void
-     */
-    private function setTarget(ServerRequestInterface $xRequest)
+    public function setTarget(ServerRequestInterface $xRequest)
     {
         $aBody = $xRequest->getParsedBody();
         if(is_array($aBody))
@@ -261,9 +246,8 @@ class CallableFunctionPlugin extends RequestPlugin
      * @inheritDoc
      * @throws RequestException
      */
-    public function processRequest(ServerRequestInterface $xRequest): ?ResponseInterface
+    public function processRequest(): ?ResponseInterface
     {
-        $this->setTarget($xRequest);
         $sRequestedFunction = $this->xTarget->getFunctionName();
 
         // Security check: make sure the requested function was registered.

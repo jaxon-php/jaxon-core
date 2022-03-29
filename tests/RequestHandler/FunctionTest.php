@@ -51,7 +51,7 @@ class FunctionTest extends TestCase
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
         $this->assertTrue(jaxon()->di()->getCallableFunctionPlugin()->canProcessRequest(jaxon()->di()->getRequest()));
         $this->assertFalse(jaxon()->di()->getCallableClassPlugin()->canProcessRequest(jaxon()->di()->getRequest()));
-        $this->assertNotNull(jaxon()->di()->getCallableFunctionPlugin()->processRequest(jaxon()->di()->getRequest()));
+        $this->assertNotNull(jaxon()->di()->getCallableFunctionPlugin()->processRequest());
     }
 
     /**
@@ -64,13 +64,13 @@ class FunctionTest extends TestCase
             return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
                 'jxnfun' => 'my_first_function',
                 'jxnargs' => [],
-            ]);
+            ])->withMethod('POST');
         });
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
         $this->assertTrue(jaxon()->di()->getCallableFunctionPlugin()->canProcessRequest(jaxon()->di()->getRequest()));
         $this->assertFalse(jaxon()->di()->getCallableClassPlugin()->canProcessRequest(jaxon()->di()->getRequest()));
-        $this->assertNotNull(jaxon()->di()->getCallableFunctionPlugin()->processRequest(jaxon()->di()->getRequest()));
+        $this->assertNotNull(jaxon()->di()->getCallableFunctionPlugin()->processRequest());
     }
 
     /**
@@ -83,11 +83,12 @@ class FunctionTest extends TestCase
             return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
                 'jxnfun' => 'my_first_function',
                 'jxnargs' => [],
-            ]);
+            ])->withMethod('POST');
         });
 
+        $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
         $this->assertTrue(jaxon()->di()->getCallableFunctionPlugin()->canProcessRequest(jaxon()->di()->getRequest()));
-        $this->assertNotNull(jaxon()->di()->getCallableFunctionPlugin()->processRequest(jaxon()->di()->getRequest()));
+        $this->assertNotNull(jaxon()->di()->getCallableFunctionPlugin()->processRequest());
 
         $xTarget = jaxon()->di()->getCallableFunctionPlugin()->getTarget();
         $this->assertNotNull($xTarget);
@@ -108,11 +109,12 @@ class FunctionTest extends TestCase
             return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
                 'jxnfun' => 'my_third_function',
                 'jxnargs' => [],
-            ]);
+            ])->withMethod('POST');
         });
 
+        $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
         $this->assertTrue(jaxon()->di()->getCallableFunctionPlugin()->canProcessRequest(jaxon()->di()->getRequest()));
-        $this->assertNotNull(jaxon()->di()->getCallableFunctionPlugin()->processRequest(jaxon()->di()->getRequest()));
+        $this->assertNotNull(jaxon()->di()->getCallableFunctionPlugin()->processRequest());
     }
 
     /**
@@ -125,11 +127,12 @@ class FunctionTest extends TestCase
             return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
                 'jxnfun' => 'my function', // A space in the function name
                 'jxnargs' => [],
-            ]);
+            ])->withMethod('POST');
         });
 
+        $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
         $this->assertTrue(jaxon()->di()->getCallableFunctionPlugin()->canProcessRequest(jaxon()->di()->getRequest()));
         $this->expectException(RequestException::class);
-        jaxon()->di()->getCallableFunctionPlugin()->processRequest(jaxon()->di()->getRequest());
+        jaxon()->di()->getCallableFunctionPlugin()->processRequest();
     }
 }

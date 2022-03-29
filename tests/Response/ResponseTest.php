@@ -143,7 +143,7 @@ class ResponseTest extends TestCase
         });
 
         $this->expectException(RequestException::class);
-        // Process the request and get the response
+        // Process the request
         jaxon()->di()->getRequestHandler()->processRequest();
     }
 }

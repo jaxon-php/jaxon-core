@@ -28,7 +28,20 @@ namespace Jaxon\Plugin;
 
 use Jaxon\Plugin\Contract\CallableRegistryInterface;
 use Jaxon\Plugin\Contract\RequestHandlerInterface;
+use Jaxon\Request\Target;
 
 abstract class RequestPlugin extends Plugin implements CallableRegistryInterface, RequestHandlerInterface
 {
+    /**
+     * @var Target
+     */
+    protected $xTarget = null;
+
+    /**
+     * @inheritDoc
+     */
+    public function getTarget(): ?Target
+    {
+        return $this->xTarget;
+    }
 }

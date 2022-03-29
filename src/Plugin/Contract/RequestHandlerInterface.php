@@ -16,6 +16,13 @@ interface RequestHandlerInterface
     public function getTarget(): ?Target;
 
     /**
+     * @param ServerRequestInterface $xRequest
+     *
+     * @return void
+     */
+    public function setTarget(ServerRequestInterface $xRequest);
+
+    /**
      * Check if this plugin can process the current request
      *
      * Called by the <Jaxon\Plugin\PluginManager> when a request has been received to determine
@@ -34,9 +41,7 @@ interface RequestHandlerInterface
      * This will only occur when <Jaxon> has determined that the current request
      * is a valid (registered) jaxon enabled function via <jaxon->canProcessRequest>.
      *
-     * @param ServerRequestInterface $xRequest
-     *
      * @return ResponseInterface|null
      */
-    public function processRequest(ServerRequestInterface $xRequest): ?ResponseInterface;
+    public function processRequest(): ?ResponseInterface;
 }

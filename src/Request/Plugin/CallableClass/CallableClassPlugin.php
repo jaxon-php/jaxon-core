@@ -92,11 +92,6 @@ class CallableClassPlugin extends RequestPlugin
     protected $xTranslator;
 
     /**
-     * @var Target
-     */
-    protected $xTarget = null;
-
-    /**
      * The methods that must not be exported to js
      *
      * @var array
@@ -279,17 +274,7 @@ class CallableClassPlugin extends RequestPlugin
     /**
      * @inheritDoc
      */
-    public function getTarget(): ?Target
-    {
-        return $this->xTarget;
-    }
-
-    /**
-     * @param ServerRequestInterface $xRequest
-     *
-     * @return void
-     */
-    private function setTarget(ServerRequestInterface $xRequest)
+    public function setTarget(ServerRequestInterface $xRequest)
     {
         $aBody = $xRequest->getParsedBody();
         if(is_array($aBody))
@@ -305,9 +290,8 @@ class CallableClassPlugin extends RequestPlugin
      * @inheritDoc
      * @throws RequestException
      */
-    public function processRequest(ServerRequestInterface $xRequest): ?ResponseInterface
+    public function processRequest(): ?ResponseInterface
     {
-        $this->setTarget($xRequest);
         $sRequestedClass = $this->xTarget->getClassName();
         $sRequestedMethod = $this->xTarget->getMethodName();
 

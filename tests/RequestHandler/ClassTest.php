@@ -49,7 +49,7 @@ class ClassTest extends TestCase
         $this->assertFalse(jaxon()->di()->getCallableFunctionPlugin()->canProcessRequest(jaxon()->di()->getRequest()));
         $this->assertTrue(jaxon()->di()->getCallableClassPlugin()->canProcessRequest(jaxon()->di()->getRequest()));
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
-        $this->assertNotNull(jaxon()->di()->getCallableClassPlugin()->processRequest(jaxon()->di()->getRequest()));
+        $this->assertNotNull(jaxon()->di()->getCallableClassPlugin()->processRequest());
     }
 
     /**
@@ -70,7 +70,7 @@ class ClassTest extends TestCase
         $this->assertFalse(jaxon()->di()->getCallableFunctionPlugin()->canProcessRequest(jaxon()->di()->getRequest()));
         $this->assertTrue(jaxon()->di()->getCallableClassPlugin()->canProcessRequest(jaxon()->di()->getRequest()));
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
-        $this->assertNotNull(jaxon()->di()->getCallableClassPlugin()->processRequest(jaxon()->di()->getRequest()));
+        $this->assertNotNull(jaxon()->di()->getCallableClassPlugin()->processRequest());
     }
 
     /**

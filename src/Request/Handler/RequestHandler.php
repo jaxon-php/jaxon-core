@@ -20,7 +20,6 @@
 
 namespace Jaxon\Request\Handler;
 
-use Jaxon\Config\ConfigManager;
 use Jaxon\Di\Container;
 use Jaxon\Exception\RequestException;
 use Jaxon\Plugin\Contract\RequestHandlerInterface;
@@ -28,16 +27,11 @@ use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Response\ResponseInterface;
 use Jaxon\Response\Manager\ResponseManager;
 use Jaxon\Response\Plugin\DataBag\DataBagPlugin;
-use Jaxon\Utils\Translation\Translator;
-use Psr\Http\Message\ServerRequestInterface;
 
 use Exception;
 
 use function call_user_func;
 use function call_user_func_array;
-use function error_reporting;
-use function ob_end_clean;
-use function ob_get_level;
 
 class RequestHandler
 {
@@ -45,11 +39,6 @@ class RequestHandler
      * @var Container
      */
     private $di;
-
-    /**
-     * @var ConfigManager
-     */
-    protected $xConfigManager;
 
     /**
      * The plugin manager.
@@ -85,11 +74,6 @@ class RequestHandler
     private $xDataBagPlugin;
 
     /**
-     * @var Translator
-     */
-    private $xTranslator;
-
-    /**
      * The request plugin that is able to process the current request
      *
      * @var RequestHandlerInterface
@@ -97,36 +81,24 @@ class RequestHandler
     private $xRequestPlugin = null;
 
     /**
-     * @var ServerRequestInterface
-     */
-    private $xRequest;
-
-    /**
      * The constructor
      *
      * @param Container $di
-     * @param ConfigManager $xConfigManager
      * @param PluginManager $xPluginManager
      * @param ResponseManager $xResponseManager
      * @param CallbackManager $xCallbackManager
-     * @param ServerRequestInterface $xRequest
      * @param UploadHandler|null $xUploadHandler
      * @param DataBagPlugin $xDataBagPlugin
-     * @param Translator $xTranslator
      */
-    public function __construct(Container $di, ConfigManager $xConfigManager, PluginManager $xPluginManager,
-        ResponseManager $xResponseManager, CallbackManager $xCallbackManager, ServerRequestInterface $xRequest,
-        ?UploadHandler $xUploadHandler, DataBagPlugin $xDataBagPlugin, Translator $xTranslator)
+    public function __construct(Container $di, PluginManager $xPluginManager, ResponseManager $xResponseManager,
+        CallbackManager $xCallbackManager, ?UploadHandler $xUploadHandler, DataBagPlugin $xDataBagPlugin)
     {
         $this->di = $di;
-        $this->xConfigManager = $xConfigManager;
         $this->xPluginManager = $xPluginManager;
         $this->xResponseManager = $xResponseManager;
         $this->xCallbackManager = $xCallbackManager;
-        $this->xRequest = $xRequest;
         $this->xUploadHandler = $xUploadHandler;
         $this->xDataBagPlugin = $xDataBagPlugin;
-        $this->xTranslator = $xTranslator;
     }
 
     /**
@@ -145,9 +117,10 @@ class RequestHandler
     /**
      * These are the pre-request processing callbacks passed to the Jaxon library.
      *
-     * @param bool $bEndRequest    If set to true, the request processing is interrupted.
+     * @param bool $bEndRequest If set to true, the request processing is interrupted.
      *
      * @return void
+     * @throws RequestException
      */
     public function onBefore(bool &$bEndRequest)
     {
@@ -171,6 +144,7 @@ class RequestHandler
      * These are the post-request processing callbacks passed to the Jaxon library.
      *
      * @return void
+     * @throws RequestException
      */
     public function onAfter(bool $bEndRequest)
     {
@@ -189,6 +163,7 @@ class RequestHandler
      * These callbacks are called whenever an invalid request is processed.
      *
      * @return void
+     * @throws RequestException
      */
     public function onInvalid(string $sMessage)
     {
@@ -237,12 +212,15 @@ class RequestHandler
             return true;
         }
 
+        // The HTTP request
+        $xRequest = $this->di->getRequest();
         // Find a plugin to process the request
         foreach($this->xPluginManager->getRequestHandlers() as $sClassName)
         {
-            if($sClassName::canProcessRequest($this->xRequest))
+            if($sClassName::canProcessRequest($xRequest))
             {
                 $this->xRequestPlugin = $this->di->g($sClassName);
+                $this->xRequestPlugin->setTarget($xRequest);
                 return true;
             }
         }
@@ -256,7 +234,7 @@ class RequestHandler
         // If no other plugin than the upload plugin can process the request,
         // then it is an HTTP (not ajax) upload request
         $this->xUploadHandler->isHttpUpload();
-        return $this->xUploadHandler->canProcessRequest($this->xRequest);
+        return $this->xUploadHandler->canProcessRequest($xRequest);
     }
 
     /**
@@ -267,15 +245,17 @@ class RequestHandler
      */
     private function _processRequest()
     {
+        // The HTTP request
+        $xRequest = $this->di->getRequest();
         // Process uploaded files, if the upload plugin is enabled
-        if($this->xUploadHandler !== null && $this->xUploadHandler->canProcessRequest($this->xRequest))
+        if($this->xUploadHandler !== null && $this->xUploadHandler->canProcessRequest($xRequest))
         {
-            $this->xUploadHandler->processRequest($this->xRequest);
+            $this->xUploadHandler->processRequest($xRequest);
         }
         // Process the request
         if(($this->xRequestPlugin))
         {
-            $xResponse = $this->xRequestPlugin->processRequest($this->xRequest);
+            $xResponse = $this->xRequestPlugin->processRequest();
             if(($xResponse))
             {
                 $this->xResponseManager->append($xResponse);
@@ -283,21 +263,6 @@ class RequestHandler
             // Process the databag
             $this->xDataBagPlugin->writeCommand();
         }
-    }
-
-    /**
-     * Clean output buffers.
-     *
-     * @return void
-     */
-    private function _cleanOutputBuffers()
-    {
-        $er = error_reporting(0);
-        while(ob_get_level() > 0)
-        {
-            ob_end_clean();
-        }
-        error_reporting($er);
     }
 
     /**
@@ -356,10 +321,5 @@ class RequestHandler
 
         // Print the debug messages
         $this->xResponseManager->printDebug();
-        // Clean the processing buffer
-        if(($this->xConfigManager->getOption('core.process.clean')))
-        {
-            $this->_cleanOutputBuffers();
-        }
     }
 }

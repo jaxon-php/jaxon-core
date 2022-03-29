@@ -56,6 +56,9 @@ use function gmdate;
 use function header;
 use function headers_sent;
 use function trim;
+use function error_reporting;
+use function ob_end_clean;
+use function ob_get_level;
 
 class Jaxon implements LoggerAwareInterface
 {
@@ -455,13 +458,20 @@ class Jaxon implements LoggerAwareInterface
         }
 
         $this->di()->getRequestHandler()->processRequest();
+
+        // Clean the processing buffer
+        if(($this->xConfigManager->getOption('core.process.clean')))
+        {
+            $er = error_reporting(0);
+            while(ob_get_level() > 0)
+            {
+                ob_end_clean();
+            }
+            error_reporting($er);
+        }
         if($this->xConfigManager->getOption('core.response.send'))
         {
             $this->sendResponse();
-            if($this->xConfigManager->getOption('core.process.exit'))
-            {
-                exit();
-            }
         }
     }
 
@@ -485,6 +495,10 @@ class Jaxon implements LoggerAwareInterface
         }
         header('content-type: ' . $this->xResponseManager->getContentType());
         print $sContent;
+        if($this->xConfigManager->getOption('core.process.exit'))
+        {
+            exit();
+        }
     }
 
     /**
