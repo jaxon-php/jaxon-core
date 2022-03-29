@@ -149,14 +149,16 @@ class RequestHandler
     /**
      * These callbacks are called whenever an invalid request is processed.
      *
+     * @param RequestException $xException
+     *
      * @return void
      * @throws RequestException
      */
-    public function onInvalid(string $sMessage)
+    public function onInvalid(RequestException $xException)
     {
         foreach($this->xCallbackManager->getInvalidCallbacks() as $xCallback)
         {
-            $xReturn = call_user_func($xCallback, $sMessage);
+            $xReturn = call_user_func($xCallback, $xException);
             if($xReturn instanceof ResponseInterface)
             {
                 $this->xResponseManager->append($xReturn);
@@ -296,7 +298,7 @@ class RequestHandler
         catch(RequestException $e)
         {
             $this->xResponseManager->error($e->getMessage());
-            $this->onInvalid($e->getMessage());
+            $this->onInvalid($e);
             throw $e;
         }
         catch(Exception $e)
