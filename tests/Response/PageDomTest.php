@@ -14,12 +14,18 @@ use function jaxon;
 
 class PageDomTest extends TestCase
 {
+    /**
+     * @throws SetupException
+     */
     public function setUp(): void
     {
         jaxon()->setOption('core.prefix.class', '');
         jaxon()->register(Jaxon::CALLABLE_DIR, __DIR__ . '/../defs/response');
     }
 
+    /**
+     * @throws SetupException
+     */
     public function tearDown(): void
     {
         jaxon()->reset();

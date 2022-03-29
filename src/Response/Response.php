@@ -21,7 +21,6 @@
 
 namespace Jaxon\Response;
 
-use Jaxon\Exception\RequestException;
 use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Plugin\ResponsePlugin;
 use Jaxon\Request\Handler\ParameterReader;
@@ -206,15 +205,5 @@ class Response implements ResponseInterface
     {
         $aAttributes['plg'] = $xPlugin->getName();
         return $this->addCommand($aAttributes, $mData);
-    }
-
-    /**
-     * Create a new Jaxon response object
-     *
-     * @return Response
-     */
-    public function newResponse(): Response
-    {
-        return new Response($this->xTranslator, $this->xPluginManager, $this->xParameterReader);
     }
 }

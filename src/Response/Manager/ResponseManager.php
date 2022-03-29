@@ -72,8 +72,7 @@ class ResponseManager
         $this->di = $di;
         $this->sCharacterEncoding = $sCharacterEncoding;
         $this->xTranslator = $xTranslator;
-        // By default, use the global response;
-        $this->xResponse = $di->getResponse();
+        $this->xResponse = $di->getResponse(); // By default, use the global response;
     }
 
     /**
@@ -84,6 +83,7 @@ class ResponseManager
     public function clear()
     {
         $this->xResponse->clearCommands();
+        $this->di->getResponse()->clearCommands();
     }
 
     /**
@@ -106,6 +106,7 @@ class ResponseManager
      * @param ResponseInterface $xResponse The response object to be appended
      *
      * @return void
+     * @throws RequestException
      */
     public function append(ResponseInterface $xResponse)
     {
@@ -116,8 +117,8 @@ class ResponseManager
         }
         if(get_class($this->xResponse) !== get_class($xResponse))
         {
-            $this->debug($this->xTranslator->trans('errors.mismatch.types', ['class' => get_class($xResponse)]));
-            return;
+            throw new RequestException($this->xTranslator->trans('errors.mismatch.types',
+                ['class' => get_class($xResponse)]));
         }
         if($this->xResponse !== $xResponse)
         {

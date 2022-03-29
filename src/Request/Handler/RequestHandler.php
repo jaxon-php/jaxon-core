@@ -23,7 +23,6 @@ namespace Jaxon\Request\Handler;
 use Jaxon\Config\ConfigManager;
 use Jaxon\Di\Container;
 use Jaxon\Exception\RequestException;
-use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\Contract\RequestHandlerInterface;
 use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Response\ResponseInterface;
@@ -265,59 +264,24 @@ class RequestHandler
      *
      * @return void
      * @throws RequestException
-     * @throws SetupException
      */
     private function _processRequest()
     {
-        try
+        // Process uploaded files, if the upload plugin is enabled
+        if($this->xUploadHandler !== null && $this->xUploadHandler->canProcessRequest($this->xRequest))
         {
-            $bEndRequest = false;
-            // Handle before processing event
-            if(($this->xRequestPlugin))
-            {
-                $this->onBefore($bEndRequest);
-            }
-            if($bEndRequest)
-            {
-                return;
-            }
-
-            // Process uploaded files, if the upload plugin is enabled
-            if($this->xUploadHandler !== null && $this->xUploadHandler->canProcessRequest($this->xRequest))
-            {
-                $this->xUploadHandler->processRequest($this->xRequest);
-            }
-            // Process the request
-            if(($this->xRequestPlugin))
-            {
-                $xResponse = $this->xRequestPlugin->processRequest($this->xRequest);
-                if(($xResponse))
-                {
-                    $this->xResponseManager->append($xResponse);
-                }
-            }
-
-            // Handle after processing event
-            if(($this->xRequestPlugin))
-            {
-                $this->onAfter($bEndRequest);
-            }
+            $this->xUploadHandler->processRequest($this->xRequest);
         }
-        catch(Exception $e)
+        // Process the request
+        if(($this->xRequestPlugin))
         {
-            // An exception was thrown while processing the request.
-            // The request missed the corresponding handler function,
-            // or an error occurred while attempting to execute the handler.
-            $this->xResponseManager->error($e->getMessage());
-            if($e instanceof RequestException || $e instanceof SetupException)
+            $xResponse = $this->xRequestPlugin->processRequest($this->xRequest);
+            if(($xResponse))
             {
-                $this->onInvalid($e->getMessage());
+                $this->xResponseManager->append($xResponse);
             }
-            else
-            {
-                $this->onError($e);
-            }
-            throw $e;
+            // Process the databag
+            $this->xDataBagPlugin->writeCommand();
         }
     }
 
@@ -344,7 +308,6 @@ class RequestHandler
      *
      * @return void
      * @throws RequestException
-     * @throws SetupException
      */
     public function processRequest()
     {
@@ -354,12 +317,45 @@ class RequestHandler
             return;
         }
 
-        $this->_processRequest();
-        // Process the databag
-        $this->xDataBagPlugin->writeCommand();
+        try
+        {
+            $bEndRequest = false;
+            // Handle before processing event
+            if(($this->xRequestPlugin))
+            {
+                $this->onBefore($bEndRequest);
+            }
+            if($bEndRequest)
+            {
+                return;
+            }
+
+            $this->_processRequest();
+
+            // Handle after processing event
+            if(($this->xRequestPlugin))
+            {
+                $this->onAfter($bEndRequest);
+            }
+        }
+        // An exception was thrown while processing the request.
+        // The request missed the corresponding handler function,
+        // or an error occurred while attempting to execute the handler.
+        catch(RequestException $e)
+        {
+            $this->xResponseManager->error($e->getMessage());
+            $this->onInvalid($e->getMessage());
+            throw $e;
+        }
+        catch(Exception $e)
+        {
+            $this->xResponseManager->error($e->getMessage());
+            $this->onError($e);
+            throw $e;
+        }
+
         // Print the debug messages
         $this->xResponseManager->printDebug();
-
         // Clean the processing buffer
         if(($this->xConfigManager->getOption('core.process.clean')))
         {
