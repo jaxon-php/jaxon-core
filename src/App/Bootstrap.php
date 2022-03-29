@@ -14,9 +14,12 @@ namespace Jaxon\App;
 
 use Jaxon\Config\ConfigManager;
 use Jaxon\Plugin\Manager\PluginManager;
-use Jaxon\Request\Handler\RequestHandler;
+use Jaxon\Request\Handler\CallbackManager;
 use Jaxon\Utils\Config\Config;
 use Jaxon\Exception\SetupException;
+
+use function call_user_func;
+use function count;
 
 class Bootstrap
 {
@@ -31,9 +34,9 @@ class Bootstrap
     private $xPluginManager;
 
     /**
-     * @var RequestHandler
+     * @var CallbackManager
      */
-    private $xRequestHandler;
+    private $xCallbackManager;
 
     /**
      * The library options
@@ -89,13 +92,13 @@ class Bootstrap
      *
      * @param ConfigManager $xConfigManager
      * @param PluginManager $xPluginManager
-     * @param RequestHandler $xRequestHandler
+     * @param CallbackManager $xCallbackManager
      */
-    public function __construct(ConfigManager $xConfigManager, PluginManager $xPluginManager, RequestHandler $xRequestHandler)
+    public function __construct(ConfigManager $xConfigManager, PluginManager $xPluginManager, CallbackManager $xCallbackManager)
     {
         $this->xConfigManager = $xConfigManager;
         $this->xPluginManager = $xPluginManager;
-        $this->xRequestHandler = $xRequestHandler;
+        $this->xCallbackManager = $xCallbackManager;
     }
 
     /**
@@ -208,6 +211,31 @@ class Bootstrap
         if(!$this->xConfigManager->hasOption('core.request.uri') && $this->sUri != '')
         {
             $this->xConfigManager->setOption('core.request.uri', $this->sUri);
+        }
+        $this->onBoot();
+    }
+
+    /**
+     * These callbacks are called right after the library is initialized.
+     *
+     * @return void
+     */
+    public function onBoot()
+    {
+        if(!$this->xCallbackManager->bootCallbackAdded())
+        {
+            return;
+        }
+        // Only call the callbacks that aren't called yet.
+        $aBootCallbacks = $this->xCallbackManager->getBootCallbacks();
+        $nBootCallCount = $this->xCallbackManager->getBootCallCount();
+        // Update the on boot calls
+        $this->xCallbackManager->updateBootCalls();
+        // Call the callbacks.
+        $nBootCallbackTotal = count($aBootCallbacks);
+        for($n = $nBootCallCount; $n < $nBootCallbackTotal; $n++)
+        {
+            call_user_func($aBootCallbacks[$n]);
         }
     }
 }

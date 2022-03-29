@@ -12,59 +12,99 @@
 
 namespace Jaxon\Request\Handler;
 
-use function call_user_func;
 use function count;
 
 class CallbackManager
 {
     /**
+     * True if a new bon boot callback was added.
+     *
+     * @var bool
+     */
+    protected $nBootCallbackAdded = false;
+
+    /**
      * Number of on boot callbacks already called.
      *
      * @var int
      */
-    protected $nOnBootCalledCount = 0;
+    protected $nBootCallCount = 0;
 
     /**
      * The callbacks to run after booting the library
      *
      * @var callable[]
      */
-    protected $xBootCallbacks = [];
+    protected $aBootCallbacks = [];
 
     /**
      * The callbacks to run before processing the request
      *
      * @var callable[]
      */
-    protected $xBeforeCallbacks = [];
+    protected $aBeforeCallbacks = [];
 
     /**
      * The callbacks to run afteer processing the request
      *
      * @var callable[]
      */
-    protected $xAfterCallbacks = [];
+    protected $aAfterCallbacks = [];
 
     /**
      * The callbacks to run in case of invalid request
      *
      * @var callable[]
      */
-    protected $xInvalidCallbacks = [];
+    protected $aInvalidCallbacks = [];
 
     /**
      * The callbacks to run in case of error
      *
      * @var callable[]
      */
-    protected $xErrorCallbacks = [];
+    protected $aErrorCallbacks = [];
 
     /**
      * The callbacks to run when a class is instanced
      *
      * @var callable[]
      */
-    protected $xInitCallbacks = [];
+    protected $aInitCallbacks = [];
+
+    /**
+     * @return bool
+     */
+    public function bootCallbackAdded(): bool
+    {
+        return $this->nBootCallbackAdded;
+    }
+
+    /**
+     * Get the number of on boot callbacks already called
+     *
+     * @return int
+     */
+    public function getBootCallCount(): int
+    {
+        return $this->nBootCallCount;
+    }
+
+    public function updateBootCalls()
+    {
+        $this->nBootCallbackAdded = false;
+        $this->nBootCallCount = count($this->aBootCallbacks);
+    }
+
+    /**
+     * Get the library booting callbacks.
+     *
+     * @return callable[]
+     */
+    public function getBootCallbacks(): array
+    {
+        return $this->aBootCallbacks;
+    }
 
     /**
      * Get the pre-request processing callbacks.
@@ -73,7 +113,7 @@ class CallbackManager
      */
     public function getBeforeCallbacks(): array
     {
-        return $this->xBeforeCallbacks;
+        return $this->aBeforeCallbacks;
     }
 
     /**
@@ -83,7 +123,7 @@ class CallbackManager
      */
     public function getAfterCallbacks(): array
     {
-        return $this->xAfterCallbacks;
+        return $this->aAfterCallbacks;
     }
 
     /**
@@ -93,7 +133,7 @@ class CallbackManager
      */
     public function getInvalidCallbacks(): array
     {
-        return $this->xInvalidCallbacks;
+        return $this->aInvalidCallbacks;
     }
 
     /**
@@ -103,7 +143,7 @@ class CallbackManager
      */
     public function getErrorCallbacks(): array
     {
-        return $this->xErrorCallbacks;
+        return $this->aErrorCallbacks;
     }
 
     /**
@@ -113,7 +153,7 @@ class CallbackManager
      */
     public function getInitCallbacks(): array
     {
-        return $this->xInitCallbacks;
+        return $this->aInitCallbacks;
     }
 
     /**
@@ -125,7 +165,8 @@ class CallbackManager
      */
     public function boot(callable $xCallable): CallbackManager
     {
-        $this->xBootCallbacks[] = $xCallable;
+        $this->aBootCallbacks[] = $xCallable;
+        $this->nBootCallbackAdded = true;
         return $this;
     }
 
@@ -138,7 +179,7 @@ class CallbackManager
      */
     public function before(callable $xCallable): CallbackManager
     {
-        $this->xBeforeCallbacks[] = $xCallable;
+        $this->aBeforeCallbacks[] = $xCallable;
         return $this;
     }
 
@@ -151,7 +192,7 @@ class CallbackManager
      */
     public function after(callable $xCallable): CallbackManager
     {
-        $this->xAfterCallbacks[] = $xCallable;
+        $this->aAfterCallbacks[] = $xCallable;
         return $this;
     }
 
@@ -164,7 +205,7 @@ class CallbackManager
      */
     public function invalid(callable $xCallable): CallbackManager
     {
-        $this->xInvalidCallbacks[] = $xCallable;
+        $this->aInvalidCallbacks[] = $xCallable;
         return $this;
     }
 
@@ -177,7 +218,7 @@ class CallbackManager
      */
     public function error(callable $xCallable): CallbackManager
     {
-        $this->xErrorCallbacks[] = $xCallable;
+        $this->aErrorCallbacks[] = $xCallable;
         return $this;
     }
 
@@ -190,23 +231,7 @@ class CallbackManager
      */
     public function init(callable $xCallable): CallbackManager
     {
-        $this->xInitCallbacks[] = $xCallable;
+        $this->aInitCallbacks[] = $xCallable;
         return $this;
-    }
-
-    /**
-     * These callbacks are called right after the library is initialized.
-     *
-     * @return void
-     */
-    public function onBoot()
-    {
-        // Only call the callbacks that aren't called yet.
-        $nOnBootCallbackTotal = count($this->xBootCallbacks);
-        for($n = $this->nOnBootCalledCount; $n < $nOnBootCallbackTotal; $n++)
-        {
-            call_user_func($this->xBootCallbacks[$n]);
-        }
-        $this->nOnBootCalledCount = $nOnBootCallbackTotal;
     }
 }

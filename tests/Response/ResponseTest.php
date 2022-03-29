@@ -37,6 +37,7 @@ class ResponseTest extends TestCase
     {
         $this->assertEquals(DataBagPlugin::class, get_class(jaxon()->getResponse()->bags));
         $this->assertEquals(JQueryPlugin::class, get_class(jaxon()->getResponse()->jquery));
+        $this->assertNull(jaxon()->getResponse()->noname);
     }
 
     /**

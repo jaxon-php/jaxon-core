@@ -26,6 +26,7 @@
 namespace Jaxon;
 
 use Jaxon\App\App;
+use Jaxon\App\Bootstrap;
 use Jaxon\Config\ConfigManager;
 use Jaxon\Di\Container;
 use Jaxon\Exception\RequestException;
@@ -93,6 +94,11 @@ class Jaxon implements LoggerAwareInterface
     private static $xContainer = null;
 
     /**
+     * @var Bootstrap
+     */
+    protected $xBootstrap;
+
+    /**
      * @var Translator
      */
     protected $xTranslator;
@@ -133,6 +139,7 @@ class Jaxon implements LoggerAwareInterface
     private static function initInstance()
     {
         // Set the attributes from the container
+        self::$xInstance->xBootstrap = self::$xContainer->g(Bootstrap::class);
         self::$xInstance->xTranslator = self::$xContainer->g(Translator::class);
         self::$xInstance->xConfigManager = self::$xContainer->g(ConfigManager::class);
         self::$xInstance->xPluginManager = self::$xContainer->g(PluginManager::class);
@@ -155,8 +162,8 @@ class Jaxon implements LoggerAwareInterface
             self::$xContainer = new Container(self::$xInstance);
             self::initInstance();
         }
-        // Call the on boot callbacks on any call to the jaxon() function.
-        self::$xInstance->xCallbackManager->onBoot();
+        // Call the on boot callbacks on each call to the jaxon() function.
+        self::$xInstance->xBootstrap->onBoot();
         return self::$xInstance;
     }
 
