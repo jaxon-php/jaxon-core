@@ -5,13 +5,13 @@ namespace Jaxon\Di\Traits;
 use Jaxon\Config\ConfigManager;
 use Jaxon\Di\Container;
 use Jaxon\Request\Handler\ParameterReader;
-use Jaxon\Request\Plugin\CallableClass\CallableRegistry;
-use Jaxon\Request\Plugin\CallableClass\CallableRepository;
 use Jaxon\Request\Plugin\CallableClass\CallableClassPlugin;
 use Jaxon\Request\Plugin\CallableClass\CallableDirPlugin;
+use Jaxon\Request\Plugin\CallableClass\CallableRegistry;
+use Jaxon\Request\Plugin\CallableClass\CallableRepository;
 use Jaxon\Request\Plugin\CallableFunction\CallableFunctionPlugin;
 use Jaxon\Request\Validator;
-use Jaxon\Response\ResponseManager;
+use Jaxon\Response\Manager\ResponseManager;
 use Jaxon\Utils\Template\TemplateEngine;
 use Jaxon\Utils\Translation\Translator;
 

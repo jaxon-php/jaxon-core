@@ -8,7 +8,7 @@ use Jaxon\App\Bootstrap;
 use Jaxon\Config\ConfigManager;
 use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Request\Handler\RequestHandler;
-use Jaxon\Response\ResponseManager;
+use Jaxon\Response\Manager\ResponseManager;
 use Jaxon\Utils\Config\ConfigReader;
 use Jaxon\Utils\Translation\Translator;
 

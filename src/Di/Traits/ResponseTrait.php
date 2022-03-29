@@ -6,8 +6,8 @@ use Jaxon\Config\ConfigManager;
 use Jaxon\Di\Container;
 use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Request\Handler\ParameterReader;
+use Jaxon\Response\Manager\ResponseManager;
 use Jaxon\Response\Response;
-use Jaxon\Response\ResponseManager;
 use Jaxon\Utils\Translation\Translator;
 
 use function trim;

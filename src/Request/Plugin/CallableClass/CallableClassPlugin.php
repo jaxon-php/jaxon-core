@@ -27,16 +27,17 @@ use Jaxon\Plugin\RequestPlugin;
 use Jaxon\Request\Handler\ParameterReader;
 use Jaxon\Request\Target;
 use Jaxon\Request\Validator;
-use Jaxon\Response\ResponseManager;
+use Jaxon\Response\Manager\ResponseManager;
 use Jaxon\Utils\Template\TemplateEngine;
 use Jaxon\Utils\Translation\Translator;
+
 use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;
 use Psr\Http\Message\ServerRequestInterface;
 
 use ReflectionClass;
-use ReflectionMethod;
 use ReflectionException;
+use ReflectionMethod;
 
 use function is_array;
 use function is_string;

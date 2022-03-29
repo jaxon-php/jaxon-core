@@ -12,11 +12,11 @@
 
 namespace Jaxon\Request\Handler;
 
+use Jaxon\Exception\RequestException;
 use Jaxon\Request\Upload\UploadManager;
-use Jaxon\Response\ResponseManager;
+use Jaxon\Response\Manager\ResponseManager;
 use Jaxon\Response\UploadResponse;
 use Jaxon\Utils\Translation\Translator;
-use Jaxon\Exception\RequestException;
 use Psr\Http\Message\ServerRequestInterface;
 
 use Closure;

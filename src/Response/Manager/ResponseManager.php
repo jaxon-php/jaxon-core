@@ -19,9 +19,10 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Response;
+namespace Jaxon\Response\Manager;
 
 use Jaxon\Di\Container;
+use Jaxon\Response\AbstractResponse;
 use Jaxon\Utils\Translation\Translator;
 
 use function get_class;

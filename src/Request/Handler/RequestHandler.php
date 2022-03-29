@@ -27,8 +27,8 @@ use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\Contract\RequestHandlerInterface;
 use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Response\AbstractResponse;
+use Jaxon\Response\Manager\ResponseManager;
 use Jaxon\Response\Plugin\DataBag\DataBagPlugin;
-use Jaxon\Response\ResponseManager;
 use Jaxon\Utils\Translation\Translator;
 use Psr\Http\Message\ServerRequestInterface;
 

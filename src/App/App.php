@@ -14,7 +14,7 @@ namespace Jaxon\App;
 
 use Jaxon\Jaxon;
 use Jaxon\Config\ConfigManager;
-use Jaxon\Response\ResponseManager;
+use Jaxon\Response\Manager\ResponseManager;
 use Jaxon\Utils\Translation\Translator;
 use Jaxon\Exception\SetupException;
 
