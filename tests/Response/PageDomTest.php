@@ -5,7 +5,6 @@ namespace Jaxon\Tests\Response;
 use Jaxon\Jaxon;
 use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;
-use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7Server\ServerRequestCreator;
 use Psr\Http\Message\ServerRequestInterface;
 use PHPUnit\Framework\TestCase;
@@ -39,15 +38,8 @@ class PageDomTest extends TestCase
     public function testCommandAssign()
     {
         // Send a request to the registered class
-        jaxon()->di()->set(ServerRequestInterface::class, function() {
-            $xRequestFactory = new Psr17Factory();
-            $xRequestCreator = new ServerRequestCreator(
-                $xRequestFactory, // ServerRequestFactory
-                $xRequestFactory, // UriFactory
-                $xRequestFactory, // UploadedFileFactory
-                $xRequestFactory  // StreamFactory
-            );
-            return $xRequestCreator->fromGlobals()->withParsedBody([
+        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
+            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
                 'jxncls' => 'TestDom',
                 'jxnmthd' => 'assign',
                 'jxnargs' => [],
@@ -67,15 +59,8 @@ class PageDomTest extends TestCase
     public function testCommandHtml()
     {
         // Send a request to the registered class
-        jaxon()->di()->set(ServerRequestInterface::class, function() {
-            $xRequestFactory = new Psr17Factory();
-            $xRequestCreator = new ServerRequestCreator(
-                $xRequestFactory, // ServerRequestFactory
-                $xRequestFactory, // UriFactory
-                $xRequestFactory, // UploadedFileFactory
-                $xRequestFactory  // StreamFactory
-            );
-            return $xRequestCreator->fromGlobals()->withParsedBody([
+        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
+            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
                 'jxncls' => 'TestDom',
                 'jxnmthd' => 'html',
                 'jxnargs' => [],
@@ -95,15 +80,8 @@ class PageDomTest extends TestCase
     public function testCommandAppend()
     {
         // Send a request to the registered class
-        jaxon()->di()->set(ServerRequestInterface::class, function() {
-            $xRequestFactory = new Psr17Factory();
-            $xRequestCreator = new ServerRequestCreator(
-                $xRequestFactory, // ServerRequestFactory
-                $xRequestFactory, // UriFactory
-                $xRequestFactory, // UploadedFileFactory
-                $xRequestFactory  // StreamFactory
-            );
-            return $xRequestCreator->fromGlobals()->withParsedBody([
+        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
+            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
                 'jxncls' => 'TestDom',
                 'jxnmthd' => 'append',
                 'jxnargs' => [],
@@ -123,15 +101,8 @@ class PageDomTest extends TestCase
     public function testCommandPrepend()
     {
         // Send a request to the registered class
-        jaxon()->di()->set(ServerRequestInterface::class, function() {
-            $xRequestFactory = new Psr17Factory();
-            $xRequestCreator = new ServerRequestCreator(
-                $xRequestFactory, // ServerRequestFactory
-                $xRequestFactory, // UriFactory
-                $xRequestFactory, // UploadedFileFactory
-                $xRequestFactory  // StreamFactory
-            );
-            return $xRequestCreator->fromGlobals()->withParsedBody([
+        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
+            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
                 'jxncls' => 'TestDom',
                 'jxnmthd' => 'prepend',
                 'jxnargs' => [],
@@ -151,15 +122,8 @@ class PageDomTest extends TestCase
     public function testCommandReplace()
     {
         // Send a request to the registered class
-        jaxon()->di()->set(ServerRequestInterface::class, function() {
-            $xRequestFactory = new Psr17Factory();
-            $xRequestCreator = new ServerRequestCreator(
-                $xRequestFactory, // ServerRequestFactory
-                $xRequestFactory, // UriFactory
-                $xRequestFactory, // UploadedFileFactory
-                $xRequestFactory  // StreamFactory
-            );
-            return $xRequestCreator->fromGlobals()->withParsedBody([
+        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
+            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
                 'jxncls' => 'TestDom',
                 'jxnmthd' => 'replace',
                 'jxnargs' => [],
@@ -179,15 +143,8 @@ class PageDomTest extends TestCase
     public function testCommandClear()
     {
         // Send a request to the registered class
-        jaxon()->di()->set(ServerRequestInterface::class, function() {
-            $xRequestFactory = new Psr17Factory();
-            $xRequestCreator = new ServerRequestCreator(
-                $xRequestFactory, // ServerRequestFactory
-                $xRequestFactory, // UriFactory
-                $xRequestFactory, // UploadedFileFactory
-                $xRequestFactory  // StreamFactory
-            );
-            return $xRequestCreator->fromGlobals()->withParsedBody([
+        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
+            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
                 'jxncls' => 'TestDom',
                 'jxnmthd' => 'clear',
                 'jxnargs' => [],
@@ -207,15 +164,8 @@ class PageDomTest extends TestCase
     public function testCommandContextAssign()
     {
         // Send a request to the registered class
-        jaxon()->di()->set(ServerRequestInterface::class, function() {
-            $xRequestFactory = new Psr17Factory();
-            $xRequestCreator = new ServerRequestCreator(
-                $xRequestFactory, // ServerRequestFactory
-                $xRequestFactory, // UriFactory
-                $xRequestFactory, // UploadedFileFactory
-                $xRequestFactory  // StreamFactory
-            );
-            return $xRequestCreator->fromGlobals()->withParsedBody([
+        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
+            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
                 'jxncls' => 'TestDom',
                 'jxnmthd' => 'contextAssign',
                 'jxnargs' => [],
@@ -235,15 +185,8 @@ class PageDomTest extends TestCase
     public function testCommandContextAppend()
     {
         // Send a request to the registered class
-        jaxon()->di()->set(ServerRequestInterface::class, function() {
-            $xRequestFactory = new Psr17Factory();
-            $xRequestCreator = new ServerRequestCreator(
-                $xRequestFactory, // ServerRequestFactory
-                $xRequestFactory, // UriFactory
-                $xRequestFactory, // UploadedFileFactory
-                $xRequestFactory  // StreamFactory
-            );
-            return $xRequestCreator->fromGlobals()->withParsedBody([
+        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
+            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
                 'jxncls' => 'TestDom',
                 'jxnmthd' => 'contextAppend',
                 'jxnargs' => [],
@@ -263,15 +206,8 @@ class PageDomTest extends TestCase
     public function testCommandContextPrepend()
     {
         // Send a request to the registered class
-        jaxon()->di()->set(ServerRequestInterface::class, function() {
-            $xRequestFactory = new Psr17Factory();
-            $xRequestCreator = new ServerRequestCreator(
-                $xRequestFactory, // ServerRequestFactory
-                $xRequestFactory, // UriFactory
-                $xRequestFactory, // UploadedFileFactory
-                $xRequestFactory  // StreamFactory
-            );
-            return $xRequestCreator->fromGlobals()->withParsedBody([
+        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
+            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
                 'jxncls' => 'TestDom',
                 'jxnmthd' => 'contextPrepend',
                 'jxnargs' => [],
@@ -291,15 +227,8 @@ class PageDomTest extends TestCase
     public function testCommandContextClear()
     {
         // Send a request to the registered class
-        jaxon()->di()->set(ServerRequestInterface::class, function() {
-            $xRequestFactory = new Psr17Factory();
-            $xRequestCreator = new ServerRequestCreator(
-                $xRequestFactory, // ServerRequestFactory
-                $xRequestFactory, // UriFactory
-                $xRequestFactory, // UploadedFileFactory
-                $xRequestFactory  // StreamFactory
-            );
-            return $xRequestCreator->fromGlobals()->withParsedBody([
+        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
+            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
                 'jxncls' => 'TestDom',
                 'jxnmthd' => 'contextClear',
                 'jxnargs' => [],
@@ -319,15 +248,8 @@ class PageDomTest extends TestCase
     public function testCommandRemove()
     {
         // Send a request to the registered class
-        jaxon()->di()->set(ServerRequestInterface::class, function() {
-            $xRequestFactory = new Psr17Factory();
-            $xRequestCreator = new ServerRequestCreator(
-                $xRequestFactory, // ServerRequestFactory
-                $xRequestFactory, // UriFactory
-                $xRequestFactory, // UploadedFileFactory
-                $xRequestFactory  // StreamFactory
-            );
-            return $xRequestCreator->fromGlobals()->withParsedBody([
+        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
+            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
                 'jxncls' => 'TestDom',
                 'jxnmthd' => 'remove',
                 'jxnargs' => [],
@@ -347,15 +269,8 @@ class PageDomTest extends TestCase
     public function testCommandCreate()
     {
         // Send a request to the registered class
-        jaxon()->di()->set(ServerRequestInterface::class, function() {
-            $xRequestFactory = new Psr17Factory();
-            $xRequestCreator = new ServerRequestCreator(
-                $xRequestFactory, // ServerRequestFactory
-                $xRequestFactory, // UriFactory
-                $xRequestFactory, // UploadedFileFactory
-                $xRequestFactory  // StreamFactory
-            );
-            return $xRequestCreator->fromGlobals()->withParsedBody([
+        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
+            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
                 'jxncls' => 'TestDom',
                 'jxnmthd' => 'create',
                 'jxnargs' => [],
@@ -375,15 +290,8 @@ class PageDomTest extends TestCase
     public function testCommandInsertBefore()
     {
         // Send a request to the registered class
-        jaxon()->di()->set(ServerRequestInterface::class, function() {
-            $xRequestFactory = new Psr17Factory();
-            $xRequestCreator = new ServerRequestCreator(
-                $xRequestFactory, // ServerRequestFactory
-                $xRequestFactory, // UriFactory
-                $xRequestFactory, // UploadedFileFactory
-                $xRequestFactory  // StreamFactory
-            );
-            return $xRequestCreator->fromGlobals()->withParsedBody([
+        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
+            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
                 'jxncls' => 'TestDom',
                 'jxnmthd' => 'insertBefore',
                 'jxnargs' => [],
@@ -403,15 +311,8 @@ class PageDomTest extends TestCase
     public function testCommandInsert()
     {
         // Send a request to the registered class
-        jaxon()->di()->set(ServerRequestInterface::class, function() {
-            $xRequestFactory = new Psr17Factory();
-            $xRequestCreator = new ServerRequestCreator(
-                $xRequestFactory, // ServerRequestFactory
-                $xRequestFactory, // UriFactory
-                $xRequestFactory, // UploadedFileFactory
-                $xRequestFactory  // StreamFactory
-            );
-            return $xRequestCreator->fromGlobals()->withParsedBody([
+        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
+            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
                 'jxncls' => 'TestDom',
                 'jxnmthd' => 'insert',
                 'jxnargs' => [],
@@ -431,15 +332,8 @@ class PageDomTest extends TestCase
     public function testCommandInsertAfter()
     {
         // Send a request to the registered class
-        jaxon()->di()->set(ServerRequestInterface::class, function() {
-            $xRequestFactory = new Psr17Factory();
-            $xRequestCreator = new ServerRequestCreator(
-                $xRequestFactory, // ServerRequestFactory
-                $xRequestFactory, // UriFactory
-                $xRequestFactory, // UploadedFileFactory
-                $xRequestFactory  // StreamFactory
-            );
-            return $xRequestCreator->fromGlobals()->withParsedBody([
+        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
+            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
                 'jxncls' => 'TestDom',
                 'jxnmthd' => 'insertAfter',
                 'jxnargs' => [],
@@ -459,15 +353,8 @@ class PageDomTest extends TestCase
     public function testCommandCreateInput()
     {
         // Send a request to the registered class
-        jaxon()->di()->set(ServerRequestInterface::class, function() {
-            $xRequestFactory = new Psr17Factory();
-            $xRequestCreator = new ServerRequestCreator(
-                $xRequestFactory, // ServerRequestFactory
-                $xRequestFactory, // UriFactory
-                $xRequestFactory, // UploadedFileFactory
-                $xRequestFactory  // StreamFactory
-            );
-            return $xRequestCreator->fromGlobals()->withParsedBody([
+        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
+            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
                 'jxncls' => 'TestDom',
                 'jxnmthd' => 'createInput',
                 'jxnargs' => [],
@@ -487,15 +374,8 @@ class PageDomTest extends TestCase
     public function testCommandInsertInput()
     {
         // Send a request to the registered class
-        jaxon()->di()->set(ServerRequestInterface::class, function() {
-            $xRequestFactory = new Psr17Factory();
-            $xRequestCreator = new ServerRequestCreator(
-                $xRequestFactory, // ServerRequestFactory
-                $xRequestFactory, // UriFactory
-                $xRequestFactory, // UploadedFileFactory
-                $xRequestFactory  // StreamFactory
-            );
-            return $xRequestCreator->fromGlobals()->withParsedBody([
+        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
+            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
                 'jxncls' => 'TestDom',
                 'jxnmthd' => 'insertInput',
                 'jxnargs' => [],
@@ -515,15 +395,8 @@ class PageDomTest extends TestCase
     public function testCommandInsertInputAfter()
     {
         // Send a request to the registered class
-        jaxon()->di()->set(ServerRequestInterface::class, function() {
-            $xRequestFactory = new Psr17Factory();
-            $xRequestCreator = new ServerRequestCreator(
-                $xRequestFactory, // ServerRequestFactory
-                $xRequestFactory, // UriFactory
-                $xRequestFactory, // UploadedFileFactory
-                $xRequestFactory  // StreamFactory
-            );
-            return $xRequestCreator->fromGlobals()->withParsedBody([
+        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
+            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
                 'jxncls' => 'TestDom',
                 'jxnmthd' => 'insertInputAfter',
                 'jxnargs' => [],

@@ -33,15 +33,17 @@ trait RequestTrait
     private function registerRequests()
     {
         // The server request
-        $this->set(ServerRequestInterface::class, function() {
+        $this->set(ServerRequestCreator::class, function() {
             $xRequestFactory = new Psr17Factory();
-            $xRequestCreator = new ServerRequestCreator(
+            return new ServerRequestCreator(
                 $xRequestFactory, // ServerRequestFactory
                 $xRequestFactory, // UriFactory
                 $xRequestFactory, // UploadedFileFactory
                 $xRequestFactory  // StreamFactory
             );
-            return $xRequestCreator->fromGlobals();
+        });
+        $this->set(ServerRequestInterface::class, function($c) {
+            return $c->g(ServerRequestCreator::class)->fromGlobals();
         });
         // The parameter reader
         $this->set(ParameterReader::class, function($c) {

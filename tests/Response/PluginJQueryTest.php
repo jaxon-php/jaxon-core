@@ -5,7 +5,6 @@ namespace Jaxon\Tests\Response;
 use Jaxon\Jaxon;
 use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;
-use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7Server\ServerRequestCreator;
 use Psr\Http\Message\ServerRequestInterface;
 use PHPUnit\Framework\TestCase;
@@ -39,15 +38,8 @@ class PluginJQueryTest extends TestCase
     public function testHtml()
     {
         // Send a request to the registered class
-        jaxon()->di()->set(ServerRequestInterface::class, function() {
-            $xRequestFactory = new Psr17Factory();
-            $xRequestCreator = new ServerRequestCreator(
-                $xRequestFactory, // ServerRequestFactory
-                $xRequestFactory, // UriFactory
-                $xRequestFactory, // UploadedFileFactory
-                $xRequestFactory  // StreamFactory
-            );
-            return $xRequestCreator->fromGlobals()->withParsedBody([
+        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
+            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
                 'jxncls' => 'TestJQuery',
                 'jxnmthd' => 'html',
                 'jxnargs' => [],
@@ -75,15 +67,8 @@ class PluginJQueryTest extends TestCase
     public function testAssign()
     {
         // Send a request to the registered class
-        jaxon()->di()->set(ServerRequestInterface::class, function() {
-            $xRequestFactory = new Psr17Factory();
-            $xRequestCreator = new ServerRequestCreator(
-                $xRequestFactory, // ServerRequestFactory
-                $xRequestFactory, // UriFactory
-                $xRequestFactory, // UploadedFileFactory
-                $xRequestFactory  // StreamFactory
-            );
-            return $xRequestCreator->fromGlobals()->withParsedBody([
+        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
+            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
                 'jxncls' => 'TestJQuery',
                 'jxnmthd' => 'assign',
                 'jxnargs' => [],
@@ -115,15 +100,8 @@ class PluginJQueryTest extends TestCase
     public function testClick()
     {
         // Send a request to the registered class
-        jaxon()->di()->set(ServerRequestInterface::class, function() {
-            $xRequestFactory = new Psr17Factory();
-            $xRequestCreator = new ServerRequestCreator(
-                $xRequestFactory, // ServerRequestFactory
-                $xRequestFactory, // UriFactory
-                $xRequestFactory, // UploadedFileFactory
-                $xRequestFactory  // StreamFactory
-            );
-            return $xRequestCreator->fromGlobals()->withParsedBody([
+        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
+            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
                 'jxncls' => 'TestJQuery',
                 'jxnmthd' => 'click',
                 'jxnargs' => [],

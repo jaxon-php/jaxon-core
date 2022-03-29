@@ -5,7 +5,6 @@ namespace Jaxon\Tests\RequestHandler;
 use Jaxon\Jaxon;
 use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;
-use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7Server\ServerRequestCreator;
 use Psr\Http\Message\ServerRequestInterface;
 use PHPUnit\Framework\TestCase;
@@ -42,16 +41,8 @@ class FunctionTest extends TestCase
     public function testGetRequestToJaxonFunction()
     {
         // The server request
-        jaxon()->di()->set(ServerRequestInterface::class, function() {
-            $xRequestFactory = new Psr17Factory();
-            $xRequestCreator = new ServerRequestCreator(
-                $xRequestFactory, // ServerRequestFactory
-                $xRequestFactory, // UriFactory
-                $xRequestFactory, // UploadedFileFactory
-                $xRequestFactory  // StreamFactory
-            );
-            // Add GET parameters to the request
-            return $xRequestCreator->fromGlobals()->withQueryParams([
+        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
+            return $c->g(ServerRequestCreator::class)->fromGlobals()->withQueryParams([
                 'jxnfun' => 'my_first_function',
                 'jxnargs' => [],
             ]);
@@ -69,16 +60,8 @@ class FunctionTest extends TestCase
     public function testPostRequestToJaxonFunction()
     {
         // The server request
-        jaxon()->di()->set(ServerRequestInterface::class, function() {
-            $xRequestFactory = new Psr17Factory();
-            $xRequestCreator = new ServerRequestCreator(
-                $xRequestFactory, // ServerRequestFactory
-                $xRequestFactory, // UriFactory
-                $xRequestFactory, // UploadedFileFactory
-                $xRequestFactory  // StreamFactory
-            );
-            // Add GET parameters to the request
-            return $xRequestCreator->fromGlobals()->withParsedBody([
+        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
+            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
                 'jxnfun' => 'my_first_function',
                 'jxnargs' => [],
             ]);
@@ -96,16 +79,8 @@ class FunctionTest extends TestCase
     public function testRequestToJaxonFunction()
     {
         // The server request
-        jaxon()->di()->set(ServerRequestInterface::class, function() {
-            $xRequestFactory = new Psr17Factory();
-            $xRequestCreator = new ServerRequestCreator(
-                $xRequestFactory, // ServerRequestFactory
-                $xRequestFactory, // UriFactory
-                $xRequestFactory, // UploadedFileFactory
-                $xRequestFactory  // StreamFactory
-            );
-            // Add GET parameters to the request
-            return $xRequestCreator->fromGlobals()->withParsedBody([
+        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
+            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
                 'jxnfun' => 'my_first_function',
                 'jxnargs' => [],
             ]);
@@ -129,16 +104,8 @@ class FunctionTest extends TestCase
     public function testRequestToJaxonClass()
     {
         // The server request
-        jaxon()->di()->set(ServerRequestInterface::class, function() {
-            $xRequestFactory = new Psr17Factory();
-            $xRequestCreator = new ServerRequestCreator(
-                $xRequestFactory, // ServerRequestFactory
-                $xRequestFactory, // UriFactory
-                $xRequestFactory, // UploadedFileFactory
-                $xRequestFactory  // StreamFactory
-            );
-            // Add GET parameters to the request
-            return $xRequestCreator->fromGlobals()->withParsedBody([
+        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
+            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
                 'jxnfun' => 'my_third_function',
                 'jxnargs' => [],
             ]);
@@ -154,16 +121,8 @@ class FunctionTest extends TestCase
     public function testRequestToJaxonFunctionIncorrectName()
     {
         // The server request
-        jaxon()->di()->set(ServerRequestInterface::class, function() {
-            $xRequestFactory = new Psr17Factory();
-            $xRequestCreator = new ServerRequestCreator(
-                $xRequestFactory, // ServerRequestFactory
-                $xRequestFactory, // UriFactory
-                $xRequestFactory, // UploadedFileFactory
-                $xRequestFactory  // StreamFactory
-            );
-            // Add GET parameters to the request
-            return $xRequestCreator->fromGlobals()->withParsedBody([
+        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
+            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
                 'jxnfun' => 'my function', // A space in the function name
                 'jxnargs' => [],
             ]);

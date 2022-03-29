@@ -5,7 +5,6 @@ namespace Jaxon\Tests\RequestHandler;
 use Jaxon\Jaxon;
 use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;
-use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7Server\ServerRequestCreator;
 use Psr\Http\Message\ServerRequestInterface;
 use PHPUnit\Framework\TestCase;
@@ -38,15 +37,8 @@ class ClassTest extends TestCase
     public function testGetRequestToJaxonClass()
     {
         // The server request
-        jaxon()->di()->set(ServerRequestInterface::class, function() {
-            $xRequestFactory = new Psr17Factory();
-            $xRequestCreator = new ServerRequestCreator(
-                $xRequestFactory, // ServerRequestFactory
-                $xRequestFactory, // UriFactory
-                $xRequestFactory, // UploadedFileFactory
-                $xRequestFactory  // StreamFactory
-            );
-            return $xRequestCreator->fromGlobals()->withQueryParams([
+        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
+            return $c->g(ServerRequestCreator::class)->fromGlobals()->withQueryParams([
                 'jxncls' => 'Sample',
                 'jxnmthd' => 'myMethod',
                 'jxnargs' => [],
@@ -66,15 +58,8 @@ class ClassTest extends TestCase
     public function testPostRequestToJaxonClass()
     {
         // The server request
-        jaxon()->di()->set(ServerRequestInterface::class, function() {
-            $xRequestFactory = new Psr17Factory();
-            $xRequestCreator = new ServerRequestCreator(
-                $xRequestFactory, // ServerRequestFactory
-                $xRequestFactory, // UriFactory
-                $xRequestFactory, // UploadedFileFactory
-                $xRequestFactory  // StreamFactory
-            );
-            return $xRequestCreator->fromGlobals()->withParsedBody([
+        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
+            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
                 'jxncls' => 'Sample',
                 'jxnmthd' => 'myMethod',
                 'jxnargs' => [],
@@ -95,15 +80,8 @@ class ClassTest extends TestCase
     public function testRequestToJaxonClass()
     {
         // The server request
-        jaxon()->di()->set(ServerRequestInterface::class, function() {
-            $xRequestFactory = new Psr17Factory();
-            $xRequestCreator = new ServerRequestCreator(
-                $xRequestFactory, // ServerRequestFactory
-                $xRequestFactory, // UriFactory
-                $xRequestFactory, // UploadedFileFactory
-                $xRequestFactory  // StreamFactory
-            );
-            return $xRequestCreator->fromGlobals()->withParsedBody([
+        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
+            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
                 'jxncls' => 'Sample',
                 'jxnmthd' => 'myMethod',
                 'jxnargs' => [],
@@ -133,15 +111,8 @@ class ClassTest extends TestCase
     public function testRequestWithIncorrectClassName()
     {
         // The server request
-        jaxon()->di()->set(ServerRequestInterface::class, function() {
-            $xRequestFactory = new Psr17Factory();
-            $xRequestCreator = new ServerRequestCreator(
-                $xRequestFactory, // ServerRequestFactory
-                $xRequestFactory, // UriFactory
-                $xRequestFactory, // UploadedFileFactory
-                $xRequestFactory  // StreamFactory
-            );
-            return $xRequestCreator->fromGlobals()->withParsedBody([
+        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
+            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
                 'jxncls' => 'Sam ple',
                 'jxnmthd' => 'myMethod',
                 'jxnargs' => [],
@@ -160,15 +131,8 @@ class ClassTest extends TestCase
     public function testRequestWithUnknownClassName()
     {
         // The server request
-        jaxon()->di()->set(ServerRequestInterface::class, function() {
-            $xRequestFactory = new Psr17Factory();
-            $xRequestCreator = new ServerRequestCreator(
-                $xRequestFactory, // ServerRequestFactory
-                $xRequestFactory, // UriFactory
-                $xRequestFactory, // UploadedFileFactory
-                $xRequestFactory  // StreamFactory
-            );
-            return $xRequestCreator->fromGlobals()->withParsedBody([
+        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
+            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
                 'jxncls' => 'NotRegistered',
                 'jxnmthd' => 'myMethod',
                 'jxnargs' => [],
@@ -187,15 +151,8 @@ class ClassTest extends TestCase
     public function testRequestWithUnknownMethodName()
     {
         // The server request
-        jaxon()->di()->set(ServerRequestInterface::class, function() {
-            $xRequestFactory = new Psr17Factory();
-            $xRequestCreator = new ServerRequestCreator(
-                $xRequestFactory, // ServerRequestFactory
-                $xRequestFactory, // UriFactory
-                $xRequestFactory, // UploadedFileFactory
-                $xRequestFactory  // StreamFactory
-            );
-            return $xRequestCreator->fromGlobals()->withParsedBody([
+        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
+            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
                 'jxncls' => 'Sample',
                 'jxnmthd' => 'unknownMethod',
                 'jxnargs' => [],
@@ -214,15 +171,8 @@ class ClassTest extends TestCase
     public function testRequestWithIncorrectMethodName()
     {
         // The server request
-        jaxon()->di()->set(ServerRequestInterface::class, function() {
-            $xRequestFactory = new Psr17Factory();
-            $xRequestCreator = new ServerRequestCreator(
-                $xRequestFactory, // ServerRequestFactory
-                $xRequestFactory, // UriFactory
-                $xRequestFactory, // UploadedFileFactory
-                $xRequestFactory  // StreamFactory
-            );
-            return $xRequestCreator->fromGlobals()->withParsedBody([
+        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
+            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
                 'jxncls' => 'Sample',
                 'jxnmthd' => 'my Method',
                 'jxnargs' => [],

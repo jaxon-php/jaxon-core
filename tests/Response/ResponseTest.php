@@ -7,7 +7,6 @@ use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;
 use Jaxon\Response\Plugin\DataBag\DataBagPlugin;
 use Jaxon\Response\Plugin\JQuery\JQueryPlugin;
-use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7Server\ServerRequestCreator;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
@@ -46,15 +45,8 @@ class ResponseTest extends TestCase
     public function testResponseContent()
     {
         // Send a request to the registered class
-        jaxon()->di()->set(ServerRequestInterface::class, function() {
-            $xRequestFactory = new Psr17Factory();
-            $xRequestCreator = new ServerRequestCreator(
-                $xRequestFactory, // ServerRequestFactory
-                $xRequestFactory, // UriFactory
-                $xRequestFactory, // UploadedFileFactory
-                $xRequestFactory  // StreamFactory
-            );
-            return $xRequestCreator->fromGlobals()->withParsedBody([
+        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
+            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
                 'jxncls' => 'Misc',
                 'jxnmthd' => 'simple',
                 'jxnargs' => [],
@@ -81,15 +73,8 @@ class ResponseTest extends TestCase
     public function testMergeResponse()
     {
         // Send a request to the registered class
-        jaxon()->di()->set(ServerRequestInterface::class, function() {
-            $xRequestFactory = new Psr17Factory();
-            $xRequestCreator = new ServerRequestCreator(
-                $xRequestFactory, // ServerRequestFactory
-                $xRequestFactory, // UriFactory
-                $xRequestFactory, // UploadedFileFactory
-                $xRequestFactory  // StreamFactory
-            );
-            return $xRequestCreator->fromGlobals()->withParsedBody([
+        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
+            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
                 'jxncls' => 'Misc',
                 'jxnmthd' => 'merge',
                 'jxnargs' => [],
@@ -108,15 +93,8 @@ class ResponseTest extends TestCase
     public function testDebugCommand()
     {
         // Send a request to the registered class
-        jaxon()->di()->set(ServerRequestInterface::class, function() {
-            $xRequestFactory = new Psr17Factory();
-            $xRequestCreator = new ServerRequestCreator(
-                $xRequestFactory, // ServerRequestFactory
-                $xRequestFactory, // UriFactory
-                $xRequestFactory, // UploadedFileFactory
-                $xRequestFactory  // StreamFactory
-            );
-            return $xRequestCreator->fromGlobals()->withParsedBody([
+        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
+            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
                 'jxncls' => 'Misc',
                 'jxnmthd' => 'simple',
                 'jxnargs' => [],
@@ -136,15 +114,8 @@ class ResponseTest extends TestCase
     public function testAppendResponseBefore()
     {
         // Send a request to the registered class
-        jaxon()->di()->set(ServerRequestInterface::class, function() {
-            $xRequestFactory = new Psr17Factory();
-            $xRequestCreator = new ServerRequestCreator(
-                $xRequestFactory, // ServerRequestFactory
-                $xRequestFactory, // UriFactory
-                $xRequestFactory, // UploadedFileFactory
-                $xRequestFactory  // StreamFactory
-            );
-            return $xRequestCreator->fromGlobals()->withParsedBody([
+        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
+            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
                 'jxncls' => 'Misc',
                 'jxnmthd' => 'appendBefore',
                 'jxnargs' => [],
@@ -163,15 +134,8 @@ class ResponseTest extends TestCase
     public function testMergeResponseWithUpload()
     {
         // Send a request to the registered class
-        jaxon()->di()->set(ServerRequestInterface::class, function() {
-            $xRequestFactory = new Psr17Factory();
-            $xRequestCreator = new ServerRequestCreator(
-                $xRequestFactory, // ServerRequestFactory
-                $xRequestFactory, // UriFactory
-                $xRequestFactory, // UploadedFileFactory
-                $xRequestFactory  // StreamFactory
-            );
-            return $xRequestCreator->fromGlobals()->withParsedBody([
+        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
+            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
                 'jxncls' => 'Misc',
                 'jxnmthd' => 'mergeWithUpload',
                 'jxnargs' => [],
