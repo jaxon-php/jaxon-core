@@ -38,14 +38,4 @@ abstract class AbstractResponse
      * @return string
      */
     abstract public function getOutput(): string;
-
-    /**
-     * Print the output, generated from the commands added to the response, that will be sent to the browser
-     *
-     * @return void
-     */
-    public function printOutput()
-    {
-        print $this->getOutput();
-    }
 }
