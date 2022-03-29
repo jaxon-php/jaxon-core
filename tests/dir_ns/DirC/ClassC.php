@@ -2,13 +2,28 @@
 
 namespace Jaxon\NsTests\DirC;
 
-class ClassC
+use Jaxon\CallableClass;
+use Jaxon\Exception\SetupException;
+use Jaxon\Response\Response;
+use Jaxon\NsTests\DirB\ClassB;
+
+class ClassC extends CallableClass
 {
-    public function methodCa()
+    /**
+     * @throws SetupException
+     */
+    public function methodCa(): Response
     {
+        $xResponse = jaxon()->getResponse();
+        $xResponse->html('div', 'This is the div content!!');
+        $this->cl(ClassB::class)->methodBb();
+        return $xResponse;
     }
 
-    public function methodCb()
+    public function methodCb(): Response
     {
+        $xResponse = jaxon()->getResponse();
+        $xResponse->html('div', 'This is the div content!!');
+        return $xResponse;
     }
 }
