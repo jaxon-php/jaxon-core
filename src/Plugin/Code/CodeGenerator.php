@@ -132,7 +132,7 @@ class CodeGenerator
      *
      * @return string
      */
-    private function getHash(): string
+    public function getHash(): string
     {
         $sHash = $this->sVersion;
         foreach($this->aClassNames as $sClassName)

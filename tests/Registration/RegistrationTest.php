@@ -111,4 +111,28 @@ class RegistrationTest extends TestCase
         $this->assertEquals(769, strlen($this->xPlugin->getScript()));
         // $this->assertEquals(file_get_contents(__DIR__ . '/../script/options.js'), $this->xPlugin->getScript());
     }
+
+    /**
+     * @throws SetupException
+     */
+    public function testJsCodeHash()
+    {
+        jaxon()->setOption('core.prefix.function', 'jxn_');
+        $sHash1 = jaxon()->di()->getCodeGenerator()->getHash();
+
+        // Register a function
+        jaxon()->register(Jaxon::CALLABLE_FUNCTION, 'my_first_function',
+            __DIR__ . '/../defs/first.php');
+        // Register a function with an alias
+        $sHash2 = jaxon()->di()->getCodeGenerator()->getHash();
+
+        jaxon()->register(Jaxon::CALLABLE_FUNCTION, 'my_second_function', [
+            'alias' => 'my_alias_function',
+            'upload' => "'html_field_id'",
+        ]);
+        $sHash3 = jaxon()->di()->getCodeGenerator()->getHash();
+        $this->assertNotEquals($sHash1, $sHash2);
+        $this->assertNotEquals($sHash1, $sHash3);
+        $this->assertNotEquals($sHash3, $sHash1);
+    }
 }
