@@ -6,15 +6,6 @@
  * This class collects commands to be sent back to the browser in response to a jaxon request.
  * Commands are encoded and packaged in json format.
  *
- * Common commands include:
- * - <Response->assign>: Assign a value to an element's attribute.
- * - <Response->append>: Append a value on to an element's attribute.
- * - <Response->script>: Execute a portion of javascript code.
- * - <Response->call>: Execute an existing javascript function.
- * - <Response->alert>: Display an alert dialog to the user.
- *
- * Elements are identified by the value of the HTML id attribute.
- *
  * @package jaxon-core
  * @author Jared White
  * @author J. Max Wilson
@@ -75,14 +66,6 @@ class Response extends AbstractResponse
      * @var array
      */
     protected $aCommands = [];
-
-    /**
-     * A string, array or integer value to be returned to the caller when using 'synchronous' mode requests.
-     * See <jaxon->setMode> for details.
-     *
-     * @var mixed
-     */
-    protected $xReturnValue;
 
     /**
      * The constructor
@@ -300,38 +283,12 @@ class Response extends AbstractResponse
     }
 
     /**
-     * Stores a value that will be passed back as part of the response
-     *
-     * When making synchronous requests, the calling javascript can obtain this value
-     * immediately as the return value of the <jaxon.call> javascript function
-     *
-     * @param mixed $value    Any value
-     *
-     * @return Response
-     */
-    public function setReturnValue($value): Response
-    {
-        $this->xReturnValue = $value;
-        return $this;
-    }
-
-    /**
      * Return the output, generated from the commands added to the response, that will be sent to the browser
      *
      * @return string
      */
     public function getOutput(): string
     {
-        $aResponse = ['jxnobj' => []];
-        if(($this->xReturnValue))
-        {
-            $aResponse['jxnrv'] = $this->xReturnValue;
-        }
-        foreach($this->aCommands as $xCommand)
-        {
-            $aResponse['jxnobj'][] = $xCommand;
-        }
-
-        return json_encode($aResponse);
+        return json_encode(['jxnobj' => $this->aCommands]);
     }
 }
