@@ -61,18 +61,18 @@ class ResponseTest extends TestCase
             ])->withMethod('POST');
         });
 
-        $this->assertEmpty(jaxon()->di()->getResponseManager()->getResponseContent());
+        $this->assertEmpty(jaxon()->di()->getResponseManager()->getOutput());
         // Process the request and get the response
         jaxon()->di()->getRequestHandler()->processRequest();
         $xResponse = jaxon()->getResponse();
         $this->assertEquals(1, $xResponse->getCommandCount());
         // Check the reponse content
-        $aContent = jaxon()->di()->getResponseManager()->getResponseContent();
-        $this->assertCount(2, $aContent);
-        $this->assertArrayHasKey('type', $aContent);
-        $this->assertIsString($aContent['type']);
-        $this->assertArrayHasKey('content', $aContent);
-        $this->assertIsString($aContent['content']);
+        $sContent = jaxon()->di()->getResponseManager()->getOutput();
+        $this->assertNotEmpty($sContent);
+        $this->assertIsString($sContent);
+        $sType = jaxon()->di()->getResponseManager()->getContentType();
+        $this->assertNotEmpty($sType);
+        $this->assertIsString($sType);
     }
 
     /**

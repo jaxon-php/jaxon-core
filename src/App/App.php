@@ -14,7 +14,6 @@ namespace Jaxon\App;
 
 use Jaxon\Jaxon;
 use Jaxon\Config\ConfigManager;
-use Jaxon\Response\Manager\ResponseManager;
 use Jaxon\Utils\Translation\Translator;
 use Jaxon\Exception\SetupException;
 
@@ -26,11 +25,6 @@ use function is_array;
 class App
 {
     use AppTrait;
-
-    /**
-     * @var ResponseManager
-     */
-    private $xResponseManager;
 
     /**
      * @var ConfigManager
@@ -47,14 +41,11 @@ class App
      *
      * @param Jaxon $jaxon
      * @param ConfigManager $xConfigManager
-     * @param ResponseManager $xResponseManager
      * @param Translator $xTranslator
      */
-    public function __construct(Jaxon $jaxon, ConfigManager $xConfigManager,
-        ResponseManager $xResponseManager, Translator $xTranslator)
+    public function __construct(Jaxon $jaxon, ConfigManager $xConfigManager, Translator $xTranslator)
     {
         $this->jaxon = $jaxon;
-        $this->xResponseManager = $xResponseManager;
         $this->xConfigManager = $xConfigManager;
         $this->xTranslator = $xTranslator;
     }
@@ -109,6 +100,6 @@ class App
         // Set the HTTP response code
         http_response_code(intval($sCode));
         // Send the response
-        $this->xResponseManager->sendOutput();
+        $this->jaxon->sendResponse();
     }
 }

@@ -441,7 +441,6 @@ class Jaxon implements LoggerAwareInterface
      * @return void
      *
      * @throws RequestException
-     * @throws SetupException
      * @see <Jaxon\Jaxon->canProcessRequest>
      */
     public function processRequest()
@@ -456,11 +455,10 @@ class Jaxon implements LoggerAwareInterface
         }
 
         $this->di()->getRequestHandler()->processRequest();
-
-        if(($this->xConfigManager->getOption('core.response.send')))
+        if($this->xConfigManager->getOption('core.response.send'))
         {
             $this->sendResponse();
-            if(($this->xConfigManager->getOption('core.process.exit')))
+            if($this->xConfigManager->getOption('core.process.exit'))
             {
                 exit();
             }
@@ -472,9 +470,9 @@ class Jaxon implements LoggerAwareInterface
      *
      * @return void
      */
-    protected function sendResponse()
+    public function sendResponse()
     {
-        if(empty($aContent = $this->xResponseManager->getResponseContent()))
+        if(empty($sContent = $this->xResponseManager->getOutput()))
         {
             return;
         }
@@ -485,8 +483,8 @@ class Jaxon implements LoggerAwareInterface
             header("Cache-Control: no-cache, must-revalidate");
             header("Pragma: no-cache");
         }
-        header('content-type: ' . $aContent['type']);
-        print $aContent['content'];
+        header('content-type: ' . $this->xResponseManager->getContentType());
+        print $sContent;
     }
 
     /**

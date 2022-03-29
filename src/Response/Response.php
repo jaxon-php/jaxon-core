@@ -28,7 +28,7 @@ use Jaxon\Response\Plugin\DataBag\DataBagContext;
 use Jaxon\Response\Plugin\JQuery\DomSelector;
 use Jaxon\Utils\Translation\Translator;
 
-use function array_keys;
+use function array_filter;
 use function array_map;
 use function is_array;
 use function is_integer;
@@ -132,6 +132,8 @@ class Response implements ResponseInterface
     }
 
     /**
+     * Get the databag with a given name
+     *
      * @param string $sName
      *
      * @return DataBagContext
@@ -154,7 +156,6 @@ class Response implements ResponseInterface
         $aAttributes = array_map(function($xAttribute) {
             return is_integer($xAttribute) ? $xAttribute : trim((string)$xAttribute, " \t");
         }, $aAttributes);
-
         $aAttributes['data'] = $mData;
         $this->aCommands[] = $aAttributes;
 
@@ -176,18 +177,12 @@ class Response implements ResponseInterface
         $mData = is_array($mData) ? array_map(function($sData) {
             return trim((string)$sData, " \t\n");
         }, $mData) : trim((string)$mData, " \t\n");
-
         if($bRemoveEmpty)
         {
-            foreach(array_keys($aAttributes) as $sAttr)
-            {
-                if($aAttributes[$sAttr] === '')
-                {
-                    unset($aAttributes[$sAttr]);
-                }
-            }
+            $aAttributes = array_filter($aAttributes, function($xValue) {
+                return $xValue === '';
+            });
         }
-
         $aAttributes['cmd'] = $sName;
         return $this->addCommand($aAttributes, $mData);
     }

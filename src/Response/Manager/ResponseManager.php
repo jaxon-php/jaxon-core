@@ -61,8 +61,6 @@ class ResponseManager
     private $aDebugMessages = [];
 
     /**
-     * The class constructor
-     *
      * @param string $sCharacterEncoding
      * @param Container $di
      * @param Translator $xTranslator
@@ -169,21 +167,23 @@ class ResponseManager
     }
 
     /**
-     * Get the type and content of the HTTP response
+     * Get the content type of the HTTP response
      *
-     * @return array
+     * @return string
      */
-    public function getResponseContent(): array
+    public function getContentType(): string
     {
-        if($this->xResponse->getCommandCount() === 0)
-        {
-            return [];
-        }
-        $sType = $this->xResponse->getContentType();
-        if(!empty($this->sCharacterEncoding))
-        {
-            $sType .= '; charset="' . $this->sCharacterEncoding . '"';
-        }
-        return ['type' => $sType, 'content' => $this->xResponse->getOutput()];
+        return empty($this->sCharacterEncoding) ? $this->xResponse->getContentType() :
+            $this->xResponse->getContentType() . '; charset="' . $this->sCharacterEncoding . '"';
+    }
+
+    /**
+     * Get the JSON output of the response
+     *
+     * @return string
+     */
+    public function getOutput(): string
+    {
+        return $this->xResponse->getCommandCount() === 0 ? '' : $this->xResponse->getOutput();
     }
 }
