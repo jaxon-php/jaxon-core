@@ -48,10 +48,7 @@ use Jaxon\Utils\Http\UriException;
 use Jaxon\Utils\Template\TemplateEngine;
 use Jaxon\Utils\Translation\Translator;
 
-use Psr\Log\LoggerAwareInterface;
-use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
-use Psr\Log\NullLogger;
 
 use function gmdate;
 use function header;
@@ -61,10 +58,8 @@ use function error_reporting;
 use function ob_end_clean;
 use function ob_get_level;
 
-class Jaxon implements LoggerAwareInterface
+class Jaxon
 {
-    use LoggerAwareTrait;
-
     /**
      * Package version number
      *
@@ -171,10 +166,7 @@ class Jaxon implements LoggerAwareInterface
      * The constructor
      */
     private function __construct()
-    {
-        // Set the default logger
-        $this->setLogger(new NullLogger());
-    }
+    {}
 
     /**
      * The current Jaxon version
@@ -203,7 +195,7 @@ class Jaxon implements LoggerAwareInterface
      */
     public function logger(): LoggerInterface
     {
-        return $this->logger;
+        return $this->di()->logger();
     }
 
     /**

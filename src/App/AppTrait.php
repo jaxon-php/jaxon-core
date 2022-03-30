@@ -232,7 +232,7 @@ trait AppTrait
      */
     public function logger(): LoggerInterface
     {
-        return $this->jaxon->logger();
+        return $this->jaxon->di()->logger();
     }
 
     /**
@@ -244,7 +244,7 @@ trait AppTrait
      */
     public function setLogger(LoggerInterface $logger)
     {
-        $this->jaxon->setLogger($logger);
+        $this->jaxon->di()->setLogger($logger);
     }
 
     /**
