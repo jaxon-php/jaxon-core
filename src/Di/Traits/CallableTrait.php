@@ -40,7 +40,7 @@ trait CallableTrait
         // Callable class plugin
         $this->set(CallableClassPlugin::class, function($c) {
             $sPrefix = $c->g(ConfigManager::class)->getOption('core.prefix.class');
-            return new CallableClassPlugin($sPrefix, $c->g(ParameterReader::class),
+            return new CallableClassPlugin($sPrefix, $c->g(Container::class), $c->g(ParameterReader::class),
                 $c->g(CallableRegistry::class), $c->g(CallableRepository::class),
                 $c->g(TemplateEngine::class), $c->g(Translator::class), $c->g(Validator::class));
         });

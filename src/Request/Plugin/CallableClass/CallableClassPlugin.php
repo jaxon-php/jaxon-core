@@ -23,6 +23,7 @@ namespace Jaxon\Request\Plugin\CallableClass;
 
 use Jaxon\Jaxon;
 use Jaxon\CallableClass;
+use Jaxon\Di\Container;
 use Jaxon\Plugin\RequestPlugin;
 use Jaxon\Request\Handler\ParameterReader;
 use Jaxon\Request\Target;
@@ -52,6 +53,11 @@ class CallableClassPlugin extends RequestPlugin
      * @var string
      */
     protected $sPrefix;
+
+    /**
+     * @var Container
+     */
+    protected $di;
 
     /**
      * The parameter reader
@@ -102,6 +108,7 @@ class CallableClassPlugin extends RequestPlugin
      * The class constructor
      *
      * @param string  $sPrefix
+     * @param Container $di
      * @param ParameterReader $xParameterReader
      * @param CallableRegistry $xRegistry    The callable class registry
      * @param CallableRepository $xRepository    The callable object repository
@@ -109,10 +116,11 @@ class CallableClassPlugin extends RequestPlugin
      * @param Translator $xTranslator
      * @param Validator $xValidator
      */
-    public function __construct(string $sPrefix, ParameterReader $xParameterReader,
+    public function __construct(string $sPrefix, Container $di, ParameterReader $xParameterReader,
         CallableRegistry $xRegistry, CallableRepository $xRepository,
         TemplateEngine $xTemplateEngine, Translator $xTranslator, Validator $xValidator)
     {
+        $this->di = $di;
         $this->sPrefix = $sPrefix;
         $this->xParameterReader = $xParameterReader;
         $this->xRegistry = $xRegistry;
@@ -312,6 +320,7 @@ class CallableClassPlugin extends RequestPlugin
         catch(ReflectionException $e)
         {
             // Unable to find the requested class or method
+            $this->di->logger()->error($e->getMessage());
             throw new RequestException($this->xTranslator->trans('errors.objects.invalid',
                 ['class' => $sRequestedClass, 'method' => $sRequestedMethod]));
         }

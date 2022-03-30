@@ -124,16 +124,14 @@ trait RegisterTrait
             // Initialize the object
             if($xRegisteredObject instanceof CallableClass)
             {
-                $xResponse = $this->getResponse();
-                // Set the members of the object
-                $cSetter = function() use($c, $xResponse, $sClassName) {
+                // Set the protected attributes of the object
+                $cSetter = function($c, $sClassName) {
                     $this->jaxon = $c->g(Jaxon::class);
-                    $this->response = $xResponse;
+                    $this->response = $c->getResponse();
                     $this->_class = $sClassName;
                 };
-                $cSetter = $cSetter->bindTo($xRegisteredObject, $xRegisteredObject);
                 // Can now access protected attributes
-                call_user_func($cSetter);
+                call_user_func($cSetter->bindTo($xRegisteredObject, $xRegisteredObject), $c, $sClassName);
             }
 
             // Run the callback for class initialisation
@@ -184,7 +182,7 @@ trait RegisterTrait
         $this->val($sClassName . '_config', $xPkgConfig);
         $this->set($sClassName, function($c) use($sClassName) {
             $xPackage = $this->make($sClassName);
-            // Set the package options
+            // Set the protected attributes of the object
             $cSetter = function($c, $sClassName) {
                 $this->xPkgConfig = $c->g($sClassName . '_config');
                 $this->xRenderer = $c->g(ViewRenderer::class);
