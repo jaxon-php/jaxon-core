@@ -5,6 +5,7 @@ namespace Jaxon\Di\Traits;
 use Jaxon\Jaxon;
 use Jaxon\CallableClass;
 use Jaxon\Config\ConfigManager;
+use Jaxon\Request\Factory;
 use Jaxon\Request\Factory\RequestFactory;
 use Jaxon\Request\Handler\CallbackManager;
 use Jaxon\Request\Plugin\CallableClass\CallableObject;
@@ -185,6 +186,7 @@ trait RegisterTrait
             // Set the protected attributes of the object
             $cSetter = function($c, $sClassName) {
                 $this->xPkgConfig = $c->g($sClassName . '_config');
+                $this->xFactory = $c->g(Factory::class);
                 $this->xRenderer = $c->g(ViewRenderer::class);
             };
             // Can now access protected attributes

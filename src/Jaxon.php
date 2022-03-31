@@ -35,7 +35,7 @@ use Jaxon\Plugin\Code\CodeGenerator;
 use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Plugin\Package;
 use Jaxon\Plugin\ResponsePlugin;
-use Jaxon\Request\Factory\Factory;
+use Jaxon\Request\Factory;
 use Jaxon\Request\Factory\RequestFactory;
 use Jaxon\Request\Handler\CallbackManager;
 use Jaxon\Request\Handler\UploadHandler;

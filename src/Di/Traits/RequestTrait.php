@@ -5,7 +5,7 @@ namespace Jaxon\Di\Traits;
 use Jaxon\Config\ConfigManager;
 use Jaxon\Di\Container;
 use Jaxon\Plugin\Manager\PluginManager;
-use Jaxon\Request\Factory\Factory;
+use Jaxon\Request\Factory;
 use Jaxon\Request\Factory\ParameterFactory;
 use Jaxon\Request\Factory\RequestFactory;
 use Jaxon\Request\Handler\CallbackManager;

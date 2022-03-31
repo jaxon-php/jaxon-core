@@ -1,6 +1,6 @@
 <?php
 
-namespace Jaxon\Request\Factory;
+namespace Jaxon\Request;
 
 /**
  * Factory.php
@@ -14,6 +14,8 @@ namespace Jaxon\Request\Factory;
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
+use Jaxon\Request\Factory\ParameterFactory;
+use Jaxon\Request\Factory\RequestFactory;
 use Jaxon\Request\Plugin\CallableClass\CallableRegistry;
 use Jaxon\Exception\SetupException;
 
