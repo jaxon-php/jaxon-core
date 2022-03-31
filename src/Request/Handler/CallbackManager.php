@@ -17,20 +17,6 @@ use function count;
 class CallbackManager
 {
     /**
-     * True if a new bon boot callback was added.
-     *
-     * @var bool
-     */
-    protected $nBootCallbackAdded = false;
-
-    /**
-     * Number of on boot callbacks already called.
-     *
-     * @var int
-     */
-    protected $nBootCallCount = 0;
-
-    /**
      * The callbacks to run after booting the library
      *
      * @var callable[]
@@ -73,37 +59,19 @@ class CallbackManager
     protected $aInitCallbacks = [];
 
     /**
-     * @return bool
-     */
-    public function bootCallbackAdded(): bool
-    {
-        return $this->nBootCallbackAdded;
-    }
-
-    /**
-     * Get the number of on boot callbacks already called
-     *
-     * @return int
-     */
-    public function getBootCallCount(): int
-    {
-        return $this->nBootCallCount;
-    }
-
-    public function updateBootCalls()
-    {
-        $this->nBootCallbackAdded = false;
-        $this->nBootCallCount = count($this->aBootCallbacks);
-    }
-
-    /**
-     * Get the library booting callbacks.
+     * Get the library booting callbacks, and reset the array.
      *
      * @return callable[]
      */
-    public function getBootCallbacks(): array
+    public function popBootCallbacks(): array
     {
-        return $this->aBootCallbacks;
+        if(empty($this->aBootCallbacks))
+        {
+            return [];
+        }
+        $aCallbacks = $this->aBootCallbacks;
+        $this->aBootCallbacks = [];
+        return $aCallbacks;
     }
 
     /**

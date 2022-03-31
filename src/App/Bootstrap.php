@@ -222,20 +222,11 @@ class Bootstrap
      */
     public function onBoot()
     {
-        if(!$this->xCallbackManager->bootCallbackAdded())
-        {
-            return;
-        }
         // Only call the callbacks that aren't called yet.
-        $aBootCallbacks = $this->xCallbackManager->getBootCallbacks();
-        $nBootCallCount = $this->xCallbackManager->getBootCallCount();
-        // Update the on boot calls
-        $this->xCallbackManager->updateBootCalls();
-        // Call the callbacks.
-        $nBootCallbackTotal = count($aBootCallbacks);
-        for($n = $nBootCallCount; $n < $nBootCallbackTotal; $n++)
+        $aBootCallbacks = $this->xCallbackManager->popBootCallbacks();
+        foreach($aBootCallbacks as $aBootCallback)
         {
-            call_user_func($aBootCallbacks[$n]);
+            call_user_func($aBootCallback);
         }
     }
 }
