@@ -133,18 +133,6 @@ class PluginManager
     }
 
     /**
-     * Get a package instance
-     *
-     * @param string $sClassName    The package class name
-     *
-     * @return Package|null
-     */
-    public function getPackage(string $sClassName): ?Package
-    {
-        return $this->di->g(trim($sClassName, '\\ '));
-    }
-
-    /**
      * Register a plugin
      *
      * Below is a table for priorities and their description:
@@ -209,6 +197,28 @@ class PluginManager
         {
             $this->di->auto($sClassName);
         }
+    }
+
+    /**
+     * Find the specified response plugin by name and return a reference to it if one exists
+     *
+     * @param string $sName    The name of the plugin
+     * @param Response|null $xResponse    The response to attach the plugin to
+     *
+     * @return ResponsePlugin|null
+     */
+    public function getResponsePlugin(string $sName, ?Response $xResponse = null): ?ResponsePlugin
+    {
+        if(!isset($this->aResponsePlugins[$sName]))
+        {
+            return null;
+        }
+        $xPlugin = $this->di->g($this->aResponsePlugins[$sName]);
+        if(($xResponse))
+        {
+            $xPlugin->setResponse($xResponse);
+        }
+        return $xPlugin;
     }
 
     /**
@@ -335,19 +345,16 @@ class PluginManager
      */
     private function getPackageOptions(string $sClassName): array
     {
-        if(!is_subclass_of($sClassName, Package::class))
-        {
-            $sMessage = $this->xTranslator->trans('errors.register.invalid', ['name' => $sClassName]);
-            throw new SetupException($sMessage);
-        }
         // $this->aPackages contains packages config file paths.
         $aLibOptions = $sClassName::config();
         if(is_string($aLibOptions))
         {
+            // A string is supposed to be the path to a config file.
             $aLibOptions = $this->xConfigManager->read($aLibOptions);
         }
-        if(!is_array($aLibOptions))
+        elseif(!is_array($aLibOptions))
         {
+            // Otherwise, anything else than an array is not accepted.
             $sMessage = $this->xTranslator->trans('errors.register.invalid', ['name' => $sClassName]);
             throw new SetupException($sMessage);
         }
@@ -366,6 +373,11 @@ class PluginManager
     public function registerPackage(string $sClassName, array $aPkgOptions)
     {
         $sClassName = trim($sClassName, '\\ ');
+        if(!is_subclass_of($sClassName, Package::class))
+        {
+            $sMessage = $this->xTranslator->trans('errors.register.invalid', ['name' => $sClassName]);
+            throw new SetupException($sMessage);
+        }
         $aLibOptions = $this->getPackageOptions($sClassName);
         // Add the package name to the config
         $aLibOptions['package'] = $sClassName;
@@ -376,6 +388,19 @@ class PluginManager
         $this->registerItemsFromConfig($xLibConfig, $xPkgConfig);
         // Register the package as a code generator.
         $this->xCodeGenerator->addGenerator($sClassName, 500);
+    }
+
+    /**
+     * Get a package instance
+     *
+     * @param string $sClassName    The package class name
+     *
+     * @return Package|null
+     */
+    public function getPackage(string $sClassName): ?Package
+    {
+        $sClassName = trim($sClassName, '\\ ');
+        return $this->di->h($sClassName) ? $this->di->g($sClassName) : null;
     }
 
     /**
@@ -396,28 +421,6 @@ class PluginManager
         {
             $this->registerPackage($sClassName, $aPkgOptions);
         }
-    }
-
-    /**
-     * Find the specified response plugin by name and return a reference to it if one exists
-     *
-     * @param string $sName    The name of the plugin
-     * @param Response|null $xResponse    The response to attach the plugin to
-     *
-     * @return ResponsePlugin|null
-     */
-    public function getResponsePlugin(string $sName, ?Response $xResponse = null): ?ResponsePlugin
-    {
-        if(!isset($this->aResponsePlugins[$sName]))
-        {
-            return null;
-        }
-        $xPlugin = $this->di->g($this->aResponsePlugins[$sName]);
-        if(($xResponse))
-        {
-            $xPlugin->setResponse($xResponse);
-        }
-        return $xPlugin;
     }
 
     /**

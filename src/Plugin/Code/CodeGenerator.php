@@ -280,10 +280,10 @@ class CodeGenerator
         if($this->xAssetManager->shallCreateJsFiles() &&
             ($sUrl = $this->xAssetManager->createJsFiles($this->getHash(), $sJsScript)))
         {
-            return $sScript . $this->render('include.js', ['sUrl' => $sUrl]) . "\n" .
+            return trim($sScript) . "\n" . $this->render('include.js', ['sUrl' => $sUrl]) . "\n" .
                 $this->render('wrapper.js', ['sScript' => $this->sJsInlineScript]);
         }
-        return $sScript . $this->render('wrapper.js',
+        return trim($sScript) . "\n" . $this->render('wrapper.js',
             ['sScript' => $sJsScript . "\n" . $this->sJsInlineScript]);
     }
 }

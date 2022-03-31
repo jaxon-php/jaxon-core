@@ -29,7 +29,9 @@
     "require-dev": {
         "phpunit/phpunit": "^8.5",
         "php-coveralls/php-coveralls": "^2.5",
-        "phpunit/phpcov": "6.*"
+        "phpunit/phpcov": "6.*",
+        "jaxon-php/jaxon-dialogs": "dev-tests",
+        "lagdo/twitter-feed": "dev-tests"
     },
     "autoload": {
         "psr-4": {

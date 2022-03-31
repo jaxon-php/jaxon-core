@@ -149,6 +149,14 @@ abstract class Package implements CodeGeneratorInterface
     }
 
     /**
+     * @inheritDoc
+     */
+    public function getReadyScript(): string
+    {
+        return '';
+    }
+
+    /**
      * Get the HTML code of the package home page
      *
      * @return string

@@ -13,6 +13,7 @@ use PHPUnit\Framework\TestCase;
 use Sample;
 
 use function strlen;
+use function trim;
 use function file_get_contents;
 use function jaxon;
 
@@ -132,9 +133,31 @@ final class FunctionTest extends TestCase
     {
         // This URI will be parsed by the URI detector
         $_SERVER['REQUEST_URI'] = 'http://example.test/path';
-        $sJsCode = jaxon()->getScript(true, false);
-        $this->assertEquals(1359, strlen($sJsCode));
+        $sJsCode = jaxon()->getScript(true, true);
+        $this->assertEquals(1356, strlen(trim($sJsCode)));
         // $this->assertEquals(file_get_contents(__DIR__ . '/../script/lib.js'), $sJsCode);
+        $this->assertEquals(32, strlen(jaxon()->di()->getCodeGenerator()->getHash()));
+        unset($_SERVER['REQUEST_URI']);
+    }
+
+    /**
+     * @throws UriException
+     * @throws SetupException
+     */
+    public function testLibraryJsCodeWithPlugins()
+    {
+        require_once __DIR__ . '/../defs/plugins.php';
+        require_once __DIR__ . '/../defs/packages.php';
+
+        jaxon()->registerPlugin('SamplePlugin', 'plugin');
+        jaxon()->registerPackage('SamplePackage');
+
+        // This URI will be parsed by the URI detector
+        $_SERVER['REQUEST_URI'] = 'http://example.test/path';
+        $sJsCode = jaxon()->getScript(true, true);
+        $this->assertEquals(1356, strlen(trim($sJsCode)));
+        // $this->assertEquals(file_get_contents(__DIR__ . '/../script/lib.js'), $sJsCode);
+        $this->assertEquals(32, strlen(jaxon()->di()->getCodeGenerator()->getHash()));
         unset($_SERVER['REQUEST_URI']);
     }
 

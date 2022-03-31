@@ -1,6 +1,4 @@
 <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/jaxon-php/jaxon-js@3.3/dist/jaxon.core.min.js"  charset="UTF-8"></script>
-
-
 <script type="text/javascript"  charset="UTF-8">
 /* <![CDATA[ */
 try {
