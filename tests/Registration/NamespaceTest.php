@@ -9,6 +9,10 @@ use Jaxon\Request\Plugin\CallableClass\CallableObject;
 use Jaxon\Exception\SetupException;
 use PHPUnit\Framework\TestCase;
 
+use Jaxon\Tests\Ns\Ajax\ClassA;
+use Jaxon\Tests\Ns\Ajax\ClassB;
+use Jaxon\Tests\Ns\Ajax\ClassC;
+
 use function strlen;
 use function file_get_contents;
 use function jaxon;
@@ -54,6 +58,24 @@ class NamespaceTest extends TestCase
     public function testPluginName()
     {
         $this->assertEquals(Jaxon::CALLABLE_DIR, $this->xDirPlugin->getName());
+    }
+
+    /**
+     * @throws SetupException
+     */
+    public function testCallableDirClasses()
+    {
+        $xClassACallable = $this->xClassPlugin->getCallable(ClassA::class);
+        $xClassBCallable = $this->xClassPlugin->getCallable(ClassB::class);
+        $xClassCCallable = $this->xClassPlugin->getCallable(ClassC::class);
+        // Test callables classes
+        $this->assertEquals(CallableObject::class, get_class($xClassACallable));
+        $this->assertEquals(CallableObject::class, get_class($xClassBCallable));
+        $this->assertEquals(CallableObject::class, get_class($xClassCCallable));
+        // Check methods
+        $this->assertTrue($xClassACallable->hasMethod('methodAa'));
+        $this->assertTrue($xClassACallable->hasMethod('methodAb'));
+        $this->assertFalse($xClassACallable->hasMethod('methodAc'));
     }
 
     /**
