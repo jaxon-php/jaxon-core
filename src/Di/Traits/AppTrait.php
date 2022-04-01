@@ -6,7 +6,7 @@ use Jaxon\Jaxon;
 use Jaxon\App\App;
 use Jaxon\App\Bootstrap;
 use Jaxon\Config\ConfigManager;
-use Jaxon\Plugin\Manager\PluginManager;
+use Jaxon\Plugin\Manager\PackageManager;
 use Jaxon\Request\Handler\CallbackManager;
 use Jaxon\Utils\Config\ConfigReader;
 use Jaxon\Utils\Translation\Translator;
@@ -90,7 +90,7 @@ trait AppTrait
         });
         // Jaxon App bootstrap
         $this->set(Bootstrap::class, function($c) {
-            return new Bootstrap($c->g(ConfigManager::class), $c->g(PluginManager::class), $c->g(CallbackManager::class));
+            return new Bootstrap($c->g(ConfigManager::class), $c->g(PackageManager::class), $c->g(CallbackManager::class));
         });
     }
 

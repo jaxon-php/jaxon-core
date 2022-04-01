@@ -1,7 +1,7 @@
 <?php
 
 /**
- * ResponseManager.php - Jaxon ResponsePlugin PluginManager
+ * ResponseManager.php - Jaxon Response Manager
  *
  * This class stores and tracks the response that will be returned after processing a request.
  * The Response Manager represents a single point of contact for working with <ResponsePlugin> objects.

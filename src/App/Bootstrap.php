@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Boot.php - Jaxon application bootstrapper
+ * Bootstrap.php - Jaxon application bootstrapper
  *
  * @package jaxon-core
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
@@ -13,7 +13,7 @@
 namespace Jaxon\App;
 
 use Jaxon\Config\ConfigManager;
-use Jaxon\Plugin\Manager\PluginManager;
+use Jaxon\Plugin\Manager\PackageManager;
 use Jaxon\Request\Handler\CallbackManager;
 use Jaxon\Utils\Config\Config;
 use Jaxon\Exception\SetupException;
@@ -29,9 +29,9 @@ class Bootstrap
     private $xConfigManager;
 
     /**
-     * @var PluginManager
+     * @var PackageManager
      */
-    private $xPluginManager;
+    private $xPackageManager;
 
     /**
      * @var CallbackManager
@@ -91,13 +91,13 @@ class Bootstrap
      * The class constructor
      *
      * @param ConfigManager $xConfigManager
-     * @param PluginManager $xPluginManager
+     * @param PackageManager $xPackageManager
      * @param CallbackManager $xCallbackManager
      */
-    public function __construct(ConfigManager $xConfigManager, PluginManager $xPluginManager, CallbackManager $xCallbackManager)
+    public function __construct(ConfigManager $xConfigManager, PackageManager $xPackageManager, CallbackManager $xCallbackManager)
     {
         $this->xConfigManager = $xConfigManager;
-        $this->xPluginManager = $xPluginManager;
+        $this->xPackageManager = $xPackageManager;
         $this->xCallbackManager = $xCallbackManager;
     }
 
@@ -170,7 +170,7 @@ class Bootstrap
     private function setupApp(Config $xAppConfig)
     {
         // Register user functions and classes
-        $this->xPluginManager->registerFromConfig($xAppConfig);
+        $this->xPackageManager->registerFromConfig($xAppConfig);
     }
 
     /**

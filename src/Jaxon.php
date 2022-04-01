@@ -32,6 +32,7 @@ use Jaxon\Di\Container;
 use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\Code\CodeGenerator;
+use Jaxon\Plugin\Manager\PackageManager;
 use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Plugin\Package;
 use Jaxon\Plugin\ResponsePlugin;
@@ -109,6 +110,11 @@ class Jaxon
     protected $xPluginManager;
 
     /**
+     * @var PackageManager
+     */
+    protected $xPackageManager;
+
+    /**
      * @var CodeGenerator
      */
     protected $xCodeGenerator;
@@ -138,6 +144,7 @@ class Jaxon
         self::$xInstance->xTranslator = self::$xContainer->g(Translator::class);
         self::$xInstance->xConfigManager = self::$xContainer->g(ConfigManager::class);
         self::$xInstance->xPluginManager = self::$xContainer->g(PluginManager::class);
+        self::$xInstance->xPackageManager = self::$xContainer->g(PackageManager::class);
         self::$xInstance->xCodeGenerator = self::$xContainer->g(CodeGenerator::class);
         self::$xInstance->xClassRegistry = self::$xContainer->g(CallableRegistry::class);
         self::$xInstance->xCallbackManager = self::$xContainer->g(CallbackManager::class);
@@ -323,7 +330,7 @@ class Jaxon
      */
     public function registerPackage(string $sClassName, array $xPkgOptions = [])
     {
-        $this->xPluginManager->registerPackage($sClassName, $xPkgOptions);
+        $this->xPackageManager->registerPackage($sClassName, $xPkgOptions);
     }
 
     /**
@@ -523,7 +530,7 @@ class Jaxon
      */
     public function package(string $sClassName): ?Package
     {
-        return $this->xPluginManager->getPackage($sClassName);
+        return $this->xPackageManager->getPackage($sClassName);
     }
 
     /**

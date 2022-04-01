@@ -7,6 +7,7 @@ use Jaxon\Config\ConfigManager;
 use Jaxon\Di\Container;
 use Jaxon\Plugin\Code\AssetManager;
 use Jaxon\Plugin\Code\CodeGenerator;
+use Jaxon\Plugin\Manager\PackageManager;
 use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Request\Handler\ParameterReader;
 use Jaxon\Request\Handler\UploadHandler;
@@ -31,7 +32,11 @@ trait PluginTrait
     {
         // Plugin manager
         $this->set(PluginManager::class, function($c) {
-            return new PluginManager($c->g(Container::class), $c->g(ConfigManager::class),
+            return new PluginManager($c->g(Container::class), $c->g(CodeGenerator::class), $c->g(Translator::class));
+        });
+        // Package manager
+        $this->set(PackageManager::class, function($c) {
+            return new PackageManager($c->g(Container::class), $c->g(PluginManager::class), $c->g(ConfigManager::class),
                 $c->g(ViewManager::class), $c->g(CodeGenerator::class), $c->g(Translator::class));
         });
         // Code Generation
