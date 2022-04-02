@@ -14,9 +14,6 @@ namespace Jaxon\Request\Upload;
 
 use Nyholm\Psr7\UploadedFile;
 
-use Closure;
-
-use function call_user_func_array;
 use function pathinfo;
 
 class File
@@ -29,7 +26,7 @@ class File
     protected $sType;
 
     /**
-     * The uploaded file name, without the extension and slugified
+     * The uploaded file name, without the extension and sanitized
      *
      * @var string
      */
@@ -64,60 +61,21 @@ class File
     protected $sExtension;
 
     /**
-     * A user defined function to transform uploaded file names
-     *
-     * @var Closure
-     */
-    protected static $cNameSanitizer = null;
-
-    /**
-     * Filter uploaded file name
-     *
-     * @param Closure $cNameSanitizer    The closure which filters filenames
-     *
-     * @return void
-     */
-    public static function setNameSanitizer(Closure $cNameSanitizer)
-    {
-        self::$cNameSanitizer = $cNameSanitizer;
-    }
-
-    /**
-     * Slugify a text
-     *
-     * @param string  $sText
-     *
-     * @return string
-     */
-    protected static function slugify(string $sText): string
-    {
-        // Todo: slugify the text.
-        return $sText;
-    }
-
-    /**
      * Create an instance of this class using data from an uploaded file.
      *
-     * @param string $sVarName
+     * @param string $sName
      * @param string $sUploadDir    The directory where to save the uploaded file
      * @param UploadedFile $xHttpFile    The uploaded file
      *
      * @return File
      */
-    public static function fromHttpFile(string $sVarName, string $sUploadDir, UploadedFile $xHttpFile): File
+    public static function fromHttpFile(string $sName, string $sUploadDir, UploadedFile $xHttpFile): File
     {
-        // Filename without the extension
-        $sName = pathinfo($xHttpFile->getClientFilename(), PATHINFO_FILENAME);
-        if(self::$cNameSanitizer !== null)
-        {
-            $sName = (string)call_user_func_array(self::$cNameSanitizer, [$sName, $sVarName]);
-        }
-
         $xFile = new File();
+        $xFile->sName = $sName;
         $xFile->sType = $xHttpFile->getClientMediaType();
-        $xFile->sName = self::slugify($sName);
         $xFile->sFilename = $xHttpFile->getClientFilename();
-        $xFile->sExtension = pathinfo($xHttpFile->getClientFilename(), PATHINFO_EXTENSION);
+        $xFile->sExtension = pathinfo($xFile->sFilename, PATHINFO_EXTENSION);
         $xFile->sSize = $xHttpFile->getSize();
         $xFile->sPath = $sUploadDir . $xFile->sName . '.' . $xFile->sExtension;
         return $xFile;

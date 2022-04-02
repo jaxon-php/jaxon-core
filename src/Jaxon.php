@@ -43,6 +43,7 @@ use Jaxon\Request\Handler\UploadHandler;
 use Jaxon\Request\Plugin\CallableClass\CallableRegistry;
 use Jaxon\Response\Manager\ResponseManager;
 use Jaxon\Response\Response;
+use Jaxon\Response\ResponseInterface;
 use Jaxon\Session\SessionInterface;
 use Jaxon\Ui\View\ViewRenderer;
 use Jaxon\Utils\Http\UriException;
@@ -278,9 +279,9 @@ class Jaxon
     /**
      * Get the Response object
      *
-     * @return Response
+     * @return ResponseInterface
      */
-    public function getResponse(): Response
+    public function getResponse(): ResponseInterface
     {
         if(($xResponse = $this->xResponseManager->getResponse()))
         {

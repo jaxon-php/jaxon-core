@@ -2,8 +2,8 @@
 
 namespace Jaxon\Response;
 
-use function array_walk;
 use function addslashes;
+use function array_reduce;
 use function json_encode;
 
 class UploadResponse implements ResponseInterface
@@ -31,6 +31,12 @@ class UploadResponse implements ResponseInterface
      */
     private $aDebugMessages = [];
 
+    public function __construct(string $sUploadedFile, string $sErrorMessage = '')
+    {
+        $this->sUploadedFile = $sUploadedFile;
+        $this->sErrorMessage = $sErrorMessage;
+    }
+
     /**
      * @inheritDoc
      */
@@ -40,27 +46,23 @@ class UploadResponse implements ResponseInterface
     }
 
     /**
-     * Set the path to the uploaded file
+     * Get the path to the uploaded file
      *
-     * @param string  $sUploadedFile
-     *
-     * @return void
+     * @return string
      */
-    public function setUploadedFile(string $sUploadedFile)
+    public function getUploadedFile(): string
     {
-        $this->sUploadedFile = $sUploadedFile;
+        return $this->sUploadedFile;
     }
 
     /**
-     * Set the error message
+     * Get the error message
      *
-     * @param string  $sErrorMessage
-     *
-     * @return void
+     * @return string
      */
-    public function setErrorMessage(string $sErrorMessage)
+    public function getErrorMessage(): string
     {
-        $this->sErrorMessage = $sErrorMessage;
+        return $this->sErrorMessage;
     }
 
     /**
@@ -77,24 +79,21 @@ class UploadResponse implements ResponseInterface
      */
     public function getOutput(): string
     {
-        $aResponse = ($this->sUploadedFile) ?
-            ['code' => 'success', 'upl' => $this->sUploadedFile] : ['code' => 'error', 'msg' => $this->sErrorMessage];
-
-        $sConsoleLog = '';
-        array_walk($this->aDebugMessages, function($sMessage) use (&$sConsoleLog) {
-            $sConsoleLog .= '
-    console.log("' . addslashes($sMessage) . '");';
-        });
+        $sResult = json_encode(($this->sUploadedFile) ?
+            ['code' => 'success', 'upl' => $this->sUploadedFile] :
+            ['code' => 'error', 'msg' => $this->sErrorMessage]) . ';';
+        $sConsoleLog = array_reduce($this->aDebugMessages, function($sJsLog, $sMessage) {
+            return "$sJsLog\n\t" . 'console.log("' . addslashes($sMessage) . '");';
+        }, '');
 
         return '
 <!DOCTYPE html>
 <html>
 <body>
 <h1>HTTP Upload for Jaxon</h1>
-<p>No real data.</p>
 </body>
 <script>
-    res = ' . json_encode($aResponse) . ';' . $sConsoleLog . '
+    res = ' . $sResult . $sConsoleLog . '
 </script>
 </html>
 ';

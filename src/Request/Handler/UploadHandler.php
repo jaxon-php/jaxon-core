@@ -12,8 +12,8 @@
 
 namespace Jaxon\Request\Handler;
 
+use Jaxon\Di\Container;
 use Jaxon\Exception\RequestException;
-use Jaxon\Request\Upload\UploadManager;
 use Jaxon\Response\Manager\ResponseManager;
 use Jaxon\Response\UploadResponse;
 use Jaxon\Utils\Translation\Translator;
@@ -28,18 +28,18 @@ use function trim;
 class UploadHandler
 {
     /**
+     * DI container
+     *
+     * @var Container
+     */
+    protected $di;
+
+    /**
      * The response manager
      *
      * @var ResponseManager
      */
     protected $xResponseManager;
-
-    /**
-     * HTTP file upload manager
-     *
-     * @var UploadManager
-     */
-    protected $xUploadManager = null;
 
     /**
      * @var Translator
@@ -70,14 +70,14 @@ class UploadHandler
     /**
      * The constructor
      *
-     * @param UploadManager $xUploadManager
+     * @param Container $di
      * @param ResponseManager $xResponseManager
      * @param Translator $xTranslator
      */
-    public function __construct(UploadManager $xUploadManager, ResponseManager $xResponseManager, Translator $xTranslator)
+    public function __construct(Container $di, ResponseManager $xResponseManager, Translator $xTranslator)
     {
+        $this->di = $di;
         $this->xResponseManager = $xResponseManager;
-        $this->xUploadManager = $xUploadManager;
         $this->xTranslator = $xTranslator;
     }
 
@@ -90,7 +90,7 @@ class UploadHandler
      */
     public function sanitizer(Closure $cSanitizer)
     {
-        $this->xUploadManager->setNameSanitizer($cSanitizer);
+        $this->di->getUploadManager()->setNameSanitizer($cSanitizer);
     }
 
     /**
@@ -126,23 +126,32 @@ class UploadHandler
         {
             return true;
         }
-        $this->sTempFile = '';
         $aBody = $xRequest->getParsedBody();
         if(is_array($aBody))
         {
-            if(isset($aBody['jxnupl']))
-            {
-                $this->sTempFile = trim($aBody['jxnupl']);
-            }
+            return isset($aBody['jxnupl']);
         }
-        else
+        $aParams = $xRequest->getQueryParams();
+        return isset($aParams['jxnupl']);
+    }
+
+    /**
+     * Read the upload temp file name from the HTTP request
+     *
+     * @param ServerRequestInterface $xRequest
+     *
+     * @return bool
+     */
+    private function setTempFile(ServerRequestInterface $xRequest): bool
+    {
+        $aBody = $xRequest->getParsedBody();
+        if(is_array($aBody))
         {
-            $aParams = $xRequest->getQueryParams();
-            if(isset($aParams['jxnupl']))
-            {
-                $this->sTempFile = trim($aParams['jxnupl']);
-            }
+            $this->sTempFile = trim($aBody['jxnupl'] ?? '');
+            return $this->sTempFile !== '';
         }
+        $aParams = $xRequest->getQueryParams();
+        $this->sTempFile = trim($aParams['jxnupl'] ?? '');
         return $this->sTempFile !== '';
     }
 
@@ -156,35 +165,36 @@ class UploadHandler
      */
     public function processRequest(ServerRequestInterface $xRequest): bool
     {
-        if(($this->sTempFile))
+        $xUploadManager = $this->di->getUploadManager();
+        if($this->setTempFile($xRequest))
         {
             // Ajax request following a normal HTTP upload.
             // Copy the previously uploaded files' location from the temp file.
-            $this->aUserFiles = $this->xUploadManager->readFromTempFile($this->sTempFile);
+            $this->aUserFiles = $xUploadManager->readFromTempFile($this->sTempFile);
             return true;
         }
 
-        // Ajax or Http request with upload; copy the uploaded files.
-        $this->aUserFiles = $this->xUploadManager->readFromHttpData($xRequest);
-
-        // For Ajax requests, there is nothing else to do here.
         if($this->bIsAjaxRequest)
         {
+            // Ajax request with upload.
+            // Copy the uploaded files from the HTTP request.
+            $this->aUserFiles = $xUploadManager->readFromHttpData($xRequest);
             return true;
         }
+
         // For HTTP requests, save the files' location to a temp file,
         // and return a response with a reference to this temp file.
-        $xResponse = new UploadResponse();
         try
         {
-            $sTempFile = $this->xUploadManager->saveToTempFile($this->aUserFiles);
-            $xResponse->setUploadedFile($sTempFile);
+            // Copy the uploaded files from the HTTP request, and create the temp file.
+            $this->aUserFiles = $xUploadManager->readFromHttpData($xRequest);
+            $sTempFile = $xUploadManager->saveToTempFile($this->aUserFiles);
+            $this->xResponseManager->append(new UploadResponse($sTempFile));
         }
         catch(Exception $e)
         {
-            $xResponse->setErrorMessage($e->getMessage());
+            $this->xResponseManager->append(new UploadResponse('', $e->getMessage()));
         }
-        $this->xResponseManager->append($xResponse);
         return true;
     }
 }

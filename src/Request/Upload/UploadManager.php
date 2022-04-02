@@ -19,9 +19,8 @@ use Nyholm\Psr7\UploadedFile;
 use Psr\Http\Message\ServerRequestInterface;
 
 use Closure;
-use Exception;
 
-use function bin2hex;
+use function call_user_func;
 use function file_exists;
 use function file_get_contents;
 use function file_put_contents;
@@ -33,10 +32,8 @@ use function is_writable;
 use function json_decode;
 use function json_encode;
 use function mkdir;
-use function random_bytes;
+use function realpath;
 use function rtrim;
-use function str_shuffle;
-use function substr;
 use function trim;
 use function unlink;
 
@@ -60,25 +57,50 @@ class UploadManager
     protected $xTranslator;
 
     /**
-     * The subdir where uploaded files are stored
+     * The file and dir name generator
+     *
+     * @var NameGeneratorInterface
+     */
+    protected $xNameGenerator;
+
+    /**
+     * The id of the upload field in the form
      *
      * @var string
      */
-    protected $sUploadSubdir = '';
+    protected $sUploadFieldId = '';
+
+    /**
+     * A user defined function to transform uploaded file names
+     *
+     * @var Closure
+     */
+    protected $cNameSanitizer = null;
+
+    /**
+     * A flat list of all uploaded files
+     *
+     * @var array
+     */
+    private $aAllFiles = [];
 
     /**
      * The constructor
      *
+     * @param NameGeneratorInterface $xNameGenerator
      * @param ConfigManager $xConfigManager
      * @param Validator $xValidator
      * @param Translator $xTranslator
      */
-    public function __construct(ConfigManager $xConfigManager, Validator $xValidator, Translator $xTranslator)
+    public function __construct(NameGeneratorInterface $xNameGenerator, ConfigManager $xConfigManager,
+        Validator $xValidator, Translator $xTranslator)
     {
+        $this->xNameGenerator = $xNameGenerator;
         $this->xConfigManager = $xConfigManager;
         $this->xValidator = $xValidator;
         $this->xTranslator = $xTranslator;
-        $this->sUploadSubdir = $this->randomName() . DIRECTORY_SEPARATOR;
+        // This feature is not yet implemented
+        $this->setUploadFieldId('');
     }
 
     /**
@@ -88,14 +110,19 @@ class UploadManager
      */
     protected function randomName(): string
     {
-        try
-        {
-            return bin2hex(random_bytes(7));
-        }
-        catch(Exception $e){}
-        // Generate the name
-        $sChars = '0123456789abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz';
-        return substr(str_shuffle($sChars), 0, 14);
+        return $this->xNameGenerator->random(14);
+    }
+
+    /**
+     * Set the id of the upload field in the form
+     *
+     * @param string $sUploadFieldId
+     *
+     * @return void
+     */
+    public function setUploadFieldId(string $sUploadFieldId)
+    {
+        $this->sUploadFieldId = $sUploadFieldId;
     }
 
     /**
@@ -107,7 +134,7 @@ class UploadManager
      */
     public function setNameSanitizer(Closure $cNameSanitizer)
     {
-        File::setNameSanitizer($cNameSanitizer);
+        $this->cNameSanitizer = $cNameSanitizer;
     }
 
     /**
@@ -121,13 +148,13 @@ class UploadManager
      */
     private function _makeUploadDir(string $sUploadDir, string $sUploadSubDir): string
     {
-        $sUploadDir = rtrim(trim($sUploadDir), '/\\') . DIRECTORY_SEPARATOR;
+        $sUploadDir = realpath(rtrim(trim($sUploadDir), '/\\'));
         // Verify that the upload dir exists and is writable
-        if(!is_writable($sUploadDir))
+        if(!is_dir($sUploadDir) || !is_writable($sUploadDir))
         {
             throw new RequestException($this->xTranslator->trans('errors.upload.access'));
         }
-        $sUploadDir .= $sUploadSubDir;
+        $sUploadDir .= DIRECTORY_SEPARATOR . $sUploadSubDir . DIRECTORY_SEPARATOR;
         if(!file_exists($sUploadDir) && !@mkdir($sUploadDir))
         {
             throw new RequestException($this->xTranslator->trans('errors.upload.access'));
@@ -148,11 +175,11 @@ class UploadManager
         // Default upload dir
         $sDefaultUploadDir = $this->xConfigManager->getOption('upload.default.dir');
         $sUploadDir = $this->xConfigManager->getOption('upload.files.' . $sFieldId . '.dir', $sDefaultUploadDir);
-        if(!is_string($sUploadDir) || !is_dir($sUploadDir))
+        if(!is_string($sUploadDir))
         {
             throw new RequestException($this->xTranslator->trans('errors.upload.access'));
         }
-        return $this->_makeUploadDir($sUploadDir, $this->sUploadSubdir);
+        return $this->_makeUploadDir($sUploadDir, $this->randomName());
     }
 
     /**
@@ -165,62 +192,46 @@ class UploadManager
     {
         // Default upload dir
         $sUploadDir = $this->xConfigManager->getOption('upload.default.dir');
-        if(!is_string($sUploadDir) || !is_dir($sUploadDir))
+        if(!is_string($sUploadDir))
         {
             throw new RequestException($this->xTranslator->trans('errors.upload.access'));
         }
-        return $this->_makeUploadDir($sUploadDir, 'tmp' . DIRECTORY_SEPARATOR);
-    }
-
-    /**
-     * Get the path to the upload temp file
-     *
-     * @param string $sTempFile
-     *
-     * @return string
-     * @throws RequestException
-     */
-    protected function getUploadTempFile(string $sTempFile): string
-    {
-        // Verify file name validity
-        if(!$this->xValidator->validateTempFileName($sTempFile))
-        {
-            throw new RequestException($this->xTranslator->trans('errors.upload.invalid'));
-        }
-        $sUploadDir = $this->xConfigManager->getOption('upload.default.dir', '');
-        $sUploadDir = rtrim(trim($sUploadDir), '/\\') . DIRECTORY_SEPARATOR;
-        $sUploadDir .= 'tmp' . DIRECTORY_SEPARATOR;
-        $sUploadTempFile = $sUploadDir . $sTempFile . '.json';
-        if(!is_readable($sUploadTempFile))
-        {
-            throw new RequestException($this->xTranslator->trans('errors.upload.access'));
-        }
-        return $sUploadTempFile;
+        return $this->_makeUploadDir($sUploadDir, 'tmp');
     }
 
     /**
      * Check uploaded files
      *
      * @param string $sVarName
-     * @param UploadedFile $xHttpFile    The uploaded file
-     * @param File $xFile    The uploaded file
+     * @param string $sUploadDir
+     * @param UploadedFile $xHttpFile
      *
-     * @return void
+     * @return File
      * @throws RequestException
      */
-    private function checkFile(string $sVarName, UploadedFile $xHttpFile, File $xFile)
+    private function makeUploadedFile(string $sVarName, string $sUploadDir, UploadedFile $xHttpFile): File
     {
-        // Verify upload result
+        // Filename without the extension. Needs to be sanitized.
+        $sName = pathinfo($xHttpFile->getClientFilename(), PATHINFO_FILENAME);
+        if($this->cNameSanitizer !== null)
+        {
+            $sName = (string)call_user_func($this->cNameSanitizer, $sName, $sVarName, $this->sUploadFieldId);
+        }
+        // Check the uploaded file validity
         if($xHttpFile->getError())
         {
-            throw new RequestException($this->xTranslator->trans('errors.upload.failed',
-                ['name' => $xHttpFile->getClientFilename()]));
+            throw new RequestException($this->xTranslator->trans('errors.upload.failed', ['name' => $sVarName]));
         }
+        // Set the user file data
+        $xFile = File::fromHttpFile($sName, $sUploadDir, $xHttpFile);
         // Verify file validity (format, size)
         if(!$this->xValidator->validateUploadedFile($sVarName, $xFile))
         {
             throw new RequestException($this->xValidator->getErrorMessage());
         }
+        // All's right, save the file for copy.
+        $this->aAllFiles[] = ['temp' => $xHttpFile, 'user' => $xFile];
+        return $xFile;
     }
 
     /**
@@ -237,30 +248,23 @@ class UploadManager
         $aTempFiles = $xRequest->getUploadedFiles();
 
         $aUserFiles = [];
-        $aAllFiles = []; // A flat list of all uploaded files
+        $this->aAllFiles = []; // A flat list of all uploaded files
         foreach($aTempFiles as $sVarName => $aFiles)
         {
             $aUserFiles[$sVarName] = [];
             // Get the path to the upload dir
             $sUploadDir = $this->getUploadDir($sVarName);
-
             if(!is_array($aFiles))
             {
                 $aFiles = [$aFiles];
             }
-            foreach($aFiles as $xFile)
+            foreach($aFiles as $xHttpFile)
             {
-                // Set the user file data
-                $xUploadedFile = File::fromHttpFile($sVarName, $sUploadDir, $xFile);
-                // Check the uploaded file validity
-                $this->checkFile($sVarName, $xFile, $xUploadedFile);
-                // All's right, save the file for copy.
-                $aAllFiles[] = ['temp' => $xFile, 'user' => $xUploadedFile];
-                $aUserFiles[$sVarName][] = $xUploadedFile;
+                $aUserFiles[$sVarName][] = $this->makeUploadedFile($sVarName, $sUploadDir, $xHttpFile);
             }
         }
         // Copy the uploaded files from the temp dir to the user dir
-        foreach($aAllFiles as $aFiles)
+        foreach($this->aAllFiles as $aFiles)
         {
             $aFiles['temp']->moveTo($aFiles['user']->path());
         }
@@ -292,6 +296,31 @@ class UploadManager
         $sTempFile = $this->randomName();
         file_put_contents($sUploadDir . $sTempFile . '.json', json_encode($aFiles));
         return $sTempFile;
+    }
+
+    /**
+     * Get the path to the upload temp file
+     *
+     * @param string $sTempFile
+     *
+     * @return string
+     * @throws RequestException
+     */
+    protected function getUploadTempFile(string $sTempFile): string
+    {
+        // Verify file name validity
+        if(!$this->xValidator->validateTempFileName($sTempFile))
+        {
+            throw new RequestException($this->xTranslator->trans('errors.upload.invalid'));
+        }
+        $sUploadDir = $this->xConfigManager->getOption('upload.default.dir', '');
+        $sUploadDir = realpath(rtrim(trim($sUploadDir), '/\\')) . DIRECTORY_SEPARATOR . 'tmp' . DIRECTORY_SEPARATOR;
+        $sUploadTempFile = $sUploadDir . $sTempFile . '.json';
+        if(!is_readable($sUploadTempFile))
+        {
+            throw new RequestException($this->xTranslator->trans('errors.upload.access'));
+        }
+        return $sUploadTempFile;
     }
 
     /**

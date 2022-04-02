@@ -19,6 +19,7 @@ use Jaxon\Plugin\Plugin;
 use Jaxon\Utils\Http\UriException;
 use Jaxon\Utils\Template\TemplateEngine;
 
+use function array_reduce;
 use function ksort;
 use function md5;
 use function trim;
@@ -134,13 +135,9 @@ class CodeGenerator
      */
     public function getHash(): string
     {
-        $sHash = $this->sVersion;
-        foreach($this->aClassNames as $sClassName)
-        {
-            $xGenerator = $this->di->g($sClassName);
-            $sHash .= $xGenerator->getHash();
-        }
-        return md5($sHash);
+        return md5(array_reduce($this->aClassNames, function($sHash, $sClassName) {
+            return $sHash . $this->di->g($sClassName)->getHash();
+        }, $this->sVersion));
     }
 
     /**

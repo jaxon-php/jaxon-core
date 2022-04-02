@@ -10,10 +10,6 @@ use Jaxon\Plugin\Code\CodeGenerator;
 use Jaxon\Plugin\Manager\PackageManager;
 use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Request\Handler\ParameterReader;
-use Jaxon\Request\Handler\UploadHandler;
-use Jaxon\Request\Upload\UploadManager;
-use Jaxon\Request\Validator;
-use Jaxon\Response\Manager\ResponseManager;
 use Jaxon\Response\Plugin\DataBag\DataBagPlugin;
 use Jaxon\Response\Plugin\JQuery\JQueryPlugin;
 use Jaxon\Ui\View\ViewManager;
@@ -48,15 +44,6 @@ trait PluginTrait
             return new CodeGenerator($sVersion, $c->g(Container::class),
                 $c->g(TemplateEngine::class), $c->g(AssetManager::class));
         });
-        // File upload manager
-        $this->set(UploadManager::class, function($c) {
-            return new UploadManager($c->g(ConfigManager::class), $c->g(Validator::class), $c->g(Translator::class));
-        });
-        // File upload plugin
-        $this->set(UploadHandler::class, function($c) {
-            return !$c->g(ConfigManager::class)->getOption('core.upload.enabled') ? null :
-                new UploadHandler($c->g(UploadManager::class), $c->g(ResponseManager::class), $c->g(Translator::class));
-        });
         // JQuery response plugin
         $this->set(JQueryPlugin::class, function($c) {
             $jQueryNs = $c->g(ConfigManager::class)->getOption('core.jquery.no_conflict', false) ? 'jQuery' : '$';
@@ -86,16 +73,6 @@ trait PluginTrait
     public function getCodeGenerator(): CodeGenerator
     {
         return $this->g(CodeGenerator::class);
-    }
-
-    /**
-     * Get the upload handler
-     *
-     * @return UploadHandler|null
-     */
-    public function getUploadHandler(): ?UploadHandler
-    {
-        return $this->g(UploadHandler::class);
     }
 
     /**
