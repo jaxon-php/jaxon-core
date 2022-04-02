@@ -35,7 +35,7 @@ class Misc extends CallableClass
     {
         $this->response->alert('This is the global response!');
 
-        $xResponse = new UploadResponse();
+        $xResponse = new UploadResponse('file.txt');
         $xResponse->debug('This is a different response!');
         return $xResponse;
     }
