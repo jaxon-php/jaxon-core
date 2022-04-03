@@ -144,10 +144,8 @@ class RegistrationTest extends TestCase
             ]);
         });
 
-        $this->assertFalse(jaxon()->getOption('core.response.headers'));
         $this->assertTrue(jaxon()->app()->canProcessRequest());
         $this->expectException(RequestException::class);
-        jaxon()->di()->getRequestHandler()->processRequest()
-        $this->assertNotNull();
+        jaxon()->app()->processRequest();
     }
 }
