@@ -74,7 +74,7 @@ class PaginationRenderer
     protected $nMaxPagesToShow = 10;
 
     /**
-     * The class contructor
+     * The class constructor
      *
      * @param ViewRenderer  $xRenderer
      */

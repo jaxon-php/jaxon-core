@@ -26,39 +26,42 @@
 namespace Jaxon;
 
 use Jaxon\App\App;
+use Jaxon\App\Bootstrap;
 use Jaxon\Config\ConfigManager;
 use Jaxon\Di\Container;
 use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\Code\CodeGenerator;
+use Jaxon\Plugin\Manager\PackageManager;
 use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Plugin\Package;
 use Jaxon\Plugin\ResponsePlugin;
-use Jaxon\Request\Factory\Factory;
+use Jaxon\Request\Factory;
 use Jaxon\Request\Factory\RequestFactory;
 use Jaxon\Request\Handler\CallbackManager;
 use Jaxon\Request\Handler\UploadHandler;
 use Jaxon\Request\Plugin\CallableClass\CallableRegistry;
+use Jaxon\Response\Manager\ResponseManager;
 use Jaxon\Response\Response;
-use Jaxon\Response\ResponseManager;
+use Jaxon\Response\ResponseInterface;
 use Jaxon\Session\SessionInterface;
 use Jaxon\Ui\View\ViewRenderer;
 use Jaxon\Utils\Http\UriException;
 use Jaxon\Utils\Template\TemplateEngine;
 use Jaxon\Utils\Translation\Translator;
 
-use Psr\Log\LoggerAwareInterface;
-use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
-use Psr\Log\NullLogger;
 
+use function gmdate;
+use function header;
 use function headers_sent;
 use function trim;
+use function error_reporting;
+use function ob_end_clean;
+use function ob_get_level;
 
-class Jaxon implements LoggerAwareInterface
+class Jaxon
 {
-    use LoggerAwareTrait;
-
     /**
      * Package version number
      *
@@ -88,6 +91,11 @@ class Jaxon implements LoggerAwareInterface
     private static $xContainer = null;
 
     /**
+     * @var Bootstrap
+     */
+    protected $xBootstrap;
+
+    /**
      * @var Translator
      */
     protected $xTranslator;
@@ -101,6 +109,11 @@ class Jaxon implements LoggerAwareInterface
      * @var PluginManager
      */
     protected $xPluginManager;
+
+    /**
+     * @var PackageManager
+     */
+    protected $xPackageManager;
 
     /**
      * @var CodeGenerator
@@ -128,9 +141,11 @@ class Jaxon implements LoggerAwareInterface
     private static function initInstance()
     {
         // Set the attributes from the container
+        self::$xInstance->xBootstrap = self::$xContainer->g(Bootstrap::class);
         self::$xInstance->xTranslator = self::$xContainer->g(Translator::class);
         self::$xInstance->xConfigManager = self::$xContainer->g(ConfigManager::class);
         self::$xInstance->xPluginManager = self::$xContainer->g(PluginManager::class);
+        self::$xInstance->xPackageManager = self::$xContainer->g(PackageManager::class);
         self::$xInstance->xCodeGenerator = self::$xContainer->g(CodeGenerator::class);
         self::$xInstance->xClassRegistry = self::$xContainer->g(CallableRegistry::class);
         self::$xInstance->xCallbackManager = self::$xContainer->g(CallbackManager::class);
@@ -150,6 +165,8 @@ class Jaxon implements LoggerAwareInterface
             self::$xContainer = new Container(self::$xInstance);
             self::initInstance();
         }
+        // Call the on boot callbacks on each call to the jaxon() function.
+        self::$xInstance->xBootstrap->onBoot();
         return self::$xInstance;
     }
 
@@ -157,10 +174,7 @@ class Jaxon implements LoggerAwareInterface
      * The constructor
      */
     private function __construct()
-    {
-        // Set the default logger
-        $this->setLogger(new NullLogger());
-    }
+    {}
 
     /**
      * The current Jaxon version
@@ -189,7 +203,7 @@ class Jaxon implements LoggerAwareInterface
      */
     public function logger(): LoggerInterface
     {
-        return $this->logger;
+        return $this->di()->logger();
     }
 
     /**
@@ -263,11 +277,11 @@ class Jaxon implements LoggerAwareInterface
     }
 
     /**
-     * Get the Global Response object
+     * Get the Response object
      *
-     * @return Response
+     * @return ResponseInterface
      */
-    public function getResponse(): Response
+    public function getResponse(): ResponseInterface
     {
         if(($xResponse = $this->xResponseManager->getResponse()))
         {
@@ -317,7 +331,7 @@ class Jaxon implements LoggerAwareInterface
      */
     public function registerPackage(string $sClassName, array $xPkgOptions = [])
     {
-        $this->xPluginManager->registerPackage($sClassName, $xPkgOptions);
+        $this->xPackageManager->registerPackage($sClassName, $xPkgOptions);
     }
 
     /**
@@ -397,23 +411,6 @@ class Jaxon implements LoggerAwareInterface
     }
 
     /**
-     * Print the jaxon Javascript header and wrapper code into your page
-     *
-     * The javascript code returned by this function is dependent on the plugins
-     * that are included and the functions and classes that are registered.
-     *
-     * @param bool $bIncludeJs    Also print the JS files
-     * @param bool $bIncludeCss    Also print the CSS files
-     *
-     * @return void
-     * @throws UriException
-     */
-    public function printScript(bool $bIncludeJs = false, bool $bIncludeCss = false)
-    {
-        print $this->getScript($bIncludeJs, $bIncludeCss);
-    }
-
-    /**
      * Return the javascript header code and file includes
      *
      * @return string
@@ -456,7 +453,6 @@ class Jaxon implements LoggerAwareInterface
      * @return void
      *
      * @throws RequestException
-     * @throws SetupException
      * @see <Jaxon\Jaxon->canProcessRequest>
      */
     public function processRequest()
@@ -472,13 +468,45 @@ class Jaxon implements LoggerAwareInterface
 
         $this->di()->getRequestHandler()->processRequest();
 
-        if(($this->xConfigManager->getOption('core.response.send')))
+        // Clean the processing buffer
+        if(($this->xConfigManager->getOption('core.process.clean')))
         {
-            $this->xResponseManager->sendOutput();
-            if(($this->xConfigManager->getOption('core.process.exit')))
+            $er = error_reporting(0);
+            while(ob_get_level() > 0)
             {
-                exit();
+                ob_end_clean();
             }
+            error_reporting($er);
+        }
+        if($this->xConfigManager->getOption('core.response.send'))
+        {
+            $this->sendResponse();
+        }
+    }
+
+    /**
+     * Prints the response to the output stream, thus sending the response to the browser
+     *
+     * @return void
+     */
+    public function sendResponse()
+    {
+        if(empty($sContent = $this->xResponseManager->getOutput()))
+        {
+            return;
+        }
+        if($this->di()->getRequest()->getMethod() === 'GET')
+        {
+            header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
+            header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
+            header("Cache-Control: no-cache, must-revalidate");
+            header("Pragma: no-cache");
+        }
+        header('content-type: ' . $this->xResponseManager->getContentType());
+        print $sContent;
+        if($this->xConfigManager->getOption('core.process.exit'))
+        {
+            exit();
         }
     }
 
@@ -503,7 +531,7 @@ class Jaxon implements LoggerAwareInterface
      */
     public function package(string $sClassName): ?Package
     {
-        return $this->xPluginManager->getPackage($sClassName);
+        return $this->xPackageManager->getPackage($sClassName);
     }
 
     /**

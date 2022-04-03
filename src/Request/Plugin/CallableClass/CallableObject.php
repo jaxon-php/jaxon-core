@@ -25,7 +25,7 @@
 namespace Jaxon\Request\Plugin\CallableClass;
 
 use Jaxon\Di\Container;
-use Jaxon\Response\Response;
+use Jaxon\Response\ResponseInterface;
 
 use ReflectionClass;
 use ReflectionException;
@@ -328,10 +328,10 @@ class CallableObject
      * @param string $sMethod    The name of the method to call
      * @param array $aArgs    The arguments to pass to the method
      *
-     * @return null|Response
+     * @return null|ResponseInterface
      * @throws ReflectionException
      */
-    public function call(string $sMethod, array $aArgs): ?Response
+    public function call(string $sMethod, array $aArgs): ?ResponseInterface
     {
         // Methods to call before processing the request
         $this->callHookMethods($this->aBeforeMethods, $sMethod);

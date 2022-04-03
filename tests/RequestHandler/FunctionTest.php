@@ -5,7 +5,6 @@ namespace Jaxon\Tests\RequestHandler;
 use Jaxon\Jaxon;
 use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;
-use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7Server\ServerRequestCreator;
 use Psr\Http\Message\ServerRequestInterface;
 use PHPUnit\Framework\TestCase;
@@ -36,19 +35,14 @@ class FunctionTest extends TestCase
         parent::tearDown();
     }
 
+    /**
+     * @throws RequestException
+     */
     public function testGetRequestToJaxonFunction()
     {
         // The server request
-        jaxon()->di()->set(ServerRequestInterface::class, function() {
-            $xRequestFactory = new Psr17Factory();
-            $xRequestCreator = new ServerRequestCreator(
-                $xRequestFactory, // ServerRequestFactory
-                $xRequestFactory, // UriFactory
-                $xRequestFactory, // UploadedFileFactory
-                $xRequestFactory  // StreamFactory
-            );
-            // Add GET parameters to the request
-            return $xRequestCreator->fromGlobals()->withQueryParams([
+        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
+            return $c->g(ServerRequestCreator::class)->fromGlobals()->withQueryParams([
                 'jxnfun' => 'my_first_function',
                 'jxnargs' => [],
             ]);
@@ -57,32 +51,26 @@ class FunctionTest extends TestCase
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
         $this->assertTrue(jaxon()->di()->getCallableFunctionPlugin()->canProcessRequest(jaxon()->di()->getRequest()));
         $this->assertFalse(jaxon()->di()->getCallableClassPlugin()->canProcessRequest(jaxon()->di()->getRequest()));
-        $this->assertNull(jaxon()->di()->getCallableClassPlugin()->getTarget());
+        $this->assertNotNull(jaxon()->di()->getCallableFunctionPlugin()->processRequest());
     }
 
+    /**
+     * @throws RequestException
+     */
     public function testPostRequestToJaxonFunction()
     {
         // The server request
-        jaxon()->di()->set(ServerRequestInterface::class, function() {
-            $xRequestFactory = new Psr17Factory();
-            $xRequestCreator = new ServerRequestCreator(
-                $xRequestFactory, // ServerRequestFactory
-                $xRequestFactory, // UriFactory
-                $xRequestFactory, // UploadedFileFactory
-                $xRequestFactory  // StreamFactory
-            );
-            // Add GET parameters to the request
-            return $xRequestCreator->fromGlobals()->withParsedBody([
+        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
+            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
                 'jxnfun' => 'my_first_function',
                 'jxnargs' => [],
-            ]);
+            ])->withMethod('POST');
         });
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
         $this->assertTrue(jaxon()->di()->getCallableFunctionPlugin()->canProcessRequest(jaxon()->di()->getRequest()));
         $this->assertFalse(jaxon()->di()->getCallableClassPlugin()->canProcessRequest(jaxon()->di()->getRequest()));
-        $xTarget = jaxon()->di()->getCallableFunctionPlugin()->getTarget();
-        $this->assertNotNull($xTarget);
+        $this->assertNotNull(jaxon()->di()->getCallableFunctionPlugin()->processRequest());
     }
 
     /**
@@ -91,23 +79,24 @@ class FunctionTest extends TestCase
     public function testRequestToJaxonFunction()
     {
         // The server request
-        jaxon()->di()->set(ServerRequestInterface::class, function() {
-            $xRequestFactory = new Psr17Factory();
-            $xRequestCreator = new ServerRequestCreator(
-                $xRequestFactory, // ServerRequestFactory
-                $xRequestFactory, // UriFactory
-                $xRequestFactory, // UploadedFileFactory
-                $xRequestFactory  // StreamFactory
-            );
-            // Add GET parameters to the request
-            return $xRequestCreator->fromGlobals()->withParsedBody([
+        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
+            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
                 'jxnfun' => 'my_first_function',
                 'jxnargs' => [],
-            ]);
+            ])->withMethod('POST');
         });
 
+        $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
         $this->assertTrue(jaxon()->di()->getCallableFunctionPlugin()->canProcessRequest(jaxon()->di()->getRequest()));
-        $this->assertTrue(jaxon()->di()->getCallableFunctionPlugin()->processRequest());
+        $this->assertNotNull(jaxon()->di()->getCallableFunctionPlugin()->processRequest());
+
+        $xTarget = jaxon()->di()->getCallableFunctionPlugin()->getTarget();
+        $this->assertNotNull($xTarget);
+        $this->assertFalse($xTarget->isClass());
+        $this->assertTrue($xTarget->isFunction());
+        $this->assertEquals('', $xTarget->getClassName());
+        $this->assertEquals('', $xTarget->getMethodName());
+        $this->assertEquals('my_first_function', $xTarget->getFunctionName());
     }
 
     /**
@@ -116,23 +105,16 @@ class FunctionTest extends TestCase
     public function testRequestToJaxonClass()
     {
         // The server request
-        jaxon()->di()->set(ServerRequestInterface::class, function() {
-            $xRequestFactory = new Psr17Factory();
-            $xRequestCreator = new ServerRequestCreator(
-                $xRequestFactory, // ServerRequestFactory
-                $xRequestFactory, // UriFactory
-                $xRequestFactory, // UploadedFileFactory
-                $xRequestFactory  // StreamFactory
-            );
-            // Add GET parameters to the request
-            return $xRequestCreator->fromGlobals()->withParsedBody([
+        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
+            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
                 'jxnfun' => 'my_third_function',
                 'jxnargs' => [],
-            ]);
+            ])->withMethod('POST');
         });
 
+        $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
         $this->assertTrue(jaxon()->di()->getCallableFunctionPlugin()->canProcessRequest(jaxon()->di()->getRequest()));
-        $this->assertTrue(jaxon()->di()->getCallableFunctionPlugin()->processRequest());
+        $this->assertNotNull(jaxon()->di()->getCallableFunctionPlugin()->processRequest());
     }
 
     /**
@@ -141,21 +123,14 @@ class FunctionTest extends TestCase
     public function testRequestToJaxonFunctionIncorrectName()
     {
         // The server request
-        jaxon()->di()->set(ServerRequestInterface::class, function() {
-            $xRequestFactory = new Psr17Factory();
-            $xRequestCreator = new ServerRequestCreator(
-                $xRequestFactory, // ServerRequestFactory
-                $xRequestFactory, // UriFactory
-                $xRequestFactory, // UploadedFileFactory
-                $xRequestFactory  // StreamFactory
-            );
-            // Add GET parameters to the request
-            return $xRequestCreator->fromGlobals()->withParsedBody([
+        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
+            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
                 'jxnfun' => 'my function', // A space in the function name
                 'jxnargs' => [],
-            ]);
+            ])->withMethod('POST');
         });
 
+        $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
         $this->assertTrue(jaxon()->di()->getCallableFunctionPlugin()->canProcessRequest(jaxon()->di()->getRequest()));
         $this->expectException(RequestException::class);
         jaxon()->di()->getCallableFunctionPlugin()->processRequest();

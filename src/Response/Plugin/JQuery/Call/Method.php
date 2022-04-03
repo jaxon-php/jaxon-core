@@ -15,8 +15,6 @@ class Method extends JsCall
     public function __construct(string $sMethod, array $aArguments)
     {
         parent::__construct($sMethod);
-        // Always use single quotes
-        $this->useSingleQuotes();
         // Add the arguments to the parameter list
         $this->addParameters($aArguments);
     }

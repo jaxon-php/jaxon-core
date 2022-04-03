@@ -5,13 +5,13 @@ namespace Jaxon\Di\Traits;
 use Jaxon\Config\ConfigManager;
 use Jaxon\Di\Container;
 use Jaxon\Request\Handler\ParameterReader;
-use Jaxon\Request\Plugin\CallableClass\CallableRegistry;
-use Jaxon\Request\Plugin\CallableClass\CallableRepository;
 use Jaxon\Request\Plugin\CallableClass\CallableClassPlugin;
 use Jaxon\Request\Plugin\CallableClass\CallableDirPlugin;
+use Jaxon\Request\Plugin\CallableClass\CallableRegistry;
+use Jaxon\Request\Plugin\CallableClass\CallableRepository;
 use Jaxon\Request\Plugin\CallableFunction\CallableFunctionPlugin;
 use Jaxon\Request\Validator;
-use Jaxon\Response\ResponseManager;
+use Jaxon\Response\Manager\ResponseManager;
 use Jaxon\Utils\Template\TemplateEngine;
 use Jaxon\Utils\Translation\Translator;
 
@@ -30,7 +30,7 @@ trait CallableTrait
         });
         // Callable objects repository
         $this->set(CallableRepository::class, function($c) {
-            return new CallableRepository($c->g(Container::class));
+            return new CallableRepository($c->g(Container::class), $c->g(Translator::class));
         });
         // Callable objects registry
         $this->set(CallableRegistry::class, function($c) {
@@ -40,8 +40,8 @@ trait CallableTrait
         // Callable class plugin
         $this->set(CallableClassPlugin::class, function($c) {
             $sPrefix = $c->g(ConfigManager::class)->getOption('core.prefix.class');
-            return new CallableClassPlugin($sPrefix, $c->g(ParameterReader::class),
-                $c->g(ResponseManager::class), $c->g(CallableRegistry::class), $c->g(CallableRepository::class),
+            return new CallableClassPlugin($sPrefix, $c->g(Container::class), $c->g(ParameterReader::class),
+                $c->g(CallableRegistry::class), $c->g(CallableRepository::class),
                 $c->g(TemplateEngine::class), $c->g(Translator::class), $c->g(Validator::class));
         });
         // Callable dir plugin
@@ -52,8 +52,7 @@ trait CallableTrait
         $this->set(CallableFunctionPlugin::class, function($c) {
             $sPrefix = $c->g(ConfigManager::class)->getOption('core.prefix.function');
             return new CallableFunctionPlugin($sPrefix, $c->g(ParameterReader::class),
-                $c->g(ResponseManager::class), $c->g(TemplateEngine::class),
-                $c->g(Translator::class), $c->g(Validator::class));
+                $c->g(TemplateEngine::class), $c->g(Translator::class), $c->g(Validator::class));
         });
     }
 

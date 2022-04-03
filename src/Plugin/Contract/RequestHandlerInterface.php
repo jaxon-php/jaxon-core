@@ -3,6 +3,7 @@
 namespace Jaxon\Plugin\Contract;
 
 use Jaxon\Request\Target;
+use Jaxon\Response\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 interface RequestHandlerInterface
@@ -13,6 +14,13 @@ interface RequestHandlerInterface
      * @return Target|null
      */
     public function getTarget(): ?Target;
+
+    /**
+     * @param ServerRequestInterface $xRequest
+     *
+     * @return void
+     */
+    public function setTarget(ServerRequestInterface $xRequest);
 
     /**
      * Check if this plugin can process the current request
@@ -33,7 +41,7 @@ interface RequestHandlerInterface
      * This will only occur when <Jaxon> has determined that the current request
      * is a valid (registered) jaxon enabled function via <jaxon->canProcessRequest>.
      *
-     * @return bool
+     * @return ResponseInterface|null
      */
-    public function processRequest(): bool;
+    public function processRequest(): ?ResponseInterface;
 }

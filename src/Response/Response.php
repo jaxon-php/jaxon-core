@@ -6,15 +6,6 @@
  * This class collects commands to be sent back to the browser in response to a jaxon request.
  * Commands are encoded and packaged in json format.
  *
- * Common commands include:
- * - <Response->assign>: Assign a value to an element's attribute.
- * - <Response->append>: Append a value on to an element's attribute.
- * - <Response->script>: Execute a portion of javascript code.
- * - <Response->call>: Execute an existing javascript function.
- * - <Response->alert>: Display an alert dialog to the user.
- *
- * Elements are identified by the value of the HTML id attribute.
- *
  * @package jaxon-core
  * @author Jared White
  * @author J. Max Wilson
@@ -30,7 +21,6 @@
 
 namespace Jaxon\Response;
 
-use Jaxon\Exception\RequestException;
 use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Plugin\ResponsePlugin;
 use Jaxon\Request\Handler\ParameterReader;
@@ -38,20 +28,18 @@ use Jaxon\Response\Plugin\DataBag\DataBagContext;
 use Jaxon\Response\Plugin\JQuery\DomSelector;
 use Jaxon\Utils\Translation\Translator;
 
-use function array_keys;
+use function array_filter;
 use function array_map;
-use function array_merge;
-use function count;
 use function is_array;
 use function is_integer;
 use function json_encode;
 use function trim;
 
-class Response extends AbstractResponse
+class Response implements ResponseInterface
 {
+    use Traits\CommandTrait;
     use Traits\DomTrait;
     use Traits\JsTrait;
-    use Traits\DomTreeTrait;
 
     /**
      * @var Translator
@@ -71,21 +59,6 @@ class Response extends AbstractResponse
     protected $xParameterReader;
 
     /**
-     * The commands that will be sent to the browser in the response
-     *
-     * @var array
-     */
-    protected $aCommands = [];
-
-    /**
-     * A string, array or integer value to be returned to the caller when using 'synchronous' mode requests.
-     * See <jaxon->setMode> for details.
-     *
-     * @var mixed
-     */
-    protected $xReturnValue;
-
-    /**
      * The constructor
      *
      * @param Translator $xTranslator
@@ -100,23 +73,19 @@ class Response extends AbstractResponse
     }
 
     /**
-     * Create a new Jaxon response object
-     *
-     * @return Response
-     */
-    public function newResponse(): Response
-    {
-        return new Response($this->xTranslator, $this->xPluginManager, $this->xParameterReader);
-    }
-
-    /**
-     * Get the content type, which is always set to 'application/json'
-     *
-     * @return string
+     * @inheritDoc
      */
     public function getContentType(): string
     {
         return 'application/json';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getOutput(): string
+    {
+        return json_encode(['jxnobj' => $this->aCommands]);
     }
 
     /**
@@ -163,6 +132,8 @@ class Response extends AbstractResponse
     }
 
     /**
+     * Get the databag with a given name
+     *
      * @param string $sName
      *
      * @return DataBagContext
@@ -185,7 +156,6 @@ class Response extends AbstractResponse
         $aAttributes = array_map(function($xAttribute) {
             return is_integer($xAttribute) ? $xAttribute : trim((string)$xAttribute, " \t");
         }, $aAttributes);
-
         $aAttributes['data'] = $mData;
         $this->aCommands[] = $aAttributes;
 
@@ -207,31 +177,14 @@ class Response extends AbstractResponse
         $mData = is_array($mData) ? array_map(function($sData) {
             return trim((string)$sData, " \t\n");
         }, $mData) : trim((string)$mData, " \t\n");
-
         if($bRemoveEmpty)
         {
-            foreach(array_keys($aAttributes) as $sAttr)
-            {
-                if($aAttributes[$sAttr] === '')
-                {
-                    unset($aAttributes[$sAttr]);
-                }
-            }
+            $aAttributes = array_filter($aAttributes, function($xValue) {
+                return $xValue === '';
+            });
         }
-
         $aAttributes['cmd'] = $sName;
         return $this->addCommand($aAttributes, $mData);
-    }
-
-    /**
-     * Clear all the commands already added to the response
-     *
-     * @return Response
-     */
-    public function clearCommands(): Response
-    {
-        $this->aCommands = [];
-        return $this;
     }
 
     /**
@@ -247,92 +200,5 @@ class Response extends AbstractResponse
     {
         $aAttributes['plg'] = $xPlugin->getName();
         return $this->addCommand($aAttributes, $mData);
-    }
-
-    /**
-     * Merge the response commands from the specified <Response> object with
-     * the response commands in this <Response> object
-     *
-     * @param Response|array $mCommands    The <Response> object
-     * @param bool $bBefore    Add the new commands to the beginning of the list
-     *
-     * @return void
-     * @throws RequestException
-     */
-    public function appendResponse($mCommands, bool $bBefore = false)
-    {
-        if($mCommands instanceof Response)
-        {
-            $this->xReturnValue = $mCommands->xReturnValue;
-            $aCommands = $mCommands->aCommands;
-        }
-        elseif(is_array($mCommands))
-        {
-            $aCommands = $mCommands;
-        }
-        else
-        {
-            throw new RequestException($this->xTranslator->trans('errors.response.data.invalid'));
-        }
-
-        $this->aCommands = ($bBefore) ?
-            array_merge($aCommands, $this->aCommands) :
-            array_merge($this->aCommands, $aCommands);
-    }
-
-    /**
-     * Get the commands in the response
-     *
-     * @return array
-     */
-    public function getCommands(): array
-    {
-        return $this->aCommands;
-    }
-
-    /**
-     * Get the number of commands in the response
-     *
-     * @return int
-     */
-    public function getCommandCount(): int
-    {
-        return count($this->aCommands);
-    }
-
-    /**
-     * Stores a value that will be passed back as part of the response
-     *
-     * When making synchronous requests, the calling javascript can obtain this value
-     * immediately as the return value of the <jaxon.call> javascript function
-     *
-     * @param mixed $value    Any value
-     *
-     * @return Response
-     */
-    public function setReturnValue($value): Response
-    {
-        $this->xReturnValue = $value;
-        return $this;
-    }
-
-    /**
-     * Return the output, generated from the commands added to the response, that will be sent to the browser
-     *
-     * @return string
-     */
-    public function getOutput(): string
-    {
-        $aResponse = ['jxnobj' => []];
-        if(($this->xReturnValue))
-        {
-            $aResponse['jxnrv'] = $this->xReturnValue;
-        }
-        foreach($this->aCommands as $xCommand)
-        {
-            $aResponse['jxnobj'][] = $xCommand;
-        }
-
-        return json_encode($aResponse);
     }
 }

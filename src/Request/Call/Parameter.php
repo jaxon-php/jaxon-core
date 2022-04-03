@@ -44,6 +44,8 @@ class Parameter implements ParameterInterface
     // Specifies that the parameter will be a non-quoted value
     // (evaluated by the browsers javascript engine at run time).
     const JS_VALUE = 'UnquotedValue';
+    // Specifies that the parameter must be json encoded
+    const JSON_VALUE = 'JsonValue';
     // Specifies that the parameter will be an integer used to generate pagination links.
     const PAGE_NUMBER = 'PageNumber';
 
@@ -132,7 +134,7 @@ class Parameter implements ParameterInterface
         }
         // if(is_array($xValue) || is_object($xValue))
         {
-            return new Parameter(self::JS_VALUE, $xValue);
+            return new Parameter(self::JSON_VALUE, $xValue);
         }
     }
 
@@ -238,13 +240,19 @@ class Parameter implements ParameterInterface
      */
     protected function getUnquotedValueScript(): string
     {
-        if(is_array($this->xValue) || is_object($this->xValue))
-        {
-            // Unable to use double quotes here because they cannot be handled on client side.
-            // So we are using simple quotes even if the Json standard recommends double quotes.
-            return str_replace('"', "'", json_encode($this->xValue, JSON_HEX_APOS | JSON_HEX_QUOT));
-        }
         return (string)$this->xValue;
+    }
+
+    /**
+     * Get the script for a non-quoted value (evaluated by the browsers javascript engine at run time).
+     *
+     * @return string
+     */
+    protected function getJsonValueScript(): string
+    {
+        // Unable to use double quotes here because they cannot be handled on client side.
+        // So we are using simple quotes even if the Json standard recommends double quotes.
+        return str_replace('"', "'", json_encode($this->xValue, JSON_HEX_APOS | JSON_HEX_QUOT));
     }
 
     /**
@@ -278,18 +286,6 @@ class Parameter implements ParameterInterface
      * @return string
      */
     public function __toString()
-    {
-        return $this->getScript();
-    }
-
-    /**
-     * Generate the jQuery call, when converting the response into json.
-     *
-     * This is a method of the JsonSerializable interface.
-     *
-     * @return string
-     */
-    public function jsonSerialize(): string
     {
         return $this->getScript();
     }

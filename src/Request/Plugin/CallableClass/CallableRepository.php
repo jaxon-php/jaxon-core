@@ -16,17 +16,11 @@ namespace Jaxon\Request\Plugin\CallableClass;
 
 use Jaxon\Di\Container;
 use Jaxon\Exception\SetupException;
-
-use Composer\Autoload\ClassLoader;
-use RecursiveDirectoryIterator;
-use RecursiveIteratorIterator;
+use Jaxon\Utils\Translation\Translator;
 
 use function array_merge;
-use function str_replace;
 use function strlen;
 use function strncmp;
-use function substr;
-use function trim;
 
 class CallableRepository
 {
@@ -38,9 +32,32 @@ class CallableRepository
     protected $di;
 
     /**
+     * @var Translator
+     */
+    protected $xTranslator;
+
+    /**
+     * The namespace options
+     *
+     * These are the options of the registered namespaces.
+     *
+     * @var array
+     */
+    protected $aNamespaceOptions = [];
+
+    /**
+     * The directory options
+     *
+     * These are the options of the registered directories.
+     *
+     * @var array
+     */
+    protected $aDirectoryOptions = [];
+
+    /**
      * The classes
      *
-     * These are all the registered classes.
+     * These are all the classes, both registered and found in registered directories.
      *
      * @var array
      */
@@ -56,27 +73,76 @@ class CallableRepository
     protected $aNamespaces = [];
 
     /**
-     * The Composer autoloader
+     * The string that will be used to compute the js file hash
      *
-     * @var ClassLoader
+     * @var string
      */
-    private $xAutoloader = null;
+    protected $sHash = '';
 
     /**
      * The constructor
      *
-     * @param Container  $di
+     * @param Container $di
+     * @param Translator $xTranslator
      */
-    public function __construct(Container $di)
+    public function __construct(Container $di, Translator $xTranslator)
     {
         $this->di = $di;
+        $this->xTranslator = $xTranslator;
+    }
 
-        // Set the composer autoloader
-        if(file_exists(($sAutoloadFile = __DIR__ . '/../../../../../../autoload.php')) ||
-            file_exists(($sAutoloadFile = __DIR__ . '/../../../../vendor/autoload.php')))
-        {
-            $this->xAutoloader = require($sAutoloadFile);
-        }
+    /**
+     * @return array
+     */
+    public function getDirectoryOptions(): array
+    {
+        return $this->aDirectoryOptions;
+    }
+
+    /**
+     * @param string $sDirectory
+     * @param array $aOptions
+     */
+    public function setDirectoryOptions(string $sDirectory, array $aOptions): void
+    {
+        $this->aDirectoryOptions[$sDirectory] = $aOptions;
+    }
+
+    /**
+     * @return array
+     */
+    public function getNamespaceOptions(): array
+    {
+        return $this->aNamespaceOptions;
+    }
+
+    /**
+     * @param string $sNamespace
+     * @param array $aOptions
+     */
+    public function setNamespaceOptions(string $sNamespace, array $aOptions): void
+    {
+        $this->aNamespaceOptions[$sNamespace] = $aOptions;
+    }
+
+    /**
+     * Get all registered namespaces
+     *
+     * @return array
+     */
+    public function getNamespaces(): array
+    {
+        return $this->aNamespaces;
+    }
+
+    /**
+     * Get the hash
+     *
+     * @return string
+     */
+    public function getHash(): string
+    {
+        return $this->sHash;
     }
 
     /**
@@ -110,7 +176,6 @@ class CallableRepository
                 $aClassOptions['functions'] = array_merge($aClassOptions['functions'], $xValue);
             }
         }
-
         // This value will be used to compute hash
         if(!isset($aClassOptions['timestamp']))
         {
@@ -118,36 +183,6 @@ class CallableRepository
         }
 
         return $aClassOptions;
-    }
-
-    /**
-     * Get all registered classes
-     *
-     * @return array
-     */
-    public function getClasses(): array
-    {
-        return $this->aClasses;
-    }
-
-    /**
-     * Get all registered namespaces
-     *
-     * @return array
-     */
-    public function getNamespaces(): array
-    {
-        return $this->aNamespaces;
-    }
-
-    /**
-     * Get the names of all registered classess
-     *
-     * @return array
-     */
-    public function getClassNames(): array
-    {
-        return array_keys($this->aClasses);
     }
 
     /**
@@ -161,152 +196,91 @@ class CallableRepository
     public function addClass(string $sClassName, array $aClassOptions, array $aDirectoryOptions = [])
     {
         $this->aClasses[$sClassName] = $this->makeClassOptions($sClassName, $aClassOptions, $aDirectoryOptions);
+        $this->sHash .= $sClassName . $this->aClasses[$sClassName]['timestamp'];
     }
 
     /**
      *
      * @param string $sNamespace    The namespace
-     * @param array|string $aOptions    The associated options
+     * @param array $aOptions    The associated options
      *
      * @return void
      */
-    public function addNamespace(string $sNamespace, $aOptions)
+    public function addNamespace(string $sNamespace, array $aOptions)
     {
-        $this->aNamespaces[$sNamespace] = $aOptions;
+        $this->aNamespaces[] = $sNamespace;
+        $this->sHash .= $sNamespace . $aOptions['separator'];
+    }
+
+    /**
+     * Find options for a class which is registered with namespace
+     *
+     * @param string $sClassName    The class name
+     *
+     * @return void
+     */
+    private function getNamespaceClassOptions(string $sClassName)
+    {
+        // Find the corresponding namespace
+        foreach($this->aNamespaceOptions as $sNamespace => $aOptions)
+        {
+            // Check if the namespace matches the class.
+            if(strncmp($sClassName, $sNamespace . '\\', strlen($sNamespace) + 1) === 0)
+            {
+                // Save the class options
+                $this->aClasses[$sClassName] = $this->makeClassOptions($sClassName,
+                    ['namespace' => $sNamespace], $aOptions);
+                return;
+            }
+        }
     }
 
     /**
      * Find the options associated with a registered class name
      *
-     * @param string $sClassName    The class name
+     * @param string $sClassName The class name
      *
-     * @return array|null
-     */
-    public function getClassOptions(string $sClassName): ?array
-    {
-        return $this->aClasses[$sClassName] ?? null;
-    }
-
-    /**
-     * Read classes from directories registered without namespaces
-     *
-     * @param array $aDirectories    The directories
-     *
-     * @return void
-     */
-    public function parseDirectories(array &$aDirectories)
-    {
-        // Browse directories without namespaces and read all the files.
-        $aClassMap = [];
-        foreach($aDirectories as $sDirectory => &$aOptions)
-        {
-            // This is to be done only once.
-            if($aOptions['parsed'])
-            {
-                continue;
-            }
-            $aOptions['parsed'] = true;
-
-            $itFile = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($sDirectory));
-            // Iterate on dir content
-            foreach($itFile as $xFile)
-            {
-                // skip everything except PHP files
-                if(!$xFile->isFile() || $xFile->getExtension() != 'php')
-                {
-                    continue;
-                }
-
-                $sClassName = $xFile->getBasename('.php');
-                $aClassOptions = ['timestamp' => $xFile->getMTime()];
-                // No more classmap autoloading. The file will be included when needed.
-                if(($aOptions['autoload']))
-                {
-                    $aClassMap[$sClassName] = $xFile->getPathname();
-                }
-                $this->addClass($sClassName, $aClassOptions, $aOptions);
-            }
-        }
-        // Set classmap autoloading
-        if(($aClassMap) && $this->xAutoloader !== null)
-        {
-            $this->xAutoloader->addClassMap($aClassMap);
-        }
-    }
-
-    /**
-     * Read classes from directories registered with namespaces
-     *
-     * @param array $aNamespaces    The namespaces
-     *
-     * @return void
-     */
-    public function parseNamespaces(array &$aNamespaces)
-    {
-        // Browse directories with namespaces and read all the files.
-        $sDS = DIRECTORY_SEPARATOR;
-        foreach($aNamespaces as $sNamespace => &$aOptions)
-        {
-            // This is to be done only once.
-            if($aOptions['parsed'])
-            {
-                continue;
-            }
-            $aOptions['parsed'] = true;
-
-            $this->addNamespace($sNamespace, ['separator' => $aOptions['separator']]);
-
-            // Iterate on dir content
-            $sDirectory = $aOptions['directory'];
-            $itFile = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($sDirectory));
-            foreach($itFile as $xFile)
-            {
-                // skip everything except PHP files
-                if(!$xFile->isFile() || $xFile->getExtension() != 'php')
-                {
-                    continue;
-                }
-
-                // Find the class path (the same as the class namespace)
-                $sClassPath = $sNamespace;
-                $sRelativePath = substr($xFile->getPath(), strlen($sDirectory));
-                $sRelativePath = trim(str_replace($sDS, '\\', $sRelativePath), '\\');
-                if($sRelativePath !== '')
-                {
-                    $sClassPath .= '\\' . $sRelativePath;
-                }
-
-                $this->addNamespace($sClassPath, ['separator' => $aOptions['separator']]);
-
-                $sClassName = $sClassPath . '\\' . $xFile->getBasename('.php');
-                $aClassOptions = ['namespace' => $sNamespace, 'timestamp' => $xFile->getMTime()];
-                $this->addClass($sClassName, $aClassOptions, $aOptions);
-            }
-        }
-    }
-
-    /**
-     * Register a callable class
-     *
-     * @param string $sClassName The class name of the callable object
-     * @param array $aOptions The callable object options
-     *
-     * @return void
+     * @return array
      * @throws SetupException
      */
-    public function registerCallableClass(string $sClassName, array $aOptions)
+    public function getClassOptions(string $sClassName): array
     {
-        // Make sure we create each callable object only once.
-        if($this->di->h($sClassName))
+        // Find options for a class registered with namespace.
+        if(!isset($this->aClasses[$sClassName]))
         {
-            return;
+            $this->getNamespaceClassOptions($sClassName);
+            if(!isset($this->aClasses[$sClassName]))
+            {
+                // Without a namespace, we need to parse all classes to be able to find one.
+                $this->di->getClassRegistry()->parseDirectories();
+            }
         }
-        // Make sure the registered class exists
-        if(isset($aOptions['include']))
+        // Find options for a class registered without namespace.
+        if(isset($this->aClasses[$sClassName]))
         {
-            require_once($aOptions['include']);
+            return $this->aClasses[$sClassName];
         }
-        // Register the callable object
-        $this->di->registerCallableClass($sClassName, $aOptions);
+        $sMessage = $this->xTranslator->trans('errors.class.invalid', ['name' => $sClassName]);
+        throw new SetupException($sMessage);
+    }
+
+    /**
+     * Get callable objects for known classes
+     *
+     * @return array
+     * @throws SetupException
+     */
+    public function getCallableObjects(): array
+    {
+        $aCallableObjects = [];
+        foreach($this->aClasses as $sClassName => $aOptions)
+        {
+            if(!$this->di->h($sClassName))
+            {
+                $this->di->registerCallableClass($sClassName, $aOptions);
+            }
+            $aCallableObjects[$sClassName] = $this->di->getCallableObject($sClassName);
+        }
+        return $aCallableObjects;
     }
 }

@@ -10,7 +10,7 @@
 
 namespace Jaxon\Response\Traits;
 
-use Jaxon\Response\AbstractResponse;
+use Jaxon\Response\ResponseInterface;
 use Jaxon\Response\Response;
 use Jaxon\Exception\RequestException;
 
@@ -43,17 +43,6 @@ trait JsTrait
     abstract protected function _addCommand(string $sName, array $aAttributes, $mData, bool $bRemoveEmpty = false): Response;
 
     /**
-     * Merge the response commands from the specified <Response> object with
-     * the response commands in this <Response> object
-     *
-     * @param Response|array $mCommands    The <Response> object
-     * @param bool $bBefore    Add the new commands to the beginning of the list
-     *
-     * @return void
-     */
-    abstract public function appendResponse($mCommands, bool $bBefore = false);
-
-    /**
      * Response command that prompts user with [ok] [cancel] style message box
      *
      * If the user clicks cancel, the specified number of response commands
@@ -68,31 +57,6 @@ trait JsTrait
     {
         $aAttributes = ['count' => $nCommandCount];
         return $this->_addCommand('cc', $aAttributes, $sMessage);
-    }
-
-    /**
-     * Response command that prompts user with [ok] [cancel] style message box
-     *
-     * If the user clicks cancel, the specified number of response commands
-     * following this one, will be skipped.
-     *
-     * @param string $sMessage The message to display to the user
-     * @param callable $xCallable The function
-     *
-     * @return Response
-     * @throws RequestException
-     */
-    public function confirm(string $sMessage, callable $xCallable): Response
-    {
-        $xResponse = $this->newResponse();
-        call_user_func($xCallable, $xResponse);
-        $nCommandCount = $xResponse->getCommandCount();
-        if($nCommandCount > 0)
-        {
-            $this->confirmCommands($nCommandCount, $sMessage);
-            $this->appendResponse($xResponse);
-        }
-        return $this;
     }
 
     /**
@@ -112,9 +76,9 @@ trait JsTrait
      *
      * @param string $sMessage    The message to be displayed
      *
-     * @return AbstractResponse
+     * @return ResponseInterface
      */
-    public function debug(string $sMessage): AbstractResponse
+    public function debug(string $sMessage): ResponseInterface
     {
         return $this->_addCommand('dbg', [], $sMessage);
     }

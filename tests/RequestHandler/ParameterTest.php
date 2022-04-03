@@ -5,7 +5,6 @@ namespace Jaxon\Tests\RequestHandler;
 use Jaxon\Exception\RequestException;
 use Jaxon\Jaxon;
 use Jaxon\Exception\SetupException;
-use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7Server\ServerRequestCreator;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
@@ -29,18 +28,32 @@ class ParameterTest extends TestCase
         parent::tearDown();
     }
 
+    /**
+     * @throws RequestException
+     */
+    public function testRequestWithNoPlugin()
+    {
+        // Send a request to the registered class
+        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
+            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
+                'jxnwho' => 'Nobody',
+                'jxnargs' => [],
+            ])->withMethod('POST');
+        });
+
+        $this->assertFalse(jaxon()->di()->getRequestHandler()->canProcessRequest());
+        // Process the request and get the response
+        jaxon()->di()->getRequestHandler()->processRequest();
+
+        $xResponse = jaxon()->getResponse();
+        $this->assertEquals(0, $xResponse->getCommandCount());
+    }
+
     public function testGetParameterProcessing()
     {
         // The server request
-        jaxon()->di()->set(ServerRequestInterface::class, function() {
-            $xRequestFactory = new Psr17Factory();
-            $xRequestCreator = new ServerRequestCreator(
-                $xRequestFactory, // ServerRequestFactory
-                $xRequestFactory, // UriFactory
-                $xRequestFactory, // UploadedFileFactory
-                $xRequestFactory  // StreamFactory
-            );
-            return $xRequestCreator->fromGlobals()
+        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
+            return $c->g(ServerRequestCreator::class)->fromGlobals()
                 ->withQueryParams([
                     'jxnargs' => [
                         'string' => 'Sstring',
@@ -82,15 +95,8 @@ class ParameterTest extends TestCase
     public function testPostParameterProcessing()
     {
         // The server request
-        jaxon()->di()->set(ServerRequestInterface::class, function() {
-            $xRequestFactory = new Psr17Factory();
-            $xRequestCreator = new ServerRequestCreator(
-                $xRequestFactory, // ServerRequestFactory
-                $xRequestFactory, // UriFactory
-                $xRequestFactory, // UploadedFileFactory
-                $xRequestFactory  // StreamFactory
-            );
-            return $xRequestCreator->fromGlobals()
+        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
+            return $c->g(ServerRequestCreator::class)->fromGlobals()
                 ->withParsedBody([
                     'jxnargs' => [
                         'string' => 'Sstring',
@@ -133,15 +139,8 @@ class ParameterTest extends TestCase
     {
         jaxon()->setOption('core.decode_utf8', true);
         // The server request
-        jaxon()->di()->set(ServerRequestInterface::class, function() {
-            $xRequestFactory = new Psr17Factory();
-            $xRequestCreator = new ServerRequestCreator(
-                $xRequestFactory, // ServerRequestFactory
-                $xRequestFactory, // UriFactory
-                $xRequestFactory, // UploadedFileFactory
-                $xRequestFactory  // StreamFactory
-            );
-            return $xRequestCreator->fromGlobals()
+        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
+            return $c->g(ServerRequestCreator::class)->fromGlobals()
                 ->withParsedBody([
                     'jxnargs' => [
                         'string' => 'Sstring',
@@ -186,15 +185,8 @@ class ParameterTest extends TestCase
         unset($_SERVER['HTTP_CONTENT_TYPE']);
         $_SERVER['CONTENT_TYPE'] = 'multipart/form-data';
         // The server request
-        jaxon()->di()->set(ServerRequestInterface::class, function() {
-            $xRequestFactory = new Psr17Factory();
-            $xRequestCreator = new ServerRequestCreator(
-                $xRequestFactory, // ServerRequestFactory
-                $xRequestFactory, // UriFactory
-                $xRequestFactory, // UploadedFileFactory
-                $xRequestFactory  // StreamFactory
-            );
-            return $xRequestCreator->fromGlobals()
+        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
+            return $c->g(ServerRequestCreator::class)->fromGlobals()
                 ->withParsedBody([
                     'jxnargs' => [
                         'string' => 'Sstring',
@@ -239,15 +231,8 @@ class ParameterTest extends TestCase
         unset($_SERVER['CONTENT_TYPE']);
         $_SERVER['HTTP_CONTENT_TYPE'] = 'multipart/form-data';
         // The server request
-        jaxon()->di()->set(ServerRequestInterface::class, function() {
-            $xRequestFactory = new Psr17Factory();
-            $xRequestCreator = new ServerRequestCreator(
-                $xRequestFactory, // ServerRequestFactory
-                $xRequestFactory, // UriFactory
-                $xRequestFactory, // UploadedFileFactory
-                $xRequestFactory  // StreamFactory
-            );
-            return $xRequestCreator->fromGlobals()
+        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
+            return $c->g(ServerRequestCreator::class)->fromGlobals()
                 ->withParsedBody([
                     'jxnargs' => [
                         'string' => 'Sstring',

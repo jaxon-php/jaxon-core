@@ -12,6 +12,8 @@
 
 namespace Jaxon\Request\Handler;
 
+use function count;
+
 class CallbackManager
 {
     /**
@@ -19,51 +21,57 @@ class CallbackManager
      *
      * @var callable[]
      */
-    protected $xBootCallbacks = [];
+    protected $aBootCallbacks = [];
 
     /**
      * The callbacks to run before processing the request
      *
      * @var callable[]
      */
-    protected $xBeforeCallbacks = [];
+    protected $aBeforeCallbacks = [];
 
     /**
      * The callbacks to run afteer processing the request
      *
      * @var callable[]
      */
-    protected $xAfterCallbacks = [];
+    protected $aAfterCallbacks = [];
 
     /**
      * The callbacks to run in case of invalid request
      *
      * @var callable[]
      */
-    protected $xInvalidCallbacks = [];
+    protected $aInvalidCallbacks = [];
 
     /**
      * The callbacks to run in case of error
      *
      * @var callable[]
      */
-    protected $xErrorCallbacks = [];
+    protected $aErrorCallbacks = [];
 
     /**
      * The callbacks to run when a class is instanced
      *
      * @var callable[]
      */
-    protected $xInitCallbacks = [];
+    protected $aInitCallbacks = [];
 
     /**
-     * Get the library booting callbacks.
+     * Get the library booting callbacks, and reset the array.
      *
      * @return callable[]
      */
-    public function getBootCallbacks(): array
+    public function popBootCallbacks(): array
     {
-        return $this->xBootCallbacks;
+        if(empty($this->aBootCallbacks))
+        {
+            return [];
+        }
+        $aCallbacks = $this->aBootCallbacks;
+        $this->aBootCallbacks = [];
+        return $aCallbacks;
     }
 
     /**
@@ -73,7 +81,7 @@ class CallbackManager
      */
     public function getBeforeCallbacks(): array
     {
-        return $this->xBeforeCallbacks;
+        return $this->aBeforeCallbacks;
     }
 
     /**
@@ -83,7 +91,7 @@ class CallbackManager
      */
     public function getAfterCallbacks(): array
     {
-        return $this->xAfterCallbacks;
+        return $this->aAfterCallbacks;
     }
 
     /**
@@ -93,7 +101,7 @@ class CallbackManager
      */
     public function getInvalidCallbacks(): array
     {
-        return $this->xInvalidCallbacks;
+        return $this->aInvalidCallbacks;
     }
 
     /**
@@ -103,7 +111,7 @@ class CallbackManager
      */
     public function getErrorCallbacks(): array
     {
-        return $this->xErrorCallbacks;
+        return $this->aErrorCallbacks;
     }
 
     /**
@@ -113,7 +121,7 @@ class CallbackManager
      */
     public function getInitCallbacks(): array
     {
-        return $this->xInitCallbacks;
+        return $this->aInitCallbacks;
     }
 
     /**
@@ -125,7 +133,8 @@ class CallbackManager
      */
     public function boot(callable $xCallable): CallbackManager
     {
-        $this->xBootCallbacks[] = $xCallable;
+        $this->aBootCallbacks[] = $xCallable;
+        $this->nBootCallbackAdded = true;
         return $this;
     }
 
@@ -138,7 +147,7 @@ class CallbackManager
      */
     public function before(callable $xCallable): CallbackManager
     {
-        $this->xBeforeCallbacks[] = $xCallable;
+        $this->aBeforeCallbacks[] = $xCallable;
         return $this;
     }
 
@@ -151,7 +160,7 @@ class CallbackManager
      */
     public function after(callable $xCallable): CallbackManager
     {
-        $this->xAfterCallbacks[] = $xCallable;
+        $this->aAfterCallbacks[] = $xCallable;
         return $this;
     }
 
@@ -164,7 +173,7 @@ class CallbackManager
      */
     public function invalid(callable $xCallable): CallbackManager
     {
-        $this->xInvalidCallbacks[] = $xCallable;
+        $this->aInvalidCallbacks[] = $xCallable;
         return $this;
     }
 
@@ -177,7 +186,7 @@ class CallbackManager
      */
     public function error(callable $xCallable): CallbackManager
     {
-        $this->xErrorCallbacks[] = $xCallable;
+        $this->aErrorCallbacks[] = $xCallable;
         return $this;
     }
 
@@ -190,7 +199,7 @@ class CallbackManager
      */
     public function init(callable $xCallable): CallbackManager
     {
-        $this->xInitCallbacks[] = $xCallable;
+        $this->aInitCallbacks[] = $xCallable;
         return $this;
     }
 }

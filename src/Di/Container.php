@@ -21,14 +21,21 @@ use Psr\Container\ContainerInterface;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
+
 use Closure;
 use ReflectionClass;
 use ReflectionException;
 
 use function realpath;
 
-class Container extends PimpleContainer
+class Container extends PimpleContainer implements LoggerAwareInterface
 {
+    use LoggerAwareTrait;
+
     use Traits\AppTrait;
     use Traits\RequestTrait;
     use Traits\ResponseTrait;
@@ -52,6 +59,9 @@ class Container extends PimpleContainer
     public function __construct(Jaxon $jaxon)
     {
         parent::__construct();
+
+        // Set the default logger
+        $this->setLogger(new NullLogger());
 
         // Save the Jaxon and Container instances
         $this->val(Jaxon::class, $jaxon);
@@ -81,6 +91,16 @@ class Container extends PimpleContainer
         $this->registerViews();
         $this->registerUtils();
         $this->registerSessions();
+    }
+
+    /**
+     * Get the logger
+     *
+     * @return LoggerInterface
+     */
+    public function logger(): LoggerInterface
+    {
+        return $this->logger;
     }
 
     /**

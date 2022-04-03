@@ -22,6 +22,9 @@ class ClassTest extends TestCase
      */
     protected $xPlugin;
 
+    /**
+     * @throws SetupException
+     */
     public function setUp(): void
     {
         jaxon()->setOption('core.prefix.class', 'Jxn');
@@ -32,6 +35,9 @@ class ClassTest extends TestCase
         $this->xPlugin = jaxon()->di()->getCallableClassPlugin();
     }
 
+    /**
+     * @throws SetupException
+     */
     public function tearDown(): void
     {
         jaxon()->reset();
@@ -68,6 +74,25 @@ class ClassTest extends TestCase
         // No callable for standard PHP functions.
         $this->expectException(SetupException::class);
         $this->xPlugin->getCallable('Simple');
+    }
+
+    /**
+     * @throws SetupException
+     */
+    public function testCallableClassUnknownOption()
+    {
+        // Register a class method as a function, with unknown option
+        jaxon()->register(Jaxon::CALLABLE_CLASS, 'TheClass', [
+            'include' => __DIR__ . '/../defs/classes.php',
+            'functions' => [
+                '*' => [
+                    '__unknown' => 'unknown',
+                ],
+            ],
+        ]);
+
+        $xCallable = $this->xPlugin->getCallable('TheClass');
+        $this->assertTrue($xCallable->hasMethod('theMethod'));
     }
 
     public function testCallableDirIncorrectOption()

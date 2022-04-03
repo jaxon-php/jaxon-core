@@ -7,14 +7,12 @@ use Jaxon\Config\ConfigManager;
 use Jaxon\Di\Container;
 use Jaxon\Plugin\Code\AssetManager;
 use Jaxon\Plugin\Code\CodeGenerator;
+use Jaxon\Plugin\Code\MinifierInterface;
+use Jaxon\Plugin\Manager\PackageManager;
 use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Request\Handler\ParameterReader;
-use Jaxon\Request\Handler\UploadHandler;
-use Jaxon\Request\Upload\UploadManager;
-use Jaxon\Request\Validator;
 use Jaxon\Response\Plugin\DataBag\DataBagPlugin;
 use Jaxon\Response\Plugin\JQuery\JQueryPlugin;
-use Jaxon\Response\ResponseManager;
 use Jaxon\Ui\View\ViewManager;
 use Jaxon\Utils\File\FileMinifier;
 use Jaxon\Utils\Template\TemplateEngine;
@@ -31,26 +29,24 @@ trait PluginTrait
     {
         // Plugin manager
         $this->set(PluginManager::class, function($c) {
-            return new PluginManager($c->g(Container::class), $c->g(ConfigManager::class),
+            return new PluginManager($c->g(Container::class), $c->g(CodeGenerator::class), $c->g(Translator::class));
+        });
+        // Package manager
+        $this->set(PackageManager::class, function($c) {
+            return new PackageManager($c->g(Container::class), $c->g(PluginManager::class), $c->g(ConfigManager::class),
                 $c->g(ViewManager::class), $c->g(CodeGenerator::class), $c->g(Translator::class));
         });
         // Code Generation
+        $this->set(MinifierInterface::class, function() {
+            return new class extends FileMinifier implements MinifierInterface {};
+        });
         $this->set(AssetManager::class, function($c) {
-            return new AssetManager($c->g(ConfigManager::class), $c->g(ParameterReader::class), $c->g(FileMinifier::class));
+            return new AssetManager($c->g(ConfigManager::class), $c->g(ParameterReader::class),
+                $c->g(MinifierInterface::class));
         });
         $this->set(CodeGenerator::class, function($c) {
             $sVersion = $c->g(Jaxon::class)->getVersion();
-            return new CodeGenerator($sVersion, $c->g(Container::class),
-                $c->g(TemplateEngine::class), $c->g(AssetManager::class));
-        });
-        // File upload manager
-        $this->set(UploadManager::class, function($c) {
-            return new UploadManager($c->g(ConfigManager::class), $c->g(Validator::class), $c->g(Translator::class));
-        });
-        // File upload plugin
-        $this->set(UploadHandler::class, function($c) {
-            return !$c->g(ConfigManager::class)->getOption('core.upload.enabled') ? null :
-                new UploadHandler($c->g(UploadManager::class), $c->g(ResponseManager::class), $c->g(Translator::class));
+            return new CodeGenerator($sVersion, $c->g(Container::class), $c->g(TemplateEngine::class));
         });
         // JQuery response plugin
         $this->set(JQueryPlugin::class, function($c) {
@@ -84,13 +80,13 @@ trait PluginTrait
     }
 
     /**
-     * Get the upload handler
+     * Get the asset manager
      *
-     * @return UploadHandler|null
+     * @return AssetManager
      */
-    public function getUploadHandler(): ?UploadHandler
+    public function getAssetManager(): AssetManager
     {
-        return $this->g(UploadHandler::class);
+        return $this->g(AssetManager::class);
     }
 
     /**

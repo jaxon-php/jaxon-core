@@ -1,6 +1,6 @@
 <?php
 
-namespace Jaxon\Tests\Ns;
+namespace Jaxon\Tests\Ns\Ajax;
 
 class ClassC
 {

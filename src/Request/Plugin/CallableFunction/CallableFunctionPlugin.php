@@ -26,7 +26,7 @@ use Jaxon\Plugin\RequestPlugin;
 use Jaxon\Request\Handler\ParameterReader;
 use Jaxon\Request\Target;
 use Jaxon\Request\Validator;
-use Jaxon\Response\ResponseManager;
+use Jaxon\Response\ResponseInterface;
 use Jaxon\Utils\Template\TemplateEngine;
 use Jaxon\Utils\Translation\Translator;
 use Jaxon\Exception\RequestException;
@@ -53,13 +53,6 @@ class CallableFunctionPlugin extends RequestPlugin
      * @var ParameterReader
      */
     protected $xParameterReader;
-
-    /**
-     * The response manager
-     *
-     * @var ResponseManager
-     */
-    protected $xResponseManager;
 
     /**
      * The request data validator
@@ -93,28 +86,19 @@ class CallableFunctionPlugin extends RequestPlugin
     protected $aOptions = [];
 
     /**
-     * The name of the function that is being requested (during the request processing phase)
-     *
-     * @var string
-     */
-    protected static $sRequestedFunction = '';
-
-    /**
      * The constructor
      *
      * @param string $sPrefix
      * @param ParameterReader $xParameterReader
-     * @param ResponseManager $xResponseManager
      * @param TemplateEngine $xTemplateEngine
      * @param Translator $xTranslator
      * @param Validator $xValidator
      */
-    public function __construct(string $sPrefix, ParameterReader $xParameterReader, ResponseManager $xResponseManager,
+    public function __construct(string $sPrefix, ParameterReader $xParameterReader,
         TemplateEngine $xTemplateEngine, Translator $xTranslator, Validator $xValidator)
     {
         $this->sPrefix = $sPrefix;
         $this->xParameterReader = $xParameterReader;
-        $this->xResponseManager = $xResponseManager;
         $this->xTemplateEngine = $xTemplateEngine;
         $this->xTranslator = $xTranslator;
         $this->xValidator = $xValidator;
@@ -234,59 +218,48 @@ class CallableFunctionPlugin extends RequestPlugin
      */
     public static function canProcessRequest(ServerRequestInterface $xRequest): bool
     {
-        self::$sRequestedFunction = '';
         $aBody = $xRequest->getParsedBody();
         if(is_array($aBody))
         {
-            if(isset($aBody['jxnfun']))
-            {
-                self::$sRequestedFunction = trim($aBody['jxnfun']);
-            }
+            return isset($aBody['jxnfun']);
         }
-        else
-        {
-            $aParams = $xRequest->getQueryParams();
-            if(isset($aParams['jxnfun']))
-            {
-                self::$sRequestedFunction = trim($aParams['jxnfun']);
-            }
-        }
-        return (self::$sRequestedFunction !== '');
+        $aParams = $xRequest->getQueryParams();
+        return isset($aParams['jxnfun']);
     }
 
     /**
      * @inheritDoc
      */
-    public function getTarget(): ?Target
+    public function setTarget(ServerRequestInterface $xRequest)
     {
-        if(!self::$sRequestedFunction)
+        $aBody = $xRequest->getParsedBody();
+        if(is_array($aBody))
         {
-            return null;
+            $this->xTarget = Target::makeFunction(trim($aBody['jxnfun']));
+            return;
         }
-        return Target::makeFunction(self::$sRequestedFunction);
+        $aParams = $xRequest->getQueryParams();
+        $this->xTarget = Target::makeFunction(trim($aParams['jxnfun']));
     }
 
     /**
      * @inheritDoc
      * @throws RequestException
      */
-    public function processRequest(): bool
+    public function processRequest(): ?ResponseInterface
     {
+        $sRequestedFunction = $this->xTarget->getFunctionName();
+
         // Security check: make sure the requested function was registered.
-        if(!$this->xValidator->validateFunction(self::$sRequestedFunction) ||
-            !isset($this->aFunctions[self::$sRequestedFunction]))
+        if(!$this->xValidator->validateFunction($sRequestedFunction) ||
+            !isset($this->aFunctions[$sRequestedFunction]))
         {
             // Unable to find the requested function
             throw new RequestException($this->xTranslator->trans('errors.functions.invalid',
-                ['name' => self::$sRequestedFunction]));
+                ['name' => $sRequestedFunction]));
         }
 
-        $xFunction = $this->getCallable(self::$sRequestedFunction);
-        $xResponse = $xFunction->call($this->xParameterReader->args());
-        if(($xResponse))
-        {
-            $this->xResponseManager->append($xResponse);
-        }
-        return true;
+        $xFunction = $this->getCallable($sRequestedFunction);
+        return $xFunction->call($this->xParameterReader->args());
     }
 }

@@ -8,10 +8,12 @@ use Jaxon\Jaxon;
 use Jaxon\Request\Plugin\CallableFunction\CallableFunction;
 use Jaxon\Request\Plugin\CallableFunction\CallableFunctionPlugin;
 use Jaxon\Exception\SetupException;
+use Jaxon\Utils\Http\UriException;
 use PHPUnit\Framework\TestCase;
 use Sample;
 
 use function strlen;
+use function trim;
 use function file_get_contents;
 use function jaxon;
 
@@ -22,6 +24,9 @@ final class FunctionTest extends TestCase
      */
     protected $xPlugin;
 
+    /**
+     * @throws SetupException
+     */
     public function setUp(): void
     {
         jaxon()->setOption('core.prefix.function', 'jxn_');
@@ -43,6 +48,9 @@ final class FunctionTest extends TestCase
         $this->xPlugin = jaxon()->di()->getCallableFunctionPlugin();
     }
 
+    /**
+     * @throws SetupException
+     */
     public function tearDown(): void
     {
         jaxon()->reset();
@@ -114,8 +122,49 @@ final class FunctionTest extends TestCase
     {
         $this->assertEquals(32, strlen($this->xPlugin->getHash()));
         // $this->assertEquals('34608e208fda374f8761041969acf96e', $this->xPlugin->getHash());
-        $this->assertEquals(strlen(file_get_contents(__DIR__ . '/../script/function.js')),
-            strlen($this->xPlugin->getScript()));
+        $this->assertEquals(403, strlen($this->xPlugin->getScript()));
+        // $this->assertEquals(file_get_contents(__DIR__ . '/../script/function.js'), $this->xPlugin->getScript());
+    }
+
+    /**
+     * @throws UriException
+     */
+    public function testLibraryJsCode()
+    {
+        // This URI will be parsed by the URI detector
+        $_SERVER['REQUEST_URI'] = 'http://example.test/path';
+
+        $sJsCode = jaxon()->getScript(true, true);
+        $this->assertEquals(1356, strlen(trim($sJsCode)));
+        // $this->assertEquals(file_get_contents(__DIR__ . '/../script/lib.js'), $sJsCode);
+        $this->assertEquals(32, strlen(jaxon()->di()->getCodeGenerator()->getHash()));
+
+        unset($_SERVER['REQUEST_URI']);
+    }
+
+    /**
+     * @throws UriException
+     * @throws SetupException
+     */
+    public function testLibraryJsCodeWithPlugins()
+    {
+        require_once __DIR__ . '/../defs/plugins.php';
+        require_once __DIR__ . '/../defs/packages.php';
+
+        jaxon()->registerPlugin('SamplePlugin', 'plugin');
+        jaxon()->registerPackage('SamplePackage');
+
+        // This URI will be parsed by the URI detector
+        $_SERVER['REQUEST_URI'] = 'http://example.test/path';
+        $sJsCode = jaxon()->getScript(true, true);
+        $this->assertEquals(1537, strlen(trim($sJsCode)));
+        // $this->assertEquals(file_get_contents(__DIR__ . '/../script/lib.js'), $sJsCode);
+        $this->assertEquals(32, strlen(jaxon()->di()->getCodeGenerator()->getHash()));
+
+        $sJsCode = trim(jaxon()->getCss() . "\n" . jaxon()->getJs()) . jaxon()->getScript();
+        $this->assertEquals(1537, strlen(trim($sJsCode)));
+
+        unset($_SERVER['REQUEST_URI']);
     }
 
     public function testCallableFunctionIncorrectName()

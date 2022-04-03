@@ -3,6 +3,7 @@
 namespace Jaxon\Tests\RequestFactory;
 
 use Jaxon\Jaxon;
+use Jaxon\Exception\SetupException;
 use PHPUnit\Framework\TestCase;
 
 use function jaxon;
@@ -11,6 +12,9 @@ use function pm;
 
 final class FunctionTest extends TestCase
 {
+    /**
+     * @throws SetupException
+     */
     public function setUp(): void
     {
         jaxon()->setOption('core.prefix.function', 'jxn_');
@@ -24,12 +28,18 @@ final class FunctionTest extends TestCase
         ]);
     }
 
+    /**
+     * @throws SetupException
+     */
     public function tearDown(): void
     {
         jaxon()->reset();
         parent::tearDown();
     }
 
+    /**
+     * @throws SetupException
+     */
     public function testRequestToGlobalFunction()
     {
         $this->assertEquals(
@@ -38,6 +48,9 @@ final class FunctionTest extends TestCase
         );
     }
 
+    /**
+     * @throws SetupException
+     */
     public function testRequestToGlobalFunctionWithParameter()
     {
         $this->assertEquals(
@@ -46,6 +59,9 @@ final class FunctionTest extends TestCase
         );
     }
 
+    /**
+     * @throws SetupException
+     */
     public function testRequestToGlobalFunctionWithJaxonParameter()
     {
         $this->assertEquals(
@@ -54,6 +70,9 @@ final class FunctionTest extends TestCase
         );
     }
 
+    /**
+     * @throws SetupException
+     */
     public function testRequestToJaxonFunction()
     {
         $this->assertEquals(
@@ -62,6 +81,9 @@ final class FunctionTest extends TestCase
         );
     }
 
+    /**
+     * @throws SetupException
+     */
     public function testRequestToJaxonFunctionWithParameter()
     {
         $this->assertEquals(
@@ -70,6 +92,9 @@ final class FunctionTest extends TestCase
         );
     }
 
+    /**
+     * @throws SetupException
+     */
     public function testRequestToJaxonFunctionWithJaxonParameter()
     {
         $this->assertEquals(

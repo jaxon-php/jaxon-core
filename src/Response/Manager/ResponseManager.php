@@ -1,7 +1,7 @@
 <?php
 
 /**
- * ResponseManager.php - Jaxon ResponsePlugin PluginManager
+ * ResponseManager.php - Jaxon Response Manager
  *
  * This class stores and tracks the response that will be returned after processing a request.
  * The Response Manager represents a single point of contact for working with <ResponsePlugin> objects.
@@ -19,14 +19,13 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Response;
+namespace Jaxon\Response\Manager;
 
 use Jaxon\Di\Container;
+use Jaxon\Exception\RequestException;
+use Jaxon\Response\ResponseInterface;
 use Jaxon\Utils\Translation\Translator;
 
-use function header;
-use function strlen;
-use function gmdate;
 use function get_class;
 
 class ResponseManager
@@ -37,33 +36,31 @@ class ResponseManager
     private $di;
 
     /**
-     * @var string
-     */
-    private $sCharacterEncoding;
-
-    /**
      * @var Translator
      */
     protected $xTranslator;
 
     /**
+     * @var string
+     */
+    private $sCharacterEncoding;
+
+    /**
      * The current response object that will be sent back to the browser
      * once the request processing phase is complete
      *
-     * @var AbstractResponse
+     * @var ResponseInterface
      */
-    private $xResponse = null;
+    private $xResponse;
 
     /**
      * The debug messages
      *
      * @var array
      */
-    private $aDebugMessages;
+    private $aDebugMessages = [];
 
     /**
-     * The class constructor
-     *
      * @param string $sCharacterEncoding
      * @param Container $di
      * @param Translator $xTranslator
@@ -73,27 +70,26 @@ class ResponseManager
         $this->di = $di;
         $this->sCharacterEncoding = $sCharacterEncoding;
         $this->xTranslator = $xTranslator;
-        $this->aDebugMessages = [];
+        $this->xResponse = $di->getResponse(); // By default, use the global response;
     }
 
     /**
      * Clear the current response
      *
-     * A new response will need to be appended before the request processing is complete.
-     *
      * @return void
      */
     public function clear()
     {
-        $this->xResponse = null;
+        $this->xResponse->clearCommands();
+        $this->di->getResponse()->clearCommands();
     }
 
     /**
      * Get the response to the Jaxon request
      *
-     * @return AbstractResponse
+     * @return ResponseInterface
      */
-    public function getResponse(): ?AbstractResponse
+    public function getResponse(): ResponseInterface
     {
         return $this->xResponse;
     }
@@ -105,26 +101,26 @@ class ResponseManager
      * If no prior response has been appended, this response becomes the main response
      * object to which other response objects will be appended.
      *
-     * @param AbstractResponse $xResponse    The response object to be appended
+     * @param ResponseInterface $xResponse The response object to be appended
      *
      * @return void
+     * @throws RequestException
      */
-    public function append(AbstractResponse $xResponse)
+    public function append(ResponseInterface $xResponse)
     {
-        if(!$this->xResponse)
+        if($this->xResponse->getCommandCount() === 0)
         {
             $this->xResponse = $xResponse;
+            return;
         }
-        elseif(get_class($this->xResponse) === get_class($xResponse))
+        if(get_class($this->xResponse) !== get_class($xResponse))
         {
-            if($this->xResponse !== $xResponse)
-            {
-                $this->xResponse->appendResponse($xResponse);
-            }
+            throw new RequestException($this->xTranslator->trans('errors.mismatch.types',
+                ['class' => get_class($xResponse)]));
         }
-        else
+        if($this->xResponse !== $xResponse)
         {
-            $this->debug($this->xTranslator->trans('errors.mismatch.types', ['class' => get_class($xResponse)]));
+            $this->xResponse->appendResponse($xResponse);
         }
     }
 
@@ -146,14 +142,13 @@ class ResponseManager
     /**
      * Clear the response and appends a debug message on the end of the debug message queue
      *
-     * @param string $sMessage    The debug message
+     * @param string $sMessage The debug message
      *
      * @return void
      */
     public function error(string $sMessage)
     {
         $this->clear();
-        $this->append($this->di->newResponse());
         $this->debug($sMessage);
     }
 
@@ -164,51 +159,22 @@ class ResponseManager
      */
     public function printDebug()
     {
-        if(($this->xResponse))
+        foreach($this->aDebugMessages as $sMessage)
         {
-            foreach($this->aDebugMessages as $sMessage)
-            {
-                $this->xResponse->debug($sMessage);
-            }
-            $this->aDebugMessages = [];
+            $this->xResponse->debug($sMessage);
         }
+        $this->aDebugMessages = [];
     }
 
     /**
-     * Used internally to generate the response headers
+     * Get the content type of the HTTP response
      *
-     * @return void
+     * @return string
      */
-    private function _sendHeaders()
+    public function getContentType(): string
     {
-        if($this->di->getRequest()->getMethod() === 'GET')
-        {
-            header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
-            header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
-            header("Cache-Control: no-cache, must-revalidate");
-            header("Pragma: no-cache");
-        }
-
-        $sCharacterSet = '';
-        if(strlen($this->sCharacterEncoding) > 0)
-        {
-            $sCharacterSet = '; charset="' . $this->sCharacterEncoding . '"';
-        }
-
-        header('content-type: ' . $this->xResponse->getContentType() . ' ' . $sCharacterSet);
-    }
-
-    /**
-     * Sends the HTTP headers back to the browser
-     *
-     * @return void
-     */
-    public function sendHeaders()
-    {
-        if(($this->xResponse))
-        {
-            $this->_sendHeaders();
-        }
+        return empty($this->sCharacterEncoding) ? $this->xResponse->getContentType() :
+            $this->xResponse->getContentType() . '; charset="' . $this->sCharacterEncoding . '"';
     }
 
     /**
@@ -218,24 +184,6 @@ class ResponseManager
      */
     public function getOutput(): string
     {
-        if(($this->xResponse))
-        {
-            return $this->xResponse->getOutput();
-        }
-        return '';
-    }
-
-    /**
-     * Prints the response object to the output stream, thus sending the response to the browser
-     *
-     * @return void
-     */
-    public function sendOutput()
-    {
-        if(($this->xResponse))
-        {
-            $this->_sendHeaders();
-            $this->xResponse->printOutput();
-        }
+        return $this->xResponse->getCommandCount() === 0 ? '' : $this->xResponse->getOutput();
     }
 }

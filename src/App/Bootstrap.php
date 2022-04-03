@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Boot.php - Jaxon application bootstrapper
+ * Bootstrap.php - Jaxon application bootstrapper
  *
  * @package jaxon-core
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
@@ -13,10 +13,13 @@
 namespace Jaxon\App;
 
 use Jaxon\Config\ConfigManager;
-use Jaxon\Plugin\Manager\PluginManager;
-use Jaxon\Request\Handler\RequestHandler;
+use Jaxon\Plugin\Manager\PackageManager;
+use Jaxon\Request\Handler\CallbackManager;
 use Jaxon\Utils\Config\Config;
 use Jaxon\Exception\SetupException;
+
+use function call_user_func;
+use function count;
 
 class Bootstrap
 {
@@ -26,14 +29,14 @@ class Bootstrap
     private $xConfigManager;
 
     /**
-     * @var PluginManager
+     * @var PackageManager
      */
-    private $xPluginManager;
+    private $xPackageManager;
 
     /**
-     * @var RequestHandler
+     * @var CallbackManager
      */
-    private $xRequestHandler;
+    private $xCallbackManager;
 
     /**
      * The library options
@@ -88,14 +91,14 @@ class Bootstrap
      * The class constructor
      *
      * @param ConfigManager $xConfigManager
-     * @param PluginManager $xPluginManager
-     * @param RequestHandler $xRequestHandler
+     * @param PackageManager $xPackageManager
+     * @param CallbackManager $xCallbackManager
      */
-    public function __construct(ConfigManager $xConfigManager, PluginManager $xPluginManager, RequestHandler $xRequestHandler)
+    public function __construct(ConfigManager $xConfigManager, PackageManager $xPackageManager, CallbackManager $xCallbackManager)
     {
         $this->xConfigManager = $xConfigManager;
-        $this->xPluginManager = $xPluginManager;
-        $this->xRequestHandler = $xRequestHandler;
+        $this->xPackageManager = $xPackageManager;
+        $this->xCallbackManager = $xCallbackManager;
     }
 
     /**
@@ -167,9 +170,7 @@ class Bootstrap
     private function setupApp(Config $xAppConfig)
     {
         // Register user functions and classes
-        $this->xPluginManager->registerFromConfig($xAppConfig);
-        // Call the on boot callbacks
-        $this->xRequestHandler->onBoot();
+        $this->xPackageManager->registerFromConfig($xAppConfig);
     }
 
     /**
@@ -210,6 +211,22 @@ class Bootstrap
         if(!$this->xConfigManager->hasOption('core.request.uri') && $this->sUri != '')
         {
             $this->xConfigManager->setOption('core.request.uri', $this->sUri);
+        }
+        $this->onBoot();
+    }
+
+    /**
+     * These callbacks are called right after the library is initialized.
+     *
+     * @return void
+     */
+    public function onBoot()
+    {
+        // Only call the callbacks that aren't called yet.
+        $aBootCallbacks = $this->xCallbackManager->popBootCallbacks();
+        foreach($aBootCallbacks as $aBootCallback)
+        {
+            call_user_func($aBootCallback);
         }
     }
 }

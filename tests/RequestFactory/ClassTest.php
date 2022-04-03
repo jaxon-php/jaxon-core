@@ -17,12 +17,18 @@ class ClassTest extends TestCase
         jaxon()->register(Jaxon::CALLABLE_CLASS, 'Sample', __DIR__ . '/../defs/sample.php');
     }
 
+    /**
+     * @throws SetupException
+     */
     public function tearDown(): void
     {
         jaxon()->reset();
         parent::tearDown();
     }
 
+    /**
+     * @throws SetupException
+     */
     public function testRequestToJaxonClass()
     {
         $this->assertEquals(
@@ -35,6 +41,9 @@ class ClassTest extends TestCase
         );
     }
 
+    /**
+     * @throws SetupException
+     */
     public function testRequestToJaxonClassWithParameter()
     {
         $this->assertEquals(
@@ -47,6 +56,9 @@ class ClassTest extends TestCase
         );
     }
 
+    /**
+     * @throws SetupException
+     */
     public function testRequestToJaxonClassWithFormParameter()
     {
         $this->assertEquals(
@@ -59,6 +71,9 @@ class ClassTest extends TestCase
         );
     }
 
+    /**
+     * @throws SetupException
+     */
     public function testRequestToJaxonClassWithInputParameter()
     {
         $this->assertEquals(
@@ -71,6 +86,9 @@ class ClassTest extends TestCase
         );
     }
 
+    /**
+     * @throws SetupException
+     */
     public function testRequestToJaxonClassWithCheckedParameter()
     {
         $this->assertEquals(
@@ -83,6 +101,9 @@ class ClassTest extends TestCase
         );
     }
 
+    /**
+     * @throws SetupException
+     */
     public function testRequestToJaxonClassWithSelectParameter()
     {
         $this->assertEquals(
@@ -95,6 +116,9 @@ class ClassTest extends TestCase
         );
     }
 
+    /**
+     * @throws SetupException
+     */
     public function testRequestToJaxonClassWithInnerHTMLParameter()
     {
         $this->assertEquals(
@@ -107,6 +131,9 @@ class ClassTest extends TestCase
         );
     }
 
+    /**
+     * @throws SetupException
+     */
     public function testRequestToJaxonClassWithMultipleParameter()
     {
         $this->assertEquals(
@@ -119,6 +146,9 @@ class ClassTest extends TestCase
         );
     }
 
+    /**
+     * @throws SetupException
+     */
     public function testRequestToJaxonClassWithConfirmation()
     {
         $this->assertEquals(
@@ -131,6 +161,9 @@ class ClassTest extends TestCase
         );
     }
 
+    /**
+     * @throws SetupException
+     */
     public function testRequestToJaxonClassWithConfirmationAndSubstitution()
     {
          $this->assertEquals(
@@ -143,6 +176,9 @@ class ClassTest extends TestCase
         );
     }
 
+    /**
+     * @throws SetupException
+     */
     public function testRequestToJaxonClassWithConditionWhen()
     {
         $this->assertEquals(
@@ -155,6 +191,9 @@ class ClassTest extends TestCase
         );
     }
 
+    /**
+     * @throws SetupException
+     */
     public function testRequestToJaxonClassWithConditionWhenAndMessage()
     {
         $this->assertEquals(
@@ -173,6 +212,9 @@ class ClassTest extends TestCase
         );
     }
 
+    /**
+     * @throws SetupException
+     */
     public function testRequestToJaxonClassWithConditionWhenAndMessageAndSubstitution()
     {
         $this->assertEquals(
@@ -191,6 +233,9 @@ class ClassTest extends TestCase
         );
     }
 
+    /**
+     * @throws SetupException
+     */
     public function testRequestToJaxonClassWithConditionUnless()
     {
          $this->assertEquals(
@@ -205,6 +250,9 @@ class ClassTest extends TestCase
         );
     }
 
+    /**
+     * @throws SetupException
+     */
     public function testRequestToJaxonClassWithConditionUnlessAndMessage()
     {
          $this->assertEquals(

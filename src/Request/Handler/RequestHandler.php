@@ -20,25 +20,18 @@
 
 namespace Jaxon\Request\Handler;
 
-use Jaxon\Config\ConfigManager;
 use Jaxon\Di\Container;
 use Jaxon\Exception\RequestException;
-use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\Contract\RequestHandlerInterface;
 use Jaxon\Plugin\Manager\PluginManager;
-use Jaxon\Response\AbstractResponse;
+use Jaxon\Response\ResponseInterface;
+use Jaxon\Response\Manager\ResponseManager;
 use Jaxon\Response\Plugin\DataBag\DataBagPlugin;
-use Jaxon\Response\ResponseManager;
-use Jaxon\Utils\Translation\Translator;
-use Psr\Http\Message\ServerRequestInterface;
 
 use Exception;
 
 use function call_user_func;
 use function call_user_func_array;
-use function error_reporting;
-use function ob_end_clean;
-use function ob_get_level;
 
 class RequestHandler
 {
@@ -46,11 +39,6 @@ class RequestHandler
      * @var Container
      */
     private $di;
-
-    /**
-     * @var ConfigManager
-     */
-    protected $xConfigManager;
 
     /**
      * The plugin manager.
@@ -86,11 +74,6 @@ class RequestHandler
     private $xDataBagPlugin;
 
     /**
-     * @var Translator
-     */
-    private $xTranslator;
-
-    /**
      * The request plugin that is able to process the current request
      *
      * @var RequestHandlerInterface
@@ -98,57 +81,33 @@ class RequestHandler
     private $xRequestPlugin = null;
 
     /**
-     * @var ServerRequestInterface
-     */
-    private $xRequest;
-
-    /**
      * The constructor
      *
      * @param Container $di
-     * @param ConfigManager $xConfigManager
      * @param PluginManager $xPluginManager
      * @param ResponseManager $xResponseManager
      * @param CallbackManager $xCallbackManager
-     * @param ServerRequestInterface $xRequest
      * @param UploadHandler|null $xUploadHandler
      * @param DataBagPlugin $xDataBagPlugin
-     * @param Translator $xTranslator
      */
-    public function __construct(Container $di, ConfigManager $xConfigManager, PluginManager $xPluginManager,
-        ResponseManager $xResponseManager, CallbackManager $xCallbackManager, ServerRequestInterface $xRequest,
-        ?UploadHandler $xUploadHandler, DataBagPlugin $xDataBagPlugin, Translator $xTranslator)
+    public function __construct(Container $di, PluginManager $xPluginManager, ResponseManager $xResponseManager,
+        CallbackManager $xCallbackManager, ?UploadHandler $xUploadHandler, DataBagPlugin $xDataBagPlugin)
     {
         $this->di = $di;
-        $this->xConfigManager = $xConfigManager;
         $this->xPluginManager = $xPluginManager;
         $this->xResponseManager = $xResponseManager;
         $this->xCallbackManager = $xCallbackManager;
-        $this->xRequest = $xRequest;
         $this->xUploadHandler = $xUploadHandler;
         $this->xDataBagPlugin = $xDataBagPlugin;
-        $this->xTranslator = $xTranslator;
-    }
-
-    /**
-     * These callbacks are called whenever an invalid request is processed.
-     *
-     * @return void
-     */
-    public function onBoot()
-    {
-        foreach($this->xCallbackManager->getBootCallbacks() as $xCallback)
-        {
-            call_user_func($xCallback);
-        }
     }
 
     /**
      * These are the pre-request processing callbacks passed to the Jaxon library.
      *
-     * @param bool $bEndRequest    If set to true, the request processing is interrupted.
+     * @param bool $bEndRequest If set to true, the request processing is interrupted.
      *
      * @return void
+     * @throws RequestException
      */
     public function onBefore(bool &$bEndRequest)
     {
@@ -157,13 +116,13 @@ class RequestHandler
         foreach($this->xCallbackManager->getBeforeCallbacks() as $xCallback)
         {
             $xReturn = call_user_func_array($xCallback, [$xTarget, &$bEndRequest]);
+            if($xReturn instanceof ResponseInterface)
+            {
+                $this->xResponseManager->append($xReturn);
+            }
             if($bEndRequest)
             {
                 return;
-            }
-            if($xReturn instanceof AbstractResponse)
-            {
-                $this->xResponseManager->append($xReturn);
             }
         }
     }
@@ -172,6 +131,7 @@ class RequestHandler
      * These are the post-request processing callbacks passed to the Jaxon library.
      *
      * @return void
+     * @throws RequestException
      */
     public function onAfter(bool $bEndRequest)
     {
@@ -179,7 +139,7 @@ class RequestHandler
         {
             $xReturn = call_user_func_array($xCallback,
                 [$this->xRequestPlugin->getTarget(), $bEndRequest]);
-            if($xReturn instanceof AbstractResponse)
+            if($xReturn instanceof ResponseInterface)
             {
                 $this->xResponseManager->append($xReturn);
             }
@@ -189,14 +149,17 @@ class RequestHandler
     /**
      * These callbacks are called whenever an invalid request is processed.
      *
+     * @param RequestException $xException
+     *
      * @return void
+     * @throws RequestException
      */
-    public function onInvalid(string $sMessage)
+    public function onInvalid(RequestException $xException)
     {
         foreach($this->xCallbackManager->getInvalidCallbacks() as $xCallback)
         {
-            $xReturn = call_user_func($xCallback, $sMessage);
-            if($xReturn instanceof AbstractResponse)
+            $xReturn = call_user_func($xCallback, $xException);
+            if($xReturn instanceof ResponseInterface)
             {
                 $this->xResponseManager->append($xReturn);
             }
@@ -206,16 +169,17 @@ class RequestHandler
     /**
      * These callbacks are called whenever an invalid request is processed.
      *
-     * @var Exception $xException
+     * @param Exception $xException
      *
      * @return void
+     * @throws RequestException
      */
     public function onError(Exception $xException)
     {
         foreach($this->xCallbackManager->getErrorCallbacks() as $xCallback)
         {
             $xReturn = call_user_func($xCallback, $xException);
-            if($xReturn instanceof AbstractResponse)
+            if($xReturn instanceof ResponseInterface)
             {
                 $this->xResponseManager->append($xReturn);
             }
@@ -237,12 +201,15 @@ class RequestHandler
             return true;
         }
 
+        // The HTTP request
+        $xRequest = $this->di->getRequest();
         // Find a plugin to process the request
         foreach($this->xPluginManager->getRequestHandlers() as $sClassName)
         {
-            if($sClassName::canProcessRequest($this->xRequest))
+            if($sClassName::canProcessRequest($xRequest))
             {
                 $this->xRequestPlugin = $this->di->g($sClassName);
+                $this->xRequestPlugin->setTarget($xRequest);
                 return true;
             }
         }
@@ -256,7 +223,7 @@ class RequestHandler
         // If no other plugin than the upload plugin can process the request,
         // then it is an HTTP (not ajax) upload request
         $this->xUploadHandler->isHttpUpload();
-        return $this->xUploadHandler->canProcessRequest($this->xRequest);
+        return $this->xUploadHandler->canProcessRequest($xRequest);
     }
 
     /**
@@ -264,10 +231,46 @@ class RequestHandler
      *
      * @return void
      * @throws RequestException
-     * @throws SetupException
      */
     private function _processRequest()
     {
+        // The HTTP request
+        $xRequest = $this->di->getRequest();
+        // Process uploaded files, if the upload plugin is enabled
+        if($this->xUploadHandler !== null && $this->xUploadHandler->canProcessRequest($xRequest))
+        {
+            $this->xUploadHandler->processRequest($xRequest);
+        }
+        // Process the request
+        if(($this->xRequestPlugin))
+        {
+            $xResponse = $this->xRequestPlugin->processRequest();
+            if(($xResponse))
+            {
+                $this->xResponseManager->append($xResponse);
+            }
+            // Process the databag
+            $this->xDataBagPlugin->writeCommand();
+        }
+    }
+
+    /**
+     * Process the current request.
+     *
+     * Calls each of the request plugins to request that they process the current request.
+     * If any plugin processes the request, it will return true.
+     *
+     * @return void
+     * @throws RequestException
+     */
+    public function processRequest()
+    {
+        // Check if there is a plugin to process this request
+        if(!$this->canProcessRequest())
+        {
+            return;
+        }
+
         try
         {
             $bEndRequest = false;
@@ -281,16 +284,7 @@ class RequestHandler
                 return;
             }
 
-            // Process uploaded files, if the upload plugin is enabled
-            if($this->xUploadHandler !== null && $this->xUploadHandler->canProcessRequest($this->xRequest))
-            {
-                $this->xUploadHandler->processRequest($this->xRequest);
-            }
-            // Process the request
-            if(($this->xRequestPlugin))
-            {
-                $this->xRequestPlugin->processRequest();
-            }
+            $this->_processRequest();
 
             // Handle after processing event
             if(($this->xRequestPlugin))
@@ -298,74 +292,23 @@ class RequestHandler
                 $this->onAfter($bEndRequest);
             }
         }
-        catch(Exception $e)
+        // An exception was thrown while processing the request.
+        // The request missed the corresponding handler function,
+        // or an error occurred while attempting to execute the handler.
+        catch(RequestException $e)
         {
-            // An exception was thrown while processing the request.
-            // The request missed the corresponding handler function,
-            // or an error occurred while attempting to execute the handler.
             $this->xResponseManager->error($e->getMessage());
-            if($e instanceof RequestException || $e instanceof SetupException)
-            {
-                $this->onInvalid($e->getMessage());
-            }
-            else
-            {
-                $this->onError($e);
-            }
+            $this->onInvalid($e);
             throw $e;
         }
-    }
-
-    /**
-     * Clean output buffers.
-     *
-     * @return void
-     */
-    private function _cleanOutputBuffers()
-    {
-        $er = error_reporting(0);
-        while(ob_get_level() > 0)
+        catch(Exception $e)
         {
-            ob_end_clean();
-        }
-        error_reporting($er);
-    }
-
-    /**
-     * Process the current request.
-     *
-     * Calls each of the request plugins to request that they process the current request.
-     * If any plugin processes the request, it will return true.
-     *
-     * @return void
-     * @throws RequestException
-     * @throws SetupException
-     */
-    public function processRequest()
-    {
-        // Check if there is a plugin to process this request
-        if(!$this->canProcessRequest())
-        {
-            return;
+            $this->xResponseManager->error($e->getMessage());
+            $this->onError($e);
+            throw $e;
         }
 
-        $this->_processRequest();
-
-        // Process the databag
-        $this->xDataBagPlugin->writeCommand();
-
-        // Clean the processing buffer
-        if(($this->xConfigManager->getOption('core.process.clean')))
-        {
-            $this->_cleanOutputBuffers();
-        }
-
-        // If the called function returned no response, take the global response
-        if(!$this->xResponseManager->getResponse())
-        {
-            $this->xResponseManager->append($this->di->getResponse());
-        }
-
+        // Print the debug messages
         $this->xResponseManager->printDebug();
     }
 }

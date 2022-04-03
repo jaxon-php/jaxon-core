@@ -5,6 +5,7 @@ namespace Jaxon\Di\Traits;
 use Jaxon\Jaxon;
 use Jaxon\CallableClass;
 use Jaxon\Config\ConfigManager;
+use Jaxon\Request\Factory;
 use Jaxon\Request\Factory\RequestFactory;
 use Jaxon\Request\Handler\CallbackManager;
 use Jaxon\Request\Plugin\CallableClass\CallableObject;
@@ -86,6 +87,11 @@ trait RegisterTrait
         $sCallableObject = $sClassName . '_CallableObject';
         $sReflectionClass = $sClassName . '_ReflectionClass';
 
+        // Make sure the registered class exists
+        if(isset($aOptions['include']))
+        {
+            require_once($aOptions['include']);
+        }
         // Register the reflection class
         try
         {
@@ -119,16 +125,14 @@ trait RegisterTrait
             // Initialize the object
             if($xRegisteredObject instanceof CallableClass)
             {
-                $xResponse = $this->getResponse();
-                // Set the members of the object
-                $cSetter = function() use($c, $xResponse, $sClassName) {
+                // Set the protected attributes of the object
+                $cSetter = function($c, $sClassName) {
                     $this->jaxon = $c->g(Jaxon::class);
-                    $this->response = $xResponse;
+                    $this->response = $c->getResponse();
                     $this->_class = $sClassName;
                 };
-                $cSetter = $cSetter->bindTo($xRegisteredObject, $xRegisteredObject);
                 // Can now access protected attributes
-                call_user_func($cSetter);
+                call_user_func($cSetter->bindTo($xRegisteredObject, $xRegisteredObject), $c, $sClassName);
             }
 
             // Run the callback for class initialisation
@@ -179,9 +183,10 @@ trait RegisterTrait
         $this->val($sClassName . '_config', $xPkgConfig);
         $this->set($sClassName, function($c) use($sClassName) {
             $xPackage = $this->make($sClassName);
-            // Set the package options
+            // Set the protected attributes of the object
             $cSetter = function($c, $sClassName) {
                 $this->xPkgConfig = $c->g($sClassName . '_config');
+                $this->xFactory = $c->g(Factory::class);
                 $this->xRenderer = $c->g(ViewRenderer::class);
             };
             // Can now access protected attributes

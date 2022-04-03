@@ -19,6 +19,7 @@ use Jaxon\Plugin\Plugin;
 use Jaxon\Utils\Http\UriException;
 use Jaxon\Utils\Template\TemplateEngine;
 
+use function array_reduce;
 use function ksort;
 use function md5;
 use function trim;
@@ -96,16 +97,12 @@ class CodeGenerator
      * @param string $sVersion
      * @param Container $di
      * @param TemplateEngine $xTemplateEngine
-     * @param AssetManager $xAssetManager
      */
-    public function __construct(string $sVersion, Container $di,
-        TemplateEngine $xTemplateEngine, AssetManager $xAssetManager)
+    public function __construct(string $sVersion, Container $di, TemplateEngine $xTemplateEngine)
     {
         $this->sVersion = $sVersion;
         $this->di = $di;
         $this->xTemplateEngine = $xTemplateEngine;
-        $this->xAssetManager = $xAssetManager;
-        $this->sJsOptions = $xAssetManager->getJsOptions();
     }
 
     /**
@@ -132,15 +129,11 @@ class CodeGenerator
      *
      * @return string
      */
-    private function getHash(): string
+    public function getHash(): string
     {
-        $sHash = $this->sVersion;
-        foreach($this->aClassNames as $sClassName)
-        {
-            $xGenerator = $this->di->g($sClassName);
-            $sHash .= $xGenerator->getHash();
-        }
-        return md5($sHash);
+        return md5(array_reduce($this->aClassNames, function($sHash, $sClassName) {
+            return $sHash . $this->di->g($sClassName)->getHash();
+        }, $this->sVersion));
     }
 
     /**
@@ -220,6 +213,8 @@ class CodeGenerator
             return;
         }
 
+        $this->xAssetManager = $this->di->getAssetManager();
+        $this->sJsOptions = $this->xAssetManager->getJsOptions();
         foreach($this->aClassNames as $sClassName)
         {
             $this->generatePluginCodes($sClassName);
@@ -280,10 +275,10 @@ class CodeGenerator
         if($this->xAssetManager->shallCreateJsFiles() &&
             ($sUrl = $this->xAssetManager->createJsFiles($this->getHash(), $sJsScript)))
         {
-            return $sScript . $this->render('include.js', ['sUrl' => $sUrl]) . "\n" .
+            return trim($sScript) . "\n" . $this->render('include.js', ['sUrl' => $sUrl]) . "\n" .
                 $this->render('wrapper.js', ['sScript' => $this->sJsInlineScript]);
         }
-        return $sScript . $this->render('wrapper.js',
+        return trim($sScript) . "\n" . $this->render('wrapper.js',
             ['sScript' => $sJsScript . "\n" . $this->sJsInlineScript]);
     }
 }

@@ -43,65 +43,6 @@ class ConfigManager
     protected $xTranslator;
 
     /**
-     * @var array The default config options
-     */
-    protected $aConfig =  [
-        'core' => [
-            'version'               => Jaxon::VERSION,
-            'language'              => 'en',
-            'encoding'              => 'utf-8',
-            'decode_utf8'           => false,
-            'prefix' => [
-                'function'          => 'jaxon_',
-                'class'             => 'Jaxon',
-            ],
-            'request' => [
-                // 'uri'            => '',
-                'mode'              => 'asynchronous',
-                'method'            => 'POST', // W3C: Method is case sensitive
-            ],
-            'response' => [
-                'send'              => true,
-                'merge.ap'          => true,
-                'merge.js'          => true,
-            ],
-            'debug' => [
-                'on'                => false,
-                'verbose'           => false,
-            ],
-            'process' => [
-                'exit'              => true,
-                'clean'             => false,
-                'timeout'           => 6000,
-            ],
-            'error' => [
-                'handle'            => false,
-                'log_file'          => '',
-            ],
-            'jquery' => [
-                'no_conflict'       => false,
-            ],
-            'upload' => [
-                'enabled'           => true,
-            ],
-        ],
-        'js' => [
-            'lib' => [
-                'output_id'         => 0,
-                'queue_size'        => 0,
-                'load_timeout'      => 2000,
-                'show_status'       => false,
-                'show_cursor'       => true,
-            ],
-            'app' => [
-                'dir'               => '',
-                'minify'            => true,
-                'options'           => '',
-            ],
-        ],
-    ];
-
-    /**
      * The constructor
      *
      * @param ConfigReader $xConfigReader
@@ -111,11 +52,7 @@ class ConfigManager
     {
         $this->xConfigReader = $xConfigReader;
         $this->xTranslator = $xTranslator;
-        try
-        {
-            $this->xConfig = new Config($this->aConfig);
-        }
-        catch(DataDepth $e){} // This exception cannot actually be raised.
+        $this->xConfig = new Config();
     }
 
     /**
