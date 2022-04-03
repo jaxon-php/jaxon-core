@@ -18,6 +18,10 @@ jaxon.config.defaultMode = "asynchronous";
 jaxon.config.defaultMethod = "POST";
 jaxon.config.responseType = "JSON";
 
+JaxonSamplePackageClass = {};
+JaxonSamplePackageClass.home = function() {
+    return jaxon.request({ jxncls: 'SamplePackageClass', jxnmthd: 'home' }, { parameters: arguments });
+};
 jxn_my_first_function = function() {
     return jaxon.request({ jxnfun: 'my_first_function' }, { parameters: arguments });
 };
