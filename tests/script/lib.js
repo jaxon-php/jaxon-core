@@ -1,4 +1,4 @@
-<script type="text/javascript" src="https://cdn.jsdelivr.net/gh/jaxon-php/jaxon-js@3.3/dist/jaxon.core.min.js"  charset="UTF-8"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/gh/jaxon-php/jaxon-js@3.3/dist/jaxon.core.js"  charset="UTF-8"></script>
 <script type="text/javascript"  charset="UTF-8">
 /* <![CDATA[ */
 try {
@@ -18,10 +18,6 @@ jaxon.config.defaultMode = "asynchronous";
 jaxon.config.defaultMethod = "POST";
 jaxon.config.responseType = "JSON";
 
-JaxonSamplePackageClass = {};
-JaxonSamplePackageClass.home = function() {
-    return jaxon.request({ jxncls: 'SamplePackageClass', jxnmthd: 'home' }, { parameters: arguments });
-};
 jxn_my_first_function = function() {
     return jaxon.request({ jxnfun: 'my_first_function' }, { parameters: arguments });
 };

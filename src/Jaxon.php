@@ -460,10 +460,10 @@ class Jaxon
         // Check to see if headers have already been sent out, in which case we can't do our job
         if(headers_sent($sFilename, $nLineNumber))
         {
-            echo $this->xTranslator->trans('errors.output.already-sent', [
+            $sMessage = $this->xTranslator->trans('errors.output.already-sent', [
                 'location' => $sFilename . ':' . $nLineNumber
-            ]), "\n", $this->xTranslator->trans('errors.output.advice');
-            exit();
+            ]) . "\n" . $this->xTranslator->trans('errors.output.advice');
+            throw new RequestException($sMessage);
         }
 
         $this->di()->getRequestHandler()->processRequest();

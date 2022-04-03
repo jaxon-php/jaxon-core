@@ -51,11 +51,19 @@ class App
     }
 
     /**
-     * @return Translator
+     * Set the javascript asset
+     *
+     * @param bool $bExport    Whether to export the js code in a file
+     * @param bool $bMinify    Whether to minify the exported js file
+     * @param string $sUri    The URI to access the js file
+     * @param string $sDir    The directory where to create the js file
+     *
+     * @return App
      */
-    protected function translator(): Translator
+    public function asset(bool $bExport, bool $bMinify, string $sUri = '', string $sDir = ''): App
     {
-        return $this->xTranslator;
+        $this->bootstrap()->asset($bExport, $bMinify, $sUri, $sDir);
+        return $this;
     }
 
     /**
@@ -87,8 +95,7 @@ class App
         $this->bootstrap()
             ->lib($aLibOptions)
             ->app($aAppOptions)
-            // ->uri($sUri)
-            // ->js(!$bIsDebug, $sJsUrl, $sJsDir, !$bIsDebug)
+            // ->asset(!$bIsDebug, !$bIsDebug, $sJsUrl, $sJsDir)
             ->setup();
     }
 

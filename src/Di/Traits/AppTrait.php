@@ -66,7 +66,6 @@ trait AppTrait
             ],
             'app' => [
                 'dir'               => '',
-                'minify'            => true,
                 'options'           => '',
             ],
         ],

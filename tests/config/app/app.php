@@ -74,9 +74,6 @@ return [
         ],
         'js' => [
             'app' => [
-                'export' => true,
-                'dir' => $baseDir . '/script',
-                'uri' => 'http://example.test/script',
             ],
         ],
         'assets' => [

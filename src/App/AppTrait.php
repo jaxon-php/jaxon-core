@@ -38,6 +38,18 @@ trait AppTrait
     }
 
     /**
+     * Set the ajax endpoint URI
+     *
+     * @param string $sUri    The ajax endpoint URI
+     *
+     * @return void
+     */
+    public function uri(string $sUri)
+    {
+        $this->jaxon->setOption('core.request.uri', $sUri);
+    }
+
+    /**
      * Get the Jaxon response.
      *
      * @return ResponseInterface
@@ -55,6 +67,16 @@ trait AppTrait
     public function getCharacterEncoding(): string
     {
         return trim($this->jaxon->getOption('core.encoding', ''));
+    }
+
+    /**
+     * Get the content type of the HTTP response
+     *
+     * @return string
+     */
+    public function getContentType(): string
+    {
+        return $this->jaxon->di()->getResponseManager()->getContentType();
     }
 
     /**
@@ -132,10 +154,6 @@ trait AppTrait
      */
     public function processRequest()
     {
-        // Prevent the Jaxon library from sending the response or exiting
-        $this->jaxon->setOption('core.response.send', false);
-        $this->jaxon->setOption('core.process.exit', false);
-
         // Process the jaxon request
         $this->jaxon->processRequest();
 
