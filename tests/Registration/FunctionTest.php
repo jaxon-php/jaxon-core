@@ -160,6 +160,10 @@ final class FunctionTest extends TestCase
         $this->assertEquals(1537, strlen(trim($sJsCode)));
         // $this->assertEquals(file_get_contents(__DIR__ . '/../script/lib.js'), $sJsCode);
         $this->assertEquals(32, strlen(jaxon()->di()->getCodeGenerator()->getHash()));
+
+        $sJsCode = trim(jaxon()->getCss() . "\n" . jaxon()->getJs()) . jaxon()->getScript();
+        $this->assertEquals(1537, strlen(trim($sJsCode)));
+
         unset($_SERVER['REQUEST_URI']);
     }
 

@@ -5,8 +5,10 @@ use Jaxon\Tests\Ns\Lib\ServiceInterface;
 use Jaxon\Tests\Ns\Lib\Service;
 use Jaxon\Tests\Ns\Lib\ServiceAuto;
 
-$defsDir = rtrim(realpath(__DIR__ . '/../../defs'), '/');
+$baseDir = realpath(__DIR__ . '/../..');
+$defsDir = realpath(__DIR__ . '/../../defs');
 require_once "$defsDir/classes.php";
+require_once "$defsDir/packages.php";
 
 return [
     'app' => [
@@ -26,15 +28,16 @@ return [
             TheClass::class,
         ],
         'directories' => [
-            __DIR__ . '/../../dir',
-            __DIR__ . '/../../Ns/Ajax' => [
+            $baseDir . '/dir',
+            $baseDir . '/Ns/Ajax' => [
                 'namespace' => "Jaxon\\Tests\\Ns\\Ajax",
                 'autoload' => false,
             ],
-            __DIR__ . '/../dir_ns' => "Jaxon\\NsTests",
+            $baseDir . '/dir_ns' => "Jaxon\\NsTests",
         ],
         'packages' => [
-            TwitterPackage::class,
+            TwitterPackage::class => [],
+            SamplePackage::class => [],
         ],
         'container' => [
             'val' => [
@@ -59,14 +62,26 @@ return [
     'lib' => [
         'core' => [
             'debug' => [
-                'on' => false,
+                'on' => true,
             ],
             'request' => [
-                'uri' => 'ajax.php',
+                'uri' => 'http://example.test/path',
             ],
             'prefix' => [
                 'function' => 'jxn_',
                 'class' => 'Jxn',
+            ],
+        ],
+        'js' => [
+            'app' => [
+                'export' => true,
+                'dir' => $baseDir . '/script',
+                'uri' => 'http://example.test/script',
+            ],
+        ],
+        'assets' => [
+            'include' => [
+                'all' => false,
             ],
         ],
     ],

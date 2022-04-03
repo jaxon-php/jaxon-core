@@ -6,6 +6,7 @@ return [
     'app' => [
         'packages' => [
             TwitterPackage::class => [],
+            SamplePackage::class => [],
         ],
     ],
     'lib' => [
