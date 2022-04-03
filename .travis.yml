@@ -24,6 +24,10 @@ cache:
 before_install:
     - if [ -n "$GH_TOKEN" ]; then composer config github-oauth.github.com ${GH_TOKEN}; fi;
     - composer self-update
+    - mkdir tests/upload/dst
+    - chmod +w tests/upload/dst
+    - mkdir tests/upload/tmp
+    - chmod +w tests/upload/tmp
 
 install:
     - composer install --no-interaction --prefer-dist -o
