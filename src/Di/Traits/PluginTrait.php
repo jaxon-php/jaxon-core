@@ -7,6 +7,7 @@ use Jaxon\Config\ConfigManager;
 use Jaxon\Di\Container;
 use Jaxon\Plugin\Code\AssetManager;
 use Jaxon\Plugin\Code\CodeGenerator;
+use Jaxon\Plugin\Code\MinifierInterface;
 use Jaxon\Plugin\Manager\PackageManager;
 use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Request\Handler\ParameterReader;
@@ -36,13 +37,16 @@ trait PluginTrait
                 $c->g(ViewManager::class), $c->g(CodeGenerator::class), $c->g(Translator::class));
         });
         // Code Generation
+        $this->set(MinifierInterface::class, function() {
+            return new class extends FileMinifier implements MinifierInterface {};
+        });
         $this->set(AssetManager::class, function($c) {
-            return new AssetManager($c->g(ConfigManager::class), $c->g(ParameterReader::class), $c->g(FileMinifier::class));
+            return new AssetManager($c->g(ConfigManager::class), $c->g(ParameterReader::class),
+                $c->g(MinifierInterface::class));
         });
         $this->set(CodeGenerator::class, function($c) {
             $sVersion = $c->g(Jaxon::class)->getVersion();
-            return new CodeGenerator($sVersion, $c->g(Container::class),
-                $c->g(TemplateEngine::class), $c->g(AssetManager::class));
+            return new CodeGenerator($sVersion, $c->g(Container::class), $c->g(TemplateEngine::class));
         });
         // JQuery response plugin
         $this->set(JQueryPlugin::class, function($c) {
@@ -73,6 +77,16 @@ trait PluginTrait
     public function getCodeGenerator(): CodeGenerator
     {
         return $this->g(CodeGenerator::class);
+    }
+
+    /**
+     * Get the asset manager
+     *
+     * @return AssetManager
+     */
+    public function getAssetManager(): AssetManager
+    {
+        return $this->g(AssetManager::class);
     }
 
     /**

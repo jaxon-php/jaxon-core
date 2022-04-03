@@ -5,7 +5,6 @@ namespace Jaxon\Plugin\Code;
 use Jaxon\Config\ConfigManager;
 use Jaxon\Plugin\Plugin;
 use Jaxon\Request\Handler\ParameterReader;
-use Jaxon\Utils\File\FileMinifier;
 use Jaxon\Utils\Http\UriException;
 
 use function rtrim;
@@ -27,14 +26,9 @@ class AssetManager
     private $xParameterReader;
 
     /**
-     * @var FileMinifier
+     * @var MinifierInterface
      */
-    private $xFileMinifier;
-
-    /**
-     * @var bool
-     */
-    protected $bIncludeAllAssets;
+    private $xMinifier;
 
     /**
      * Default library URL
@@ -48,14 +42,13 @@ class AssetManager
      *
      * @param ConfigManager $xConfigManager
      * @param ParameterReader $xParameterReader
-     * @param FileMinifier $xFileMinifier
+     * @param MinifierInterface $xMinifier
      */
-    public function __construct(ConfigManager $xConfigManager, ParameterReader $xParameterReader, FileMinifier $xFileMinifier)
+    public function __construct(ConfigManager $xConfigManager, ParameterReader $xParameterReader, MinifierInterface $xMinifier)
     {
         $this->xConfigManager = $xConfigManager;
         $this->xParameterReader = $xParameterReader;
-        $this->xFileMinifier = $xFileMinifier;
-        $this->bIncludeAllAssets = $xConfigManager->getOption('assets.include.all', true);
+        $this->xMinifier = $xMinifier;
     }
 
     /**
@@ -77,7 +70,7 @@ class AssetManager
      */
     public function shallIncludeAssets(Plugin $xPlugin): bool
     {
-        if($this->bIncludeAllAssets)
+        if($this->xConfigManager->getOption('assets.include.all', true))
         {
             return true;
         }
@@ -178,7 +171,7 @@ class AssetManager
         $sJsFilePath = $sJsDirectory . $sJsFileName . '.js';
         $sJsMinFilePath = $sJsDirectory . $sJsFileName . '.min.js';
         $sJsFileUri = rtrim($this->xConfigManager->getOption('js.app.uri'), '/') . "/$sJsFileName";
-        if(!is_file($sJsFilePath) && !file_put_contents($sJsFilePath, $sJsCode))
+        if(!is_file($sJsFilePath) && !@file_put_contents($sJsFilePath, $sJsCode))
         {
             return '';
         }
@@ -186,7 +179,7 @@ class AssetManager
         {
             return $sJsFileUri . '.js';
         }
-        if(!is_file($sJsMinFilePath) && !$this->xFileMinifier->minify($sJsFilePath, $sJsMinFilePath))
+        if(!is_file($sJsMinFilePath) && !$this->xMinifier->minify($sJsFilePath, $sJsMinFilePath))
         {
             // If the file cannot be minified, return the plain js file.
             return $sJsFileUri . '.js';

@@ -97,16 +97,12 @@ class CodeGenerator
      * @param string $sVersion
      * @param Container $di
      * @param TemplateEngine $xTemplateEngine
-     * @param AssetManager $xAssetManager
      */
-    public function __construct(string $sVersion, Container $di,
-        TemplateEngine $xTemplateEngine, AssetManager $xAssetManager)
+    public function __construct(string $sVersion, Container $di, TemplateEngine $xTemplateEngine)
     {
         $this->sVersion = $sVersion;
         $this->di = $di;
         $this->xTemplateEngine = $xTemplateEngine;
-        $this->xAssetManager = $xAssetManager;
-        $this->sJsOptions = $xAssetManager->getJsOptions();
     }
 
     /**
@@ -217,6 +213,8 @@ class CodeGenerator
             return;
         }
 
+        $this->xAssetManager = $this->di->getAssetManager();
+        $this->sJsOptions = $this->xAssetManager->getJsOptions();
         foreach($this->aClassNames as $sClassName)
         {
             $this->generatePluginCodes($sClassName);
