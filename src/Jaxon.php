@@ -45,6 +45,7 @@ use Jaxon\Response\Manager\ResponseManager;
 use Jaxon\Response\Response;
 use Jaxon\Response\ResponseInterface;
 use Jaxon\Session\SessionInterface;
+use Jaxon\Ui\Pagination\Paginator;
 use Jaxon\Ui\View\ViewRenderer;
 use Jaxon\Utils\Http\UriException;
 use Jaxon\Utils\Template\TemplateEngine;
@@ -582,6 +583,16 @@ class Jaxon
     public function view(): ViewRenderer
     {
         return $this->di()->getViewRenderer();
+    }
+
+    /**
+     * Get the paginator
+     *
+     * @return Paginator
+     */
+    public function paginator(): Paginator
+    {
+        return $this->di()->getPaginator();
     }
 
     /**

@@ -71,7 +71,7 @@ class PaginationRenderer
     /**
      * @var integer
      */
-    protected $nMaxPagesToShow = 10;
+    protected $nMaxPages = 10;
 
     /**
      * The class constructor
@@ -139,16 +139,16 @@ class PaginationRenderer
     /**
      * Set the max number of pages to show
      *
-     * @param int $nMaxPagesToShow    The max number of pages to show
+     * @param int $nMaxPages    The max number of pages to show
      *
      * @return void
      */
-    public function setMaxPagesToShow(int $nMaxPagesToShow)
+    public function setMaxPages(int $nMaxPages)
     {
-        $this->nMaxPagesToShow = $nMaxPagesToShow;
-        if($this->nMaxPagesToShow < 4)
+        $this->nMaxPages = $nMaxPages;
+        if($this->nMaxPages < 4)
         {
-            $this->nMaxPagesToShow = 4;
+            $this->nMaxPages = 4;
         }
     }
 
@@ -237,7 +237,7 @@ class PaginationRenderer
     {
         $aPageNumbers = [];
 
-        if($this->nTotalPages <= $this->nMaxPagesToShow)
+        if($this->nTotalPages <= $this->nMaxPages)
         {
             for($i = 0; $i < $this->nTotalPages; $i++)
             {
@@ -248,7 +248,7 @@ class PaginationRenderer
         }
 
         // Determine the sliding range, centered around the current page.
-        $nNumAdjacents = (int)floor(($this->nMaxPagesToShow - 4) / 2);
+        $nNumAdjacents = (int)floor(($this->nMaxPages - 4) / 2);
 
         $nSlidingStart = 1;
         $nSlidingEndOffset = $nNumAdjacents + 3 - $this->nCurrentPage;
