@@ -15,6 +15,7 @@ namespace Jaxon\App;
 use Jaxon\Config\ConfigManager;
 use Jaxon\Plugin\Manager\PackageManager;
 use Jaxon\Request\Handler\CallbackManager;
+use Jaxon\Ui\View\ViewRenderer;
 use Jaxon\Utils\Config\Config;
 use Jaxon\Exception\SetupException;
 
@@ -38,6 +39,11 @@ class Bootstrap
     private $xCallbackManager;
 
     /**
+     * @var ViewRenderer
+     */
+    private $xViewRenderer;
+
+    /**
      * The library options
      *
      * @var array
@@ -57,12 +63,15 @@ class Bootstrap
      * @param ConfigManager $xConfigManager
      * @param PackageManager $xPackageManager
      * @param CallbackManager $xCallbackManager
+     * @param ViewRenderer $xViewRenderer
      */
-    public function __construct(ConfigManager $xConfigManager, PackageManager $xPackageManager, CallbackManager $xCallbackManager)
+    public function __construct(ConfigManager $xConfigManager, PackageManager $xPackageManager,
+        CallbackManager $xCallbackManager, ViewRenderer $xViewRenderer)
     {
         $this->xConfigManager = $xConfigManager;
         $this->xPackageManager = $xPackageManager;
         $this->xCallbackManager = $xCallbackManager;
+        $this->xViewRenderer = $xViewRenderer;
     }
 
     /**
@@ -127,6 +136,10 @@ class Bootstrap
      */
     private function setupApp(Config $xAppConfig)
     {
+        if($xAppConfig->hasOption('options.views.default'))
+        {
+            $this->xViewRenderer->setDefaultNamespace($xAppConfig->getOption('options.views.default'));
+        }
         // Register user functions and classes
         $this->xPackageManager->registerFromConfig($xAppConfig);
     }

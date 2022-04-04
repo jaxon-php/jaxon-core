@@ -19,13 +19,6 @@ class ViewManager
     protected $di;
 
     /**
-     * The default namespace
-     *
-     * @var string
-     */
-    protected $sDefaultNamespace = '';
-
-    /**
      * The view namespaces
      *
      * @var array
@@ -40,51 +33,6 @@ class ViewManager
     public function __construct(Container $di)
     {
         $this->di = $di;
-    }
-
-    /**
-     * Get the default namespace
-     *
-     * @return string
-     */
-    public function getDefaultNamespace(): string
-    {
-        return $this->sDefaultNamespace;
-    }
-
-    /**
-     * Get the view namespaces
-     *
-     * @return array
-     */
-    public function getNamespaces(): array
-    {
-        return $this->aNamespaces;
-    }
-
-    /**
-     * Find a view namespace by its name.
-     *
-     * @param string $sNamespace    The namespace name
-     *
-     * @return array|null
-     */
-    public function getNamespace(string $sNamespace): ?array
-    {
-        return $this->aNamespaces[$sNamespace] ?? null;
-    }
-
-    /**
-     * Add a view namespace, and set the corresponding renderer.
-     *
-     * @param string $sNamespace    The corresponding renderer name
-     * @param array $aNamespace    The namespace options
-     *
-     * @return void
-     */
-    private function _addNamespace(string $sNamespace, array $aNamespace)
-    {
-        $this->aNamespaces[$sNamespace] = $aNamespace;
     }
 
     /**
@@ -104,52 +52,45 @@ class ViewManager
             'extension' => $sExtension,
             'renderer' => $sRenderer,
         ];
-        $this->_addNamespace($sNamespace, $aNamespace);
+        $this->aNamespaces[$sNamespace] = $aNamespace;
     }
 
     /**
      * Set the view namespaces.
      *
-     * @param Config $xLibConfig    The config options provided in the library
-     * @param Config|null $xPkgConfig    The config options provided in the app section of the global config file.
+     * @param Config $xAppConfig    The config options provided in the library
+     * @param Config|null $xUserConfig    The config options provided in the app section of the global config file.
      *
      * @return void
      */
-    public function addNamespaces(Config $xLibConfig, ?Config $xPkgConfig = null)
+    public function addNamespaces(Config $xAppConfig, ?Config $xUserConfig = null)
     {
-        $this->sDefaultNamespace = $xLibConfig->getOption('options.views.default', '');
-
-        $sPackage = $xLibConfig->getOption('package', '');
-
-        if(is_array($aNamespaces = $xLibConfig->getOptionNames('views')))
+        if(empty($aNamespaces = $xAppConfig->getOptionNames('views')))
         {
-            foreach($aNamespaces as $sNamespace => $sOption)
+            return;
+        }
+        $sPackage = $xAppConfig->getOption('package', '');
+        foreach($aNamespaces as $sNamespace => $sOption)
+        {
+            // Save the namespace
+            $aNamespace = $xAppConfig->getOption($sOption);
+            $aNamespace['package'] = $sPackage;
+            if(!isset($aNamespace['renderer']))
             {
-                // If no default namespace is defined, use the first one as default.
-                if($this->sDefaultNamespace === '')
-                {
-                    $this->sDefaultNamespace = (string)$sNamespace;
-                }
-                // Save the namespace
-                $aNamespace = $xLibConfig->getOption($sOption);
-                $aNamespace['package'] = $sPackage;
-                if(!isset($aNamespace['renderer']))
-                {
-                    $aNamespace['renderer'] = 'jaxon'; // 'jaxon' is the default renderer.
-                }
-
-                // If the lib config has defined a template option, then its value must be
-                // read from the app config.
-                if($xPkgConfig !== null && isset($aNamespace['template']))
-                {
-                    $sTemplateOption = $xLibConfig->getOption($sOption . '.template.option');
-                    $sTemplateDefault = $xLibConfig->getOption($sOption . '.template.default');
-                    $sTemplate = $xPkgConfig->getOption($sTemplateOption, $sTemplateDefault);
-                    $aNamespace['directory'] = rtrim($aNamespace['directory'], '/') . '/' . $sTemplate;
-                }
-
-                $this->_addNamespace($sNamespace, $aNamespace);
+                $aNamespace['renderer'] = 'jaxon'; // 'jaxon' is the default renderer.
             }
+
+            // If the lib config has defined a template option, then its value must be
+            // read from the app config.
+            if($xUserConfig !== null && isset($aNamespace['template']) && is_array($aNamespace['template']))
+            {
+                $sTemplateOption = $xAppConfig->getOption($sOption . '.template.option');
+                $sTemplateDefault = $xAppConfig->getOption($sOption . '.template.default');
+                $sTemplate = $xUserConfig->getOption($sTemplateOption, $sTemplateDefault);
+                $aNamespace['directory'] = rtrim($aNamespace['directory'], '/') . '/' . $sTemplate;
+            }
+
+            $this->aNamespaces[$sNamespace] = $aNamespace;
         }
     }
 
@@ -163,7 +104,7 @@ class ViewManager
     public function getRenderer(string $sId): ViewInterface
     {
         // Return the view renderer with the given id
-        return $this->di->get('jaxon.app.view.' . $sId);
+        return $this->di->g('jaxon.app.view.' . $sId);
     }
 
     /**
@@ -201,12 +142,11 @@ class ViewManager
      */
     public function getNamespaceRenderer(string $sNamespace): ?ViewInterface
     {
-        $aNamespace = $this->getNamespace($sNamespace);
-        if(!$aNamespace)
+        if(!isset($this->aNamespaces[$sNamespace]))
         {
             return null;
         }
         // Return the view renderer with the configured id
-        return $this->getRenderer($aNamespace['renderer']);
+        return $this->getRenderer($this->aNamespaces[$sNamespace]['renderer']);
     }
 }

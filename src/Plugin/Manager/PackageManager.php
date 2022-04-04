@@ -150,21 +150,21 @@ class PackageManager
      * Read and set Jaxon options from a JSON config file
      *
      * @param Config $xConfig The config options
-     * @param Config|null $xPkgConfig The user provided package options
+     * @param Config|null $xUserConfig The user provided package options
      *
      * @return void
      * @throws SetupException
      */
-    private function registerItemsFromConfig(Config $xConfig, ?Config $xPkgConfig = null)
+    private function registerItemsFromConfig(Config $xConfig, ?Config $xUserConfig = null)
     {
         // Register functions, classes and directories
         $this->registerCallables($xConfig->getOption('functions', []), Jaxon::CALLABLE_FUNCTION);
         $this->registerCallables($xConfig->getOption('classes', []), Jaxon::CALLABLE_CLASS);
         $this->registerCallables($xConfig->getOption('directories', []), Jaxon::CALLABLE_DIR);
         // Register the view namespaces
-        // Note: the $xPkgConfig can provide a "template" option, which is used to customize
+        // Note: the $xUserConfig can provide a "template" option, which is used to customize
         // the user defined view namespaces. That's why it is needed here.
-        $this->xViewManager->addNamespaces($xConfig, $xPkgConfig);
+        $this->xViewManager->addNamespaces($xConfig, $xUserConfig);
         // Save items in the DI container
         $this->updateContainer($xConfig);
     }
@@ -199,12 +199,12 @@ class PackageManager
      * Register a package
      *
      * @param string $sClassName    The package class
-     * @param array $aPkgOptions    The user provided package options
+     * @param array $aUserOptions    The user provided package options
      *
      * @return void
      * @throws SetupException
      */
-    public function registerPackage(string $sClassName, array $aPkgOptions)
+    public function registerPackage(string $sClassName, array $aUserOptions)
     {
         $sClassName = trim($sClassName, '\\ ');
         if(!is_subclass_of($sClassName, Package::class))
@@ -215,11 +215,11 @@ class PackageManager
         $aLibOptions = $this->getPackageOptions($sClassName);
         // Add the package name to the config
         $aLibOptions['package'] = $sClassName;
-        $xLibConfig = $this->xConfigManager->newConfig($aLibOptions);
-        $xPkgConfig = $this->xConfigManager->newConfig($aPkgOptions);
-        $this->di->registerPackage($sClassName, $xPkgConfig);
+        $xAppConfig = $this->xConfigManager->newConfig($aLibOptions);
+        $xUserConfig = $this->xConfigManager->newConfig($aUserOptions);
+        $this->di->registerPackage($sClassName, $xUserConfig);
         // Register the declarations in the package config.
-        $this->registerItemsFromConfig($xLibConfig, $xPkgConfig);
+        $this->registerItemsFromConfig($xAppConfig, $xUserConfig);
         // Register the package as a code generator.
         $this->xCodeGenerator->addGenerator($sClassName, 500);
     }
