@@ -24,6 +24,17 @@ class SamplePackage extends Package
             'classes' => [
                 SamplePackageClass::class,
             ],
+            'views' => [
+                'test' => [
+                    'directory' => realpath(__DIR__ . '/../views'),
+                    'extension' => '.php',
+                    // 'renderer' => 'jaxon', // This is the default value.
+                    'template' => [
+                        'option' => 'template',
+                        'default' => 'test',
+                    ],
+                ],
+            ],
         ];
     }
 
