@@ -1,12 +1,12 @@
 <?php
 
-use Lagdo\TwitterFeed\Package as TwitterPackage;
-use Jaxon\Tests\Ns\Lib\ServiceInterface;
 use Jaxon\Tests\Ns\Lib\Service;
 use Jaxon\Tests\Ns\Lib\ServiceAuto;
+use Jaxon\Tests\Ns\Lib\ServiceInterface;
+use Lagdo\TwitterFeed\Package as TwitterPackage;
 
 $baseDir = realpath(__DIR__ . '/../..');
-$defsDir = realpath(__DIR__ . '/../../defs');
+$defsDir = realpath(__DIR__ . '/../../src');
 require_once "$defsDir/classes.php";
 require_once "$defsDir/packages.php";
 
@@ -28,12 +28,12 @@ return [
             TheClass::class,
         ],
         'directories' => [
-            $baseDir . '/dir',
-            $baseDir . '/Ns/Ajax' => [
+            $baseDir . '/src/dir',
+            $baseDir . '/src/Ns/Ajax' => [
                 'namespace' => "Jaxon\\Tests\\Ns\\Ajax",
                 'autoload' => false,
             ],
-            $baseDir . '/dir_ns' => "Jaxon\\NsTests",
+            $baseDir . '/src/dir_ns' => "Jaxon\\NsTests",
         ],
         'packages' => [
             TwitterPackage::class => [],

@@ -1,12 +1,7 @@
 <?php
 
-use Lagdo\TwitterFeed\Package as TwitterPackage;
-use Jaxon\Tests\Ns\Lib\ServiceInterface;
-use Jaxon\Tests\Ns\Lib\Service;
-use Jaxon\Tests\Ns\Lib\ServiceAuto;
-
 $baseDir = realpath(__DIR__ . '/../..');
-$defsDir = realpath(__DIR__ . '/../../defs');
+$defsDir = realpath(__DIR__ . '/../../src');
 require_once "$defsDir/classes.php";
 require_once "$defsDir/packages.php";
 
@@ -25,8 +20,8 @@ return [
         'js' => [
             'app' => [
                 'export' => true,
-                'dir' => $baseDir . '/script',
-                'uri' => 'http://example.test/script',
+                'dir' => $baseDir . '/js',
+                'uri' => 'http://example.test/js',
             ],
         ],
         'assets' => [

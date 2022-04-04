@@ -43,7 +43,8 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Jaxon\\Tests\\": "tests/"
+            "Jaxon\\Tests\\": "tests/",
+            "Jaxon\\Tests\\Ns\\": "tests/src/Ns/"
         }
     },
     "minimum-stability": "dev",
