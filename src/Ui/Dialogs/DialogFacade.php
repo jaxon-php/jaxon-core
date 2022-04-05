@@ -76,23 +76,17 @@ class DialogFacade
     /**
      * Get the QuestionInterface instance (javascript question function)
      *
-     * @param Response|null $xResponse
      * @param string $sQuestionLibrary
      *
      * @return QuestionInterface
      */
-    public function getQuestionLibrary(?Response $xResponse = null, string $sQuestionLibrary = '')
+    public function getQuestionLibrary(string $sQuestionLibrary = '')
     {
         if($sQuestionLibrary === '')
         {
             $sQuestionLibrary = $this->sQuestionLibrary;
         }
-        $xLibrary = ($sQuestionLibrary) ? $this->di->g($sQuestionLibrary) : $this->xAlertLibrary;
-        if($xResponse !== null)
-        {
-            $xLibrary->setResponse($xResponse);
-        }
-        return $xLibrary;
+        return ($sQuestionLibrary) ? $this->di->g($sQuestionLibrary) : $this->xAlertLibrary;
     }
 
     /**
