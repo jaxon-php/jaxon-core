@@ -110,7 +110,7 @@ class Paginator
      */
     protected function updateTotalPages()
     {
-        $this->totalPages = ($this->itemsPerPage == 0 ? 0 : (int)ceil($this->totalItems / $this->itemsPerPage));
+        $this->totalPages = ($this->itemsPerPage === 0 ? 0 : (int)ceil($this->totalItems / $this->itemsPerPage));
         return $this;
     }
 
