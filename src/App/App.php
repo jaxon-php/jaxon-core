@@ -91,6 +91,11 @@ class App
             $sMessage = $this->xTranslator->trans('errors.file.content', ['path' => $sConfigFile]);
             throw new SetupException($sMessage);
         }
+        // The bootstrap set this to false. It needs to be changed.
+        if(!isset($aLibOptions['core']['response']['send']))
+        {
+            $aLibOptions['core']['response']['send'] = true;
+        }
 
         $this->bootstrap()
             ->lib($aLibOptions)

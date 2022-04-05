@@ -150,13 +150,13 @@ class PluginManager
         // This plugin implements the Message interface
         if(in_array(MessageInterface::class, $aInterfaces))
         {
-            $this->di->getDialog()->setMessage($sClassName);
+            $this->di->getDialog()->setMessageLibrary($sClassName);
             $bIsUsed = true;
         }
         // This plugin implements the Question interface
         if(in_array(QuestionInterface::class, $aInterfaces))
         {
-            $this->di->getDialog()->setQuestion($sClassName);
+            $this->di->getDialog()->setQuestionLibrary($sClassName);
             $bIsUsed = true;
         }
 

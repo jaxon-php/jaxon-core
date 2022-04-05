@@ -26,7 +26,6 @@ use Jaxon\Ui\Pagination\Paginator;
 
 use function array_map;
 use function array_shift;
-use function count;
 use function func_get_args;
 use function implode;
 
@@ -54,7 +53,29 @@ class Call extends JsCall
      *
      * @var array
      */
+    protected $aConfirmArgs = [];
+
+    /**
+     * The arguments of the elseShow() call
+     *
+     * @var array
+     */
     protected $aMessageArgs = [];
+
+    /**
+     * @var array
+     */
+    private $aVariables;
+
+    /**
+     * @var string
+     */
+    private $sVars;
+
+    /**
+     * @var int
+     */
+    private $nVarId;
 
     /**
      * The constructor.
@@ -185,20 +206,6 @@ class Call extends JsCall
     }
 
     /**
-     * Create parameters for message arguments
-     *
-     * @param array $aArgs    The arguments
-     *
-     * @return void
-     */
-    private function setMessageArgs(array $aArgs)
-    {
-        $this->aMessageArgs = array_map(function($xParameter) {
-            return Parameter::make($xParameter);
-        }, $aArgs);
-    }
-
-    /**
      * Add a confirmation question to the request
      *
      * @param string $sQuestion    The question to ask
@@ -208,7 +215,9 @@ class Call extends JsCall
     public function confirm(string $sQuestion): Call
     {
         $this->sCondition = '__confirm__';
-        $this->setMessageArgs(func_get_args());
+        $this->aConfirmArgs = array_map(function($xParameter) {
+            return Parameter::make($xParameter);
+        }, func_get_args());
         return $this;
     }
 
@@ -224,7 +233,9 @@ class Call extends JsCall
      */
     public function elseShow(string $sMessage): Call
     {
-        $this->setMessageArgs(func_get_args());
+        $this->aMessageArgs = array_map(function($xParameter) {
+            return Parameter::make($xParameter);
+        }, func_get_args());
         return $this;
     }
 
@@ -232,33 +243,76 @@ class Call extends JsCall
      * Make unique js vars for parameters of type DomSelector
      *
      * @param ParameterInterface $xParameter
-     * @param array $aVariables
-     * @param string $sVars
-     * @param int $nVarId
      *
      * @return ParameterInterface
      */
-    private function _makeUniqueJsVar(ParameterInterface $xParameter, array &$aVariables, string &$sVars, int &$nVarId): ParameterInterface
+    private function _makeUniqueJsVar(ParameterInterface $xParameter): ParameterInterface
     {
         if($xParameter instanceof DomSelector)
         {
             $sParameterStr = $xParameter->getScript();
-            if(!isset($aVariables[$sParameterStr]))
+            if(!isset($this->aVariables[$sParameterStr]))
             {
                 // The value is not yet defined. A new variable is created.
-                $sVarName = "jxnVar$nVarId";
-                $aVariables[$sParameterStr] = $sVarName;
-                $sVars .= "$sVarName=$xParameter;";
-                $nVarId++;
+                $sVarName = 'jxnVar' . $this->nVarId;
+                $this->aVariables[$sParameterStr] = $sVarName;
+                $this->sVars .= "$sVarName=$xParameter;";
+                $this->nVarId++;
             }
             else
             {
                 // The value is already defined. The corresponding variable is assigned.
-                $sVarName = $aVariables[$sParameterStr];
+                $sVarName = $this->aVariables[$sParameterStr];
             }
             $xParameter = new Parameter(Parameter::JS_VALUE, $sVarName);
         }
         return $xParameter;
+    }
+
+    /**
+     * Make a phrase to be displayed in js code
+     *
+     * @param array $aArgs
+     *
+     * @return string
+     */
+    private function makePhrase(array $aArgs): string
+    {
+        if(empty($aArgs))
+        {
+            return '';
+        }
+        // The first array entry is the message.
+        $sPhrase = array_shift($aArgs);
+        if(empty($aArgs))
+        {
+            return $sPhrase;
+        }
+        $nParamId = 1;
+        foreach($aArgs as &$xParameter)
+        {
+            $xParameter = $this->_makeUniqueJsVar($xParameter);
+            $xParameter = "'$nParamId':" . $xParameter->getScript();
+            $nParamId++;
+        }
+        $sPhrase .= '.supplant({' . implode(',', $aArgs) . '})';
+        return $sPhrase;
+    }
+
+    /**
+     * Make a phrase to be displayed in js code
+     *
+     * @param array $aArgs
+     *
+     * @return string
+     */
+    private function makeMessage(array $aArgs): string
+    {
+        if(!($sPhrase = $this->makePhrase($aArgs)))
+        {
+            return '';
+        }
+        return $this->xDialogFacade->getMessageLibrary(true)->warning($sPhrase);
     }
 
     /**
@@ -275,49 +329,30 @@ class Call extends JsCall
          * To avoid issues related to these context changes, the JQuery selectors values are first saved into
          * local variables, which are then used in Jaxon function calls.
          */
-        $sVars = ''; // Javascript code defining all the variables values.
-        $nVarId = 1; // Position of the variables, starting from 1.
+        $this->sVars = ''; // Javascript code defining all the variables values.
+        $this->nVarId = 1; // Position of the variables, starting from 1.
         // This array will avoid declaring multiple variables with the same value.
         // The array key is the variable value, while the array value is the variable name.
-        $aVariables = []; // Array of local variables.
+        $this->aVariables = []; // Array of local variables.
         foreach($this->aParameters as &$xParameter)
         {
-            $xParameter = $this->_makeUniqueJsVar($xParameter, $aVariables, $sVars, $nVarId);
+            $xParameter = $this->_makeUniqueJsVar($xParameter);
         }
 
-        $sPhrase = '';
-        if(count($this->aMessageArgs) > 0)
-        {
-            $sPhrase = array_shift($this->aMessageArgs); // The first array entry is the question.
-            if(count($this->aMessageArgs) > 0)
-            {
-                $nParamId = 1;
-                foreach($this->aMessageArgs as &$xParameter)
-                {
-                    $xParameter = $this->_makeUniqueJsVar($xParameter, $aVariables, $sVars, $nVarId);
-                    $xParameter = "'$nParamId':" . $xParameter->getScript();
-                    $nParamId++;
-                }
-                $sPhrase .= '.supplant({' . implode(',', $this->aMessageArgs) . '})';
-            }
-        }
-
+        $sMessageScript = $this->makeMessage($this->aMessageArgs);
         $sScript = parent::getScript();
         if($this->sCondition === '__confirm__')
         {
-            $sScript = $this->xDialogFacade->confirm($sPhrase, $sScript, '');
+            $sConfirmPhrase = $this->makePhrase($this->aConfirmArgs);
+            $sScript = $this->xDialogFacade->getQuestionLibrary()
+                ->confirm($sConfirmPhrase, $sScript, $sMessageScript);
         }
         elseif($this->sCondition !== null)
         {
-            $sScript = 'if(' . $this->sCondition . '){' . $sScript . ';}';
-            if(($sPhrase))
-            {
-                $this->xDialogFacade->getMessage()->setReturn(true);
-                $sScript .= 'else{' . $this->xDialogFacade->warning($sPhrase) . ';}';
-                $this->xDialogFacade->getMessage()->setReturn(false);
-            }
+            $sScript = empty($sMessageScript) ? 'if(' . $this->sCondition . '){' . $sScript . ';}' :
+                'if(' . $this->sCondition . '){' . $sScript . ';}else{' . $sMessageScript . ';}';
         }
-        return $sVars . $sScript;
+        return $this->sVars . $sScript;
     }
 
     /**

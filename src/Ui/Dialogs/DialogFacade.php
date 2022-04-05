@@ -12,6 +12,7 @@
 namespace Jaxon\Ui\Dialogs;
 
 use Jaxon\Di\Container;
+use Jaxon\Response\Response;
 
 class DialogFacade
 {
@@ -25,28 +26,28 @@ class DialogFacade
      *
      * @var string
      */
-    private $sQuestion = '';
-
-    /**
-     * Default javascript confirm function
-     *
-     * @var QuestionInterface
-     */
-    private $xDefaultQuestion;
+    private $sQuestionLibrary = '';
 
     /**
      * The MessageInterface class name (javascript alert function)
      *
      * @var string
      */
-    private $sMessage = '';
+    private $sMessageLibrary = '';
 
     /**
-     * Default javascript alert function
+     * The ModalInterface class name
      *
-     * @var MessageInterface
+     * @var string
      */
-    private $xDefaultMessage;
+    private $sModalLibrary = '';
+
+    /**
+     * Default javascript alert libray
+     *
+     * @var AlertLibrary
+     */
+    private $xAlertLibrary;
 
     /**
      * The constructor
@@ -57,147 +58,110 @@ class DialogFacade
     {
         $this->di = $di;
         // Javascript confirm function
-        $this->xDefaultQuestion = new Question();
-        // Javascript alert function
-        $this->xDefaultMessage = new Message();
+        $this->xAlertLibrary = new AlertLibrary();
     }
 
     /**
      * Set the QuestionInterface class name
      *
-     * @param string $sQuestion    The QuestionInterface class name
+     * @param string $sQuestionLibrary    The QuestionInterface class name
      *
      * @return void
      */
-    public function setQuestion(string $sQuestion)
+    public function setQuestionLibrary(string $sQuestionLibrary)
     {
-        $this->sQuestion = $sQuestion;
+        $this->sQuestionLibrary = $sQuestionLibrary;
     }
 
     /**
-     * Get the QuestionInterface class name (javascript question function)
+     * Get the QuestionInterface instance (javascript question function)
+     *
+     * @param Response|null $xResponse
+     * @param string $sQuestionLibrary
      *
      * @return QuestionInterface
      */
-    public function getQuestion()
+    public function getQuestionLibrary(?Response $xResponse = null, string $sQuestionLibrary = '')
     {
-        return ($this->sQuestion) ? $this->di->get($this->sQuestion) : $this->xDefaultQuestion;
-    }
-
-    /**
-     * Get the default QuestionInterface class name (javascript confirm function)
-     *
-     * @return QuestionInterface
-     */
-    public function getDefaultQuestion(): QuestionInterface
-    {
-        return $this->xDefaultQuestion;
+        if($sQuestionLibrary === '')
+        {
+            $sQuestionLibrary = $this->sQuestionLibrary;
+        }
+        $xLibrary = ($sQuestionLibrary) ? $this->di->g($sQuestionLibrary) : $this->xAlertLibrary;
+        if($xResponse !== null)
+        {
+            $xLibrary->setResponse($xResponse);
+        }
+        return $xLibrary;
     }
 
     /**
      * Set MessageInterface class name
      *
-     * @param string $sMessage    The MessageInterface class name
+     * @param string $sMessageLibrary    The MessageInterface class name
      *
      * @return void
      */
-    public function setMessage(string $sMessage)
+    public function setMessageLibrary(string $sMessageLibrary)
     {
-        $this->sMessage = $sMessage;
+        $this->sMessageLibrary = $sMessageLibrary;
     }
 
     /**
-     * Get the MessageInterface class name (javascript alert function)
+     * Get the MessageInterface instance (javascript alert function)
+     *
+     * @param bool $bReturn Whether to return the code
+     * @param Response|null $xResponse
+     * @param string $sMessageLibrary
      *
      * @return MessageInterface
      */
-    public function getMessage(): MessageInterface
+    public function getMessageLibrary(bool $bReturn, ?Response $xResponse = null, string $sMessageLibrary = ''): MessageInterface
     {
-        return ($this->sMessage) ? $this->di->get($this->sMessage) : $this->xDefaultMessage;
+        if($sMessageLibrary === '')
+        {
+            $sMessageLibrary = $this->sMessageLibrary;
+        }
+        $xLibrary = ($sMessageLibrary) ? $this->di->g($sMessageLibrary) : $this->xAlertLibrary;
+        $xLibrary->setReturn($bReturn);
+        if($xResponse !== null)
+        {
+            $xLibrary->setResponse($xResponse);
+        }
+        return $xLibrary;
     }
 
     /**
-     * Get the default MessageInterface class name (javascript alert function)
+     * Set the ModalInterface class name
      *
-     * @return MessageInterface
+     * @param string $sModalLibrary    The ModalInterface class name
+     *
+     * @return void
      */
-    public function getDefaultMessage(): MessageInterface
+    public function setModalLibrary(string $sModalLibrary)
     {
-        return $this->xDefaultMessage;
+        $this->sModalLibrary = $sModalLibrary;
     }
 
     /**
-     * Get the script which makes a call only if the user answers yes to the given question.
-     * It is a function of the Question interface.
+     * Get the ModalInterface instance (javascript question function)
      *
-     * @param string  $sQuestion
-     * @param string  $sYesScript
-     * @param string  $sNoScript
+     * @param Response|null $xResponse
+     * @param string $sModalLibrary
      *
-     * @return string
+     * @return ModalInterface
      */
-    public function confirm(string $sQuestion, string $sYesScript, string $sNoScript): string
+    public function getModalLibrary(?Response $xResponse = null, string $sModalLibrary = ''): ?ModalInterface
     {
-        return $this->getQuestion()->confirm($sQuestion, $sYesScript, $sNoScript);
-    }
-
-    /**
-     * Print a success message.
-     *
-     * It is a function of the Message interface.
-     *
-     * @param string $sMessage    The text of the message
-     * @param string $sTitle    The title of the message
-     *
-     * @return string
-     */
-    public function success(string $sMessage, string $sTitle = ''): string
-    {
-        return $this->getMessage()->success($sMessage, $sTitle);
-    }
-
-    /**
-     * Print an information message.
-     *
-     * It is a function of the Message interface.
-     *
-     * @param string $sMessage    The text of the message
-     * @param string $sTitle    The title of the message
-     *
-     * @return string
-     */
-    public function info(string $sMessage, string $sTitle = ''): string
-    {
-        return $this->getMessage()->info($sMessage, $sTitle);
-    }
-
-    /**
-     * Print a warning message.
-     *
-     * It is a function of the Message interface.
-     *
-     * @param string $sMessage    The text of the message
-     * @param string $sTitle    The title of the message
-     *
-     * @return string
-     */
-    public function warning(string $sMessage, string $sTitle = ''): string
-    {
-        return $this->getMessage()->warning($sMessage, $sTitle);
-    }
-
-    /**
-     * Print an error message.
-     *
-     * It is a function of the Message interface.
-     *
-     * @param string $sMessage    The text of the message
-     * @param string $sTitle    The title of the message
-     *
-     * @return string
-     */
-    public function error(string $sMessage, string $sTitle = ''): string
-    {
-        return $this->getMessage()->error($sMessage, $sTitle);
+        if($sModalLibrary === '')
+        {
+            $sModalLibrary = $this->sModalLibrary;
+        }
+        $xLibrary = ($sModalLibrary) ? $this->di->g($sModalLibrary) : null;
+        if($xResponse !== null)
+        {
+            $xLibrary->setResponse($xResponse);
+        }
+        return $xLibrary;
     }
 }

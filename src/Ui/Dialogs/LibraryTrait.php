@@ -1,7 +1,7 @@
 <?php
 
 /**
- * MessageTrait.php - Trait for alert messages.
+ * LibraryTrait.php - Trait for alert messages.
  *
  * @package jaxon-dialogs
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
@@ -12,14 +12,41 @@
 
 namespace Jaxon\Ui\Dialogs;
 
-trait MessageTrait
+use Jaxon\Response\Response;
+
+trait LibraryTrait
 {
     /**
-     *
-     *
+     * @var Response
+     */
+    protected $xResponse = null;
+
+    /**
      * @var bool
      */
-    private $bReturn = false;
+    protected $bReturn = false;
+
+    /**
+     * Set the response to attach the messages to.
+     *
+     * @param Response $xResponse    Whether to return the code
+     *
+     * @return void
+     */
+    public function setResponse(Response $xResponse)
+    {
+        $this->xResponse = $xResponse;
+    }
+
+    /**
+     * Get the <Jaxon\Response\Response> object
+     *
+     * @return Response
+     */
+    final public function response(): Response
+    {
+        return $this->xResponse;
+    }
 
     /**
      * Set the library to return the javascript code or run it in the browser.

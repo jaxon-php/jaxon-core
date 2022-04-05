@@ -1,7 +1,9 @@
 <?php
 
 /**
- * Message.php - Interface for alert messages.
+ * AlertLibrary.php
+ *
+ * Implements the dialog message and question features using the js alert and confirm functions.
  *
  * @package jaxon-dialogs
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
@@ -12,9 +14,24 @@
 
 namespace Jaxon\Ui\Dialogs;
 
-class Message implements MessageInterface
+class AlertLibrary implements MessageInterface, QuestionInterface
 {
-    use MessageTrait;
+    use LibraryTrait;
+
+    /**
+     * Get the script which makes a call only if the user answers yes to the given question
+     *
+     * @param string  $sQuestion
+     * @param string  $sYesScript
+     * @param string  $sNoScript
+     *
+     * @return string
+     */
+    public function confirm(string $sQuestion, string $sYesScript, string $sNoScript): string
+    {
+        return empty($sNoScript) ? 'if(confirm(' . $sQuestion . ')){' . $sYesScript . ';}' :
+            'if(confirm(' . $sQuestion . ')){' . $sYesScript . ';}else{' . $sNoScript . ';}';
+    }
 
     /**
      * Print an alert message.
@@ -28,6 +45,10 @@ class Message implements MessageInterface
         if($this->getReturn())
         {
             return 'alert(' . $sMessage . ')';
+        }
+        if($this->xResponse !== null)
+        {
+            $this->xResponse->alert($sMessage);
         }
         return '';
     }
