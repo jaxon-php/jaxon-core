@@ -53,16 +53,6 @@ trait ViewTrait
     }
 
     /**
-     * Get the dialog wrapper
-     *
-     * @return DialogFacade
-     */
-    public function getDialog(): DialogFacade
-    {
-        return $this->g(DialogFacade::class);
-    }
-
-    /**
      * Get the view manager
      *
      * @return ViewManager

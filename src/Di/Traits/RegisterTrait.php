@@ -40,10 +40,6 @@ trait RegisterTrait
                 $xCallableObject->configure($sName, $aOptions[$sName]);
             }
         }
-        if(!isset($aOptions['functions']))
-        {
-            return;
-        }
         // Functions options
         $aCallableOptions = [];
         foreach($aOptions['functions'] as $sNames => $aFunctionOptions)

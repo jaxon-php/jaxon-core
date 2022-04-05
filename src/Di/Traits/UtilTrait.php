@@ -3,7 +3,6 @@
 namespace Jaxon\Di\Traits;
 
 use Jaxon\Utils\Config\ConfigReader;
-use Jaxon\Utils\File\FileMinifier;
 use Jaxon\Utils\Http\UriDetector;
 use Jaxon\Utils\Template\TemplateEngine;
 use Jaxon\Utils\Translation\Translator;
@@ -51,10 +50,6 @@ trait UtilTrait
             $xTemplateEngine->addNamespace('pagination', $sPaginationDir, '.php');
             $xTemplateEngine->setDefaultNamespace('jaxon');
             return $xTemplateEngine;
-        });
-        // File minifier
-        $this->set(FileMinifier::class, function() {
-            return new FileMinifier();
         });
         // URI detector
         $this->set(UriDetector::class, function() {

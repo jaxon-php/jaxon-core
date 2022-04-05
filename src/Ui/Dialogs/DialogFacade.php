@@ -43,7 +43,7 @@ class DialogFacade
     private $sModalLibrary = '';
 
     /**
-     * Default javascript alert libray
+     * Default javascript alert library
      *
      * @var AlertLibrary
      */
