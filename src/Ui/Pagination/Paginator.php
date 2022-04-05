@@ -120,13 +120,13 @@ class Paginator
     /**
      * Set the max number of pages to show
      *
-     * @param int $nMaxPagesToShow    The max number of pages to show
+     * @param int $nMaxPages    The max number of pages to show
      *
      * @return Paginator
      */
-    public function setMaxPagesToShow(int $nMaxPagesToShow): Paginator
+    public function setMaxPages(int $nMaxPages): Paginator
     {
-        $this->xRenderer->setMaxPagesToShow($nMaxPagesToShow);
+        $this->xRenderer->setMaxPages($nMaxPages);
         return $this;
     }
 
@@ -193,6 +193,10 @@ class Paginator
      */
     public function getPages(): array
     {
+        if($this->nTotalPages < 2)
+        {
+            return [];
+        }
         return array_map(function($aPage) {
             return (object)['type' => $aPage[0], 'text' => $aPage[1], 'call' => $aPage[2]];
         }, $this->xRenderer->getPages($this->nTotalPages));

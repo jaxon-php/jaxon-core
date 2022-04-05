@@ -1,6 +1,6 @@
 <?php
 
-$baseDir = __DIR__ . '/../..';
+$baseDir = __DIR__ . '/../../src';
 
 return [
     'app' => [

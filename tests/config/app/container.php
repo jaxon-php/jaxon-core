@@ -1,8 +1,8 @@
 <?php
 
-use Jaxon\Tests\Ns\Lib\ServiceInterface;
 use Jaxon\Tests\Ns\Lib\Service;
 use Jaxon\Tests\Ns\Lib\ServiceAuto;
+use Jaxon\Tests\Ns\Lib\ServiceInterface;
 
 return [
     'app' => [

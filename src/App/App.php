@@ -51,11 +51,19 @@ class App
     }
 
     /**
-     * @return Translator
+     * Set the javascript asset
+     *
+     * @param bool $bExport    Whether to export the js code in a file
+     * @param bool $bMinify    Whether to minify the exported js file
+     * @param string $sUri    The URI to access the js file
+     * @param string $sDir    The directory where to create the js file
+     *
+     * @return App
      */
-    protected function translator(): Translator
+    public function asset(bool $bExport, bool $bMinify, string $sUri = '', string $sDir = ''): App
     {
-        return $this->xTranslator;
+        $this->bootstrap()->asset($bExport, $bMinify, $sUri, $sDir);
+        return $this;
     }
 
     /**
@@ -83,12 +91,16 @@ class App
             $sMessage = $this->xTranslator->trans('errors.file.content', ['path' => $sConfigFile]);
             throw new SetupException($sMessage);
         }
+        // The bootstrap set this to false. It needs to be changed.
+        if(!isset($aLibOptions['core']['response']['send']))
+        {
+            $aLibOptions['core']['response']['send'] = true;
+        }
 
         $this->bootstrap()
             ->lib($aLibOptions)
             ->app($aAppOptions)
-            // ->uri($sUri)
-            // ->js(!$bIsDebug, $sJsUrl, $sJsDir, !$bIsDebug)
+            // ->asset(!$bIsDebug, !$bIsDebug, $sJsUrl, $sJsDir)
             ->setup();
     }
 

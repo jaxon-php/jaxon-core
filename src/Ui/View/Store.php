@@ -4,7 +4,9 @@ namespace Jaxon\Ui\View;
 
 use function array_merge;
 
-class Store
+use JsonSerializable;
+
+class Store implements JsonSerializable
 {
     /**
      * The view renderer

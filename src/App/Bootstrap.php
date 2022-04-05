@@ -15,11 +15,11 @@ namespace Jaxon\App;
 use Jaxon\Config\ConfigManager;
 use Jaxon\Plugin\Manager\PackageManager;
 use Jaxon\Request\Handler\CallbackManager;
+use Jaxon\Ui\View\ViewRenderer;
 use Jaxon\Utils\Config\Config;
 use Jaxon\Exception\SetupException;
 
 use function call_user_func;
-use function count;
 
 class Bootstrap
 {
@@ -39,6 +39,11 @@ class Bootstrap
     private $xCallbackManager;
 
     /**
+     * @var ViewRenderer
+     */
+    private $xViewRenderer;
+
+    /**
      * The library options
      *
      * @var array
@@ -53,52 +58,20 @@ class Bootstrap
     private $aAppOptions = [];
 
     /**
-     * The Ajax endpoint URI
-     *
-     * @var string
-     */
-    private $sUri = '';
-
-    /**
-     * The js code URI
-     *
-     * @var string
-     */
-    private $sJsUri = '';
-
-    /**
-     * The js code dir
-     *
-     * @var string
-     */
-    private $sJsDir = '';
-
-    /**
-     * Export the js code
-     *
-     * @var bool
-     */
-    private $bExportJs = false;
-
-    /**
-     * Minify the js code
-     *
-     * @var bool
-     */
-    private $bMinifyJs = false;
-
-    /**
      * The class constructor
      *
      * @param ConfigManager $xConfigManager
      * @param PackageManager $xPackageManager
      * @param CallbackManager $xCallbackManager
+     * @param ViewRenderer $xViewRenderer
      */
-    public function __construct(ConfigManager $xConfigManager, PackageManager $xPackageManager, CallbackManager $xCallbackManager)
+    public function __construct(ConfigManager $xConfigManager, PackageManager $xPackageManager,
+        CallbackManager $xCallbackManager, ViewRenderer $xViewRenderer)
     {
         $this->xConfigManager = $xConfigManager;
         $this->xPackageManager = $xPackageManager;
         $this->xCallbackManager = $xCallbackManager;
+        $this->xViewRenderer = $xViewRenderer;
     }
 
     /**
@@ -128,34 +101,28 @@ class Bootstrap
     }
 
     /**
-     * Set the ajax endpoint URI
+     * Set the javascript asset
      *
-     * @param string $sUri    The ajax endpoint URI
-     *
-     * @return Bootstrap
-     */
-    public function uri(string $sUri): Bootstrap
-    {
-        $this->sUri = $sUri;
-        return $this;
-    }
-
-    /**
-     * Set the javascript code
-     *
-     * @param bool $bExportJs    Whether to export the js code in a file
-     * @param string $sJsUri    The URI to access the js file
-     * @param string $sJsDir    The directory where to create the js file
-     * @param bool $bMinifyJs    Whether to minify the exported js file
+     * @param bool $bExport    Whether to export the js code in a file
+     * @param bool $bMinify    Whether to minify the exported js file
+     * @param string $sUri    The URI to access the js file
+     * @param string $sDir    The directory where to create the js file
      *
      * @return Bootstrap
      */
-    public function js(bool $bExportJs, string $sJsUri = '', string $sJsDir = '', bool $bMinifyJs = false): Bootstrap
+    public function asset(bool $bExport, bool $bMinify, string $sUri = '', string $sDir = ''): Bootstrap
     {
-        $this->sJsUri = $sJsUri;
-        $this->sJsDir = $sJsDir;
-        $this->bExportJs = $bExportJs;
-        $this->bMinifyJs = $bMinifyJs;
+        // Jaxon library settings
+        $this->xConfigManager->setOption('js.app.export', $bExport);
+        $this->xConfigManager->setOption('js.app.minify', $bMinify);
+        if($sUri !== '')
+        {
+            $this->xConfigManager->setOption('js.app.uri', $sUri);
+        }
+        if($sDir !== '')
+        {
+            $this->xConfigManager->setOption('js.app.dir', $sDir);
+        }
         return $this;
     }
 
@@ -169,6 +136,10 @@ class Bootstrap
      */
     private function setupApp(Config $xAppConfig)
     {
+        if($xAppConfig->hasOption('options.views.default'))
+        {
+            $this->xViewRenderer->setDefaultNamespace($xAppConfig->getOption('options.views.default'));
+        }
         // Register user functions and classes
         $this->xPackageManager->registerFromConfig($xAppConfig);
     }
@@ -181,37 +152,18 @@ class Bootstrap
      */
     public function setup()
     {
+        // Prevent the Jaxon library from sending the response or exiting
+        $this->xConfigManager->setOption('core.response.send', false);
+        $this->xConfigManager->setOption('core.process.exit', false);
+        $this->xConfigManager->setOption('core.process.clean', false);
+
         // Setup the lib config options.
         $this->xConfigManager->setOptions($this->aLibOptions);
-
         // Get the app config options.
         $xAppConfig = $this->xConfigManager->newConfig($this->aAppOptions);
         $xAppConfig->setOption('options.views.default', 'default');
         // Setup the app.
         $this->setupApp($xAppConfig);
-
-        // Jaxon library settings
-        if(!$this->xConfigManager->hasOption('js.app.export'))
-        {
-            $this->xConfigManager->setOption('js.app.export', $this->bExportJs);
-        }
-        if(!$this->xConfigManager->hasOption('js.app.minify'))
-        {
-            $this->xConfigManager->setOption('js.app.minify', $this->bMinifyJs);
-        }
-        if(!$this->xConfigManager->hasOption('js.app.uri') && $this->sJsUri != '')
-        {
-            $this->xConfigManager->setOption('js.app.uri', $this->sJsUri);
-        }
-        if(!$this->xConfigManager->hasOption('js.app.dir') && $this->sJsDir != '')
-        {
-            $this->xConfigManager->setOption('js.app.dir', $this->sJsDir);
-        }
-        // Set the request URI
-        if(!$this->xConfigManager->hasOption('core.request.uri') && $this->sUri != '')
-        {
-            $this->xConfigManager->setOption('core.request.uri', $this->sUri);
-        }
         $this->onBoot();
     }
 

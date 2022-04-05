@@ -49,6 +49,7 @@ trait UtilTrait
             $sPaginationDir = $sTemplateDir . DIRECTORY_SEPARATOR . 'pagination';
             $xTemplateEngine->addNamespace('jaxon', $sTemplateDir, '.php');
             $xTemplateEngine->addNamespace('pagination', $sPaginationDir, '.php');
+            $xTemplateEngine->setDefaultNamespace('jaxon');
             return $xTemplateEngine;
         });
         // File minifier

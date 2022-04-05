@@ -16,6 +16,13 @@ class ViewRenderer
     protected $xStore = null;
 
     /**
+     * The default namespace
+     *
+     * @var string
+     */
+    protected $sDefaultNamespace = 'jaxon';
+
+    /**
      * The view global data
      *
      * @var array
@@ -35,6 +42,16 @@ class ViewRenderer
     public function __construct(ViewManager $xViewManager)
     {
         $this->xViewManager = $xViewManager;
+    }
+
+    /**
+     * Set the default namespace
+     *
+     * @param string $sDefaultNamespace
+     */
+    public function setDefaultNamespace(string $sDefaultNamespace): void
+    {
+        $this->sDefaultNamespace = $sDefaultNamespace;
     }
 
     /**
@@ -109,25 +126,21 @@ class ViewRenderer
     {
         // Get the store
         $xStore = $this->store();
-
         // Get the default view namespace
-        $sNamespace = $this->xViewManager->getDefaultNamespace();
+        $sNamespace = $this->sDefaultNamespace;
         // Get the namespace from the view name
         $nSeparatorPosition = strrpos($sViewName, '::');
         if($nSeparatorPosition !== false)
         {
             $sNamespace = substr($sViewName, 0, $nSeparatorPosition);
         }
-
         $xRenderer = $this->xViewManager->getNamespaceRenderer($sNamespace);
         if(!$xRenderer)
         {
             // Cannot render a view if there's no renderer corresponding to the namespace.
             return null;
         }
-
-        $xStore->setData(array_merge($this->aViewData, $aViewData))
-            ->setView($xRenderer, $sNamespace, $sViewName);
+        $xStore->setData(array_merge($this->aViewData, $aViewData))->setView($xRenderer, $sNamespace, $sViewName);
         // Set the store to null so a new store will be created for the next view.
         $this->xStore = null;
         // Return the store

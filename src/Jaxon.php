@@ -45,6 +45,7 @@ use Jaxon\Response\Manager\ResponseManager;
 use Jaxon\Response\Response;
 use Jaxon\Response\ResponseInterface;
 use Jaxon\Session\SessionInterface;
+use Jaxon\Ui\Pagination\Paginator;
 use Jaxon\Ui\View\ViewRenderer;
 use Jaxon\Utils\Http\UriException;
 use Jaxon\Utils\Template\TemplateEngine;
@@ -460,10 +461,10 @@ class Jaxon
         // Check to see if headers have already been sent out, in which case we can't do our job
         if(headers_sent($sFilename, $nLineNumber))
         {
-            echo $this->xTranslator->trans('errors.output.already-sent', [
+            $sMessage = $this->xTranslator->trans('errors.output.already-sent', [
                 'location' => $sFilename . ':' . $nLineNumber
-            ]), "\n", $this->xTranslator->trans('errors.output.advice');
-            exit();
+            ]) . "\n" . $this->xTranslator->trans('errors.output.advice');
+            throw new RequestException($sMessage);
         }
 
         $this->di()->getRequestHandler()->processRequest();
@@ -582,6 +583,16 @@ class Jaxon
     public function view(): ViewRenderer
     {
         return $this->di()->getViewRenderer();
+    }
+
+    /**
+     * Get the paginator
+     *
+     * @return Paginator
+     */
+    public function paginator(): Paginator
+    {
+        return $this->di()->getPaginator();
     }
 
     /**
