@@ -186,11 +186,38 @@ final class RequestTest extends TestCase
     /**
      * @throws SetupException
      */
+    public function testRequestToJaxonClassWithConfirmationAndMessage()
+    {
+        $this->assertEquals(
+            "if(confirm('Really?')){JaxonSample.method(jaxon.$('elt_id').innerHTML);}else{alert('Oh! Sorry!');}",
+            rq('Sample')->method(pm()->html('elt_id'))->confirm("Really?")
+                ->elseShow("Oh! Sorry!")->getScript()
+        );
+    }
+
+    /**
+     * @throws SetupException
+     */
     public function testRequestToJaxonClassWithConfirmationAndSubstitution()
     {
          $this->assertEquals(
             "if(confirm('Really M. {1}?'.supplant({'1':jaxon.$('name_id').innerHTML}))){JaxonSample.method(jaxon.$('elt_id').innerHTML);}",
             rq('Sample')->method(pm()->html('elt_id'))->confirm("Really M. {1}?", pm()->html('name_id'))->getScript()
+        );
+    }
+
+    /**
+     * @throws SetupException
+     */
+    public function testRequestToJaxonClassWithConfirmationMessageAndSubstitution()
+    {
+        $this->assertEquals(
+            "if(confirm('Really M. {1}?'.supplant({'1':jaxon.$('name_id').innerHTML})))" .
+                "{JaxonSample.method(jaxon.$('elt_id').innerHTML);}else{alert('Oh! Sorry M. {1}!'." .
+                "supplant({'1':jaxon.$('name_id').innerHTML}));}",
+            rq('Sample')->method(pm()->html('elt_id'))
+                ->confirm("Really M. {1}?", pm()->html('name_id'))
+                ->elseShow("Oh! Sorry M. {1}!", pm()->html('name_id'))->getScript()
         );
     }
 
