@@ -1,7 +1,7 @@
 <?php
 
 /**
- * LibraryTrait.php - Trait for alert messages.
+ * DialogLibraryTrait.php
  *
  * @package jaxon-dialogs
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
@@ -10,21 +10,32 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Ui\Dialogs;
+namespace Jaxon\Ui\Dialog\Library;
 
 use Jaxon\Response\Response;
+use Jaxon\Ui\Dialog\MessageInterface;
 
-trait LibraryTrait
+trait DialogLibraryTrait
 {
+    /**
+     * The dialog library helper
+     *
+     * @var DialogLibraryHelper
+     */
+    protected $xHelper;
+
     /**
      * @var Response
      */
     protected $xResponse = null;
 
     /**
+     * For MessageInterface, tells if the calls to the functions shall
+     * add commands to the response or return the js code. By default, they add commands.
+     *
      * @var bool
      */
-    protected $bReturn = false;
+    protected $bReturnCode = false;
 
     /**
      * Set the response to attach the messages to.
@@ -33,7 +44,7 @@ trait LibraryTrait
      *
      * @return void
      */
-    public function setResponse(Response $xResponse)
+    final public function setResponse(Response $xResponse)
     {
         $this->xResponse = $xResponse;
     }
@@ -43,21 +54,20 @@ trait LibraryTrait
      *
      * @return Response
      */
-    final public function response(): Response
+    final protected function response(): Response
     {
         return $this->xResponse;
     }
 
     /**
-     * Set the library to return the javascript code or run it in the browser.
+     * @param bool $bReturnCode
      *
-     * @param bool $bReturn    Whether to return the code
-     *
-     * @return void
+     * @return MessageInterface
      */
-    public function setReturn(bool $bReturn)
+    final public function setReturnCode(bool $bReturnCode): MessageInterface
     {
-        $this->bReturn = $bReturn;
+        $this->bReturnCode = $bReturnCode;
+        return $this;
     }
 
     /**
@@ -65,8 +75,8 @@ trait LibraryTrait
      *
      * @return bool
      */
-    public function getReturn(): bool
+    final protected function returnCode(): bool
     {
-        return $this->bReturn;
+        return $this->bReturnCode;
     }
 }

@@ -12,11 +12,14 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Ui\Dialogs;
+namespace Jaxon\Ui\Dialog\Library;
+
+use Jaxon\Ui\Dialog\MessageInterface;
+use Jaxon\Ui\Dialog\QuestionInterface;
 
 class AlertLibrary implements MessageInterface, QuestionInterface
 {
-    use LibraryTrait;
+    use DialogLibraryTrait;
 
     /**
      * Get the script which makes a call only if the user answers yes to the given question
@@ -42,14 +45,11 @@ class AlertLibrary implements MessageInterface, QuestionInterface
      */
     private function alert(string $sMessage): string
     {
-        if($this->getReturn())
+        if($this->returnCode())
         {
             return 'alert(' . $sMessage . ')';
         }
-        if($this->xResponse !== null)
-        {
-            $this->xResponse->alert($sMessage);
-        }
+        $this->xResponse->alert($sMessage);
         return '';
     }
 

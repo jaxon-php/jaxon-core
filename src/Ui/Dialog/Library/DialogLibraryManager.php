@@ -9,12 +9,14 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Ui\Dialogs;
+namespace Jaxon\Ui\Dialog\Library;
 
 use Jaxon\Di\Container;
-use Jaxon\Response\Response;
+use Jaxon\Ui\Dialog\MessageInterface;
+use Jaxon\Ui\Dialog\ModalInterface;
+use Jaxon\Ui\Dialog\QuestionInterface;
 
-class DialogFacade
+class DialogLibraryManager
 {
     /**
      * @var Container
@@ -22,14 +24,14 @@ class DialogFacade
     private $di;
 
     /**
-     * The QuestionInterface class name (javascript confirm function)
+     * The QuestionInterface class name
      *
      * @var string
      */
     private $sQuestionLibrary = '';
 
     /**
-     * The MessageInterface class name (javascript alert function)
+     * The MessageInterface class name
      *
      * @var string
      */
@@ -43,7 +45,7 @@ class DialogFacade
     private $sModalLibrary = '';
 
     /**
-     * Default javascript alert libray
+     * Default javascript alert library
      *
      * @var AlertLibrary
      */
@@ -57,7 +59,7 @@ class DialogFacade
     public function __construct(Container $di)
     {
         $this->di = $di;
-        // Javascript confirm function
+        // Library for javascript confirm and alert functions.
         $this->xAlertLibrary = new AlertLibrary();
     }
 
@@ -74,7 +76,7 @@ class DialogFacade
     }
 
     /**
-     * Get the QuestionInterface instance (javascript question function)
+     * Get the QuestionInterface instance
      *
      * @param string $sQuestionLibrary
      *
@@ -102,27 +104,19 @@ class DialogFacade
     }
 
     /**
-     * Get the MessageInterface instance (javascript alert function)
+     * Get the MessageInterface instance
      *
-     * @param bool $bReturn Whether to return the code
-     * @param Response|null $xResponse
      * @param string $sMessageLibrary
      *
      * @return MessageInterface
      */
-    public function getMessageLibrary(bool $bReturn, ?Response $xResponse = null, string $sMessageLibrary = ''): MessageInterface
+    public function getMessageLibrary(string $sMessageLibrary = ''): MessageInterface
     {
         if($sMessageLibrary === '')
         {
             $sMessageLibrary = $this->sMessageLibrary;
         }
-        $xLibrary = ($sMessageLibrary) ? $this->di->g($sMessageLibrary) : $this->xAlertLibrary;
-        $xLibrary->setReturn($bReturn);
-        if($xResponse !== null)
-        {
-            $xLibrary->setResponse($xResponse);
-        }
-        return $xLibrary;
+        return ($sMessageLibrary) ? $this->di->g($sMessageLibrary) : $this->xAlertLibrary;
     }
 
     /**
@@ -138,24 +132,18 @@ class DialogFacade
     }
 
     /**
-     * Get the ModalInterface instance (javascript question function)
+     * Get the ModalInterface instance
      *
-     * @param Response|null $xResponse
      * @param string $sModalLibrary
      *
      * @return ModalInterface
      */
-    public function getModalLibrary(?Response $xResponse = null, string $sModalLibrary = ''): ?ModalInterface
+    public function getModalLibrary(string $sModalLibrary = ''): ?ModalInterface
     {
         if($sModalLibrary === '')
         {
             $sModalLibrary = $this->sModalLibrary;
         }
-        $xLibrary = ($sModalLibrary) ? $this->di->g($sModalLibrary) : null;
-        if($xResponse !== null)
-        {
-            $xLibrary->setResponse($xResponse);
-        }
-        return $xLibrary;
+        return ($sModalLibrary) ? $this->di->g($sModalLibrary) : null;
     }
 }

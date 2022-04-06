@@ -42,6 +42,7 @@ use Jaxon\Request\Handler\CallbackManager;
 use Jaxon\Request\Handler\UploadHandler;
 use Jaxon\Request\Plugin\CallableClass\CallableRegistry;
 use Jaxon\Response\Manager\ResponseManager;
+use Jaxon\Response\Plugin\Dialog\DialogPlugin;
 use Jaxon\Response\Response;
 use Jaxon\Response\ResponseInterface;
 use Jaxon\Session\SessionInterface;
@@ -593,6 +594,29 @@ class Jaxon
     public function paginator(): Paginator
     {
         return $this->di()->getPaginator();
+    }
+
+    /**
+     * Get the Dialog plugin
+     *
+     * @return DialogPlugin
+     */
+    public function dialog(): DialogPlugin
+    {
+        return $this->di()->getDialogPlugin();
+    }
+
+    /**
+     * Register a javascript dialog library adapter.
+     *
+     * @param string $sClass
+     * @param string $sName
+     *
+     * @return void
+     */
+    public function registerDialogLibrary(string $sClass, string $sName)
+    {
+        $this->di()->registerDialogLibrary($sClass, $sName);
     }
 
     /**

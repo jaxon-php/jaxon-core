@@ -5,15 +5,17 @@ namespace Jaxon\Di\Traits;
 use Jaxon\Jaxon;
 use Jaxon\CallableClass;
 use Jaxon\Config\ConfigManager;
+use Jaxon\Exception\SetupException;
 use Jaxon\Request\Factory;
 use Jaxon\Request\Factory\RequestFactory;
 use Jaxon\Request\Handler\CallbackManager;
 use Jaxon\Request\Plugin\CallableClass\CallableObject;
-use Jaxon\Ui\Dialogs\DialogFacade;
+use Jaxon\Ui\Dialog\Library\DialogLibraryHelper;
+use Jaxon\Ui\Dialog\Library\DialogLibraryManager;
 use Jaxon\Ui\Pagination\Paginator;
 use Jaxon\Ui\View\ViewRenderer;
 use Jaxon\Utils\Config\Config;
-use Jaxon\Exception\SetupException;
+use Jaxon\Utils\Template\TemplateEngine;
 use Jaxon\Utils\Translation\Translator;
 
 use ReflectionClass;
@@ -116,7 +118,7 @@ trait RegisterTrait
             $xConfigManager = $c->g(ConfigManager::class);
             $xCallable = $c->g($sCallableObject);
             $sJsClass = $xConfigManager->getOption('core.prefix.class') . $xCallable->getJsName() . '.';
-            return new RequestFactory($sJsClass, $c->g(DialogFacade::class), $c->g(Paginator::class));
+            return new RequestFactory($sJsClass, $c->g(DialogLibraryManager::class), $c->g(Paginator::class));
         });
 
         // Register the user class
@@ -205,5 +207,27 @@ trait RegisterTrait
     public function getPackageConfig(string $sClassName): Config
     {
         return $this->g($sClassName . '_config');
+    }
+
+    /**
+     * Register a javascript dialog library adapter.
+     *
+     * @param string $sClass
+     * @param string $sName
+     *
+     * @return void
+     */
+    public function registerDialogLibrary(string $sClass, string $sName)
+    {
+        $this->set($sName, function($c) use($sClass) {
+            // Set the protected attributes of the library
+            $cSetter = function() use($c) {
+                $this->xHelper = new DialogLibraryHelper($this, $c->g(ConfigManager::class), $c->g(TemplateEngine::class));
+            };
+            // Can now access protected attributes
+            $xLibrary = $c->make($sClass);
+            call_user_func($cSetter->bindTo($xLibrary, $xLibrary));
+            return $xLibrary;
+        });
     }
 }

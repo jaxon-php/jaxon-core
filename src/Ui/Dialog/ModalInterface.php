@@ -10,7 +10,7 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Ui\Dialogs;
+namespace Jaxon\Ui\Dialog;
 
 interface ModalInterface
 {

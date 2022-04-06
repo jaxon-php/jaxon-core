@@ -18,14 +18,13 @@ use Jaxon\Request\Upload\UploadManager;
 use Jaxon\Request\Validator;
 use Jaxon\Response\Manager\ResponseManager;
 use Jaxon\Response\Plugin\DataBag\DataBagPlugin;
-use Jaxon\Ui\Dialogs\DialogFacade;
+use Jaxon\Ui\Dialog\Library\DialogLibraryManager;
 use Jaxon\Ui\Pagination\Paginator;
 use Jaxon\Utils\Http\UriDetector;
 use Jaxon\Utils\Translation\Translator;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7Server\ServerRequestCreator;
 use Psr\Http\Message\ServerRequestInterface;
-
 use function bin2hex;
 use function random_bytes;
 
@@ -102,7 +101,7 @@ trait RequestTrait
         // Factory for requests to functions
         $this->set(RequestFactory::class, function($c) {
             $sPrefix = $c->g(ConfigManager::class)->getOption('core.prefix.function');
-            return new RequestFactory($sPrefix, $c->g(DialogFacade::class), $c->g(Paginator::class));
+            return new RequestFactory($sPrefix, $c->g(DialogLibraryManager::class), $c->g(Paginator::class));
         });
         // Parameter Factory
         $this->set(ParameterFactory::class, function() {

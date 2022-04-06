@@ -34,10 +34,9 @@ use Jaxon\Request\Plugin\CallableClass\CallableClassPlugin;
 use Jaxon\Request\Plugin\CallableClass\CallableDirPlugin;
 use Jaxon\Request\Plugin\CallableFunction\CallableFunctionPlugin;
 use Jaxon\Response\Plugin\DataBag\DataBagPlugin;
+use Jaxon\Response\Plugin\Dialog\DialogPlugin;
 use Jaxon\Response\Plugin\JQuery\JQueryPlugin;
 use Jaxon\Response\Response;
-use Jaxon\Ui\Dialogs\MessageInterface;
-use Jaxon\Ui\Dialogs\QuestionInterface;
 use Jaxon\Utils\Translation\Translator;
 
 use function class_implements;
@@ -224,5 +223,7 @@ class PluginManager
         $this->registerPlugin(JQueryPlugin::class, JQueryPlugin::NAME, 700);
         // Register the DataBag response plugin
         $this->registerPlugin(DataBagPlugin::class, DataBagPlugin::NAME, 700);
+        // Register the Dialog response plugin
+        $this->registerPlugin(DialogPlugin::class, DialogPlugin::NAME, 750);
     }
 }

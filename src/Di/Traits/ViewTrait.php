@@ -3,9 +3,9 @@
 namespace Jaxon\Di\Traits;
 
 use Jaxon\Di\Container;
-use Jaxon\Ui\Dialogs\DialogFacade;
-use Jaxon\Ui\Pagination\Paginator;
+use Jaxon\Ui\Dialog\Library\DialogLibraryManager;
 use Jaxon\Ui\Pagination\PaginationRenderer;
+use Jaxon\Ui\Pagination\Paginator;
 use Jaxon\Ui\Template\TemplateView;
 use Jaxon\Ui\View\ViewManager;
 use Jaxon\Ui\View\ViewRenderer;
@@ -20,10 +20,6 @@ trait ViewTrait
      */
     private function registerViews()
     {
-        // Dialog Facade
-        $this->set(DialogFacade::class, function($c) {
-            return new DialogFacade($c->g(Container::class));
-        });
         // View Manager
         $this->set(ViewManager::class, function($c) {
             $xViewManager = new ViewManager($this);
@@ -49,6 +45,10 @@ trait ViewTrait
         // Pagination Renderer
         $this->set(PaginationRenderer::class, function($c) {
             return new PaginationRenderer($c->g(ViewRenderer::class));
+        });
+        // Dialog library manager
+        $this->set(DialogLibraryManager::class, function($c) {
+            return new DialogLibraryManager($c->g(Container::class));
         });
     }
 

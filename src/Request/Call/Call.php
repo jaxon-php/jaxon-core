@@ -21,9 +21,8 @@
 namespace Jaxon\Request\Call;
 
 use Jaxon\Response\Plugin\JQuery\DomSelector;
-use Jaxon\Ui\Dialogs\DialogFacade;
+use Jaxon\Ui\Dialog\Library\DialogLibraryManager;
 use Jaxon\Ui\Pagination\Paginator;
-
 use function array_map;
 use function array_shift;
 use function func_get_args;
@@ -32,7 +31,7 @@ use function implode;
 class Call extends JsCall
 {
     /**
-     * @var DialogFacade
+     * @var DialogLibraryManager
      */
     protected $xDialogFacade;
 
@@ -81,10 +80,10 @@ class Call extends JsCall
      * The constructor.
      *
      * @param string $sName    The javascript function or method name
-     * @param DialogFacade $xDialogFacade
+     * @param DialogLibraryManager $xDialogFacade
      * @param Paginator $xPaginator
      */
-    public function __construct(string $sName, DialogFacade $xDialogFacade, Paginator $xPaginator)
+    public function __construct(string $sName, DialogLibraryManager $xDialogFacade, Paginator $xPaginator)
     {
         parent::__construct($sName);
         $this->xDialogFacade = $xDialogFacade;
@@ -312,7 +311,7 @@ class Call extends JsCall
         {
             return '';
         }
-        return $this->xDialogFacade->getMessageLibrary(true)->warning($sPhrase);
+        return $this->xDialogFacade->getMessageLibrary()->setReturnCode(true)->warning($sPhrase);
     }
 
     /**

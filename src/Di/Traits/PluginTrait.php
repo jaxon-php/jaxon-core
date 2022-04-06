@@ -12,7 +12,9 @@ use Jaxon\Plugin\Manager\PackageManager;
 use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Request\Handler\ParameterReader;
 use Jaxon\Response\Plugin\DataBag\DataBagPlugin;
+use Jaxon\Response\Plugin\Dialog\DialogPlugin;
 use Jaxon\Response\Plugin\JQuery\JQueryPlugin;
+use Jaxon\Ui\Dialog\Library\DialogLibraryManager;
 use Jaxon\Ui\View\ViewManager;
 use Jaxon\Utils\File\FileMinifier;
 use Jaxon\Utils\Template\TemplateEngine;
@@ -53,9 +55,14 @@ trait PluginTrait
             $jQueryNs = $c->g(ConfigManager::class)->getOption('core.jquery.no_conflict', false) ? 'jQuery' : '$';
             return new JQueryPlugin($jQueryNs);
         });
-        // DataBagPlugin response plugin
+        // DataBag response plugin
         $this->set(DataBagPlugin::class, function($c) {
             return new DataBagPlugin($c->g(Container::class));
+        });
+        // Dialog response plugin
+        $this->set(DialogPlugin::class, function($c) {
+            return new DialogPlugin($c->g(Container::class), $c->g(ConfigManager::class),
+                $c->g(DialogLibraryManager::class));
         });
     }
 
@@ -97,5 +104,15 @@ trait PluginTrait
     public function getJQueryPlugin(): JQueryPlugin
     {
         return $this->g(JQueryPlugin::class);
+    }
+
+    /**
+     * Get the Dialog plugin
+     *
+     * @return DialogPlugin
+     */
+    public function getDialogPlugin(): DialogPlugin
+    {
+        return $this->g(DialogPlugin::class);
     }
 }
