@@ -4,9 +4,9 @@ namespace Jaxon\Tests\TestRegistration;
 
 use Jaxon\Exception\SetupException;
 use Jaxon\Jaxon;
-use Jaxon\Plugin\Plugin\CallableClass\CallableClassPlugin;
-use Jaxon\Plugin\Plugin\CallableClass\CallableDirPlugin;
-use Jaxon\Plugin\Plugin\CallableClass\CallableObject;
+use Jaxon\Plugin\Request\CallableClass\CallableClassPlugin;
+use Jaxon\Plugin\Request\CallableClass\CallableDirPlugin;
+use Jaxon\Plugin\Request\CallableClass\CallableObject;
 use PHPUnit\Framework\TestCase;
 use function jaxon;
 use function strlen;

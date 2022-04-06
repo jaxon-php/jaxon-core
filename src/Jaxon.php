@@ -609,14 +609,14 @@ class Jaxon
     /**
      * Register a javascript dialog library adapter.
      *
-     * @param string $sClass
+     * @param string $sClassName
      * @param string $sName
      *
      * @return void
      */
-    public function registerDialogLibrary(string $sClass, string $sName)
+    public function registerDialogLibrary(string $sClassName, string $sName)
     {
-        $this->di()->registerDialogLibrary($sClass, $sName);
+        $this->dialog()->registerLibrary($sClassName, $sName);
     }
 
     /**

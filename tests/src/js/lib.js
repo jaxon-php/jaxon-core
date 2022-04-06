@@ -1,4 +1,5 @@
 <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/jaxon-php/jaxon-js@3.3/dist/jaxon.core.js"  charset="UTF-8"></script>
+
 <script type="text/javascript"  charset="UTF-8">
 /* <![CDATA[ */
 try {
@@ -27,10 +28,14 @@ jxn_my_alias_function = function() {
 jxn_my_third_function = function() {
     return jaxon.request({ jxnfun: 'my_third_function' }, { parameters: arguments });
 };
+
+jaxon.dialogs = {};
+
 jaxon.dom.ready(function() {
 jaxon.command.handler.register("jquery", function(args) {
         jaxon.cmd.script.execute(args);
     });
+
 jaxon.command.handler.register("bags.set", function(args) {
         for (const bag in args.data) {
             jaxon.ajax.parameters.bags[bag] = args.data[bag];

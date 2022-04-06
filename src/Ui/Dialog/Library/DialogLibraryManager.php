@@ -1,7 +1,7 @@
 <?php
 
 /**
- * DialogFacade.php - Shows alert and confirm dialogs
+ * DialogLibraryManager.php - Shows alert and confirm dialogs
  *
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
  * @copyright 2019 Thierry Feuzeu <thierry.feuzeu@gmail.com>
@@ -45,6 +45,14 @@ class DialogLibraryManager
     private $sModalLibrary = '';
 
     /**
+     * The name of the library to use for the next call.
+     * This is used to override the default library.
+     *
+     * @var string
+     */
+    protected $sNextLibrary = '';
+
+    /**
      * Default javascript alert library
      *
      * @var AlertLibrary
@@ -78,16 +86,11 @@ class DialogLibraryManager
     /**
      * Get the QuestionInterface instance
      *
-     * @param string $sQuestionLibrary
-     *
      * @return QuestionInterface
      */
-    public function getQuestionLibrary(string $sQuestionLibrary = '')
+    public function getQuestionLibrary()
     {
-        if($sQuestionLibrary === '')
-        {
-            $sQuestionLibrary = $this->sQuestionLibrary;
-        }
+        $sQuestionLibrary = $this->sNextLibrary ?: $this->sQuestionLibrary;
         return ($sQuestionLibrary) ? $this->di->g($sQuestionLibrary) : $this->xAlertLibrary;
     }
 
@@ -106,16 +109,11 @@ class DialogLibraryManager
     /**
      * Get the MessageInterface instance
      *
-     * @param string $sMessageLibrary
-     *
      * @return MessageInterface
      */
-    public function getMessageLibrary(string $sMessageLibrary = ''): MessageInterface
+    public function getMessageLibrary(): MessageInterface
     {
-        if($sMessageLibrary === '')
-        {
-            $sMessageLibrary = $this->sMessageLibrary;
-        }
+        $sMessageLibrary = $this->sNextLibrary ?: $this->sMessageLibrary;
         return ($sMessageLibrary) ? $this->di->g($sMessageLibrary) : $this->xAlertLibrary;
     }
 
@@ -134,16 +132,23 @@ class DialogLibraryManager
     /**
      * Get the ModalInterface instance
      *
-     * @param string $sModalLibrary
-     *
      * @return ModalInterface
      */
-    public function getModalLibrary(string $sModalLibrary = ''): ?ModalInterface
+    public function getModalLibrary(): ?ModalInterface
     {
-        if($sModalLibrary === '')
-        {
-            $sModalLibrary = $this->sModalLibrary;
-        }
+        $sModalLibrary = $this->sNextLibrary ?: $this->sModalLibrary;
         return ($sModalLibrary) ? $this->di->g($sModalLibrary) : null;
+    }
+
+    /**
+     * Set the name of the library to use for the next call
+     *
+     * @param string $sNextLibrary
+     *
+     * @return void
+     */
+    public function setNextLibrary(string $sNextLibrary): void
+    {
+        $this->sNextLibrary = $sNextLibrary;
     }
 }

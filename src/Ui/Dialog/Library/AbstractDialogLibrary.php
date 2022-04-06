@@ -30,7 +30,7 @@ abstract class AbstractDialogLibrary implements DialogLibraryInterface
      */
     final public function addCommand(array $aAttributes, $xData)
     {
-        $aAttributes['plg'] = DialogPlugin::NAME;
+        $aAttributes['plg'] = $this->getName();
         $this->xResponse->addCommand($aAttributes, $xData);
     }
 

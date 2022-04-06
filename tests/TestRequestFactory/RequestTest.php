@@ -4,7 +4,7 @@ namespace Jaxon\Tests\CallableClass\Request;
 
 use Jaxon\Exception\SetupException;
 use Jaxon\Jaxon;
-use Jaxon\Plugin\Plugin\CallableClass\CallableClassPlugin;
+use Jaxon\Plugin\Request\CallableClass\CallableClassPlugin;
 use PHPUnit\Framework\TestCase;
 use function jaxon;
 use function pm;

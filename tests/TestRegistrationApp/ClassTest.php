@@ -5,8 +5,8 @@ namespace Jaxon\Tests\TestRegistrationApp;
 require_once __DIR__ . '/../src/classes.php';
 
 use Jaxon\Exception\SetupException;
-use Jaxon\Plugin\Plugin\CallableClass\CallableClassPlugin;
-use Jaxon\Plugin\Plugin\CallableClass\CallableObject;
+use Jaxon\Plugin\Request\CallableClass\CallableClassPlugin;
+use Jaxon\Plugin\Request\CallableClass\CallableObject;
 use PHPUnit\Framework\TestCase;
 use TheClass;
 use function file_get_contents;

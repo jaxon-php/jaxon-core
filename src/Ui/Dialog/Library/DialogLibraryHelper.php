@@ -36,11 +36,11 @@ class DialogLibraryHelper
     protected $sName = '';
 
     /**
-     * The default URI where to get the library files from
+     * The URI where to get the library files from
      *
      * @var string
      */
-    protected $sUri = 'https://cdn.jaxon-php.org/libs';
+    protected $sUri = '';
 
     /**
      * The subdir of the JS and CSS files in the CDN

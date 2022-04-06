@@ -6,8 +6,8 @@ require_once __DIR__ . '/../src/functions.php';
 
 use Jaxon\Exception\SetupException;
 use Jaxon\Jaxon;
-use Jaxon\Plugin\Plugin\CallableFunction\CallableFunction;
-use Jaxon\Plugin\Plugin\CallableFunction\CallableFunctionPlugin;
+use Jaxon\Plugin\Request\CallableFunction\CallableFunction;
+use Jaxon\Plugin\Request\CallableFunction\CallableFunctionPlugin;
 use PHPUnit\Framework\TestCase;
 use function jaxon;
 use function strlen;

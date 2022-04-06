@@ -18,14 +18,15 @@ namespace Jaxon\Plugin\Response\Dialog;
 use Jaxon\Config\ConfigManager;
 use Jaxon\Di\Container;
 use Jaxon\Plugin\ResponsePlugin;
+use Jaxon\Response\Response;
 use Jaxon\Ui\Dialog\Library\DialogLibraryManager;
 use Jaxon\Ui\Dialog\MessageInterface;
 use Jaxon\Ui\Dialog\ModalInterface;
-use Jaxon\Ui\Dialog\QuestionInterface;
 
 use function array_reduce;
+use function trim;
 
-class DialogPlugin extends ResponsePlugin implements ModalInterface, MessageInterface, QuestionInterface
+class DialogPlugin extends ResponsePlugin implements ModalInterface, MessageInterface
 {
     /**
      * @const The plugin name
@@ -50,14 +51,7 @@ class DialogPlugin extends ResponsePlugin implements ModalInterface, MessageInte
     protected $xConfigManager;
 
     /**
-     * The name of the library to use for the next call
-     *
-     * @var string
-     */
-    protected $sNextLibrary = '';
-
-    /**
-     * @vr array
+     * @var array
      */
     protected $aLibraries = [];
 
@@ -74,7 +68,11 @@ class DialogPlugin extends ResponsePlugin implements ModalInterface, MessageInte
         $this->xConfigManager = $xConfigManager;
         $this->xLibraryManager = $xLibraryManager;
 
-        $this->registerLibraries();
+        $aLibraries = $this->xConfigManager->getOption('dialogs.libraries', []);
+        foreach($aLibraries as $sClassName => $sName)
+        {
+            $this->registerLibrary($sClassName, $sName);
+        }
     }
 
     /**
@@ -90,39 +88,55 @@ class DialogPlugin extends ResponsePlugin implements ModalInterface, MessageInte
      */
     public function getHash(): string
     {
-        // The version number is used as hash
-        return '4.0.0';
+        return '4.0.0'; // The version number is used as hash
     }
 
     /**
-     * Register the javascript libraries adapters in the DI container.
+     * Register a javascript dialog library adapter.
+     *
+     * @param string $sClassName
+     * @param string $sName
      *
      * @return void
      */
-    protected function registerLibraries()
+    public function registerLibrary(string $sClassName, string $sName)
     {
-        $aLibraries = $this->xConfigManager->getOption('dialogs.libraries', []);
-        foreach($aLibraries as $sName => $sClassName)
-        {
-            $this->aLibraries[] = $sName;
-            $this->di->registerDialogLibrary($sClassName, $sName);
-        }
+        $this->aLibraries[] = $sName;
+        $this->di->registerDialogLibrary($sClassName, $sName);
+    }
 
-        // Get the default modal library
+    /**
+     * @return void
+     */
+    protected function setDefaultLibraries()
+    {
+        // Set the default modal library
         if(($sName = $this->xConfigManager->getOption('dialogs.default.modal', '')))
         {
             $this->xLibraryManager->setModalLibrary($sName);
         }
-        // Get the configured message library
+        // Set the default message library
         if(($sName = $this->xConfigManager->getOption('dialogs.default.message', '')))
         {
             $this->xLibraryManager->setMessageLibrary($sName);
         }
-        // Get the configured question library
+        // Set the default question library
         if(($sName = $this->xConfigManager->getOption('dialogs.default.question', '')))
         {
             $this->xLibraryManager->setQuestionLibrary($sName);
         }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setResponse(Response $xResponse)
+    {
+        parent::setResponse($xResponse);
+
+        // Hack the setResponse() method, to set the default libraries on each access to this plugin.
+        $this->setDefaultLibraries();
+        $this->xLibraryManager->setNextLibrary('');
     }
 
     /**
@@ -134,7 +148,7 @@ class DialogPlugin extends ResponsePlugin implements ModalInterface, MessageInte
      */
     public function with(string $sLibrary): DialogPlugin
     {
-        $this->sNextLibrary = $sLibrary;
+        $this->xLibraryManager->setNextLibrary($sLibrary);
         return $this;
     }
 
@@ -145,9 +159,8 @@ class DialogPlugin extends ResponsePlugin implements ModalInterface, MessageInte
      */
     protected function getModalLibrary(): ?ModalInterface
     {
-        $xLibrary = $this->xLibraryManager->getModalLibrary($this->sNextLibrary);
+        $xLibrary = $this->xLibraryManager->getModalLibrary();
         $xLibrary->setResponse($this->xResponse);
-        $this->sNextLibrary = '';
         return $xLibrary;
     }
 
@@ -158,23 +171,10 @@ class DialogPlugin extends ResponsePlugin implements ModalInterface, MessageInte
      */
     protected function getMessageLibrary(): ?MessageInterface
     {
-        $xLibrary = $this->xLibraryManager->getMessageLibrary($this->sNextLibrary);
+        $xLibrary = $this->xLibraryManager->getMessageLibrary();
         $xLibrary->setResponse($this->xResponse);
         // By default, always add commands to the response
         $xLibrary->setReturnCode(false);
-        $this->sNextLibrary = '';
-        return $xLibrary;
-    }
-
-    /**
-     * Get the library adapter to use for question.
-     *
-     * @return QuestionInterface|null
-     */
-    protected function getQuestionLibrary(): ?QuestionInterface
-    {
-        $xLibrary = $this->xLibraryManager->getQuestionLibrary($this->sNextLibrary);
-        $this->sNextLibrary = '';
         return $xLibrary;
     }
 
@@ -196,7 +196,7 @@ class DialogPlugin extends ResponsePlugin implements ModalInterface, MessageInte
     {
         return array_reduce($this->aLibraries, function($sCode, $sName) {
             $xLibrary = $this->di->g($sName);
-            return $sCode . $xLibrary->getCss() . "\n\n";
+            return $sCode . trim($xLibrary->getCss()) . "\n\n";
         }, '');
     }
 
@@ -205,13 +205,11 @@ class DialogPlugin extends ResponsePlugin implements ModalInterface, MessageInte
      */
     public function getScript(): string
     {
-        if(empty($this->aLibraries))
-        {
-            return ''; // Do not return anything if no dialog library is registered.
-        }
+        // The default scripts need to be set in the js code.
+        $this->setDefaultLibraries();
         return array_reduce($this->aLibraries, function($sCode, $sName) {
             $xLibrary = $this->di->g($sName);
-            return $sCode . $xLibrary->getScript() . "\n\n";
+            return $sCode . trim($xLibrary->getScript()) . "\n\n";
         }, "jaxon.dialogs = {};\n");
     }
 
@@ -222,30 +220,12 @@ class DialogPlugin extends ResponsePlugin implements ModalInterface, MessageInte
     {
         return array_reduce($this->aLibraries, function($sCode, $sName) {
             $xLibrary = $this->di->g($sName);
-            return $sCode . $xLibrary->getReadyScript() . "\n\n";
+            return $sCode . trim($xLibrary->getReadyScript()) . "\n\n";
         }, '');
     }
 
     /**
-     * Show a modal dialog.
-     *
-     * It is a function of the Jaxon\Dialogs\Contracts\ModalInterface interface.
-     *
-     * @param string $sTitle The title of the dialog
-     * @param string $sContent The content of the dialog
-     * @param array $aButtons The buttons of the dialog
-     * @param array $aOptions The options of the dialog
-     *
-     * Each button is an array containin the following entries:
-     * - title: the text to be printed in the button
-     * - class: the CSS class of the button
-     * - click: the javascript function to be called when the button is clicked
-     * If the click value is set to "close", then the buttons closes the dialog.
-     *
-     * The content of the $aOptions depends on the javascript library in use.
-     * Check their specific documentation for more information.
-     *
-     * @return void
+     * @inheritDoc
      */
     public function show(string $sTitle, string $sContent, array $aButtons = [], array $aOptions = [])
     {
@@ -253,28 +233,7 @@ class DialogPlugin extends ResponsePlugin implements ModalInterface, MessageInte
     }
 
     /**
-     * Show a modal dialog.
-     *
-     * It is another name for the show() function.
-     *
-     * @param string $sTitle The title of the dialog
-     * @param string $sContent The content of the dialog
-     * @param array $aButtons The buttons of the dialog
-     * @param array $aOptions The options of the dialog
-     *
-     * @return void
-     */
-    public function modal(string $sTitle, string $sContent, array $aButtons = [], array $aOptions = [])
-    {
-        $this->show($sTitle, $sContent, $aButtons, $aOptions);
-    }
-
-    /**
-     * Hide the modal dialog.
-     *
-     * It is a function of the Jaxon\Dialogs\Contracts\ModalInterface interface.
-     *
-     * @return void
+     * @inheritDoc
      */
     public function hide()
     {
@@ -311,13 +270,5 @@ class DialogPlugin extends ResponsePlugin implements ModalInterface, MessageInte
     public function error(string $sMessage, string $sTitle = ''): string
     {
         return $this->getMessageLibrary()->error($sMessage, $sTitle);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function confirm(string $sQuestion, string $sYesScript, string $sNoScript): string
-    {
-        return $this->getQuestionLibrary()->confirm($sQuestion, $sYesScript, $sNoScript);
     }
 }
