@@ -289,7 +289,7 @@ trait AppTrait
      */
     public function addViewNamespace(string $sNamespace, string $sDirectory, string $sExtension, string $sRenderer)
     {
-        $this->jaxon->di()->getViewManager()->addNamespace($sNamespace, $sDirectory, $sExtension, $sRenderer);
+        $this->jaxon->di()->getViewRenderer()->addNamespace($sNamespace, $sDirectory, $sExtension, $sRenderer);
     }
 
     /**
@@ -302,7 +302,7 @@ trait AppTrait
      */
     public function addViewRenderer(string $sId, Closure $xClosure)
     {
-        $this->jaxon->di()->getViewManager()->addRenderer($sId, $xClosure);
+        $this->jaxon->di()->getViewRenderer()->addRenderer($sId, $xClosure);
     }
 
     /**

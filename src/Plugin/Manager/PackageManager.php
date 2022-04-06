@@ -20,7 +20,7 @@ use Jaxon\Di\Container;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\Code\CodeGenerator;
 use Jaxon\Plugin\Package;
-use Jaxon\Ui\View\ViewManager;
+use Jaxon\Ui\View\ViewRenderer;
 use Jaxon\Utils\Config\Config;
 use Jaxon\Utils\Translation\Translator;
 
@@ -48,9 +48,9 @@ class PackageManager
     protected $xConfigManager;
 
     /**
-     * @var ViewManager
+     * @var ViewRenderer
      */
-    protected $xViewManager;
+    protected $xViewRenderer;
 
     /**
      * The code generator
@@ -70,17 +70,17 @@ class PackageManager
      * @param Container $di
      * @param PluginManager $xPluginManager
      * @param ConfigManager $xConfigManager
-     * @param ViewManager $xViewManager
+     * @param ViewRenderer $xViewRenderer
      * @param CodeGenerator $xCodeGenerator
      * @param Translator $xTranslator
      */
     public function __construct(Container $di, PluginManager $xPluginManager, ConfigManager $xConfigManager,
-        ViewManager $xViewManager, CodeGenerator $xCodeGenerator, Translator $xTranslator)
+        ViewRenderer $xViewRenderer, CodeGenerator $xCodeGenerator, Translator $xTranslator)
     {
         $this->di = $di;
         $this->xPluginManager = $xPluginManager;
         $this->xConfigManager = $xConfigManager;
-        $this->xViewManager = $xViewManager;
+        $this->xViewRenderer = $xViewRenderer;
         $this->xCodeGenerator = $xCodeGenerator;
         $this->xTranslator = $xTranslator;
     }
@@ -164,7 +164,7 @@ class PackageManager
         // Register the view namespaces
         // Note: the $xUserConfig can provide a "template" option, which is used to customize
         // the user defined view namespaces. That's why it is needed here.
-        $this->xViewManager->addNamespaces($xConfig, $xUserConfig);
+        $this->xViewRenderer->addNamespaces($xConfig, $xUserConfig);
         // Save items in the DI container
         $this->updateContainer($xConfig);
     }

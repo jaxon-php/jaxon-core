@@ -15,7 +15,7 @@ use Jaxon\Response\Plugin\DataBag\DataBagPlugin;
 use Jaxon\Response\Plugin\Dialog\DialogPlugin;
 use Jaxon\Response\Plugin\JQuery\JQueryPlugin;
 use Jaxon\Ui\Dialog\Library\DialogLibraryManager;
-use Jaxon\Ui\View\ViewManager;
+use Jaxon\Ui\View\ViewRenderer;
 use Jaxon\Utils\File\FileMinifier;
 use Jaxon\Utils\Template\TemplateEngine;
 use Jaxon\Utils\Translation\Translator;
@@ -36,7 +36,7 @@ trait PluginTrait
         // Package manager
         $this->set(PackageManager::class, function($c) {
             return new PackageManager($c->g(Container::class), $c->g(PluginManager::class), $c->g(ConfigManager::class),
-                $c->g(ViewManager::class), $c->g(CodeGenerator::class), $c->g(Translator::class));
+                $c->g(ViewRenderer::class), $c->g(CodeGenerator::class), $c->g(Translator::class));
         });
         // Code Generation
         $this->set(MinifierInterface::class, function() {
