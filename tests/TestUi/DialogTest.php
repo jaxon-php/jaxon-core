@@ -102,71 +102,9 @@ class DialogTest extends TestCase
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
         jaxon()->di()->getRequestHandler()->processRequest();
 
-        $xResponse = jaxon()->getResponse();
-        $this->assertCount(1, $xResponse->getCommands());
-    }
-
-    /**
-     * @throws RequestException
-     */
-    public function testDefaultDialogWarning()
-    {
-        // The server request
-        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)->fromGlobals()->withQueryParams([
-                'jxncls' => 'Dialog',
-                'jxnmthd' => 'warning',
-                'jxnargs' => [],
-            ]);
-        });
-
-        $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
-        jaxon()->di()->getRequestHandler()->processRequest();
-
-        $xResponse = jaxon()->getResponse();
-        $this->assertCount(1, $xResponse->getCommands());
-    }
-
-    /**
-     * @throws RequestException
-     */
-    public function testDefaultDialogInfo()
-    {
-        // The server request
-        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)->fromGlobals()->withQueryParams([
-                'jxncls' => 'Dialog',
-                'jxnmthd' => 'info',
-                'jxnargs' => [],
-            ]);
-        });
-
-        $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
-        jaxon()->di()->getRequestHandler()->processRequest();
-
-        $xResponse = jaxon()->getResponse();
-        $this->assertCount(1, $xResponse->getCommands());
-    }
-
-    /**
-     * @throws RequestException
-     */
-    public function testDefaultDialogError()
-    {
-        // The server request
-        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)->fromGlobals()->withQueryParams([
-                'jxncls' => 'Dialog',
-                'jxnmthd' => 'error',
-                'jxnargs' => [],
-            ]);
-        });
-
-        $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
-        jaxon()->di()->getRequestHandler()->processRequest();
-
-        $xResponse = jaxon()->getResponse();
-        $this->assertCount(1, $xResponse->getCommands());
+        $aCommands = jaxon()->getResponse()->getCommands();
+        $this->assertCount(1, $aCommands);
+        $this->assertEquals('al', $aCommands[0]['cmd']);
     }
 
     /**
@@ -189,8 +127,32 @@ class DialogTest extends TestCase
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
         jaxon()->di()->getRequestHandler()->processRequest();
 
-        $xResponse = jaxon()->getResponse();
-        $this->assertCount(1, $xResponse->getCommands());
+        $aCommands = jaxon()->getResponse()->getCommands();
+        $this->assertCount(1, $aCommands);
+        $this->assertEquals('bootstrap.alert', $aCommands[0]['cmd']);
+        $this->assertEquals('bootstrap', $aCommands[0]['plg']);
+    }
+
+    /**
+     * @throws RequestException
+     */
+    public function testDefaultDialogWarning()
+    {
+        // The server request
+        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
+            return $c->g(ServerRequestCreator::class)->fromGlobals()->withQueryParams([
+                'jxncls' => 'Dialog',
+                'jxnmthd' => 'warning',
+                'jxnargs' => [],
+            ]);
+        });
+
+        $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
+        jaxon()->di()->getRequestHandler()->processRequest();
+
+        $aCommands = jaxon()->getResponse()->getCommands();
+        $this->assertCount(1, $aCommands);
+        $this->assertEquals('al', $aCommands[0]['cmd']);
     }
 
     /**
@@ -213,8 +175,32 @@ class DialogTest extends TestCase
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
         jaxon()->di()->getRequestHandler()->processRequest();
 
-        $xResponse = jaxon()->getResponse();
-        $this->assertCount(1, $xResponse->getCommands());
+        $aCommands = jaxon()->getResponse()->getCommands();
+        $this->assertCount(1, $aCommands);
+        $this->assertEquals('bootstrap.alert', $aCommands[0]['cmd']);
+        $this->assertEquals('bootstrap', $aCommands[0]['plg']);
+    }
+
+    /**
+     * @throws RequestException
+     */
+    public function testDefaultDialogInfo()
+    {
+        // The server request
+        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
+            return $c->g(ServerRequestCreator::class)->fromGlobals()->withQueryParams([
+                'jxncls' => 'Dialog',
+                'jxnmthd' => 'info',
+                'jxnargs' => [],
+            ]);
+        });
+
+        $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
+        jaxon()->di()->getRequestHandler()->processRequest();
+
+        $aCommands = jaxon()->getResponse()->getCommands();
+        $this->assertCount(1, $aCommands);
+        $this->assertEquals('al', $aCommands[0]['cmd']);
     }
 
     /**
@@ -237,8 +223,32 @@ class DialogTest extends TestCase
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
         jaxon()->di()->getRequestHandler()->processRequest();
 
-        $xResponse = jaxon()->getResponse();
-        $this->assertCount(1, $xResponse->getCommands());
+        $aCommands = jaxon()->getResponse()->getCommands();
+        $this->assertCount(1, $aCommands);
+        $this->assertEquals('bootstrap.alert', $aCommands[0]['cmd']);
+        $this->assertEquals('bootstrap', $aCommands[0]['plg']);
+    }
+
+    /**
+     * @throws RequestException
+     */
+    public function testDefaultDialogError()
+    {
+        // The server request
+        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
+            return $c->g(ServerRequestCreator::class)->fromGlobals()->withQueryParams([
+                'jxncls' => 'Dialog',
+                'jxnmthd' => 'error',
+                'jxnargs' => [],
+            ]);
+        });
+
+        $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
+        jaxon()->di()->getRequestHandler()->processRequest();
+
+        $aCommands = jaxon()->getResponse()->getCommands();
+        $this->assertCount(1, $aCommands);
+        $this->assertEquals('al', $aCommands[0]['cmd']);
     }
 
     /**
@@ -261,8 +271,10 @@ class DialogTest extends TestCase
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
         jaxon()->di()->getRequestHandler()->processRequest();
 
-        $xResponse = jaxon()->getResponse();
-        $this->assertCount(1, $xResponse->getCommands());
+        $aCommands = jaxon()->getResponse()->getCommands();
+        $this->assertCount(1, $aCommands);
+        $this->assertEquals('bootstrap.alert', $aCommands[0]['cmd']);
+        $this->assertEquals('bootstrap', $aCommands[0]['plg']);
     }
 
     /**
@@ -285,8 +297,10 @@ class DialogTest extends TestCase
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
         jaxon()->di()->getRequestHandler()->processRequest();
 
-        $xResponse = jaxon()->getResponse();
-        $this->assertCount(1, $xResponse->getCommands());
+        $aCommands = jaxon()->getResponse()->getCommands();
+        $this->assertCount(1, $aCommands);
+        $this->assertEquals('bootstrap.show', $aCommands[0]['cmd']);
+        $this->assertEquals('bootstrap', $aCommands[0]['plg']);
     }
 
     /**
@@ -309,8 +323,12 @@ class DialogTest extends TestCase
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
         jaxon()->di()->getRequestHandler()->processRequest();
 
-        $xResponse = jaxon()->getResponse();
-        $this->assertCount(3, $xResponse->getCommands());
+        $aCommands = jaxon()->getResponse()->getCommands();
+        $this->assertCount(3, $aCommands);
+        // The bootbox plugin issues one assign and two script commands.
+        $this->assertEquals('as', $aCommands[0]['cmd']);
+        $this->assertEquals('js', $aCommands[1]['cmd']);
+        $this->assertEquals('js', $aCommands[2]['cmd']);
     }
 
     /**
@@ -318,6 +336,7 @@ class DialogTest extends TestCase
      */
     public function testDialogLibraryShowWith()
     {
+        // Choose the bootstrap library in the options, and use the bootbox in the class.
         jaxon()->setOption('dialogs.default.modal', 'bootstrap');
         jaxon()->setOption('dialogs.default.message', 'bootstrap');
         jaxon()->setOption('dialogs.default.question', 'bootstrap');
@@ -333,8 +352,12 @@ class DialogTest extends TestCase
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
         jaxon()->di()->getRequestHandler()->processRequest();
 
-        $xResponse = jaxon()->getResponse();
-        $this->assertCount(3, $xResponse->getCommands());
+        $aCommands = jaxon()->getResponse()->getCommands();
+        $this->assertCount(3, $aCommands);
+        // The bootbox plugin issues one assign and two script commands.
+        $this->assertEquals('as', $aCommands[0]['cmd']);
+        $this->assertEquals('js', $aCommands[1]['cmd']);
+        $this->assertEquals('js', $aCommands[2]['cmd']);
     }
 
     /**
@@ -357,7 +380,10 @@ class DialogTest extends TestCase
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
         jaxon()->di()->getRequestHandler()->processRequest();
 
-        $xResponse = jaxon()->getResponse();
-        $this->assertCount(1, $xResponse->getCommands());
+        $aCommands = jaxon()->getResponse()->getCommands();
+        $this->assertCount(1, $aCommands);
+        // The bootbox plugin issues a single script command.
+        $this->assertEquals('bootstrap.hide', $aCommands[0]['cmd']);
+        $this->assertEquals('bootstrap', $aCommands[0]['plg']);
     }
 }

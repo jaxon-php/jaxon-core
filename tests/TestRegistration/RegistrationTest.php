@@ -162,4 +162,15 @@ class RegistrationTest extends TestCase
         $this->expectException(SetupException::class);
         jaxon()->register('PluginNotFound', 'Sample');
     }
+
+    /**
+     * @throws SetupException
+     */
+    public function testUnknownCallableClass()
+    {
+        // Register a class that does not exist.
+        jaxon()->register(Jaxon::CALLABLE_CLASS, 'UnknownClass');
+        $this->expectException(SetupException::class);
+        $this->xPlugin->getCallable('UnknownClass');
+    }
 }
