@@ -19,11 +19,13 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Request\Plugin\CallableClass;
+namespace Jaxon\Plugin\Request\CallableClass;
 
 use Jaxon\Jaxon;
 use Jaxon\CallableClass;
 use Jaxon\Di\Container;
+use Jaxon\Exception\RequestException;
+use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\RequestPlugin;
 use Jaxon\Request\Handler\ParameterReader;
 use Jaxon\Request\Target;
@@ -31,8 +33,6 @@ use Jaxon\Request\Validator;
 use Jaxon\Response\ResponseInterface;
 use Jaxon\Utils\Template\TemplateEngine;
 use Jaxon\Utils\Translation\Translator;
-use Jaxon\Exception\RequestException;
-use Jaxon\Exception\SetupException;
 use Psr\Http\Message\ServerRequestInterface;
 
 use ReflectionClass;

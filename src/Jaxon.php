@@ -35,14 +35,14 @@ use Jaxon\Plugin\Code\CodeGenerator;
 use Jaxon\Plugin\Manager\PackageManager;
 use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Plugin\Package;
+use Jaxon\Plugin\Response\Dialog\DialogPlugin;
+use Jaxon\Plugin\Request\CallableClass\CallableRegistry;
 use Jaxon\Plugin\ResponsePlugin;
 use Jaxon\Request\Factory;
 use Jaxon\Request\Factory\RequestFactory;
 use Jaxon\Request\Handler\CallbackManager;
 use Jaxon\Request\Handler\UploadHandler;
-use Jaxon\Request\Plugin\CallableClass\CallableRegistry;
 use Jaxon\Response\Manager\ResponseManager;
-use Jaxon\Response\Plugin\Dialog\DialogPlugin;
 use Jaxon\Response\Response;
 use Jaxon\Response\ResponseInterface;
 use Jaxon\Session\SessionInterface;
@@ -54,13 +54,13 @@ use Jaxon\Utils\Translation\Translator;
 
 use Psr\Log\LoggerInterface;
 
+use function error_reporting;
 use function gmdate;
 use function header;
 use function headers_sent;
-use function trim;
-use function error_reporting;
 use function ob_end_clean;
 use function ob_get_level;
+use function trim;
 
 class Jaxon
 {

@@ -22,7 +22,7 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Request\Plugin\CallableClass;
+namespace Jaxon\Plugin\Request\CallableClass;
 
 use Jaxon\Di\Container;
 use Jaxon\Response\ResponseInterface;
@@ -31,15 +31,15 @@ use ReflectionClass;
 use ReflectionException;
 use ReflectionMethod;
 
-use function array_map;
 use function array_filter;
+use function array_map;
 use function array_merge;
 use function in_array;
 use function is_array;
 use function is_string;
 use function json_encode;
-use function substr;
 use function str_replace;
+use function substr;
 
 class CallableObject
 {

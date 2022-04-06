@@ -18,12 +18,12 @@
  * @link https://github.com/jaxon-php/jaxon-jquery
  */
 
-namespace Jaxon\Response\Plugin\JQuery;
+namespace Jaxon\Plugin\Response\JQuery;
 
+use Jaxon\Plugin\Response\JQuery\Call\AttrGet;
+use Jaxon\Plugin\Response\JQuery\Call\AttrSet;
+use Jaxon\Plugin\Response\JQuery\Call\Method;
 use Jaxon\Request\Call\ParameterInterface;
-use Jaxon\Response\Plugin\JQuery\Call\AttrGet;
-use Jaxon\Response\Plugin\JQuery\Call\AttrSet;
-use Jaxon\Response\Plugin\JQuery\Call\Method;
 
 use JsonSerializable;
 

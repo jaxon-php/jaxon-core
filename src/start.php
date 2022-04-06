@@ -1,10 +1,10 @@
 <?php
 
 use Jaxon\Jaxon;
-use Jaxon\Request\Factory\RequestFactory;
-use Jaxon\Request\Factory\ParameterFactory;
-use Jaxon\Response\Plugin\JQuery\DomSelector;
 use Jaxon\Exception\SetupException;
+use Jaxon\Plugin\Response\JQuery\DomSelector;
+use Jaxon\Request\Factory\ParameterFactory;
+use Jaxon\Request\Factory\RequestFactory;
 
 /**
  * start.php

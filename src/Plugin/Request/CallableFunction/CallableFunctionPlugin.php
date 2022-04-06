@@ -19,9 +19,11 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Request\Plugin\CallableFunction;
+namespace Jaxon\Plugin\Request\CallableFunction;
 
 use Jaxon\Jaxon;
+use Jaxon\Exception\RequestException;
+use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\RequestPlugin;
 use Jaxon\Request\Handler\ParameterReader;
 use Jaxon\Request\Target;
@@ -29,8 +31,6 @@ use Jaxon\Request\Validator;
 use Jaxon\Response\ResponseInterface;
 use Jaxon\Utils\Template\TemplateEngine;
 use Jaxon\Utils\Translation\Translator;
-use Jaxon\Exception\RequestException;
-use Jaxon\Exception\SetupException;
 use Psr\Http\Message\ServerRequestInterface;
 
 use function array_keys;

@@ -20,16 +20,14 @@
 
 namespace Jaxon\Request\Handler;
 
+use Exception;
 use Jaxon\Di\Container;
 use Jaxon\Exception\RequestException;
 use Jaxon\Plugin\Contract\RequestHandlerInterface;
 use Jaxon\Plugin\Manager\PluginManager;
-use Jaxon\Response\ResponseInterface;
+use Jaxon\Plugin\Response\DataBag\DataBagPlugin;
 use Jaxon\Response\Manager\ResponseManager;
-use Jaxon\Response\Plugin\DataBag\DataBagPlugin;
-
-use Exception;
-
+use Jaxon\Response\ResponseInterface;
 use function call_user_func;
 use function call_user_func_array;
 

@@ -12,12 +12,12 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Request\Plugin\CallableClass;
+namespace Jaxon\Plugin\Request\CallableClass;
 
 use Jaxon\Di\Container;
+use Jaxon\Exception\SetupException;
 use Jaxon\Request\Factory\RequestFactory;
 use Jaxon\Utils\Translation\Translator;
-use Jaxon\Exception\SetupException;
 
 use Composer\Autoload\ClassLoader;
 use RecursiveDirectoryIterator;

@@ -15,7 +15,7 @@
 namespace Jaxon\Plugin\Code;
 
 use Jaxon\Di\Container;
-use Jaxon\Plugin\Plugin;
+use Jaxon\Plugin\Request;
 use Jaxon\Utils\Http\UriException;
 use Jaxon\Utils\Template\TemplateEngine;
 

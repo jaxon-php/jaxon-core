@@ -1,9 +1,6 @@
 <?php
 
-namespace Jaxon\Response\Plugin\DataBag;
-
-use function is_array;
-use function array_map;
+namespace Jaxon\Plugin\Response\DataBag;
 
 class DataBagContext
 {

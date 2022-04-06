@@ -2,14 +2,13 @@
 
 namespace Jaxon\Tests\CallableClass\Request;
 
-use Jaxon\Jaxon;
-use Jaxon\Request\Plugin\CallableClass\CallableClassPlugin;
 use Jaxon\Exception\SetupException;
+use Jaxon\Jaxon;
+use Jaxon\Plugin\Plugin\CallableClass\CallableClassPlugin;
 use PHPUnit\Framework\TestCase;
-
 use function jaxon;
-use function rq;
 use function pm;
+use function rq;
 
 final class RequestTest extends TestCase
 {

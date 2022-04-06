@@ -19,13 +19,13 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Request\Plugin\CallableClass;
+namespace Jaxon\Plugin\Request\CallableClass;
 
 use Jaxon\Jaxon;
+use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\Contract\CallableRegistryInterface;
 use Jaxon\Plugin\Contract\PluginInterface;
 use Jaxon\Utils\Translation\Translator;
-use Jaxon\Exception\SetupException;
 
 use function is_array;
 use function is_dir;

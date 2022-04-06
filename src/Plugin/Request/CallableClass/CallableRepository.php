@@ -12,7 +12,7 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Request\Plugin\CallableClass;
+namespace Jaxon\Plugin\Request\CallableClass;
 
 use Jaxon\Di\Container;
 use Jaxon\Exception\SetupException;

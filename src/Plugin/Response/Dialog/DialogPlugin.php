@@ -13,7 +13,7 @@
  * @link https://github.com/jaxon-php/jaxon-dialogs
  */
 
-namespace Jaxon\Response\Plugin\Dialog;
+namespace Jaxon\Plugin\Response\Dialog;
 
 use Jaxon\Config\ConfigManager;
 use Jaxon\Di\Container;

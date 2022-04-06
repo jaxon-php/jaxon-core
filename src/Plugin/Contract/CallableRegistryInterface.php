@@ -17,7 +17,7 @@ interface CallableRegistryInterface
     /**
      * Register a callable entity: a function or a class.
      *
-     * Called by the <Jaxon\Plugin\PluginManager> when a user script
+     * Called by the <Jaxon\Plugin\RequestManager> when a user script
      * when a function or callable object is to be registered.
      * Additional plugins may support other registration types.
      *

@@ -22,10 +22,10 @@
 namespace Jaxon\Response;
 
 use Jaxon\Plugin\Manager\PluginManager;
+use Jaxon\Plugin\Response\DataBag\DataBagContext;
+use Jaxon\Plugin\Response\JQuery\DomSelector;
 use Jaxon\Plugin\ResponsePlugin;
 use Jaxon\Request\Handler\ParameterReader;
-use Jaxon\Response\Plugin\DataBag\DataBagContext;
-use Jaxon\Response\Plugin\JQuery\DomSelector;
 use Jaxon\Utils\Translation\Translator;
 
 use function array_filter;

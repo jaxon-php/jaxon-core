@@ -1,6 +1,6 @@
 <?php
 
-namespace Jaxon\Response\Plugin\JQuery\Call;
+namespace Jaxon\Plugin\Response\JQuery\Call;
 
 use Jaxon\Request\Call\Parameter;
 

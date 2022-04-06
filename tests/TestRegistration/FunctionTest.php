@@ -4,18 +4,16 @@ namespace Jaxon\Tests\TestRegistration;
 
 require_once __DIR__ . '/../src/functions.php';
 
-use Jaxon\Jaxon;
-use Jaxon\Request\Plugin\CallableFunction\CallableFunction;
-use Jaxon\Request\Plugin\CallableFunction\CallableFunctionPlugin;
 use Jaxon\Exception\SetupException;
+use Jaxon\Jaxon;
+use Jaxon\Plugin\Plugin\CallableFunction\CallableFunction;
+use Jaxon\Plugin\Plugin\CallableFunction\CallableFunctionPlugin;
 use Jaxon\Utils\Http\UriException;
 use PHPUnit\Framework\TestCase;
 use Sample;
-
+use function jaxon;
 use function strlen;
 use function trim;
-use function file_get_contents;
-use function jaxon;
 
 final class FunctionTest extends TestCase
 {

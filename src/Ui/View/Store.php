@@ -2,9 +2,9 @@
 
 namespace Jaxon\Ui\View;
 
-use function array_merge;
-
 use JsonSerializable;
+
+use function array_merge;
 
 class Store implements JsonSerializable
 {

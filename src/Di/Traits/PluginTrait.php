@@ -2,18 +2,18 @@
 
 namespace Jaxon\Di\Traits;
 
-use Jaxon\Jaxon;
 use Jaxon\Config\ConfigManager;
 use Jaxon\Di\Container;
+use Jaxon\Jaxon;
 use Jaxon\Plugin\Code\AssetManager;
 use Jaxon\Plugin\Code\CodeGenerator;
 use Jaxon\Plugin\Code\MinifierInterface;
 use Jaxon\Plugin\Manager\PackageManager;
 use Jaxon\Plugin\Manager\PluginManager;
+use Jaxon\Plugin\Response\DataBag\DataBagPlugin;
+use Jaxon\Plugin\Response\Dialog\DialogPlugin;
+use Jaxon\Plugin\Response\JQuery\JQueryPlugin;
 use Jaxon\Request\Handler\ParameterReader;
-use Jaxon\Response\Plugin\DataBag\DataBagPlugin;
-use Jaxon\Response\Plugin\Dialog\DialogPlugin;
-use Jaxon\Response\Plugin\JQuery\JQueryPlugin;
 use Jaxon\Ui\Dialog\Library\DialogLibraryManager;
 use Jaxon\Ui\View\ViewRenderer;
 use Jaxon\Utils\File\FileMinifier;

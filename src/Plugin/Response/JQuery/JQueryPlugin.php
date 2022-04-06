@@ -1,6 +1,6 @@
 <?php
 
-namespace Jaxon\Response\Plugin\JQuery;
+namespace Jaxon\Plugin\Response\JQuery;
 
 use Jaxon\Plugin\ResponsePlugin;
 

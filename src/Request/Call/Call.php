@@ -20,7 +20,7 @@
 
 namespace Jaxon\Request\Call;
 
-use Jaxon\Response\Plugin\JQuery\DomSelector;
+use Jaxon\Plugin\Response\JQuery\DomSelector;
 use Jaxon\Ui\Dialog\Library\DialogLibraryManager;
 use Jaxon\Ui\Pagination\Paginator;
 use function array_map;

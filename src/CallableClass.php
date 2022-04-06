@@ -2,15 +2,14 @@
 
 namespace Jaxon;
 
+use Jaxon\Exception\SetupException;
+use Jaxon\Plugin\Response\DataBag\DataBagContext;
+use Jaxon\Plugin\Response\JQuery\DomSelector;
 use Jaxon\Request\Factory\ParameterFactory;
 use Jaxon\Request\Factory\RequestFactory;
-use Jaxon\Response\Plugin\DataBag\DataBagContext;
-use Jaxon\Response\Plugin\JQuery\DomSelector;
 use Jaxon\Response\Response;
 use Jaxon\Session\SessionInterface;
 use Jaxon\Ui\View\ViewRenderer;
-use Jaxon\Exception\SetupException;
-
 use Psr\Log\LoggerInterface;
 
 class CallableClass

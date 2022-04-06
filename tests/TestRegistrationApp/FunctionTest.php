@@ -4,14 +4,13 @@ namespace Jaxon\Tests\TestRegistrationApp;
 
 require_once __DIR__ . '/../src/functions.php';
 
-use Jaxon\Jaxon;
-use Jaxon\Request\Plugin\CallableFunction\CallableFunction;
-use Jaxon\Request\Plugin\CallableFunction\CallableFunctionPlugin;
 use Jaxon\Exception\SetupException;
+use Jaxon\Jaxon;
+use Jaxon\Plugin\Plugin\CallableFunction\CallableFunction;
+use Jaxon\Plugin\Plugin\CallableFunction\CallableFunctionPlugin;
 use PHPUnit\Framework\TestCase;
-
-use function strlen;
 use function jaxon;
+use function strlen;
 
 final class FunctionTest extends TestCase
 {

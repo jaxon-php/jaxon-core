@@ -1,6 +1,6 @@
 <?php
 
-namespace Jaxon\Response\Plugin\DataBag;
+namespace Jaxon\Plugin\Response\DataBag;
 
 use Jaxon\Di\Container;
 use Jaxon\Plugin\ResponsePlugin;

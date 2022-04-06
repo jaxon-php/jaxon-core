@@ -14,10 +14,10 @@ namespace Jaxon\Request;
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
+use Jaxon\Exception\SetupException;
+use Jaxon\Plugin\Request\CallableClass\CallableRegistry;
 use Jaxon\Request\Factory\ParameterFactory;
 use Jaxon\Request\Factory\RequestFactory;
-use Jaxon\Request\Plugin\CallableClass\CallableRegistry;
-use Jaxon\Exception\SetupException;
 
 use function trim;
 

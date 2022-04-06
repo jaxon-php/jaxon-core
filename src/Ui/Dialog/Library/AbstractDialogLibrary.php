@@ -14,7 +14,7 @@
 
 namespace Jaxon\Ui\Dialog\Library;
 
-use Jaxon\Response\Plugin\Dialog\DialogPlugin;
+use Jaxon\Plugin\Response\Dialog\DialogPlugin;
 
 abstract class AbstractDialogLibrary implements DialogLibraryInterface
 {

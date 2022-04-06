@@ -3,7 +3,7 @@
 namespace Jaxon\Plugin\Code;
 
 use Jaxon\Config\ConfigManager;
-use Jaxon\Plugin\Plugin;
+use Jaxon\Plugin\Request;
 use Jaxon\Request\Handler\ParameterReader;
 use Jaxon\Utils\Http\UriException;
 
