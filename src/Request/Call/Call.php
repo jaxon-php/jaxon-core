@@ -3,7 +3,7 @@
 /**
  * Call.php - The Jaxon Call
  *
- * This class is used to create client side requests to callable classes and functions.
+ * This class is used to create js ajax requests to callable classes and functions.
  *
  * @package jaxon-core
  * @author Jared White
@@ -22,44 +22,24 @@ namespace Jaxon\Request\Call;
 
 use Jaxon\Plugin\Response\JQuery\DomSelector;
 use Jaxon\Ui\Dialog\Library\DialogLibraryManager;
-use Jaxon\Ui\Pagination\Paginator;
-use function array_map;
+
 use function array_shift;
-use function func_get_args;
 use function implode;
 
 class Call extends JsCall
 {
+    use Traits\CallConditionTrait;
+    use Traits\CallMessageTrait;
+
     /**
      * @var DialogLibraryManager
      */
-    protected $xDialogFacade;
+    protected $xDialogLibraryManager;
 
     /**
      * @var Paginator
      */
     protected $xPaginator;
-
-    /**
-     * A condition to check before sending this request
-     *
-     * @var string
-     */
-    protected $sCondition = null;
-
-    /**
-     * The arguments of the confirm() call
-     *
-     * @var array
-     */
-    protected $aConfirmArgs = [];
-
-    /**
-     * The arguments of the elseShow() call
-     *
-     * @var array
-     */
-    protected $aMessageArgs = [];
 
     /**
      * @var array
@@ -80,162 +60,14 @@ class Call extends JsCall
      * The constructor.
      *
      * @param string $sName    The javascript function or method name
-     * @param DialogLibraryManager $xDialogFacade
+     * @param DialogLibraryManager $xDialogLibraryManager
      * @param Paginator $xPaginator
      */
-    public function __construct(string $sName, DialogLibraryManager $xDialogFacade, Paginator $xPaginator)
+    public function __construct(string $sName, DialogLibraryManager $xDialogLibraryManager, Paginator $xPaginator)
     {
         parent::__construct($sName);
-        $this->xDialogFacade = $xDialogFacade;
+        $this->xDialogLibraryManager = $xDialogLibraryManager;
         $this->xPaginator = $xPaginator;
-    }
-
-    /**
-     * Add a condition to the request
-     *
-     * The request is sent only if the condition is true.
-     *
-     * @param mixed $xCondition    The condition to check
-     *
-     * @return Call
-     */
-    public function when($xCondition): Call
-    {
-        $this->sCondition = Parameter::make($xCondition)->getScript();
-        return $this;
-    }
-
-    /**
-     * Add a condition to the request
-     *
-     * The request is sent only if the condition is false.
-     *
-     * @param mixed $xCondition    The condition to check
-     *
-     * @return Call
-     */
-    public function unless($xCondition): Call
-    {
-        $this->sCondition = '!(' . Parameter::make($xCondition)->getScript() . ')';
-        return $this;
-    }
-
-    /**
-     * Check if a value is equal to another before sending the request
-     *
-     * @param mixed $xValue1    The first value to compare
-     * @param mixed $xValue2    The second value to compare
-     *
-     * @return Call
-     */
-    public function ifeq($xValue1, $xValue2): Call
-    {
-        $this->sCondition = Parameter::make($xValue1) . '==' . Parameter::make($xValue2);
-        return $this;
-    }
-
-    /**
-     * Check if a value is not equal to another before sending the request
-     *
-     * @param mixed $xValue1    The first value to compare
-     * @param mixed $xValue2    The second value to compare
-     *
-     * @return Call
-     */
-    public function ifne($xValue1, $xValue2): Call
-    {
-        $this->sCondition = Parameter::make($xValue1) . '!=' . Parameter::make($xValue2);
-        return $this;
-    }
-
-    /**
-     * Check if a value is greater than another before sending the request
-     *
-     * @param mixed $xValue1    The first value to compare
-     * @param mixed $xValue2    The second value to compare
-     *
-     * @return Call
-     */
-    public function ifgt($xValue1, $xValue2): Call
-    {
-        $this->sCondition = Parameter::make($xValue1) . '>' . Parameter::make($xValue2);
-        return $this;
-    }
-
-    /**
-     * Check if a value is greater or equal to another before sending the request
-     *
-     * @param mixed $xValue1    The first value to compare
-     * @param mixed $xValue2    The second value to compare
-     *
-     * @return Call
-     */
-    public function ifge($xValue1, $xValue2): Call
-    {
-        $this->sCondition = Parameter::make($xValue1) . '>=' . Parameter::make($xValue2);
-        return $this;
-    }
-
-    /**
-     * Check if a value is lower than another before sending the request
-     *
-     * @param mixed $xValue1    The first value to compare
-     * @param mixed $xValue2    The second value to compare
-     *
-     * @return Call
-     */
-    public function iflt($xValue1, $xValue2): Call
-    {
-        $this->sCondition = Parameter::make($xValue1) . '<' . Parameter::make($xValue2);
-        return $this;
-    }
-
-    /**
-     * Check if a value is lower or equal to another before sending the request
-     *
-     * @param mixed $xValue1    The first value to compare
-     * @param mixed $xValue2    The second value to compare
-     *
-     * @return Call
-     */
-    public function ifle($xValue1, $xValue2): Call
-    {
-        $this->sCondition = Parameter::make($xValue1) . '<=' . Parameter::make($xValue2);
-        return $this;
-    }
-
-    /**
-     * Add a confirmation question to the request
-     *
-     * @param string $sQuestion    The question to ask
-     *
-     * @return Call
-     */
-    public function confirm(string $sQuestion): Call
-    {
-        $this->sCondition = '__confirm__';
-        $this->aConfirmArgs = array_map(function($xParameter) {
-            return Parameter::make($xParameter);
-        }, func_get_args());
-        return $this;
-    }
-
-    /**
-     * Set the message to show if the condition to send the request is not met
-     *
-     * The first parameter is the message to show. The followings allow inserting data from
-     * the webpage in the message using positional placeholders.
-     *
-     * @param string $sMessage    The message to show if the request is not sent
-     *
-     * @return Call
-     */
-    public function elseShow(string $sMessage): Call
-    {
-        $this->aMessageArgs = array_map(function($xParameter) {
-            return Parameter::make($xParameter);
-        }, func_get_args());
-        return $this;
     }
 
     /**
@@ -301,17 +133,18 @@ class Call extends JsCall
     /**
      * Make a phrase to be displayed in js code
      *
-     * @param array $aArgs
-     *
      * @return string
      */
-    private function makeMessage(array $aArgs): string
+    private function makeMessage(): string
     {
-        if(!($sPhrase = $this->makePhrase($aArgs)))
+        if(!($sPhrase = $this->makePhrase($this->aMessageArgs)))
         {
             return '';
         }
-        return $this->xDialogFacade->getMessageLibrary()->setReturnCode(true)->warning($sPhrase);
+        $sMethod = $this->sMessageType;
+        $xLibrary = $this->xDialogLibraryManager->getMessageLibrary();
+        $xLibrary->setReturnCode(true);
+        return $xLibrary->$sMethod($sPhrase);
     }
 
     /**
@@ -338,15 +171,15 @@ class Call extends JsCall
             $xParameter = $this->_makeUniqueJsVar($xParameter);
         }
 
-        $sMessageScript = $this->makeMessage($this->aMessageArgs);
+        $sMessageScript = $this->makeMessage();
         $sScript = parent::getScript();
         if($this->sCondition === '__confirm__')
         {
             $sConfirmPhrase = $this->makePhrase($this->aConfirmArgs);
-            $sScript = $this->xDialogFacade->getQuestionLibrary()
+            $sScript = $this->xDialogLibraryManager->getQuestionLibrary()
                 ->confirm($sConfirmPhrase, $sScript, $sMessageScript);
         }
-        elseif($this->sCondition !== null)
+        elseif($this->sCondition !== '')
         {
             $sScript = empty($sMessageScript) ? 'if(' . $this->sCondition . '){' . $sScript . ';}' :
                 'if(' . $this->sCondition . '){' . $sScript . ';}else{' . $sMessageScript . ';}';
@@ -399,10 +232,34 @@ class Call extends JsCall
      * @param integer $nItemsPerPage    The number of items per page
      * @param integer $nItemsTotal    The total number of items
      *
+     * @return array
+     */
+    public function pages(int $nCurrentPage, int $nItemsPerPage, int $nItemsTotal): array
+    {
+        // Append the page number to the parameter list, if not yet given.
+        if(!$this->hasPageNumber())
+        {
+            $this->addParameter(Parameter::PAGE_NUMBER, 0);
+        }
+        return $this->xPaginator->setup($this, $nCurrentPage, $nItemsPerPage, $nItemsTotal)->pages();
+    }
+
+    /**
+     * Make the pagination links for this request
+     *
+     * @param integer $nCurrentPage    The current page
+     * @param integer $nItemsPerPage    The number of items per page
+     * @param integer $nItemsTotal    The total number of items
+     *
      * @return Paginator
      */
     public function paginate(int $nCurrentPage, int $nItemsPerPage, int $nItemsTotal): Paginator
     {
+        // Append the page number to the parameter list, if not yet given.
+        if(!$this->hasPageNumber())
+        {
+            $this->addParameter(Parameter::PAGE_NUMBER, 0);
+        }
         return $this->xPaginator->setup($this, $nCurrentPage, $nItemsPerPage, $nItemsTotal);
     }
 
@@ -418,19 +275,5 @@ class Call extends JsCall
     public function pg(int $nCurrentPage, int $nItemsPerPage, int $nItemsTotal): Paginator
     {
         return $this->paginate($nCurrentPage, $nItemsPerPage, $nItemsTotal);
-    }
-
-    /**
-     * Make the pagination links for this request
-     *
-     * @param integer $nCurrentPage    The current page
-     * @param integer $nItemsPerPage    The number of items per page
-     * @param integer $nItemsTotal    The total number of items
-     *
-     * @return array
-     */
-    public function pages(int $nCurrentPage, int $nItemsPerPage, int $nItemsTotal): array
-    {
-        return $this->xPaginator->setup($this, $nCurrentPage, $nItemsPerPage, $nItemsTotal)->getPages();
     }
 }

@@ -12,7 +12,7 @@ use Jaxon\Request\Factory\RequestFactory;
 use Jaxon\Request\Handler\CallbackManager;
 use Jaxon\Ui\Dialog\Library\DialogLibraryHelper;
 use Jaxon\Ui\Dialog\Library\DialogLibraryManager;
-use Jaxon\Ui\Pagination\Paginator;
+use Jaxon\Request\Call\Paginator;
 use Jaxon\Ui\View\ViewRenderer;
 use Jaxon\Utils\Config\Config;
 use Jaxon\Utils\Template\TemplateEngine;

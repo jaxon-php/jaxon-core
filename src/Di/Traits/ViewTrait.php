@@ -3,9 +3,9 @@
 namespace Jaxon\Di\Traits;
 
 use Jaxon\Di\Container;
+use Jaxon\Request\Call\Paginator;
 use Jaxon\Ui\Dialog\Library\DialogLibraryManager;
-use Jaxon\Ui\Pagination\PaginationRenderer;
-use Jaxon\Ui\Pagination\Paginator;
+use Jaxon\Ui\View\PaginationRenderer;
 use Jaxon\Ui\View\TemplateView;
 use Jaxon\Ui\View\ViewRenderer;
 use Jaxon\Utils\Template\TemplateEngine;

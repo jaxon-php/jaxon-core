@@ -16,8 +16,9 @@ namespace Jaxon\Request\Factory;
  */
 
 use Jaxon\Request\Call\Call;
+use Jaxon\Request\Call\Paginator;
 use Jaxon\Ui\Dialog\Library\DialogLibraryManager;
-use Jaxon\Ui\Pagination\Paginator;
+
 use function array_shift;
 use function func_get_args;
 
