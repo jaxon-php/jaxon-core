@@ -88,7 +88,7 @@ class DialogLibraryManager
      *
      * @return QuestionInterface
      */
-    public function getQuestionLibrary()
+    public function getQuestionLibrary(): QuestionInterface
     {
         $sQuestionLibrary = $this->sNextLibrary ?: $this->sQuestionLibrary;
         return ($sQuestionLibrary) ? $this->di->g($sQuestionLibrary) : $this->xAlertLibrary;

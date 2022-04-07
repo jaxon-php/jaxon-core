@@ -14,12 +14,23 @@
 
 namespace Jaxon\Ui\Dialog\Library;
 
+use Jaxon\Ui\Dialog\LibraryInterface;
 use Jaxon\Ui\Dialog\MessageInterface;
 use Jaxon\Ui\Dialog\QuestionInterface;
 
-class AlertLibrary implements MessageInterface, QuestionInterface
+class AlertLibrary implements LibraryInterface, MessageInterface, QuestionInterface
 {
     use DialogLibraryTrait;
+
+    /**
+     * Get the library name
+     *
+     * @return string
+     */
+    public function getName(): string
+    {
+        return ''; // No name
+    }
 
     /**
      * Get the script which makes a call only if the user answers yes to the given question

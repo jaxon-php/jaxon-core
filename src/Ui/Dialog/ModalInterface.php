@@ -12,7 +12,7 @@
 
 namespace Jaxon\Ui\Dialog;
 
-interface ModalInterface
+interface ModalInterface extends LibraryInterface
 {
     /**
      * Show a modal dialog.

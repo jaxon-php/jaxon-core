@@ -12,10 +12,10 @@
 
 namespace Jaxon\Ui\Dialog;
 
-interface MessageInterface
+interface MessageInterface extends LibraryInterface
 {
     /**
-     * Print a success message.
+     * Show a success message.
      *
      * @param string $sMessage    The text of the message
      * @param string $sTitle    The title of the message
@@ -25,7 +25,7 @@ interface MessageInterface
     public function success(string $sMessage, string $sTitle = ''): string;
 
     /**
-     * Print an information message.
+     * Show an information message.
      *
      * @param string $sMessage    The text of the message
      * @param string $sTitle    The title of the message
@@ -35,7 +35,7 @@ interface MessageInterface
     public function info(string $sMessage, string $sTitle = ''): string;
 
     /**
-     * Print a warning message.
+     * Show a warning message.
      *
      * @param string $sMessage    The text of the message
      * @param string $sTitle    The title of the message
@@ -45,7 +45,7 @@ interface MessageInterface
     public function warning(string $sMessage, string $sTitle = ''): string;
 
     /**
-     * Print an error message.
+     * Show an error message.
      *
      * @param string $sMessage    The text of the message
      * @param string $sTitle    The title of the message

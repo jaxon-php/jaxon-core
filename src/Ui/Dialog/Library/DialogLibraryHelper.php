@@ -3,6 +3,7 @@
 namespace Jaxon\Ui\Dialog\Library;
 
 use Jaxon\Config\ConfigManager;
+use Jaxon\Ui\Dialog\LibraryInterface;
 use Jaxon\Utils\Template\TemplateEngine;
 
 use function array_merge;
@@ -59,11 +60,11 @@ class DialogLibraryHelper
     /**
      * The constructor
      *
-     * @param AbstractDialogLibrary $xDialogLibrary
+     * @param LibraryInterface $xDialogLibrary
      * @param ConfigManager $xConfigManager
      * @param TemplateEngine $xTemplateEngine
      */
-    public function __construct(AbstractDialogLibrary $xDialogLibrary,
+    public function __construct(LibraryInterface $xDialogLibrary,
         ConfigManager $xConfigManager, TemplateEngine $xTemplateEngine)
     {
         $this->xConfigManager = $xConfigManager;

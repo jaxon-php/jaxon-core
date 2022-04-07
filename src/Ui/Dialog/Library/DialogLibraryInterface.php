@@ -1,7 +1,7 @@
 <?php
 
 /**
- * DialogLibraryInterface.php - Interface for javascript dialog library adapters.
+ * DialogLibraryInterface.php
  *
  * @package jaxon-core
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
@@ -12,61 +12,23 @@
 
 namespace Jaxon\Ui\Dialog\Library;
 
+use Jaxon\Response\Response;
+
 interface DialogLibraryInterface
 {
     /**
-     * Get the library name
+     * Set the response to attach the messages to.
      *
-     * @return string
+     * @param Response $xResponse    Whether to return the code
+     *
+     * @return void
      */
-    public function getName(): string;
+    public function setResponse(Response $xResponse);
 
     /**
-     * Get the library base URI
+     * @param bool $bReturnCode
      *
-     * @return string
+     * @return void
      */
-    public function getUri(): string;
-
-    /**
-     * Get the library subdir for the URI
-     *
-     * @return string
-     */
-    public function getSubdir(): string;
-
-    /**
-     * Get the library version for the URI
-     *
-     * @return string
-     */
-    public function getVersion(): string;
-
-    /**
-     * Get the CSS header code and file includes
-     *
-     * @return string
-     */
-    public function getCss(): string;
-
-    /**
-     * Get the javascript header code and file includes
-     *
-     * @return string
-     */
-    public function getJs(): string;
-
-    /**
-     * Get the javascript code to be printed into the page
-     *
-     * @return string
-     */
-    public function getScript(): string;
-
-    /**
-     * Get the javascript code to be executed on page load
-     *
-     * @return string
-     */
-    public function getReadyScript(): string;
+    public function setReturnCode(bool $bReturnCode);
 }

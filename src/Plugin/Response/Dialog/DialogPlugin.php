@@ -6,7 +6,7 @@
  * Show modal, message and question dialogs with various javascript libraries
  * based on user settings.
  *
- * @package jaxon-dialogs
+ * @package jaxon-core
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
  * @copyright 2016 Thierry Feuzeu <thierry.feuzeu@gmail.com>
  * @license https://opensource.org/licenses/BSD-3-Clause BSD 3-Clause License
@@ -28,6 +28,8 @@ use function trim;
 
 class DialogPlugin extends ResponsePlugin implements ModalInterface, MessageInterface
 {
+    use DialogLibraryTrait;
+
     /**
      * @const The plugin name
      */

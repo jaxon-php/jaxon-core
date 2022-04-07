@@ -13,7 +13,7 @@
 
 namespace Jaxon\Ui\Dialog;
 
-interface QuestionInterface
+interface QuestionInterface extends LibraryInterface
 {
     /**
      * Return a script which makes a call only if the user answers yes to the given question
