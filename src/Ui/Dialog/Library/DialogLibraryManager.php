@@ -12,9 +12,15 @@
 namespace Jaxon\Ui\Dialog\Library;
 
 use Jaxon\Di\Container;
+use Jaxon\Exception\SetupException;
 use Jaxon\Ui\Dialog\MessageInterface;
 use Jaxon\Ui\Dialog\ModalInterface;
 use Jaxon\Ui\Dialog\QuestionInterface;
+use Jaxon\Utils\Translation\Translator;
+
+use function array_map;
+use function class_implements;
+use function in_array;
 
 class DialogLibraryManager
 {
@@ -22,6 +28,26 @@ class DialogLibraryManager
      * @var Container
      */
     private $di;
+
+    /**
+     * @var array
+     */
+    protected $aLibraries = [];
+
+    /**
+     * @var array
+     */
+    protected $aQuestionLibraries = [];
+
+    /**
+     * @var array
+     */
+    protected $aMessageLibraries = [];
+
+    /**
+     * @var array
+     */
+    protected $aModalLibraries = [];
 
     /**
      * The QuestionInterface class name
@@ -60,84 +86,163 @@ class DialogLibraryManager
     private $xAlertLibrary;
 
     /**
+     * @var Translator
+     */
+    private $xTranslator;
+
+    /**
      * The constructor
      *
      * @param Container $di
+     * @param Translator $xTranslator
      */
-    public function __construct(Container $di)
+    public function __construct(Container $di, Translator $xTranslator)
     {
         $this->di = $di;
+        $this->xTranslator = $xTranslator;
         // Library for javascript confirm and alert functions.
         $this->xAlertLibrary = new AlertLibrary();
     }
 
     /**
-     * Set the QuestionInterface class name
+     * Register a javascript dialog library adapter.
      *
-     * @param string $sQuestionLibrary    The QuestionInterface class name
+     * @param string $sClassName
+     * @param string $sName
      *
      * @return void
+     * @throws SetupException
      */
-    public function setQuestionLibrary(string $sQuestionLibrary)
+    public function registerLibrary(string $sClassName, string $sName)
     {
-        $this->sQuestionLibrary = $sQuestionLibrary;
+        $bIsUsed = false;
+        $aInterfaces = class_implements($sClassName);
+        if(in_array(QuestionInterface::class, $aInterfaces))
+        {
+            $this->aQuestionLibraries[$sName] = $sClassName;
+            $bIsUsed = true;
+        }
+        if(in_array(MessageInterface::class, $aInterfaces))
+        {
+            $this->aMessageLibraries[$sName] = $sClassName;
+            $bIsUsed = true;
+        }
+        if(in_array(ModalInterface::class, $aInterfaces))
+        {
+            $this->aModalLibraries[$sName] = $sClassName;
+            $bIsUsed = true;
+        }
+
+        if(!$bIsUsed)
+        {
+            // The class is invalid.
+            $sMessage = $this->xTranslator->trans('errors.register.invalid', ['name' => $sClassName]);
+            throw new SetupException($sMessage);
+        }
+        $this->aLibraries[] = $sClassName;
+        $this->di->registerDialogLibrary($sClassName);
     }
 
     /**
-     * Get the QuestionInterface instance
+     * Get the library class instances
+     *
+     * @return array
+     */
+    public function getLibraries(): array
+    {
+        return array_map(function($sClassName) {
+            return $this->di->g($sClassName);
+        }, $this->aLibraries);
+    }
+
+    /**
+     * Set the QuestionInterface library
+     *
+     * @param string $sLibraryName The QuestionInterface library name
+     *
+     * @return void
+     * @throws SetupException
+     */
+    public function setQuestionLibrary(string $sLibraryName)
+    {
+        if(!isset($this->aQuestionLibraries[$sLibraryName]))
+        {
+            $sMessage = $this->xTranslator->trans('errors.dialog.library',
+                ['type' => 'question', 'name' => $sLibraryName]);
+            throw new SetupException($sMessage);
+        }
+        $this->sQuestionLibrary = $sLibraryName;
+    }
+
+    /**
+     * Get the QuestionInterface library
      *
      * @return QuestionInterface
      */
     public function getQuestionLibrary(): QuestionInterface
     {
-        $sQuestionLibrary = $this->sNextLibrary ?: $this->sQuestionLibrary;
-        return ($sQuestionLibrary) ? $this->di->g($sQuestionLibrary) : $this->xAlertLibrary;
+        $sLibraryName = $this->sNextLibrary ?: $this->sQuestionLibrary;
+        return ($sLibraryName) ? $this->di->g($this->aQuestionLibraries[$sLibraryName]) : $this->xAlertLibrary;
     }
 
     /**
-     * Set MessageInterface class name
+     * Set MessageInterface library
      *
-     * @param string $sMessageLibrary    The MessageInterface class name
+     * @param string $sLibraryName The MessageInterface library name
      *
      * @return void
+     * @throws SetupException
      */
-    public function setMessageLibrary(string $sMessageLibrary)
+    public function setMessageLibrary(string $sLibraryName)
     {
-        $this->sMessageLibrary = $sMessageLibrary;
+        if(!isset($this->aMessageLibraries[$sLibraryName]))
+        {
+            $sMessage = $this->xTranslator->trans('errors.dialog.library',
+                ['type' => 'message', 'name' => $sLibraryName]);
+            throw new SetupException($sMessage);
+        }
+        $this->sMessageLibrary = $sLibraryName;
     }
 
     /**
-     * Get the MessageInterface instance
+     * Get the MessageInterface library
      *
      * @return MessageInterface
      */
     public function getMessageLibrary(): MessageInterface
     {
-        $sMessageLibrary = $this->sNextLibrary ?: $this->sMessageLibrary;
-        return ($sMessageLibrary) ? $this->di->g($sMessageLibrary) : $this->xAlertLibrary;
+        $sLibraryName = $this->sNextLibrary ?: $this->sMessageLibrary;
+        return ($sLibraryName) ? $this->di->g($this->aMessageLibraries[$sLibraryName]) : $this->xAlertLibrary;
     }
 
     /**
-     * Set the ModalInterface class name
+     * Set the ModalInterface library
      *
-     * @param string $sModalLibrary    The ModalInterface class name
+     * @param string $sLibraryName The ModalInterface library name
      *
      * @return void
+     * @throws SetupException
      */
-    public function setModalLibrary(string $sModalLibrary)
+    public function setModalLibrary(string $sLibraryName)
     {
-        $this->sModalLibrary = $sModalLibrary;
+        if(!isset($this->aModalLibraries[$sLibraryName]))
+        {
+            $sMessage = $this->xTranslator->trans('errors.dialog.library',
+                ['type' => 'modal', 'name' => $sLibraryName]);
+            throw new SetupException($sMessage);
+        }
+        $this->sModalLibrary = $sLibraryName;
     }
 
     /**
-     * Get the ModalInterface instance
+     * Get the ModalInterface library
      *
      * @return ModalInterface
      */
     public function getModalLibrary(): ?ModalInterface
     {
-        $sModalLibrary = $this->sNextLibrary ?: $this->sModalLibrary;
-        return ($sModalLibrary) ? $this->di->g($sModalLibrary) : null;
+        $sLibraryName = $this->sNextLibrary ?: $this->sModalLibrary;
+        return ($sLibraryName) ? $this->di->g($this->aModalLibraries[$sLibraryName]) : null;
     }
 
     /**

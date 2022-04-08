@@ -2,13 +2,16 @@
 
 namespace Jaxon\Di\Traits;
 
+use Jaxon\Config\ConfigManager;
 use Jaxon\Di\Container;
 use Jaxon\Request\Call\Paginator;
+use Jaxon\Ui\Dialog\Library\DialogLibraryHelper;
 use Jaxon\Ui\Dialog\Library\DialogLibraryManager;
 use Jaxon\Ui\View\PaginationRenderer;
 use Jaxon\Ui\View\TemplateView;
 use Jaxon\Ui\View\ViewRenderer;
 use Jaxon\Utils\Template\TemplateEngine;
+use Jaxon\Utils\Translation\Translator;
 
 trait ViewTrait
 {
@@ -33,6 +36,7 @@ trait ViewTrait
             $xViewRenderer->addNamespace('pagination', $sPaginationDir, '.php', 'jaxon');
             return $xViewRenderer;
         });
+
         // Pagination Paginator
         $this->set(Paginator::class, function($c) {
             return new Paginator($c->g(PaginationRenderer::class));
@@ -43,8 +47,39 @@ trait ViewTrait
         });
         // Dialog library manager
         $this->set(DialogLibraryManager::class, function($c) {
-            return new DialogLibraryManager($c->g(Container::class));
+            return new DialogLibraryManager($c->g(Container::class), $c->g(Translator::class));
         });
+    }
+
+    /**
+     * Register a javascript dialog library adapter.
+     *
+     * @param string $sClass
+     *
+     * @return void
+     */
+    public function registerDialogLibrary(string $sClass)
+    {
+        $this->set($sClass, function($c) use($sClass) {
+            // Set the protected attributes of the library
+            $cSetter = function() use($c) {
+                $this->xHelper = new DialogLibraryHelper($this, $c->g(ConfigManager::class), $c->g(TemplateEngine::class));
+            };
+            // Can now access protected attributes
+            $xLibrary = $c->make($sClass);
+            call_user_func($cSetter->bindTo($xLibrary, $xLibrary));
+            return $xLibrary;
+        });
+    }
+
+    /**
+     * Get the dialog library manager
+     *
+     * @return DialogLibraryManager
+     */
+    public function getDialogLibraryManager(): DialogLibraryManager
+    {
+        return $this->g(DialogLibraryManager::class);
     }
 
     /**

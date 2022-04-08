@@ -9,6 +9,7 @@ return [
         ],
         'class' => [
             'invalid' => "La classe :name n'existe pas.",
+            'implements' => "La classe :name n'implémente pas l'interface :interface.",
         ],
         'response' => [
             'result.invalid' => "Une réponse invalide a été renvoyée lors du traitement de la requête.",

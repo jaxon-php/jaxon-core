@@ -17,6 +17,8 @@ namespace Jaxon\Ui\View;
 use Jaxon\Request\Call\Paginator;
 
 use function array_map;
+use function array_pop;
+use function array_shift;
 
 class PaginationRenderer
 {
@@ -66,10 +68,13 @@ class PaginationRenderer
         $aLinks = array_map(function($aPage) {
             return $this->renderLink($aPage[0], $aPage[1], $aPage[2]);
         }, $xPaginator->links());
-
         $aPrevLink = array_shift($aLinks); // The first entry in the array
         $aNextLink = array_pop($aLinks); // The last entry in the array
-        return $this->xRenderer->render('pagination::wrapper',
-            ['links' => $aLinks, 'prev' => $aPrevLink, 'next' => $aNextLink]);
+
+        return $this->xRenderer->render('pagination::wrapper', [
+            'links' => $aLinks,
+            'prev' => $aPrevLink,
+            'next' => $aNextLink,
+        ]);
     }
 }

@@ -11,7 +11,6 @@ use Jaxon\Dialogs\Library\Bootbox\BootboxLibrary;
 use Jaxon\Dialogs\Library\Bootstrap\BootstrapLibrary;
 use Jaxon\Dialogs\Library\Toastr\ToastrLibrary;
 use Jaxon\Ui\Dialog\Library\AlertLibrary;
-use Jaxon\Ui\Dialog\Library\DialogLibraryManager;
 use Jaxon\Utils\Http\UriException;
 use Nyholm\Psr7Server\ServerRequestCreator;
 use Psr\Http\Message\ServerRequestInterface;
@@ -57,7 +56,7 @@ class DialogTest extends TestCase
 
     public function testDialogSettings()
     {
-        $xDialogLibraryManager = jaxon()->di()->g(DialogLibraryManager::class);
+        $xDialogLibraryManager = jaxon()->di()->getDialogLibraryManager();
         $this->assertEquals('', $xDialogLibraryManager->getQuestionLibrary()->getName());
         $this->assertEquals(AlertLibrary::class, get_class($xDialogLibraryManager->getQuestionLibrary()));
         $this->assertEquals(AlertLibrary::class, get_class($xDialogLibraryManager->getMessageLibrary()));
@@ -67,7 +66,7 @@ class DialogTest extends TestCase
         jaxon()->setOption('dialogs.default.message', 'bootstrap');
         jaxon()->setOption('dialogs.default.question', 'bootstrap');
         // The change is not automatic. It needs to be triggered.
-        jaxon()->dialog()->getScript();
+        jaxon()->dialog();
         $this->assertEquals(BootstrapLibrary::class, get_class($xDialogLibraryManager->getQuestionLibrary()));
         $this->assertEquals(BootstrapLibrary::class, get_class($xDialogLibraryManager->getMessageLibrary()));
         $this->assertEquals(BootstrapLibrary::class, get_class($xDialogLibraryManager->getModalLibrary()));
@@ -75,24 +74,29 @@ class DialogTest extends TestCase
         jaxon()->setOption('dialogs.default.modal', 'bootbox');
         jaxon()->setOption('dialogs.default.message', 'bootbox');
         jaxon()->setOption('dialogs.default.question', 'bootbox');
-        // The change is not automatic. It needs to be triggered.
-        jaxon()->dialog()->getScript();
-        $this->assertEquals(BootboxLibrary::class, get_class($xDialogLibraryManager->getQuestionLibrary()));
-        $this->assertEquals(BootboxLibrary::class, get_class($xDialogLibraryManager->getMessageLibrary()));
-        $this->assertEquals(BootboxLibrary::class, get_class($xDialogLibraryManager->getModalLibrary()));
+        // The default can be changed only once.
+        jaxon()->dialog();
+        $this->assertEquals(BootstrapLibrary::class, get_class($xDialogLibraryManager->getQuestionLibrary()));
+        $this->assertEquals(BootstrapLibrary::class, get_class($xDialogLibraryManager->getMessageLibrary()));
+        $this->assertEquals(BootstrapLibrary::class, get_class($xDialogLibraryManager->getModalLibrary()));
     }
 
     public function testDialogOptions()
     {
-        $xDialogLibraryManager = jaxon()->di()->g(DialogLibraryManager::class);
+        $xDialogLibraryManager = jaxon()->di()->getDialogLibraryManager();
         jaxon()->setOption('dialogs.default.message', 'toastr');
         // The change is not automatic. It needs to be triggered.
-        jaxon()->dialog()->getScript();
+        jaxon()->dialog();
         $xMessageLibrary = $xDialogLibraryManager->getMessageLibrary();
         $this->assertEquals(ToastrLibrary::class, get_class($xMessageLibrary));
         $this->assertTrue($xMessageLibrary->helper()->hasOption('options.closeButton'));
         $this->assertIsArray($xMessageLibrary->helper()->getOption('options.sampleArray'));
         $this->assertIsString($xMessageLibrary->helper()->getOption('options.positionClass'));
+        // Test dialog plugin stub methods
+        jaxon()->dialog()->setReturnCode(false);
+        $this->assertEquals('', jaxon()->dialog()->getUri());
+        $this->assertEquals('', jaxon()->dialog()->getSubdir());
+        $this->assertEquals('', jaxon()->dialog()->getVersion());
     }
 
     public function testDialogJsCode()

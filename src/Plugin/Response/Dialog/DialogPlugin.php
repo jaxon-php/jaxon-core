@@ -16,7 +16,7 @@
 namespace Jaxon\Plugin\Response\Dialog;
 
 use Jaxon\Config\ConfigManager;
-use Jaxon\Di\Container;
+use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\ResponsePlugin;
 use Jaxon\Response\Response;
 use Jaxon\Ui\Dialog\Library\DialogLibraryManager;
@@ -36,13 +36,6 @@ class DialogPlugin extends ResponsePlugin implements ModalInterface, MessageInte
     const NAME = 'dialog';
 
     /**
-     * Dependency Injection manager
-     *
-     * @var Container
-     */
-    protected $di;
-
-    /**
      * @var DialogLibraryManager
      */
     protected $xLibraryManager;
@@ -55,26 +48,18 @@ class DialogPlugin extends ResponsePlugin implements ModalInterface, MessageInte
     /**
      * @var array
      */
-    protected $aLibraries = [];
+    protected $aLibraries = null;
 
     /**
      * The constructor
      *
-     * @param Container $di
      * @param ConfigManager $xConfigManager
      * @param DialogLibraryManager $xLibraryManager
      */
-    public function __construct(Container $di, ConfigManager $xConfigManager, DialogLibraryManager $xLibraryManager)
+    public function __construct(ConfigManager $xConfigManager, DialogLibraryManager $xLibraryManager)
     {
-        $this->di = $di;
         $this->xConfigManager = $xConfigManager;
         $this->xLibraryManager = $xLibraryManager;
-
-        $aLibraries = $this->xConfigManager->getOption('dialogs.libraries', []);
-        foreach($aLibraries as $sClassName => $sName)
-        {
-            $this->registerLibrary($sClassName, $sName);
-        }
     }
 
     /**
@@ -90,27 +75,32 @@ class DialogPlugin extends ResponsePlugin implements ModalInterface, MessageInte
      */
     public function getHash(): string
     {
-        return '4.0.0'; // The version number is used as hash
+        // The version number is used as hash
+        return '4.0.0';
     }
 
     /**
-     * Register a javascript dialog library adapter.
-     *
-     * @param string $sClassName
-     * @param string $sName
+     * Register the javascript dialog libraries from config options.
      *
      * @return void
+     * @throws SetupException
      */
-    public function registerLibrary(string $sClassName, string $sName)
+    public function registerLibraries()
     {
-        $this->aLibraries[] = $sName;
-        $this->di->registerDialogLibrary($sClassName, $sName);
+        $aLibraries = $this->xConfigManager->getOption('dialogs.libraries', []);
+        foreach($aLibraries as $sClassName => $sName)
+        {
+            $this->xLibraryManager->registerLibrary($sClassName, $sName);
+        }
     }
 
     /**
+     * Set the default library for each dialog feature.
+     *
      * @return void
+     * @throws SetupException
      */
-    protected function setDefaultLibraries()
+    public function setDefaultLibraries()
     {
         // Set the default modal library
         if(($sName = $this->xConfigManager->getOption('dialogs.default.modal', '')))
@@ -137,7 +127,6 @@ class DialogPlugin extends ResponsePlugin implements ModalInterface, MessageInte
         parent::setResponse($xResponse);
 
         // Hack the setResponse() method, to set the default libraries on each access to this plugin.
-        $this->setDefaultLibraries();
         $this->xLibraryManager->setNextLibrary('');
     }
 
@@ -181,12 +170,23 @@ class DialogPlugin extends ResponsePlugin implements ModalInterface, MessageInte
     }
 
     /**
+     * @return array
+     */
+    private function getLibraries(): array
+    {
+        if($this->aLibraries === null)
+        {
+            $this->aLibraries = $this->xLibraryManager->getLibraries();
+        }
+        return $this->aLibraries;
+    }
+
+    /**
      * @inheritDoc
      */
     public function getJs(): string
     {
-        return array_reduce($this->aLibraries, function($sCode, $sName) {
-            $xLibrary = $this->di->g($sName);
+        return array_reduce($this->getLibraries(), function($sCode, $xLibrary) {
             return $sCode . $xLibrary->getJs() . "\n\n";
         }, '');
     }
@@ -196,21 +196,21 @@ class DialogPlugin extends ResponsePlugin implements ModalInterface, MessageInte
      */
     public function getCss(): string
     {
-        return array_reduce($this->aLibraries, function($sCode, $sName) {
-            $xLibrary = $this->di->g($sName);
+        return array_reduce($this->getLibraries(), function($sCode, $xLibrary) {
             return $sCode . trim($xLibrary->getCss()) . "\n\n";
         }, '');
     }
 
     /**
      * @inheritDoc
+     * @throws SetupException
      */
     public function getScript(): string
     {
         // The default scripts need to be set in the js code.
         $this->setDefaultLibraries();
-        return array_reduce($this->aLibraries, function($sCode, $sName) {
-            $xLibrary = $this->di->g($sName);
+
+        return array_reduce($this->getLibraries(), function($sCode, $xLibrary) {
             return $sCode . trim($xLibrary->getScript()) . "\n\n";
         }, "jaxon.dialogs = {};\n");
     }
@@ -220,8 +220,7 @@ class DialogPlugin extends ResponsePlugin implements ModalInterface, MessageInte
      */
     public function getReadyScript(): string
     {
-        return array_reduce($this->aLibraries, function($sCode, $sName) {
-            $xLibrary = $this->di->g($sName);
+        return array_reduce($this->getLibraries(), function($sCode, $xLibrary) {
             return $sCode . trim($xLibrary->getReadyScript()) . "\n\n";
         }, '');
     }

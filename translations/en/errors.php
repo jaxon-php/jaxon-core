@@ -9,6 +9,7 @@ return [
         ],
         'class' => [
             'invalid' => "Unable to find class with name :name.",
+            'implements' => "The class :name does not implement the interface :interface.",
         ],
         'response' => [
             'result.invalid' => "An invalid response was returned while processing this request.",

@@ -613,10 +613,11 @@ class Jaxon
      * @param string $sName
      *
      * @return void
+     * @throws SetupException
      */
     public function registerDialogLibrary(string $sClassName, string $sName)
     {
-        $this->dialog()->registerLibrary($sClassName, $sName);
+        $this->di()->getDialogLibraryManager()->registerLibrary($sClassName, $sName);
     }
 
     /**

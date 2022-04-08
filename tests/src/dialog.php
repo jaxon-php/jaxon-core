@@ -3,6 +3,7 @@
 use Jaxon\Tests\Ns\CallableClass;
 use Jaxon\Ui\Dialog\Library\DialogLibraryTrait;
 use Jaxon\Ui\Dialog\LibraryInterface;
+use Jaxon\Ui\Dialog\QuestionInterface;
 
 class Dialog extends CallableClass
 {
@@ -44,7 +45,7 @@ class Dialog extends CallableClass
     }
 }
 
-class TestDialogLibrary implements LibraryInterface
+class TestDialogLibrary implements LibraryInterface, QuestionInterface
 {
     use DialogLibraryTrait;
 
@@ -59,5 +60,10 @@ class TestDialogLibrary implements LibraryInterface
     public function getName(): string
     {
         return self::NAME;
+    }
+
+    public function confirm(string $sQuestion, string $sYesScript, string $sNoScript): string
+    {
+        return '';
     }
 }

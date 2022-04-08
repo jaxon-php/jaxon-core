@@ -9,6 +9,7 @@ return [
         ],
         'class' => [
             'invalid' => "No hay clase con el nombre :name.",
+            'implements' => "The class :name does not implement the interface :interface.",
         ],
         'response' => [
             'result.invalid' => "Una respuesta invalida fue devuelta al procesar esta solicitud.",
@@ -58,6 +59,9 @@ return [
         'magic' => [
             'get' => "Intentando leer propiedad desconocida :name con sobrecarga __get en línea :line en archivo :file.",
             'set' => "Intentando escribir propiedad desconocida :name con sobrecarga __set en línea :line en archivo :file.",
+        ],
+        'dialog' => [
+            'library' => "There is no :type library with name :name",
         ],
     ],
 ];

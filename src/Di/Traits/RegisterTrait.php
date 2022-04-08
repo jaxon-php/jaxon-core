@@ -10,15 +10,14 @@ use Jaxon\Plugin\Request\CallableClass\CallableObject;
 use Jaxon\Request\Factory;
 use Jaxon\Request\Factory\RequestFactory;
 use Jaxon\Request\Handler\CallbackManager;
-use Jaxon\Ui\Dialog\Library\DialogLibraryHelper;
 use Jaxon\Ui\Dialog\Library\DialogLibraryManager;
 use Jaxon\Request\Call\Paginator;
 use Jaxon\Ui\View\ViewRenderer;
 use Jaxon\Utils\Config\Config;
-use Jaxon\Utils\Template\TemplateEngine;
 use Jaxon\Utils\Translation\Translator;
 use ReflectionClass;
 use ReflectionException;
+
 use function call_user_func;
 use function explode;
 use function substr;
@@ -201,27 +200,5 @@ trait RegisterTrait
     public function getPackageConfig(string $sClassName): Config
     {
         return $this->g($sClassName . '_config');
-    }
-
-    /**
-     * Register a javascript dialog library adapter.
-     *
-     * @param string $sClass
-     * @param string $sName
-     *
-     * @return void
-     */
-    public function registerDialogLibrary(string $sClass, string $sName)
-    {
-        $this->set($sName, function($c) use($sClass) {
-            // Set the protected attributes of the library
-            $cSetter = function() use($c) {
-                $this->xHelper = new DialogLibraryHelper($this, $c->g(ConfigManager::class), $c->g(TemplateEngine::class));
-            };
-            // Can now access protected attributes
-            $xLibrary = $c->make($sClass);
-            call_user_func($cSetter->bindTo($xLibrary, $xLibrary));
-            return $xLibrary;
-        });
     }
 }
