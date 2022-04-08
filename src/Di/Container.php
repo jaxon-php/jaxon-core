@@ -104,16 +104,6 @@ class Container extends PimpleContainer implements LoggerAwareInterface
     }
 
     /**
-     * Get the container provided by the integrated framework
-     *
-     * @return ContainerInterface
-     */
-    public function getAppContainer(): ?ContainerInterface
-    {
-        return $this->appContainer;
-    }
-
-    /**
      * Set the container provided by the integrated framework
      *
      * @param ContainerInterface $xContainer    The container implementation
@@ -226,7 +216,7 @@ class Container extends PimpleContainer implements LoggerAwareInterface
     }
 
     /**
-     * Create an instance of a class, getting the contructor parameters from the DI container
+     * Create an instance of a class, getting the constructor parameters from the DI container
      *
      * @param string|ReflectionClass $xClass    The class name or the reflection class
      *
