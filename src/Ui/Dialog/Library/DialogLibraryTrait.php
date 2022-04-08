@@ -50,7 +50,7 @@ trait DialogLibraryTrait
      *
      * @return DialogLibraryHelper
      */
-    final protected function helper(): DialogLibraryHelper
+    final public function helper(): DialogLibraryHelper
     {
         return $this->xHelper;
     }
@@ -70,9 +70,9 @@ trait DialogLibraryTrait
     /**
      * Get the <Jaxon\Response\Response> object
      *
-     * @return Response
+     * @return Response|null
      */
-    final protected function response(): Response
+    final protected function response(): ?Response
     {
         return $this->xResponse;
     }
@@ -107,6 +107,7 @@ trait DialogLibraryTrait
      */
     final public function addCommand(array $aAttributes, $xData)
     {
+        // This is usually the response plugin name. We set the library name instead.
         $aAttributes['plg'] = $this->getName();
         $this->xResponse->addCommand($aAttributes, $xData);
     }
