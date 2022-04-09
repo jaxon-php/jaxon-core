@@ -14,8 +14,6 @@ use Jaxon\Request\Factory\PsrFactory;
 use Jaxon\Request\Factory\RequestFactory;
 use Jaxon\Request\Handler\CallbackManager;
 use Jaxon\Request\Handler\ParameterReader;
-use Jaxon\Request\Handler\PsrMiddleware;
-use Jaxon\Request\Handler\PsrRequestHandler;
 use Jaxon\Request\Handler\RequestHandler;
 use Jaxon\Request\Handler\UploadHandler;
 use Jaxon\Request\Upload\NameGeneratorInterface;
@@ -25,11 +23,6 @@ use Jaxon\Response\Manager\ResponseManager;
 use Jaxon\Ui\Dialog\Library\DialogLibraryManager;
 use Jaxon\Utils\Http\UriDetector;
 use Jaxon\Utils\Translation\Translator;
-use Nyholm\Psr7\Factory\Psr17Factory;
-use Nyholm\Psr7Server\ServerRequestCreator;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Server\MiddlewareInterface;
-use Psr\Http\Server\RequestHandlerInterface;
 
 use function bin2hex;
 use function random_bytes;
@@ -43,22 +36,6 @@ trait RequestTrait
      */
     private function registerRequests()
     {
-        // The server request
-        $this->set(Psr17Factory::class, function() {
-            return new Psr17Factory();
-        });
-        $this->set(ServerRequestCreator::class, function($c) {
-            $xRequestFactory = $c->g(Psr17Factory::class);
-            return new ServerRequestCreator(
-                $xRequestFactory, // ServerRequestFactory
-                $xRequestFactory, // UriFactory
-                $xRequestFactory, // UploadedFileFactory
-                $xRequestFactory  // StreamFactory
-            );
-        });
-        $this->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)->fromGlobals();
-        });
         // The parameter reader
         $this->set(ParameterReader::class, function($c) {
             return new ParameterReader($c->g(Container::class), $c->g(ConfigManager::class),
@@ -108,20 +85,6 @@ trait RequestTrait
         $this->set(ParameterFactory::class, function() {
             return new ParameterFactory();
         });
-        // PSR request handler and middleware
-        $this->set(PsrRequestHandler::class, function($c) {
-            return new PsrRequestHandler($c->g(Container::class), $c->g(RequestHandler::class),
-                $c->g(ResponseManager::class), $c->g(Translator::class));
-        });
-        $this->alias(RequestHandlerInterface::class, PsrRequestHandler::class);
-        $this->set(PsrMiddleware::class, function($c) {
-            return new PsrMiddleware($c->g(Container::class), $c->g(RequestHandler::class),
-                $c->g(ResponseManager::class));
-        });
-        $this->alias(MiddlewareInterface::class, PsrMiddleware::class);
-        $this->set(PsrFactory::class, function($c) {
-            return new PsrFactory($c->g(Container::class));
-        });
     }
 
     /**
@@ -132,26 +95,6 @@ trait RequestTrait
     public function getFactory(): Factory
     {
         return $this->g(Factory::class);
-    }
-
-    /**
-     * Get the PSR factory
-     *
-     * @return PsrFactory
-     */
-    public function getPsrFactory(): PsrFactory
-    {
-        return $this->g(PsrFactory::class);
-    }
-
-    /**
-     * Get the request
-     *
-     * @return ServerRequestInterface
-     */
-    public function getRequest(): ServerRequestInterface
-    {
-        return $this->g(ServerRequestInterface::class);
     }
 
     /**

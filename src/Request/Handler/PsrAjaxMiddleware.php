@@ -1,7 +1,7 @@
 <?php
 
 /**
- * PsrMiddleware.php
+ * PsrAjaxMiddleware.php
  *
  * A Psr7 middleware to process Jaxon ajax requests.
  *
@@ -22,7 +22,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
-class PsrMiddleware implements MiddlewareInterface
+class PsrAjaxMiddleware implements MiddlewareInterface
 {
     /**
      * @var Container

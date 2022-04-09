@@ -20,7 +20,6 @@ use Pimple\Exception\UnknownIdentifierException;
 use Psr\Container\ContainerInterface;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
-
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
@@ -37,6 +36,7 @@ class Container extends PimpleContainer implements LoggerAwareInterface
     use LoggerAwareTrait;
 
     use Traits\AppTrait;
+    use Traits\PsrTrait;
     use Traits\RequestTrait;
     use Traits\ResponseTrait;
     use Traits\PluginTrait;
@@ -84,6 +84,7 @@ class Container extends PimpleContainer implements LoggerAwareInterface
     private function registerAll()
     {
         $this->registerApp();
+        $this->registerPsr();
         $this->registerRequests();
         $this->registerResponses();
         $this->registerPlugins();

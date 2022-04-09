@@ -15,9 +15,10 @@ namespace Jaxon\Request\Factory;
  */
 
 use Jaxon\Di\Container;
+use Jaxon\Request\Handler\PsrAjaxMiddleware;
+use Jaxon\Request\Handler\PsrConfigMiddleware;
+use Jaxon\Request\Handler\PsrRequestHandler;
 use Psr\Container\ContainerInterface;
-use Psr\Http\Server\MiddlewareInterface;
-use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
 
 class PsrFactory
@@ -68,20 +69,32 @@ class PsrFactory
     /**
      * Get the Jaxon ajax PSR request handler
      *
-     * @return RequestHandlerInterface
+     * @return PsrRequestHandler
      */
-    public function handler(): RequestHandlerInterface
+    public function handler(): PsrRequestHandler
     {
-        return $this->di->g(RequestHandlerInterface::class);
+        return $this->di->getPsrRequestHandler();
+    }
+
+    /**
+     * Get the Jaxon config PSR middleware
+     *
+     * @param string $sConfigFile
+     *
+     * @return PsrConfigMiddleware
+     */
+    public function config(string $sConfigFile): PsrConfigMiddleware
+    {
+        return $this->di->getPsrConfigMiddleware($sConfigFile);
     }
 
     /**
      * Get the Jaxon ajax PSR middleware
      *
-     * @return MiddlewareInterface
+     * @return PsrAjaxMiddleware
      */
-    public function middleware(): MiddlewareInterface
+    public function ajax(): PsrAjaxMiddleware
     {
-        return $this->di->g(MiddlewareInterface::class);
+        return $this->di->getPsrAjaxMiddleware();
     }
 }
