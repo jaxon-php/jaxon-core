@@ -24,6 +24,7 @@ return [
         ],
         'request' => [
             'conversion' => "Los datos entrantes Jaxon no se pueden convertir de UTF-8.",
+            'plugin' => "Jaxon failed to find a plugin to process the request.",
         ],
         'mismatch' => [
             'content-types' => "No se puede mezclar tipos de contenido en una sola respuesta: :type",

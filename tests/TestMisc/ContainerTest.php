@@ -64,7 +64,7 @@ class ContainerTest extends TestCase
         $xContainer[ServiceExt::class] = function() {
             return new ServiceExt();
         };
-        jaxon()->di()->setAppContainer($xAppContainer);
+        jaxon()->di()->setContainer($xAppContainer);
         // Access the class from the Jaxon container
         $this->assertFalse(jaxon()->di()->h(ServiceExt::class));
         $this->assertTrue(jaxon()->di()->has(ServiceExt::class));

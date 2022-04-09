@@ -14,7 +14,7 @@
 namespace Jaxon\Plugin;
 
 use Jaxon\Plugin\Contract\CodeGeneratorInterface;
-use Jaxon\Request\Factory;
+use Jaxon\Request\Factory\Factory;
 use Jaxon\Ui\View\ViewRenderer;
 use Jaxon\Utils\Config\Config;
 

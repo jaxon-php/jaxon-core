@@ -21,15 +21,18 @@
 
 namespace Jaxon\Response;
 
+use Jaxon\Di\Container;
 use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Plugin\Response\DataBag\DataBagContext;
 use Jaxon\Plugin\Response\JQuery\DomSelector;
 use Jaxon\Plugin\ResponsePlugin;
-use Jaxon\Request\Handler\ParameterReader;
-use Jaxon\Utils\Translation\Translator;
+use Nyholm\Psr7\Factory\Psr17Factory;
+use Nyholm\Psr7\Stream;
+use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 
 use function array_filter;
 use function array_map;
+use function gmdate;
 use function is_array;
 use function is_integer;
 use function json_encode;
@@ -42,9 +45,11 @@ class Response implements ResponseInterface
     use Traits\JsTrait;
 
     /**
-     * @var Translator
+     * The container
+     *
+     * @var Container
      */
-    protected $xTranslator;
+    protected $di;
 
     /**
      * @var PluginManager
@@ -52,24 +57,22 @@ class Response implements ResponseInterface
     protected $xPluginManager;
 
     /**
-     * The parameter reader
-     *
-     * @var ParameterReader
+     * @var Psr17Factory
      */
-    protected $xParameterReader;
+    protected $xPsr17Factory;
 
     /**
      * The constructor
      *
-     * @param Translator $xTranslator
+     * @param Container $di
      * @param PluginManager $xPluginManager
-     * @param ParameterReader $xParameterReader
+     * @param Psr17Factory $xPsr17Factory
      */
-    public function __construct(Translator $xTranslator, PluginManager $xPluginManager, ParameterReader $xParameterReader)
+    public function __construct(Container $di, PluginManager $xPluginManager, Psr17Factory $xPsr17Factory)
     {
-        $this->xTranslator = $xTranslator;
+        $this->di = $di;
         $this->xPluginManager = $xPluginManager;
-        $this->xParameterReader = $xParameterReader;
+        $this->xPsr17Factory = $xPsr17Factory;
     }
 
     /**
@@ -158,7 +161,6 @@ class Response implements ResponseInterface
         }, $aAttributes);
         $aAttributes['data'] = $mData;
         $this->aCommands[] = $aAttributes;
-
         return $this;
     }
 
@@ -200,5 +202,26 @@ class Response implements ResponseInterface
     {
         $aAttributes['plg'] = $xPlugin->getName();
         return $this->addCommand($aAttributes, $mData);
+    }
+
+    /**
+     * Convert this response to a PSR7 response object
+     *
+     * @return PsrResponseInterface
+     */
+    public function toPsr(): PsrResponseInterface
+    {
+        $xPsrResponse = $this->xPsr17Factory->createResponse(200);
+        if($this->di->getRequest()->getMethod() === 'GET')
+        {
+            $xPsrResponse = $xPsrResponse
+                ->withHeader('Expires', 'Mon, 26 Jul 1997 05:00:00 GMT')
+                ->withHeader('Last-Modified', gmdate("D, d M Y H:i:s") . ' GMT')
+                ->withHeader('Cache-Control', 'no-cache, must-revalidate')
+                ->withHeader('Pragma', 'no-cache');
+        }
+        return $xPsrResponse
+            ->withHeader('content-type', $this->getContentType())
+            ->withBody(Stream::create($this->getOutput()));
     }
 }

@@ -51,7 +51,7 @@ class Container extends PimpleContainer implements LoggerAwareInterface
      *
      * @var ContainerInterface
      */
-    private $appContainer = null;
+    private $xContainer = null;
 
     /**
      * The class constructor
@@ -110,9 +110,9 @@ class Container extends PimpleContainer implements LoggerAwareInterface
      *
      * @return void
      */
-    public function setAppContainer(ContainerInterface $xContainer)
+    public function setContainer(ContainerInterface $xContainer)
     {
-        $this->appContainer = $xContainer;
+        $this->xContainer = $xContainer;
     }
 
     /**
@@ -136,7 +136,7 @@ class Container extends PimpleContainer implements LoggerAwareInterface
      */
     public function has(string $sClass): bool
     {
-        if($this->appContainer != null && $this->appContainer->has($sClass))
+        if($this->xContainer != null && $this->xContainer->has($sClass))
         {
             return true;
         }
@@ -167,9 +167,9 @@ class Container extends PimpleContainer implements LoggerAwareInterface
      */
     public function get(string $sClass)
     {
-        if($this->appContainer != null && $this->appContainer->has($sClass))
+        if($this->xContainer != null && $this->xContainer->has($sClass))
         {
-            return $this->appContainer->get($sClass);
+            return $this->xContainer->get($sClass);
         }
         return $this->offsetGet($sClass);
     }

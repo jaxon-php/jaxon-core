@@ -46,6 +46,7 @@ use function array_map;
 use function array_walk;
 use function floor;
 use function ceil;
+use function max;
 
 class Paginator
 {
@@ -157,7 +158,7 @@ class Paginator
      */
     public function setMaxPages(int $nMaxPages): Paginator
     {
-        $this->nMaxPages = $nMaxPages < 4 ? 4 : $nMaxPages;
+        $this->nMaxPages = max($nMaxPages, 4);
         return $this;
     }
 

@@ -189,11 +189,11 @@ class UploadHandler
             // Copy the uploaded files from the HTTP request, and create the temp file.
             $this->aUserFiles = $xUploadManager->readFromHttpData($xRequest);
             $sTempFile = $xUploadManager->saveToTempFile($this->aUserFiles);
-            $this->xResponseManager->append(new UploadResponse($sTempFile));
+            $this->xResponseManager->append(new UploadResponse($this->di->getPsr17Factory(), $sTempFile));
         }
         catch(Exception $e)
         {
-            $this->xResponseManager->append(new UploadResponse('', $e->getMessage()));
+            $this->xResponseManager->append(new UploadResponse($this->di->getPsr17Factory(), '', $e->getMessage()));
         }
         return true;
     }

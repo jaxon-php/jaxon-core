@@ -24,6 +24,7 @@ return [
         ],
         'request' => [
             'conversion' => "Les données Jaxon reçues n'ont pas pu être converties de l'UTF-8.",
+            'plugin' => "Jaxon n'a pas pu trouver un plugin pour traiter la requête.",
         ],
         'mismatch' => [
             'content-types' => "Il ne peut y avoir des types de contenu différents dans une seule réponse: :type",

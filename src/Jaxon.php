@@ -35,11 +35,12 @@ use Jaxon\Plugin\Code\CodeGenerator;
 use Jaxon\Plugin\Manager\PackageManager;
 use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Plugin\Package;
-use Jaxon\Plugin\Response\Dialog\DialogPlugin;
 use Jaxon\Plugin\Request\CallableClass\CallableRegistry;
+use Jaxon\Plugin\Response\Dialog\DialogPlugin;
 use Jaxon\Plugin\ResponsePlugin;
 use Jaxon\Request\Call\Paginator;
-use Jaxon\Request\Factory;
+use Jaxon\Request\Factory\Factory;
+use Jaxon\Request\Factory\PsrFactory;
 use Jaxon\Request\Factory\RequestFactory;
 use Jaxon\Request\Handler\CallbackManager;
 use Jaxon\Request\Handler\UploadHandler;
@@ -51,7 +52,6 @@ use Jaxon\Ui\View\ViewRenderer;
 use Jaxon\Utils\Http\UriException;
 use Jaxon\Utils\Template\TemplateEngine;
 use Jaxon\Utils\Translation\Translator;
-
 use Psr\Log\LoggerInterface;
 
 use function error_reporting;
@@ -379,7 +379,17 @@ class Jaxon
      */
     public function factory(): Factory
     {
-        return $this->di()->g(Factory::class);
+        return $this->di()->getFactory();
+    }
+
+    /**
+     * Get the PSR factory
+     *
+     * @return PsrFactory
+     */
+    public function psr(): PsrFactory
+    {
+        return $this->di()->getPsrFactory();
     }
 
     /**

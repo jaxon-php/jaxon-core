@@ -5,10 +5,10 @@ namespace Jaxon\Di\Traits;
 use Jaxon\Config\ConfigManager;
 use Jaxon\Di\Container;
 use Jaxon\Plugin\Manager\PluginManager;
-use Jaxon\Request\Handler\ParameterReader;
 use Jaxon\Response\Manager\ResponseManager;
 use Jaxon\Response\Response;
 use Jaxon\Utils\Translation\Translator;
+use Nyholm\Psr7\Factory\Psr17Factory;
 
 use function trim;
 
@@ -21,12 +21,9 @@ trait ResponseTrait
      */
     private function registerResponses()
     {
-        /*
-         * Core library objects
-         */
         // Global Response
         $this->set(Response::class, function($c) {
-            return new Response($c->g(Translator::class), $c->g(PluginManager::class), $c->g(ParameterReader::class));
+            return new Response($c->g(Container::class), $c->g(PluginManager::class), $c->g(Psr17Factory::class));
         });
         // Response Manager
         $this->set(ResponseManager::class, function($c) {
@@ -62,7 +59,17 @@ trait ResponseTrait
      */
     public function newResponse(): Response
     {
-        return new Response($this->g(Translator::class),
-            $this->g(PluginManager::class), $this->g(ParameterReader::class));
+        return new Response($this->g(Container::class), $this->g(PluginManager::class),
+            $this->g(Psr17Factory::class));
+    }
+
+    /**
+     * Get the Psr17 factory
+     *
+     * @return Psr17Factory
+     */
+    public function getPsr17Factory(): Psr17Factory
+    {
+        return $this->g(Psr17Factory::class);
     }
 }

@@ -272,9 +272,9 @@ trait AppTrait
      *
      * @return void
      */
-    public function setAppContainer(ContainerInterface $xContainer)
+    public function setContainer(ContainerInterface $xContainer)
     {
-        $this->jaxon->di()->setAppContainer($xContainer);
+        $this->jaxon->di()->setContainer($xContainer);
     }
 
     /**

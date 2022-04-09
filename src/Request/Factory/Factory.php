@@ -1,6 +1,6 @@
 <?php
 
-namespace Jaxon\Request;
+namespace Jaxon\Request\Factory;
 
 /**
  * Factory.php
@@ -16,8 +16,6 @@ namespace Jaxon\Request;
 
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\Request\CallableClass\CallableRegistry;
-use Jaxon\Request\Factory\ParameterFactory;
-use Jaxon\Request\Factory\RequestFactory;
 
 use function trim;
 
