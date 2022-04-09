@@ -1,6 +1,6 @@
 <?php
 
-namespace Jaxon\Plugin\Contract;
+namespace Jaxon\Plugin;
 
 interface PluginInterface
 {
