@@ -20,24 +20,25 @@
 
 namespace Jaxon\Plugin\Manager;
 
+use Jaxon\Jaxon;
 use Jaxon\Di\Container;
 use Jaxon\Exception\SetupException;
-use Jaxon\Jaxon;
 use Jaxon\Plugin\Code\CodeGenerator;
 use Jaxon\Plugin\Contract\CallableRegistryInterface;
 use Jaxon\Plugin\Contract\CodeGeneratorInterface;
 use Jaxon\Plugin\Contract\RequestHandlerInterface;
 use Jaxon\Plugin\Contract\ResponsePluginInterface;
+use Jaxon\Plugin\Request\CallableClass\CallableClassPlugin;
+use Jaxon\Plugin\Request\CallableDir\CallableDirPlugin;
+use Jaxon\Plugin\Request\CallableFunction\CallableFunctionPlugin;
+use Jaxon\Plugin\RequestPlugin;
 use Jaxon\Plugin\Response\DataBag\DataBagPlugin;
 use Jaxon\Plugin\Response\Dialog\DialogPlugin;
 use Jaxon\Plugin\Response\JQuery\JQueryPlugin;
-use Jaxon\Plugin\Request\CallableClass\CallableClassPlugin;
-use Jaxon\Plugin\Request\CallableClass\CallableDirPlugin;
-use Jaxon\Plugin\Request\CallableFunction\CallableFunctionPlugin;
-use Jaxon\Plugin\RequestPlugin;
 use Jaxon\Plugin\ResponsePlugin;
 use Jaxon\Response\Response;
 use Jaxon\Utils\Translation\Translator;
+
 use function class_implements;
 use function in_array;
 
