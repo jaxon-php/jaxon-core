@@ -1,9 +1,9 @@
 <?php
 
 /**
- * PsrAjaxMiddleware.php
+ * PsrRequestHandler.php
  *
- * A Psr7 middleware to process Jaxon ajax requests.
+ * A Psr7 Jaxon ajax request handler.
  *
  * @package jaxon-core
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
@@ -12,17 +12,18 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Request\Handler;
+namespace Jaxon\Request\Handler\Psr;
 
 use Jaxon\Di\Container;
 use Jaxon\Exception\RequestException;
+use Jaxon\Request\Handler\RequestHandler;
 use Jaxon\Response\Manager\ResponseManager;
+use Jaxon\Utils\Translation\Translator;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
-class PsrAjaxMiddleware implements MiddlewareInterface
+class PsrRequestHandler implements RequestHandlerInterface
 {
     /**
      * @var Container
@@ -40,24 +41,32 @@ class PsrAjaxMiddleware implements MiddlewareInterface
     private $xResponseManager;
 
     /**
+     * @var Translator
+     */
+    private $xTranslator;
+
+    /**
      * The constructor
      *
      * @param Container $di
      * @param RequestHandler $xRequestHandler
      * @param ResponseManager $xResponseManager
+     * @param Translator $xTranslator
      */
-    public function __construct(Container $di, RequestHandler $xRequestHandler, ResponseManager $xResponseManager)
+    public function __construct(Container $di, RequestHandler $xRequestHandler,
+        ResponseManager $xResponseManager, Translator $xTranslator)
     {
         $this->di = $di;
         $this->xRequestHandler = $xRequestHandler;
         $this->xResponseManager = $xResponseManager;
+        $this->xTranslator = $xTranslator;
     }
 
     /**
      * @inheritDoc
      * @throws RequestException
      */
-    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
+    public function handle(ServerRequestInterface $request): ResponseInterface
     {
         // Save the request in the container. This will override the default request,
         // and the other classes will get this request from there.
@@ -66,7 +75,7 @@ class PsrAjaxMiddleware implements MiddlewareInterface
         if(!$this->xRequestHandler->canProcessRequest())
         {
             // Unable to find a plugin to process the request
-            return $handler->handle($request);
+            throw new RequestException($this->xTranslator->trans('errors.request.plugin'));
         }
 
         // Process the request

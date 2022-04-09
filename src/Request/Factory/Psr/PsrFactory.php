@@ -1,6 +1,6 @@
 <?php
 
-namespace Jaxon\Request\Factory;
+namespace Jaxon\Request\Factory\Psr;
 
 /**
  * PsrFactory.php
@@ -15,9 +15,9 @@ namespace Jaxon\Request\Factory;
  */
 
 use Jaxon\Di\Container;
-use Jaxon\Request\Handler\PsrAjaxMiddleware;
-use Jaxon\Request\Handler\PsrConfigMiddleware;
-use Jaxon\Request\Handler\PsrRequestHandler;
+use Jaxon\Request\Handler\Psr\PsrAjaxMiddleware;
+use Jaxon\Request\Handler\Psr\PsrConfigMiddleware;
+use Jaxon\Request\Handler\Psr\PsrRequestHandler;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 
@@ -47,7 +47,7 @@ class PsrFactory
      *
      * @return $this
      */
-    public function setLogger(LoggerInterface $xLogger): PsrFactory
+    public function logger(LoggerInterface $xLogger): PsrFactory
     {
         $this->di->setLogger($xLogger);
         return $this;
@@ -60,7 +60,7 @@ class PsrFactory
      *
      * @return $this
      */
-    public function setContainer(ContainerInterface $xContainer): PsrFactory
+    public function container(ContainerInterface $xContainer): PsrFactory
     {
         $this->di->setContainer($xContainer);
         return $this;

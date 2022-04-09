@@ -12,7 +12,7 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Request\Handler;
+namespace Jaxon\Request\Handler\Psr;
 
 use Jaxon\Di\Container;
 use Jaxon\Exception\SetupException;

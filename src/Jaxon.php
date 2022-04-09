@@ -40,7 +40,7 @@ use Jaxon\Plugin\Response\Dialog\DialogPlugin;
 use Jaxon\Plugin\ResponsePlugin;
 use Jaxon\Request\Call\Paginator;
 use Jaxon\Request\Factory\Factory;
-use Jaxon\Request\Factory\PsrFactory;
+use Jaxon\Request\Factory\Psr\PsrFactory;
 use Jaxon\Request\Factory\RequestFactory;
 use Jaxon\Request\Handler\CallbackManager;
 use Jaxon\Request\Handler\UploadHandler;

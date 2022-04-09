@@ -10,7 +10,6 @@ use Jaxon\Plugin\Response\DataBag\DataBagPlugin;
 use Jaxon\Request\Call\Paginator;
 use Jaxon\Request\Factory\Factory;
 use Jaxon\Request\Factory\ParameterFactory;
-use Jaxon\Request\Factory\PsrFactory;
 use Jaxon\Request\Factory\RequestFactory;
 use Jaxon\Request\Handler\CallbackManager;
 use Jaxon\Request\Handler\ParameterReader;

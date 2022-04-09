@@ -3,10 +3,10 @@
 namespace Jaxon\Di\Traits;
 
 use Jaxon\Di\Container;
-use Jaxon\Request\Factory\PsrFactory;
-use Jaxon\Request\Handler\PsrAjaxMiddleware;
-use Jaxon\Request\Handler\PsrConfigMiddleware;
-use Jaxon\Request\Handler\PsrRequestHandler;
+use Jaxon\Request\Factory\Psr\PsrFactory;
+use Jaxon\Request\Handler\Psr\PsrAjaxMiddleware;
+use Jaxon\Request\Handler\Psr\PsrConfigMiddleware;
+use Jaxon\Request\Handler\Psr\PsrRequestHandler;
 use Jaxon\Request\Handler\RequestHandler;
 use Jaxon\Response\Manager\ResponseManager;
 use Jaxon\Utils\Translation\Translator;
