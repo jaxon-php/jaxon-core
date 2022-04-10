@@ -17,16 +17,34 @@ class DataBagPlugin extends ResponsePlugin
     const NAME = 'bags';
 
     /**
+     * @var Container
+     */
+    protected $di;
+
+    /**
      * @var DataBag
      */
-    protected $xDataBag;
+    protected $xDataBag = null;
 
     /**
      * The constructor
      */
     public function __construct(Container $di)
     {
-        $xRequest = $di->getRequest();
+        $this->di = $di;
+    }
+
+    /**
+     * @return void
+     */
+    public function setDataBag()
+    {
+        if($this->xDataBag !== null)
+        {
+            return;
+        }
+
+        $xRequest = $this->di->getRequest();
         $aBody = $xRequest->getParsedBody();
         $aParams = $xRequest->getQueryParams();
         $aData = is_array($aBody) ?
@@ -86,6 +104,7 @@ class DataBagPlugin extends ResponsePlugin
      */
     public function writeCommand()
     {
+        $this->setDataBag();
         if($this->xDataBag->touched())
         {
             $this->addCommand(['cmd' => 'bags.set'], $this->xDataBag->getAll());
@@ -99,6 +118,7 @@ class DataBagPlugin extends ResponsePlugin
      */
     public function bag(string $sName): DataBagContext
     {
+        $this->setDataBag();
         return new DataBagContext($this->xDataBag, $sName);
     }
 }

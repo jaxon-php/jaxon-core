@@ -9,6 +9,7 @@ use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;
 use Jaxon\Dialogs\Library\Bootbox\BootboxLibrary;
 use Jaxon\Dialogs\Library\Bootstrap\BootstrapLibrary;
+use Jaxon\Dialogs\Library\Noty\NotyLibrary;
 use Jaxon\Dialogs\Library\Toastr\ToastrLibrary;
 use Jaxon\Ui\Dialog\Library\AlertLibrary;
 use Jaxon\Utils\Http\UriException;
@@ -37,6 +38,7 @@ class DialogTest extends TestCase
         jaxon()->register(Jaxon::CALLABLE_CLASS, 'Dialog');
         jaxon()->registerDialogLibrary(BootboxLibrary::class, BootboxLibrary::NAME);
         jaxon()->registerDialogLibrary(BootstrapLibrary::class, BootstrapLibrary::NAME);
+        jaxon()->registerDialogLibrary(NotyLibrary::class, NotyLibrary::NAME);
         jaxon()->registerDialogLibrary(ToastrLibrary::class, ToastrLibrary::NAME);
         jaxon()->registerDialogLibrary(TestDialogLibrary::class, TestDialogLibrary::NAME);
 
@@ -432,5 +434,77 @@ class DialogTest extends TestCase
         // The bootbox plugin issues a single script command.
         $this->assertEquals('bootstrap.hide', $aCommands[0]['cmd']);
         $this->assertEquals('bootstrap', $aCommands[0]['plg']);
+    }
+
+    /**
+     * @throws SetupException
+     */
+    public function testConfirmMessageSuccess()
+    {
+        jaxon()->register(Jaxon::CALLABLE_CLASS, 'Sample', __DIR__ . '/../src/sample.php');
+        jaxon()->setOption('dialogs.default.message', 'toastr');
+        jaxon()->setOption('dialogs.default.question', 'noty');
+        // The change is not automatic. It needs to be triggered.
+        jaxon()->dialog();
+        $this->assertEquals(
+            "jaxon.dialogs.noty.confirm('Really?','',function(){Sample.method(jaxon.$('elt_id').innerHTML);}," .
+                "function(){toastr.success('No confirm');})",
+            rq('Sample')->method(pm()->html('elt_id'))->confirm("Really?")
+                ->elseSuccess("No confirm")->getScript()
+        );
+    }
+
+    /**
+     * @throws SetupException
+     */
+    public function testConfirmMessageInfo()
+    {
+        jaxon()->register(Jaxon::CALLABLE_CLASS, 'Sample', __DIR__ . '/../src/sample.php');
+        jaxon()->setOption('dialogs.default.message', 'toastr');
+        jaxon()->setOption('dialogs.default.question', 'noty');
+        // The change is not automatic. It needs to be triggered.
+        jaxon()->dialog();
+        $this->assertEquals(
+            "jaxon.dialogs.noty.confirm('Really?','',function(){Sample.method(jaxon.$('elt_id').innerHTML);}," .
+                "function(){toastr.info('No confirm');})",
+            rq('Sample')->method(pm()->html('elt_id'))->confirm("Really?")
+                ->elseInfo("No confirm")->getScript()
+        );
+    }
+
+    /**
+     * @throws SetupException
+     */
+    public function testConfirmMessageWarning()
+    {
+        jaxon()->register(Jaxon::CALLABLE_CLASS, 'Sample', __DIR__ . '/../src/sample.php');
+        jaxon()->setOption('dialogs.default.message', 'toastr');
+        jaxon()->setOption('dialogs.default.question', 'noty');
+        // The change is not automatic. It needs to be triggered.
+        jaxon()->dialog();
+        $this->assertEquals(
+            "jaxon.dialogs.noty.confirm('Really?','',function(){Sample.method(jaxon.$('elt_id').innerHTML);}," .
+                "function(){toastr.warning('No confirm');})",
+            rq('Sample')->method(pm()->html('elt_id'))->confirm("Really?")
+                ->elseWarning("No confirm")->getScript()
+        );
+    }
+
+    /**
+     * @throws SetupException
+     */
+    public function testConfirmMessageError()
+    {
+        jaxon()->register(Jaxon::CALLABLE_CLASS, 'Sample', __DIR__ . '/../src/sample.php');
+        jaxon()->setOption('dialogs.default.message', 'toastr');
+        jaxon()->setOption('dialogs.default.question', 'noty');
+        // The change is not automatic. It needs to be triggered.
+        jaxon()->dialog();
+        $this->assertEquals(
+            "jaxon.dialogs.noty.confirm('Really?','',function(){Sample.method(jaxon.$('elt_id').innerHTML);}," .
+                "function(){toastr.error('No confirm');})",
+            rq('Sample')->method(pm()->html('elt_id'))->confirm("Really?")
+                ->elseError("No confirm")->getScript()
+        );
     }
 }

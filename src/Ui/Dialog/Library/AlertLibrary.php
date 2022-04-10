@@ -51,16 +51,21 @@ class AlertLibrary implements LibraryInterface, MessageInterface, QuestionInterf
      * Print an alert message.
      *
      * @param string $sMessage    The text of the message
+     * @param string $sTitle    The title of the message
      *
      * @return string
      */
-    private function alert(string $sMessage): string
+    private function alert(string $sMessage, string $sTitle): string
     {
+        if(!empty($sTitle))
+        {
+            $sMessage = '<b>' . $sTitle . '</b><br/>' . $sMessage;
+        }
         if($this->returnCode())
         {
             return 'alert(' . $sMessage . ')';
         }
-        $this->xResponse->alert($sMessage);
+        $this->xResponse->alert($sMessage, $sTitle);
         return '';
     }
 
@@ -74,7 +79,7 @@ class AlertLibrary implements LibraryInterface, MessageInterface, QuestionInterf
      */
     public function success(string $sMessage, string $sTitle = ''): string
     {
-        return $this->alert($sMessage);
+        return $this->alert($sMessage, $sTitle);
     }
 
     /**
@@ -87,7 +92,7 @@ class AlertLibrary implements LibraryInterface, MessageInterface, QuestionInterf
      */
     public function info(string $sMessage, string $sTitle = ''): string
     {
-        return $this->alert($sMessage);
+        return $this->alert($sMessage, $sTitle);
     }
 
     /**
@@ -100,7 +105,7 @@ class AlertLibrary implements LibraryInterface, MessageInterface, QuestionInterf
      */
     public function warning(string $sMessage, string $sTitle = ''): string
     {
-        return $this->alert($sMessage);
+        return $this->alert($sMessage, $sTitle);
     }
 
     /**
@@ -113,6 +118,6 @@ class AlertLibrary implements LibraryInterface, MessageInterface, QuestionInterf
      */
     public function error(string $sMessage, string $sTitle = ''): string
     {
-        return $this->alert($sMessage);
+        return $this->alert($sMessage, $sTitle);
     }
 }

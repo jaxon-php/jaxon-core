@@ -1,11 +1,12 @@
 <?php
 
-namespace Jaxon\Tests\CallableClass\Request;
+namespace Jaxon\Tests\TestRequestFactory;
 
-use Jaxon\Exception\SetupException;
 use Jaxon\Jaxon;
+use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\Request\CallableClass\CallableClassPlugin;
 use PHPUnit\Framework\TestCase;
+
 use function jaxon;
 use function pm;
 use function rq;
@@ -188,9 +189,9 @@ final class RequestTest extends TestCase
     public function testRequestToJaxonClassWithConfirmationAndMessage()
     {
         $this->assertEquals(
-            "if(confirm('Really?')){JaxonSample.method(jaxon.$('elt_id').innerHTML);}else{alert('Oh! Sorry!');}",
+            "if(confirm('Really?')){JaxonSample.method(jaxon.$('elt_id').innerHTML);}else{alert('No confirm');}",
             rq('Sample')->method(pm()->html('elt_id'))->confirm("Really?")
-                ->elseShow("Oh! Sorry!")->getScript()
+                ->elseShow("No confirm")->getScript()
         );
     }
 
@@ -200,8 +201,10 @@ final class RequestTest extends TestCase
     public function testRequestToJaxonClassWithConfirmationAndSubstitution()
     {
          $this->assertEquals(
-            "if(confirm('Really M. {1}?'.supplant({'1':jaxon.$('name_id').innerHTML}))){JaxonSample.method(jaxon.$('elt_id').innerHTML);}",
-            rq('Sample')->method(pm()->html('elt_id'))->confirm("Really M. {1}?", pm()->html('name_id'))->getScript()
+            "if(confirm('Really M. {1}?'.supplant({'1':jaxon.$('name_id').innerHTML})))" .
+                "{JaxonSample.method(jaxon.$('elt_id').innerHTML);}",
+            rq('Sample')->method(pm()->html('elt_id'))->confirm("Really M. {1}?",
+                pm()->html('name_id'))->getScript()
         );
     }
 
@@ -313,11 +316,33 @@ final class RequestTest extends TestCase
     /**
      * @throws SetupException
      */
+    public function testRequestToJaxonClassWithIfteqCondition()
+    {
+        $this->assertEquals(
+            "if(jaxon.$('elt_id').innerHTML==='yes'){JaxonSample.method();}",
+            rq('Sample')->method()->ifteq(pm()->html('elt_id'), 'yes')->getScript()
+        );
+    }
+
+    /**
+     * @throws SetupException
+     */
     public function testRequestToJaxonClassWithIfneCondition()
     {
         $this->assertEquals(
             "if(jaxon.$('elt_id').innerHTML!='yes'){JaxonSample.method();}",
             rq('Sample')->method()->ifne(pm()->html('elt_id'), 'yes')->getScript()
+        );
+    }
+
+    /**
+     * @throws SetupException
+     */
+    public function testRequestToJaxonClassWithIfnteCondition()
+    {
+        $this->assertEquals(
+            "if(jaxon.$('elt_id').innerHTML!=='yes'){JaxonSample.method();}",
+            rq('Sample')->method()->ifnte(pm()->html('elt_id'), 'yes')->getScript()
         );
     }
 
@@ -362,6 +387,58 @@ final class RequestTest extends TestCase
         $this->assertEquals(
             "if(jaxon.$('elt_id').innerHTML<=10){JaxonSample.method();}",
             rq('Sample')->method()->ifle(pm()->html('elt_id'), 10)->getScript()
+        );
+    }
+
+    /**
+     * @throws SetupException
+     */
+    public function testConfirmMessageSuccess()
+    {
+        $this->assertEquals(
+            "if(confirm('Really?')){JaxonSample.method(jaxon.$('elt_id').innerHTML);}" .
+                "else{alert('No confirm');}",
+            rq('Sample')->method(pm()->html('elt_id'))->confirm("Really?")
+                ->elseSuccess("No confirm")->getScript()
+        );
+    }
+
+    /**
+     * @throws SetupException
+     */
+    public function testConfirmMessageInfo()
+    {
+        $this->assertEquals(
+            "if(confirm('Really?')){JaxonSample.method(jaxon.$('elt_id').innerHTML);}" .
+                "else{alert('No confirm');}",
+            rq('Sample')->method(pm()->html('elt_id'))->confirm("Really?")
+                ->elseInfo("No confirm")->getScript()
+        );
+    }
+
+    /**
+     * @throws SetupException
+     */
+    public function testConfirmMessageWarning()
+    {
+        $this->assertEquals(
+            "if(confirm('Really?')){JaxonSample.method(jaxon.$('elt_id').innerHTML);}" .
+                "else{alert('No confirm');}",
+            rq('Sample')->method(pm()->html('elt_id'))->confirm("Really?")
+                ->elseWarning("No confirm")->getScript()
+        );
+    }
+
+    /**
+     * @throws SetupException
+     */
+    public function testConfirmMessageError()
+    {
+        $this->assertEquals(
+            "if(confirm('Really?')){JaxonSample.method(jaxon.$('elt_id').innerHTML);}" .
+                "else{alert('No confirm');}",
+            rq('Sample')->method(pm()->html('elt_id'))->confirm("Really?")
+                ->elseError("No confirm")->getScript()
         );
     }
 }

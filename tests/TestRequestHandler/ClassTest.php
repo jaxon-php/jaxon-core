@@ -10,7 +10,6 @@ use Psr\Http\Message\ServerRequestInterface;
 use PHPUnit\Framework\TestCase;
 
 use function jaxon;
-use function rq;
 
 class ClassTest extends TestCase
 {
