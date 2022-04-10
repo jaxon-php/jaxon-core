@@ -16,7 +16,7 @@ use PHPUnit\Framework\TestCase;
 
 use function jaxon;
 
-class TestPsrRequestHandler extends TestCase
+class PsrRequestHandlerTest extends TestCase
 {
     private $xPsrConfigMiddleware;
 
