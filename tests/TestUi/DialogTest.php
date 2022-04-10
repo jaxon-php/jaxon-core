@@ -18,6 +18,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use PHPUnit\Framework\TestCase;
 
 use TestDialogLibrary;
+use Dialog;
 
 use function get_class;
 use function jaxon;
@@ -35,7 +36,7 @@ class DialogTest extends TestCase
         jaxon()->setOption('dialogs.toastr.options.closeButton', true);
         jaxon()->setOption('dialogs.toastr.options.positionClass', 'toast-top-center');
         jaxon()->setOption('dialogs.toastr.options.sampleArray', ['value']);
-        jaxon()->register(Jaxon::CALLABLE_CLASS, 'Dialog');
+        jaxon()->register(Jaxon::CALLABLE_CLASS, Dialog::class);
         jaxon()->registerDialogLibrary(BootboxLibrary::class, BootboxLibrary::NAME);
         jaxon()->registerDialogLibrary(BootstrapLibrary::class, BootstrapLibrary::NAME);
         jaxon()->registerDialogLibrary(NotyLibrary::class, NotyLibrary::NAME);
@@ -506,5 +507,38 @@ class DialogTest extends TestCase
             rq('Sample')->method(pm()->html('elt_id'))->confirm("Really?")
                 ->elseError("No confirm")->getScript()
         );
+    }
+
+    /**
+     * @throws SetupException
+     */
+    public function testErrorRegisterIncorrectDialogClass()
+    {
+        $this->expectException(SetupException::class);
+        jaxon()->registerDialogLibrary(Dialog::class, 'incorrect');
+    }
+
+    public function testErrorSetWrongMessageLibrary()
+    {
+        $this->expectException(SetupException::class);
+        jaxon()->setOption('dialogs.default.message', 'incorrect');
+        // The change is not automatic. It needs to be triggered.
+        jaxon()->dialog();
+    }
+
+    public function testErrorSetWrongModalLibrary()
+    {
+        $this->expectException(SetupException::class);
+        jaxon()->setOption('dialogs.default.modal', 'incorrect');
+        // The change is not automatic. It needs to be triggered.
+        jaxon()->dialog();
+    }
+
+    public function testErrorSetWrongQuestionLibrary()
+    {
+        $this->expectException(SetupException::class);
+        jaxon()->setOption('dialogs.default.question', 'incorrect');
+        // The change is not automatic. It needs to be triggered.
+        jaxon()->dialog();
     }
 }
