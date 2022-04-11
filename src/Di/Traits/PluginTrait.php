@@ -61,10 +61,7 @@ trait PluginTrait
         });
         // Dialog response plugin
         $this->set(DialogPlugin::class, function($c) {
-            $xDialogPlugin = new DialogPlugin($c->g(ConfigManager::class), $c->g(DialogLibraryManager::class));
-            $xDialogPlugin->registerLibraries();
-            $xDialogPlugin->setDefaultLibraries();
-            return $xDialogPlugin;
+            return new DialogPlugin($c->g(DialogLibraryManager::class));
         });
     }
 

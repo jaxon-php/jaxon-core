@@ -13,6 +13,10 @@ use Jaxon\Ui\View\ViewRenderer;
 use Jaxon\Utils\Template\TemplateEngine;
 use Jaxon\Utils\Translation\Translator;
 
+use function call_user_func;
+use function rtrim;
+use function trim;
+
 trait ViewTrait
 {
     /**
@@ -45,9 +49,14 @@ trait ViewTrait
         $this->set(PaginationRenderer::class, function($c) {
             return new PaginationRenderer($c->g(ViewRenderer::class));
         });
+
         // Dialog library manager
         $this->set(DialogLibraryManager::class, function($c) {
-            return new DialogLibraryManager($c->g(Container::class), $c->g(Translator::class));
+            $xLibraryManager = new DialogLibraryManager($c->g(Container::class),
+                $c->g(ConfigManager::class), $c->g(Translator::class));
+            $xLibraryManager->registerLibraries();
+            $xLibraryManager->setDefaultLibraries();
+            return $xLibraryManager;
         });
     }
 

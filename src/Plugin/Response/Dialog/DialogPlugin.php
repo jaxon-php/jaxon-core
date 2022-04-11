@@ -15,7 +15,6 @@
 
 namespace Jaxon\Plugin\Response\Dialog;
 
-use Jaxon\Config\ConfigManager;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\ResponsePlugin;
 use Jaxon\Response\Response;
@@ -41,11 +40,6 @@ class DialogPlugin extends ResponsePlugin implements ModalInterface, MessageInte
     protected $xLibraryManager;
 
     /**
-     * @var ConfigManager
-     */
-    protected $xConfigManager;
-
-    /**
      * @var array
      */
     protected $aLibraries = null;
@@ -53,12 +47,10 @@ class DialogPlugin extends ResponsePlugin implements ModalInterface, MessageInte
     /**
      * The constructor
      *
-     * @param ConfigManager $xConfigManager
      * @param DialogLibraryManager $xLibraryManager
      */
-    public function __construct(ConfigManager $xConfigManager, DialogLibraryManager $xLibraryManager)
+    public function __construct(DialogLibraryManager $xLibraryManager)
     {
-        $this->xConfigManager = $xConfigManager;
         $this->xLibraryManager = $xLibraryManager;
     }
 
@@ -77,46 +69,6 @@ class DialogPlugin extends ResponsePlugin implements ModalInterface, MessageInte
     {
         // The version number is used as hash
         return '4.0.0';
-    }
-
-    /**
-     * Register the javascript dialog libraries from config options.
-     *
-     * @return void
-     * @throws SetupException
-     */
-    public function registerLibraries()
-    {
-        $aLibraries = $this->xConfigManager->getOption('dialogs.libraries', []);
-        foreach($aLibraries as $sClassName => $sName)
-        {
-            $this->xLibraryManager->registerLibrary($sClassName, $sName);
-        }
-    }
-
-    /**
-     * Set the default library for each dialog feature.
-     *
-     * @return void
-     * @throws SetupException
-     */
-    public function setDefaultLibraries()
-    {
-        // Set the default modal library
-        if(($sName = $this->xConfigManager->getOption('dialogs.default.modal', '')))
-        {
-            $this->xLibraryManager->setModalLibrary($sName);
-        }
-        // Set the default message library
-        if(($sName = $this->xConfigManager->getOption('dialogs.default.message', '')))
-        {
-            $this->xLibraryManager->setMessageLibrary($sName);
-        }
-        // Set the default question library
-        if(($sName = $this->xConfigManager->getOption('dialogs.default.question', '')))
-        {
-            $this->xLibraryManager->setQuestionLibrary($sName);
-        }
     }
 
     /**
@@ -207,9 +159,6 @@ class DialogPlugin extends ResponsePlugin implements ModalInterface, MessageInte
      */
     public function getScript(): string
     {
-        // The default scripts need to be set in the js code.
-        $this->setDefaultLibraries();
-
         return array_reduce($this->getLibraries(), function($sCode, $xLibrary) {
             return $sCode . trim($xLibrary->getScript()) . "\n\n";
         }, "jaxon.dialogs = {};\n");

@@ -1,7 +1,9 @@
 <?php
 
 /**
- * DialogLibraryManager.php - Shows alert and confirm dialogs
+ * DialogLibraryManager.php
+ *
+ * Manage dialog library list and defaults.
  *
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
  * @copyright 2019 Thierry Feuzeu <thierry.feuzeu@gmail.com>
@@ -11,6 +13,7 @@
 
 namespace Jaxon\Ui\Dialog\Library;
 
+use Jaxon\Config\ConfigManager;
 use Jaxon\Di\Container;
 use Jaxon\Exception\SetupException;
 use Jaxon\Ui\Dialog\MessageInterface;
@@ -86,6 +89,11 @@ class DialogLibraryManager
     private $xAlertLibrary;
 
     /**
+     * @var ConfigManager
+     */
+    protected $xConfigManager;
+
+    /**
      * @var Translator
      */
     private $xTranslator;
@@ -94,11 +102,13 @@ class DialogLibraryManager
      * The constructor
      *
      * @param Container $di
+     * @param ConfigManager $xConfigManager
      * @param Translator $xTranslator
      */
-    public function __construct(Container $di, Translator $xTranslator)
+    public function __construct(Container $di, ConfigManager $xConfigManager, Translator $xTranslator)
     {
         $this->di = $di;
+        $this->xConfigManager = $xConfigManager;
         $this->xTranslator = $xTranslator;
         // Library for javascript confirm and alert functions.
         $this->xAlertLibrary = new AlertLibrary();
@@ -255,5 +265,45 @@ class DialogLibraryManager
     public function setNextLibrary(string $sNextLibrary): void
     {
         $this->sNextLibrary = $sNextLibrary;
+    }
+
+    /**
+     * Register the javascript dialog libraries from config options.
+     *
+     * @return void
+     * @throws SetupException
+     */
+    public function registerLibraries()
+    {
+        $aLibraries = $this->xConfigManager->getOption('dialogs.libraries', []);
+        foreach($aLibraries as $sClassName => $sName)
+        {
+            $this->registerLibrary($sClassName, $sName);
+        }
+    }
+
+    /**
+     * Set the default library for each dialog feature.
+     *
+     * @return void
+     * @throws SetupException
+     */
+    public function setDefaultLibraries()
+    {
+        // Set the default modal library
+        if(($sName = $this->xConfigManager->getOption('dialogs.default.modal', '')))
+        {
+            $this->setModalLibrary($sName);
+        }
+        // Set the default message library
+        if(($sName = $this->xConfigManager->getOption('dialogs.default.message', '')))
+        {
+            $this->setMessageLibrary($sName);
+        }
+        // Set the default question library
+        if(($sName = $this->xConfigManager->getOption('dialogs.default.question', '')))
+        {
+            $this->setQuestionLibrary($sName);
+        }
     }
 }
