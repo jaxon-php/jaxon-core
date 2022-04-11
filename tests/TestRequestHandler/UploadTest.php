@@ -256,6 +256,7 @@ class UploadTest extends TestCase
         $this->assertTrue(jaxon()->di()->getUploadHandler()->canProcessRequest(jaxon()->di()->getRequest()));
         jaxon()->di()->getResponseManager()->debug('Testing the HTTP upload!!');
         jaxon()->di()->getRequestHandler()->processRequest();
+
         $xResponse = jaxon()->getResponse();
         $this->assertEquals(UploadResponse::class, get_class($xResponse));
         $this->assertNotEquals('', $xResponse->getUploadedFile());
@@ -282,7 +283,7 @@ class UploadTest extends TestCase
                 'jxnmthd' => 'myMethod',
                 'jxnargs' => [],
                 'jxnupl' => $sTempFile,
-            ]);
+            ])->withMethod('POST');
         });
 
         $this->assertNotEquals('', $sTempFile);

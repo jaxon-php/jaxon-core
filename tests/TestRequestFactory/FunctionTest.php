@@ -46,6 +46,10 @@ final class FunctionTest extends TestCase
             "jxn_testFunction()",
             rq()->testFunction()->getScript()
         );
+        $this->assertEquals(
+            "jxn_testFunction()",
+            jaxon()->request()->testFunction()->getScript()
+        );
     }
 
     /**

@@ -48,6 +48,10 @@ final class RequestTest extends TestCase
             "JaxonSample.method()",
             rq('Sample')->call('method')->getScript()
         );
+        $this->assertEquals(
+            "JaxonSample.method()",
+            jaxon()->request('Sample')->call('method')->getScript()
+        );
     }
 
     /**
