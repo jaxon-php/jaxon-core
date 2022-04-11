@@ -61,5 +61,8 @@ return [
             'get' => "Accès à la propriété inconnue :name avec la surcharge magique __get à la ligne :line du fichier :file.",
             'set' => "Accès à la propriété inconnue :name avec la surcharge magique __set à la ligne :line du fichier :file.",
         ],
+        'dialog' => [
+            'library' => "There is no :type library with name :name",
+        ],
     ],
 ];

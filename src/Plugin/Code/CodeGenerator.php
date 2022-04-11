@@ -15,12 +15,12 @@
 namespace Jaxon\Plugin\Code;
 
 use Jaxon\Di\Container;
+use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Plugin\Plugin;
 use Jaxon\Utils\Http\UriException;
 use Jaxon\Utils\Template\TemplateEngine;
 
 use function array_reduce;
-use function ksort;
 use function md5;
 use function trim;
 use function is_subclass_of;
@@ -38,6 +38,11 @@ class CodeGenerator
     private $di;
 
     /**
+     * @var PluginManager
+     */
+    protected $xPluginManager;
+
+    /**
      * The Jaxon template engine
      *
      * @var TemplateEngine
@@ -48,13 +53,6 @@ class CodeGenerator
      * @var AssetManager
      */
     private $xAssetManager;
-
-    /**
-     * The class names of objects that generate code
-     *
-     * @var array<string>
-     */
-    protected $aClassNames = [];
 
     /**
      * @var string
@@ -96,32 +94,15 @@ class CodeGenerator
      *
      * @param string $sVersion
      * @param Container $di
+     * @param PluginManager $xPluginManager
      * @param TemplateEngine $xTemplateEngine
      */
-    public function __construct(string $sVersion, Container $di, TemplateEngine $xTemplateEngine)
+    public function __construct(string $sVersion, Container $di, PluginManager $xPluginManager, TemplateEngine $xTemplateEngine)
     {
         $this->sVersion = $sVersion;
         $this->di = $di;
+        $this->xPluginManager = $xPluginManager;
         $this->xTemplateEngine = $xTemplateEngine;
-    }
-
-    /**
-     * Add a new generator to the list
-     *
-     * @param string $sClassName    The code generator class
-     * @param int $nPriority    The desired priority, used to order the plugins
-     *
-     * @return void
-     */
-    public function addGenerator(string $sClassName, int $nPriority)
-    {
-        while(isset($this->aClassNames[$nPriority]))
-        {
-            $nPriority++;
-        }
-        $this->aClassNames[$nPriority] = $sClassName;
-        // Sort the array by ascending keys
-        ksort($this->aClassNames);
     }
 
     /**
@@ -131,7 +112,7 @@ class CodeGenerator
      */
     public function getHash(): string
     {
-        return md5(array_reduce($this->aClassNames, function($sHash, $sClassName) {
+        return md5(array_reduce($this->xPluginManager->getCodeGenerators(), function($sHash, $sClassName) {
             return $sHash . $this->di->g($sClassName)->getHash();
         }, $this->sVersion));
     }
@@ -215,7 +196,7 @@ class CodeGenerator
 
         $this->xAssetManager = $this->di->getAssetManager();
         $this->sJsOptions = $this->xAssetManager->getJsOptions();
-        foreach($this->aClassNames as $sClassName)
+        foreach($this->xPluginManager->getCodeGenerators() as $sClassName)
         {
             $this->generatePluginCodes($sClassName);
         }

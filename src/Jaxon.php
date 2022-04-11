@@ -33,11 +33,8 @@ use Jaxon\Config\ConfigManager;
 use Jaxon\Di\Container;
 use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;
-use Jaxon\Plugin\Code\CodeGenerator;
-use Jaxon\Plugin\Manager\PackageManager;
 use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Plugin\Package;
-use Jaxon\Plugin\Request\CallableClass\CallableRegistry;
 use Jaxon\Plugin\Response\Dialog\DialogPlugin;
 use Jaxon\Plugin\ResponsePlugin;
 use Jaxon\Request\Call\Paginator;
@@ -113,26 +110,6 @@ class Jaxon
     protected $xPluginManager;
 
     /**
-     * @var PackageManager
-     */
-    protected $xPackageManager;
-
-    /**
-     * @var CodeGenerator
-     */
-    protected $xCodeGenerator;
-
-    /**
-     * @var CallableRegistry
-     */
-    protected $xClassRegistry;
-
-    /**
-     * @var CallbackManager
-     */
-    protected $xCallbackManager;
-
-    /**
      * @var ResponseManager
      */
     protected $xResponseManager;
@@ -147,10 +124,6 @@ class Jaxon
         self::$xInstance->xTranslator = self::$xContainer->g(Translator::class);
         self::$xInstance->xConfigManager = self::$xContainer->g(ConfigManager::class);
         self::$xInstance->xPluginManager = self::$xContainer->g(PluginManager::class);
-        self::$xInstance->xPackageManager = self::$xContainer->g(PackageManager::class);
-        self::$xInstance->xCodeGenerator = self::$xContainer->g(CodeGenerator::class);
-        self::$xInstance->xClassRegistry = self::$xContainer->g(CallableRegistry::class);
-        self::$xInstance->xCallbackManager = self::$xContainer->g(CallbackManager::class);
         self::$xInstance->xResponseManager = self::$xContainer->g(ResponseManager::class);
     }
 
@@ -325,7 +298,7 @@ class Jaxon
      */
     public function registerPackage(string $sClassName, array $xPkgOptions = [])
     {
-        $this->xPackageManager->registerPackage($sClassName, $xPkgOptions);
+        $this->di()->getPackageManager()->registerPackage($sClassName, $xPkgOptions);
     }
 
     /**
@@ -360,7 +333,7 @@ class Jaxon
      */
     public function instance(string $sClassName)
     {
-        $xCallable = $this->xClassRegistry->getCallableObject($sClassName);
+        $xCallable = $this->di()->getCallableRegistry()->getCallableObject($sClassName);
         return ($xCallable) ? $xCallable->getRegisteredObject() : null;
     }
 
@@ -411,7 +384,7 @@ class Jaxon
      */
     public function getScript(bool $bIncludeJs = false, bool $bIncludeCss = false): string
     {
-        return $this->xCodeGenerator->getScript($bIncludeJs, $bIncludeCss);
+        return $this->di()->getCodeGenerator()->getScript($bIncludeJs, $bIncludeCss);
     }
 
     /**
@@ -421,7 +394,7 @@ class Jaxon
      */
     public function getJs(): string
     {
-        return $this->xCodeGenerator->getJs();
+        return $this->di()->getCodeGenerator()->getJs();
     }
 
     /**
@@ -431,7 +404,7 @@ class Jaxon
      */
     public function getCss(): string
     {
-        return $this->xCodeGenerator->getCss();
+        return $this->di()->getCodeGenerator()->getCss();
     }
 
     /**
@@ -535,7 +508,7 @@ class Jaxon
      */
     public function package(string $sClassName): ?Package
     {
-        return $this->xPackageManager->getPackage($sClassName);
+        return $this->di()->getPackageManager()->getPackage($sClassName);
     }
 
     /**

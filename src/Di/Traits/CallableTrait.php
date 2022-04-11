@@ -60,7 +60,7 @@ trait CallableTrait
      *
      * @return CallableRegistry
      */
-    public function getClassRegistry(): CallableRegistry
+    public function getCallableRegistry(): CallableRegistry
     {
         return $this->g(CallableRegistry::class);
     }

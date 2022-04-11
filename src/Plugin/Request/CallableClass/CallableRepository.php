@@ -252,7 +252,7 @@ class CallableRepository
             if(!isset($this->aClasses[$sClassName]))
             {
                 // Without a namespace, we need to parse all classes to be able to find one.
-                $this->di->getClassRegistry()->parseDirectories();
+                $this->di->getCallableRegistry()->parseDirectories();
             }
         }
         // Find options for a class registered without namespace.

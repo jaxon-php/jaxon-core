@@ -31,12 +31,12 @@ trait PluginTrait
     {
         // Plugin manager
         $this->set(PluginManager::class, function($c) {
-            return new PluginManager($c->g(Container::class), $c->g(CodeGenerator::class), $c->g(Translator::class));
+            return new PluginManager($c->g(Container::class), $c->g(Translator::class));
         });
         // Package manager
         $this->set(PackageManager::class, function($c) {
-            return new PackageManager($c->g(Container::class), $c->g(PluginManager::class), $c->g(ConfigManager::class),
-                $c->g(ViewRenderer::class), $c->g(CodeGenerator::class), $c->g(Translator::class));
+            return new PackageManager($c->g(Container::class), $c->g(PluginManager::class),
+                $c->g(ConfigManager::class), $c->g(ViewRenderer::class), $c->g(Translator::class));
         });
         // Code Generation
         $this->set(MinifierInterface::class, function() {
@@ -48,7 +48,8 @@ trait PluginTrait
         });
         $this->set(CodeGenerator::class, function($c) {
             $sVersion = $c->g(Jaxon::class)->getVersion();
-            return new CodeGenerator($sVersion, $c->g(Container::class), $c->g(TemplateEngine::class));
+            return new CodeGenerator($sVersion, $c->g(Container::class), $c->g(PluginManager::class),
+                $c->g(TemplateEngine::class));
         });
         // JQuery response plugin
         $this->set(JQueryPlugin::class, function($c) {
@@ -73,6 +74,16 @@ trait PluginTrait
     public function getPluginManager(): PluginManager
     {
         return $this->g(PluginManager::class);
+    }
+
+    /**
+     * Get the package manager
+     *
+     * @return PackageManager
+     */
+    public function getPackageManager(): PackageManager
+    {
+        return $this->g(PackageManager::class);
     }
 
     /**

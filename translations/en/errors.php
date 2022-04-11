@@ -61,5 +61,8 @@ return [
             'get' => "Trying to read unknown property :name with magic property __get at line :line in file :file.",
             'set' => "Trying to write unknown property :name with magic property __set at line :line in file :file.",
         ],
+        'dialog' => [
+            'library' => "There is no :type library with name :name",
+        ],
     ],
 ];

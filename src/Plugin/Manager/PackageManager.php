@@ -19,7 +19,6 @@ use Jaxon\App\Translator;
 use Jaxon\Config\ConfigManager;
 use Jaxon\Di\Container;
 use Jaxon\Exception\SetupException;
-use Jaxon\Plugin\Code\CodeGenerator;
 use Jaxon\Plugin\Package;
 use Jaxon\Ui\View\ViewRenderer;
 use Jaxon\Utils\Config\Config;
@@ -53,13 +52,6 @@ class PackageManager
     protected $xViewRenderer;
 
     /**
-     * The code generator
-     *
-     * @var CodeGenerator
-     */
-    private $xCodeGenerator;
-
-    /**
      * @var Translator
      */
     protected $xTranslator;
@@ -71,17 +63,15 @@ class PackageManager
      * @param PluginManager $xPluginManager
      * @param ConfigManager $xConfigManager
      * @param ViewRenderer $xViewRenderer
-     * @param CodeGenerator $xCodeGenerator
      * @param Translator $xTranslator
      */
     public function __construct(Container $di, PluginManager $xPluginManager, ConfigManager $xConfigManager,
-        ViewRenderer $xViewRenderer, CodeGenerator $xCodeGenerator, Translator $xTranslator)
+        ViewRenderer $xViewRenderer, Translator $xTranslator)
     {
         $this->di = $di;
         $this->xPluginManager = $xPluginManager;
         $this->xConfigManager = $xConfigManager;
         $this->xViewRenderer = $xViewRenderer;
-        $this->xCodeGenerator = $xCodeGenerator;
         $this->xTranslator = $xTranslator;
     }
 
@@ -221,7 +211,7 @@ class PackageManager
         // Register the declarations in the package config.
         $this->registerItemsFromConfig($xAppConfig, $xUserConfig);
         // Register the package as a code generator.
-        $this->xCodeGenerator->addGenerator($sClassName, 500);
+        $this->xPluginManager->addCodeGenerator($sClassName, 500);
     }
 
     /**

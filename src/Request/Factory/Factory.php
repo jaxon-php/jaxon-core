@@ -24,7 +24,7 @@ class Factory
     /**
      * @var CallableRegistry
      */
-    private $xClassRegistry;
+    private $xCallableRegistry;
 
     /**
      * @var RequestFactory
@@ -39,14 +39,14 @@ class Factory
     /**
      * The constructor.
      *
-     * @param CallableRegistry $xClassRegistry
+     * @param CallableRegistry $xCallableRegistry
      * @param RequestFactory $xRequestFactory
      * @param ParameterFactory $xParameterFactory
      */
-    public function __construct(CallableRegistry $xClassRegistry,
+    public function __construct(CallableRegistry $xCallableRegistry,
         RequestFactory $xRequestFactory, ParameterFactory $xParameterFactory)
     {
-        $this->xClassRegistry = $xClassRegistry;
+        $this->xCallableRegistry = $xCallableRegistry;
         $this->xRequestFactory = $xRequestFactory;
         $this->xParameterFactory = $xParameterFactory;
     }
@@ -68,7 +68,7 @@ class Factory
             return $this->xRequestFactory;
         }
         // While each callable class has it own request factory.
-        return $this->xClassRegistry->getRequestFactory($sClassName);
+        return $this->xCallableRegistry->getRequestFactory($sClassName);
     }
 
     /**

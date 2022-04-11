@@ -25,7 +25,6 @@ use Jaxon\App\Translator;
 use Jaxon\Di\Container;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\CallableRegistryInterface;
-use Jaxon\Plugin\Code\CodeGenerator;
 use Jaxon\Plugin\CodeGeneratorInterface;
 use Jaxon\Plugin\Request\CallableClass\CallableClassPlugin;
 use Jaxon\Plugin\Request\CallableDir\CallableDirPlugin;
@@ -41,6 +40,7 @@ use Jaxon\Response\Response;
 
 use function class_implements;
 use function in_array;
+use function ksort;
 
 class PluginManager
 {
@@ -55,11 +55,11 @@ class PluginManager
     protected $xTranslator;
 
     /**
-     * The code generator
+     * The classes that generate code
      *
-     * @var CodeGenerator
+     * @var array<string>
      */
-    private $xCodeGenerator;
+    protected $aCodeGenerators = [];
 
     /**
      * Request plugins, indexed by name
@@ -86,14 +86,41 @@ class PluginManager
      * The constructor
      *
      * @param Container $di
-     * @param CodeGenerator $xCodeGenerator
      * @param Translator $xTranslator
      */
-    public function __construct(Container $di, CodeGenerator $xCodeGenerator, Translator $xTranslator)
+    public function __construct(Container $di, Translator $xTranslator)
     {
         $this->di = $di;
-        $this->xCodeGenerator = $xCodeGenerator;
         $this->xTranslator = $xTranslator;
+    }
+
+    /**
+     * Add a code generator to the list
+     *
+     * @param string $sClassName    The code generator class
+     * @param int $nPriority    The desired priority, used to order the plugins
+     *
+     * @return void
+     */
+    public function addCodeGenerator(string $sClassName, int $nPriority)
+    {
+        while(isset($this->aCodeGenerators[$nPriority]))
+        {
+            $nPriority++;
+        }
+        $this->aCodeGenerators[$nPriority] = $sClassName;
+        // Sort the array by ascending keys
+        ksort($this->aCodeGenerators);
+    }
+
+    /**
+     * Get the code generators
+     *
+     * @return string[]
+     */
+    public function getCodeGenerators(): array
+    {
+        return $this->aCodeGenerators;
     }
 
     /**
@@ -127,7 +154,7 @@ class PluginManager
         $aInterfaces = class_implements($sClassName);
         if(in_array(CodeGeneratorInterface::class, $aInterfaces))
         {
-            $this->xCodeGenerator->addGenerator($sClassName, $nPriority);
+            $this->addCodeGenerator($sClassName, $nPriority);
             $bIsUsed = true;
         }
         if(in_array(CallableRegistryInterface::class, $aInterfaces))
@@ -219,11 +246,9 @@ class PluginManager
         $this->registerPlugin(CallableFunctionPlugin::class, Jaxon::CALLABLE_FUNCTION, 102);
         $this->registerPlugin(CallableDirPlugin::class, Jaxon::CALLABLE_DIR, 103);
 
-        // Register the JQuery response plugin
+        // Response plugins
         $this->registerPlugin(JQueryPlugin::class, JQueryPlugin::NAME, 700);
-        // Register the DataBag response plugin
         $this->registerPlugin(DataBagPlugin::class, DataBagPlugin::NAME, 700);
-        // Register the Dialog response plugin
         $this->registerPlugin(DialogPlugin::class, DialogPlugin::NAME, 750);
     }
 }
