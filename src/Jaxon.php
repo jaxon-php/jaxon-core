@@ -178,7 +178,7 @@ class Jaxon
      */
     public function logger(): LoggerInterface
     {
-        return $this->di()->logger();
+        return $this->di()->getLogger();
     }
 
     /**

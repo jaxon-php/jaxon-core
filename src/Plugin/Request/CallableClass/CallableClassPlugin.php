@@ -320,7 +320,7 @@ class CallableClassPlugin extends RequestPlugin
         catch(ReflectionException $e)
         {
             // Unable to find the requested class or method
-            $this->di->logger()->error($e->getMessage());
+            $this->di->getLogger()->error($e->getMessage());
             throw new RequestException($this->xTranslator->trans('errors.objects.invalid',
                 ['class' => $sRequestedClass, 'method' => $sRequestedMethod]));
         }

@@ -4,6 +4,7 @@ namespace Jaxon;
 
 use Jaxon\App\Session\SessionInterface;
 use Jaxon\Exception\SetupException;
+use Jaxon\Plugin\Request\CallableClass\CallableClassHelper;
 use Jaxon\Plugin\Response\DataBag\DataBagContext;
 use Jaxon\Plugin\Response\JQuery\DomSelector;
 use Jaxon\Request\Factory\ParameterFactory;
@@ -15,9 +16,9 @@ use Psr\Log\LoggerInterface;
 class CallableClass
 {
     /**
-     * @var Jaxon
+     * @var CallableClassHelper
      */
-    protected $jaxon = null;
+    protected $helper = null;
 
     /**
      * The Jaxon response returned by all classes methods
@@ -27,20 +28,13 @@ class CallableClass
     protected $response = null;
 
     /**
-     * The name of the registered class
-     *
-     * @var string
-     */
-    protected $_class = '';
-
-    /**
      * Get the view renderer
      *
      * @return ViewRenderer
      */
     public function view(): ViewRenderer
     {
-        return $this->jaxon->view();
+        return $this->helper->view;
     }
 
     /**
@@ -50,7 +44,7 @@ class CallableClass
      */
     public function session(): SessionInterface
     {
-        return $this->jaxon->session();
+        return $this->helper->session;
     }
 
     /**
@@ -60,7 +54,7 @@ class CallableClass
      */
     public function logger(): LoggerInterface
     {
-        return $this->jaxon->logger();
+        return $this->helper->logger;
     }
 
     /**
@@ -68,24 +62,23 @@ class CallableClass
      *
      * @param string $sName the class name
      *
-     * @return object
+     * @return object|null
      * @throws SetupException
      */
     public function cl(string $sName)
     {
         // Find the class instance
-        return $this->jaxon->instance($sName);
+        return $this->helper->registry->getCallableObject($sName)->getRegisteredObject();
     }
 
     /**
      * Get the request factory.
      *
      * @return RequestFactory
-     * @throws SetupException
      */
     public function rq(): RequestFactory
     {
-        return $this->jaxon->factory()->request($this->_class);
+        return $this->helper->request;
     }
 
     /**
@@ -95,7 +88,7 @@ class CallableClass
      */
     public function pm(): ParameterFactory
     {
-        return $this->jaxon->factory()->parameter();
+        return $this->helper->pm;
     }
 
     /**
@@ -105,7 +98,7 @@ class CallableClass
      */
     public function files(): array
     {
-        return $this->jaxon->upload()->files();
+        return $this->helper->upload->files();
     }
 
     /**

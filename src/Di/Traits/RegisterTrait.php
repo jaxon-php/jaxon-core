@@ -2,11 +2,11 @@
 
 namespace Jaxon\Di\Traits;
 
-use Jaxon\Jaxon;
 use Jaxon\App\Translator;
 use Jaxon\CallableClass;
 use Jaxon\Config\ConfigManager;
 use Jaxon\Exception\SetupException;
+use Jaxon\Plugin\Request\CallableClass\CallableClassHelper;
 use Jaxon\Plugin\Request\CallableClass\CallableObject;
 use Jaxon\Request\Call\Paginator;
 use Jaxon\Request\Factory\Factory;
@@ -123,9 +123,8 @@ trait RegisterTrait
             {
                 // Set the protected attributes of the object
                 $cSetter = function($c, $sClassName) {
-                    $this->jaxon = $c->g(Jaxon::class);
+                    $this->helper = new CallableClassHelper($c, $sClassName);
                     $this->response = $c->getResponse();
-                    $this->_class = $sClassName;
                 };
                 // Can now access protected attributes
                 call_user_func($cSetter->bindTo($xRegisteredObject, $xRegisteredObject), $c, $sClassName);

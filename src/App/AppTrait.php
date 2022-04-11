@@ -250,7 +250,7 @@ trait AppTrait
      */
     public function logger(): LoggerInterface
     {
-        return $this->jaxon->di()->logger();
+        return $this->jaxon->di()->getLogger();
     }
 
     /**
