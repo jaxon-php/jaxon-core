@@ -14,11 +14,11 @@
 
 namespace Jaxon\Request\Handler\Psr;
 
+use Jaxon\App\Translator;
 use Jaxon\Di\Container;
 use Jaxon\Exception\RequestException;
 use Jaxon\Request\Handler\RequestHandler;
 use Jaxon\Response\Manager\ResponseManager;
-use Jaxon\Utils\Translation\Translator;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;

@@ -22,9 +22,9 @@ namespace Jaxon\Request;
  * http://www.w3schools.com/charsets/ref_utf_latin1_supplement.asp
  */
 
+use Jaxon\App\Translator;
 use Jaxon\Config\ConfigManager;
 use Jaxon\Request\Upload\File;
-use Jaxon\Utils\Translation\Translator;
 
 use function preg_match;
 use function is_array;

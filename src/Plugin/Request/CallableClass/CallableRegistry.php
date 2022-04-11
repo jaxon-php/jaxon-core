@@ -14,10 +14,10 @@
 
 namespace Jaxon\Plugin\Request\CallableClass;
 
+use Jaxon\App\Translator;
 use Jaxon\Di\Container;
 use Jaxon\Exception\SetupException;
 use Jaxon\Request\Factory\RequestFactory;
-use Jaxon\Utils\Translation\Translator;
 
 use Composer\Autoload\ClassLoader;
 use RecursiveDirectoryIterator;

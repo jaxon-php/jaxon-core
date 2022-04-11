@@ -14,9 +14,9 @@
 
 namespace Jaxon\Plugin\Request\CallableClass;
 
+use Jaxon\App\Translator;
 use Jaxon\Di\Container;
 use Jaxon\Exception\SetupException;
-use Jaxon\Utils\Translation\Translator;
 
 use function array_merge;
 use function strlen;

@@ -2,6 +2,7 @@
 
 namespace Jaxon\Di\Traits;
 
+use Jaxon\App\Translator;
 use Jaxon\Di\Container;
 use Jaxon\Request\Factory\Psr\PsrFactory;
 use Jaxon\Request\Handler\Psr\PsrAjaxMiddleware;
@@ -9,7 +10,6 @@ use Jaxon\Request\Handler\Psr\PsrConfigMiddleware;
 use Jaxon\Request\Handler\Psr\PsrRequestHandler;
 use Jaxon\Request\Handler\RequestHandler;
 use Jaxon\Response\Manager\ResponseManager;
-use Jaxon\Utils\Translation\Translator;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7Server\ServerRequestCreator;
 use Psr\Http\Message\ServerRequestInterface;

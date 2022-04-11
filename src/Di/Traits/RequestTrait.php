@@ -2,6 +2,7 @@
 
 namespace Jaxon\Di\Traits;
 
+use Jaxon\App\Translator;
 use Jaxon\Config\ConfigManager;
 use Jaxon\Di\Container;
 use Jaxon\Plugin\Manager\PluginManager;
@@ -21,7 +22,6 @@ use Jaxon\Request\Validator;
 use Jaxon\Response\Manager\ResponseManager;
 use Jaxon\Ui\Dialog\Library\DialogLibraryManager;
 use Jaxon\Utils\Http\UriDetector;
-use Jaxon\Utils\Translation\Translator;
 
 use function bin2hex;
 use function random_bytes;

@@ -2,10 +2,11 @@
 
 namespace Jaxon\Di\Traits;
 
+use Jaxon\Jaxon;
+use Jaxon\App\Translator;
 use Jaxon\CallableClass;
 use Jaxon\Config\ConfigManager;
 use Jaxon\Exception\SetupException;
-use Jaxon\Jaxon;
 use Jaxon\Plugin\Request\CallableClass\CallableObject;
 use Jaxon\Request\Call\Paginator;
 use Jaxon\Request\Factory\Factory;
@@ -14,9 +15,10 @@ use Jaxon\Request\Handler\CallbackManager;
 use Jaxon\Ui\Dialog\Library\DialogLibraryManager;
 use Jaxon\Ui\View\ViewRenderer;
 use Jaxon\Utils\Config\Config;
-use Jaxon\Utils\Translation\Translator;
+
 use ReflectionClass;
 use ReflectionException;
+
 use function call_user_func;
 use function explode;
 use function substr;

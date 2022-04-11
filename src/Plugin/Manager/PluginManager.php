@@ -20,9 +20,10 @@
 
 namespace Jaxon\Plugin\Manager;
 
+use Jaxon\Jaxon;
+use Jaxon\App\Translator;
 use Jaxon\Di\Container;
 use Jaxon\Exception\SetupException;
-use Jaxon\Jaxon;
 use Jaxon\Plugin\CallableRegistryInterface;
 use Jaxon\Plugin\Code\CodeGenerator;
 use Jaxon\Plugin\CodeGeneratorInterface;
@@ -37,7 +38,7 @@ use Jaxon\Plugin\Response\JQuery\JQueryPlugin;
 use Jaxon\Plugin\ResponsePlugin;
 use Jaxon\Plugin\ResponsePluginInterface;
 use Jaxon\Response\Response;
-use Jaxon\Utils\Translation\Translator;
+
 use function class_implements;
 use function in_array;
 

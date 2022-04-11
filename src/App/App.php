@@ -14,7 +14,7 @@ namespace Jaxon\App;
 
 use Jaxon\Jaxon;
 use Jaxon\Config\ConfigManager;
-use Jaxon\Utils\Translation\Translator;
+use Jaxon\App\Translator;
 use Jaxon\Exception\SetupException;
 
 use function file_exists;

@@ -23,6 +23,7 @@ namespace Jaxon\Plugin\Request\CallableClass;
 
 use Jaxon\Jaxon;
 use Jaxon\CallableClass;
+use Jaxon\App\Translator;
 use Jaxon\Di\Container;
 use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;
@@ -32,7 +33,6 @@ use Jaxon\Request\Target;
 use Jaxon\Request\Validator;
 use Jaxon\Response\ResponseInterface;
 use Jaxon\Utils\Template\TemplateEngine;
-use Jaxon\Utils\Translation\Translator;
 use Psr\Http\Message\ServerRequestInterface;
 
 use ReflectionClass;

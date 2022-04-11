@@ -13,13 +13,13 @@
 
 namespace Jaxon\Ui\Dialog\Library;
 
+use Jaxon\App\Translator;
 use Jaxon\Config\ConfigManager;
 use Jaxon\Di\Container;
 use Jaxon\Exception\SetupException;
 use Jaxon\Ui\Dialog\MessageInterface;
 use Jaxon\Ui\Dialog\ModalInterface;
 use Jaxon\Ui\Dialog\QuestionInterface;
-use Jaxon\Utils\Translation\Translator;
 
 use function array_map;
 use function class_implements;

@@ -22,6 +22,7 @@
 namespace Jaxon\Plugin\Request\CallableFunction;
 
 use Jaxon\Jaxon;
+use Jaxon\App\Translator;
 use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\RequestPlugin;
@@ -30,7 +31,6 @@ use Jaxon\Request\Target;
 use Jaxon\Request\Validator;
 use Jaxon\Response\ResponseInterface;
 use Jaxon\Utils\Template\TemplateEngine;
-use Jaxon\Utils\Translation\Translator;
 use Psr\Http\Message\ServerRequestInterface;
 
 use function array_keys;

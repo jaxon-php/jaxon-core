@@ -2,6 +2,7 @@
 
 namespace Jaxon\Di\Traits;
 
+use Jaxon\App\Translator;
 use Jaxon\Config\ConfigManager;
 use Jaxon\Di\Container;
 use Jaxon\Request\Call\Paginator;
@@ -11,7 +12,6 @@ use Jaxon\Ui\View\PaginationRenderer;
 use Jaxon\Ui\View\TemplateView;
 use Jaxon\Ui\View\ViewRenderer;
 use Jaxon\Utils\Template\TemplateEngine;
-use Jaxon\Utils\Translation\Translator;
 
 use function call_user_func;
 use function rtrim;

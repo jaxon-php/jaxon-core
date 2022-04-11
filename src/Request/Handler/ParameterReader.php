@@ -22,12 +22,12 @@
 
 namespace Jaxon\Request\Handler;
 
+use Jaxon\App\Translator;
 use Jaxon\Di\Container;
 use Jaxon\Config\ConfigManager;
 use Jaxon\Exception\RequestException;
 use Jaxon\Utils\Http\UriDetector;
 use Jaxon\Utils\Http\UriException;
-use Jaxon\Utils\Translation\Translator;
 
 use function strcasecmp;
 use function is_array;

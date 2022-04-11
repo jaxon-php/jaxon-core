@@ -5,12 +5,12 @@ namespace Jaxon\Di\Traits;
 use Jaxon\Jaxon;
 use Jaxon\App\App;
 use Jaxon\App\Bootstrap;
+use Jaxon\App\Translator;
 use Jaxon\Config\ConfigManager;
 use Jaxon\Plugin\Manager\PackageManager;
 use Jaxon\Request\Handler\CallbackManager;
 use Jaxon\Ui\View\ViewRenderer;
 use Jaxon\Utils\Config\ConfigReader;
-use Jaxon\Utils\Translation\Translator;
 
 trait AppTrait
 {
@@ -79,6 +79,24 @@ trait AppTrait
      */
     private function registerApp()
     {
+        // Translator
+        $this->set(Translator::class, function($c) {
+            $xTranslator = new Translator();
+            $sResourceDir = rtrim(trim($c->g('jaxon.core.dir.translation')), '/\\');
+            // Load the Jaxon package translations
+            $xTranslator->loadTranslations($sResourceDir . '/en/errors.php', 'en');
+            $xTranslator->loadTranslations($sResourceDir . '/fr/errors.php', 'fr');
+            $xTranslator->loadTranslations($sResourceDir . '/es/errors.php', 'es');
+            // Load the config translations
+            $xTranslator->loadTranslations($sResourceDir . '/en/config.php', 'en');
+            $xTranslator->loadTranslations($sResourceDir . '/fr/config.php', 'fr');
+            $xTranslator->loadTranslations($sResourceDir . '/es/config.php', 'es');
+            // Load the upload translations
+            $xTranslator->loadTranslations($sResourceDir . '/en/upload.php', 'en');
+            $xTranslator->loadTranslations($sResourceDir . '/fr/upload.php', 'fr');
+            $xTranslator->loadTranslations($sResourceDir . '/es/upload.php', 'es');
+            return $xTranslator;
+        });
         $this->set(ConfigManager::class, function($c) {
             $xConfigManager = new ConfigManager($c->g(ConfigReader::class), $c->g(Translator::class));
             $xConfigManager->setOptions($this->aConfig);

@@ -2,9 +2,10 @@
 
 namespace Jaxon\Di\Traits;
 
+use Jaxon\Jaxon;
+use Jaxon\App\Translator;
 use Jaxon\Config\ConfigManager;
 use Jaxon\Di\Container;
-use Jaxon\Jaxon;
 use Jaxon\Plugin\Code\AssetManager;
 use Jaxon\Plugin\Code\CodeGenerator;
 use Jaxon\Plugin\Code\MinifierInterface;
@@ -18,7 +19,6 @@ use Jaxon\Ui\Dialog\Library\DialogLibraryManager;
 use Jaxon\Ui\View\ViewRenderer;
 use Jaxon\Utils\File\FileMinifier;
 use Jaxon\Utils\Template\TemplateEngine;
-use Jaxon\Utils\Translation\Translator;
 
 trait PluginTrait
 {

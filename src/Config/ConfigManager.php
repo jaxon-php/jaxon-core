@@ -15,10 +15,10 @@
 namespace Jaxon\Config;
 
 use Jaxon\Jaxon;
+use Jaxon\App\Translator;
 use Jaxon\Exception\SetupException;
 use Jaxon\Utils\Config\Config;
 use Jaxon\Utils\Config\ConfigReader;
-use Jaxon\Utils\Translation\Translator;
 use Jaxon\Utils\Config\Exception\DataDepth;
 use Jaxon\Utils\Config\Exception\FileAccess;
 use Jaxon\Utils\Config\Exception\FileContent;

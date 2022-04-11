@@ -28,6 +28,7 @@ namespace Jaxon;
 use Jaxon\App\App;
 use Jaxon\App\Bootstrap;
 use Jaxon\App\Session\SessionInterface;
+use Jaxon\App\Translator;
 use Jaxon\Config\ConfigManager;
 use Jaxon\Di\Container;
 use Jaxon\Exception\RequestException;
@@ -51,7 +52,6 @@ use Jaxon\Response\ResponseInterface;
 use Jaxon\Ui\View\ViewRenderer;
 use Jaxon\Utils\Http\UriException;
 use Jaxon\Utils\Template\TemplateEngine;
-use Jaxon\Utils\Translation\Translator;
 use Psr\Log\LoggerInterface;
 
 use function error_reporting;

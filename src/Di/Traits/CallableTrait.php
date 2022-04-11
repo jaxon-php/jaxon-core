@@ -2,6 +2,7 @@
 
 namespace Jaxon\Di\Traits;
 
+use Jaxon\App\Translator;
 use Jaxon\Config\ConfigManager;
 use Jaxon\Di\Container;
 use Jaxon\Plugin\Request\CallableClass\CallableClassPlugin;
@@ -12,7 +13,6 @@ use Jaxon\Plugin\Request\CallableFunction\CallableFunctionPlugin;
 use Jaxon\Request\Handler\ParameterReader;
 use Jaxon\Request\Validator;
 use Jaxon\Utils\Template\TemplateEngine;
-use Jaxon\Utils\Translation\Translator;
 
 trait CallableTrait
 {

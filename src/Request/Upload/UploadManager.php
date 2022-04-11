@@ -11,9 +11,9 @@
 
 namespace Jaxon\Request\Upload;
 
+use Jaxon\App\Translator;
 use Jaxon\Config\ConfigManager;
 use Jaxon\Request\Validator;
-use Jaxon\Utils\Translation\Translator;
 use Jaxon\Exception\RequestException;
 use Nyholm\Psr7\UploadedFile;
 use Psr\Http\Message\ServerRequestInterface;

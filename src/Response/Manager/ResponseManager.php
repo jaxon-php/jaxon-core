@@ -21,10 +21,10 @@
 
 namespace Jaxon\Response\Manager;
 
+use Jaxon\App\Translator;
 use Jaxon\Di\Container;
 use Jaxon\Exception\RequestException;
 use Jaxon\Response\ResponseInterface;
-use Jaxon\Utils\Translation\Translator;
 
 use function get_class;
 

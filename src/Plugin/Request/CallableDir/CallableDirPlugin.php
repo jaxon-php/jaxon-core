@@ -22,11 +22,11 @@
 namespace Jaxon\Plugin\Request\CallableDir;
 
 use Jaxon\Jaxon;
+use Jaxon\App\Translator;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\CallableRegistryInterface;
 use Jaxon\Plugin\PluginInterface;
 use Jaxon\Plugin\Request\CallableClass\CallableRegistry;
-use Jaxon\Utils\Translation\Translator;
 
 use function is_array;
 use function is_dir;

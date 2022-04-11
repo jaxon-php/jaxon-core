@@ -15,6 +15,7 @@
 namespace Jaxon\Plugin\Manager;
 
 use Jaxon\Jaxon;
+use Jaxon\App\Translator;
 use Jaxon\Config\ConfigManager;
 use Jaxon\Di\Container;
 use Jaxon\Exception\SetupException;
@@ -22,7 +23,6 @@ use Jaxon\Plugin\Code\CodeGenerator;
 use Jaxon\Plugin\Package;
 use Jaxon\Ui\View\ViewRenderer;
 use Jaxon\Utils\Config\Config;
-use Jaxon\Utils\Translation\Translator;
 
 use function is_array;
 use function is_integer;

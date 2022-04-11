@@ -2,12 +2,12 @@
 
 namespace Jaxon\Di\Traits;
 
+use Jaxon\App\Translator;
 use Jaxon\Config\ConfigManager;
 use Jaxon\Di\Container;
 use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Response\Manager\ResponseManager;
 use Jaxon\Response\Response;
-use Jaxon\Utils\Translation\Translator;
 use Nyholm\Psr7\Factory\Psr17Factory;
 
 use function trim;
