@@ -1,6 +1,6 @@
 <?php
 
-namespace Jaxon\Session;
+namespace Jaxon\App\Session;
 
 interface SessionInterface
 {

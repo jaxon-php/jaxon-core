@@ -14,21 +14,20 @@
 
 namespace Jaxon\Di;
 
+use Closure;
+use Jaxon\App\Session\SessionInterface;
 use Jaxon\Jaxon;
 use Pimple\Container as PimpleContainer;
 use Pimple\Exception\UnknownIdentifierException;
-use Psr\Container\ContainerInterface;
 use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
-
-use Closure;
 use ReflectionClass;
 use ReflectionException;
-
 use function realpath;
 
 class Container extends PimpleContainer implements LoggerAwareInterface
@@ -44,7 +43,6 @@ class Container extends PimpleContainer implements LoggerAwareInterface
     use Traits\RegisterTrait;
     use Traits\ViewTrait;
     use Traits\UtilTrait;
-    use Traits\SessionTrait;
 
     /**
      * The Dependency Injection Container
@@ -91,7 +89,6 @@ class Container extends PimpleContainer implements LoggerAwareInterface
         $this->registerCallables();
         $this->registerViews();
         $this->registerUtils();
-        $this->registerSessions();
     }
 
     /**
@@ -265,5 +262,27 @@ class Container extends PimpleContainer implements LoggerAwareInterface
         $this->set($sClass, function() use ($sClass) {
             return $this->make($sClass);
         });
+    }
+
+    /**
+     * Get the session manager
+     *
+     * @return SessionInterface
+     */
+    public function getSessionManager(): SessionInterface
+    {
+        return $this->g(SessionInterface::class);
+    }
+
+    /**
+     * Set the session manager
+     *
+     * @param Closure $xClosure    A closure to create the session manager instance
+     *
+     * @return void
+     */
+    public function setSessionManager(Closure $xClosure)
+    {
+        $this->set(SessionInterface::class, $xClosure);
     }
 }

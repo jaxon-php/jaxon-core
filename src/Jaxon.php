@@ -27,6 +27,7 @@ namespace Jaxon;
 
 use Jaxon\App\App;
 use Jaxon\App\Bootstrap;
+use Jaxon\App\Session\SessionInterface;
 use Jaxon\Config\ConfigManager;
 use Jaxon\Di\Container;
 use Jaxon\Exception\RequestException;
@@ -47,7 +48,6 @@ use Jaxon\Request\Handler\UploadHandler;
 use Jaxon\Response\Manager\ResponseManager;
 use Jaxon\Response\Response;
 use Jaxon\Response\ResponseInterface;
-use Jaxon\Session\SessionInterface;
 use Jaxon\Ui\View\ViewRenderer;
 use Jaxon\Utils\Http\UriException;
 use Jaxon\Utils\Template\TemplateEngine;
@@ -227,7 +227,7 @@ class Jaxon
      * @param string $sName    The option name
      * @param mixed|null $xDefault    The default value, to be returned if the option is not defined
      *
-     * @return mixed        The option value, or null if the option is unknown
+     * @return mixed
      */
     public function getOption(string $sName, $xDefault = null)
     {
@@ -239,7 +239,7 @@ class Jaxon
      *
      * @param string $sName    The option name
      *
-     * @return bool        True if the option exists, and false if not
+     * @return bool
      */
     public function hasOption(string $sName): bool
     {
@@ -265,17 +265,13 @@ class Jaxon
     }
 
     /**
-     * Get a translated string
+     * Get the translator
      *
-     * @param string $sText    The key of the translated string
-     * @param array $aPlaceHolders    The placeholders of the translated string
-     * @param string $sLanguage    The language of the translated string
-     *
-     * @return string
+     * @return Translator
      */
-    public function trans(string $sText, array $aPlaceHolders = [], string $sLanguage = ''): string
+    public function translator(): Translator
     {
-        return $this->xTranslator->trans($sText, $aPlaceHolders, $sLanguage);
+        return $this->xTranslator;
     }
 
     /**
@@ -285,11 +281,7 @@ class Jaxon
      */
     public function getResponse(): ResponseInterface
     {
-        if(($xResponse = $this->xResponseManager->getResponse()))
-        {
-            return $xResponse;
-        }
-        return $this->di()->getResponse();
+        return $this->xResponseManager->getResponse();
     }
 
     /**

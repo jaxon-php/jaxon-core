@@ -1,10 +1,6 @@
 <?php
 
-namespace Jaxon\Session;
-
-use function session_id;
-use function session_regenerate_id;
-use function session_unset;
+use Jaxon\App\Session\SessionInterface;
 
 class SessionManager implements SessionInterface
 {
