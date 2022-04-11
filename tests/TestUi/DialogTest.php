@@ -68,8 +68,6 @@ class DialogTest extends TestCase
         jaxon()->setOption('dialogs.default.modal', 'bootstrap');
         jaxon()->setOption('dialogs.default.message', 'bootstrap');
         jaxon()->setOption('dialogs.default.question', 'bootstrap');
-        // The change is not automatic. It needs to be triggered.
-        jaxon()->dialog();
         $this->assertEquals(BootstrapLibrary::class, get_class($xDialogLibraryManager->getQuestionLibrary()));
         $this->assertEquals(BootstrapLibrary::class, get_class($xDialogLibraryManager->getMessageLibrary()));
         $this->assertEquals(BootstrapLibrary::class, get_class($xDialogLibraryManager->getModalLibrary()));
@@ -77,19 +75,15 @@ class DialogTest extends TestCase
         jaxon()->setOption('dialogs.default.modal', 'bootbox');
         jaxon()->setOption('dialogs.default.message', 'bootbox');
         jaxon()->setOption('dialogs.default.question', 'bootbox');
-        // The default can be changed only once.
-        jaxon()->dialog();
-        $this->assertEquals(BootstrapLibrary::class, get_class($xDialogLibraryManager->getQuestionLibrary()));
-        $this->assertEquals(BootstrapLibrary::class, get_class($xDialogLibraryManager->getMessageLibrary()));
-        $this->assertEquals(BootstrapLibrary::class, get_class($xDialogLibraryManager->getModalLibrary()));
+        $this->assertEquals(BootboxLibrary::class, get_class($xDialogLibraryManager->getQuestionLibrary()));
+        $this->assertEquals(BootboxLibrary::class, get_class($xDialogLibraryManager->getMessageLibrary()));
+        $this->assertEquals(BootboxLibrary::class, get_class($xDialogLibraryManager->getModalLibrary()));
     }
 
     public function testDialogOptions()
     {
         $xDialogLibraryManager = jaxon()->di()->getDialogLibraryManager();
         jaxon()->setOption('dialogs.default.message', 'toastr');
-        // The change is not automatic. It needs to be triggered.
-        jaxon()->dialog();
         $xMessageLibrary = $xDialogLibraryManager->getMessageLibrary();
         $this->assertEquals(ToastrLibrary::class, get_class($xMessageLibrary));
         $this->assertTrue($xMessageLibrary->helper()->hasOption('options.closeButton'));
@@ -445,8 +439,6 @@ class DialogTest extends TestCase
         jaxon()->register(Jaxon::CALLABLE_CLASS, 'Sample', __DIR__ . '/../src/sample.php');
         jaxon()->setOption('dialogs.default.message', 'toastr');
         jaxon()->setOption('dialogs.default.question', 'noty');
-        // The change is not automatic. It needs to be triggered.
-        jaxon()->dialog();
         $this->assertEquals(
             "jaxon.dialogs.noty.confirm('Really?','',function(){Sample.method(jaxon.$('elt_id').innerHTML);}," .
                 "function(){toastr.success('No confirm');})",
@@ -463,8 +455,6 @@ class DialogTest extends TestCase
         jaxon()->register(Jaxon::CALLABLE_CLASS, 'Sample', __DIR__ . '/../src/sample.php');
         jaxon()->setOption('dialogs.default.message', 'toastr');
         jaxon()->setOption('dialogs.default.question', 'noty');
-        // The change is not automatic. It needs to be triggered.
-        jaxon()->dialog();
         $this->assertEquals(
             "jaxon.dialogs.noty.confirm('Really?','',function(){Sample.method(jaxon.$('elt_id').innerHTML);}," .
                 "function(){toastr.info('No confirm');})",
@@ -481,8 +471,6 @@ class DialogTest extends TestCase
         jaxon()->register(Jaxon::CALLABLE_CLASS, 'Sample', __DIR__ . '/../src/sample.php');
         jaxon()->setOption('dialogs.default.message', 'toastr');
         jaxon()->setOption('dialogs.default.question', 'noty');
-        // The change is not automatic. It needs to be triggered.
-        jaxon()->dialog();
         $this->assertEquals(
             "jaxon.dialogs.noty.confirm('Really?','',function(){Sample.method(jaxon.$('elt_id').innerHTML);}," .
                 "function(){toastr.warning('No confirm');})",
@@ -499,8 +487,6 @@ class DialogTest extends TestCase
         jaxon()->register(Jaxon::CALLABLE_CLASS, 'Sample', __DIR__ . '/../src/sample.php');
         jaxon()->setOption('dialogs.default.message', 'toastr');
         jaxon()->setOption('dialogs.default.question', 'noty');
-        // The change is not automatic. It needs to be triggered.
-        jaxon()->dialog();
         $this->assertEquals(
             "jaxon.dialogs.noty.confirm('Really?','',function(){Sample.method(jaxon.$('elt_id').innerHTML);}," .
                 "function(){toastr.error('No confirm');})",
@@ -522,23 +508,17 @@ class DialogTest extends TestCase
     {
         $this->expectException(SetupException::class);
         jaxon()->setOption('dialogs.default.message', 'incorrect');
-        // The change is not automatic. It needs to be triggered.
-        jaxon()->dialog();
     }
 
     public function testErrorSetWrongModalLibrary()
     {
         $this->expectException(SetupException::class);
         jaxon()->setOption('dialogs.default.modal', 'incorrect');
-        // The change is not automatic. It needs to be triggered.
-        jaxon()->dialog();
     }
 
     public function testErrorSetWrongQuestionLibrary()
     {
         $this->expectException(SetupException::class);
         jaxon()->setOption('dialogs.default.question', 'incorrect');
-        // The change is not automatic. It needs to be triggered.
-        jaxon()->dialog();
     }
 }

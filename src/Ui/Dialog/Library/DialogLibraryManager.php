@@ -14,18 +14,21 @@
 namespace Jaxon\Ui\Dialog\Library;
 
 use Jaxon\App\Translator;
+use Jaxon\Config\ConfigListenerInterface;
 use Jaxon\Config\ConfigManager;
 use Jaxon\Di\Container;
 use Jaxon\Exception\SetupException;
 use Jaxon\Ui\Dialog\MessageInterface;
 use Jaxon\Ui\Dialog\ModalInterface;
 use Jaxon\Ui\Dialog\QuestionInterface;
+use Jaxon\Utils\Config\Config;
 
 use function array_map;
 use function class_implements;
 use function in_array;
+use function substr;
 
-class DialogLibraryManager
+class DialogLibraryManager implements ConfigListenerInterface
 {
     /**
      * @var Container
@@ -273,12 +276,15 @@ class DialogLibraryManager
      * @return void
      * @throws SetupException
      */
-    public function registerLibraries()
+    protected function registerLibraries()
     {
         $aLibraries = $this->xConfigManager->getOption('dialogs.libraries', []);
         foreach($aLibraries as $sClassName => $sName)
         {
-            $this->registerLibrary($sClassName, $sName);
+            if(!$this->di->h($sClassName))
+            {
+                $this->registerLibrary($sClassName, $sName);
+            }
         }
     }
 
@@ -288,7 +294,7 @@ class DialogLibraryManager
      * @return void
      * @throws SetupException
      */
-    public function setDefaultLibraries()
+    protected function setDefaultLibraries()
     {
         // Set the default modal library
         if(($sName = $this->xConfigManager->getOption('dialogs.default.modal', '')))
@@ -304,6 +310,30 @@ class DialogLibraryManager
         if(($sName = $this->xConfigManager->getOption('dialogs.default.question', '')))
         {
             $this->setQuestionLibrary($sName);
+        }
+    }
+
+    /**
+     * @inheritDoc
+     * @throws SetupException
+     */
+    public function onChanges(Config $xConfig)
+    {
+        // Reset the default libraries any time the config is changed.
+        $this->registerLibraries();
+        $this->setDefaultLibraries();
+    }
+
+    /**
+     * @inheritDoc
+     * @throws SetupException
+     */
+    public function onChange(Config $xConfig, string $sName)
+    {
+        // Reset the default libraries any time the config is changed.
+        if(substr($sName, 0, 15) === 'dialogs.default')
+        {
+            $this->setDefaultLibraries();
         }
     }
 }

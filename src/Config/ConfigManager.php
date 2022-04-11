@@ -14,7 +14,6 @@
 
 namespace Jaxon\Config;
 
-use Jaxon\Jaxon;
 use Jaxon\App\Translator;
 use Jaxon\Exception\SetupException;
 use Jaxon\Utils\Config\Config;
@@ -38,6 +37,11 @@ class ConfigManager
     protected $xConfigReader;
 
     /**
+     * @var ConfigEventManager
+     */
+    protected $xEventManager;
+
+    /**
      * @var Translator
      */
     protected $xTranslator;
@@ -46,11 +50,13 @@ class ConfigManager
      * The constructor
      *
      * @param ConfigReader $xConfigReader
+     * @param ConfigEventManager $xEventManager
      * @param Translator $xTranslator
      */
-    public function __construct(ConfigReader $xConfigReader, Translator $xTranslator)
+    public function __construct(ConfigReader $xConfigReader, ConfigEventManager $xEventManager, Translator $xTranslator)
     {
         $this->xConfigReader = $xConfigReader;
+        $this->xEventManager = $xEventManager;
         $this->xTranslator = $xTranslator;
         $this->xConfig = new Config();
     }
@@ -106,8 +112,8 @@ class ConfigManager
         {
             // Read the options and save in the config.
             $this->xConfig->setOptions($this->read($sConfigFile), $sConfigSection);
-            // Set the library language any time the config is changed.
-            $this->xTranslator->setLocale($this->xConfig->getOption('core.language'));
+            // Call the config change listeners.
+            $this->xEventManager->onChanges($this->xConfig);
         }
         catch(DataDepth $e)
         {
@@ -134,8 +140,8 @@ class ConfigManager
             {
                 return false;
             }
-            // Set the library language any time the config is changed.
-            $this->xTranslator->setLocale($this->xConfig->getOption('core.language'));
+            // Call the config change listeners.
+            $this->xEventManager->onChanges($this->xConfig);
             return true;
         }
         catch(DataDepth $e)
@@ -157,8 +163,8 @@ class ConfigManager
     public function setOption(string $sName, $xValue)
     {
         $this->xConfig->setOption($sName, $xValue);
-        // Set the library language any time the config is changed.
-        $this->xTranslator->setLocale($this->xConfig->getOption('core.language'));
+        // Call the config change listeners.
+        $this->xEventManager->onChange($this->xConfig, $sName);
     }
 
     /**

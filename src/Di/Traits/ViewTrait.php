@@ -52,11 +52,7 @@ trait ViewTrait
 
         // Dialog library manager
         $this->set(DialogLibraryManager::class, function($c) {
-            $xLibraryManager = new DialogLibraryManager($c->g(Container::class),
-                $c->g(ConfigManager::class), $c->g(Translator::class));
-            $xLibraryManager->registerLibraries();
-            $xLibraryManager->setDefaultLibraries();
-            return $xLibraryManager;
+            return new DialogLibraryManager($c->g(Container::class), $c->g(ConfigManager::class), $c->g(Translator::class));
         });
     }
 

@@ -6,9 +6,12 @@ use Jaxon\Jaxon;
 use Jaxon\App\App;
 use Jaxon\App\Bootstrap;
 use Jaxon\App\Translator;
+use Jaxon\Config\ConfigEventManager;
 use Jaxon\Config\ConfigManager;
+use Jaxon\Di\Container;
 use Jaxon\Plugin\Manager\PackageManager;
 use Jaxon\Request\Handler\CallbackManager;
+use Jaxon\Ui\Dialog\Library\DialogLibraryManager;
 use Jaxon\Ui\View\ViewRenderer;
 use Jaxon\Utils\Config\ConfigReader;
 
@@ -97,9 +100,18 @@ trait AppTrait
             $xTranslator->loadTranslations($sResourceDir . '/es/upload.php', 'es');
             return $xTranslator;
         });
+        // Config Manager
+        $this->set(ConfigEventManager::class, function($c) {
+            return new ConfigEventManager($c->g(Container::class));
+        });
         $this->set(ConfigManager::class, function($c) {
-            $xConfigManager = new ConfigManager($c->g(ConfigReader::class), $c->g(Translator::class));
+            $xEventManager = $c->g(ConfigEventManager::class);
+            $xConfigManager = new ConfigManager($c->g(ConfigReader::class), $xEventManager, $c->g(Translator::class));
             $xConfigManager->setOptions($this->aConfig);
+            // It's important to call this after the $xConfigManager->setOptions(),
+            // because we don't want to trigger the events since the listeners cannot yet be instantiated.
+            $xEventManager->addListener(Translator::class);
+            $xEventManager->addListener(DialogLibraryManager::class);
             return $xConfigManager;
         });
         // Jaxon App

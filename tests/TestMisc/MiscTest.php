@@ -41,6 +41,13 @@ final class MiscTest extends TestCase
             jaxon()->translator()->trans('errors.debug.message', ['message' => 'Incorrect.'], 'fr'));
         $this->assertEquals('Mensajes de error de PHP: Incorrect.',
             jaxon()->translator()->trans('errors.debug.message', ['message' => 'Incorrect.'], 'es'));
+
+        jaxon()->setOption('core.language', 'fr');
+        $this->assertEquals("Messages d'erreur PHP: Incorrect.",
+            jaxon()->translator()->trans('errors.debug.message', ['message' => 'Incorrect.']));
+        jaxon()->setOption('core.language', 'es');
+        $this->assertEquals('Mensajes de error de PHP: Incorrect.',
+            jaxon()->translator()->trans('errors.debug.message', ['message' => 'Incorrect.']));
     }
 
     public function testNullLogger()
