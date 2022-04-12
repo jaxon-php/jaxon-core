@@ -1,6 +1,6 @@
 <?php
 
-use Jaxon\Jaxon;
+use Jaxon\App\Ajax;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\Response\JQuery\DomSelector;
 use Jaxon\Request\Factory\ParameterFactory;
@@ -21,13 +21,13 @@ use Jaxon\Request\Factory\RequestFactory;
  */
 
 /**
- * Return the singleton instance of the Jaxon/Jaxon class
+ * Return the singleton instance of the Ajax class
  *
- * @return Jaxon
+ * @return Ajax
  */
-function jaxon(): Jaxon
+function jaxon(): Ajax
 {
-    return Jaxon::getInstance();
+    return Ajax::getInstance();
 }
 
 /**
@@ -40,7 +40,7 @@ function jaxon(): Jaxon
  */
 function rq(string $sClassName = ''): ?RequestFactory
 {
-    return Jaxon::getInstance()->factory()->request($sClassName);
+    return Ajax::getInstance()->factory()->request($sClassName);
 }
 
 /**
@@ -50,7 +50,7 @@ function rq(string $sClassName = ''): ?RequestFactory
  */
 function pm(): ParameterFactory
 {
-    return Jaxon::getInstance()->factory()->parameter();
+    return Ajax::getInstance()->factory()->parameter();
 }
 
 /**
@@ -66,8 +66,8 @@ function pm(): ParameterFactory
  */
 function jq(string $sPath = '', string $sContext = ''): DomSelector
 {
-    return Jaxon::getInstance()->di()->getJQueryPlugin()->command(false)->selector($sPath, $sContext);
+    return Ajax::getInstance()->di()->getJQueryPlugin()->command(false)->selector($sPath, $sContext);
 }
 
 // Register the Jaxon request and response plugins
-Jaxon::getInstance()->di()->getPluginManager()->registerPlugins();
+Ajax::getInstance()->di()->getPluginManager()->registerPlugins();

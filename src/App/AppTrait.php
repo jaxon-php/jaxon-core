@@ -2,7 +2,6 @@
 
 namespace Jaxon\App;
 
-use Jaxon\Jaxon;
 use Jaxon\App\Session\SessionInterface;
 use Jaxon\App\View\ViewRenderer;
 use Jaxon\Exception\RequestException;
@@ -23,14 +22,14 @@ use function trim;
 trait AppTrait
 {
     /**
-     * @var Jaxon
+     * @var Ajax
      */
     protected $jaxon;
 
     /**
-     * @return Jaxon
+     * @return Ajax
      */
-    protected function jaxon(): Jaxon
+    protected function jaxon(): Ajax
     {
         return $this->jaxon ?: ($this->jaxon = jaxon());
     }

@@ -48,8 +48,7 @@ trait PluginTrait
                 $c->g(MinifierInterface::class));
         });
         $this->set(CodeGenerator::class, function($c) {
-            $sVersion = $c->g(Jaxon::class)->getVersion();
-            return new CodeGenerator($sVersion, $c->g(Container::class), $c->g(PluginManager::class),
+            return new CodeGenerator(Jaxon::VERSION, $c->g(Container::class), $c->g(PluginManager::class),
                 $c->g(TemplateEngine::class));
         });
         // JQuery response plugin

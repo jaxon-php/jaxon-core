@@ -12,7 +12,6 @@
 
 namespace Jaxon\App;
 
-use Jaxon\Jaxon;
 use Jaxon\App\Config\ConfigManager;
 use Jaxon\App\I18n\Translator;
 use Jaxon\Exception\SetupException;
@@ -39,13 +38,11 @@ class App
     /**
      * The class constructor
      *
-     * @param Jaxon $jaxon
      * @param ConfigManager $xConfigManager
      * @param Translator $xTranslator
      */
-    public function __construct(Jaxon $jaxon, ConfigManager $xConfigManager, Translator $xTranslator)
+    public function __construct(ConfigManager $xConfigManager, Translator $xTranslator)
     {
-        $this->jaxon = $jaxon;
         $this->xConfigManager = $xConfigManager;
         $this->xTranslator = $xTranslator;
     }

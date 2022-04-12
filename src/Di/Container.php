@@ -1,9 +1,9 @@
 <?php
 
 /**
- * Container.php - Jaxon data container
+ * Container.php - Jaxon DI container
  *
- * Provide container service for Jaxon utils class instances.
+ * Provide container service for Jaxon classes.
  *
  * @package jaxon-core
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
@@ -14,7 +14,7 @@
 
 namespace Jaxon\Di;
 
-use Jaxon\Jaxon;
+use Jaxon\App\Ajax;
 use Jaxon\App\Session\SessionInterface;
 use Pimple\Container as PimpleContainer;
 use Pimple\Exception\UnknownIdentifierException;
@@ -56,15 +56,15 @@ class Container extends PimpleContainer implements LoggerAwareInterface
     /**
      * The class constructor
      */
-    public function __construct(Jaxon $jaxon)
+    public function __construct(Ajax $jaxon)
     {
         parent::__construct();
 
         // Set the default logger
         $this->setLogger(new NullLogger());
 
-        // Save the Jaxon and Container instances
-        $this->val(Jaxon::class, $jaxon);
+        // Save the Ajax and Container instances
+        $this->val(Ajax::class, $jaxon);
         $this->val(Container::class, $this);
         // Template directory
         $sTemplateDir = realpath(__DIR__ . '/../../templates');
