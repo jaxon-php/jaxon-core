@@ -123,7 +123,7 @@ trait RegisterTrait
             {
                 // Set the protected attributes of the object
                 $cSetter = function($c, $sClassName) {
-                    $this->helper = new CallableClassHelper($c, $sClassName);
+                    $this->xCallableClassHelper = new CallableClassHelper($c, $sClassName);
                     $this->response = $c->getResponse();
                 };
                 // Can now access protected attributes

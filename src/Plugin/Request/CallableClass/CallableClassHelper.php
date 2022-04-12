@@ -14,10 +14,9 @@
 
 namespace Jaxon\Plugin\Request\CallableClass;
 
-use Jaxon\App\Session\SessionInterface;
 use Jaxon\Di\Container;
+use Jaxon\App\Session\SessionInterface;
 use Jaxon\Exception\SetupException;
-use Jaxon\Request\Factory\ParameterFactory;
 use Jaxon\Request\Factory\RequestFactory;
 use Jaxon\Request\Handler\UploadHandler;
 use Jaxon\Ui\View\ViewRenderer;
@@ -28,53 +27,48 @@ class CallableClassHelper
     /**
      * @var RequestFactory
      */
-    public $request;
-
-    /**
-     * @var ParameterFactory
-     */
-    public $parameter;
+    public $xRequestFactory;
 
     /**
      * @var ViewRenderer
      */
-    public $view;
+    public $xViewRenderer;
 
     /**
      * @var LoggerInterface
      */
-    public $logger;
+    public $xLogger;
 
     /**
      * @var UploadHandler
      */
-    public $upload;
+    public $xUploadHandler;
 
     /**
      * @var CallableRegistry
      */
-    public $registry;
+    public $xCallableRegistry;
 
     /**
      * @var SessionInterface
      */
-    public $session;
+    public $xSessionManager;
 
     /**
      * The constructor
      *
      * @param Container $di
      * @param string $sClassName
+     *
      * @throws SetupException
      */
     public function __construct(Container $di, string $sClassName)
     {
-        $this->request = $di->getFactory()->request($sClassName);
-        $this->parameter = $di->getFactory()->parameter();
-        $this->registry = $di->getCallableRegistry();
-        $this->view = $di->getViewRenderer();
-        $this->logger = $di->getLogger();
-        $this->upload = $di->getUploadHandler();
-        $this->session = $di->getSessionManager();
+        $this->xRequestFactory = $di->getFactory()->request($sClassName);
+        $this->xCallableRegistry = $di->getCallableRegistry();
+        $this->xViewRenderer = $di->getViewRenderer();
+        $this->xLogger = $di->getLogger();
+        $this->xUploadHandler = $di->getUploadHandler();
+        $this->xSessionManager = $di->getSessionManager();
     }
 }

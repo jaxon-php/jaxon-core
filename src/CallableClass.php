@@ -7,7 +7,6 @@ use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\Request\CallableClass\CallableClassHelper;
 use Jaxon\Plugin\Response\DataBag\DataBagContext;
 use Jaxon\Plugin\Response\JQuery\DomSelector;
-use Jaxon\Request\Factory\ParameterFactory;
 use Jaxon\Request\Factory\RequestFactory;
 use Jaxon\Response\Response;
 use Jaxon\Ui\View\ViewRenderer;
@@ -16,46 +15,14 @@ use Psr\Log\LoggerInterface;
 class CallableClass
 {
     /**
-     * @var CallableClassHelper
-     */
-    protected $helper = null;
-
-    /**
-     * The Jaxon response returned by all classes methods
-     *
      * @var Response
      */
     protected $response = null;
 
     /**
-     * Get the view renderer
-     *
-     * @return ViewRenderer
+     * @var CallableClassHelper
      */
-    public function view(): ViewRenderer
-    {
-        return $this->helper->view;
-    }
-
-    /**
-     * Get the session manager
-     *
-     * @return SessionInterface
-     */
-    public function session(): SessionInterface
-    {
-        return $this->helper->session;
-    }
-
-    /**
-     * Get the logger
-     *
-     * @return LoggerInterface
-     */
-    public function logger(): LoggerInterface
-    {
-        return $this->helper->logger;
-    }
+    protected $xCallableClassHelper = null;
 
     /**
      * Get an instance of a Jaxon class by name
@@ -67,8 +34,12 @@ class CallableClass
      */
     public function cl(string $sName)
     {
-        // Find the class instance
-        return $this->helper->registry->getCallableObject($sName)->getRegisteredObject();
+        $xCallableClass = $this->xCallableClassHelper->xCallableRegistry->getCallableObject($sName);
+        if($xCallableClass === null)
+        {
+            return null;
+        }
+        return $xCallableClass->getRegisteredObject();
     }
 
     /**
@@ -78,17 +49,37 @@ class CallableClass
      */
     public function rq(): RequestFactory
     {
-        return $this->helper->request;
+        return $this->xCallableClassHelper->xRequestFactory;
     }
 
     /**
-     * Get the parameter factory.
+     * Get the logger
      *
-     * @return ParameterFactory
+     * @return LoggerInterface
      */
-    public function pm(): ParameterFactory
+    public function logger(): LoggerInterface
     {
-        return $this->helper->pm;
+        return $this->xCallableClassHelper->xLogger;
+    }
+
+    /**
+     * Get the view renderer
+     *
+     * @return ViewRenderer
+     */
+    public function view(): ViewRenderer
+    {
+        return $this->xCallableClassHelper->xViewRenderer;
+    }
+
+    /**
+     * Get the session manager
+     *
+     * @return SessionInterface
+     */
+    public function session(): SessionInterface
+    {
+        return $this->xCallableClassHelper->xSessionManager;
     }
 
     /**
@@ -98,7 +89,7 @@ class CallableClass
      */
     public function files(): array
     {
-        return $this->helper->upload->files();
+        return $this->xCallableClassHelper->xUploadHandler->files();
     }
 
     /**
