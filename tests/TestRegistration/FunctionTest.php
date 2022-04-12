@@ -4,18 +4,16 @@ namespace Jaxon\Tests\TestRegistration;
 
 require_once __DIR__ . '/../src/functions.php';
 
-use Jaxon\Jaxon;
-use Jaxon\Request\Plugin\CallableFunction\CallableFunction;
-use Jaxon\Request\Plugin\CallableFunction\CallableFunctionPlugin;
 use Jaxon\Exception\SetupException;
+use Jaxon\Jaxon;
+use Jaxon\Plugin\Request\CallableFunction\CallableFunction;
+use Jaxon\Plugin\Request\CallableFunction\CallableFunctionPlugin;
 use Jaxon\Utils\Http\UriException;
 use PHPUnit\Framework\TestCase;
 use Sample;
-
+use function jaxon;
 use function strlen;
 use function trim;
-use function file_get_contents;
-use function jaxon;
 
 final class FunctionTest extends TestCase
 {
@@ -44,7 +42,6 @@ final class FunctionTest extends TestCase
             'class' => Sample::class,
             'include' => __DIR__ . '/../src/classes.php',
         ]);
-
         $this->xPlugin = jaxon()->di()->getCallableFunctionPlugin();
     }
 
@@ -135,7 +132,7 @@ final class FunctionTest extends TestCase
         $_SERVER['REQUEST_URI'] = 'http://example.test/path';
 
         $sJsCode = jaxon()->getScript(true, true);
-        $this->assertEquals(1352, strlen(trim($sJsCode)));
+        $this->assertEquals(1376, strlen(trim($sJsCode)));
         // $this->assertEquals(file_get_contents(__DIR__ . '/../src/js/lib.js'), $sJsCode);
         $this->assertEquals(32, strlen(jaxon()->di()->getCodeGenerator()->getHash()));
 
@@ -157,11 +154,11 @@ final class FunctionTest extends TestCase
         // This URI will be parsed by the URI detector
         $_SERVER['REQUEST_URI'] = 'http://example.test/path';
         $sJsCode = jaxon()->getScript(true, true);
-        $this->assertEquals(1533, strlen(trim($sJsCode)));
+        $this->assertEquals(1558, strlen(trim($sJsCode)));
         $this->assertEquals(32, strlen(jaxon()->di()->getCodeGenerator()->getHash()));
 
         $sJsCode = trim(jaxon()->getCss() . "\n" . jaxon()->getJs()) . jaxon()->getScript();
-        $this->assertEquals(1533, strlen(trim($sJsCode)));
+        $this->assertEquals(1558, strlen(trim($sJsCode)));
 
         unset($_SERVER['REQUEST_URI']);
     }

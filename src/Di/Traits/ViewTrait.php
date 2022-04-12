@@ -2,14 +2,20 @@
 
 namespace Jaxon\Di\Traits;
 
+use Jaxon\App\Config\ConfigManager;
+use Jaxon\App\Dialog\Library\DialogLibraryHelper;
+use Jaxon\App\Dialog\Library\DialogLibraryManager;
+use Jaxon\App\I18n\Translator;
+use Jaxon\App\View\PaginationRenderer;
+use Jaxon\App\View\TemplateView;
+use Jaxon\App\View\ViewRenderer;
 use Jaxon\Di\Container;
-use Jaxon\Ui\Dialogs\DialogFacade;
-use Jaxon\Ui\Pagination\Paginator;
-use Jaxon\Ui\Pagination\PaginationRenderer;
-use Jaxon\Ui\Template\TemplateView;
-use Jaxon\Ui\View\ViewManager;
-use Jaxon\Ui\View\ViewRenderer;
+use Jaxon\Request\Call\Paginator;
 use Jaxon\Utils\Template\TemplateEngine;
+
+use function call_user_func;
+use function rtrim;
+use function trim;
 
 trait ViewTrait
 {
@@ -20,28 +26,21 @@ trait ViewTrait
      */
     private function registerViews()
     {
-        // Dialog Facade
-        $this->set(DialogFacade::class, function($c) {
-            return new DialogFacade($c->g(Container::class));
-        });
-        // View Manager
-        $this->set(ViewManager::class, function($c) {
-            $xViewManager = new ViewManager($this);
+        // View Renderer
+        $this->set(ViewRenderer::class, function($c) {
+            $xViewRenderer = new ViewRenderer($c->g(Container::class));
             // Add the default view renderer
-            $xViewManager->addRenderer('jaxon', function($di) {
+            $xViewRenderer->addRenderer('jaxon', function($di) {
                 return new TemplateView($di->g(TemplateEngine::class));
             });
             $sTemplateDir = rtrim(trim($c->g('jaxon.core.dir.template')), '/\\');
             $sPaginationDir = $sTemplateDir . DIRECTORY_SEPARATOR . 'pagination';
             // By default, render pagination templates with Jaxon.
-            $xViewManager->addNamespace('jaxon', $sTemplateDir, '.php', 'jaxon');
-            $xViewManager->addNamespace('pagination', $sPaginationDir, '.php', 'jaxon');
-            return $xViewManager;
+            $xViewRenderer->addNamespace('jaxon', $sTemplateDir, '.php', 'jaxon');
+            $xViewRenderer->addNamespace('pagination', $sPaginationDir, '.php', 'jaxon');
+            return $xViewRenderer;
         });
-        // View Renderer
-        $this->set(ViewRenderer::class, function($c) {
-            return new ViewRenderer($c->g(ViewManager::class));
-        });
+
         // Pagination Paginator
         $this->set(Paginator::class, function($c) {
             return new Paginator($c->g(PaginationRenderer::class));
@@ -50,30 +49,46 @@ trait ViewTrait
         $this->set(PaginationRenderer::class, function($c) {
             return new PaginationRenderer($c->g(ViewRenderer::class));
         });
+
+        // Dialog library manager
+        $this->set(DialogLibraryManager::class, function($c) {
+            return new DialogLibraryManager($c->g(Container::class), $c->g(ConfigManager::class), $c->g(Translator::class));
+        });
     }
 
     /**
-     * Get the dialog wrapper
+     * Register a javascript dialog library adapter.
      *
-     * @return DialogFacade
-     */
-    public function getDialog(): DialogFacade
-    {
-        return $this->g(DialogFacade::class);
-    }
-
-    /**
-     * Get the view manager
+     * @param string $sClass
      *
-     * @return ViewManager
+     * @return void
      */
-    public function getViewManager(): ViewManager
+    public function registerDialogLibrary(string $sClass)
     {
-        return $this->g(ViewManager::class);
+        $this->set($sClass, function($c) use($sClass) {
+            // Set the protected attributes of the library
+            $cSetter = function() use($c) {
+                $this->xHelper = new DialogLibraryHelper($this, $c->g(ConfigManager::class), $c->g(TemplateEngine::class));
+            };
+            // Can now access protected attributes
+            $xLibrary = $c->make($sClass);
+            call_user_func($cSetter->bindTo($xLibrary, $xLibrary));
+            return $xLibrary;
+        });
     }
 
     /**
-     * Get the view facade
+     * Get the dialog library manager
+     *
+     * @return DialogLibraryManager
+     */
+    public function getDialogLibraryManager(): DialogLibraryManager
+    {
+        return $this->g(DialogLibraryManager::class);
+    }
+
+    /**
+     * Get the view renderer
      *
      * @return ViewRenderer
      */

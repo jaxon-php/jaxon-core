@@ -2,16 +2,16 @@
 
 namespace Jaxon\Plugin\Code;
 
-use Jaxon\Config\ConfigManager;
+use Jaxon\App\Config\ConfigManager;
 use Jaxon\Plugin\Plugin;
 use Jaxon\Request\Handler\ParameterReader;
 use Jaxon\Utils\Http\UriException;
 
-use function rtrim;
+use function file_put_contents;
 use function is_dir;
 use function is_file;
 use function is_writable;
-use function file_put_contents;
+use function rtrim;
 
 class AssetManager
 {

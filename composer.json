@@ -3,11 +3,11 @@
     "type": "library",
     "description": "Jaxon is an open source PHP library for easily creating Ajax web applications",
     "authors": [
+        {"name": "Thierry Feuzeu"},
         {"name": "Jared White"},
         {"name": "J. Max Wilson"},
         {"name": "Joseph Woolley"},
-        {"name": "Steffen Konerow"},
-        {"name": "Thierry Feuzeu"}
+        {"name": "Steffen Konerow"}
     ],
     "homepage": "https://www.jaxon-php.org",
     "license": "BSD-3-Clause",
@@ -19,8 +19,11 @@
     "require": {
         "php": ">=7.1",
         "ext-json": "*",
-        "psr/log": ">=1.0.0",
-        "psr/container": ">=1.0.0",
+        "psr/log": "^1.0",
+        "psr/container": "^1.0",
+        "psr/http-message": "^1.0",
+        "psr/http-server-handler": "^1.0",
+        "psr/http-server-middleware": "^1.0",
         "pimple/pimple": "^3.0",
         "nyholm/psr7": "^1.5",
         "nyholm/psr7-server": "^1.0",

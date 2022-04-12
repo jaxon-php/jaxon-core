@@ -2,6 +2,10 @@
 
 namespace Jaxon\Response;
 
+use Nyholm\Psr7\Factory\Psr17Factory;
+use Nyholm\Psr7\Stream;
+use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
+
 use function addslashes;
 use function array_reduce;
 use function json_encode;
@@ -9,6 +13,11 @@ use function json_encode;
 class UploadResponse implements ResponseInterface
 {
     use Traits\CommandTrait;
+
+    /**
+     * @var Psr17Factory
+     */
+    protected $xPsr17Factory;
 
     /**
      * The path to the uploaded file
@@ -31,8 +40,16 @@ class UploadResponse implements ResponseInterface
      */
     private $aDebugMessages = [];
 
-    public function __construct(string $sUploadedFile, string $sErrorMessage = '')
+    /**
+     * The constructor
+     *
+     * @param Psr17Factory $xPsr17Factory
+     * @param string $sUploadedFile
+     * @param string $sErrorMessage
+     */
+    public function __construct(Psr17Factory $xPsr17Factory, string $sUploadedFile, string $sErrorMessage = '')
     {
+        $this->xPsr17Factory = $xPsr17Factory;
         $this->sUploadedFile = $sUploadedFile;
         $this->sErrorMessage = $sErrorMessage;
     }
@@ -95,7 +112,18 @@ class UploadResponse implements ResponseInterface
 <script>
     res = ' . $sResult . $sConsoleLog . '
 </script>
-</html>
-';
+</html>';
+    }
+
+    /**
+     * Convert this response to a PSR7 response object
+     *
+     * @return PsrResponseInterface
+     */
+    public function toPsr(): PsrResponseInterface
+    {
+        return $this->xPsr17Factory->createResponse(($this->sUploadedFile) ? 200 : 500)
+            ->withHeader('content-type', $this->getContentType())
+            ->withBody(Stream::create($this->getOutput()));
     }
 }

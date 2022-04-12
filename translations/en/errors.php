@@ -9,6 +9,7 @@ return [
         ],
         'class' => [
             'invalid' => "Unable to find class with name :name.",
+            'implements' => "The class :name does not implement the interface :interface.",
         ],
         'response' => [
             'result.invalid' => "An invalid response was returned while processing this request.",
@@ -23,6 +24,7 @@ return [
         ],
         'request' => [
             'conversion' => "The incoming Jaxon data could not be converted from UTF-8.",
+            'plugin' => "Jaxon failed to find a plugin to process the request.",
         ],
         'mismatch' => [
             'content-types' => "Cannot mix content types in a single response: :type",
@@ -58,6 +60,9 @@ return [
         'magic' => [
             'get' => "Trying to read unknown property :name with magic property __get at line :line in file :file.",
             'set' => "Trying to write unknown property :name with magic property __set at line :line in file :file.",
+        ],
+        'dialog' => [
+            'library' => "There is no :type library with name :name",
         ],
     ],
 ];

@@ -20,7 +20,8 @@ class PackageTest extends TestCase
         jaxon()->setOption('core.prefix.class', '');
         jaxon()->setOption('core.request.uri', 'http://example.test/path');
         jaxon()->registerPackage(TwitterPackage::class);
-        jaxon()->registerPackage(SamplePackage::class);
+        jaxon()->registerPackage(SamplePackage::class,
+            ['option1' => 'value1', 'option2' => ['option3' => 'value3']]);
     }
 
     /**
@@ -45,6 +46,17 @@ class PackageTest extends TestCase
         $xSamplePackage->ready();
         $sScript = jaxon()->getScript();
         $this->assertStringContainsString('SamplePackageClass = {}', $sScript);
+    }
+
+    public function testPackageOptions()
+    {
+        $xPackageConfig = jaxon()->di()->getPackageConfig(SamplePackage::class);
+        $this->assertEquals('value1', $xPackageConfig->getOption('option1'));
+        $this->assertEquals('value3', $xPackageConfig->getOption('option2.option3'));
+
+        $xPackage = jaxon()->di()->g(SamplePackage::class);
+        $this->assertEquals('value1', $xPackage->getOption('option1'));
+        $this->assertEquals('value3', $xPackage->getOption('option2.option3'));
     }
 
     /**
@@ -77,7 +89,7 @@ class PackageTest extends TestCase
     public function testRegisterInvalidPackage()
     {
         require_once __DIR__ . '/../src/sample.php';
-        // Register a class which is not a plugin as a plugin.
+        // Register a class which is not a package as a package.
         $this->expectException(SetupException::class);
         jaxon()->registerPackage('Sample');
     }
@@ -92,5 +104,17 @@ class PackageTest extends TestCase
     public function testGetInvalidPackage()
     {
         $this->assertNull(jaxon()->package('Sample'));
+    }
+
+    public function testRegisterUnknownPackage()
+    {
+        // Register a class which doesn't exist.
+        $this->expectException(SetupException::class);
+        jaxon()->registerPackage('UnknownPackage');
+    }
+
+    public function testGetUnknownPackage()
+    {
+        $this->assertNull(jaxon()->package('UnknownPackage'));
     }
 }

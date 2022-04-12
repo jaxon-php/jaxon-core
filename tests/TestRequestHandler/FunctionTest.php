@@ -18,6 +18,10 @@ class FunctionTest extends TestCase
     {
         jaxon()->register(Jaxon::CALLABLE_FUNCTION, 'my_first_function',
             __DIR__ . '/../src/first.php');
+        jaxon()->register(Jaxon::CALLABLE_FUNCTION, 'my_second_function', [
+            'alias' => 'my_alias_function',
+            'include' => __DIR__ . '/../src/functions.php',
+        ]);
         // Register a class method as a function
         jaxon()->register(Jaxon::CALLABLE_FUNCTION, 'myMethod', [
             'alias' => 'my_third_function',
@@ -52,6 +56,7 @@ class FunctionTest extends TestCase
         $this->assertTrue(jaxon()->di()->getCallableFunctionPlugin()->canProcessRequest(jaxon()->di()->getRequest()));
         $this->assertFalse(jaxon()->di()->getCallableClassPlugin()->canProcessRequest(jaxon()->di()->getRequest()));
         $this->assertNotNull(jaxon()->di()->getCallableFunctionPlugin()->processRequest());
+        $this->assertCount(1, jaxon()->getResponse()->getCommands());
     }
 
     /**
@@ -71,6 +76,26 @@ class FunctionTest extends TestCase
         $this->assertTrue(jaxon()->di()->getCallableFunctionPlugin()->canProcessRequest(jaxon()->di()->getRequest()));
         $this->assertFalse(jaxon()->di()->getCallableClassPlugin()->canProcessRequest(jaxon()->di()->getRequest()));
         $this->assertNotNull(jaxon()->di()->getCallableFunctionPlugin()->processRequest());
+        $this->assertCount(1, jaxon()->getResponse()->getCommands());
+    }
+
+    /**
+     * @throws RequestException
+     */
+    public function testRequestToFunctionWithoutReturn()
+    {
+        // The server request
+        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
+            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
+                'jxnfun' => 'my_alias_function',
+                'jxnargs' => [],
+            ])->withMethod('POST');
+        });
+
+        $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
+        // The function returns no data
+        $this->assertNull(jaxon()->di()->getCallableFunctionPlugin()->processRequest());
+        $this->assertCount(1, jaxon()->getResponse()->getCommands());
     }
 
     /**

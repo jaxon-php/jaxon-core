@@ -2,16 +2,12 @@
 
 namespace Jaxon\Tests\TestRegistration;
 
-use Jaxon\Jaxon;
-use Jaxon\Request\Plugin\CallableClass\CallableClassPlugin;
-use Jaxon\Request\Plugin\CallableClass\CallableDirPlugin;
-use Jaxon\Request\Plugin\CallableClass\CallableObject;
 use Jaxon\Exception\SetupException;
+use Jaxon\Jaxon;
+use Jaxon\Plugin\Request\CallableClass\CallableClassPlugin;
 use PHPUnit\Framework\TestCase;
-
-use function strlen;
-use function file_get_contents;
 use function jaxon;
+use function strlen;
 
 class RegistrationTest extends TestCase
 {
@@ -165,5 +161,16 @@ class RegistrationTest extends TestCase
         // Register a class with an incorrect plugin id.
         $this->expectException(SetupException::class);
         jaxon()->register('PluginNotFound', 'Sample');
+    }
+
+    /**
+     * @throws SetupException
+     */
+    public function testUnknownCallableClass()
+    {
+        // Register a class that does not exist.
+        jaxon()->register(Jaxon::CALLABLE_CLASS, 'UnknownClass');
+        $this->expectException(SetupException::class);
+        $this->xPlugin->getCallable('UnknownClass');
     }
 }

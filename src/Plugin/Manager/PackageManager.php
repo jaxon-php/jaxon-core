@@ -15,14 +15,13 @@
 namespace Jaxon\Plugin\Manager;
 
 use Jaxon\Jaxon;
-use Jaxon\Config\ConfigManager;
+use Jaxon\App\Config\ConfigManager;
+use Jaxon\App\I18n\Translator;
+use Jaxon\App\View\ViewRenderer;
 use Jaxon\Di\Container;
 use Jaxon\Exception\SetupException;
-use Jaxon\Plugin\Code\CodeGenerator;
 use Jaxon\Plugin\Package;
-use Jaxon\Ui\View\ViewManager;
 use Jaxon\Utils\Config\Config;
-use Jaxon\Utils\Translation\Translator;
 
 use function is_array;
 use function is_integer;
@@ -48,16 +47,9 @@ class PackageManager
     protected $xConfigManager;
 
     /**
-     * @var ViewManager
+     * @var ViewRenderer
      */
-    protected $xViewManager;
-
-    /**
-     * The code generator
-     *
-     * @var CodeGenerator
-     */
-    private $xCodeGenerator;
+    protected $xViewRenderer;
 
     /**
      * @var Translator
@@ -70,18 +62,16 @@ class PackageManager
      * @param Container $di
      * @param PluginManager $xPluginManager
      * @param ConfigManager $xConfigManager
-     * @param ViewManager $xViewManager
-     * @param CodeGenerator $xCodeGenerator
+     * @param ViewRenderer $xViewRenderer
      * @param Translator $xTranslator
      */
     public function __construct(Container $di, PluginManager $xPluginManager, ConfigManager $xConfigManager,
-        ViewManager $xViewManager, CodeGenerator $xCodeGenerator, Translator $xTranslator)
+        ViewRenderer $xViewRenderer, Translator $xTranslator)
     {
         $this->di = $di;
         $this->xPluginManager = $xPluginManager;
         $this->xConfigManager = $xConfigManager;
-        $this->xViewManager = $xViewManager;
-        $this->xCodeGenerator = $xCodeGenerator;
+        $this->xViewRenderer = $xViewRenderer;
         $this->xTranslator = $xTranslator;
     }
 
@@ -164,7 +154,7 @@ class PackageManager
         // Register the view namespaces
         // Note: the $xUserConfig can provide a "template" option, which is used to customize
         // the user defined view namespaces. That's why it is needed here.
-        $this->xViewManager->addNamespaces($xConfig, $xUserConfig);
+        $this->xViewRenderer->addNamespaces($xConfig, $xUserConfig);
         // Save items in the DI container
         $this->updateContainer($xConfig);
     }
@@ -221,7 +211,7 @@ class PackageManager
         // Register the declarations in the package config.
         $this->registerItemsFromConfig($xAppConfig, $xUserConfig);
         // Register the package as a code generator.
-        $this->xCodeGenerator->addGenerator($sClassName, 500);
+        $this->xPluginManager->addCodeGenerator($sClassName, 500);
     }
 
     /**

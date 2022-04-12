@@ -1,7 +1,9 @@
 <?php
 
 /**
- * Callbacks.php - Jaxon request callbacks
+ * Callbacks.php
+ *
+ * Jaxon request callback manager
  *
  * @package jaxon-core
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
@@ -11,8 +13,6 @@
  */
 
 namespace Jaxon\Request\Handler;
-
-use function count;
 
 class CallbackManager
 {
@@ -31,7 +31,7 @@ class CallbackManager
     protected $aBeforeCallbacks = [];
 
     /**
-     * The callbacks to run afteer processing the request
+     * The callbacks to run after processing the request
      *
      * @var callable[]
      */
@@ -134,7 +134,6 @@ class CallbackManager
     public function boot(callable $xCallable): CallbackManager
     {
         $this->aBootCallbacks[] = $xCallable;
-        $this->nBootCallbackAdded = true;
         return $this;
     }
 

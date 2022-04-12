@@ -2,15 +2,18 @@
 
 namespace Jaxon\Di\Traits;
 
-use Jaxon\Jaxon;
 use Jaxon\App\App;
 use Jaxon\App\Bootstrap;
-use Jaxon\Config\ConfigManager;
+use Jaxon\App\Config\ConfigEventManager;
+use Jaxon\App\Config\ConfigManager;
+use Jaxon\App\Dialog\Library\DialogLibraryManager;
+use Jaxon\App\I18n\Translator;
+use Jaxon\App\View\ViewRenderer;
+use Jaxon\Di\Container;
+use Jaxon\Jaxon;
 use Jaxon\Plugin\Manager\PackageManager;
 use Jaxon\Request\Handler\CallbackManager;
-use Jaxon\Ui\View\ViewRenderer;
 use Jaxon\Utils\Config\ConfigReader;
-use Jaxon\Utils\Translation\Translator;
 
 trait AppTrait
 {
@@ -34,8 +37,6 @@ trait AppTrait
             ],
             'response' => [
                 'send'              => true,
-                'merge.ap'          => true,
-                'merge.js'          => true,
             ],
             'debug' => [
                 'on'                => false,
@@ -43,7 +44,6 @@ trait AppTrait
             ],
             'process' => [
                 'exit'              => true,
-                'clean'             => false,
                 'timeout'           => 6000,
             ],
             'error' => [
@@ -79,14 +79,41 @@ trait AppTrait
      */
     private function registerApp()
     {
+        // Translator
+        $this->set(Translator::class, function($c) {
+            $xTranslator = new Translator();
+            $sResourceDir = rtrim(trim($c->g('jaxon.core.dir.translation')), '/\\');
+            // Load the Jaxon package translations
+            $xTranslator->loadTranslations($sResourceDir . '/en/errors.php', 'en');
+            $xTranslator->loadTranslations($sResourceDir . '/fr/errors.php', 'fr');
+            $xTranslator->loadTranslations($sResourceDir . '/es/errors.php', 'es');
+            // Load the config translations
+            $xTranslator->loadTranslations($sResourceDir . '/en/config.php', 'en');
+            $xTranslator->loadTranslations($sResourceDir . '/fr/config.php', 'fr');
+            $xTranslator->loadTranslations($sResourceDir . '/es/config.php', 'es');
+            // Load the upload translations
+            $xTranslator->loadTranslations($sResourceDir . '/en/upload.php', 'en');
+            $xTranslator->loadTranslations($sResourceDir . '/fr/upload.php', 'fr');
+            $xTranslator->loadTranslations($sResourceDir . '/es/upload.php', 'es');
+            return $xTranslator;
+        });
+        // Config Manager
+        $this->set(ConfigEventManager::class, function($c) {
+            return new ConfigEventManager($c->g(Container::class));
+        });
         $this->set(ConfigManager::class, function($c) {
-            $xConfigManager = new ConfigManager($c->g(ConfigReader::class), $c->g(Translator::class));
+            $xEventManager = $c->g(ConfigEventManager::class);
+            $xConfigManager = new ConfigManager($c->g(ConfigReader::class), $xEventManager, $c->g(Translator::class));
             $xConfigManager->setOptions($this->aConfig);
+            // It's important to call this after the $xConfigManager->setOptions(),
+            // because we don't want to trigger the events since the listeners cannot yet be instantiated.
+            $xEventManager->addListener(Translator::class);
+            $xEventManager->addListener(DialogLibraryManager::class);
             return $xConfigManager;
         });
         // Jaxon App
         $this->set(App::class, function($c) {
-            return new App($c->g(Jaxon::class), $c->g(ConfigManager::class), $c->g(Translator::class));
+            return new App($c->g(ConfigManager::class), $c->g(Translator::class));
         });
         // Jaxon App bootstrap
         $this->set(Bootstrap::class, function($c) {

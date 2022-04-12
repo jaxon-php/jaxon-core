@@ -2,29 +2,26 @@
 
 namespace Jaxon\Di\Traits;
 
-use Jaxon\Config\ConfigManager;
+use Jaxon\App\Config\ConfigManager;
+use Jaxon\App\Dialog\Library\DialogLibraryManager;
+use Jaxon\App\I18n\Translator;
 use Jaxon\Di\Container;
 use Jaxon\Plugin\Manager\PluginManager;
-use Jaxon\Request\Factory;
+use Jaxon\Plugin\Request\CallableClass\CallableRegistry;
+use Jaxon\Plugin\Response\DataBag\DataBagPlugin;
+use Jaxon\Request\Call\Paginator;
+use Jaxon\Request\Factory\Factory;
 use Jaxon\Request\Factory\ParameterFactory;
 use Jaxon\Request\Factory\RequestFactory;
 use Jaxon\Request\Handler\CallbackManager;
 use Jaxon\Request\Handler\ParameterReader;
 use Jaxon\Request\Handler\RequestHandler;
 use Jaxon\Request\Handler\UploadHandler;
-use Jaxon\Request\Plugin\CallableClass\CallableRegistry;
 use Jaxon\Request\Upload\NameGeneratorInterface;
 use Jaxon\Request\Upload\UploadManager;
 use Jaxon\Request\Validator;
 use Jaxon\Response\Manager\ResponseManager;
-use Jaxon\Response\Plugin\DataBag\DataBagPlugin;
-use Jaxon\Ui\Dialogs\DialogFacade;
-use Jaxon\Ui\Pagination\Paginator;
 use Jaxon\Utils\Http\UriDetector;
-use Jaxon\Utils\Translation\Translator;
-use Nyholm\Psr7\Factory\Psr17Factory;
-use Nyholm\Psr7Server\ServerRequestCreator;
-use Psr\Http\Message\ServerRequestInterface;
 
 use function bin2hex;
 use function random_bytes;
@@ -38,19 +35,6 @@ trait RequestTrait
      */
     private function registerRequests()
     {
-        // The server request
-        $this->set(ServerRequestCreator::class, function() {
-            $xRequestFactory = new Psr17Factory();
-            return new ServerRequestCreator(
-                $xRequestFactory, // ServerRequestFactory
-                $xRequestFactory, // UriFactory
-                $xRequestFactory, // UploadedFileFactory
-                $xRequestFactory  // StreamFactory
-            );
-        });
-        $this->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)->fromGlobals();
-        });
         // The parameter reader
         $this->set(ParameterReader::class, function($c) {
             return new ParameterReader($c->g(Container::class), $c->g(ConfigManager::class),
@@ -73,14 +57,6 @@ trait RequestTrait
                 public function random(int $nLength): string
                 {
                     return bin2hex(random_bytes((int)($nLength / 2)));
-                    /*try
-                    {
-                        return bin2hex(random_bytes((int)($nLength / 2)));
-                    }
-                    catch(Exception $e){}
-                    // Generate the name
-                    $sChars = '0123456789abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz';
-                    return substr(str_shuffle($sChars), 0, $nLength);*/
                 }
             };
         });
@@ -102,7 +78,7 @@ trait RequestTrait
         // Factory for requests to functions
         $this->set(RequestFactory::class, function($c) {
             $sPrefix = $c->g(ConfigManager::class)->getOption('core.prefix.function');
-            return new RequestFactory($sPrefix, $c->g(DialogFacade::class), $c->g(Paginator::class));
+            return new RequestFactory($sPrefix, $c->g(DialogLibraryManager::class), $c->g(Paginator::class));
         });
         // Parameter Factory
         $this->set(ParameterFactory::class, function() {
@@ -111,13 +87,13 @@ trait RequestTrait
     }
 
     /**
-     * Get the request
+     * Get the factory
      *
-     * @return ServerRequestInterface
+     * @return Factory
      */
-    public function getRequest(): ServerRequestInterface
+    public function getFactory(): Factory
     {
-        return $this->g(ServerRequestInterface::class);
+        return $this->g(Factory::class);
     }
 
     /**

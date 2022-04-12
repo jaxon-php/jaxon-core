@@ -22,11 +22,11 @@ namespace Jaxon\Request\Handler;
 
 use Jaxon\Di\Container;
 use Jaxon\Exception\RequestException;
-use Jaxon\Plugin\Contract\RequestHandlerInterface;
 use Jaxon\Plugin\Manager\PluginManager;
-use Jaxon\Response\ResponseInterface;
+use Jaxon\Plugin\RequestHandlerInterface;
+use Jaxon\Plugin\Response\DataBag\DataBagPlugin;
 use Jaxon\Response\Manager\ResponseManager;
-use Jaxon\Response\Plugin\DataBag\DataBagPlugin;
+use Jaxon\Response\ResponseInterface;
 
 use Exception;
 

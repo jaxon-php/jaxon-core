@@ -26,8 +26,6 @@
 
 namespace Jaxon\Plugin;
 
-use Jaxon\Plugin\Contract\CallableRegistryInterface;
-use Jaxon\Plugin\Contract\RequestHandlerInterface;
 use Jaxon\Request\Target;
 
 abstract class RequestPlugin extends Plugin implements CallableRegistryInterface, RequestHandlerInterface

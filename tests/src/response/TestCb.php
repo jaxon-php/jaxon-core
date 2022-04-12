@@ -1,6 +1,6 @@
 <?php
 
-use Jaxon\CallableClass;
+use Jaxon\App\CallableClass;
 use Jaxon\Response\Response;
 
 class TestCb extends CallableClass

@@ -2,19 +2,19 @@
 
 namespace Jaxon\Di\Traits;
 
-use Jaxon\Jaxon;
-use Jaxon\CallableClass;
-use Jaxon\Config\ConfigManager;
-use Jaxon\Request\Factory;
+use Jaxon\App\CallableClass;
+use Jaxon\App\Config\ConfigManager;
+use Jaxon\App\Dialog\Library\DialogLibraryManager;
+use Jaxon\App\I18n\Translator;
+use Jaxon\App\View\ViewRenderer;
+use Jaxon\Exception\SetupException;
+use Jaxon\Plugin\Request\CallableClass\CallableClassHelper;
+use Jaxon\Plugin\Request\CallableClass\CallableObject;
+use Jaxon\Request\Call\Paginator;
+use Jaxon\Request\Factory\Factory;
 use Jaxon\Request\Factory\RequestFactory;
 use Jaxon\Request\Handler\CallbackManager;
-use Jaxon\Request\Plugin\CallableClass\CallableObject;
-use Jaxon\Ui\Dialogs\DialogFacade;
-use Jaxon\Ui\Pagination\Paginator;
-use Jaxon\Ui\View\ViewRenderer;
 use Jaxon\Utils\Config\Config;
-use Jaxon\Exception\SetupException;
-use Jaxon\Utils\Translation\Translator;
 
 use ReflectionClass;
 use ReflectionException;
@@ -39,10 +39,6 @@ trait RegisterTrait
             {
                 $xCallableObject->configure($sName, $aOptions[$sName]);
             }
-        }
-        if(!isset($aOptions['functions']))
-        {
-            return;
         }
         // Functions options
         $aCallableOptions = [];
@@ -116,7 +112,7 @@ trait RegisterTrait
             $xConfigManager = $c->g(ConfigManager::class);
             $xCallable = $c->g($sCallableObject);
             $sJsClass = $xConfigManager->getOption('core.prefix.class') . $xCallable->getJsName() . '.';
-            return new RequestFactory($sJsClass, $c->g(DialogFacade::class), $c->g(Paginator::class));
+            return new RequestFactory($sJsClass, $c->g(DialogLibraryManager::class), $c->g(Paginator::class));
         });
 
         // Register the user class
@@ -127,9 +123,8 @@ trait RegisterTrait
             {
                 // Set the protected attributes of the object
                 $cSetter = function($c, $sClassName) {
-                    $this->jaxon = $c->g(Jaxon::class);
+                    $this->xCallableClassHelper = new CallableClassHelper($c, $sClassName);
                     $this->response = $c->getResponse();
-                    $this->_class = $sClassName;
                 };
                 // Can now access protected attributes
                 call_user_func($cSetter->bindTo($xRegisteredObject, $xRegisteredObject), $c, $sClassName);

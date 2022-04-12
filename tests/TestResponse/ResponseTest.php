@@ -2,15 +2,14 @@
 
 namespace Jaxon\Tests\TestResponse;
 
-use Jaxon\Jaxon;
 use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;
-use Jaxon\Response\Plugin\DataBag\DataBagPlugin;
-use Jaxon\Response\Plugin\JQuery\JQueryPlugin;
+use Jaxon\Jaxon;
+use Jaxon\Plugin\Response\DataBag\DataBagPlugin;
+use Jaxon\Plugin\Response\JQuery\JQueryPlugin;
 use Nyholm\Psr7Server\ServerRequestCreator;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
-
 use function jaxon;
 
 class ResponseTest extends TestCase

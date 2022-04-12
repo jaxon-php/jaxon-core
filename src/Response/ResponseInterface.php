@@ -2,6 +2,8 @@
 
 namespace Jaxon\Response;
 
+use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
+
 interface ResponseInterface
 {
     /**
@@ -67,4 +69,11 @@ interface ResponseInterface
      * @return string
      */
     public function getOutput(): string;
+
+    /**
+     * Convert this response to a PSR7 response object
+     *
+     * @return PsrResponseInterface
+     */
+    public function toPsr(): PsrResponseInterface;
 }

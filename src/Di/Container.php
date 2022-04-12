@@ -1,9 +1,9 @@
 <?php
 
 /**
- * Container.php - Jaxon data container
+ * Container.php - Jaxon DI container
  *
- * Provide container service for Jaxon utils class instances.
+ * Provide container service for Jaxon classes.
  *
  * @package jaxon-core
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
@@ -14,13 +14,13 @@
 
 namespace Jaxon\Di;
 
-use Jaxon\Jaxon;
+use Jaxon\App\Ajax;
+use Jaxon\App\Session\SessionInterface;
 use Pimple\Container as PimpleContainer;
 use Pimple\Exception\UnknownIdentifierException;
-use Psr\Container\ContainerInterface;
 use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
-
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
@@ -37,6 +37,7 @@ class Container extends PimpleContainer implements LoggerAwareInterface
     use LoggerAwareTrait;
 
     use Traits\AppTrait;
+    use Traits\PsrTrait;
     use Traits\RequestTrait;
     use Traits\ResponseTrait;
     use Traits\PluginTrait;
@@ -44,27 +45,26 @@ class Container extends PimpleContainer implements LoggerAwareInterface
     use Traits\RegisterTrait;
     use Traits\ViewTrait;
     use Traits\UtilTrait;
-    use Traits\SessionTrait;
 
     /**
      * The Dependency Injection Container
      *
      * @var ContainerInterface
      */
-    private $appContainer = null;
+    private $xContainer = null;
 
     /**
      * The class constructor
      */
-    public function __construct(Jaxon $jaxon)
+    public function __construct(Ajax $jaxon)
     {
         parent::__construct();
 
         // Set the default logger
         $this->setLogger(new NullLogger());
 
-        // Save the Jaxon and Container instances
-        $this->val(Jaxon::class, $jaxon);
+        // Save the Ajax and Container instances
+        $this->val(Ajax::class, $jaxon);
         $this->val(Container::class, $this);
         // Template directory
         $sTemplateDir = realpath(__DIR__ . '/../../templates');
@@ -84,13 +84,13 @@ class Container extends PimpleContainer implements LoggerAwareInterface
     private function registerAll()
     {
         $this->registerApp();
+        $this->registerPsr();
         $this->registerRequests();
         $this->registerResponses();
         $this->registerPlugins();
         $this->registerCallables();
         $this->registerViews();
         $this->registerUtils();
-        $this->registerSessions();
     }
 
     /**
@@ -98,19 +98,9 @@ class Container extends PimpleContainer implements LoggerAwareInterface
      *
      * @return LoggerInterface
      */
-    public function logger(): LoggerInterface
+    public function getLogger(): LoggerInterface
     {
         return $this->logger;
-    }
-
-    /**
-     * Get the container provided by the integrated framework
-     *
-     * @return ContainerInterface
-     */
-    public function getAppContainer(): ?ContainerInterface
-    {
-        return $this->appContainer;
     }
 
     /**
@@ -120,9 +110,9 @@ class Container extends PimpleContainer implements LoggerAwareInterface
      *
      * @return void
      */
-    public function setAppContainer(ContainerInterface $xContainer)
+    public function setContainer(ContainerInterface $xContainer)
     {
-        $this->appContainer = $xContainer;
+        $this->xContainer = $xContainer;
     }
 
     /**
@@ -146,7 +136,7 @@ class Container extends PimpleContainer implements LoggerAwareInterface
      */
     public function has(string $sClass): bool
     {
-        if($this->appContainer != null && $this->appContainer->has($sClass))
+        if($this->xContainer != null && $this->xContainer->has($sClass))
         {
             return true;
         }
@@ -177,9 +167,9 @@ class Container extends PimpleContainer implements LoggerAwareInterface
      */
     public function get(string $sClass)
     {
-        if($this->appContainer != null && $this->appContainer->has($sClass))
+        if($this->xContainer != null && $this->xContainer->has($sClass))
         {
-            return $this->appContainer->get($sClass);
+            return $this->xContainer->get($sClass);
         }
         return $this->offsetGet($sClass);
     }
@@ -226,7 +216,7 @@ class Container extends PimpleContainer implements LoggerAwareInterface
     }
 
     /**
-     * Create an instance of a class, getting the contructor parameters from the DI container
+     * Create an instance of a class, getting the constructor parameters from the DI container
      *
      * @param string|ReflectionClass $xClass    The class name or the reflection class
      *
@@ -240,8 +230,7 @@ class Container extends PimpleContainer implements LoggerAwareInterface
     {
         if(is_string($xClass))
         {
-            // Create the reflection class instance
-            $xClass = new ReflectionClass($xClass);
+            $xClass = new ReflectionClass($xClass); // Create the reflection class instance
         }
         if(!($xClass instanceof ReflectionClass))
         {
@@ -274,5 +263,27 @@ class Container extends PimpleContainer implements LoggerAwareInterface
         $this->set($sClass, function() use ($sClass) {
             return $this->make($sClass);
         });
+    }
+
+    /**
+     * Get the session manager
+     *
+     * @return SessionInterface|null
+     */
+    public function getSessionManager(): ?SessionInterface
+    {
+        return $this->h(SessionInterface::class) ? $this->g(SessionInterface::class) : null;
+    }
+
+    /**
+     * Set the session manager
+     *
+     * @param Closure $xClosure    A closure to create the session manager instance
+     *
+     * @return void
+     */
+    public function setSessionManager(Closure $xClosure)
+    {
+        $this->set(SessionInterface::class, $xClosure);
     }
 }

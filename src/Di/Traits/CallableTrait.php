@@ -2,18 +2,17 @@
 
 namespace Jaxon\Di\Traits;
 
-use Jaxon\Config\ConfigManager;
+use Jaxon\App\Config\ConfigManager;
+use Jaxon\App\I18n\Translator;
 use Jaxon\Di\Container;
+use Jaxon\Plugin\Request\CallableClass\CallableClassPlugin;
+use Jaxon\Plugin\Request\CallableClass\CallableRegistry;
+use Jaxon\Plugin\Request\CallableClass\CallableRepository;
+use Jaxon\Plugin\Request\CallableDir\CallableDirPlugin;
+use Jaxon\Plugin\Request\CallableFunction\CallableFunctionPlugin;
 use Jaxon\Request\Handler\ParameterReader;
-use Jaxon\Request\Plugin\CallableClass\CallableClassPlugin;
-use Jaxon\Request\Plugin\CallableClass\CallableDirPlugin;
-use Jaxon\Request\Plugin\CallableClass\CallableRegistry;
-use Jaxon\Request\Plugin\CallableClass\CallableRepository;
-use Jaxon\Request\Plugin\CallableFunction\CallableFunctionPlugin;
 use Jaxon\Request\Validator;
-use Jaxon\Response\Manager\ResponseManager;
 use Jaxon\Utils\Template\TemplateEngine;
-use Jaxon\Utils\Translation\Translator;
 
 trait CallableTrait
 {
@@ -61,7 +60,7 @@ trait CallableTrait
      *
      * @return CallableRegistry
      */
-    public function getClassRegistry(): CallableRegistry
+    public function getCallableRegistry(): CallableRegistry
     {
         return $this->g(CallableRegistry::class);
     }

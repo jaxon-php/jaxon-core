@@ -4,9 +4,9 @@ namespace Jaxon\Tests\TestRegistration;
 
 use Jaxon\Jaxon;
 use Jaxon\Exception\SetupException;
-use Jaxon\Request\Plugin\CallableClass\CallableClassPlugin;
-use Jaxon\Request\Plugin\CallableClass\CallableDirPlugin;
-use Jaxon\Request\Plugin\CallableClass\CallableObject;
+use Jaxon\Plugin\Request\CallableClass\CallableClassPlugin;
+use Jaxon\Plugin\Request\CallableClass\CallableObject;
+use Jaxon\Plugin\Request\CallableDir\CallableDirPlugin;
 use Jaxon\Tests\Ns\Ajax\ClassA;
 use Jaxon\Tests\Ns\Ajax\ClassB;
 use Jaxon\Tests\Ns\Ajax\ClassC;

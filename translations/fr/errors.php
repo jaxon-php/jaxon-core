@@ -9,6 +9,7 @@ return [
         ],
         'class' => [
             'invalid' => "La classe :name n'existe pas.",
+            'implements' => "La classe :name n'implémente pas l'interface :interface.",
         ],
         'response' => [
             'result.invalid' => "Une réponse invalide a été renvoyée lors du traitement de la requête.",
@@ -23,6 +24,7 @@ return [
         ],
         'request' => [
             'conversion' => "Les données Jaxon reçues n'ont pas pu être converties de l'UTF-8.",
+            'plugin' => "Jaxon n'a pas pu trouver un plugin pour traiter la requête.",
         ],
         'mismatch' => [
             'content-types' => "Il ne peut y avoir des types de contenu différents dans une seule réponse: :type",
@@ -58,6 +60,9 @@ return [
         'magic' => [
             'get' => "Accès à la propriété inconnue :name avec la surcharge magique __get à la ligne :line du fichier :file.",
             'set' => "Accès à la propriété inconnue :name avec la surcharge magique __set à la ligne :line du fichier :file.",
+        ],
+        'dialog' => [
+            'library' => "There is no :type library with name :name",
         ],
     ],
 ];

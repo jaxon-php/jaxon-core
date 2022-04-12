@@ -2,10 +2,10 @@
 
 namespace Jaxon\NsTests\DirC;
 
-use Jaxon\CallableClass;
+use Jaxon\App\CallableClass;
 use Jaxon\Exception\SetupException;
-use Jaxon\Response\Response;
 use Jaxon\NsTests\DirB\ClassB;
+use Jaxon\Response\Response;
 
 class ClassC extends CallableClass
 {

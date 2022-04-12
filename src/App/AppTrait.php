@@ -2,30 +2,37 @@
 
 namespace Jaxon\App;
 
-use Jaxon\Jaxon;
+use Jaxon\App\Session\SessionInterface;
+use Jaxon\App\View\ViewRenderer;
+use Jaxon\Exception\RequestException;
+use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\Package;
 use Jaxon\Request\Factory\RequestFactory;
 use Jaxon\Request\Handler\CallbackManager;
 use Jaxon\Response\ResponseInterface;
-use Jaxon\Session\SessionInterface;
-use Jaxon\Ui\View\ViewRenderer;
 use Jaxon\Utils\Http\UriException;
-use Jaxon\Exception\RequestException;
-use Jaxon\Exception\SetupException;
-
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 
 use Closure;
 
+use function jaxon;
 use function trim;
 
 trait AppTrait
 {
     /**
-     * @var Jaxon
+     * @var Ajax
      */
     protected $jaxon;
+
+    /**
+     * @return Ajax
+     */
+    protected function jaxon(): Ajax
+    {
+        return $this->jaxon ?: ($this->jaxon = jaxon());
+    }
 
     /**
      * Get the Jaxon application bootstrapper.
@@ -34,7 +41,7 @@ trait AppTrait
      */
     protected function bootstrap(): Bootstrap
     {
-        return $this->jaxon->di()->getBootstrap();
+        return $this->jaxon()->di()->getBootstrap();
     }
 
     /**
@@ -46,7 +53,7 @@ trait AppTrait
      */
     public function uri(string $sUri)
     {
-        $this->jaxon->setOption('core.request.uri', $sUri);
+        $this->jaxon()->setOption('core.request.uri', $sUri);
     }
 
     /**
@@ -56,7 +63,7 @@ trait AppTrait
      */
     public function ajaxResponse(): ResponseInterface
     {
-        return $this->jaxon->getResponse();
+        return $this->jaxon()->getResponse();
     }
 
     /**
@@ -66,7 +73,7 @@ trait AppTrait
      */
     public function getCharacterEncoding(): string
     {
-        return trim($this->jaxon->getOption('core.encoding', ''));
+        return trim($this->jaxon()->getOption('core.encoding', ''));
     }
 
     /**
@@ -76,20 +83,7 @@ trait AppTrait
      */
     public function getContentType(): string
     {
-        return $this->jaxon->di()->getResponseManager()->getContentType();
-    }
-
-    /**
-     * Get an instance of a registered class
-     *
-     * @param string $sClassName The class name
-     *
-     * @return object|null
-     * @throws SetupException
-     */
-    public function instance(string $sClassName)
-    {
-        return $this->jaxon->instance($sClassName);
+        return $this->jaxon()->di()->getResponseManager()->getContentType();
     }
 
     /**
@@ -102,7 +96,7 @@ trait AppTrait
      */
     public function request(string $sClassName): ?RequestFactory
     {
-        return $this->jaxon->request($sClassName);
+        return $this->jaxon()->request($sClassName);
     }
 
     /**
@@ -114,7 +108,7 @@ trait AppTrait
      */
     public function package(string $sClassName): ?Package
     {
-        return $this->jaxon->package($sClassName);
+        return $this->jaxon()->package($sClassName);
     }
 
     /**
@@ -124,7 +118,7 @@ trait AppTrait
      */
     public function callback(): CallbackManager
     {
-        return $this->jaxon->callback();
+        return $this->jaxon()->callback();
     }
 
     /**
@@ -134,7 +128,7 @@ trait AppTrait
      */
     public function canProcessRequest(): bool
     {
-        return $this->jaxon->canProcessRequest();
+        return $this->jaxon()->canProcessRequest();
     }
 
     /**
@@ -155,7 +149,7 @@ trait AppTrait
     public function processRequest()
     {
         // Process the jaxon request
-        $this->jaxon->processRequest();
+        $this->jaxon()->processRequest();
 
         // Return the response to the request
         return $this->httpResponse();
@@ -168,7 +162,7 @@ trait AppTrait
      */
     public function css(): string
     {
-        return $this->jaxon->getCss();
+        return $this->jaxon()->getCss();
     }
 
     /**
@@ -178,7 +172,7 @@ trait AppTrait
      */
     public function getCss(): string
     {
-        return $this->jaxon->getCss();
+        return $this->jaxon()->getCss();
     }
 
     /**
@@ -188,7 +182,7 @@ trait AppTrait
      */
     public function js(): string
     {
-        return $this->jaxon->getJs();
+        return $this->jaxon()->getJs();
     }
 
     /**
@@ -198,7 +192,7 @@ trait AppTrait
      */
     public function getJs(): string
     {
-        return $this->jaxon->getJs();
+        return $this->jaxon()->getJs();
     }
 
     /**
@@ -209,7 +203,7 @@ trait AppTrait
      */
     public function script(bool $bIncludeJs = false, bool $bIncludeCss = false): string
     {
-        return $this->jaxon->getScript($bIncludeJs, $bIncludeCss);
+        return $this->jaxon()->getScript($bIncludeJs, $bIncludeCss);
     }
 
     /**
@@ -220,7 +214,7 @@ trait AppTrait
      */
     public function getScript(bool $bIncludeJs = false, bool $bIncludeCss = false): string
     {
-        return $this->jaxon->getScript($bIncludeJs, $bIncludeCss);
+        return $this->jaxon()->getScript($bIncludeJs, $bIncludeCss);
     }
 
     /**
@@ -230,7 +224,7 @@ trait AppTrait
      */
     public function view(): ViewRenderer
     {
-        return $this->jaxon->view();
+        return $this->jaxon()->view();
     }
 
     /**
@@ -240,7 +234,7 @@ trait AppTrait
      */
     public function session(): SessionInterface
     {
-        return $this->jaxon->session();
+        return $this->jaxon()->session();
     }
 
     /**
@@ -250,7 +244,7 @@ trait AppTrait
      */
     public function logger(): LoggerInterface
     {
-        return $this->jaxon->di()->logger();
+        return $this->jaxon()->di()->getLogger();
     }
 
     /**
@@ -262,7 +256,7 @@ trait AppTrait
      */
     public function setLogger(LoggerInterface $logger)
     {
-        $this->jaxon->di()->setLogger($logger);
+        $this->jaxon()->di()->setLogger($logger);
     }
 
     /**
@@ -272,9 +266,9 @@ trait AppTrait
      *
      * @return void
      */
-    public function setAppContainer(ContainerInterface $xContainer)
+    public function setContainer(ContainerInterface $xContainer)
     {
-        $this->jaxon->di()->setAppContainer($xContainer);
+        $this->jaxon()->di()->setContainer($xContainer);
     }
 
     /**
@@ -289,7 +283,7 @@ trait AppTrait
      */
     public function addViewNamespace(string $sNamespace, string $sDirectory, string $sExtension, string $sRenderer)
     {
-        $this->jaxon->di()->getViewManager()->addNamespace($sNamespace, $sDirectory, $sExtension, $sRenderer);
+        $this->jaxon()->di()->getViewRenderer()->addNamespace($sNamespace, $sDirectory, $sExtension, $sRenderer);
     }
 
     /**
@@ -302,7 +296,7 @@ trait AppTrait
      */
     public function addViewRenderer(string $sId, Closure $xClosure)
     {
-        $this->jaxon->di()->getViewManager()->addRenderer($sId, $xClosure);
+        $this->jaxon()->di()->getViewRenderer()->addRenderer($sId, $xClosure);
     }
 
     /**
@@ -314,6 +308,6 @@ trait AppTrait
      */
     public function setSessionManager(Closure $xClosure)
     {
-        $this->jaxon->di()->setSessionManager($xClosure);
+        $this->jaxon()->di()->setSessionManager($xClosure);
     }
 }

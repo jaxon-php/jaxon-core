@@ -2,14 +2,25 @@
 
 namespace Jaxon\Tests\TestUi;
 
+require_once __DIR__ . '/../src/dialog.php';
+
 use Jaxon\Jaxon;
+use Jaxon\App\Dialog\Library\AlertLibrary;
+use Jaxon\Dialogs\Library\Bootbox\BootboxLibrary;
+use Jaxon\Dialogs\Library\Bootstrap\BootstrapLibrary;
+use Jaxon\Dialogs\Library\Noty\NotyLibrary;
+use Jaxon\Dialogs\Library\Toastr\ToastrLibrary;
 use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;
-use Jaxon\Dialogs\DialogPlugin;
+use Jaxon\Utils\Http\UriException;
 use Nyholm\Psr7Server\ServerRequestCreator;
-use Psr\Http\Message\ServerRequestInterface;
 use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\ServerRequestInterface;
 
+use Dialog;
+use TestDialogLibrary;
+
+use function get_class;
 use function jaxon;
 
 class DialogTest extends TestCase
@@ -20,8 +31,21 @@ class DialogTest extends TestCase
     public function setUp(): void
     {
         jaxon()->setOption('core.prefix.class', '');
-        jaxon()->register(Jaxon::CALLABLE_CLASS, 'Dialog', __DIR__ . '/../src/dialog.php');
-        jaxon()->registerPlugin(DialogPlugin::class, DialogPlugin::NAME);
+        jaxon()->setOption('core.request.uri', 'http://example.test/path');
+        jaxon()->setOption('dialogs.assets.include.all', true);
+        jaxon()->setOption('dialogs.toastr.options.closeButton', true);
+        jaxon()->setOption('dialogs.toastr.options.positionClass', 'toast-top-center');
+        jaxon()->setOption('dialogs.toastr.options.sampleArray', ['value']);
+        jaxon()->register(Jaxon::CALLABLE_CLASS, Dialog::class);
+        jaxon()->dialog()->registerLibrary(BootboxLibrary::class, BootboxLibrary::NAME);
+        jaxon()->dialog()->registerLibrary(BootstrapLibrary::class, BootstrapLibrary::NAME);
+        jaxon()->dialog()->registerLibrary(NotyLibrary::class, NotyLibrary::NAME);
+        jaxon()->dialog()->registerLibrary(ToastrLibrary::class, ToastrLibrary::NAME);
+        jaxon()->dialog()->registerLibrary(TestDialogLibrary::class, TestDialogLibrary::NAME);
+
+        // Register the template dir into the template renderer
+        jaxon()->template()->addNamespace('jaxon::dialogs',
+            dirname(__DIR__, 2) . '/vendor/jaxon-php/jaxon-dialogs/templates');
     }
 
     /**
@@ -31,6 +55,79 @@ class DialogTest extends TestCase
     {
         jaxon()->reset();
         parent::tearDown();
+    }
+
+    public function testDialogSettings()
+    {
+        $xDialogLibraryManager = jaxon()->di()->getDialogLibraryManager();
+        $this->assertEquals('', $xDialogLibraryManager->getQuestionLibrary()->getName());
+        $this->assertEquals(AlertLibrary::class, get_class($xDialogLibraryManager->getQuestionLibrary()));
+        $this->assertEquals(AlertLibrary::class, get_class($xDialogLibraryManager->getMessageLibrary()));
+        $this->assertEquals(null, $xDialogLibraryManager->getModalLibrary());
+
+        jaxon()->setOption('dialogs.default.modal', 'bootstrap');
+        jaxon()->setOption('dialogs.default.message', 'bootstrap');
+        jaxon()->setOption('dialogs.default.question', 'bootstrap');
+        $this->assertEquals(BootstrapLibrary::class, get_class($xDialogLibraryManager->getQuestionLibrary()));
+        $this->assertEquals(BootstrapLibrary::class, get_class($xDialogLibraryManager->getMessageLibrary()));
+        $this->assertEquals(BootstrapLibrary::class, get_class($xDialogLibraryManager->getModalLibrary()));
+
+        jaxon()->setOption('dialogs.default.modal', 'bootbox');
+        jaxon()->setOption('dialogs.default.message', 'bootbox');
+        jaxon()->setOption('dialogs.default.question', 'bootbox');
+        $this->assertEquals(BootboxLibrary::class, get_class($xDialogLibraryManager->getQuestionLibrary()));
+        $this->assertEquals(BootboxLibrary::class, get_class($xDialogLibraryManager->getMessageLibrary()));
+        $this->assertEquals(BootboxLibrary::class, get_class($xDialogLibraryManager->getModalLibrary()));
+    }
+
+    public function testDialogOptions()
+    {
+        $xDialogLibraryManager = jaxon()->di()->getDialogLibraryManager();
+        jaxon()->setOption('dialogs.default.message', 'toastr');
+        $xMessageLibrary = $xDialogLibraryManager->getMessageLibrary();
+        $this->assertEquals(ToastrLibrary::class, get_class($xMessageLibrary));
+        $this->assertTrue($xMessageLibrary->helper()->hasOption('options.closeButton'));
+        $this->assertIsArray($xMessageLibrary->helper()->getOption('options.sampleArray'));
+        $this->assertIsString($xMessageLibrary->helper()->getOption('options.positionClass'));
+        // Test dialog plugin stub methods
+        $xDialog = jaxon()->plugin('dialog');
+        $xDialog->setReturnCode(false);
+        $this->assertEquals('', $xDialog->getUri());
+        $this->assertEquals('', $xDialog->getSubdir());
+        $this->assertEquals('', $xDialog->getVersion());
+    }
+
+    public function testDialogJsCode()
+    {
+        $sJsCode = jaxon()->getJs();
+        $this->assertStringContainsString('bootbox.min.js', $sJsCode);
+        $this->assertStringContainsString('bootstrap-dialog.min.js', $sJsCode);
+        $this->assertStringContainsString('toastr.min.js', $sJsCode);
+    }
+
+    public function testDialogCssCode()
+    {
+        $sCssCode = jaxon()->getCss();
+        $this->assertStringContainsString('bootstrap-dialog.min.css', $sCssCode);
+        $this->assertStringContainsString('toastr.min.css', $sCssCode);
+    }
+
+    /**
+     * @throws UriException
+     */
+    public function testDialogScriptCode()
+    {
+        jaxon()->setOption('dialogs.default.modal', 'bootstrap');
+        jaxon()->setOption('dialogs.default.message', 'bootstrap');
+        jaxon()->setOption('dialogs.default.question', 'bootstrap');
+        $sScriptCode = jaxon()->getScript();
+        $this->assertStringContainsString('jaxon.dialogs = {}', $sScriptCode);
+        $this->assertStringContainsString('jaxon.dialogs.bootstrap', $sScriptCode);
+        $this->assertStringContainsString('jaxon.dialogs.bootbox', $sScriptCode);
+        $this->assertStringContainsString('jaxon.dialogs.toastr', $sScriptCode);
+        $this->assertStringContainsString('jaxon.command.handler.register', $sScriptCode);
+        $this->assertStringContainsString('jaxon.ajax.message', $sScriptCode);
+        $this->assertStringContainsString('jaxon.dialogs.toastr', $sScriptCode);
     }
 
     /**
@@ -50,8 +147,35 @@ class DialogTest extends TestCase
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
         jaxon()->di()->getRequestHandler()->processRequest();
 
-        $xResponse = jaxon()->getResponse();
-        $this->assertCount(1, $xResponse->getCommands());
+        $aCommands = jaxon()->getResponse()->getCommands();
+        $this->assertCount(1, $aCommands);
+        $this->assertEquals('al', $aCommands[0]['cmd']);
+    }
+
+    /**
+     * @throws RequestException
+     */
+    public function testDialogLibrarySuccess()
+    {
+        jaxon()->setOption('dialogs.default.modal', 'bootstrap');
+        jaxon()->setOption('dialogs.default.message', 'bootstrap');
+        jaxon()->setOption('dialogs.default.question', 'bootstrap');
+        // The server request
+        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
+            return $c->g(ServerRequestCreator::class)->fromGlobals()->withQueryParams([
+                'jxncls' => 'Dialog',
+                'jxnmthd' => 'success',
+                'jxnargs' => [],
+            ]);
+        });
+
+        $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
+        jaxon()->di()->getRequestHandler()->processRequest();
+
+        $aCommands = jaxon()->getResponse()->getCommands();
+        $this->assertCount(1, $aCommands);
+        $this->assertEquals('bootstrap.alert', $aCommands[0]['cmd']);
+        $this->assertEquals('bootstrap', $aCommands[0]['plg']);
     }
 
     /**
@@ -71,8 +195,35 @@ class DialogTest extends TestCase
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
         jaxon()->di()->getRequestHandler()->processRequest();
 
-        $xResponse = jaxon()->getResponse();
-        $this->assertCount(1, $xResponse->getCommands());
+        $aCommands = jaxon()->getResponse()->getCommands();
+        $this->assertCount(1, $aCommands);
+        $this->assertEquals('al', $aCommands[0]['cmd']);
+    }
+
+    /**
+     * @throws RequestException
+     */
+    public function testDialogLibraryWarning()
+    {
+        jaxon()->setOption('dialogs.default.modal', 'bootstrap');
+        jaxon()->setOption('dialogs.default.message', 'bootstrap');
+        jaxon()->setOption('dialogs.default.question', 'bootstrap');
+        // The server request
+        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
+            return $c->g(ServerRequestCreator::class)->fromGlobals()->withQueryParams([
+                'jxncls' => 'Dialog',
+                'jxnmthd' => 'warning',
+                'jxnargs' => [],
+            ]);
+        });
+
+        $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
+        jaxon()->di()->getRequestHandler()->processRequest();
+
+        $aCommands = jaxon()->getResponse()->getCommands();
+        $this->assertCount(1, $aCommands);
+        $this->assertEquals('bootstrap.alert', $aCommands[0]['cmd']);
+        $this->assertEquals('bootstrap', $aCommands[0]['plg']);
     }
 
     /**
@@ -92,8 +243,35 @@ class DialogTest extends TestCase
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
         jaxon()->di()->getRequestHandler()->processRequest();
 
-        $xResponse = jaxon()->getResponse();
-        $this->assertCount(1, $xResponse->getCommands());
+        $aCommands = jaxon()->getResponse()->getCommands();
+        $this->assertCount(1, $aCommands);
+        $this->assertEquals('al', $aCommands[0]['cmd']);
+    }
+
+    /**
+     * @throws RequestException
+     */
+    public function testDialogLibraryInfo()
+    {
+        jaxon()->setOption('dialogs.default.modal', 'bootstrap');
+        jaxon()->setOption('dialogs.default.message', 'bootstrap');
+        jaxon()->setOption('dialogs.default.question', 'bootstrap');
+        // The server request
+        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
+            return $c->g(ServerRequestCreator::class)->fromGlobals()->withQueryParams([
+                'jxncls' => 'Dialog',
+                'jxnmthd' => 'info',
+                'jxnargs' => [],
+            ]);
+        });
+
+        $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
+        jaxon()->di()->getRequestHandler()->processRequest();
+
+        $aCommands = jaxon()->getResponse()->getCommands();
+        $this->assertCount(1, $aCommands);
+        $this->assertEquals('bootstrap.alert', $aCommands[0]['cmd']);
+        $this->assertEquals('bootstrap', $aCommands[0]['plg']);
     }
 
     /**
@@ -113,80 +291,9 @@ class DialogTest extends TestCase
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
         jaxon()->di()->getRequestHandler()->processRequest();
 
-        $xResponse = jaxon()->getResponse();
-        $this->assertCount(1, $xResponse->getCommands());
-    }
-
-    /**
-     * @throws RequestException
-     */
-    public function testDialogLibrarySuccess()
-    {
-        jaxon()->setOption('dialogs.default.modal', 'bootbox');
-        jaxon()->setOption('dialogs.default.message', 'bootbox');
-        jaxon()->setOption('dialogs.default.question', 'bootbox');
-        // The server request
-        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)->fromGlobals()->withQueryParams([
-                'jxncls' => 'Dialog',
-                'jxnmthd' => 'success',
-                'jxnargs' => [],
-            ]);
-        });
-
-        $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
-        jaxon()->di()->getRequestHandler()->processRequest();
-
-        $xResponse = jaxon()->getResponse();
-        $this->assertCount(1, $xResponse->getCommands());
-    }
-
-    /**
-     * @throws RequestException
-     */
-    public function testDialogLibraryWarning()
-    {
-        jaxon()->setOption('dialogs.default.modal', 'bootbox');
-        jaxon()->setOption('dialogs.default.message', 'bootbox');
-        jaxon()->setOption('dialogs.default.question', 'bootbox');
-        // The server request
-        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)->fromGlobals()->withQueryParams([
-                'jxncls' => 'Dialog',
-                'jxnmthd' => 'warning',
-                'jxnargs' => [],
-            ]);
-        });
-
-        $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
-        jaxon()->di()->getRequestHandler()->processRequest();
-
-        $xResponse = jaxon()->getResponse();
-        $this->assertCount(1, $xResponse->getCommands());
-    }
-
-    /**
-     * @throws RequestException
-     */
-    public function testDialogLibraryInfo()
-    {
-        jaxon()->setOption('dialogs.default.modal', 'bootbox');
-        jaxon()->setOption('dialogs.default.message', 'bootbox');
-        jaxon()->setOption('dialogs.default.question', 'bootbox');
-        // The server request
-        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)->fromGlobals()->withQueryParams([
-                'jxncls' => 'Dialog',
-                'jxnmthd' => 'info',
-                'jxnargs' => [],
-            ]);
-        });
-
-        $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
-        jaxon()->di()->getRequestHandler()->processRequest();
-
-        $xResponse = jaxon()->getResponse();
-        $this->assertCount(1, $xResponse->getCommands());
+        $aCommands = jaxon()->getResponse()->getCommands();
+        $this->assertCount(1, $aCommands);
+        $this->assertEquals('al', $aCommands[0]['cmd']);
     }
 
     /**
@@ -194,9 +301,9 @@ class DialogTest extends TestCase
      */
     public function testDialogLibraryError()
     {
-        jaxon()->setOption('dialogs.default.modal', 'bootbox');
-        jaxon()->setOption('dialogs.default.message', 'bootbox');
-        jaxon()->setOption('dialogs.default.question', 'bootbox');
+        jaxon()->setOption('dialogs.default.modal', 'bootstrap');
+        jaxon()->setOption('dialogs.default.message', 'bootstrap');
+        jaxon()->setOption('dialogs.default.question', 'bootstrap');
         // The server request
         jaxon()->di()->set(ServerRequestInterface::class, function($c) {
             return $c->g(ServerRequestCreator::class)->fromGlobals()->withQueryParams([
@@ -209,14 +316,42 @@ class DialogTest extends TestCase
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
         jaxon()->di()->getRequestHandler()->processRequest();
 
-        $xResponse = jaxon()->getResponse();
-        $this->assertCount(1, $xResponse->getCommands());
+        $aCommands = jaxon()->getResponse()->getCommands();
+        $this->assertCount(1, $aCommands);
+        $this->assertEquals('bootstrap.alert', $aCommands[0]['cmd']);
+        $this->assertEquals('bootstrap', $aCommands[0]['plg']);
     }
 
     /**
      * @throws RequestException
      */
     public function testDialogLibraryShow()
+    {
+        jaxon()->setOption('dialogs.default.modal', 'bootstrap');
+        jaxon()->setOption('dialogs.default.message', 'bootstrap');
+        jaxon()->setOption('dialogs.default.question', 'bootstrap');
+        // The server request
+        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
+            return $c->g(ServerRequestCreator::class)->fromGlobals()->withQueryParams([
+                'jxncls' => 'Dialog',
+                'jxnmthd' => 'show',
+                'jxnargs' => [],
+            ]);
+        });
+
+        $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
+        jaxon()->di()->getRequestHandler()->processRequest();
+
+        $aCommands = jaxon()->getResponse()->getCommands();
+        $this->assertCount(1, $aCommands);
+        $this->assertEquals('bootstrap.show', $aCommands[0]['cmd']);
+        $this->assertEquals('bootstrap', $aCommands[0]['plg']);
+    }
+
+    /**
+     * @throws RequestException
+     */
+    public function testBootboxLibraryShow()
     {
         jaxon()->setOption('dialogs.default.modal', 'bootbox');
         jaxon()->setOption('dialogs.default.message', 'bootbox');
@@ -233,8 +368,41 @@ class DialogTest extends TestCase
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
         jaxon()->di()->getRequestHandler()->processRequest();
 
-        $xResponse = jaxon()->getResponse();
-        $this->assertCount(3, $xResponse->getCommands());
+        $aCommands = jaxon()->getResponse()->getCommands();
+        $this->assertCount(3, $aCommands);
+        // The bootbox plugin issues one assign and two script commands.
+        $this->assertEquals('as', $aCommands[0]['cmd']);
+        $this->assertEquals('js', $aCommands[1]['cmd']);
+        $this->assertEquals('js', $aCommands[2]['cmd']);
+    }
+
+    /**
+     * @throws RequestException
+     */
+    public function testDialogLibraryShowWith()
+    {
+        // Choose the bootstrap library in the options, and use the bootbox in the class.
+        jaxon()->setOption('dialogs.default.modal', 'bootstrap');
+        jaxon()->setOption('dialogs.default.message', 'bootstrap');
+        jaxon()->setOption('dialogs.default.question', 'bootstrap');
+        // The server request
+        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
+            return $c->g(ServerRequestCreator::class)->fromGlobals()->withQueryParams([
+                'jxncls' => 'Dialog',
+                'jxnmthd' => 'showWith',
+                'jxnargs' => [],
+            ]);
+        });
+
+        $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
+        jaxon()->di()->getRequestHandler()->processRequest();
+
+        $aCommands = jaxon()->getResponse()->getCommands();
+        $this->assertCount(3, $aCommands);
+        // The bootbox plugin issues one assign and two script commands.
+        $this->assertEquals('as', $aCommands[0]['cmd']);
+        $this->assertEquals('js', $aCommands[1]['cmd']);
+        $this->assertEquals('js', $aCommands[2]['cmd']);
     }
 
     /**
@@ -242,9 +410,9 @@ class DialogTest extends TestCase
      */
     public function testDialogLibraryHide()
     {
-        jaxon()->setOption('dialogs.default.modal', 'bootbox');
-        jaxon()->setOption('dialogs.default.message', 'bootbox');
-        jaxon()->setOption('dialogs.default.question', 'bootbox');
+        jaxon()->setOption('dialogs.default.modal', 'bootstrap');
+        jaxon()->setOption('dialogs.default.message', 'bootstrap');
+        jaxon()->setOption('dialogs.default.question', 'bootstrap');
         // The server request
         jaxon()->di()->set(ServerRequestInterface::class, function($c) {
             return $c->g(ServerRequestCreator::class)->fromGlobals()->withQueryParams([
@@ -257,7 +425,101 @@ class DialogTest extends TestCase
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
         jaxon()->di()->getRequestHandler()->processRequest();
 
-        $xResponse = jaxon()->getResponse();
-        $this->assertCount(1, $xResponse->getCommands());
+        $aCommands = jaxon()->getResponse()->getCommands();
+        $this->assertCount(1, $aCommands);
+        // The bootbox plugin issues a single script command.
+        $this->assertEquals('bootstrap.hide', $aCommands[0]['cmd']);
+        $this->assertEquals('bootstrap', $aCommands[0]['plg']);
+    }
+
+    /**
+     * @throws SetupException
+     */
+    public function testConfirmMessageSuccess()
+    {
+        jaxon()->register(Jaxon::CALLABLE_CLASS, 'Sample', __DIR__ . '/../src/sample.php');
+        jaxon()->setOption('dialogs.default.message', 'toastr');
+        jaxon()->setOption('dialogs.default.question', 'noty');
+        $this->assertEquals(
+            "jaxon.dialogs.noty.confirm('Really?','',function(){Sample.method(jaxon.$('elt_id').innerHTML);}," .
+                "function(){toastr.success('No confirm');})",
+            rq('Sample')->method(pm()->html('elt_id'))->confirm("Really?")
+                ->elseSuccess("No confirm")->getScript()
+        );
+    }
+
+    /**
+     * @throws SetupException
+     */
+    public function testConfirmMessageInfo()
+    {
+        jaxon()->register(Jaxon::CALLABLE_CLASS, 'Sample', __DIR__ . '/../src/sample.php');
+        jaxon()->setOption('dialogs.default.message', 'toastr');
+        jaxon()->setOption('dialogs.default.question', 'noty');
+        $this->assertEquals(
+            "jaxon.dialogs.noty.confirm('Really?','',function(){Sample.method(jaxon.$('elt_id').innerHTML);}," .
+                "function(){toastr.info('No confirm');})",
+            rq('Sample')->method(pm()->html('elt_id'))->confirm("Really?")
+                ->elseInfo("No confirm")->getScript()
+        );
+    }
+
+    /**
+     * @throws SetupException
+     */
+    public function testConfirmMessageWarning()
+    {
+        jaxon()->register(Jaxon::CALLABLE_CLASS, 'Sample', __DIR__ . '/../src/sample.php');
+        jaxon()->setOption('dialogs.default.message', 'toastr');
+        jaxon()->setOption('dialogs.default.question', 'noty');
+        $this->assertEquals(
+            "jaxon.dialogs.noty.confirm('Really?','',function(){Sample.method(jaxon.$('elt_id').innerHTML);}," .
+                "function(){toastr.warning('No confirm');})",
+            rq('Sample')->method(pm()->html('elt_id'))->confirm("Really?")
+                ->elseWarning("No confirm")->getScript()
+        );
+    }
+
+    /**
+     * @throws SetupException
+     */
+    public function testConfirmMessageError()
+    {
+        jaxon()->register(Jaxon::CALLABLE_CLASS, 'Sample', __DIR__ . '/../src/sample.php');
+        jaxon()->setOption('dialogs.default.message', 'toastr');
+        jaxon()->setOption('dialogs.default.question', 'noty');
+        $this->assertEquals(
+            "jaxon.dialogs.noty.confirm('Really?','',function(){Sample.method(jaxon.$('elt_id').innerHTML);}," .
+                "function(){toastr.error('No confirm');})",
+            rq('Sample')->method(pm()->html('elt_id'))->confirm("Really?")
+                ->elseError("No confirm")->getScript()
+        );
+    }
+
+    /**
+     * @throws SetupException
+     */
+    public function testErrorRegisterIncorrectDialogClass()
+    {
+        $this->expectException(SetupException::class);
+        jaxon()->dialog()->registerLibrary(Dialog::class, 'incorrect');
+    }
+
+    public function testErrorSetWrongMessageLibrary()
+    {
+        $this->expectException(SetupException::class);
+        jaxon()->setOption('dialogs.default.message', 'incorrect');
+    }
+
+    public function testErrorSetWrongModalLibrary()
+    {
+        $this->expectException(SetupException::class);
+        jaxon()->setOption('dialogs.default.modal', 'incorrect');
+    }
+
+    public function testErrorSetWrongQuestionLibrary()
+    {
+        $this->expectException(SetupException::class);
+        jaxon()->setOption('dialogs.default.question', 'incorrect');
     }
 }

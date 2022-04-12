@@ -12,12 +12,12 @@
 
 namespace Jaxon\App;
 
-use Jaxon\Config\ConfigManager;
+use Jaxon\App\Config\ConfigManager;
+use Jaxon\App\View\ViewRenderer;
+use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\Manager\PackageManager;
 use Jaxon\Request\Handler\CallbackManager;
-use Jaxon\Ui\View\ViewRenderer;
 use Jaxon\Utils\Config\Config;
-use Jaxon\Exception\SetupException;
 
 use function call_user_func;
 
@@ -155,7 +155,6 @@ class Bootstrap
         // Prevent the Jaxon library from sending the response or exiting
         $this->xConfigManager->setOption('core.response.send', false);
         $this->xConfigManager->setOption('core.process.exit', false);
-        $this->xConfigManager->setOption('core.process.clean', false);
 
         // Setup the lib config options.
         $this->xConfigManager->setOptions($this->aLibOptions);

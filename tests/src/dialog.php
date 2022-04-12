@@ -1,5 +1,8 @@
 <?php
 
+use Jaxon\App\Dialog\Library\DialogLibraryTrait;
+use Jaxon\App\Dialog\LibraryInterface;
+use Jaxon\App\Dialog\QuestionInterface;
 use Jaxon\Tests\Ns\CallableClass;
 
 class Dialog extends CallableClass
@@ -30,8 +33,37 @@ class Dialog extends CallableClass
             [['title' => 'Save', 'class' => 'btn', 'click' => $this->rq()->save()->confirm('Save?')]]);
     }
 
+    public function showWith()
+    {
+        $this->response->dialog->with('bootbox')->show('Dialog', 'This is the dialog content!!',
+            [['title' => 'Save', 'class' => 'btn', 'click' => $this->rq()->save()->confirm('Save?')]]);
+    }
+
     public function hide()
     {
         $this->response->dialog->hide();
+    }
+}
+
+class TestDialogLibrary implements LibraryInterface, QuestionInterface
+{
+    use DialogLibraryTrait;
+
+    /**
+     * @const The library name
+     */
+    const NAME = 'test';
+
+    /**
+     * @inheritDoc
+     */
+    public function getName(): string
+    {
+        return self::NAME;
+    }
+
+    public function confirm(string $sQuestion, string $sYesScript, string $sNoScript): string
+    {
+        return '';
     }
 }
