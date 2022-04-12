@@ -1,6 +1,6 @@
 <?php
 
-namespace Jaxon\App;
+namespace Jaxon\App\I18n;
 
 /**
  * Translator.php
@@ -14,7 +14,7 @@ namespace Jaxon\App;
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-use Jaxon\Config\ConfigListenerInterface;
+use Jaxon\App\Config\ConfigListenerInterface;
 use Jaxon\Utils\Config\Config;
 use Jaxon\Utils\Translation\Translator as BaseTranslator;
 

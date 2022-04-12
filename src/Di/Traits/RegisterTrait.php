@@ -2,9 +2,11 @@
 
 namespace Jaxon\Di\Traits;
 
-use Jaxon\App\Translator;
 use Jaxon\CallableClass;
-use Jaxon\Config\ConfigManager;
+use Jaxon\App\Config\ConfigManager;
+use Jaxon\App\Dialog\Library\DialogLibraryManager;
+use Jaxon\App\I18n\Translator;
+use Jaxon\App\View\ViewRenderer;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\Request\CallableClass\CallableClassHelper;
 use Jaxon\Plugin\Request\CallableClass\CallableObject;
@@ -12,8 +14,6 @@ use Jaxon\Request\Call\Paginator;
 use Jaxon\Request\Factory\Factory;
 use Jaxon\Request\Factory\RequestFactory;
 use Jaxon\Request\Handler\CallbackManager;
-use Jaxon\Ui\Dialog\Library\DialogLibraryManager;
-use Jaxon\Ui\View\ViewRenderer;
 use Jaxon\Utils\Config\Config;
 
 use ReflectionClass;

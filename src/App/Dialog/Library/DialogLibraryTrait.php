@@ -12,7 +12,7 @@
  * @link https://github.com/jaxon-php/jaxon-dialogs
  */
 
-namespace Jaxon\Ui\Dialog\Library;
+namespace Jaxon\App\Dialog\Library;
 
 use Jaxon\Response\Response;
 

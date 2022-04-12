@@ -5,20 +5,20 @@ namespace Jaxon\Tests\TestUi;
 require_once __DIR__ . '/../src/dialog.php';
 
 use Jaxon\Jaxon;
-use Jaxon\Exception\RequestException;
-use Jaxon\Exception\SetupException;
+use Jaxon\App\Dialog\Library\AlertLibrary;
 use Jaxon\Dialogs\Library\Bootbox\BootboxLibrary;
 use Jaxon\Dialogs\Library\Bootstrap\BootstrapLibrary;
 use Jaxon\Dialogs\Library\Noty\NotyLibrary;
 use Jaxon\Dialogs\Library\Toastr\ToastrLibrary;
-use Jaxon\Ui\Dialog\Library\AlertLibrary;
+use Jaxon\Exception\RequestException;
+use Jaxon\Exception\SetupException;
 use Jaxon\Utils\Http\UriException;
 use Nyholm\Psr7Server\ServerRequestCreator;
-use Psr\Http\Message\ServerRequestInterface;
 use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\ServerRequestInterface;
 
-use TestDialogLibrary;
 use Dialog;
+use TestDialogLibrary;
 
 use function get_class;
 use function jaxon;

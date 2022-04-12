@@ -40,12 +40,12 @@ SOFTWARE.
 
 namespace Jaxon\Request\Call;
 
-use Jaxon\Ui\View\PaginationRenderer;
+use Jaxon\App\View\PaginationRenderer;
 
 use function array_map;
 use function array_walk;
-use function floor;
 use function ceil;
+use function floor;
 use function max;
 
 class Paginator

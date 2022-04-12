@@ -3,8 +3,10 @@
 namespace Jaxon\Di\Traits;
 
 use Jaxon\Jaxon;
-use Jaxon\App\Translator;
-use Jaxon\Config\ConfigManager;
+use Jaxon\App\Config\ConfigManager;
+use Jaxon\App\Dialog\Library\DialogLibraryManager;
+use Jaxon\App\I18n\Translator;
+use Jaxon\App\View\ViewRenderer;
 use Jaxon\Di\Container;
 use Jaxon\Plugin\Code\AssetManager;
 use Jaxon\Plugin\Code\CodeGenerator;
@@ -15,8 +17,6 @@ use Jaxon\Plugin\Response\DataBag\DataBagPlugin;
 use Jaxon\Plugin\Response\Dialog\DialogPlugin;
 use Jaxon\Plugin\Response\JQuery\JQueryPlugin;
 use Jaxon\Request\Handler\ParameterReader;
-use Jaxon\Ui\Dialog\Library\DialogLibraryManager;
-use Jaxon\Ui\View\ViewRenderer;
 use Jaxon\Utils\File\FileMinifier;
 use Jaxon\Utils\Template\TemplateEngine;
 

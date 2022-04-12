@@ -11,16 +11,16 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Ui\Dialog\Library;
+namespace Jaxon\App\Dialog\Library;
 
-use Jaxon\App\Translator;
-use Jaxon\Config\ConfigListenerInterface;
-use Jaxon\Config\ConfigManager;
+use Jaxon\App\Config\ConfigListenerInterface;
+use Jaxon\App\Config\ConfigManager;
+use Jaxon\App\Dialog\MessageInterface;
+use Jaxon\App\Dialog\ModalInterface;
+use Jaxon\App\Dialog\QuestionInterface;
+use Jaxon\App\I18n\Translator;
 use Jaxon\Di\Container;
 use Jaxon\Exception\SetupException;
-use Jaxon\Ui\Dialog\MessageInterface;
-use Jaxon\Ui\Dialog\ModalInterface;
-use Jaxon\Ui\Dialog\QuestionInterface;
 use Jaxon\Utils\Config\Config;
 
 use function array_map;

@@ -10,9 +10,9 @@
  * @link https://github.com/jaxon-php/jaxon-dialogs
  */
 
-namespace Jaxon\Ui\Dialog;
+namespace Jaxon\App\Dialog;
 
-use Jaxon\Ui\Dialog\Library\DialogLibraryInterface;
+use Jaxon\App\Dialog\Library\DialogLibraryInterface;
 
 interface LibraryInterface extends DialogLibraryInterface
 {

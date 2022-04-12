@@ -2,7 +2,7 @@
 
 namespace Jaxon\Di\Traits;
 
-use Jaxon\App\Translator;
+use Jaxon\App\I18n\Translator;
 use Jaxon\Di\Container;
 use Jaxon\Request\Factory\Psr\PsrFactory;
 use Jaxon\Request\Handler\Psr\PsrAjaxMiddleware;

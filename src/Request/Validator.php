@@ -22,13 +22,13 @@ namespace Jaxon\Request;
  * http://www.w3schools.com/charsets/ref_utf_latin1_supplement.asp
  */
 
-use Jaxon\App\Translator;
-use Jaxon\Config\ConfigManager;
+use Jaxon\App\Config\ConfigManager;
+use Jaxon\App\I18n\Translator;
 use Jaxon\Request\Upload\File;
 
-use function preg_match;
-use function is_array;
 use function in_array;
+use function is_array;
+use function preg_match;
 
 class Validator
 {

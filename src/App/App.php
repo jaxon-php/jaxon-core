@@ -13,8 +13,8 @@
 namespace Jaxon\App;
 
 use Jaxon\Jaxon;
-use Jaxon\Config\ConfigManager;
-use Jaxon\App\Translator;
+use Jaxon\App\Config\ConfigManager;
+use Jaxon\App\I18n\Translator;
 use Jaxon\Exception\SetupException;
 
 use function file_exists;

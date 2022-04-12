@@ -3,16 +3,15 @@
 namespace Jaxon\App;
 
 use Jaxon\Jaxon;
+use Jaxon\App\View\ViewRenderer;
+use Jaxon\Exception\RequestException;
+use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\Package;
 use Jaxon\Request\Factory\RequestFactory;
 use Jaxon\Request\Handler\CallbackManager;
 use Jaxon\Response\ResponseInterface;
 use Jaxon\Session\SessionInterface;
-use Jaxon\Ui\View\ViewRenderer;
 use Jaxon\Utils\Http\UriException;
-use Jaxon\Exception\RequestException;
-use Jaxon\Exception\SetupException;
-
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 

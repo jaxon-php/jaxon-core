@@ -22,7 +22,7 @@
 namespace Jaxon\Plugin\Request\CallableFunction;
 
 use Jaxon\Jaxon;
-use Jaxon\App\Translator;
+use Jaxon\App\I18n\Translator;
 use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\RequestPlugin;

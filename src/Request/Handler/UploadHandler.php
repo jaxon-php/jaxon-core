@@ -12,7 +12,7 @@
 
 namespace Jaxon\Request\Handler;
 
-use Jaxon\App\Translator;
+use Jaxon\App\I18n\Translator;
 use Jaxon\Di\Container;
 use Jaxon\Exception\RequestException;
 use Jaxon\Response\Manager\ResponseManager;

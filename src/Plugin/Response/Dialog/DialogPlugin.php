@@ -15,12 +15,12 @@
 
 namespace Jaxon\Plugin\Response\Dialog;
 
+use Jaxon\App\Dialog\Library\DialogLibraryManager;
+use Jaxon\App\Dialog\MessageInterface;
+use Jaxon\App\Dialog\ModalInterface;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\ResponsePlugin;
 use Jaxon\Response\Response;
-use Jaxon\Ui\Dialog\Library\DialogLibraryManager;
-use Jaxon\Ui\Dialog\MessageInterface;
-use Jaxon\Ui\Dialog\ModalInterface;
 
 use function array_reduce;
 use function trim;

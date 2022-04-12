@@ -11,7 +11,7 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Ui\Dialog;
+namespace Jaxon\App\Dialog;
 
 interface QuestionInterface extends LibraryInterface
 {

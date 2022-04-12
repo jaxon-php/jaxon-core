@@ -1,6 +1,6 @@
 <?php
 
-namespace Jaxon\Config;
+namespace Jaxon\App\Config;
 
 /**
  * ConfigEventManager.php

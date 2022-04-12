@@ -12,9 +12,9 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Config;
+namespace Jaxon\App\Config;
 
-use Jaxon\App\Translator;
+use Jaxon\App\I18n\Translator;
 use Jaxon\Exception\SetupException;
 use Jaxon\Utils\Config\Config;
 use Jaxon\Utils\Config\ConfigReader;

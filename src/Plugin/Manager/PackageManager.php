@@ -15,12 +15,12 @@
 namespace Jaxon\Plugin\Manager;
 
 use Jaxon\Jaxon;
-use Jaxon\App\Translator;
-use Jaxon\Config\ConfigManager;
+use Jaxon\App\Config\ConfigManager;
+use Jaxon\App\I18n\Translator;
+use Jaxon\App\View\ViewRenderer;
 use Jaxon\Di\Container;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\Package;
-use Jaxon\Ui\View\ViewRenderer;
 use Jaxon\Utils\Config\Config;
 
 use function is_array;

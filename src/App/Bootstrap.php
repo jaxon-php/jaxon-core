@@ -12,12 +12,12 @@
 
 namespace Jaxon\App;
 
-use Jaxon\Config\ConfigManager;
+use Jaxon\App\Config\ConfigManager;
+use Jaxon\App\View\ViewRenderer;
+use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\Manager\PackageManager;
 use Jaxon\Request\Handler\CallbackManager;
-use Jaxon\Ui\View\ViewRenderer;
 use Jaxon\Utils\Config\Config;
-use Jaxon\Exception\SetupException;
 
 use function call_user_func;
 

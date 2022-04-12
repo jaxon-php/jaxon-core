@@ -20,8 +20,8 @@
 
 namespace Jaxon\Request\Call;
 
+use Jaxon\App\Dialog\Library\DialogLibraryManager;
 use Jaxon\Plugin\Response\JQuery\DomSelector;
-use Jaxon\Ui\Dialog\Library\DialogLibraryManager;
 
 use function array_shift;
 use function implode;

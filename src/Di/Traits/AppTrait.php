@@ -5,14 +5,14 @@ namespace Jaxon\Di\Traits;
 use Jaxon\Jaxon;
 use Jaxon\App\App;
 use Jaxon\App\Bootstrap;
-use Jaxon\App\Translator;
-use Jaxon\Config\ConfigEventManager;
-use Jaxon\Config\ConfigManager;
+use Jaxon\App\Config\ConfigEventManager;
+use Jaxon\App\Config\ConfigManager;
+use Jaxon\App\Dialog\Library\DialogLibraryManager;
+use Jaxon\App\I18n\Translator;
+use Jaxon\App\View\ViewRenderer;
 use Jaxon\Di\Container;
 use Jaxon\Plugin\Manager\PackageManager;
 use Jaxon\Request\Handler\CallbackManager;
-use Jaxon\Ui\Dialog\Library\DialogLibraryManager;
-use Jaxon\Ui\View\ViewRenderer;
 use Jaxon\Utils\Config\ConfigReader;
 
 trait AppTrait

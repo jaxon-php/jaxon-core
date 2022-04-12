@@ -3,13 +3,13 @@
 namespace Jaxon;
 
 use Jaxon\App\Session\SessionInterface;
+use Jaxon\App\View\ViewRenderer;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\Request\CallableClass\CallableClassHelper;
 use Jaxon\Plugin\Response\DataBag\DataBagContext;
 use Jaxon\Plugin\Response\JQuery\DomSelector;
 use Jaxon\Request\Factory\RequestFactory;
 use Jaxon\Response\Response;
-use Jaxon\Ui\View\ViewRenderer;
 use Psr\Log\LoggerInterface;
 
 class CallableClass

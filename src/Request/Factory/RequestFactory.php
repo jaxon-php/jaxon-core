@@ -15,9 +15,9 @@ namespace Jaxon\Request\Factory;
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
+use Jaxon\App\Dialog\Library\DialogLibraryManager;
 use Jaxon\Request\Call\Call;
 use Jaxon\Request\Call\Paginator;
-use Jaxon\Ui\Dialog\Library\DialogLibraryManager;
 
 use function array_shift;
 use function func_get_args;

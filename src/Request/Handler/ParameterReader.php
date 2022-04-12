@@ -22,26 +22,26 @@
 
 namespace Jaxon\Request\Handler;
 
-use Jaxon\App\Translator;
+use Jaxon\App\Config\ConfigManager;
+use Jaxon\App\I18n\Translator;
 use Jaxon\Di\Container;
-use Jaxon\Config\ConfigManager;
 use Jaxon\Exception\RequestException;
 use Jaxon\Utils\Http\UriDetector;
 use Jaxon\Utils\Http\UriException;
 
-use function strcasecmp;
-use function is_array;
-use function is_string;
-use function substr;
-use function strlen;
-use function floor;
-use function json_decode;
-use function call_user_func;
 use function array_map;
+use function call_user_func;
+use function floor;
 use function function_exists;
 use function iconv;
 use function intval;
+use function is_array;
+use function is_string;
+use function json_decode;
 use function mb_convert_encoding;
+use function strcasecmp;
+use function strlen;
+use function substr;
 use function utf8_decode;
 
 class ParameterReader

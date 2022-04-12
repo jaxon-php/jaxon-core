@@ -12,7 +12,7 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Ui\View;
+namespace Jaxon\App\View;
 
 use Jaxon\Request\Call\Paginator;
 

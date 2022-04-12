@@ -21,7 +21,7 @@
 namespace Jaxon\Plugin\Manager;
 
 use Jaxon\Jaxon;
-use Jaxon\App\Translator;
+use Jaxon\App\I18n\Translator;
 use Jaxon\Di\Container;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\CallableRegistryInterface;

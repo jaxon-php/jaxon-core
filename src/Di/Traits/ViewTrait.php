@@ -2,15 +2,15 @@
 
 namespace Jaxon\Di\Traits;
 
-use Jaxon\App\Translator;
-use Jaxon\Config\ConfigManager;
+use Jaxon\App\Config\ConfigManager;
+use Jaxon\App\Dialog\Library\DialogLibraryHelper;
+use Jaxon\App\Dialog\Library\DialogLibraryManager;
+use Jaxon\App\I18n\Translator;
+use Jaxon\App\View\PaginationRenderer;
+use Jaxon\App\View\TemplateView;
+use Jaxon\App\View\ViewRenderer;
 use Jaxon\Di\Container;
 use Jaxon\Request\Call\Paginator;
-use Jaxon\Ui\Dialog\Library\DialogLibraryHelper;
-use Jaxon\Ui\Dialog\Library\DialogLibraryManager;
-use Jaxon\Ui\View\PaginationRenderer;
-use Jaxon\Ui\View\TemplateView;
-use Jaxon\Ui\View\ViewRenderer;
 use Jaxon\Utils\Template\TemplateEngine;
 
 use function call_user_func;

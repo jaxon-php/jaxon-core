@@ -1,15 +1,15 @@
 <?php
 
-namespace Jaxon\Ui\Dialog\Library;
+namespace Jaxon\App\Dialog\Library;
 
-use Jaxon\Config\ConfigManager;
-use Jaxon\Ui\Dialog\LibraryInterface;
+use Jaxon\App\Config\ConfigManager;
+use Jaxon\App\Dialog\LibraryInterface;
 use Jaxon\Utils\Template\TemplateEngine;
 
 use function array_merge;
-use function is_string;
 use function is_bool;
 use function is_numeric;
+use function is_string;
 use function json_encode;
 use function rtrim;
 use function str_repeat;

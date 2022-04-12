@@ -1,6 +1,6 @@
 <?php
 
-namespace Jaxon\Ui\View;
+namespace Jaxon\App\View;
 
 use JsonSerializable;
 

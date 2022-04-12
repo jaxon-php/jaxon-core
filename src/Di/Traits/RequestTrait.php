@@ -2,8 +2,9 @@
 
 namespace Jaxon\Di\Traits;
 
-use Jaxon\App\Translator;
-use Jaxon\Config\ConfigManager;
+use Jaxon\App\Config\ConfigManager;
+use Jaxon\App\Dialog\Library\DialogLibraryManager;
+use Jaxon\App\I18n\Translator;
 use Jaxon\Di\Container;
 use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Plugin\Request\CallableClass\CallableRegistry;
@@ -20,7 +21,6 @@ use Jaxon\Request\Upload\NameGeneratorInterface;
 use Jaxon\Request\Upload\UploadManager;
 use Jaxon\Request\Validator;
 use Jaxon\Response\Manager\ResponseManager;
-use Jaxon\Ui\Dialog\Library\DialogLibraryManager;
 use Jaxon\Utils\Http\UriDetector;
 
 use function bin2hex;

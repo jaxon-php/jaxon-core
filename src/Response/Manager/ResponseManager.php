@@ -21,7 +21,7 @@
 
 namespace Jaxon\Response\Manager;
 
-use Jaxon\App\Translator;
+use Jaxon\App\I18n\Translator;
 use Jaxon\Di\Container;
 use Jaxon\Exception\RequestException;
 use Jaxon\Response\ResponseInterface;

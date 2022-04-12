@@ -22,7 +22,7 @@
 namespace Jaxon\Plugin\Request\CallableDir;
 
 use Jaxon\Jaxon;
-use Jaxon\App\Translator;
+use Jaxon\App\I18n\Translator;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\CallableRegistryInterface;
 use Jaxon\Plugin\PluginInterface;
