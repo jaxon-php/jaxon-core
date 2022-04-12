@@ -1,8 +1,7 @@
 <?php
 
-use Jaxon\CallableClass;
+use Jaxon\App\CallableClass;
 use Jaxon\Response\Response;
-use Jaxon\Response\UploadResponse;
 
 class TestHk extends CallableClass
 {

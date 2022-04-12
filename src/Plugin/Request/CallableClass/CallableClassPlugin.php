@@ -22,8 +22,8 @@
 namespace Jaxon\Plugin\Request\CallableClass;
 
 use Jaxon\Jaxon;
+use Jaxon\App\CallableClass;
 use Jaxon\App\I18n\Translator;
-use Jaxon\CallableClass;
 use Jaxon\Di\Container;
 use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;

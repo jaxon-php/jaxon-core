@@ -2,6 +2,6 @@
 
 namespace Jaxon\Tests\Ns;
 
-class CallableClass extends \Jaxon\CallableClass
+class CallableClass extends \Jaxon\App\CallableClass
 {
 }

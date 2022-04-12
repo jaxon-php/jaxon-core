@@ -1,6 +1,6 @@
 <?php
 
-namespace Jaxon;
+namespace Jaxon\App;
 
 use Jaxon\App\Session\SessionInterface;
 use Jaxon\App\View\ViewRenderer;

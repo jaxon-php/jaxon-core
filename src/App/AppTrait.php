@@ -3,6 +3,7 @@
 namespace Jaxon\App;
 
 use Jaxon\Jaxon;
+use Jaxon\App\Session\SessionInterface;
 use Jaxon\App\View\ViewRenderer;
 use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;
@@ -10,7 +11,6 @@ use Jaxon\Plugin\Package;
 use Jaxon\Request\Factory\RequestFactory;
 use Jaxon\Request\Handler\CallbackManager;
 use Jaxon\Response\ResponseInterface;
-use Jaxon\Session\SessionInterface;
 use Jaxon\Utils\Http\UriException;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
@@ -76,19 +76,6 @@ trait AppTrait
     public function getContentType(): string
     {
         return $this->jaxon->di()->getResponseManager()->getContentType();
-    }
-
-    /**
-     * Get an instance of a registered class
-     *
-     * @param string $sClassName The class name
-     *
-     * @return object|null
-     * @throws SetupException
-     */
-    public function instance(string $sClassName)
-    {
-        return $this->jaxon->instance($sClassName);
     }
 
     /**

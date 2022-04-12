@@ -2,7 +2,7 @@
 
 namespace Jaxon\Di\Traits;
 
-use Jaxon\CallableClass;
+use Jaxon\App\CallableClass;
 use Jaxon\App\Config\ConfigManager;
 use Jaxon\App\Dialog\Library\DialogLibraryManager;
 use Jaxon\App\I18n\Translator;
