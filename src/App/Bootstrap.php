@@ -155,7 +155,6 @@ class Bootstrap
         // Prevent the Jaxon library from sending the response or exiting
         $this->xConfigManager->setOption('core.response.send', false);
         $this->xConfigManager->setOption('core.process.exit', false);
-        $this->xConfigManager->setOption('core.process.clean', false);
 
         // Setup the lib config options.
         $this->xConfigManager->setOptions($this->aLibOptions);

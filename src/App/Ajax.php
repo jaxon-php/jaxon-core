@@ -50,12 +50,9 @@ use Jaxon\Utils\Http\UriException;
 use Jaxon\Utils\Template\TemplateEngine;
 use Psr\Log\LoggerInterface;
 
-use function error_reporting;
 use function gmdate;
 use function header;
 use function headers_sent;
-use function ob_end_clean;
-use function ob_get_level;
 use function trim;
 
 class Ajax
@@ -396,16 +393,6 @@ class Ajax
 
         $this->di()->getRequestHandler()->processRequest();
 
-        // Clean the processing buffer
-        if(($this->xConfigManager->getOption('core.process.clean')))
-        {
-            $er = error_reporting(0);
-            while(ob_get_level() > 0)
-            {
-                ob_end_clean();
-            }
-            error_reporting($er);
-        }
         if($this->xConfigManager->getOption('core.response.send'))
         {
             $this->sendResponse();

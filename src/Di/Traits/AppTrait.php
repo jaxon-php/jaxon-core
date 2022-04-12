@@ -37,8 +37,6 @@ trait AppTrait
             ],
             'response' => [
                 'send'              => true,
-                'merge.ap'          => true,
-                'merge.js'          => true,
             ],
             'debug' => [
                 'on'                => false,
@@ -46,7 +44,6 @@ trait AppTrait
             ],
             'process' => [
                 'exit'              => true,
-                'clean'             => false,
                 'timeout'           => 6000,
             ],
             'error' => [
