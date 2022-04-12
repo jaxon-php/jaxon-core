@@ -35,7 +35,6 @@ use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Plugin\Package;
-use Jaxon\Plugin\Response\Dialog\DialogPlugin;
 use Jaxon\Plugin\ResponsePlugin;
 use Jaxon\Request\Call\Paginator;
 use Jaxon\Request\Factory\Factory;
@@ -46,6 +45,7 @@ use Jaxon\Request\Handler\UploadHandler;
 use Jaxon\Response\Manager\ResponseManager;
 use Jaxon\Response\Response;
 use Jaxon\Response\ResponseInterface;
+use Jaxon\Ui\Dialog\Library\DialogLibraryManager;
 use Jaxon\Ui\View\ViewRenderer;
 use Jaxon\Utils\Http\UriException;
 use Jaxon\Utils\Template\TemplateEngine;
@@ -324,20 +324,6 @@ class Jaxon
     }
 
     /**
-     * Get an instance of a registered class
-     *
-     * @param string $sClassName The class name
-     *
-     * @return null|object
-     * @throws SetupException
-     */
-    public function instance(string $sClassName)
-    {
-        $xCallable = $this->di()->getCallableRegistry()->getCallableObject($sClassName);
-        return ($xCallable) ? $xCallable->getRegisteredObject() : null;
-    }
-
-    /**
      * Get the factory
      *
      * @return Factory
@@ -574,33 +560,19 @@ class Jaxon
     /**
      * Get the Dialog plugin
      *
-     * @return DialogPlugin
+     * @return DialogLibraryManager
      */
-    public function dialog(): DialogPlugin
+    public function dialog(): DialogLibraryManager
     {
-        return $this->di()->getDialogPlugin();
-    }
-
-    /**
-     * Register a javascript dialog library adapter.
-     *
-     * @param string $sClassName
-     * @param string $sName
-     *
-     * @return void
-     * @throws SetupException
-     */
-    public function registerDialogLibrary(string $sClassName, string $sName)
-    {
-        $this->di()->getDialogLibraryManager()->registerLibrary($sClassName, $sName);
+        return $this->di()->getDialogLibraryManager();
     }
 
     /**
      * Get the session manager
      *
-     * @return SessionInterface
+     * @return SessionInterface|null
      */
-    public function session(): SessionInterface
+    public function session(): ?SessionInterface
     {
         return $this->di()->getSessionManager();
     }

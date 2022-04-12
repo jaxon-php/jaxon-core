@@ -40,7 +40,8 @@ trait PluginTrait
         });
         // Code Generation
         $this->set(MinifierInterface::class, function() {
-            return new class extends FileMinifier implements MinifierInterface {};
+            return new class extends FileMinifier implements MinifierInterface
+            {};
         });
         $this->set(AssetManager::class, function($c) {
             return new AssetManager($c->g(ConfigManager::class), $c->g(ParameterReader::class),
@@ -114,15 +115,5 @@ trait PluginTrait
     public function getJQueryPlugin(): JQueryPlugin
     {
         return $this->g(JQueryPlugin::class);
-    }
-
-    /**
-     * Get the Dialog plugin
-     *
-     * @return DialogPlugin
-     */
-    public function getDialogPlugin(): DialogPlugin
-    {
-        return $this->g(DialogPlugin::class);
     }
 }

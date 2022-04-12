@@ -37,11 +37,11 @@ class DialogTest extends TestCase
         jaxon()->setOption('dialogs.toastr.options.positionClass', 'toast-top-center');
         jaxon()->setOption('dialogs.toastr.options.sampleArray', ['value']);
         jaxon()->register(Jaxon::CALLABLE_CLASS, Dialog::class);
-        jaxon()->registerDialogLibrary(BootboxLibrary::class, BootboxLibrary::NAME);
-        jaxon()->registerDialogLibrary(BootstrapLibrary::class, BootstrapLibrary::NAME);
-        jaxon()->registerDialogLibrary(NotyLibrary::class, NotyLibrary::NAME);
-        jaxon()->registerDialogLibrary(ToastrLibrary::class, ToastrLibrary::NAME);
-        jaxon()->registerDialogLibrary(TestDialogLibrary::class, TestDialogLibrary::NAME);
+        jaxon()->dialog()->registerLibrary(BootboxLibrary::class, BootboxLibrary::NAME);
+        jaxon()->dialog()->registerLibrary(BootstrapLibrary::class, BootstrapLibrary::NAME);
+        jaxon()->dialog()->registerLibrary(NotyLibrary::class, NotyLibrary::NAME);
+        jaxon()->dialog()->registerLibrary(ToastrLibrary::class, ToastrLibrary::NAME);
+        jaxon()->dialog()->registerLibrary(TestDialogLibrary::class, TestDialogLibrary::NAME);
 
         // Register the template dir into the template renderer
         jaxon()->template()->addNamespace('jaxon::dialogs',
@@ -90,10 +90,11 @@ class DialogTest extends TestCase
         $this->assertIsArray($xMessageLibrary->helper()->getOption('options.sampleArray'));
         $this->assertIsString($xMessageLibrary->helper()->getOption('options.positionClass'));
         // Test dialog plugin stub methods
-        jaxon()->dialog()->setReturnCode(false);
-        $this->assertEquals('', jaxon()->dialog()->getUri());
-        $this->assertEquals('', jaxon()->dialog()->getSubdir());
-        $this->assertEquals('', jaxon()->dialog()->getVersion());
+        $xDialog = jaxon()->plugin('dialog');
+        $xDialog->setReturnCode(false);
+        $this->assertEquals('', $xDialog->getUri());
+        $this->assertEquals('', $xDialog->getSubdir());
+        $this->assertEquals('', $xDialog->getVersion());
     }
 
     public function testDialogJsCode()
@@ -501,7 +502,7 @@ class DialogTest extends TestCase
     public function testErrorRegisterIncorrectDialogClass()
     {
         $this->expectException(SetupException::class);
-        jaxon()->registerDialogLibrary(Dialog::class, 'incorrect');
+        jaxon()->dialog()->registerLibrary(Dialog::class, 'incorrect');
     }
 
     public function testErrorSetWrongMessageLibrary()
