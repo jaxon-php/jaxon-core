@@ -8,6 +8,7 @@ use Jaxon\App\Dialog\Library\DialogLibraryManager;
 use Jaxon\App\I18n\Translator;
 use Jaxon\App\View\ViewRenderer;
 use Jaxon\Exception\SetupException;
+use Jaxon\Plugin\AnnotationReaderInterface;
 use Jaxon\Plugin\Request\CallableClass\CallableClassHelper;
 use Jaxon\Plugin\Request\CallableClass\CallableObject;
 use Jaxon\Request\Call\Paginator;
@@ -15,9 +16,6 @@ use Jaxon\Request\Factory\Factory;
 use Jaxon\Request\Factory\RequestFactory;
 use Jaxon\Request\Handler\CallbackManager;
 use Jaxon\Utils\Config\Config;
-use Jaxon\Annotations\AnnotationReader;
-use mindplay\annotations\AnnotationCache;
-use mindplay\annotations\AnnotationManager;
 
 use ReflectionClass;
 use ReflectionException;
@@ -26,7 +24,6 @@ use function array_merge;
 use function call_user_func;
 use function explode;
 use function substr;
-use function sys_get_temp_dir;
 
 trait RegisterTrait
 {
@@ -37,11 +34,14 @@ trait RegisterTrait
      */
     private function registerAnnotations()
     {
-        $this->val('jaxon_annotations_cache_dir', sys_get_temp_dir());
-        $this->set(AnnotationReader::class, function($c) {
-            $xAnnotationManager = new AnnotationManager();
-            $xAnnotationManager->cache = new AnnotationCache($c->g('jaxon_annotations_cache_dir'));
-            return new AnnotationReader($xAnnotationManager);
+        $this->set(AnnotationReaderInterface::class, function($c) {
+            return new class implements AnnotationReaderInterface
+            {
+                public function getAttributes(string $sClass, array $aMethods): array
+                {
+                    return [false, [], []];
+                }
+            };
         });
     }
 
@@ -79,9 +79,9 @@ trait RegisterTrait
     private function setCallableObjectOptions(string $sClassName, CallableObject $xCallableObject, array $aOptions)
     {
         // Annotations options
-        $xAnnotationReader = $this->g(AnnotationReader::class);
-        [$bExcluded, $aAnnotationOptions, $aAnnotationProtected] = $xAnnotationReader
-            ->getAttributes($sClassName, $xCallableObject->getPublicMethods());
+        $xAnnotationReader = $this->g(AnnotationReaderInterface::class);
+        [$bExcluded, $aAnnotationOptions, $aAnnotationProtected] =
+            $xAnnotationReader->getAttributes($sClassName, $xCallableObject->getPublicMethods());
         if($bExcluded)
         {
             $xCallableObject->configure('excluded', true);
