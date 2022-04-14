@@ -16,14 +16,19 @@ namespace Jaxon\Annotations\Annotation;
 use mindplay\annotations\Annotation;
 use mindplay\annotations\AnnotationException;
 
+use function count;
+use function is_string;
+
 /**
  * Specifies an upload form field id.
  *
- * @usage('method'=>true, 'inherited'=>true)
+ * @usage('method'=>true)
  */
 class UploadAnnotation extends AbstractAnnotation
 {
     /**
+     * The name of the upload field
+     *
      * @var string
      */
     protected $sField = '';
@@ -36,7 +41,7 @@ class UploadAnnotation extends AbstractAnnotation
     {
         if(count($properties) != 1 || !isset($properties['field']) || !is_string($properties['field']))
         {
-            throw new AnnotationException('UploadAnnotation requires a field property of type string');
+            throw new AnnotationException('The @upload annotation requires a property "field" of type string');
         }
         $this->sField = $properties['field'];
     }
@@ -52,8 +57,8 @@ class UploadAnnotation extends AbstractAnnotation
     /**
      * @inheritDoc
      */
-    public function getValue($xCurrValue)
+    public function getValue()
     {
-        return "'" . $this->sField . "'" ;
+        return "'" . $this->sField . "'" ; // The field id is surrounded with simple quotes.
     }
 }

@@ -16,15 +16,18 @@ namespace Jaxon\Annotations\Annotation;
 use mindplay\annotations\AnnotationException;
 
 use function count;
+use function is_bool;
 
 /**
  * Specifies a method to be called after the one targeted by a Jaxon request.
  *
- * @usage('method'=>true, 'inherited'=>true)
+ * @usage('class' => true, 'method'=>true)
  */
 class ExcludeAnnotation extends AbstractAnnotation
 {
     /**
+     * The name of the upload field
+     *
      * @var bool
      */
     protected $bValue;
@@ -38,7 +41,7 @@ class ExcludeAnnotation extends AbstractAnnotation
         if(count($properties) !== 0 &&
             (count($properties) !== 1 || !isset($properties[0]) || !is_bool($properties[0])))
         {
-            throw new AnnotationException('the @exclude annotation does not have any property');
+            throw new AnnotationException('the @exclude annotation requires a boolean or no property');
         }
         $this->bValue = $properties[0] ?? true;
     }
@@ -54,7 +57,7 @@ class ExcludeAnnotation extends AbstractAnnotation
     /**
      * @inheritDoc
      */
-    public function getValue($xCurrValue)
+    public function getValue()
     {
         return $this->bValue;
     }

@@ -80,8 +80,13 @@ trait RegisterTrait
     {
         // Annotations options
         $xAnnotationReader = $this->g(AnnotationReader::class);
-        [$aAnnotationOptions, $aAnnotationProtected] = $xAnnotationReader
-            ->getClassAttributes($sClassName, $xCallableObject->getPublicMethods());
+        [$bExcluded, $aAnnotationOptions, $aAnnotationProtected] = $xAnnotationReader
+            ->getAttributes($sClassName, $xCallableObject->getPublicMethods());
+        if($bExcluded)
+        {
+            $xCallableObject->configure('excluded', true);
+            return;
+        }
 
         $xCallableObject->configure('separator', $aOptions['separator']);
         $xCallableObject->configure('protected', array_merge($aOptions['protected'], $aAnnotationProtected));

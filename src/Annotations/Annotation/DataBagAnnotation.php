@@ -22,11 +22,13 @@ use function is_string;
 /**
  * Specifies a data bag stored in the browser and included in ajax requests to a method.
  *
- * @usage('method'=>true, 'multiple'=>true, 'inherited'=>true)
+ * @usage('class' => true, 'method'=>true, 'multiple'=>true, 'inherited'=>true)
  */
 class DataBagAnnotation extends AbstractAnnotation
 {
     /**
+     * The data bag name
+     *
      * @var string
      */
     protected $sName = '';
@@ -39,7 +41,7 @@ class DataBagAnnotation extends AbstractAnnotation
     {
         if(count($properties) != 1 || !isset($properties['name']) || !is_string($properties['name']))
         {
-            throw new AnnotationException('UploadAnnotation requires a name property of type string');
+            throw new AnnotationException('The @databag annotation requires a property "name" of type string');
         }
         $this->sName = $properties['name'];
     }
@@ -55,13 +57,13 @@ class DataBagAnnotation extends AbstractAnnotation
     /**
      * @inheritDoc
      */
-    public function getValue($xCurrValue)
+    public function getValue()
     {
-        if(!is_array($xCurrValue))
+        if(is_array($this->xPrevValue))
         {
-            return [$this->sName];
+            $this->xPrevValue[] = $this->sName; // Append the current value to the array
+            return $this->xPrevValue;
         }
-        $xCurrValue[] = $this->sName;
-        return $xCurrValue;
+        return [$this->sName]; // Return the current value in an array
     }
 }

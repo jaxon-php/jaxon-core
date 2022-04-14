@@ -52,41 +52,29 @@ class AnnotationReader
     }
 
     /**
-     * @param string $sClass
-     * @param string $sMethod
+     * @param array $aAnnotations
      *
      * @return AbstractAnnotation[]
      */
-    private function getMethodAnnotations(string $sClass, string $sMethod): array
+    private function filterAnnotations(array $aAnnotations): array
     {
-        try
-        {
-            $aAnnotations = $this->xManager->getMethodAnnotations($sClass, $sMethod);
-            return array_filter($aAnnotations, function($xAnnotation) {
-                return is_a($xAnnotation, AbstractAnnotation::class);
-            });
-        }
-        catch(AnnotationException $e) {}
-        return [];
-    }
+        // Only keep the annotations declared in this package.
+        $aAnnotations = array_filter($aAnnotations, function($xAnnotation) {
+            return is_a($xAnnotation, AbstractAnnotation::class);
+        });
 
-    /**
-     * @param string $sClass
-     * @param string $sMethod
-     *
-     * @return array
-     */
-    private function getMethodAttributes(string $sClass, string $sMethod): array
-    {
-        $aAnnotations = $this->getMethodAnnotations($sClass, $sMethod);
         $aAttributes = [];
         foreach($aAnnotations as $xAnnotation)
         {
             $sName = $xAnnotation->getName();
-            $xValue = $xAnnotation->getValue($aAttributes[$sName] ?? null);
+            if(isset($aAttributes[$sName]))
+            {
+                $xAnnotation->setPrevValue($aAttributes[$sName]);
+            }
+            $xValue = $xAnnotation->getValue();
             if($sName === 'protected' && !$xValue)
             {
-                continue; // Ignore annotation exclude with value false
+                continue; // Ignore annotation @exclude with value false
             }
             $aAttributes[$sName] = $xValue;
         }
@@ -94,29 +82,43 @@ class AnnotationReader
     }
 
     /**
-     * Get the class attributes from its methods annotations
+     * Get the class attributes from its annotations
      *
      * @param string $sClass
      * @param array $aMethods
      *
      * @return array
+     * @throws AnnotationException
      */
-    public function getClassAttributes(string $sClass, array $aMethods): array
+    public function getAttributes(string $sClass, array $aMethods): array
     {
+        // Class annotations
+        $aClassAttrs = $this->filterAnnotations($this->xManager->getClassAnnotations($sClass));
+        if(isset($aClassAttrs['protected']))
+        {
+            return [true, [], []]; // The entire class is not to be exported.
+        }
+
         $aProtected = [];
         $aAttributes = [];
+        if(count($aClassAttrs) > 0)
+        {
+            $aAttributes['*'] = $aClassAttrs;
+        }
+
+        // Methods annotations
         foreach($aMethods as $sMethod)
         {
-            $aMethodAttrs = $this->getMethodAttributes($sClass, $sMethod);
+            $aMethodAttrs = $this->filterAnnotations($this->xManager->getMethodAnnotations($sClass, $sMethod));
             if(isset($aMethodAttrs['protected']))
             {
-                $aProtected[] = $sMethod;
+                $aProtected[] = $sMethod; // The method is not to be exported.
             }
             elseif(count($aMethodAttrs) > 0)
             {
                 $aAttributes[$sMethod] = $aMethodAttrs;
             }
         }
-        return [$aAttributes, $aProtected];
+        return [false, $aAttributes, $aProtected];
     }
 }

@@ -15,10 +15,14 @@ namespace Jaxon\Annotations\Annotation;
 
 use mindplay\annotations\AnnotationException;
 
+use function array_keys;
+use function is_array;
+use function is_string;
+
 /**
  * Specifies a method to be called after the one targeted by a Jaxon request.
  *
- * @usage('method'=>true, 'multiple'=>true, 'inherited'=>true)
+ * @usage('class' => true, 'method'=>true, 'multiple'=>true, 'inherited'=>true)
  */
 class AfterAnnotation extends AbstractAnnotation
 {
@@ -38,26 +42,26 @@ class AfterAnnotation extends AbstractAnnotation
      */
     public function initAnnotation(array $properties)
     {
-        if(!isset($properties['name']) || !is_string($properties['name']))
+        if(!isset($properties['call']) || !is_string($properties['call']))
         {
-            throw new AnnotationException('The @after annotation requires a property "name" of type string');
+            throw new AnnotationException('The @after annotation requires a property "call" of type string');
         }
         foreach(array_keys($properties) as $propName)
         {
-            if($propName !== 'name' && $propName !== 'params')
+            if($propName !== 'call' && $propName !== 'with')
             {
                 throw new AnnotationException('Unknown property "' . $propName . '" in the @after annotation');
             }
         }
-        if(isset($properties['params']))
+        if(isset($properties['with']))
         {
-            if(!is_array($properties['params']))
+            if(!is_array($properties['with']))
             {
-                throw new AnnotationException('The "params" property of the @after annotation must be of type array');
+                throw new AnnotationException('The "with" property of the @after annotation must be of type array');
             }
-            $this->sMethodParams = $properties['params'];
+            $this->sMethodParams = $properties['with'];
         }
-        $this->sMethodName = $properties['name'];
+        $this->sMethodName = $properties['call'];
     }
 
     /**
@@ -71,8 +75,15 @@ class AfterAnnotation extends AbstractAnnotation
     /**
      * @inheritDoc
      */
-    public function getValue($xCurrValue)
+    public function getValue()
     {
+        if(is_array($this->xPrevValue))
+        {
+            // Add the current value to the array
+            $this->xPrevValue[$this->sMethodName] = $this->sMethodParams;
+            return $this->xPrevValue;
+        }
+        // Return the current value in an array
         return [$this->sMethodName => $this->sMethodParams];
     }
 }
