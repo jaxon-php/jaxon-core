@@ -14,8 +14,8 @@
 namespace Jaxon\Annotations;
 
 use Jaxon\Annotations\Annotation\AbstractAnnotation;
-// use Jaxon\Annotations\Annotation\AfterAnnotation;
-// use Jaxon\Annotations\Annotation\BeforeAnnotation;
+use Jaxon\Annotations\Annotation\AfterAnnotation;
+use Jaxon\Annotations\Annotation\BeforeAnnotation;
 use Jaxon\Annotations\Annotation\DataBagAnnotation;
 use Jaxon\Annotations\Annotation\ExcludeAnnotation;
 use Jaxon\Annotations\Annotation\UploadAnnotation;
@@ -44,8 +44,8 @@ class AnnotationReader
         $this->xManager->registry['upload'] = UploadAnnotation::class;
         $this->xManager->registry['databag'] = DataBagAnnotation::class;
         $this->xManager->registry['exclude'] = ExcludeAnnotation::class;
-        // $this->xManager->registry['before'] = BeforeAnnotation::class;;
-        // $this->xManager->registry['after'] = AfterAnnotation::class;;
+        $this->xManager->registry['before'] = BeforeAnnotation::class;;
+        $this->xManager->registry['after'] = AfterAnnotation::class;;
         // Missing standard annotations.
         // We need to define this, otherwise they throw an exception, and make the whole processing fail.
         $this->xManager->registry['inheritDoc'] = false;
