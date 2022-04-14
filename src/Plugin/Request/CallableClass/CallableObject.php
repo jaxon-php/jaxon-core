@@ -210,7 +210,7 @@ class CallableObject
      *
      * @return array
      */
-    private function _getMethods(array $aProtectedMethods): array
+    public function getPublicMethods(array $aProtectedMethods = []): array
     {
         $aMethods = array_map(function($xMethod) {
             return $xMethod->getShortName();
@@ -231,7 +231,7 @@ class CallableObject
      *
      * @return array
      */
-    public function getMethods(array $aProtectedMethods): array
+    public function getCallableMethods(array $aProtectedMethods): array
     {
         // Convert an option to a string to be displayed in the js script template.
         $fConvertOption = function($xOption) {
@@ -247,7 +247,7 @@ class CallableObject
                 'name' => $sMethodName,
                 'config' => array_merge($aCommonConfig, $aMethodConfig),
             ];
-        }, $this->_getMethods($aProtectedMethods));
+        }, $this->getPublicMethods($aProtectedMethods));
     }
 
     /**

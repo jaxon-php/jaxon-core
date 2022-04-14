@@ -238,7 +238,7 @@ class CallableClassPlugin extends RequestPlugin
         return $this->xTemplateEngine->render('jaxon::callables/object.js', [
             'sPrefix' => $this->sPrefix,
             'sClass' => $xCallableObject->getJsName(),
-            'aMethods' => $xCallableObject->getMethods($aProtectedMethods),
+            'aMethods' => $xCallableObject->getCallableMethods($aProtectedMethods),
         ]);
     }
 

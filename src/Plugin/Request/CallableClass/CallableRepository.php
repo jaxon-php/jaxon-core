@@ -19,6 +19,7 @@ use Jaxon\Di\Container;
 use Jaxon\Exception\SetupException;
 
 use function array_merge;
+use function is_string;
 use function strlen;
 use function strncmp;
 
@@ -78,6 +79,11 @@ class CallableRepository
      * @var string
      */
     protected $sHash = '';
+
+    /**
+     * @var array
+     */
+    private $aDefaultClassOptions = ['separator' => '.', 'protected' => [], 'functions' => [], 'timestamp' => 0];
 
     /**
      * The constructor
@@ -156,30 +162,42 @@ class CallableRepository
      */
     public function makeClassOptions(string $sClassName, array $aClassOptions, array $aDirectoryOptions): array
     {
-        if(!isset($aClassOptions['functions']))
+        foreach($this->aDefaultClassOptions as $sOption => $xValue)
         {
-            $aClassOptions['functions'] = [];
-        }
-        foreach(['separator', 'protected'] as $sName)
-        {
-            if(isset($aDirectoryOptions[$sName]))
+            if(!isset($aClassOptions[$sOption]))
             {
-                $aClassOptions[$sName] = $aDirectoryOptions[$sName];
+                $aClassOptions[$sOption] = $xValue;
             }
+        }
+        if(is_string($aClassOptions['protected']))
+        {
+            $aClassOptions['protected'] = [$aClassOptions['protected']]; // Convert to array.
         }
 
-        $aFunctionOptions = $aDirectoryOptions['classes'] ?? [];
-        foreach($aFunctionOptions as $sName => $xValue)
+        $aDirectoryOptions['functions'] = []; // The 'functions' section is not allowed here.
+        $aOptionGroups = [
+            $aDirectoryOptions, // Options at directory level
+            $aDirectoryOptions['classes']['*'] ?? [], // Options for all classes
+            $aDirectoryOptions['classes'][$sClassName] ?? [], // Options for this specific class
+        ];
+        foreach($aOptionGroups as $aOptionGroup)
         {
-            if($sName === '*' || strncmp($sClassName, $sName, strlen($sName)) === 0)
+            if(isset($aOptionGroup['separator']))
             {
-                $aClassOptions['functions'] = array_merge($aClassOptions['functions'], $xValue);
+                $aClassOptions['separator'] = $aOptionGroup['separator'];
             }
-        }
-        // This value will be used to compute hash
-        if(!isset($aClassOptions['timestamp']))
-        {
-            $aClassOptions['timestamp'] = 0;
+            if(isset($aOptionGroup['protected']))
+            {
+                if(is_string($aOptionGroup['protected']))
+                {
+                    $aOptionGroup['protected'] = [$aOptionGroup['protected']]; // Convert to array.
+                }
+                $aClassOptions['protected'] = array_merge($aClassOptions['protected'], $aOptionGroup['protected']);
+            }
+            if(isset($aOptionGroup['functions']))
+            {
+                $aClassOptions['functions'] = array_merge($aClassOptions['functions'], $aOptionGroup['functions']);
+            }
         }
 
         return $aClassOptions;
@@ -251,11 +269,11 @@ class CallableRepository
             $this->getNamespaceClassOptions($sClassName);
             if(!isset($this->aClasses[$sClassName]))
             {
-                // Without a namespace, we need to parse all classes to be able to find one.
+                // Find options for a class registered without namespace.
+                // We then need to parse all classes to be able to find one.
                 $this->di->getCallableRegistry()->parseDirectories();
             }
         }
-        // Find options for a class registered without namespace.
         if(isset($this->aClasses[$sClassName]))
         {
             return $this->aClasses[$sClassName];
