@@ -48,6 +48,7 @@ class AnnotationReader
         $this->xManager->registry['after'] = AfterAnnotation::class;;
         // Missing standard annotations.
         // We need to define this, otherwise they throw an exception, and make the whole processing fail.
+        $this->xManager->registry['const'] = false;
         $this->xManager->registry['inheritDoc'] = false;
     }
 
