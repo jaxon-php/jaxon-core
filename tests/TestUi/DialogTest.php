@@ -6,10 +6,10 @@ require_once __DIR__ . '/../src/dialog.php';
 
 use Jaxon\Jaxon;
 use Jaxon\App\Dialog\Library\AlertLibrary;
-use Jaxon\Dialogs\Library\Bootbox\BootboxLibrary;
-use Jaxon\Dialogs\Library\Bootstrap\BootstrapLibrary;
-use Jaxon\Dialogs\Library\Noty\NotyLibrary;
-use Jaxon\Dialogs\Library\Toastr\ToastrLibrary;
+use Jaxon\Dialogs\Bootbox\BootboxLibrary;
+use Jaxon\Dialogs\Bootstrap\BootstrapLibrary;
+use Jaxon\Dialogs\Noty\NotyLibrary;
+use Jaxon\Dialogs\Toastr\ToastrLibrary;
 use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;
 use Jaxon\Utils\Http\UriException;
@@ -99,6 +99,7 @@ class DialogTest extends TestCase
 
     public function testDialogJsCode()
     {
+        jaxon()->setOption('dialogs.libraries', ['bootstrap', 'bootbox', 'toastr']);
         $sJsCode = jaxon()->getJs();
         $this->assertStringContainsString('bootbox.min.js', $sJsCode);
         $this->assertStringContainsString('bootstrap-dialog.min.js', $sJsCode);
@@ -107,6 +108,7 @@ class DialogTest extends TestCase
 
     public function testDialogCssCode()
     {
+        jaxon()->setOption('dialogs.libraries', ['bootstrap', 'bootbox', 'toastr']);
         $sCssCode = jaxon()->getCss();
         $this->assertStringContainsString('bootstrap-dialog.min.css', $sCssCode);
         $this->assertStringContainsString('toastr.min.css', $sCssCode);
@@ -120,6 +122,7 @@ class DialogTest extends TestCase
         jaxon()->setOption('dialogs.default.modal', 'bootstrap');
         jaxon()->setOption('dialogs.default.message', 'bootstrap');
         jaxon()->setOption('dialogs.default.question', 'bootstrap');
+        jaxon()->setOption('dialogs.libraries', ['bootbox', 'toastr']);
         $sScriptCode = jaxon()->getScript();
         $this->assertStringContainsString('jaxon.dialogs = {}', $sScriptCode);
         $this->assertStringContainsString('jaxon.dialogs.bootstrap', $sScriptCode);
