@@ -8,6 +8,7 @@ use Jaxon\App\Dialog\Library\DialogLibraryManager;
 use Jaxon\App\I18n\Translator;
 use Jaxon\App\View\ViewRenderer;
 use Jaxon\Exception\SetupException;
+use Jaxon\Plugin\AnnotationReaderInterface;
 use Jaxon\Plugin\Request\CallableClass\CallableClassHelper;
 use Jaxon\Plugin\Request\CallableClass\CallableObject;
 use Jaxon\Request\Call\Paginator;
@@ -19,6 +20,7 @@ use Jaxon\Utils\Config\Config;
 use ReflectionClass;
 use ReflectionException;
 
+use function array_merge;
 use function call_user_func;
 use function explode;
 use function substr;
@@ -26,43 +28,84 @@ use function substr;
 trait RegisterTrait
 {
     /**
-     * @param mixed $xCallableObject
+     * Register the values into the container
+     *
+     * @return void
+     */
+    private function registerAnnotations()
+    {
+        $this->set(AnnotationReaderInterface::class, function($c) {
+            return new class implements AnnotationReaderInterface
+            {
+                public function getAttributes(string $sClass, array $aMethods): array
+                {
+                    return [false, [], []];
+                }
+            };
+        });
+    }
+
+    /**
+     * @param array $aConfigOptions
+     * @param array $aAnnotationOptions
+     *
+     * @return array
+     */
+    private function getCallableObjectOptions(array $aConfigOptions, array $aAnnotationOptions): array
+    {
+        $aOptions = [];
+        foreach($aConfigOptions as $sNames => $aFunctionOptions)
+        {
+            $aFunctionNames = explode(',', $sNames); // Names are in comma-separated list.
+            foreach($aFunctionNames as $sFunctionName)
+            {
+                $aOptions[$sFunctionName] = array_merge($aOptions[$sFunctionName] ?? [], $aFunctionOptions);
+            }
+        }
+        foreach($aAnnotationOptions as $sFunctionName => $aFunctionOptions)
+        {
+            $aOptions[$sFunctionName] = array_merge($aOptions[$sFunctionName] ?? [], $aFunctionOptions);
+        }
+        return $aOptions;
+    }
+
+    /**
+     * @param string $sClassName
+     * @param CallableObject $xCallableObject
      * @param array $aOptions
      *
      * @return void
      */
-    private function setCallableObjectOptions($xCallableObject, array $aOptions)
+    private function setCallableObjectOptions(string $sClassName, CallableObject $xCallableObject, array $aOptions)
     {
-        foreach(['separator', 'protected'] as $sName)
+        // Annotations options
+        $xAnnotationReader = $this->g(AnnotationReaderInterface::class);
+        [$bExcluded, $aAnnotationOptions, $aAnnotationProtected] =
+            $xAnnotationReader->getAttributes($sClassName, $xCallableObject->getPublicMethods());
+        if($bExcluded)
         {
-            if(isset($aOptions[$sName]))
-            {
-                $xCallableObject->configure($sName, $aOptions[$sName]);
-            }
+            $xCallableObject->configure('excluded', true);
+            return;
         }
+
+        $xCallableObject->configure('separator', $aOptions['separator']);
+        $xCallableObject->configure('protected', array_merge($aOptions['protected'], $aAnnotationProtected));
+
         // Functions options
         $aCallableOptions = [];
-        foreach($aOptions['functions'] as $sNames => $aFunctionOptions)
+        $aOptions = $this->getCallableObjectOptions($aOptions['functions'], $aAnnotationOptions);
+        foreach($aOptions as $sFunctionName => $aFunctionOptions)
         {
-            if($sNames === 'protected')
+            foreach($aFunctionOptions as $sOptionName => $xOptionValue)
             {
-                $xCallableObject->configure('protected', $aFunctionOptions);
-                continue;
-            }
-            $aNames = explode(',', $sNames); // Names are in comma-separated list.
-            foreach($aNames as $sFunctionName)
-            {
-                foreach($aFunctionOptions as $sOptionName => $xOptionValue)
+                if(substr($sOptionName, 0, 2) !== '__')
                 {
-                    if(substr($sOptionName, 0, 2) !== '__')
-                    {
-                        // Options for javascript code.
-                        $aCallableOptions[$sFunctionName][$sOptionName] = $xOptionValue;
-                        continue;
-                    }
-                    // Options for PHP classes. They start with "__".
-                    $xCallableObject->configure($sOptionName, [$sFunctionName => $xOptionValue]);
+                    // Options for javascript code.
+                    $aCallableOptions[$sFunctionName][$sOptionName] = $xOptionValue;
+                    continue;
                 }
+                // Options for PHP classes. They start with "__".
+                $xCallableObject->configure($sOptionName, [$sFunctionName => $xOptionValue]);
             }
         }
         $xCallableObject->setOptions($aCallableOptions);
@@ -101,9 +144,9 @@ trait RegisterTrait
         }
 
         // Register the callable object
-        $this->set($sCallableObject, function($c) use($sReflectionClass, $aOptions) {
+        $this->set($sCallableObject, function($c) use($sClassName, $sReflectionClass, $aOptions) {
             $xCallableObject = new CallableObject($this, $c->g($sReflectionClass));
-            $this->setCallableObjectOptions($xCallableObject, $aOptions);
+            $this->setCallableObjectOptions($sClassName, $xCallableObject, $aOptions);
             return $xCallableObject;
         });
 

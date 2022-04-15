@@ -331,6 +331,11 @@ class DialogLibraryManager implements ConfigListenerInterface
     public function onChange(Config $xConfig, string $sName)
     {
         // Reset the default libraries any time the config is changed.
+        if($sName === 'dialogs.libraries')
+        {
+            $this->registerLibraries();
+            return;
+        }
         if(substr($sName, 0, 15) === 'dialogs.default')
         {
             $this->setDefaultLibraries();

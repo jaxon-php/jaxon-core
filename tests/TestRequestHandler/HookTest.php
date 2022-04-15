@@ -51,19 +51,21 @@ class HookTest extends TestCase
         jaxon()->register(Jaxon::CALLABLE_DIR, __DIR__ . '/../src/response', [
             'classes' => [
                 'TestHk' => [
-                    '*' => [
-                        '__before' => 'before',
-                        '__after' => 'after',
-                    ],
-                    'three' => [
-                        '__before' => ['before', 'before2'],
-                        '__after' => [],
-                    ],
-                    'four' => [
-                        '__before' => [],
-                        '__after' => [
-                            'after1' => ['p1'],
-                            'after2' => ['p1', 'p2'],
+                    'functions' => [
+                        '*' => [
+                            '__before' => 'before',
+                            '__after' => 'after',
+                        ],
+                        'three' => [
+                            '__before' => ['before', 'before2'],
+                            '__after' => [],
+                        ],
+                        'four' => [
+                            '__before' => [],
+                            '__after' => [
+                                'after1' => ['p1'],
+                                'after2' => ['p1', 'p2'],
+                            ],
                         ],
                     ],
                 ],

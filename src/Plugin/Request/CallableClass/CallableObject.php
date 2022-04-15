@@ -93,6 +93,13 @@ class CallableObject
     private $sSeparator = '.';
 
     /**
+     * Check if the js code for this object must be generated
+     *
+     * @var bool
+     */
+    private $bExcluded = false;
+
+    /**
      * The class constructor
      *
      * @param Container  $di
@@ -113,6 +120,16 @@ class CallableObject
     public function getOptions(): array
     {
         return $this->aOptions;
+    }
+
+    /**
+     * Check if the js code for this object must be generated
+     *
+     * @return bool
+     */
+    public function excluded(): bool
+    {
+        return $this->bExcluded;
     }
 
     /**
@@ -198,6 +215,9 @@ class CallableObject
         case '__after':
             $this->setHookMethods($this->aAfterMethods, $xValue);
             break;
+        case 'excluded':
+            $this->bExcluded = (bool)$xValue;
+            break;
         default:
             break;
         }
@@ -210,7 +230,7 @@ class CallableObject
      *
      * @return array
      */
-    private function _getMethods(array $aProtectedMethods): array
+    public function getPublicMethods(array $aProtectedMethods = []): array
     {
         $aMethods = array_map(function($xMethod) {
             return $xMethod->getShortName();
@@ -231,7 +251,7 @@ class CallableObject
      *
      * @return array
      */
-    public function getMethods(array $aProtectedMethods): array
+    public function getCallableMethods(array $aProtectedMethods): array
     {
         // Convert an option to a string to be displayed in the js script template.
         $fConvertOption = function($xOption) {
@@ -247,7 +267,7 @@ class CallableObject
                 'name' => $sMethodName,
                 'config' => array_merge($aCommonConfig, $aMethodConfig),
             ];
-        }, $this->_getMethods($aProtectedMethods));
+        }, $this->getPublicMethods($aProtectedMethods));
     }
 
     /**

@@ -91,6 +91,7 @@ class Container extends PimpleContainer implements LoggerAwareInterface
         $this->registerCallables();
         $this->registerViews();
         $this->registerUtils();
+        $this->registerAnnotations();
     }
 
     /**

@@ -171,7 +171,7 @@ class CallableRegistry
             // Iterate on dir content
             foreach($itFile as $xFile)
             {
-                // skip everything except PHP files
+                // Skip everything except PHP files
                 if(!$xFile->isFile() || $xFile->getExtension() != 'php')
                 {
                     continue;
