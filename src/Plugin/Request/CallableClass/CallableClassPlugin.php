@@ -234,6 +234,11 @@ class CallableClassPlugin extends RequestPlugin
      */
     private function getCallableScript(string $sClassName, CallableObject $xCallableObject): string
     {
+        if($xCallableObject->excluded())
+        {
+            return '';
+        }
+
         $aProtectedMethods = is_subclass_of($sClassName, CallableClass::class) ? $this->aProtectedMethods : [];
         return $this->xTemplateEngine->render('jaxon::callables/object.js', [
             'sPrefix' => $this->sPrefix,

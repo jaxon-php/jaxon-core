@@ -93,6 +93,13 @@ class CallableObject
     private $sSeparator = '.';
 
     /**
+     * Check if the js code for this object must be generated
+     *
+     * @var bool
+     */
+    private $bExcluded = false;
+
+    /**
      * The class constructor
      *
      * @param Container  $di
@@ -113,6 +120,16 @@ class CallableObject
     public function getOptions(): array
     {
         return $this->aOptions;
+    }
+
+    /**
+     * Check if the js code for this object must be generated
+     *
+     * @return bool
+     */
+    public function excluded(): bool
+    {
+        return $this->bExcluded;
     }
 
     /**
@@ -197,6 +214,9 @@ class CallableObject
         // Set the methods to call after processing the request
         case '__after':
             $this->setHookMethods($this->aAfterMethods, $xValue);
+            break;
+        case 'excluded':
+            $this->bExcluded = (bool)$xValue;
             break;
         default:
             break;
