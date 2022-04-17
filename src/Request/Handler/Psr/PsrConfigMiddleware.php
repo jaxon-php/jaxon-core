@@ -26,12 +26,12 @@ class PsrConfigMiddleware implements MiddlewareInterface
     /**
      * @var Container
      */
-    private $di;
+    protected $di;
 
     /**
      * @var string
      */
-    private $sConfigFile;
+    protected $sConfigFile;
 
     /**
      * The constructor

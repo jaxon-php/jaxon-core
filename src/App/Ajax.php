@@ -108,15 +108,17 @@ class Ajax
     /**
      * @return Ajax
      */
-    public static function getInstance(): ?Ajax
+    public static function getInstance(): Ajax
     {
         if(self::$xInstance === null)
         {
+            // First call: create and initialize the instances.
             self::$xInstance = new Ajax();
             self::$xContainer = new Container(self::$xInstance);
             self::initInstance();
+            return self::$xInstance;
         }
-        // Call the on boot callbacks on each call to the jaxon() function.
+        // Call the on boot callbacks on each call to the jaxon() function, except the first.
         self::$xInstance->xBootstrap->onBoot();
         return self::$xInstance;
     }
