@@ -1,7 +1,9 @@
 <?php
 
 /**
- * App.php - Jaxon application
+ * App.php
+ *
+ * Jaxon application
  *
  * @package jaxon-core
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
@@ -12,59 +14,33 @@
 
 namespace Jaxon\App;
 
-use Jaxon\App\Config\ConfigManager;
-use Jaxon\App\I18n\Translator;
+use Jaxon\App\Traits\AjaxSendTrait;
+use Jaxon\App\Traits\AppTrait;
+use Jaxon\Di\Container;
+use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;
-
 use function file_exists;
 use function http_response_code;
 use function intval;
 use function is_array;
 
-class App
+class App implements AppInterface
 {
     use AppTrait;
-
-    /**
-     * @var ConfigManager
-     */
-    private $xConfigManager;
-
-    /**
-     * @var Translator
-     */
-    private $xTranslator;
+    use AjaxSendTrait;
 
     /**
      * The class constructor
      *
-     * @param ConfigManager $xConfigManager
-     * @param Translator $xTranslator
+     * @param Container $xContainer
      */
-    public function __construct(ConfigManager $xConfigManager, Translator $xTranslator)
+    public function __construct(Container $xContainer)
     {
-        $this->xConfigManager = $xConfigManager;
-        $this->xTranslator = $xTranslator;
+        $this->initApp($xContainer);
     }
 
     /**
-     * Set the javascript asset
-     *
-     * @param bool $bExport    Whether to export the js code in a file
-     * @param bool $bMinify    Whether to minify the exported js file
-     * @param string $sUri    The URI to access the js file
-     * @param string $sDir    The directory where to create the js file
-     *
-     * @return App
-     */
-    public function asset(bool $bExport, bool $bMinify, string $sUri = '', string $sDir = ''): App
-    {
-        $this->bootstrap()->asset($bExport, $bMinify, $sUri, $sDir);
-        return $this;
-    }
-
-    /**
-     * Read config options from a config file and setup the library
+     * Read config options from a config file and set up the library
      *
      * @param string $sConfigFile    The full path to the config file
      *
@@ -97,18 +73,18 @@ class App
         $this->bootstrap()
             ->lib($aLibOptions)
             ->app($aAppOptions)
-            // ->asset(!$bIsDebug, !$bIsDebug, $sJsUrl, $sJsDir)
             ->setup();
     }
 
     /**
      * @inheritDoc
+     * @throws RequestException
      */
     public function httpResponse(string $sCode = '200')
     {
         // Set the HTTP response code
         http_response_code(intval($sCode));
         // Send the response
-        $this->jaxon->sendResponse();
+        $this->sendResponse();
     }
 }

@@ -25,47 +25,35 @@
 
 namespace Jaxon\App;
 
-use Jaxon\Jaxon;
 use Jaxon\App\Config\ConfigManager;
 use Jaxon\App\Dialog\Library\DialogLibraryManager;
 use Jaxon\App\I18n\Translator;
 use Jaxon\App\Session\SessionInterface;
+use Jaxon\App\Traits\AjaxSendTrait;
+use Jaxon\App\Traits\AjaxTrait;
 use Jaxon\App\View\ViewRenderer;
 use Jaxon\Di\Container;
 use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;
+use Jaxon\Jaxon;
 use Jaxon\Plugin\Manager\PluginManager;
-use Jaxon\Plugin\Package;
-use Jaxon\Plugin\ResponsePlugin;
 use Jaxon\Request\Call\Paginator;
-use Jaxon\Request\Factory\Factory;
 use Jaxon\Request\Factory\Psr\PsrFactory;
-use Jaxon\Request\Factory\RequestFactory;
-use Jaxon\Request\Handler\CallbackManager;
 use Jaxon\Request\Handler\UploadHandler;
 use Jaxon\Response\Manager\ResponseManager;
 use Jaxon\Response\Response;
-use Jaxon\Response\ResponseInterface;
-use Jaxon\Utils\Http\UriException;
 use Jaxon\Utils\Template\TemplateEngine;
-use Psr\Log\LoggerInterface;
-
-use function gmdate;
-use function header;
-use function headers_sent;
 use function trim;
 
 class Ajax
 {
+    use AjaxTrait;
+    use AjaxSendTrait;
+
     /**
      * @var Ajax
      */
     private static $xInstance = null;
-
-    /**
-     * @var Container
-     */
-    private static $xContainer = null;
 
     /**
      * @var Bootstrap
@@ -73,36 +61,19 @@ class Ajax
     protected $xBootstrap;
 
     /**
-     * @var Translator
-     */
-    protected $xTranslator;
-
-    /**
-     * @var ConfigManager
-     */
-    protected $xConfigManager;
-
-    /**
-     * @var PluginManager
-     */
-    protected $xPluginManager;
-
-    /**
-     * @var ResponseManager
-     */
-    protected $xResponseManager;
-
-    /**
+     * @param Container $xContainer
+     *
      * @return void
      */
-    private static function initInstance()
+    private function init(Container $xContainer)
     {
+        $this->xContainer = $xContainer;
         // Set the attributes from the container
-        self::$xInstance->xBootstrap = self::$xContainer->g(Bootstrap::class);
-        self::$xInstance->xTranslator = self::$xContainer->g(Translator::class);
-        self::$xInstance->xConfigManager = self::$xContainer->g(ConfigManager::class);
-        self::$xInstance->xPluginManager = self::$xContainer->g(PluginManager::class);
-        self::$xInstance->xResponseManager = self::$xContainer->g(ResponseManager::class);
+        $this->xBootstrap = $xContainer->g(Bootstrap::class);
+        $this->xTranslator = $xContainer->g(Translator::class);
+        $this->xConfigManager = $xContainer->g(ConfigManager::class);
+        $this->xPluginManager = $xContainer->g(PluginManager::class);
+        $this->xResponseManager = $xContainer->g(ResponseManager::class);
     }
 
     /**
@@ -114,10 +85,10 @@ class Ajax
         {
             // First call: create and initialize the instances.
             self::$xInstance = new Ajax();
-            self::$xContainer = new Container(self::$xInstance);
-            self::initInstance();
+            self::$xInstance->init(new Container(self::$xInstance));
             return self::$xInstance;
         }
+
         // Call the on boot callbacks on each call to the jaxon() function, except the first.
         self::$xInstance->xBootstrap->onBoot();
         return self::$xInstance;
@@ -138,60 +109,6 @@ class Ajax
     }
 
     /**
-     * @return Container
-     */
-    public function di(): ?Container
-    {
-        return self::$xContainer;
-    }
-
-    /**
-     * @return LoggerInterface
-     */
-    public function logger(): LoggerInterface
-    {
-        return $this->di()->getLogger();
-    }
-
-    /**
-     * Set the value of a config option
-     *
-     * @param string $sName    The option name
-     * @param mixed $sValue    The option value
-     *
-     * @return void
-     */
-    public function setOption(string $sName, $sValue)
-    {
-        $this->xConfigManager->setOption($sName, $sValue);
-    }
-
-    /**
-     * Get the value of a config option
-     *
-     * @param string $sName    The option name
-     * @param mixed|null $xDefault    The default value, to be returned if the option is not defined
-     *
-     * @return mixed
-     */
-    public function getOption(string $sName, $xDefault = null)
-    {
-        return $this->xConfigManager->getOption($sName, $xDefault);
-    }
-
-    /**
-     * Check the presence of a config option
-     *
-     * @param string $sName    The option name
-     *
-     * @return bool
-     */
-    public function hasOption(string $sName): bool
-    {
-        return $this->xConfigManager->hasOption($sName);
-    }
-
-    /**
      * Read the options from the file, if provided, and return the config
      *
      * @param string $sConfigFile The full path to the config file
@@ -207,24 +124,6 @@ class Ajax
             $this->xConfigManager->load($sConfigFile, trim($sConfigSection));
         }
         return $this->xConfigManager;
-    }
-
-    /**
-     * @return Translator
-     */
-    public function translator(): Translator
-    {
-        return $this->xTranslator;
-    }
-
-    /**
-     * Get the global Response object
-     *
-     * @return ResponseInterface
-     */
-    public function getResponse(): ResponseInterface
-    {
-        return $this->xResponseManager->getResponse();
     }
 
     /**
@@ -272,6 +171,14 @@ class Ajax
     }
 
     /**
+     * @return UploadHandler|null
+     */
+    public function upload(): ?UploadHandler
+    {
+        return $this->di()->getUploadHandler();
+    }
+
+    /**
      * Register request handlers, including functions, callable classes and directories.
      *
      * @param string $sType    The type of request handler being registered
@@ -294,80 +201,6 @@ class Ajax
     }
 
     /**
-     * @return Factory
-     */
-    public function factory(): Factory
-    {
-        return $this->di()->getFactory();
-    }
-
-    /**
-     * @return PsrFactory
-     */
-    public function psr(): PsrFactory
-    {
-        return $this->di()->getPsrFactory();
-    }
-
-    /**
-     * @param string $sClassName The class name
-     *
-     * @return RequestFactory|null
-     * @throws SetupException
-     */
-    public function request(string $sClassName = ''): ?RequestFactory
-    {
-        return $this->factory()->request($sClassName);
-    }
-
-    /**
-     * Returns the Jaxon Javascript header and wrapper code to be printed into the page
-     *
-     * The javascript code returned by this function is dependent on the plugins
-     * that are included and the functions and classes that are registered.
-     *
-     * @param bool $bIncludeJs    Also get the JS files
-     * @param bool $bIncludeCss    Also get the CSS files
-     *
-     * @return string
-     * @throws UriException
-     */
-    public function getScript(bool $bIncludeJs = false, bool $bIncludeCss = false): string
-    {
-        return $this->di()->getCodeGenerator()->getScript($bIncludeJs, $bIncludeCss);
-    }
-
-    /**
-     * Return the javascript header code and file includes
-     *
-     * @return string
-     */
-    public function getJs(): string
-    {
-        return $this->di()->getCodeGenerator()->getJs();
-    }
-
-    /**
-     * Return the CSS header code and file includes
-     *
-     * @return string
-     */
-    public function getCss(): string
-    {
-        return $this->di()->getCodeGenerator()->getCss();
-    }
-
-    /**
-     * Determine if a call is a jaxon request or a page load request
-     *
-     * @return bool
-     */
-    public function canProcessRequest(): bool
-    {
-        return $this->di()->getRequestHandler()->canProcessRequest();
-    }
-
-    /**
      * If this is a jaxon request, call the requested PHP function, build the response and send it back to the browser
      *
      * This is the main server side engine for Jaxon.
@@ -380,47 +213,17 @@ class Ajax
      * @return void
      *
      * @throws RequestException
-     * @see <Jaxon\Jaxon->canProcessRequest>
+     * @see <AjaxTrait::canProcessRequest>
      */
     public function processRequest()
     {
-        // Check to see if headers have already been sent out, in which case we can't do our job
-        if(headers_sent($sFilename, $nLineNumber))
-        {
-            $sMessage = $this->xTranslator->trans('errors.output.already-sent', [
-                'location' => $sFilename . ':' . $nLineNumber
-            ]) . "\n" . $this->xTranslator->trans('errors.output.advice');
-            throw new RequestException($sMessage);
-        }
-
+        // Process the jaxon request
         $this->di()->getRequestHandler()->processRequest();
 
         if($this->xConfigManager->getOption('core.response.send'))
         {
             $this->sendResponse();
         }
-    }
-
-    /**
-     * Prints the response to the output stream, thus sending the response to the browser
-     *
-     * @return void
-     */
-    public function sendResponse()
-    {
-        if(empty($sContent = $this->xResponseManager->getOutput()))
-        {
-            return;
-        }
-        if($this->di()->getRequest()->getMethod() === 'GET')
-        {
-            header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
-            header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
-            header("Cache-Control: no-cache, must-revalidate");
-            header("Pragma: no-cache");
-        }
-        header('content-type: ' . $this->xResponseManager->getContentType());
-        print $sContent;
         if($this->xConfigManager->getOption('core.process.exit'))
         {
             exit();
@@ -428,43 +231,19 @@ class Ajax
     }
 
     /**
-     * Get a registered response plugin
-     *
-     * @param string $sName    The name of the plugin
-     *
-     * @return ResponsePlugin|null
+     * @return PsrFactory
      */
-    public function plugin(string $sName): ?ResponsePlugin
+    public function psr(): PsrFactory
     {
-        return $this->xPluginManager->getResponsePlugin($sName);
+        return $this->di()->getPsrFactory();
     }
 
     /**
-     * Get a package instance
-     *
-     * @param string $sClassName    The package class name
-     *
-     * @return Package|null
+     * @return AppInterface
      */
-    public function package(string $sClassName): ?Package
+    public function app(): AppInterface
     {
-        return $this->di()->getPackageManager()->getPackage($sClassName);
-    }
-
-    /**
-     * @return UploadHandler|null
-     */
-    public function upload(): ?UploadHandler
-    {
-        return $this->di()->getUploadHandler();
-    }
-
-    /**
-     * @return CallbackManager
-     */
-    public function callback(): CallbackManager
-    {
-        return $this->di()->getCallbackManager();
+        return $this->di()->getApp();
     }
 
     /**
@@ -473,14 +252,6 @@ class Ajax
     public function template(): TemplateEngine
     {
         return $this->di()->getTemplateEngine();
-    }
-
-    /**
-     * @return App
-     */
-    public function app(): App
-    {
-        return $this->di()->getApp();
     }
 
     /**
@@ -522,7 +293,6 @@ class Ajax
     public function reset()
     {
         self::$xInstance = null;
-        self::$xContainer = null;
         // Need to register the default plugins.
         self::getInstance()->di()->getPluginManager()->registerPlugins();
     }
