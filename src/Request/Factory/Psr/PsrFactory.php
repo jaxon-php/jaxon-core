@@ -21,6 +21,8 @@ use Jaxon\Request\Handler\Psr\PsrRequestHandler;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 
+use Closure;
+
 class PsrFactory
 {
     /**
@@ -64,6 +66,22 @@ class PsrFactory
     {
         $this->di->setContainer($xContainer);
         return $this;
+    }
+
+    /**
+     * Add a view renderer with an id
+     *
+     * @param string $sRenderer    The renderer name
+     * @param string $sExtension    The extension to append to template names
+     * @param Closure $xClosure    A closure to create the view instance
+     *
+     * @return void
+     */
+    public function view(string $sRenderer, string $sExtension, Closure $xClosure)
+    {
+        $xViewRenderer = $this->di->getViewRenderer();
+        $xViewRenderer->addNamespace('default', '', $sExtension, $sRenderer);
+        $xViewRenderer->addRenderer($sRenderer, $xClosure);
     }
 
     /**

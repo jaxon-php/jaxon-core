@@ -52,7 +52,7 @@ trait AjaxSendTrait
             header("Cache-Control: no-cache, must-revalidate");
             header("Pragma: no-cache");
         }
-        header('content-type: ' . $this->xResponseManager->getContentType());
+        header('Content-Type: ' . $this->xResponseManager->getContentType());
 
         print $sContent;
     }

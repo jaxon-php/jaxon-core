@@ -207,26 +207,27 @@ interface AppInterface
     public function setContainer(ContainerInterface $xContainer);
 
     /**
-     * Add a view namespace, and set the corresponding renderer.
-     *
-     * @param string $sNamespace    The namespace name
-     * @param string $sDirectory    The namespace directory
-     * @param string $sExtension    The extension to append to template names
-     * @param string $sRenderer    The corresponding renderer name
-     *
-     * @return void
-     */
-    public function addViewNamespace(string $sNamespace, string $sDirectory, string $sExtension, string $sRenderer);
-
-    /**
      * Add a view renderer with an id
      *
-     * @param string $sId    The unique identifier of the view renderer
+     * @param string $sRenderer    The renderer name
+     * @param string $sExtension    The extension to append to template names
      * @param Closure $xClosure    A closure to create the view instance
      *
      * @return void
      */
-    public function addViewRenderer(string $sId, Closure $xClosure);
+    public function addViewRenderer(string $sRenderer, string $sExtension, Closure $xClosure);
+
+    /**
+     * Set the javascript asset
+     *
+     * @param bool $bExport    Whether to export the js code in a file
+     * @param bool $bMinify    Whether to minify the exported js file
+     * @param string $sUri    The URI to access the js file
+     * @param string $sDir    The directory where to create the js file
+     *
+     * @return AppInterface
+     */
+    public function asset(bool $bExport, bool $bMinify, string $sUri = '', string $sDir = ''): AppInterface;
 
     /**
      * Read config options from a config file and set up the library

@@ -14,7 +14,6 @@
 
 namespace Jaxon\App\Traits;
 
-use Closure;
 use Jaxon\App\AppInterface;
 use Jaxon\App\Bootstrap;
 use Jaxon\App\Config\ConfigManager;
@@ -25,10 +24,12 @@ use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Response\Manager\ResponseManager;
 use Psr\Container\ContainerInterface;
 
+use Closure;
+
 trait AppTrait
 {
     use AjaxTrait {
-        getResponse as protected ajaxResponse;
+        AjaxTrait::getResponse as public ajaxResponse;
     }
 
     /**
@@ -121,31 +122,19 @@ trait AppTrait
     }
 
     /**
-     * Add a view namespace, and set the corresponding renderer.
-     *
-     * @param string $sNamespace    The namespace name
-     * @param string $sDirectory    The namespace directory
-     * @param string $sExtension    The extension to append to template names
-     * @param string $sRenderer    The corresponding renderer name
-     *
-     * @return void
-     */
-    public function addViewNamespace(string $sNamespace, string $sDirectory, string $sExtension, string $sRenderer)
-    {
-        $this->di()->getViewRenderer()->addNamespace($sNamespace, $sDirectory, $sExtension, $sRenderer);
-    }
-
-    /**
      * Add a view renderer with an id
      *
-     * @param string $sId    The unique identifier of the view renderer
+     * @param string $sRenderer    The renderer name
+     * @param string $sExtension    The extension to append to template names
      * @param Closure $xClosure    A closure to create the view instance
      *
      * @return void
      */
-    public function addViewRenderer(string $sId, Closure $xClosure)
+    public function addViewRenderer(string $sRenderer, string $sExtension, Closure $xClosure)
     {
-        $this->di()->getViewRenderer()->addRenderer($sId, $xClosure);
+        $xViewRenderer = $this->di->getViewRenderer();
+        $xViewRenderer->addNamespace('default', '', $sExtension, $sRenderer);
+        $xViewRenderer->addRenderer($sRenderer, $xClosure);
     }
 
     /**
