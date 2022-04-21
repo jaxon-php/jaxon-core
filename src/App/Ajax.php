@@ -43,6 +43,7 @@ use Jaxon\Request\Handler\UploadHandler;
 use Jaxon\Response\Manager\ResponseManager;
 use Jaxon\Response\Response;
 use Jaxon\Utils\Template\TemplateEngine;
+
 use function trim;
 
 class Ajax
