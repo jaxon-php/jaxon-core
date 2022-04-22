@@ -188,11 +188,11 @@ trait AjaxTrait
     }
 
     /**
-     * Get the global Response object
+     * Get the Jaxon ajax response
      *
      * @return ResponseInterface
      */
-    public function getResponse(): ResponseInterface
+    public function ajaxResponse(): ResponseInterface
     {
         return $this->xResponseManager->getResponse();
     }

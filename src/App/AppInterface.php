@@ -19,6 +19,7 @@ use Jaxon\Plugin\ResponsePlugin;
 use Jaxon\Request\Factory\Factory;
 use Jaxon\Request\Factory\RequestFactory;
 use Jaxon\Request\Handler\CallbackManager;
+use Jaxon\Response\ResponseInterface;
 use Jaxon\Utils\Http\UriException;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
@@ -154,9 +155,16 @@ interface AppInterface
     /**
      * Process an incoming Jaxon request, and return the response.
      *
-     * @return mixed
+     * @return void
      */
     public function processRequest();
+
+    /**
+     * Get the Jaxon ajax response
+     *
+     * @return ResponseInterface
+     */
+    public function ajaxResponse(): ResponseInterface;
 
     /**
      * Get the HTTP response

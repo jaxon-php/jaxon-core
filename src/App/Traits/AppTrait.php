@@ -23,14 +23,11 @@ use Jaxon\Exception\RequestException;
 use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Response\Manager\ResponseManager;
 use Psr\Container\ContainerInterface;
-
 use Closure;
 
 trait AppTrait
 {
-    use AjaxTrait {
-        AjaxTrait::getResponse as public ajaxResponse;
-    }
+    use AjaxTrait;
 
     /**
      * @param Container $xContainer
@@ -97,16 +94,12 @@ trait AppTrait
     /**
      * Process an incoming Jaxon request, and return the response.
      *
-     * @return mixed
+     * @return void
      * @throws RequestException
      */
     public function processRequest()
     {
-        // Process the jaxon request
         $this->di()->getRequestHandler()->processRequest();
-
-        // Return the response to the request
-        return $this->httpResponse();
     }
 
     /**
@@ -132,7 +125,7 @@ trait AppTrait
      */
     public function addViewRenderer(string $sRenderer, string $sExtension, Closure $xClosure)
     {
-        $xViewRenderer = $this->di->getViewRenderer();
+        $xViewRenderer = $this->di()->getViewRenderer();
         $xViewRenderer->addNamespace('default', '', $sExtension, $sRenderer);
         $xViewRenderer->addRenderer($sRenderer, $xClosure);
     }

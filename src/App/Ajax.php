@@ -42,6 +42,7 @@ use Jaxon\Request\Factory\Psr\PsrFactory;
 use Jaxon\Request\Handler\UploadHandler;
 use Jaxon\Response\Manager\ResponseManager;
 use Jaxon\Response\Response;
+use Jaxon\Response\ResponseInterface;
 use Jaxon\Utils\Template\TemplateEngine;
 
 use function trim;
@@ -125,6 +126,16 @@ class Ajax
             $this->xConfigManager->load($sConfigFile, trim($sConfigSection));
         }
         return $this->xConfigManager;
+    }
+
+    /**
+     * Get the global Response object
+     *
+     * @return ResponseInterface
+     */
+    public function getResponse(): ResponseInterface
+    {
+        return $this->xResponseManager->getResponse();
     }
 
     /**
