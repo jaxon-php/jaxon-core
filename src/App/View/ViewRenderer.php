@@ -158,6 +158,22 @@ class ViewRenderer
     }
 
     /**
+     * Add a view renderer with an id
+     *
+     * @param string $sId    The unique identifier of the view renderer
+     * @param string $sExtension    The extension to append to template names
+     * @param Closure $xClosure    A closure to create the view instance
+     *
+     * @return void
+     */
+    public function setDefaultRenderer(string $sId, string $sExtension, Closure $xClosure)
+    {
+        $this->setDefaultNamespace($sId);
+        $this->addNamespace($sId, '', $sExtension, $sId);
+        $this->addRenderer($sId, $xClosure);
+    }
+
+    /**
      * Get the view renderer for a given namespace
      *
      * @param string $sNamespace    The namespace name
@@ -254,7 +270,6 @@ class ViewRenderer
      */
     public function render(string $sViewName, array $aViewData = []): ?Store
     {
-        // Get the store
         $xStore = $this->store();
         // Get the default view namespace
         $sNamespace = $this->sDefaultNamespace;

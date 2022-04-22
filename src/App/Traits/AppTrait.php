@@ -125,9 +125,7 @@ trait AppTrait
      */
     public function addViewRenderer(string $sRenderer, string $sExtension, Closure $xClosure)
     {
-        $xViewRenderer = $this->di()->getViewRenderer();
-        $xViewRenderer->addNamespace('default', '', $sExtension, $sRenderer);
-        $xViewRenderer->addRenderer($sRenderer, $xClosure);
+        $this->di()->getViewRenderer()->setDefaultRenderer($sRenderer, $sExtension, $xClosure);
     }
 
     /**

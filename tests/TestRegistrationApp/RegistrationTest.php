@@ -145,7 +145,8 @@ class RegistrationTest extends TestCase
         });
 
         $this->assertTrue(jaxon()->app()->canProcessRequest());
-        $this->expectException(RequestException::class);
         jaxon()->app()->processRequest();
+        $this->expectException(RequestException::class);
+        jaxon()->app()->httpResponse();
     }
 }

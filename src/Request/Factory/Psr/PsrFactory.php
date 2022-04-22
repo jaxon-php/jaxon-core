@@ -75,13 +75,12 @@ class PsrFactory
      * @param string $sExtension    The extension to append to template names
      * @param Closure $xClosure    A closure to create the view instance
      *
-     * @return void
+     * @return $this
      */
-    public function view(string $sRenderer, string $sExtension, Closure $xClosure)
+    public function view(string $sRenderer, string $sExtension, Closure $xClosure): PsrFactory
     {
-        $xViewRenderer = $this->di->getViewRenderer();
-        $xViewRenderer->addNamespace('default', '', $sExtension, $sRenderer);
-        $xViewRenderer->addRenderer($sRenderer, $xClosure);
+        $this->di->getViewRenderer()->setDefaultRenderer($sRenderer, $sExtension, $xClosure);
+        return $this;
     }
 
     /**
