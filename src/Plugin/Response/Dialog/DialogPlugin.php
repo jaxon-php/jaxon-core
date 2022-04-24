@@ -27,7 +27,7 @@ use function trim;
 
 class DialogPlugin extends ResponsePlugin implements ModalInterface, MessageInterface
 {
-    use DialogLibraryTrait;
+    use DialogPluginTrait;
 
     /**
      * @const The plugin name

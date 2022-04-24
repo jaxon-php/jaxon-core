@@ -106,6 +106,12 @@ class DialogTest extends TestCase
         $this->assertEquals('', $xQuestionLibrary->getJs());
         $this->assertEquals('', $xQuestionLibrary->getScript());
         $this->assertEquals('', $xQuestionLibrary->getReadyScript());
+
+        $xDialogPlugin = jaxon()->di()->getDialogPlugin();
+        $xDialogPlugin->setReturnCode(false);
+        $this->assertEquals('', $xDialogPlugin->getUri());
+        $this->assertEquals('', $xDialogPlugin->getSubdir());
+        $this->assertEquals('', $xDialogPlugin->getVersion());
     }
 
     public function testDialogJsCode()
