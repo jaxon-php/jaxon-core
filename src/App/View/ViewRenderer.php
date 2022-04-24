@@ -142,7 +142,7 @@ class ViewRenderer
     public function addRenderer(string $sId, Closure $xClosure)
     {
         // Return the initialized view renderer
-        $this->di->set('jaxon.app.view.' . $sId, function($di) use ($sId, $xClosure) {
+        $this->di->set('jaxon.app.view.' . $sId, function($di) use($sId, $xClosure) {
             // Get the defined renderer
             $xRenderer = $xClosure($di);
             // Init the renderer with the template namespaces

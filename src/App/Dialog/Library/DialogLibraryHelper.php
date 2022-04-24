@@ -175,8 +175,8 @@ class DialogLibraryHelper
      */
     public function getJsCode(string $sFile): string
     {
-        return '<script type="text/javascript" src="' . $this->sUri . '/' .
-            $this->sSubDir . '/' . $this->sVersion . '/' . $sFile . '"></script>';
+        $sPath = ($this->sSubDir ? $this->sSubDir . '/' : '') . ($this->sVersion ? $this->sVersion . '/' : '');
+        return '<script type="text/javascript" src="' . $this->sUri . '/' . $sPath . $sFile . '"></script>';
     }
 
     /**
@@ -188,8 +188,8 @@ class DialogLibraryHelper
      */
     public function getCssCode(string $sFile): string
     {
-        return '<link rel="stylesheet" href="' . $this->sUri . '/' .
-            $this->sSubDir . '/' . $this->sVersion . '/' . $sFile . '" />';
+        $sPath = ($this->sSubDir ? $this->sSubDir . '/' : '') . ($this->sVersion ? $this->sVersion . '/' : '');
+        return '<link rel="stylesheet" href="' . $this->sUri . '/' . $sPath . $sFile . '" />';
     }
 
     /**
