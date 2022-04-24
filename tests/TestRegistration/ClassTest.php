@@ -70,7 +70,7 @@ class ClassTest extends TestCase
 
     public function testClassNotFound()
     {
-        // No callable for standard PHP functions.
+        // No callable for classes that does not exist.
         $this->expectException(SetupException::class);
         $this->xPlugin->getCallable('Simple');
     }
@@ -83,6 +83,7 @@ class ClassTest extends TestCase
         // Register a class method as a function, with unknown option
         jaxon()->register(Jaxon::CALLABLE_CLASS, 'TheClass', [
             'include' => __DIR__ . '/../src/classes.php',
+            'protected' => 'protectedMethod',
             'functions' => [
                 '*' => [
                     '__unknown' => 'unknown',

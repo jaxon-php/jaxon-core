@@ -33,6 +33,11 @@ trait AjaxSendTrait
      */
     public function sendResponse()
     {
+        if(!$this->xConfigManager->getOption('core.response.send', false))
+        {
+            return;
+        }
+
         // Check to see if headers have already been sent out, in which case we can't do our job
         if(headers_sent($sFilename, $nLineNumber))
         {
@@ -55,5 +60,10 @@ trait AjaxSendTrait
         header('Content-Type: ' . $this->xResponseManager->getContentType());
 
         print $sContent;
+
+        if($this->xConfigManager->getOption('core.process.exit', false))
+        {
+            exit();
+        }
     }
 }

@@ -4,6 +4,7 @@ namespace Jaxon\Tests\TestMisc;
 
 require __DIR__ . '/../src/session.php';
 
+use Jaxon\Jaxon;
 use Jaxon\Exception\SetupException;
 use Psr\Log\NullLogger;
 use PHPUnit\Framework\TestCase;
@@ -29,6 +30,11 @@ final class MiscTest extends TestCase
     {
         jaxon()->reset();
         parent::tearDown();
+    }
+
+    public function testLibraryVersion()
+    {
+        $this->assertEquals(Jaxon::VERSION, jaxon()->getVersion());
     }
 
     public function testTranslator()

@@ -47,6 +47,7 @@ class CallbackTest extends TestCase
      */
     public function setUp(): void
     {
+        jaxon()->setOption('core.response.send', false);
         jaxon()->register(Jaxon::CALLABLE_FUNCTION, 'my_first_function',
             __DIR__ . '/../src/first.php');
         jaxon()->setOption('core.prefix.class', '');
@@ -109,7 +110,7 @@ class CallbackTest extends TestCase
             ])->withMethod('POST');
         });
         // Process the request and get the response
-        jaxon()->di()->getRequestHandler()->processRequest();
+        jaxon()->processRequest();
 
         $this->assertNotNull($this->xCallable);
         $this->assertEquals('TestCb', get_class($this->xCallable));
@@ -134,7 +135,7 @@ class CallbackTest extends TestCase
         });
         // Process the request and get the response
         $this->assertTrue(jaxon()->canProcessRequest());
-        jaxon()->di()->getRequestHandler()->processRequest();
+        jaxon()->processRequest();
 
         $this->assertNotNull($this->xTarget);
         $this->assertFalse($this->xTarget->isClass());
@@ -165,7 +166,7 @@ class CallbackTest extends TestCase
         });
         // Process the request and get the response
         $this->assertTrue(jaxon()->canProcessRequest());
-        jaxon()->di()->getRequestHandler()->processRequest();
+        jaxon()->processRequest();
 
         $this->assertFalse($this->bEndRequest);
         $this->assertNotNull($this->xTarget);
@@ -196,7 +197,7 @@ class CallbackTest extends TestCase
         });
         // Process the request and get the response
         $this->assertTrue(jaxon()->canProcessRequest());
-        jaxon()->di()->getRequestHandler()->processRequest();
+        jaxon()->processRequest();
 
         $this->assertNotNull($this->xTarget);
         $this->assertTrue($this->xTarget->isClass());
@@ -227,7 +228,7 @@ class CallbackTest extends TestCase
             ])->withMethod('POST');
         });
         // Process the request and get the response
-        jaxon()->di()->getRequestHandler()->processRequest();
+        jaxon()->processRequest();
 
         $xResponse = jaxon()->getResponse();
         $this->assertEquals(2, $xResponse->getCommandCount());
@@ -255,7 +256,7 @@ class CallbackTest extends TestCase
             ])->withMethod('POST');
         });
         // Process the request and get the response
-        jaxon()->di()->getRequestHandler()->processRequest();
+        jaxon()->processRequest();
 
         $xResponse = jaxon()->getResponse();
         // The Jaxon class is not called, so there is only one command in the response.
@@ -283,7 +284,7 @@ class CallbackTest extends TestCase
             ])->withMethod('POST');
         });
         // Process the request and get the response
-        jaxon()->di()->getRequestHandler()->processRequest();
+        jaxon()->processRequest();
 
         $xResponse = jaxon()->getResponse();
         $this->assertEquals(2, $xResponse->getCommandCount());
@@ -312,7 +313,7 @@ class CallbackTest extends TestCase
         });
         // Process the request and get the response
         $this->expectException(RequestException::class);
-        jaxon()->di()->getRequestHandler()->processRequest();
+        jaxon()->processRequest();
 
         $xResponse = jaxon()->getResponse();
         $this->assertEquals(2, $xResponse->getCommandCount());
@@ -342,7 +343,7 @@ class CallbackTest extends TestCase
         });
         // Process the request and get the response
         $this->expectException(Exception::class);
-        jaxon()->di()->getRequestHandler()->processRequest();
+        jaxon()->processRequest();
 
         $xResponse = jaxon()->getResponse();
         $this->assertEquals(2, $xResponse->getCommandCount());

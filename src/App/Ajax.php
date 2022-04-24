@@ -232,14 +232,7 @@ class Ajax
         // Process the jaxon request
         $this->di()->getRequestHandler()->processRequest();
 
-        if($this->xConfigManager->getOption('core.response.send'))
-        {
-            $this->sendResponse();
-        }
-        if($this->xConfigManager->getOption('core.process.exit'))
-        {
-            exit();
-        }
+        $this->sendResponse();
     }
 
     /**

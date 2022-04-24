@@ -31,12 +31,16 @@ trait ViewTrait
      */
     private function registerViews()
     {
+        // Jaxon template view
+        $this->set(TemplateView::class, function($c) {
+            return new TemplateView($c->g(TemplateEngine::class));
+        });
         // View Renderer
         $this->set(ViewRenderer::class, function($c) {
             $xViewRenderer = new ViewRenderer($c->g(Container::class));
             // Add the default view renderer
-            $xViewRenderer->addRenderer('jaxon', function($di) {
-                return new TemplateView($di->g(TemplateEngine::class));
+            $xViewRenderer->addRenderer('jaxon', function($c) {
+                return $c->g(TemplateView::class);
             });
             $sTemplateDir = rtrim(trim($c->g('jaxon.core.dir.template')), '/\\');
             $sPaginationDir = $sTemplateDir . DIRECTORY_SEPARATOR . 'pagination';

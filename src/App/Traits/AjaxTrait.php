@@ -14,7 +14,6 @@
 
 namespace Jaxon\App\Traits;
 
-use Closure;
 use Jaxon\App\Config\ConfigManager;
 use Jaxon\App\I18n\Translator;
 use Jaxon\Di\Container;
@@ -26,7 +25,6 @@ use Jaxon\Request\Factory\Factory;
 use Jaxon\Request\Factory\RequestFactory;
 use Jaxon\Request\Handler\CallbackManager;
 use Jaxon\Response\Manager\ResponseManager;
-use Jaxon\Response\ResponseInterface;
 use Jaxon\Utils\Http\UriException;
 use Psr\Log\LoggerInterface;
 
@@ -68,36 +66,11 @@ trait AjaxTrait
     }
 
     /**
-     * Read the options from the file, if provided, and return the config
-     *
-     * @param string $sConfigFile The full path to the config file
-     * @param string $sConfigSection The section of the config file to be loaded
-     *
-     * @return ConfigManager
-     */
-    public function config(string $sConfigFile = '', string $sConfigSection = ''): ConfigManager
-    {
-        return $this->xConfigManager;
-    }
-
-    /**
      * @return LoggerInterface
      */
     public function logger(): LoggerInterface
     {
         return $this->di()->getLogger();
-    }
-
-    /**
-     * Set the logger.
-     *
-     * @param LoggerInterface $logger
-     *
-     * @return void
-     */
-    public function setLogger(LoggerInterface $logger)
-    {
-        $this->di()->setLogger($logger);
     }
 
     /**
@@ -125,7 +98,7 @@ trait AjaxTrait
      * Get the value of a config option
      *
      * @param string $sName    The option name
-     * @param mixed|null $xDefault    The default value, to be returned if the option is not defined
+     * @param mixed $xDefault    The default value, to be returned if the option is not defined
      *
      * @return mixed
      */
@@ -167,6 +140,8 @@ trait AjaxTrait
     }
 
     /**
+     * Get the factory for request and parameter factories
+     *
      * @return Factory
      */
     public function factory(): Factory
@@ -188,17 +163,7 @@ trait AjaxTrait
     }
 
     /**
-     * Get the Jaxon ajax response
-     *
-     * @return ResponseInterface
-     */
-    public function ajaxResponse(): ResponseInterface
-    {
-        return $this->xResponseManager->getResponse();
-    }
-
-    /**
-     * Return the javascript header code and file includes
+     * Get the HTML tags to include Jaxon javascript files into the page.
      *
      * @return string
      */
@@ -214,11 +179,11 @@ trait AjaxTrait
      */
     public function js(): string
     {
-        return $this->getJs();
+        return $this->di()->getCodeGenerator()->getJs();
     }
 
     /**
-     * Return the CSS header code and file includes
+     * Get the HTML tags to include Jaxon CSS code and files into the page.
      *
      * @return string
      */
@@ -230,21 +195,21 @@ trait AjaxTrait
     /**
      * Get the HTML tags to include Jaxon CSS code and files into the page.
      *
-     * @return string  the javascript code
+     * @return string
      */
     public function css(): string
     {
-        return $this->getCss();
+        return $this->di()->getCodeGenerator()->getCss();
     }
 
     /**
      * Returns the js header and wrapper code to be printed into the page
      *
-     * The javascript code returned by this function is dependent on the plugins
+     * The javascript code returned by this function depends on the plugins
      * that are included and the functions and classes that are registered.
      *
-     * @param bool $bIncludeJs    Also get the JS files
-     * @param bool $bIncludeCss    Also get the CSS files
+     * @param bool $bIncludeJs    Also get the js code
+     * @param bool $bIncludeCss    Also get the css code
      *
      * @return string
      * @throws UriException
@@ -257,15 +222,15 @@ trait AjaxTrait
     /**
      * Returns the js header and wrapper code to be printed into the page
      *
-     * @param bool $bIncludeJs    Also get the JS files
-     * @param bool $bIncludeCss    Also get the CSS files
+     * @param bool $bIncludeJs    Also get the js code
+     * @param bool $bIncludeCss    Also get the css code
      *
      * @return string  the javascript code
      * @throws UriException
      */
     public function script(bool $bIncludeJs = false, bool $bIncludeCss = false): string
     {
-        return $this->getScript($bIncludeJs, $bIncludeCss);
+        return $this->di()->getCodeGenerator()->getScript($bIncludeJs, $bIncludeCss);
     }
 
     /**
@@ -303,20 +268,12 @@ trait AjaxTrait
     }
 
     /**
+     * Get the callback manager
+     *
      * @return CallbackManager
      */
     public function callback(): CallbackManager
     {
         return $this->di()->getCallbackManager();
-    }
-
-    /**
-     * @param Closure $xClosure    A closure to create the session manager instance
-     *
-     * @return void
-     */
-    public function setSessionManager(Closure $xClosure)
-    {
-        $this->di()->setSessionManager($xClosure);
     }
 }

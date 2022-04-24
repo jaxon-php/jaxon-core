@@ -2,6 +2,7 @@
 
 namespace Jaxon\Tests\TestRequestHandler;
 
+use Jaxon\App\View\TemplateView;
 use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;
 use Jaxon\Response\UploadResponse;
@@ -55,7 +56,12 @@ class PsrRequestHandlerTest extends TestCase
 
     public function setUp(): void
     {
-        jaxon()->psr()->logger(new NullLogger())->container(new PsrContainer(new AppContainer()));
+        jaxon()->psr()
+            ->logger(new NullLogger())
+            ->container(new PsrContainer(new AppContainer()))
+            ->view('default', '.php', function() {
+                return jaxon()->di()->g(TemplateView::class);
+            });
 
         $this->xPsrConfigMiddleware = jaxon()->psr()->config(__DIR__ . '/../config/app/classes.php');
         $this->xPsrAjaxMiddleware = jaxon()->psr()->ajax();

@@ -18,6 +18,7 @@ class ClassTest extends TestCase
      */
     public function setUp(): void
     {
+        jaxon()->setOption('core.response.send', false);
         jaxon()->register(Jaxon::CALLABLE_CLASS, 'Sample', __DIR__ . '/../src/sample.php');
     }
 
@@ -88,7 +89,7 @@ class ClassTest extends TestCase
         });
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
-        jaxon()->di()->getRequestHandler()->processRequest();
+        jaxon()->processRequest();
         $this->assertNotNull(jaxon()->getResponse());
         $this->assertEquals(1, jaxon()->getResponse()->getCommandCount());
         $xCallableObject = jaxon()->di()->getCallableClassPlugin()->getCallable('Sample');
@@ -120,7 +121,7 @@ class ClassTest extends TestCase
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
         $this->expectException(RequestException::class);
-        jaxon()->di()->getRequestHandler()->processRequest();
+        jaxon()->processRequest();
     }
 
     /**
@@ -140,7 +141,7 @@ class ClassTest extends TestCase
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
         $this->expectException(RequestException::class);
-        jaxon()->di()->getRequestHandler()->processRequest();
+        jaxon()->processRequest();
     }
 
     /**
@@ -160,7 +161,7 @@ class ClassTest extends TestCase
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
         $this->expectException(RequestException::class);
-        jaxon()->di()->getRequestHandler()->processRequest();
+        jaxon()->processRequest();
     }
 
     /**
@@ -180,6 +181,6 @@ class ClassTest extends TestCase
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
         $this->expectException(RequestException::class);
-        jaxon()->di()->getRequestHandler()->processRequest();
+        jaxon()->processRequest();
     }
 }

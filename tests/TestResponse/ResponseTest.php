@@ -62,9 +62,8 @@ class ResponseTest extends TestCase
         $sContent = jaxon()->di()->getResponseManager()->getOutput();
         $this->assertNotEmpty($sContent);
         $this->assertIsString($sContent);
-        $sType = jaxon()->di()->getResponseManager()->getContentType();
-        $this->assertNotEmpty($sType);
-        $this->assertIsString($sType);
+        $this->assertEquals('application/json; charset="utf-8"', jaxon()->getContentType());
+        $this->assertEquals('utf-8', jaxon()->getCharacterEncoding());
     }
 
     /**

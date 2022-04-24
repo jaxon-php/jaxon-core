@@ -22,7 +22,10 @@ use Jaxon\Di\Container;
 use Jaxon\Exception\RequestException;
 use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Response\Manager\ResponseManager;
+use Jaxon\Response\ResponseInterface;
 use Psr\Container\ContainerInterface;
+use Psr\Log\LoggerInterface;
+
 use Closure;
 
 trait AppTrait
@@ -74,12 +77,24 @@ trait AppTrait
      * @param string $sUri    The URI to access the js file
      * @param string $sDir    The directory where to create the js file
      *
-     * @return AppInterface
+     * @return void
      */
-    public function asset(bool $bExport, bool $bMinify, string $sUri = '', string $sDir = ''): AppInterface
+    public function asset(bool $bExport, bool $bMinify, string $sUri = '', string $sDir = '')
     {
         $this->bootstrap()->asset($bExport, $bMinify, $sUri, $sDir);
-        return $this;
+    }
+
+    /**
+     * Read the options from the file, if provided, and return the config
+     *
+     * @param string $sConfigFile The full path to the config file
+     * @param string $sConfigSection The section of the config file to be loaded
+     *
+     * @return ConfigManager
+     */
+    public function config(string $sConfigFile = '', string $sConfigSection = ''): ConfigManager
+    {
+        return $this->xConfigManager;
     }
 
     /**
@@ -90,6 +105,16 @@ trait AppTrait
      * @return mixed
      */
     abstract public function httpResponse(string $sCode = '200');
+
+    /**
+     * Get the Jaxon ajax response
+     *
+     * @return ResponseInterface
+     */
+    public function ajaxResponse(): ResponseInterface
+    {
+        return $this->xResponseManager->getResponse();
+    }
 
     /**
      * Process an incoming Jaxon request, and return the response.
@@ -126,6 +151,18 @@ trait AppTrait
     public function addViewRenderer(string $sRenderer, string $sExtension, Closure $xClosure)
     {
         $this->di()->getViewRenderer()->setDefaultRenderer($sRenderer, $sExtension, $xClosure);
+    }
+
+    /**
+     * Set the logger.
+     *
+     * @param LoggerInterface $logger
+     *
+     * @return void
+     */
+    public function setLogger(LoggerInterface $logger)
+    {
+        $this->di()->setLogger($logger);
     }
 
     /**

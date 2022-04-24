@@ -16,13 +16,10 @@ use function jaxon;
 
 class RegistrationTest extends TestCase
 {
-    /**
-     * @throws SetupException
-     */
     public function setUp(): void
     {
-        jaxon()->app()->asset(true, true, 'http://example.test/js',
-            realpath(__DIR__ . '/../src/js'))->setup(__DIR__ . '/../config/app/app.php');
+        jaxon()->app()->asset(true, true, 'http://example.test/js', realpath(__DIR__ . '/../src/js'));
+        jaxon()->app()->setup(__DIR__ . '/../config/app/app.php');
     }
 
     /**
@@ -95,8 +92,7 @@ class RegistrationTest extends TestCase
     {
         // Change the js dir
         jaxon()->setOption('js.app.dir', __DIR__ . '/../src/script'); // This dir must not exist.
-        $sScript = jaxon()->getScript();
-        $this->assertStringContainsString('SamplePackageClass = {}', $sScript);
+        $this->assertStringContainsString('SamplePackageClass = {}', jaxon()->script());
     }
 
     /**
@@ -106,26 +102,17 @@ class RegistrationTest extends TestCase
     {
         // Change the js dir
         jaxon()->setOption('js.app.file', 'js/app'); // This dir must not exist.
-        $sScript = jaxon()->getScript();
-        $this->assertStringContainsString('SamplePackageClass = {}', $sScript);
+        $this->assertStringContainsString('SamplePackageClass = {}', jaxon()->script());
     }
 
-    /**
-     * @throws SetupException
-     */
     public function testSetupIncorrectFile()
     {
-        // Change the js dir
         $this->expectException(SetupException::class);
         jaxon()->app()->setup(__DIR__ . '/../config/app/not-found.php');
     }
 
-    /**
-     * @throws SetupException
-     */
     public function testSetupIncorrectConfig()
     {
-        // Change the js dir
         $this->expectException(SetupException::class);
         jaxon()->app()->setup(__DIR__ . '/../config/app/app-error.php');
     }

@@ -233,9 +233,9 @@ interface AppInterface
      * @param string $sUri    The URI to access the js file
      * @param string $sDir    The directory where to create the js file
      *
-     * @return AppInterface
+     * @return void
      */
-    public function asset(bool $bExport, bool $bMinify, string $sUri = '', string $sDir = ''): AppInterface;
+    public function asset(bool $bExport, bool $bMinify, string $sUri = '', string $sDir = '');
 
     /**
      * Read config options from a config file and set up the library

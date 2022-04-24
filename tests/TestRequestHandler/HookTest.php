@@ -47,6 +47,7 @@ class HookTest extends TestCase
      */
     public function setUp(): void
     {
+        jaxon()->setOption('core.response.send', false);
         jaxon()->setOption('core.prefix.class', '');
         jaxon()->register(Jaxon::CALLABLE_DIR, __DIR__ . '/../src/response', [
             'classes' => [
@@ -96,7 +97,7 @@ class HookTest extends TestCase
             ])->withMethod('POST');
         });
         // Process the request and get the response
-        jaxon()->di()->getRequestHandler()->processRequest();
+        jaxon()->processRequest();
 
         $xResponse = jaxon()->getResponse();
         $this->assertEquals(3, $xResponse->getCommandCount());
@@ -116,7 +117,7 @@ class HookTest extends TestCase
             ])->withMethod('POST');
         });
         // Process the request and get the response
-        jaxon()->di()->getRequestHandler()->processRequest();
+        jaxon()->processRequest();
 
         $xResponse = jaxon()->getResponse();
         $this->assertEquals(4, $xResponse->getCommandCount());
@@ -136,7 +137,7 @@ class HookTest extends TestCase
             ])->withMethod('POST');
         });
         // Process the request and get the response
-        jaxon()->di()->getRequestHandler()->processRequest();
+        jaxon()->processRequest();
 
         $xResponse = jaxon()->getResponse();
         $this->assertEquals(4, $xResponse->getCommandCount());
@@ -156,7 +157,7 @@ class HookTest extends TestCase
             ])->withMethod('POST');
         });
         // Process the request and get the response
-        jaxon()->di()->getRequestHandler()->processRequest();
+        jaxon()->processRequest();
 
         $xResponse = jaxon()->getResponse();
         $this->assertEquals(3, $xResponse->getCommandCount());

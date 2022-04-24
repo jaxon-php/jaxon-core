@@ -4,7 +4,7 @@
  * CallableObject.php - Jaxon callable object
  *
  * This class stores a reference to an object whose methods can be called from
- * the client via an Jaxon request
+ * the client via a Jaxon request
  *
  * The Jaxon plugin manager will call <CallableObject->getClientScript> so that
  * stub functions can be generated and sent to the browser.
@@ -201,10 +201,6 @@ class CallableObject
             if(is_array($xValue))
             {
                 $this->aProtectedMethods = array_merge($this->aProtectedMethods, $xValue);
-            }
-            elseif(is_string($xValue))
-            {
-                $this->aProtectedMethods[] = $xValue;
             }
             break;
         // Set the methods to call before processing the request

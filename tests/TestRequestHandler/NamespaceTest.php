@@ -20,6 +20,7 @@ class NamespaceTest extends TestCase
      */
     public function setUp(): void
     {
+        jaxon()->setOption('core.response.send', false);
         jaxon()->setOption('core.prefix.class', '');
         jaxon()->register(Jaxon::CALLABLE_DIR, __DIR__ . '/../src/dir_ns', 'Jaxon\NsTests');
     }
@@ -87,7 +88,7 @@ class NamespaceTest extends TestCase
         });
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
-        jaxon()->di()->getRequestHandler()->processRequest();
+        jaxon()->processRequest();
         $this->assertNotNull(jaxon()->getResponse());
         $this->assertEquals(2, jaxon()->getResponse()->getCommandCount());
         $xCallableObject = jaxon()->di()->getCallableClassPlugin()->getCallable(ClassC::class);
