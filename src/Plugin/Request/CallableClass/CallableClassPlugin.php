@@ -22,7 +22,6 @@
 namespace Jaxon\Plugin\Request\CallableClass;
 
 use Jaxon\Jaxon;
-use Jaxon\App\CallableClass;
 use Jaxon\App\I18n\Translator;
 use Jaxon\Di\Container;
 use Jaxon\Exception\RequestException;
@@ -35,13 +34,10 @@ use Jaxon\Response\ResponseInterface;
 use Jaxon\Utils\Template\TemplateEngine;
 use Psr\Http\Message\ServerRequestInterface;
 
-use ReflectionClass;
 use ReflectionException;
-use ReflectionMethod;
 
 use function is_array;
 use function is_string;
-use function is_subclass_of;
 use function md5;
 use function strlen;
 use function trim;
@@ -98,13 +94,6 @@ class CallableClassPlugin extends RequestPlugin
     protected $xTranslator;
 
     /**
-     * The methods that must not be exported to js
-     *
-     * @var array
-     */
-    protected $aProtectedMethods = [];
-
-    /**
      * The class constructor
      *
      * @param string  $sPrefix
@@ -128,13 +117,6 @@ class CallableClassPlugin extends RequestPlugin
         $this->xTemplateEngine = $xTemplateEngine;
         $this->xTranslator = $xTranslator;
         $this->xValidator = $xValidator;
-
-        // The methods of the CallableClass class must not be exported
-        $xCallableClass = new ReflectionClass(CallableClass::class);
-        foreach($xCallableClass->getMethods(ReflectionMethod::IS_PUBLIC) as $xMethod)
-        {
-            $this->aProtectedMethods[] = $xMethod->getName();
-        }
     }
 
     /**
@@ -239,11 +221,10 @@ class CallableClassPlugin extends RequestPlugin
             return '';
         }
 
-        $aProtectedMethods = is_subclass_of($sClassName, CallableClass::class) ? $this->aProtectedMethods : [];
         return $this->xTemplateEngine->render('jaxon::callables/object.js', [
             'sPrefix' => $this->sPrefix,
             'sClass' => $xCallableObject->getJsName(),
-            'aMethods' => $xCallableObject->getCallableMethods($aProtectedMethods),
+            'aMethods' => $xCallableObject->getCallableMethods($this->xRepository->getProtectedMethods($sClassName)),
         ]);
     }
 

@@ -66,6 +66,16 @@ trait CallableTrait
     }
 
     /**
+     * Get the callable repository
+     *
+     * @return CallableRepository
+     */
+    public function getCallableRepository(): CallableRepository
+    {
+        return $this->g(CallableRepository::class);
+    }
+
+    /**
      * Get the callable function plugin
      *
      * @return CallableFunctionPlugin

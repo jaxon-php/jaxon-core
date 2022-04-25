@@ -78,10 +78,11 @@ trait RegisterTrait
      */
     private function setCallableObjectOptions(string $sClassName, CallableObject $xCallableObject, array $aOptions)
     {
+        $aProtectedMethods = $this->getCallableRepository()->getProtectedMethods($sClassName);
         // Annotations options
         $xAnnotationReader = $this->g(AnnotationReaderInterface::class);
         [$bExcluded, $aAnnotationOptions, $aAnnotationProtected] =
-            $xAnnotationReader->getAttributes($sClassName, $xCallableObject->getPublicMethods());
+            $xAnnotationReader->getAttributes($sClassName, $xCallableObject->getPublicMethods($aProtectedMethods));
         if($bExcluded)
         {
             $xCallableObject->configure('excluded', true);

@@ -14,12 +14,17 @@
 
 namespace Jaxon\Plugin\Request\CallableClass;
 
+use Jaxon\App\CallableClass;
 use Jaxon\App\I18n\Translator;
 use Jaxon\Di\Container;
 use Jaxon\Exception\SetupException;
 
+use ReflectionClass;
+use ReflectionMethod;
+
 use function array_merge;
 use function is_string;
+use function is_subclass_of;
 use function strlen;
 use function strncmp;
 
@@ -86,6 +91,13 @@ class CallableRepository
     private $aDefaultClassOptions = ['separator' => '.', 'protected' => [], 'functions' => [], 'timestamp' => 0];
 
     /**
+     * The methods that must not be exported to js
+     *
+     * @var array
+     */
+    private $aProtectedMethods = [];
+
+    /**
      * The constructor
      *
      * @param Container $di
@@ -95,6 +107,13 @@ class CallableRepository
     {
         $this->di = $di;
         $this->xTranslator = $xTranslator;
+
+        // The methods of the CallableClass class must not be exported
+        $xCallableClass = new ReflectionClass(CallableClass::class);
+        foreach($xCallableClass->getMethods(ReflectionMethod::IS_PUBLIC) as $xMethod)
+        {
+            $this->aProtectedMethods[] = $xMethod->getName();
+        }
     }
 
     /**
@@ -280,6 +299,18 @@ class CallableRepository
         }
         $sMessage = $this->xTranslator->trans('errors.class.invalid', ['name' => $sClassName]);
         throw new SetupException($sMessage);
+    }
+
+    /**
+     * Find the options associated with a registered class name
+     *
+     * @param string $sClassName The class name
+     *
+     * @return array
+     */
+    public function getProtectedMethods(string $sClassName): array
+    {
+        return is_subclass_of($sClassName, CallableClass::class) ? $this->aProtectedMethods : [];
     }
 
     /**

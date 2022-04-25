@@ -1,7 +1,9 @@
 <?php
 
 /**
- * CallableObject.php - Jaxon callable object
+ * CallableObject.php
+ *
+ * Jaxon callable object
  *
  * This class stores a reference to an object whose methods can be called from
  * the client via a Jaxon request
@@ -98,6 +100,20 @@ class CallableObject
      * @var bool
      */
     private $bExcluded = false;
+
+    /**
+     * The user registered callable object
+     *
+     * @var object
+     */
+    private $xRegisteredObject = null;
+
+    /**
+     * The attributes to inject in the user registered callable object
+     *
+     * @var array
+     */
+    private $aAttributes = [];
 
     /**
      * The class constructor
@@ -211,6 +227,10 @@ class CallableObject
         case '__after':
             $this->setHookMethods($this->aAfterMethods, $xValue);
             break;
+        // Set the attributes to inject in the callable object
+        case '__di':
+            $this->aAttributes = array_merge($this->aAttributes, $xValue);
+            break;
         case 'excluded':
             $this->bExcluded = (bool)$xValue;
             break;
@@ -234,9 +254,9 @@ class CallableObject
         return array_filter($aMethods, function($sMethodName) use($aProtectedMethods) {
             // Don't take magic __call, __construct, __destruct methods
             // Don't take protected methods
-            return !(substr($sMethodName, 0, 2) === '__' ||
-                in_array($sMethodName, $aProtectedMethods) ||
-                in_array($sMethodName, $this->aProtectedMethods));
+            return substr($sMethodName, 0, 2) !== '__' &&
+                !in_array($sMethodName, $aProtectedMethods) &&
+                !in_array($sMethodName, $this->aProtectedMethods);
         });
     }
 
@@ -273,7 +293,11 @@ class CallableObject
      */
     public function getRegisteredObject()
     {
-        return $this->di->g($this->xReflectionClass->getName());
+        if($this->xRegisteredObject === null)
+        {
+            $this->xRegisteredObject = $this->di->g($this->xReflectionClass->getName());
+        }
+        return $this->xRegisteredObject;
     }
 
     /**
@@ -302,7 +326,7 @@ class CallableObject
     {
         $reflectionMethod = $this->xReflectionClass->getMethod($sMethod);
         $reflectionMethod->setAccessible($bAccessible); // Make it possible to call protected methods
-        return $reflectionMethod->invokeArgs($this->getRegisteredObject(), $aArgs);
+        return $reflectionMethod->invokeArgs($this->xRegisteredObject, $aArgs);
     }
 
     /**
@@ -325,6 +349,7 @@ class CallableObject
         {
             $aMethods = $aClassMethods['*'];
         }
+
         foreach($aMethods as $xKey => $xValue)
         {
             $sMethodName = $xValue;
@@ -341,18 +366,35 @@ class CallableObject
     /**
      * Call the specified method of the registered callable object using the specified array of arguments
      *
-     * @param string $sMethod    The name of the method to call
-     * @param array $aArgs    The arguments to pass to the method
+     * @param string $sMethod The name of the method to call
+     * @param array $aArgs The arguments to pass to the method
      *
      * @return null|ResponseInterface
      * @throws ReflectionException
      */
     public function call(string $sMethod, array $aArgs): ?ResponseInterface
     {
+        $this->getRegisteredObject();
+
+        // Set dynamic attributes
+        foreach($this->aAttributes as $sKey => $aAttributes)
+        {
+            if($sKey === $sMethod || $sKey === '*')
+            {
+                foreach($aAttributes as $sName => $sClass)
+                {
+                    // Warning: dynamic properties will be deprecated in PHP8.2.
+                    $this->xRegisteredObject->$sName = $this->di->get($sClass);
+                }
+            }
+        }
+
         // Methods to call before processing the request
         $this->callHookMethods($this->aBeforeMethods, $sMethod);
+
         // Call the request method
         $xResponse = $this->callMethod($sMethod, $aArgs, false);
+
         // Methods to call after processing the request
         $this->callHookMethods($this->aAfterMethods, $sMethod);
         return $xResponse;
