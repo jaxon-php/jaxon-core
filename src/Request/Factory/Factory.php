@@ -65,7 +65,12 @@ class Factory
         if(!$sClassName)
         {
             // There is a single request factory for all callable functions.
-            return $this->xRequestFactory;
+            return $this->xRequestFactory->noPrefix(false);
+        }
+        if($sClassName === '.')
+        {
+            // The request factory is for a js function, not a Jaxon call.
+            return $this->xRequestFactory->noPrefix(true);
         }
         // While each callable class has it own request factory.
         return $this->xCallableRegistry->getRequestFactory($sClassName);
