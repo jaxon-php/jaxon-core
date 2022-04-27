@@ -10,6 +10,8 @@ return [
         'class' => [
             'invalid' => "La classe :name n'existe pas.",
             'implements' => "La classe :name n'implémente pas l'interface :interface.",
+            'container' => "Impossible de trouver une instance de la classe :name dans le conteneur DI.",
+            'method' => "Impossible d'appeler la méthode :method de la classe :class.",
         ],
         'response' => [
             'result.invalid' => "Une réponse invalide a été renvoyée lors du traitement de la requête.",

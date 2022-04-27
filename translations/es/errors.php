@@ -10,6 +10,8 @@ return [
         'class' => [
             'invalid' => "No hay clase con el nombre :name.",
             'implements' => "The class :name does not implement the interface :interface.",
+            'container' => "Unable to get an instance of class :name from the DI container.",
+            'method' => "Unable to call method :method in class :class.",
         ],
         'response' => [
             'result.invalid' => "Una respuesta invalida fue devuelta al procesar esta solicitud.",

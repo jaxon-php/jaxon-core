@@ -303,16 +303,10 @@ class CallableClassPlugin extends RequestPlugin
             $xCallableObject = $this->xRegistry->getCallableObject($sRequestedClass);
             return $xCallableObject->call($sRequestedMethod, $this->xParameterReader->args());
         }
-        catch(ReflectionException $e)
+        catch(ReflectionException|SetupException $e)
         {
             // Unable to find the requested class or method
             $this->di->getLogger()->error($e->getMessage());
-            throw new RequestException($this->xTranslator->trans('errors.objects.invalid',
-                ['class' => $sRequestedClass, 'method' => $sRequestedMethod]));
-        }
-        catch(SetupException $e)
-        {
-            // Unable to get the callable object
             throw new RequestException($this->xTranslator->trans('errors.objects.invalid',
                 ['class' => $sRequestedClass, 'method' => $sRequestedMethod]));
         }
