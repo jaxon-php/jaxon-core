@@ -46,6 +46,7 @@ class Container extends PimpleContainer implements LoggerAwareInterface
     use Traits\RegisterTrait;
     use Traits\ViewTrait;
     use Traits\UtilTrait;
+    use Traits\AnnotationTrait;
 
     /**
      * The Dependency Injection Container
@@ -67,9 +68,11 @@ class Container extends PimpleContainer implements LoggerAwareInterface
         // Save the Ajax and Container instances
         $this->val(Ajax::class, $jaxon);
         $this->val(Container::class, $this);
+
         // Template directory
         $sTemplateDir = realpath(__DIR__ . '/../../templates');
         $this->val('jaxon.core.dir.template', $sTemplateDir);
+
         // Translation directory
         $sTranslationDir = realpath(__DIR__ . '/../../translations');
         $this->val('jaxon.core.dir.translation', $sTranslationDir);

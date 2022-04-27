@@ -21,11 +21,7 @@ class AnnotationTest extends TestCase
      */
     public function setUp(): void
     {
-        jaxon()->setOption('core.prefix.class', '');
-        jaxon()->setOption('core.request.uri', 'http://example.test/path');
-
-        // Register the annotation reader
-        AnnotationReader::register();
+        jaxon()->config(__DIR__ . '/../config/annotations.php');
 
         jaxon()->register(Jaxon::CALLABLE_CLASS, Annotated::class);
         jaxon()->register(Jaxon::CALLABLE_CLASS, Excluded::class);

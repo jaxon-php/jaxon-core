@@ -28,24 +28,6 @@ use function substr;
 trait RegisterTrait
 {
     /**
-     * Register the values into the container
-     *
-     * @return void
-     */
-    private function registerAnnotations()
-    {
-        $this->set(AnnotationReaderInterface::class, function($c) {
-            return new class implements AnnotationReaderInterface
-            {
-                public function getAttributes(string $sClass, array $aMethods): array
-                {
-                    return [false, [], []];
-                }
-            };
-        });
-    }
-
-    /**
      * @param array $aConfigOptions
      * @param array $aAnnotationOptions
      *

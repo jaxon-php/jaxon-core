@@ -120,6 +120,25 @@ class RegistrationTest extends TestCase
     /**
      * @throws RequestException
      */
+    public function testJaxonClassAnnotations()
+    {
+        jaxon()->setOption('core.annotations.on', true);
+        // The server request
+        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
+            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
+                'jxncls' => 'Jaxon.NsTests.DirB.ClassB',
+                'jxnmthd' => 'methodBa',
+                'jxnargs' => [],
+            ])->withMethod('POST');
+        });
+
+        $this->assertTrue(jaxon()->app()->canProcessRequest());
+        $this->assertNotNull(jaxon()->di()->getCallableClassPlugin()->processRequest());
+    }
+
+    /**
+     * @throws RequestException
+     */
     public function testRequestToJaxonClass()
     {
         // The server request
@@ -128,7 +147,7 @@ class RegistrationTest extends TestCase
                 'jxncls' => 'Jaxon.NsTests.DirB.ClassB',
                 'jxnmthd' => 'methodBb',
                 'jxnargs' => [],
-            ]);
+            ])->withMethod('POST');
         });
 
         $this->assertTrue(jaxon()->app()->canProcessRequest());

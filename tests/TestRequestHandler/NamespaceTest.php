@@ -45,7 +45,7 @@ class NamespaceTest extends TestCase
                 'jxncls' => 'Jaxon.NsTests.DirA.ClassA',
                 'jxnmthd' => 'methodAa',
                 'jxnargs' => [],
-            ]);
+            ])->withMethod('GET');
         });
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
@@ -64,7 +64,7 @@ class NamespaceTest extends TestCase
                 'jxncls' => 'Jaxon.NsTests.DirB.ClassB',
                 'jxnmthd' => 'methodBb',
                 'jxnargs' => [],
-            ]);
+            ])->withMethod('POST');
         });
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
@@ -84,7 +84,7 @@ class NamespaceTest extends TestCase
                 'jxncls' => 'Jaxon.NsTests.DirC.ClassC',
                 'jxnmthd' => 'methodCa',
                 'jxnargs' => [],
-            ]);
+            ])->withMethod('POST');
         });
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());

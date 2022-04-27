@@ -3,9 +3,14 @@
 namespace Jaxon\NsTests\DirB;
 
 use Jaxon\Response\ResponseInterface;
+use Jaxon\Tests\Ns\Lib\ServiceInterface;
 
 class ClassB
 {
+    /**
+     * @di('attr' => 'service', 'class' => 'ServiceInterface')
+     * @return ResponseInterface
+     */
     public function methodBa(): ResponseInterface
     {
         $xResponse = jaxon()->getResponse();

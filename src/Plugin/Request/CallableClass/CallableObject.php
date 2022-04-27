@@ -27,6 +27,7 @@
 namespace Jaxon\Plugin\Request\CallableClass;
 
 use Jaxon\Di\Container;
+use Jaxon\Exception\SetupException;
 use Jaxon\Response\ResponseInterface;
 
 use ReflectionClass;
@@ -251,6 +252,7 @@ class CallableObject
         $aMethods = array_map(function($xMethod) {
             return $xMethod->getShortName();
         }, $this->xReflectionClass->getMethods(ReflectionMethod::IS_PUBLIC));
+
         return array_filter($aMethods, function($sMethodName) use($aProtectedMethods) {
             // Don't take magic __call, __construct, __destruct methods
             // Don't take protected methods
@@ -293,11 +295,7 @@ class CallableObject
      */
     public function getRegisteredObject()
     {
-        if($this->xRegisteredObject === null)
-        {
-            $this->xRegisteredObject = $this->di->g($this->xReflectionClass->getName());
-        }
-        return $this->xRegisteredObject;
+        return $this->di->g($this->xReflectionClass->getName());
     }
 
     /**
@@ -332,24 +330,15 @@ class CallableObject
     /**
      * Call the specified method of the registered callable object using the specified array of arguments
      *
-     * @param array $aClassMethods    The method config options
+     * @param array $aHookMethods    The method config options
      * @param string $sMethod    The method called by the request
      *
      * @return void
      * @throws ReflectionException
      */
-    private function callHookMethods(array $aClassMethods, string $sMethod)
+    private function callHookMethods(array $aHookMethods, string $sMethod)
     {
-        $aMethods = [];
-        if(isset($aClassMethods[$sMethod]))
-        {
-            $aMethods = $aClassMethods[$sMethod];
-        }
-        elseif(isset($aClassMethods['*']))
-        {
-            $aMethods = $aClassMethods['*'];
-        }
-
+        $aMethods = $aHookMethods[$sMethod] ?? $aHookMethods['*'] ?? [];
         foreach($aMethods as $xKey => $xValue)
         {
             $sMethodName = $xValue;
@@ -371,22 +360,18 @@ class CallableObject
      *
      * @return null|ResponseInterface
      * @throws ReflectionException
+     * @throws SetupException
      */
     public function call(string $sMethod, array $aArgs): ?ResponseInterface
     {
-        $this->getRegisteredObject();
+        $this->xRegisteredObject = $this->getRegisteredObject();
 
-        // Set dynamic attributes
-        foreach($this->aAttributes as $sKey => $aAttributes)
+        // Set attributes from the DI container
+        $aAttributes = $this->aAttributes[$sMethod] ?? $this->aAttributes['*'] ?? [];
+        foreach($aAttributes as $sName => $sClass)
         {
-            if($sKey === $sMethod || $sKey === '*')
-            {
-                foreach($aAttributes as $sName => $sClass)
-                {
-                    // Warning: dynamic properties will be deprecated in PHP8.2.
-                    $this->xRegisteredObject->$sName = $this->di->get($sClass);
-                }
-            }
+            // Warning: dynamic properties will be deprecated in PHP8.2.
+            $this->xRegisteredObject->$sName = $this->di->get($sClass);
         }
 
         // Methods to call before processing the request
