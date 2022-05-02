@@ -37,6 +37,7 @@ use ReflectionMethod;
 use function array_filter;
 use function array_map;
 use function array_merge;
+use function call_user_func;
 use function in_array;
 use function is_array;
 use function is_string;
@@ -370,8 +371,13 @@ class CallableObject
         $aAttributes = $this->aAttributes[$sMethod] ?? $this->aAttributes['*'] ?? [];
         foreach($aAttributes as $sName => $sClass)
         {
-            // Warning: dynamic properties will be deprecated in PHP8.2.
-            $this->xRegisteredObject->$sName = $this->di->get($sClass);
+            // Set the protected attributes of the object
+            $cSetter = function($c) use($sClass, $sName) {
+                // Warning: dynamic properties will be deprecated in PHP8.2.
+                $this->$sName = $c->get($sClass);
+            };
+            // Can now access protected attributes
+            call_user_func($cSetter->bindTo($this->xRegisteredObject, $this->xRegisteredObject), $this->di);
         }
 
         // Methods to call before processing the request
