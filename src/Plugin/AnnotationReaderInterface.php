@@ -25,5 +25,5 @@ interface AnnotationReaderInterface
      *
      * @return array
      */
-    public function getAttributes(string $sClass, array $aMethods, array $aProperties): array;
+    public function getAttributes(string $sClass, array $aMethods = [], array $aProperties = []): array;
 }
