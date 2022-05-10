@@ -63,8 +63,9 @@ trait RegisterTrait
         $aProtectedMethods = $this->getCallableRepository()->getProtectedMethods($sClassName);
         // Annotations options
         $xAnnotationReader = $this->g(AnnotationReaderInterface::class);
-        [$bExcluded, $aAnnotationOptions, $aAnnotationProtected] =
-            $xAnnotationReader->getAttributes($sClassName, $xCallableObject->getPublicMethods($aProtectedMethods));
+        $aMethods = $xCallableObject->getPublicMethods($aProtectedMethods);
+        $aProperties = $xCallableObject->getProperties();
+        [$bExcluded, $aAnnotationOptions, $aAnnotationProtected] = $xAnnotationReader->getAttributes($sClassName, $aMethods, $aProperties);
         if($bExcluded)
         {
             $xCallableObject->configure('excluded', true);

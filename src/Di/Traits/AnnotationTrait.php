@@ -23,7 +23,7 @@ trait AnnotationTrait
         $this->set(AnnotationReaderInterface::class, function() {
             return new class implements AnnotationReaderInterface
             {
-                public function getAttributes(string $sClass, array $aMethods): array
+                public function getAttributes(string $sClass, array $aMethods, array $aProperties): array
                 {
                     return [false, [], []];
                 }

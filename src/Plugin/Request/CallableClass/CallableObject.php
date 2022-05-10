@@ -33,6 +33,7 @@ use Jaxon\Response\ResponseInterface;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionMethod;
+use ReflectionProperty;
 
 use function array_filter;
 use function array_map;
@@ -242,7 +243,19 @@ class CallableObject
     }
 
     /**
-     * Return a list of methods of the callable object
+     * Get the public and protected attributes of the callable object
+     *
+     * @return array
+     */
+    public function getProperties(): array
+    {
+        return array_map(function($xProperty) {
+            return $xProperty->getName();
+        }, $this->xReflectionClass->getProperties(ReflectionProperty::IS_PUBLIC | ReflectionProperty::IS_PROTECTED));
+    }
+
+    /**
+     * Get the public methods of the callable object
      *
      * @param array $aProtectedMethods    The protected methods
      *
