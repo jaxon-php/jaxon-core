@@ -19,7 +19,7 @@ use Jaxon\App\View\ViewRenderer;
 use Jaxon\Di\Container;
 use Jaxon\Exception\SetupException;
 use Jaxon\Request\Factory\RequestFactory;
-use Jaxon\Request\Handler\UploadHandlerInterface;
+use Jaxon\Request\Upload\UploadHandlerInterface;
 use Psr\Log\LoggerInterface;
 
 class CallableClassHelper

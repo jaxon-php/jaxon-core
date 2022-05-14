@@ -12,7 +12,7 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Request\Handler;
+namespace Jaxon\Request\Upload;
 
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -32,7 +32,7 @@ interface UploadHandlerInterface
     /**
      * Get the uploaded files
      *
-     * @return array
+     * @return FileInterface[]
      */
     public function files(): array;
 

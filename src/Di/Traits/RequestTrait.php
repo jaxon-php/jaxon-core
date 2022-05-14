@@ -16,7 +16,7 @@ use Jaxon\Request\Factory\RequestFactory;
 use Jaxon\Request\Handler\CallbackManager;
 use Jaxon\Request\Handler\ParameterReader;
 use Jaxon\Request\Handler\RequestHandler;
-use Jaxon\Request\Handler\UploadHandlerInterface;
+use Jaxon\Request\Upload\UploadHandlerInterface;
 use Jaxon\Response\Manager\ResponseManager;
 use Jaxon\Utils\Http\UriDetector;
 

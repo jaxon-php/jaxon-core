@@ -39,7 +39,7 @@ use Jaxon\Jaxon;
 use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Request\Call\Paginator;
 use Jaxon\Request\Factory\Psr\PsrFactory;
-use Jaxon\Request\Handler\UploadHandlerInterface;
+use Jaxon\Request\Upload\UploadHandlerInterface;
 use Jaxon\Response\Manager\ResponseManager;
 use Jaxon\Response\Response;
 use Jaxon\Response\ResponseInterface;
