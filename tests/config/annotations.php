@@ -9,7 +9,7 @@ return [
             'uri' => 'http://example.test/path',
         ],
         'annotations' => [
-            'on' => true,
+            'enabled' => true,
         ],
     ],
 ];

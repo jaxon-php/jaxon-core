@@ -46,7 +46,6 @@ class Container extends PimpleContainer implements LoggerAwareInterface
     use Traits\RegisterTrait;
     use Traits\ViewTrait;
     use Traits\UtilTrait;
-    use Traits\AnnotationTrait;
 
     /**
      * The Dependency Injection Container
@@ -95,7 +94,6 @@ class Container extends PimpleContainer implements LoggerAwareInterface
         $this->registerCallables();
         $this->registerViews();
         $this->registerUtils();
-        $this->registerAnnotations();
     }
 
     /**

@@ -5,6 +5,7 @@ namespace Jaxon\Di\Traits;
 use Jaxon\App\Config\ConfigManager;
 use Jaxon\App\I18n\Translator;
 use Jaxon\Di\Container;
+use Jaxon\Plugin\AnnotationReaderInterface;
 use Jaxon\Plugin\Request\CallableClass\CallableClassPlugin;
 use Jaxon\Plugin\Request\CallableClass\CallableRegistry;
 use Jaxon\Plugin\Request\CallableClass\CallableRepository;
@@ -23,6 +24,16 @@ trait CallableTrait
      */
     private function registerCallables()
     {
+        // By default, register a fake annotation reader.
+        $this->set(AnnotationReaderInterface::class, function() {
+            return new class implements AnnotationReaderInterface
+            {
+                public function getAttributes(string $sClass, array $aMethods = [], array $aProperties = []): array
+                {
+                    return [false, [], []];
+                }
+            };
+        });
         // Validator
         $this->set(Validator::class, function($c) {
             return new Validator($c->g(ConfigManager::class), $c->g(Translator::class));
