@@ -19,16 +19,7 @@ use Jaxon\Utils\Config\Config;
 interface ConfigListenerInterface
 {
     /**
-     * Multiple config options changed
-     *
-     * @param Config $xConfig
-     *
-     * @return void
-     */
-    public function onChanges(Config $xConfig);
-
-    /**
-     * Single config option changed
+     * Config option changed, in case on multiple changes, the name is an empty string
      *
      * @param Config $xConfig
      * @param string $sName The option name
