@@ -19,7 +19,7 @@ use Jaxon\App\View\ViewRenderer;
 use Jaxon\Di\Container;
 use Jaxon\Exception\SetupException;
 use Jaxon\Request\Factory\RequestFactory;
-use Jaxon\Request\Handler\UploadHandler;
+use Jaxon\Request\Handler\UploadHandlerInterface;
 use Psr\Log\LoggerInterface;
 
 class CallableClassHelper
@@ -40,7 +40,7 @@ class CallableClassHelper
     public $xLogger;
 
     /**
-     * @var UploadHandler
+     * @var UploadHandlerInterface
      */
     public $xUploadHandler;
 

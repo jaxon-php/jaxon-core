@@ -2,10 +2,12 @@
 
 namespace Jaxon\Tests\TestRequestHandler;
 
+require_once(__DIR__ . '/../../vendor/jaxon-php/jaxon-upload/src/start.php');
+
 use Jaxon\App\View\TemplateView;
 use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;
-use Jaxon\Response\UploadResponse;
+use Jaxon\Upload\UploadResponse;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7\UploadedFile;
 use Nyholm\Psr7Server\ServerRequestCreator;
@@ -18,6 +20,7 @@ use Psr\Log\NullLogger;
 use PHPUnit\Framework\TestCase;
 
 use function jaxon;
+use function Jaxon\Upload\registerUpload;
 
 class PsrRequestHandlerTest extends TestCase
 {
@@ -217,6 +220,8 @@ class PsrRequestHandlerTest extends TestCase
         @mkdir($this->tmpDir);
         @copy($this->sSrcWhite, $this->sPathWhite);
 
+        registerUpload();
+        jaxon()->setOption('core.upload.enabled', true);
         jaxon()->setOption('upload.default.dir', __DIR__ . '/../upload/dst');
         // Send a request to the registered class
         $xRequest = jaxon()->di()->g(ServerRequestCreator::class)->fromGlobals()
@@ -260,6 +265,8 @@ class PsrRequestHandlerTest extends TestCase
         @mkdir($this->tmpDir);
         @copy($this->sSrcWhite, $this->sPathWhite);
 
+        registerUpload();
+        jaxon()->setOption('core.upload.enabled', true);
         jaxon()->setOption('upload.default.dir', __DIR__ . '/../upload/dst');
         // Send a request to the registered class
         $xRequest = jaxon()->di()->g(ServerRequestCreator::class)->fromGlobals()
@@ -295,6 +302,9 @@ class PsrRequestHandlerTest extends TestCase
      */
     public function testAjaxRequestAfterHttpUpload(string $sTempFile)
     {
+        registerUpload();
+        jaxon()->setOption('core.upload.enabled', true);
+
         jaxon()->setOption('upload.default.dir', __DIR__ . '/../upload/dst');
         // Ajax request following an HTTP upload
         $xRequest = jaxon()->di()->g(ServerRequestCreator::class)->fromGlobals()

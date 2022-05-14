@@ -16,15 +16,9 @@ use Jaxon\Request\Factory\RequestFactory;
 use Jaxon\Request\Handler\CallbackManager;
 use Jaxon\Request\Handler\ParameterReader;
 use Jaxon\Request\Handler\RequestHandler;
-use Jaxon\Request\Handler\UploadHandler;
-use Jaxon\Request\Upload\NameGeneratorInterface;
-use Jaxon\Request\Upload\UploadManager;
-use Jaxon\Request\Validator;
+use Jaxon\Request\Handler\UploadHandlerInterface;
 use Jaxon\Response\Manager\ResponseManager;
 use Jaxon\Utils\Http\UriDetector;
-
-use function bin2hex;
-use function random_bytes;
 
 trait RequestTrait
 {
@@ -44,31 +38,14 @@ trait RequestTrait
         $this->set(CallbackManager::class, function() {
             return new CallbackManager();
         });
+        // By default, register a null upload handler
+        $this->set(UploadHandlerInterface::class, function() {
+            return null;
+        });
         // Request Handler
         $this->set(RequestHandler::class, function($c) {
             return new RequestHandler($c->g(Container::class), $c->g(PluginManager::class),
-                $c->g(ResponseManager::class), $c->g(CallbackManager::class),
-                $c->g(UploadHandler::class), $c->g(DataBagPlugin::class));
-        });
-        // Upload file and dir name generator
-        $this->set(NameGeneratorInterface::class, function() {
-            return new class implements NameGeneratorInterface
-            {
-                public function random(int $nLength): string
-                {
-                    return bin2hex(random_bytes((int)($nLength / 2)));
-                }
-            };
-        });
-        // File upload manager
-        $this->set(UploadManager::class, function($c) {
-            return new UploadManager($c->g(NameGeneratorInterface::class), $c->g(ConfigManager::class),
-                $c->g(Validator::class), $c->g(Translator::class));
-        });
-        // File upload plugin
-        $this->set(UploadHandler::class, function($c) {
-            return !$c->g(ConfigManager::class)->getOption('core.upload.enabled') ? null :
-                new UploadHandler($c->g(Container::class), $c->g(ResponseManager::class), $c->g(Translator::class));
+                $c->g(ResponseManager::class), $c->g(CallbackManager::class), $c->g(DataBagPlugin::class));
         });
         // Request Factory
         $this->set(Factory::class, function($c) {
@@ -109,21 +86,11 @@ trait RequestTrait
     /**
      * Get the upload handler
      *
-     * @return UploadHandler|null
+     * @return UploadHandlerInterface|null
      */
-    public function getUploadHandler(): ?UploadHandler
+    public function getUploadHandler(): ?UploadHandlerInterface
     {
-        return $this->g(UploadHandler::class);
-    }
-
-    /**
-     * Get the upload manager
-     *
-     * @return UploadManager
-     */
-    public function getUploadManager(): UploadManager
-    {
-        return $this->g(UploadManager::class);
+        return $this->g(UploadHandlerInterface::class);
     }
 
     /**

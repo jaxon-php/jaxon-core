@@ -39,7 +39,7 @@ use Jaxon\Jaxon;
 use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Request\Call\Paginator;
 use Jaxon\Request\Factory\Psr\PsrFactory;
-use Jaxon\Request\Handler\UploadHandler;
+use Jaxon\Request\Handler\UploadHandlerInterface;
 use Jaxon\Response\Manager\ResponseManager;
 use Jaxon\Response\Response;
 use Jaxon\Response\ResponseInterface;
@@ -183,9 +183,9 @@ class Ajax
     }
 
     /**
-     * @return UploadHandler|null
+     * @return UploadHandlerInterface|null
      */
-    public function upload(): ?UploadHandler
+    public function upload(): ?UploadHandlerInterface
     {
         return $this->di()->getUploadHandler();
     }

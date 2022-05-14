@@ -4,8 +4,12 @@ namespace Jaxon\Tests\TestMisc;
 
 require __DIR__ . '/../src/session.php';
 
+use Jaxon\Exception\RequestException;
 use Jaxon\Jaxon;
 use Jaxon\Exception\SetupException;
+use Nyholm\Psr7\UploadedFile;
+use Nyholm\Psr7Server\ServerRequestCreator;
+use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\NullLogger;
 use PHPUnit\Framework\TestCase;
 use SessionManager;
@@ -16,10 +20,35 @@ use function jaxon;
 final class MiscTest extends TestCase
 {
     /**
+     * @var string
+     */
+    protected $sNameWhite;
+
+    /**
+     * @var string
+     */
+    protected $sPathWhite;
+
+    /**
+     * @var int
+     */
+    protected $sSizeWhite;
+
+    /**
      * @throws SetupException
      */
     protected function setUp(): void
     {
+        $tmpDir = __DIR__ . '/../upload/tmp';
+        @mkdir($tmpDir);
+
+        $sSrcWhite = __DIR__ . '/../upload/src/white.png';
+        $this->sNameWhite = 'white.png';
+        $this->sPathWhite = "$tmpDir/{$this->sNameWhite}";
+        $this->sSizeWhite = filesize($sSrcWhite);
+        // Copy the file to the temp dir.
+        @copy($sSrcWhite, $this->sPathWhite);
+
         jaxon()->config()->setOptions(['core' => ['language' => 'en']]);
     }
 
@@ -70,5 +99,22 @@ final class MiscTest extends TestCase
         $this->assertNull(jaxon()->session()->get('key'));
         jaxon()->session()->set('key', 'value');
         $this->assertEquals('value', jaxon()->session()->get('key'));
+    }
+
+    /**
+     * @throws RequestException
+     */
+    public function testHttpUploadDisabled()
+    {
+        jaxon()->setOption('core.upload.enabled', false);
+        // Send a request to the registered class
+        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
+            return $c->g(ServerRequestCreator::class)->fromGlobals()->withUploadedFiles([
+                'image' => new UploadedFile($this->sPathWhite, $this->sSizeWhite,
+                    UPLOAD_ERR_OK, $this->sNameWhite, 'png'),
+            ])->withMethod('POST');
+        });
+
+        $this->assertFalse(jaxon()->di()->getRequestHandler()->canProcessRequest());
     }
 }

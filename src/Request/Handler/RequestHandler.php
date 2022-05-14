@@ -62,7 +62,7 @@ class RequestHandler
     private $xCallbackManager;
 
     /**
-     * @var UploadHandler
+     * @var UploadHandlerInterface
      */
     private $xUploadHandler;
 
@@ -87,17 +87,15 @@ class RequestHandler
      * @param PluginManager $xPluginManager
      * @param ResponseManager $xResponseManager
      * @param CallbackManager $xCallbackManager
-     * @param UploadHandler|null $xUploadHandler
      * @param DataBagPlugin $xDataBagPlugin
      */
     public function __construct(Container $di, PluginManager $xPluginManager, ResponseManager $xResponseManager,
-        CallbackManager $xCallbackManager, ?UploadHandler $xUploadHandler, DataBagPlugin $xDataBagPlugin)
+        CallbackManager $xCallbackManager, DataBagPlugin $xDataBagPlugin)
     {
         $this->di = $di;
         $this->xPluginManager = $xPluginManager;
         $this->xResponseManager = $xResponseManager;
         $this->xCallbackManager = $xCallbackManager;
-        $this->xUploadHandler = $xUploadHandler;
         $this->xDataBagPlugin = $xDataBagPlugin;
     }
 
@@ -195,6 +193,8 @@ class RequestHandler
      */
     public function canProcessRequest(): bool
     {
+        $this->xUploadHandler = $this->di->getUploadHandler();
+
         // Return true if the request plugin was already found
         if($this->xRequestPlugin !== null)
         {

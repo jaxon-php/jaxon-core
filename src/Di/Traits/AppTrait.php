@@ -56,9 +56,6 @@ trait AppTrait
             'jquery' => [
                 'no_conflict'       => false,
             ],
-            'upload' => [
-                'enabled'           => true,
-            ],
         ],
         'js' => [
             'lib' => [
