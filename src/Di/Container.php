@@ -67,6 +67,8 @@ class Container extends PimpleContainer implements LoggerAwareInterface
         // Save the Ajax and Container instances
         $this->val(Ajax::class, $jaxon);
         $this->val(Container::class, $this);
+        // Register the logger
+        $this->val(LoggerInterface::class, $this->logger);
 
         // Template directory
         $sTemplateDir = realpath(__DIR__ . '/../../templates');
