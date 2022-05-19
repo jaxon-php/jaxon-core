@@ -91,10 +91,6 @@ trait AppTrait
             $xTranslator->loadTranslations($sResourceDir . '/en/config.php', 'en');
             $xTranslator->loadTranslations($sResourceDir . '/fr/config.php', 'fr');
             $xTranslator->loadTranslations($sResourceDir . '/es/config.php', 'es');
-            // Load the upload translations
-            $xTranslator->loadTranslations($sResourceDir . '/en/upload.php', 'en');
-            $xTranslator->loadTranslations($sResourceDir . '/fr/upload.php', 'fr');
-            $xTranslator->loadTranslations($sResourceDir . '/es/upload.php', 'es');
             return $xTranslator;
         });
 
