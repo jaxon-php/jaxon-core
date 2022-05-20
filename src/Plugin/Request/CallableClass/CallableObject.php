@@ -39,6 +39,7 @@ use function array_filter;
 use function array_map;
 use function array_merge;
 use function call_user_func;
+use function count;
 use function in_array;
 use function is_array;
 use function is_string;
@@ -346,12 +347,14 @@ class CallableObject
      *
      * @param array $aHookMethods    The method config options
      * @param string $sMethod    The method called by the request
+     * @param array $aArgs The arguments to pass to the method
      *
      * @return void
      * @throws ReflectionException
      */
-    private function callHookMethods(array $aHookMethods, string $sMethod)
+    private function callHookMethods(array $aHookMethods, string $sMethod, array $aArgs)
     {
+        // The hooks defined at method level override those defined at class level.
         $aMethods = $aHookMethods[$sMethod] ?? $aHookMethods['*'] ?? [];
         foreach($aMethods as $xKey => $xValue)
         {
@@ -361,6 +364,11 @@ class CallableObject
             {
                 $sMethodName = $xKey;
                 $aMethodArgs = is_array($xValue) ? $xValue : [$xValue];
+                // The parameters of the method can be passed to the hooks.
+                if(count($aMethodArgs) > 0 && $aMethodArgs[0] === '__params__')
+                {
+                    $aMethodArgs[0] = $aArgs;
+                }
             }
             $this->callMethod($sMethodName, $aMethodArgs, true);
         }
@@ -381,6 +389,7 @@ class CallableObject
         $this->xRegisteredObject = $this->getRegisteredObject();
 
         // Set attributes from the DI container
+        // The attributes defined at method level override those defined at class level.
         $aAttributes = $this->aAttributes[$sMethod] ?? $this->aAttributes['*'] ?? [];
         foreach($aAttributes as $sName => $sClass)
         {
@@ -394,13 +403,13 @@ class CallableObject
         }
 
         // Methods to call before processing the request
-        $this->callHookMethods($this->aBeforeMethods, $sMethod);
+        $this->callHookMethods($this->aBeforeMethods, $sMethod, $aArgs);
 
         // Call the request method
         $xResponse = $this->callMethod($sMethod, $aArgs, false);
 
         // Methods to call after processing the request
-        $this->callHookMethods($this->aAfterMethods, $sMethod);
+        $this->callHookMethods($this->aAfterMethods, $sMethod, $aArgs);
         return $xResponse;
     }
 }
