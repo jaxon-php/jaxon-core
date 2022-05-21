@@ -10,9 +10,6 @@ use Nyholm\Psr7Server\ServerRequestCreator;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 
-use Exception;
-
-use function get_class;
 use function jaxon;
 
 class HookTest extends TestCase
@@ -58,11 +55,9 @@ class HookTest extends TestCase
                             '__after' => 'after',
                         ],
                         'three' => [
-                            '__before' => ['before', 'before2'],
-                            '__after' => [],
+                            '__before' => ['before2'],
                         ],
                         'four' => [
-                            '__before' => [],
                             '__after' => [
                                 'after1' => ['p1'],
                                 'after2' => ['p1', 'p2'],
@@ -140,7 +135,7 @@ class HookTest extends TestCase
         jaxon()->processRequest();
 
         $xResponse = jaxon()->getResponse();
-        $this->assertEquals(4, $xResponse->getCommandCount());
+        $this->assertEquals(5, $xResponse->getCommandCount());
     }
 
     /**
@@ -160,6 +155,6 @@ class HookTest extends TestCase
         jaxon()->processRequest();
 
         $xResponse = jaxon()->getResponse();
-        $this->assertEquals(3, $xResponse->getCommandCount());
+        $this->assertEquals(5, $xResponse->getCommandCount());
     }
 }

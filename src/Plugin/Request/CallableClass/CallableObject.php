@@ -355,7 +355,9 @@ class CallableObject
     private function callHookMethods(array $aHookMethods, string $sMethod, array $aArgs)
     {
         // The hooks defined at method level override those defined at class level.
-        $aMethods = $aHookMethods[$sMethod] ?? $aHookMethods['*'] ?? [];
+        // $aMethods = $aHookMethods[$sMethod] ?? $aHookMethods['*'] ?? [];
+        // The hooks defined at method level are merged with those defined at class level.
+        $aMethods = array_merge($aHookMethods['*'] ?? [], $aHookMethods[$sMethod] ?? []);
         foreach($aMethods as $xKey => $xValue)
         {
             $sMethodName = $xValue;
@@ -390,7 +392,9 @@ class CallableObject
 
         // Set attributes from the DI container
         // The attributes defined at method level override those defined at class level.
-        $aAttributes = $this->aAttributes[$sMethod] ?? $this->aAttributes['*'] ?? [];
+        // $aAttributes = $this->aAttributes[$sMethod] ?? $this->aAttributes['*'] ?? [];
+        // The attributes defined at method level are merged with those defined at class level.
+        $aAttributes = array_merge($this->aAttributes['*'] ?? [], $this->aAttributes[$sMethod] ?? []);
         foreach($aAttributes as $sName => $sClass)
         {
             // Set the protected attributes of the object
