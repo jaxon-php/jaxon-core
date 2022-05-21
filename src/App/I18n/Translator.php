@@ -23,19 +23,10 @@ class Translator extends BaseTranslator implements ConfigListenerInterface
     /**
      * @inheritDoc
      */
-    public function onChanges(Config $xConfig)
-    {
-        // Set the library language any time the config is changed.
-        $this->setLocale($xConfig->getOption('core.language'));
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function onChange(Config $xConfig, string $sName)
     {
         // Set the library language any time the config is changed.
-        if($sName === 'core.language')
+        if($sName === '' || $sName === 'core.language')
         {
             $this->setLocale($xConfig->getOption('core.language'));
         }
