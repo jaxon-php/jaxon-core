@@ -63,6 +63,9 @@ class HookTest extends TestCase
                                 'after2' => ['p1', 'p2'],
                             ],
                         ],
+                        'param' => [
+                            '__before' => ['beforeParam' => '__params__'],
+                        ],
                     ],
                 ],
             ],
@@ -156,5 +159,25 @@ class HookTest extends TestCase
 
         $xResponse = jaxon()->getResponse();
         $this->assertEquals(5, $xResponse->getCommandCount());
+    }
+
+    /**
+     * @throws RequestException
+     */
+    public function testHookParamAccess()
+    {
+        // Send a request to the registered class
+        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
+            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
+                'jxncls' => 'TestHk',
+                'jxnmthd' => 'param',
+                'jxnargs' => ['Svalue'],
+            ])->withMethod('POST');
+        });
+        // Process the request and get the response
+        jaxon()->processRequest();
+
+        $xResponse = jaxon()->getResponse();
+        $this->assertEquals(3, $xResponse->getCommandCount());
     }
 }

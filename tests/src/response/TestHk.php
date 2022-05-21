@@ -61,4 +61,20 @@ class TestHk extends CallableClass
         $this->response->html('div-id', 'This is the four method!');
         return $this->response;
     }
+
+    protected $value;
+
+    protected function beforeParam(array $params)
+    {
+        [$this->value] = $params;
+    }
+
+    public function param($param): Response
+    {
+        if(($param) && $this->value === $param)
+        {
+            $this->response->html('div-id', 'This is the method with params!');
+        }
+        return $this->response;
+    }
 }
