@@ -16,6 +16,7 @@ class ParameterTest extends TestCase
      */
     public function setUp(): void
     {
+        jaxon()->setOption('core.response.send', false);
         jaxon()->register(Jaxon::CALLABLE_CLASS, 'Sample', __DIR__ . '/../src/sample.php');
     }
 
@@ -43,7 +44,7 @@ class ParameterTest extends TestCase
 
         $this->assertFalse(jaxon()->di()->getRequestHandler()->canProcessRequest());
         // Process the request and get the response
-        jaxon()->di()->getRequestHandler()->processRequest();
+        jaxon()->processRequest();
 
         $xResponse = jaxon()->getResponse();
         $this->assertEquals(0, $xResponse->getCommandCount());

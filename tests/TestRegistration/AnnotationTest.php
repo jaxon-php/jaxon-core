@@ -3,16 +3,18 @@
 namespace Jaxon\Tests\TestRegistration;
 
 require __DIR__ . '/../src/annotated.php';
+require_once(__DIR__ . '/../../vendor/jaxon-php/jaxon-annotations/src/start.php');
 
 use Jaxon\Jaxon;
 use Jaxon\Exception\SetupException;
-use Jaxon\Annotations\AnnotationReader;
 use Jaxon\Utils\Http\UriException;
 use PHPUnit\Framework\TestCase;
+
 use Annotated;
 use Excluded;
 
 use function jaxon;
+use function Jaxon\Annotations\registerAnnotations;
 
 class AnnotationTest extends TestCase
 {
@@ -21,11 +23,9 @@ class AnnotationTest extends TestCase
      */
     public function setUp(): void
     {
-        jaxon()->setOption('core.prefix.class', '');
-        jaxon()->setOption('core.request.uri', 'http://example.test/path');
+        registerAnnotations();
 
-        // Register the annotation reader
-        AnnotationReader::register();
+        jaxon()->config(__DIR__ . '/../config/annotations.php');
 
         jaxon()->register(Jaxon::CALLABLE_CLASS, Annotated::class);
         jaxon()->register(Jaxon::CALLABLE_CLASS, Excluded::class);

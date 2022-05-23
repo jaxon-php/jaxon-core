@@ -1,7 +1,7 @@
 <?php
 
 /**
- * DialogLibraryTrait.php
+ * DialogPluginTrait.php
  *
  * Provides stub methods for the DialogPlugin class, so it can conform to the interfaces it implements.
  *
@@ -14,7 +14,7 @@
 
 namespace Jaxon\Plugin\Response\Dialog;
 
-trait DialogLibraryTrait
+trait DialogPluginTrait
 {
     public function setReturnCode(bool $bReturnCode)
     {}

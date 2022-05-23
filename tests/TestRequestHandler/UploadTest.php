@@ -2,11 +2,13 @@
 
 namespace Jaxon\Tests\TestRequestHandler;
 
+require_once(__DIR__ . '/../../vendor/jaxon-php/jaxon-upload/src/start.php');
+
 use Jaxon\Jaxon;
 use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;
 use Jaxon\Request\Upload\NameGeneratorInterface;
-use Jaxon\Response\UploadResponse;
+use Jaxon\Upload\UploadResponse;
 use Nyholm\Psr7\UploadedFile;
 use Nyholm\Psr7Server\ServerRequestCreator;
 use Psr\Http\Message\ServerRequestInterface;
@@ -14,7 +16,7 @@ use PHPUnit\Framework\TestCase;
 
 use function jaxon;
 use function filesize;
-use function realpath;
+use function Jaxon\Upload\registerUpload;
 
 class UploadTest extends TestCase
 {
@@ -53,7 +55,11 @@ class UploadTest extends TestCase
      */
     public function setUp(): void
     {
-        $tmpDir = realpath(__DIR__ . '/../upload/tmp');
+        registerUpload();
+        jaxon()->setOption('core.upload.enabled', true);
+
+        jaxon()->setOption('core.response.send', false);
+        $tmpDir = __DIR__ . '/../upload/tmp';
         @mkdir($tmpDir);
 
         $sSrcWhite = __DIR__ . '/../upload/src/white.png';
@@ -102,7 +108,7 @@ class UploadTest extends TestCase
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
         $this->assertTrue(jaxon()->di()->getUploadHandler()->canProcessRequest(jaxon()->di()->getRequest()));
-        jaxon()->di()->getRequestHandler()->processRequest();
+        jaxon()->processRequest();
 
         // Uploaded files
         $aFiles = jaxon()->upload()->files();
@@ -139,7 +145,7 @@ class UploadTest extends TestCase
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
         $this->assertTrue(jaxon()->di()->getUploadHandler()->canProcessRequest(jaxon()->di()->getRequest()));
-        jaxon()->di()->getRequestHandler()->processRequest();
+        jaxon()->processRequest();
 
         // Uploaded files
         $aFiles = jaxon()->upload()->files();
@@ -183,7 +189,7 @@ class UploadTest extends TestCase
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
         $this->assertTrue(jaxon()->di()->getUploadHandler()->canProcessRequest(jaxon()->di()->getRequest()));
-        jaxon()->di()->getRequestHandler()->processRequest();
+        jaxon()->processRequest();
 
         // Uploaded files
         $aFiles = jaxon()->upload()->files();
@@ -225,7 +231,7 @@ class UploadTest extends TestCase
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
         $this->assertTrue(jaxon()->di()->getUploadHandler()->canProcessRequest(jaxon()->di()->getRequest()));
-        jaxon()->di()->getRequestHandler()->processRequest();
+        jaxon()->processRequest();
 
         // Uploaded files
         $aFiles = jaxon()->upload()->files();
@@ -255,7 +261,7 @@ class UploadTest extends TestCase
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
         $this->assertTrue(jaxon()->di()->getUploadHandler()->canProcessRequest(jaxon()->di()->getRequest()));
         jaxon()->di()->getResponseManager()->debug('Testing the HTTP upload!!');
-        jaxon()->di()->getRequestHandler()->processRequest();
+        jaxon()->processRequest();
 
         $xResponse = jaxon()->getResponse();
         $this->assertEquals(UploadResponse::class, get_class($xResponse));
@@ -289,7 +295,7 @@ class UploadTest extends TestCase
         $this->assertNotEquals('', $sTempFile);
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
         $this->assertTrue(jaxon()->di()->getUploadHandler()->canProcessRequest(jaxon()->di()->getRequest()));
-        jaxon()->di()->getRequestHandler()->processRequest();
+        jaxon()->processRequest();
 
         // Uploaded files
         $aFiles = jaxon()->upload()->files();
@@ -323,7 +329,7 @@ class UploadTest extends TestCase
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
         $this->assertTrue(jaxon()->di()->getUploadHandler()->canProcessRequest(jaxon()->di()->getRequest()));
-        jaxon()->di()->getRequestHandler()->processRequest();
+        jaxon()->processRequest();
 
         // Return the file name for the next test
         $aFiles = jaxon()->upload()->files();
@@ -356,7 +362,7 @@ class UploadTest extends TestCase
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
         $this->assertTrue(jaxon()->di()->getUploadHandler()->canProcessRequest(jaxon()->di()->getRequest()));
         $this->expectException(RequestException::class);
-        jaxon()->di()->getRequestHandler()->processRequest();
+        jaxon()->processRequest();
     }
 
     /**
@@ -380,7 +386,7 @@ class UploadTest extends TestCase
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
         $this->assertTrue(jaxon()->di()->getUploadHandler()->canProcessRequest(jaxon()->di()->getRequest()));
-        jaxon()->di()->getRequestHandler()->processRequest();
+        jaxon()->processRequest();
 
         // Return the file name for the next test
         $aFiles = jaxon()->upload()->files();
@@ -413,7 +419,7 @@ class UploadTest extends TestCase
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
         $this->assertTrue(jaxon()->di()->getUploadHandler()->canProcessRequest(jaxon()->di()->getRequest()));
         $this->expectException(RequestException::class);
-        jaxon()->di()->getRequestHandler()->processRequest();
+        jaxon()->processRequest();
     }
 
     /**
@@ -437,7 +443,7 @@ class UploadTest extends TestCase
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
         $this->assertTrue(jaxon()->di()->getUploadHandler()->canProcessRequest(jaxon()->di()->getRequest()));
-        jaxon()->di()->getRequestHandler()->processRequest();
+        jaxon()->processRequest();
 
         // Return the file name for the next test
         $aFiles = jaxon()->upload()->files();
@@ -470,7 +476,7 @@ class UploadTest extends TestCase
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
         $this->assertTrue(jaxon()->di()->getUploadHandler()->canProcessRequest(jaxon()->di()->getRequest()));
         $this->expectException(RequestException::class);
-        jaxon()->di()->getRequestHandler()->processRequest();
+        jaxon()->processRequest();
     }
 
     /**
@@ -494,7 +500,7 @@ class UploadTest extends TestCase
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
         $this->assertTrue(jaxon()->di()->getUploadHandler()->canProcessRequest(jaxon()->di()->getRequest()));
-        jaxon()->di()->getRequestHandler()->processRequest();
+        jaxon()->processRequest();
 
         // Return the file name for the next test
         $aFiles = jaxon()->upload()->files();
@@ -527,7 +533,7 @@ class UploadTest extends TestCase
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
         $this->assertTrue(jaxon()->di()->getUploadHandler()->canProcessRequest(jaxon()->di()->getRequest()));
         $this->expectException(RequestException::class);
-        jaxon()->di()->getRequestHandler()->processRequest();
+        jaxon()->processRequest();
     }
 
     /**
@@ -545,7 +551,7 @@ class UploadTest extends TestCase
         });
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
-        jaxon()->di()->getRequestHandler()->processRequest();
+        jaxon()->processRequest();
         $xResponse = jaxon()->getResponse();
         $this->assertEquals(UploadResponse::class, get_class($xResponse));
         $this->assertEquals('', $xResponse->getUploadedFile());
@@ -566,7 +572,7 @@ class UploadTest extends TestCase
         });
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
-        jaxon()->di()->getRequestHandler()->processRequest();
+        jaxon()->processRequest();
         $xResponse = jaxon()->getResponse();
         $this->assertEquals(UploadResponse::class, get_class($xResponse));
         $this->assertEquals('', $xResponse->getUploadedFile());
@@ -587,7 +593,7 @@ class UploadTest extends TestCase
         });
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
-        jaxon()->di()->getRequestHandler()->processRequest();
+        jaxon()->processRequest();
         $xResponse = jaxon()->getResponse();
         $this->assertEquals(UploadResponse::class, get_class($xResponse));
         $this->assertEquals('', $xResponse->getUploadedFile());
@@ -597,7 +603,7 @@ class UploadTest extends TestCase
     /**
      * @throws RequestException
      */
-    public function testHttpUploadErrorDirNotFound()
+    /*public function testHttpUploadErrorDirNotFound()
     {
         jaxon()->setOption('upload.default.dir', __DIR__ . '/../upload/not-found');
         // Send a request to the registered class
@@ -609,17 +615,17 @@ class UploadTest extends TestCase
         });
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
-        jaxon()->di()->getRequestHandler()->processRequest();
+        jaxon()->processRequest();
         $xResponse = jaxon()->getResponse();
         $this->assertEquals(UploadResponse::class, get_class($xResponse));
         $this->assertEquals('', $xResponse->getUploadedFile());
         $this->assertNotEquals('', $xResponse->getErrorMessage());
-    }
+    }*/
 
     /**
      * @throws RequestException
      */
-    public function testHttpUploadErrorNoTmpDir()
+    /*public function testHttpUploadErrorNoTmpDir()
     {
         jaxon()->setOption('upload.files.image.dir', __DIR__ . '/../upload/dst');
         // Send a request to the registered class
@@ -631,17 +637,17 @@ class UploadTest extends TestCase
         });
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
-        jaxon()->di()->getRequestHandler()->processRequest();
+        jaxon()->processRequest();
         $xResponse = jaxon()->getResponse();
         $this->assertEquals(UploadResponse::class, get_class($xResponse));
         $this->assertEquals('', $xResponse->getUploadedFile());
         $this->assertNotEquals('', $xResponse->getErrorMessage());
-    }
+    }*/
 
     /**
      * @throws RequestException
      */
-    public function testHttpUploadErrorDirCreation()
+    /*public function testHttpUploadErrorDirCreation()
     {
         jaxon()->setOption('upload.default.dir', __DIR__ . '/../upload/dst');
         // Upload file and dir name generator
@@ -664,29 +670,12 @@ class UploadTest extends TestCase
         });
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
-        jaxon()->di()->getRequestHandler()->processRequest();
+        jaxon()->processRequest();
         $xResponse = jaxon()->getResponse();
         $this->assertEquals(UploadResponse::class, get_class($xResponse));
         $this->assertEquals('', $xResponse->getUploadedFile());
         $this->assertNotEquals('', $xResponse->getErrorMessage());
-    }
-
-    /**
-     * @throws RequestException
-     */
-    public function testHttpUploadDisabled()
-    {
-        jaxon()->setOption('core.upload.enabled', false);
-        // Send a request to the registered class
-        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)->fromGlobals()->withUploadedFiles([
-                'image' => new UploadedFile($this->sPathWhite, $this->sSizeWhite,
-                    UPLOAD_ERR_OK, $this->sNameWhite, 'png'),
-            ])->withMethod('POST');
-        });
-
-        $this->assertFalse(jaxon()->di()->getRequestHandler()->canProcessRequest());
-    }
+    }*/
 
     /**
      * @throws RequestException
@@ -724,7 +713,7 @@ class UploadTest extends TestCase
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
         $this->assertTrue(jaxon()->di()->getUploadHandler()->canProcessRequest(jaxon()->di()->getRequest()));
         $this->expectException(RequestException::class);
-        jaxon()->di()->getRequestHandler()->processRequest();
+        jaxon()->processRequest();
     }
 
     /**
@@ -746,6 +735,6 @@ class UploadTest extends TestCase
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
         $this->assertTrue(jaxon()->di()->getUploadHandler()->canProcessRequest(jaxon()->di()->getRequest()));
         $this->expectException(RequestException::class);
-        jaxon()->di()->getRequestHandler()->processRequest();
+        jaxon()->processRequest();
     }
 }

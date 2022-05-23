@@ -6,10 +6,10 @@ require_once __DIR__ . '/../src/dialog.php';
 
 use Jaxon\Jaxon;
 use Jaxon\App\Dialog\Library\AlertLibrary;
-use Jaxon\Dialogs\Library\Bootbox\BootboxLibrary;
-use Jaxon\Dialogs\Library\Bootstrap\BootstrapLibrary;
-use Jaxon\Dialogs\Library\Noty\NotyLibrary;
-use Jaxon\Dialogs\Library\Toastr\ToastrLibrary;
+use Jaxon\Dialogs\Bootbox\BootboxLibrary;
+use Jaxon\Dialogs\Bootstrap\BootstrapLibrary;
+use Jaxon\Dialogs\Noty\NotyLibrary;
+use Jaxon\Dialogs\Toastr\ToastrLibrary;
 use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;
 use Jaxon\Utils\Http\UriException;
@@ -39,9 +39,12 @@ class DialogTest extends TestCase
         jaxon()->register(Jaxon::CALLABLE_CLASS, Dialog::class);
         jaxon()->dialog()->registerLibrary(BootboxLibrary::class, BootboxLibrary::NAME);
         jaxon()->dialog()->registerLibrary(BootstrapLibrary::class, BootstrapLibrary::NAME);
-        jaxon()->dialog()->registerLibrary(NotyLibrary::class, NotyLibrary::NAME);
-        jaxon()->dialog()->registerLibrary(ToastrLibrary::class, ToastrLibrary::NAME);
-        jaxon()->dialog()->registerLibrary(TestDialogLibrary::class, TestDialogLibrary::NAME);
+        // Register dialog classes from config
+        jaxon()->setOption('dialogs.classes', [
+            NotyLibrary::NAME => NotyLibrary::class,
+            ToastrLibrary::NAME => ToastrLibrary::class,
+            TestDialogLibrary::NAME => TestDialogLibrary::class,
+        ]);
 
         // Register the template dir into the template renderer
         jaxon()->template()->addNamespace('jaxon::dialogs',
@@ -89,17 +92,32 @@ class DialogTest extends TestCase
         $this->assertTrue($xMessageLibrary->helper()->hasOption('options.closeButton'));
         $this->assertIsArray($xMessageLibrary->helper()->getOption('options.sampleArray'));
         $this->assertIsString($xMessageLibrary->helper()->getOption('options.positionClass'));
-        // Test dialog plugin stub methods
-        $xDialog = jaxon()->plugin('dialog');
-        $xDialog->setReturnCode(false);
-        $this->assertEquals('', $xDialog->getUri());
-        $this->assertEquals('', $xDialog->getSubdir());
-        $this->assertEquals('', $xDialog->getVersion());
+    }
+
+    public function testDialogDefaultMethods()
+    {
+        $xDialogLibraryManager = jaxon()->di()->getDialogLibraryManager();
+        jaxon()->setOption('dialogs.default.question', TestDialogLibrary::NAME);
+        $xQuestionLibrary = $xDialogLibraryManager->getQuestionLibrary();
+        $xQuestionLibrary->setReturnCode(false);
+        $this->assertEquals('https://cdn.jaxon-php.org/libs', $xQuestionLibrary->getUri());
+        $this->assertEquals('', $xQuestionLibrary->getSubdir());
+        $this->assertEquals('', $xQuestionLibrary->getVersion());
+        $this->assertEquals('', $xQuestionLibrary->getJs());
+        $this->assertEquals('', $xQuestionLibrary->getScript());
+        $this->assertEquals('', $xQuestionLibrary->getReadyScript());
+
+        $xDialogPlugin = jaxon()->di()->getDialogPlugin();
+        $xDialogPlugin->setReturnCode(false);
+        $this->assertEquals('', $xDialogPlugin->getUri());
+        $this->assertEquals('', $xDialogPlugin->getSubdir());
+        $this->assertEquals('', $xDialogPlugin->getVersion());
     }
 
     public function testDialogJsCode()
     {
-        $sJsCode = jaxon()->getJs();
+        jaxon()->setOption('dialogs.libraries', ['bootstrap', 'bootbox', 'toastr']);
+        $sJsCode = jaxon()->js();
         $this->assertStringContainsString('bootbox.min.js', $sJsCode);
         $this->assertStringContainsString('bootstrap-dialog.min.js', $sJsCode);
         $this->assertStringContainsString('toastr.min.js', $sJsCode);
@@ -107,7 +125,8 @@ class DialogTest extends TestCase
 
     public function testDialogCssCode()
     {
-        $sCssCode = jaxon()->getCss();
+        jaxon()->setOption('dialogs.libraries', ['bootstrap', 'bootbox', 'toastr']);
+        $sCssCode = jaxon()->css();
         $this->assertStringContainsString('bootstrap-dialog.min.css', $sCssCode);
         $this->assertStringContainsString('toastr.min.css', $sCssCode);
     }
@@ -120,6 +139,7 @@ class DialogTest extends TestCase
         jaxon()->setOption('dialogs.default.modal', 'bootstrap');
         jaxon()->setOption('dialogs.default.message', 'bootstrap');
         jaxon()->setOption('dialogs.default.question', 'bootstrap');
+        jaxon()->setOption('dialogs.libraries', ['bootbox', 'toastr']);
         $sScriptCode = jaxon()->getScript();
         $this->assertStringContainsString('jaxon.dialogs = {}', $sScriptCode);
         $this->assertStringContainsString('jaxon.dialogs.bootstrap', $sScriptCode);

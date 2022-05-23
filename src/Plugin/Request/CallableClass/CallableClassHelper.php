@@ -19,7 +19,8 @@ use Jaxon\App\View\ViewRenderer;
 use Jaxon\Di\Container;
 use Jaxon\Exception\SetupException;
 use Jaxon\Request\Factory\RequestFactory;
-use Jaxon\Request\Handler\UploadHandler;
+use Jaxon\Request\Target;
+use Jaxon\Request\Upload\UploadHandlerInterface;
 use Psr\Log\LoggerInterface;
 
 class CallableClassHelper
@@ -40,7 +41,7 @@ class CallableClassHelper
     public $xLogger;
 
     /**
-     * @var UploadHandler
+     * @var UploadHandlerInterface
      */
     public $xUploadHandler;
 
@@ -53,6 +54,11 @@ class CallableClassHelper
      * @var SessionInterface
      */
     public $xSessionManager;
+
+    /**
+     * @var Target
+     */
+    public $xTarget;
 
     /**
      * The constructor

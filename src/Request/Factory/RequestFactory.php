@@ -25,11 +25,14 @@ use function func_get_args;
 class RequestFactory
 {
     /**
-     * The prefix to prepend on each call
-     *
      * @var string
      */
     protected $sPrefix;
+
+    /**
+     * @var bool
+     */
+    protected $bNoPrefix = false;
 
     /**
      * @var DialogLibraryManager
@@ -56,6 +59,17 @@ class RequestFactory
     }
 
     /**
+     * @param bool $bNoPrefix
+     *
+     * @return RequestFactory
+     */
+    public function noPrefix(bool $bNoPrefix): RequestFactory
+    {
+        $this->bNoPrefix = $bNoPrefix;
+        return $this;
+    }
+
+    /**
      * Generate the javascript code for a call to a given method
      *
      * @param string $sFunction
@@ -66,7 +80,8 @@ class RequestFactory
     public function __call(string $sFunction, array $aArguments): Call
     {
         // Make the request
-        $xCall = new Call($this->sPrefix . $sFunction, $this->xDialogLibraryManager, $this->xPaginator);
+        $sPrefix = $this->bNoPrefix ? '' : $this->sPrefix;
+        $xCall = new Call($sPrefix . $sFunction, $this->xDialogLibraryManager, $this->xPaginator);
         $xCall->addParameters($aArguments);
         return $xCall;
     }

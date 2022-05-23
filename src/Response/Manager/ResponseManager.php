@@ -184,6 +184,6 @@ class ResponseManager
      */
     public function getOutput(): string
     {
-        return $this->xResponse->getCommandCount() === 0 ? '' : $this->xResponse->getOutput();
+        return $this->xResponse->getOutput();
     }
 }

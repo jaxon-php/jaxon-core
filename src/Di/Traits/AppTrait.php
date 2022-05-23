@@ -3,6 +3,7 @@
 namespace Jaxon\Di\Traits;
 
 use Jaxon\App\App;
+use Jaxon\App\AppInterface;
 use Jaxon\App\Bootstrap;
 use Jaxon\App\Config\ConfigEventManager;
 use Jaxon\App\Config\ConfigManager;
@@ -18,7 +19,9 @@ use Jaxon\Utils\Config\ConfigReader;
 trait AppTrait
 {
     /**
-     * @var array The default config options
+     * The default config options
+     *
+     * @var array
      */
     protected $aConfig =  [
         'core' => [
@@ -33,7 +36,7 @@ trait AppTrait
             'request' => [
                 // 'uri'            => '',
                 'mode'              => 'asynchronous',
-                'method'            => 'POST', // W3C: Method is case sensitive
+                'method'            => 'POST', // W3C: Method is case-sensitive
             ],
             'response' => [
                 'send'              => true,
@@ -52,9 +55,6 @@ trait AppTrait
             ],
             'jquery' => [
                 'no_conflict'       => false,
-            ],
-            'upload' => [
-                'enabled'           => true,
             ],
         ],
         'js' => [
@@ -91,12 +91,9 @@ trait AppTrait
             $xTranslator->loadTranslations($sResourceDir . '/en/config.php', 'en');
             $xTranslator->loadTranslations($sResourceDir . '/fr/config.php', 'fr');
             $xTranslator->loadTranslations($sResourceDir . '/es/config.php', 'es');
-            // Load the upload translations
-            $xTranslator->loadTranslations($sResourceDir . '/en/upload.php', 'en');
-            $xTranslator->loadTranslations($sResourceDir . '/fr/upload.php', 'fr');
-            $xTranslator->loadTranslations($sResourceDir . '/es/upload.php', 'es');
             return $xTranslator;
         });
+
         // Config Manager
         $this->set(ConfigEventManager::class, function($c) {
             return new ConfigEventManager($c->g(Container::class));
@@ -111,9 +108,10 @@ trait AppTrait
             $xEventManager->addListener(DialogLibraryManager::class);
             return $xConfigManager;
         });
+
         // Jaxon App
-        $this->set(App::class, function($c) {
-            return new App($c->g(ConfigManager::class), $c->g(Translator::class));
+        $this->set(AppInterface::class, function($c) {
+            return new App($c->g(Container::class));
         });
         // Jaxon App bootstrap
         $this->set(Bootstrap::class, function($c) {
@@ -125,11 +123,11 @@ trait AppTrait
     /**
      * Get the App instance
      *
-     * @return App
+     * @return AppInterface
      */
-    public function getApp(): App
+    public function getApp(): AppInterface
     {
-        return $this->g(App::class);
+        return $this->g(AppInterface::class);
     }
 
     /**

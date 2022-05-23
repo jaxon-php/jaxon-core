@@ -1,9 +1,9 @@
 <?php
 
 /**
- * Container.php - Jaxon DI container
+ * Container.php
  *
- * Provide container service for Jaxon classes.
+ * Jaxon DI container. Provide container service for Jaxon classes.
  *
  * @package jaxon-core
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
@@ -15,20 +15,21 @@
 namespace Jaxon\Di;
 
 use Jaxon\App\Ajax;
+use Jaxon\App\I18n\Translator;
 use Jaxon\App\Session\SessionInterface;
+use Jaxon\Exception\SetupException;
 use Pimple\Container as PimpleContainer;
-use Pimple\Exception\UnknownIdentifierException;
-use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
-use Psr\Container\NotFoundExceptionInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
 use Closure;
+use Exception;
 use ReflectionClass;
 use ReflectionException;
+use Throwable;
 
 use function realpath;
 
@@ -66,9 +67,13 @@ class Container extends PimpleContainer implements LoggerAwareInterface
         // Save the Ajax and Container instances
         $this->val(Ajax::class, $jaxon);
         $this->val(Container::class, $this);
+        // Register the logger
+        $this->val(LoggerInterface::class, $this->logger);
+
         // Template directory
         $sTemplateDir = realpath(__DIR__ . '/../../templates');
         $this->val('jaxon.core.dir.template', $sTemplateDir);
+
         // Translation directory
         $sTranslationDir = realpath(__DIR__ . '/../../translations');
         $this->val('jaxon.core.dir.translation', $sTranslationDir);
@@ -91,7 +96,6 @@ class Container extends PimpleContainer implements LoggerAwareInterface
         $this->registerCallables();
         $this->registerViews();
         $this->registerUtils();
-        $this->registerAnnotations();
     }
 
     /**
@@ -159,20 +163,27 @@ class Container extends PimpleContainer implements LoggerAwareInterface
     /**
      * Get a class instance
      *
-     * @param string $sClass    The full class name
+     * @param string $sClass The full class name
      *
      * @return mixed
-     * @throws NotFoundExceptionInterface  No entry was found for **this** identifier.
-     * @throws ContainerExceptionInterface Error while retrieving the entry.
-     * @throws UnknownIdentifierException If the identifier is not defined
+     * @throws SetupException
      */
     public function get(string $sClass)
     {
-        if($this->xContainer != null && $this->xContainer->has($sClass))
+        try
         {
-            return $this->xContainer->get($sClass);
+            if($this->xContainer != null && $this->xContainer->has($sClass))
+            {
+                return $this->xContainer->get($sClass);
+            }
+            return $this->offsetGet($sClass);
         }
-        return $this->offsetGet($sClass);
+        catch(Exception|Throwable $e)
+        {
+            $xTranslator = $this->g(Translator::class);
+            $sMessage = $xTranslator->trans('errors.class.container', ['name' => $sClass]);
+            throw new SetupException($sMessage);
+        }
     }
 
     /**
@@ -219,13 +230,11 @@ class Container extends PimpleContainer implements LoggerAwareInterface
     /**
      * Create an instance of a class, getting the constructor parameters from the DI container
      *
-     * @param string|ReflectionClass $xClass    The class name or the reflection class
+     * @param string|ReflectionClass $xClass The class name or the reflection class
      *
      * @return object|null
      * @throws ReflectionException
-     * @throws NotFoundExceptionInterface
-     * @throws ContainerExceptionInterface
-     * @throws UnknownIdentifierException
+     * @throws SetupException
      */
     public function make($xClass)
     {

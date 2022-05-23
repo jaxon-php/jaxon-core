@@ -22,7 +22,6 @@
 namespace Jaxon\Plugin\Request\CallableClass;
 
 use Jaxon\Jaxon;
-use Jaxon\App\CallableClass;
 use Jaxon\App\I18n\Translator;
 use Jaxon\Di\Container;
 use Jaxon\Exception\RequestException;
@@ -35,13 +34,10 @@ use Jaxon\Response\ResponseInterface;
 use Jaxon\Utils\Template\TemplateEngine;
 use Psr\Http\Message\ServerRequestInterface;
 
-use ReflectionClass;
 use ReflectionException;
-use ReflectionMethod;
 
 use function is_array;
 use function is_string;
-use function is_subclass_of;
 use function md5;
 use function strlen;
 use function trim;
@@ -98,13 +94,6 @@ class CallableClassPlugin extends RequestPlugin
     protected $xTranslator;
 
     /**
-     * The methods that must not be exported to js
-     *
-     * @var array
-     */
-    protected $aProtectedMethods = [];
-
-    /**
      * The class constructor
      *
      * @param string  $sPrefix
@@ -128,13 +117,6 @@ class CallableClassPlugin extends RequestPlugin
         $this->xTemplateEngine = $xTemplateEngine;
         $this->xTranslator = $xTranslator;
         $this->xValidator = $xValidator;
-
-        // The methods of the CallableClass class must not be exported
-        $xCallableClass = new ReflectionClass(CallableClass::class);
-        foreach($xCallableClass->getMethods(ReflectionMethod::IS_PUBLIC) as $xMethod)
-        {
-            $this->aProtectedMethods[] = $xMethod->getName();
-        }
     }
 
     /**
@@ -239,11 +221,10 @@ class CallableClassPlugin extends RequestPlugin
             return '';
         }
 
-        $aProtectedMethods = is_subclass_of($sClassName, CallableClass::class) ? $this->aProtectedMethods : [];
         return $this->xTemplateEngine->render('jaxon::callables/object.js', [
             'sPrefix' => $this->sPrefix,
             'sClass' => $xCallableObject->getJsName(),
-            'aMethods' => $xCallableObject->getCallableMethods($aProtectedMethods),
+            'aMethods' => $xCallableObject->getCallableMethods($this->xRepository->getProtectedMethods($sClassName)),
         ]);
     }
 
@@ -305,35 +286,29 @@ class CallableClassPlugin extends RequestPlugin
      */
     public function processRequest(): ?ResponseInterface
     {
-        $sRequestedClass = $this->xTarget->getClassName();
-        $sRequestedMethod = $this->xTarget->getMethodName();
+        $sClassName = $this->xTarget->getClassName();
+        $sMethodName = $this->xTarget->getMethodName();
+        $this->xTarget->setMethodArgs($this->xParameterReader->args());
 
-        if(!$this->xValidator->validateClass($sRequestedClass) ||
-            !$this->xValidator->validateMethod($sRequestedMethod))
+        if(!$this->xValidator->validateClass($sClassName) || !$this->xValidator->validateMethod($sMethodName))
         {
             // Unable to find the requested object or method
             throw new RequestException($this->xTranslator->trans('errors.objects.invalid',
-                ['class' => $sRequestedClass, 'method' => $sRequestedMethod]));
+                ['class' => $sClassName, 'method' => $sMethodName]));
         }
 
         // Call the requested method
         try
         {
-            $xCallableObject = $this->xRegistry->getCallableObject($sRequestedClass);
-            return $xCallableObject->call($sRequestedMethod, $this->xParameterReader->args());
+            $xCallableObject = $this->xRegistry->getCallableObject($sClassName);
+            return $xCallableObject->call($this->xTarget);
         }
-        catch(ReflectionException $e)
+        catch(ReflectionException|SetupException $e)
         {
             // Unable to find the requested class or method
             $this->di->getLogger()->error($e->getMessage());
             throw new RequestException($this->xTranslator->trans('errors.objects.invalid',
-                ['class' => $sRequestedClass, 'method' => $sRequestedMethod]));
-        }
-        catch(SetupException $e)
-        {
-            // Unable to get the callable object
-            throw new RequestException($this->xTranslator->trans('errors.objects.invalid',
-                ['class' => $sRequestedClass, 'method' => $sRequestedMethod]));
+                ['class' => $sClassName, 'method' => $sMethodName]));
         }
     }
 }

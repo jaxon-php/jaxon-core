@@ -25,6 +25,7 @@ use Jaxon\Exception\RequestException;
 use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Plugin\RequestHandlerInterface;
 use Jaxon\Plugin\Response\DataBag\DataBagPlugin;
+use Jaxon\Request\Upload\UploadHandlerInterface;
 use Jaxon\Response\Manager\ResponseManager;
 use Jaxon\Response\ResponseInterface;
 
@@ -62,7 +63,7 @@ class RequestHandler
     private $xCallbackManager;
 
     /**
-     * @var UploadHandler
+     * @var UploadHandlerInterface
      */
     private $xUploadHandler;
 
@@ -87,17 +88,15 @@ class RequestHandler
      * @param PluginManager $xPluginManager
      * @param ResponseManager $xResponseManager
      * @param CallbackManager $xCallbackManager
-     * @param UploadHandler|null $xUploadHandler
      * @param DataBagPlugin $xDataBagPlugin
      */
     public function __construct(Container $di, PluginManager $xPluginManager, ResponseManager $xResponseManager,
-        CallbackManager $xCallbackManager, ?UploadHandler $xUploadHandler, DataBagPlugin $xDataBagPlugin)
+        CallbackManager $xCallbackManager, DataBagPlugin $xDataBagPlugin)
     {
         $this->di = $di;
         $this->xPluginManager = $xPluginManager;
         $this->xResponseManager = $xResponseManager;
         $this->xCallbackManager = $xCallbackManager;
-        $this->xUploadHandler = $xUploadHandler;
         $this->xDataBagPlugin = $xDataBagPlugin;
     }
 
@@ -195,6 +194,8 @@ class RequestHandler
      */
     public function canProcessRequest(): bool
     {
+        $this->xUploadHandler = $this->di->getUploadHandler();
+
         // Return true if the request plugin was already found
         if($this->xRequestPlugin !== null)
         {

@@ -1,7 +1,9 @@
 <?php
 
 /**
- * Bootstrap.php - Jaxon application bootstrapper
+ * Bootstrap.php
+ *
+ * Jaxon application bootstrapper
  *
  * @package jaxon-core
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
@@ -136,10 +138,6 @@ class Bootstrap
      */
     private function setupApp(Config $xAppConfig)
     {
-        if($xAppConfig->hasOption('options.views.default'))
-        {
-            $this->xViewRenderer->setDefaultNamespace($xAppConfig->getOption('options.views.default'));
-        }
         // Register user functions and classes
         $this->xPackageManager->registerFromConfig($xAppConfig);
     }
@@ -160,7 +158,7 @@ class Bootstrap
         $this->xConfigManager->setOptions($this->aLibOptions);
         // Get the app config options.
         $xAppConfig = $this->xConfigManager->newConfig($this->aAppOptions);
-        $xAppConfig->setOption('options.views.default', 'default');
+
         // Setup the app.
         $this->setupApp($xAppConfig);
         $this->onBoot();

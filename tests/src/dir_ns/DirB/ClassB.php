@@ -2,18 +2,23 @@
 
 namespace Jaxon\NsTests\DirB;
 
-use Jaxon\Response\Response;
+use Jaxon\Response\ResponseInterface;
+use Jaxon\Tests\Ns\Lib\ServiceInterface;
 
 class ClassB
 {
-    public function methodBa(): Response
+    /**
+     * @di('attr' => 'service', 'class' => 'ServiceInterface')
+     * @return ResponseInterface
+     */
+    public function methodBa(): ResponseInterface
     {
         $xResponse = jaxon()->getResponse();
         $xResponse->html('div', 'This is the div content!!');
         return $xResponse;
     }
 
-    public function methodBb(): Response
+    public function methodBb(): ResponseInterface
     {
         $xResponse = jaxon()->getResponse();
         $xResponse->html('div', 'This is the div content!!');

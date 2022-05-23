@@ -54,17 +54,6 @@ class ConfigEventManager implements ConfigListenerInterface
     /**
      * @inheritDoc
      */
-    public function onChanges(Config $xConfig)
-    {
-        foreach($this->aListeners as $sListener)
-        {
-            $this->di->g($sListener)->onChanges($xConfig);
-        }
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function onChange(Config $xConfig, string $sName)
     {
         foreach($this->aListeners as $sListener)

@@ -16,6 +16,7 @@ class FunctionTest extends TestCase
      */
     public function setUp(): void
     {
+        jaxon()->setOption('core.response.send', false);
         jaxon()->register(Jaxon::CALLABLE_FUNCTION, 'my_first_function',
             __DIR__ . '/../src/first.php');
         jaxon()->register(Jaxon::CALLABLE_FUNCTION, 'my_second_function', [

@@ -10,9 +10,6 @@ use Nyholm\Psr7Server\ServerRequestCreator;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 
-use Exception;
-
-use function get_class;
 use function jaxon;
 
 class HookTest extends TestCase
@@ -47,6 +44,7 @@ class HookTest extends TestCase
      */
     public function setUp(): void
     {
+        jaxon()->setOption('core.response.send', false);
         jaxon()->setOption('core.prefix.class', '');
         jaxon()->register(Jaxon::CALLABLE_DIR, __DIR__ . '/../src/response', [
             'classes' => [
@@ -57,15 +55,16 @@ class HookTest extends TestCase
                             '__after' => 'after',
                         ],
                         'three' => [
-                            '__before' => ['before', 'before2'],
-                            '__after' => [],
+                            '__before' => ['before2'],
                         ],
                         'four' => [
-                            '__before' => [],
                             '__after' => [
                                 'after1' => ['p1'],
                                 'after2' => ['p1', 'p2'],
                             ],
+                        ],
+                        'param' => [
+                            '__before' => ['beforeParam' => ['__method__', '__args__']],
                         ],
                     ],
                 ],
@@ -96,7 +95,7 @@ class HookTest extends TestCase
             ])->withMethod('POST');
         });
         // Process the request and get the response
-        jaxon()->di()->getRequestHandler()->processRequest();
+        jaxon()->processRequest();
 
         $xResponse = jaxon()->getResponse();
         $this->assertEquals(3, $xResponse->getCommandCount());
@@ -116,7 +115,7 @@ class HookTest extends TestCase
             ])->withMethod('POST');
         });
         // Process the request and get the response
-        jaxon()->di()->getRequestHandler()->processRequest();
+        jaxon()->processRequest();
 
         $xResponse = jaxon()->getResponse();
         $this->assertEquals(4, $xResponse->getCommandCount());
@@ -136,10 +135,10 @@ class HookTest extends TestCase
             ])->withMethod('POST');
         });
         // Process the request and get the response
-        jaxon()->di()->getRequestHandler()->processRequest();
+        jaxon()->processRequest();
 
         $xResponse = jaxon()->getResponse();
-        $this->assertEquals(4, $xResponse->getCommandCount());
+        $this->assertEquals(5, $xResponse->getCommandCount());
     }
 
     /**
@@ -156,7 +155,27 @@ class HookTest extends TestCase
             ])->withMethod('POST');
         });
         // Process the request and get the response
-        jaxon()->di()->getRequestHandler()->processRequest();
+        jaxon()->processRequest();
+
+        $xResponse = jaxon()->getResponse();
+        $this->assertEquals(5, $xResponse->getCommandCount());
+    }
+
+    /**
+     * @throws RequestException
+     */
+    public function testHookParamAccess()
+    {
+        // Send a request to the registered class
+        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
+            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
+                'jxncls' => 'TestHk',
+                'jxnmthd' => 'param',
+                'jxnargs' => ['Svalue'],
+            ])->withMethod('POST');
+        });
+        // Process the request and get the response
+        jaxon()->processRequest();
 
         $xResponse = jaxon()->getResponse();
         $this->assertEquals(3, $xResponse->getCommandCount());

@@ -51,6 +51,7 @@ trait PluginTrait
             return new CodeGenerator(Jaxon::VERSION, $c->g(Container::class), $c->g(PluginManager::class),
                 $c->g(TemplateEngine::class));
         });
+
         // JQuery response plugin
         $this->set(JQueryPlugin::class, function($c) {
             $jQueryNs = $c->g(ConfigManager::class)->getOption('core.jquery.no_conflict', false) ? 'jQuery' : '$';
@@ -114,5 +115,15 @@ trait PluginTrait
     public function getJQueryPlugin(): JQueryPlugin
     {
         return $this->g(JQueryPlugin::class);
+    }
+
+    /**
+     * Get the dialog plugin
+     *
+     * @return DialogPlugin
+     */
+    public function getDialogPlugin(): DialogPlugin
+    {
+        return $this->g(DialogPlugin::class);
     }
 }

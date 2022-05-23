@@ -28,24 +28,6 @@ use function substr;
 trait RegisterTrait
 {
     /**
-     * Register the values into the container
-     *
-     * @return void
-     */
-    private function registerAnnotations()
-    {
-        $this->set(AnnotationReaderInterface::class, function($c) {
-            return new class implements AnnotationReaderInterface
-            {
-                public function getAttributes(string $sClass, array $aMethods): array
-                {
-                    return [false, [], []];
-                }
-            };
-        });
-    }
-
-    /**
      * @param array $aConfigOptions
      * @param array $aAnnotationOptions
      *
@@ -78,10 +60,12 @@ trait RegisterTrait
      */
     private function setCallableObjectOptions(string $sClassName, CallableObject $xCallableObject, array $aOptions)
     {
+        $aProtectedMethods = $this->getCallableRepository()->getProtectedMethods($sClassName);
         // Annotations options
         $xAnnotationReader = $this->g(AnnotationReaderInterface::class);
-        [$bExcluded, $aAnnotationOptions, $aAnnotationProtected] =
-            $xAnnotationReader->getAttributes($sClassName, $xCallableObject->getPublicMethods());
+        $aMethods = $xCallableObject->getPublicMethods($aProtectedMethods);
+        $aProperties = $xCallableObject->getProperties();
+        [$bExcluded, $aAnnotationOptions, $aAnnotationProtected] = $xAnnotationReader->getAttributes($sClassName, $aMethods, $aProperties);
         if($bExcluded)
         {
             $xCallableObject->configure('excluded', true);

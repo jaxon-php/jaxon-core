@@ -113,7 +113,7 @@ class ConfigManager
             // Read the options and save in the config.
             $this->xConfig->setOptions($this->read($sConfigFile), $sConfigSection);
             // Call the config change listeners.
-            $this->xEventManager->onChanges($this->xConfig);
+            $this->xEventManager->onChange($this->xConfig, '');
         }
         catch(DataDepth $e)
         {
@@ -141,7 +141,7 @@ class ConfigManager
                 return false;
             }
             // Call the config change listeners.
-            $this->xEventManager->onChanges($this->xConfig);
+            $this->xEventManager->onChange($this->xConfig, '');
             return true;
         }
         catch(DataDepth $e)
