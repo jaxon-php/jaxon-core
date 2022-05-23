@@ -13,7 +13,7 @@
 
 namespace Jaxon\Request;
 
-class Target
+class Target implements TargetInterface
 {
     /**
      * The target type for function.
@@ -58,19 +58,28 @@ class Target
     private $sMethodName = '';
 
     /**
+     * The target method args.
+     *
+     * @var array
+     */
+    private $aMethodArgs = [];
+
+    /**
      * The constructor
      *
      * @param string $sType    The target type
      * @param string $sFunctionName    The function name
      * @param string $sClassName    The class name
      * @param string $sMethodName    The method name
+     * @param array $aMethodArgs    The method args
      */
-    private function __construct(string $sType, string $sFunctionName, string $sClassName, string $sMethodName)
+    private function __construct(string $sType, string $sFunctionName, string $sClassName, string $sMethodName, array $aMethodArgs = [])
     {
         $this->sType = $sType;
         $this->sFunctionName = $sFunctionName;
         $this->sClassName = $sClassName;
         $this->sMethodName = $sMethodName;
+        $this->aMethodArgs = $aMethodArgs;
     }
 
     /**
@@ -146,5 +155,45 @@ class Target
     public function getMethodName(): string
     {
         return $this->sMethodName;
+    }
+
+    /**
+     * Set the target method name.
+     *
+     * @param array $aMethodArgs
+     */
+    public function setMethodArgs(array $aMethodArgs): void
+    {
+        $this->aMethodArgs = $aMethodArgs;
+    }
+
+    /**
+     * The target method args.
+     *
+     * @return array
+     */
+    public function getMethodArgs(): array
+    {
+        return $this->aMethodArgs;
+    }
+
+    /**
+     * The target method name.
+     *
+     * @return string
+     */
+    public function method(): string
+    {
+        return $this->sMethodName;
+    }
+
+    /**
+     * The target method args.
+     *
+     * @return array
+     */
+    public function args(): array
+    {
+        return $this->aMethodArgs;
     }
 }

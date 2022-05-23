@@ -9,6 +9,7 @@ use Jaxon\Plugin\Request\CallableClass\CallableClassHelper;
 use Jaxon\Plugin\Response\DataBag\DataBagContext;
 use Jaxon\Plugin\Response\JQuery\DomSelector;
 use Jaxon\Request\Factory\RequestFactory;
+use Jaxon\Request\TargetInterface;
 use Jaxon\Response\Response;
 use Psr\Log\LoggerInterface;
 
@@ -23,6 +24,16 @@ class CallableClass
      * @var CallableClassHelper
      */
     protected $xCallableClassHelper = null;
+
+    /**
+     * Get the Jaxon request target
+     *
+     * @return TargetInterface
+     */
+    protected function target(): TargetInterface
+    {
+        return $this->xCallableClassHelper->xTarget;
+    }
 
     /**
      * Get an instance of a Jaxon class by name

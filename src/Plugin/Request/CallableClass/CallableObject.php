@@ -26,8 +26,10 @@
 
 namespace Jaxon\Plugin\Request\CallableClass;
 
+use Jaxon\App\CallableClass;
 use Jaxon\Di\Container;
 use Jaxon\Exception\SetupException;
+use Jaxon\Request\Target;
 use Jaxon\Response\ResponseInterface;
 
 use ReflectionClass;
@@ -39,7 +41,6 @@ use function array_filter;
 use function array_map;
 use function array_merge;
 use function call_user_func;
-use function count;
 use function in_array;
 use function is_array;
 use function is_string;
@@ -118,6 +119,13 @@ class CallableObject
      * @var array
      */
     private $aAttributes = [];
+
+    /**
+     * The target of the Jaxon call
+     *
+     * @var Target
+     */
+    private $xTarget;
 
     /**
      * The class constructor
@@ -346,49 +354,57 @@ class CallableObject
      * Call the specified method of the registered callable object using the specified array of arguments
      *
      * @param array $aHookMethods    The method config options
-     * @param string $sMethod    The method called by the request
-     * @param array $aArgs The arguments to pass to the method
      *
      * @return void
      * @throws ReflectionException
      */
-    private function callHookMethods(array $aHookMethods, string $sMethod, array $aArgs)
+    private function callHookMethods(array $aHookMethods)
     {
+        $sMethod = $this->xTarget->getMethodName();
+        $aArgs = $this->xTarget->getMethodArgs();
         // The hooks defined at method level override those defined at class level.
         // $aMethods = $aHookMethods[$sMethod] ?? $aHookMethods['*'] ?? [];
         // The hooks defined at method level are merged with those defined at class level.
         $aMethods = array_merge($aHookMethods['*'] ?? [], $aHookMethods[$sMethod] ?? []);
         foreach($aMethods as $xKey => $xValue)
         {
-            $sMethodName = $xValue;
-            $aMethodArgs = [];
+            $sHookName = $xValue;
+            $aHookArgs = [];
             if(is_string($xKey))
             {
-                $sMethodName = $xKey;
-                $aMethodArgs = is_array($xValue) ? $xValue : [$xValue];
-                // The parameters of the method can be passed to the hooks.
-                if(count($aMethodArgs) > 0 && $aMethodArgs[0] === '__params__')
-                {
-                    $aMethodArgs[0] = $aArgs;
-                }
+                $sHookName = $xKey;
+                $aHookArgs = is_array($xValue) ? $xValue : [$xValue];
+                // The name and arguments of the method can be passed to the hooks.
+                /*$aHookArgs = array_map(function($xHookArg) use($sMethod, $aArgs) {
+                    switch($xHookArg)
+                    {
+                    case '__method__':
+                        return $sMethod;
+                    case '__args__':
+                        return $aArgs;
+                    default:
+                        return $xHookArg;
+                    }
+                }, $aHookArgs);*/
             }
-            $this->callMethod($sMethodName, $aMethodArgs, true);
+            $this->callMethod($sHookName, $aHookArgs, true);
         }
     }
 
     /**
      * Call the specified method of the registered callable object using the specified array of arguments
      *
-     * @param string $sMethod The name of the method to call
-     * @param array $aArgs The arguments to pass to the method
+     * @param Target $xTarget The target of the Jaxon call
      *
      * @return null|ResponseInterface
      * @throws ReflectionException
      * @throws SetupException
      */
-    public function call(string $sMethod, array $aArgs): ?ResponseInterface
+    public function call(Target $xTarget): ?ResponseInterface
     {
         $this->xRegisteredObject = $this->getRegisteredObject();
+        $this->xTarget = $xTarget;
+        $sMethod = $xTarget->getMethodName();
 
         // Set attributes from the DI container
         // The attributes defined at method level override those defined at class level.
@@ -398,7 +414,7 @@ class CallableObject
         foreach($aAttributes as $sName => $sClass)
         {
             // Set the protected attributes of the object
-            $cSetter = function($c) use($sClass, $sName) {
+            $cSetter = function($c) use($sName, $sClass) {
                 // Warning: dynamic properties will be deprecated in PHP8.2.
                 $this->$sName = $c->get($sClass);
             };
@@ -406,14 +422,25 @@ class CallableObject
             call_user_func($cSetter->bindTo($this->xRegisteredObject, $this->xRegisteredObject), $this->di);
         }
 
+        // Set the Jaxon request target in the helper
+        if($this->xRegisteredObject instanceof CallableClass)
+        {
+            // Set the protected attributes of the object
+            $cSetter = function() use($xTarget) {
+                $this->xCallableClassHelper->xTarget = $xTarget;
+            };
+            // Can now access protected attributes
+            call_user_func($cSetter->bindTo($this->xRegisteredObject, $this->xRegisteredObject));
+        }
+
         // Methods to call before processing the request
-        $this->callHookMethods($this->aBeforeMethods, $sMethod, $aArgs);
+        $this->callHookMethods($this->aBeforeMethods);
 
         // Call the request method
-        $xResponse = $this->callMethod($sMethod, $aArgs, false);
+        $xResponse = $this->callMethod($sMethod, $this->xTarget->getMethodArgs(), false);
 
         // Methods to call after processing the request
-        $this->callHookMethods($this->aAfterMethods, $sMethod, $aArgs);
+        $this->callHookMethods($this->aAfterMethods);
         return $xResponse;
     }
 }

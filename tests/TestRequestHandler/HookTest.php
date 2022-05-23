@@ -64,7 +64,7 @@ class HookTest extends TestCase
                             ],
                         ],
                         'param' => [
-                            '__before' => ['beforeParam' => '__params__'],
+                            '__before' => ['beforeParam' => ['__method__', '__args__']],
                         ],
                     ],
                 ],

@@ -286,29 +286,29 @@ class CallableClassPlugin extends RequestPlugin
      */
     public function processRequest(): ?ResponseInterface
     {
-        $sRequestedClass = $this->xTarget->getClassName();
-        $sRequestedMethod = $this->xTarget->getMethodName();
+        $sClassName = $this->xTarget->getClassName();
+        $sMethodName = $this->xTarget->getMethodName();
+        $this->xTarget->setMethodArgs($this->xParameterReader->args());
 
-        if(!$this->xValidator->validateClass($sRequestedClass) ||
-            !$this->xValidator->validateMethod($sRequestedMethod))
+        if(!$this->xValidator->validateClass($sClassName) || !$this->xValidator->validateMethod($sMethodName))
         {
             // Unable to find the requested object or method
             throw new RequestException($this->xTranslator->trans('errors.objects.invalid',
-                ['class' => $sRequestedClass, 'method' => $sRequestedMethod]));
+                ['class' => $sClassName, 'method' => $sMethodName]));
         }
 
         // Call the requested method
         try
         {
-            $xCallableObject = $this->xRegistry->getCallableObject($sRequestedClass);
-            return $xCallableObject->call($sRequestedMethod, $this->xParameterReader->args());
+            $xCallableObject = $this->xRegistry->getCallableObject($sClassName);
+            return $xCallableObject->call($this->xTarget);
         }
         catch(ReflectionException|SetupException $e)
         {
             // Unable to find the requested class or method
             $this->di->getLogger()->error($e->getMessage());
             throw new RequestException($this->xTranslator->trans('errors.objects.invalid',
-                ['class' => $sRequestedClass, 'method' => $sRequestedMethod]));
+                ['class' => $sClassName, 'method' => $sMethodName]));
         }
     }
 }
