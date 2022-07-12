@@ -45,6 +45,14 @@ class CallTest extends TestCase
         $this->assertEquals('This is the value', $xUnknownTypeParam->getValue());
     }
 
+    public function testRequestParameterConversion()
+    {
+        $this->assertEquals("parseInt(jaxon.$('val2').value)", pm()->input('val2')->toInt()->getScript());
+        $this->assertEquals("parseInt(jaxon.$('val3').innerHTML)", pm()->html('val3')->toInt()->getScript());
+        $this->assertEquals("parseInt(jaxon.$('val4').value)", pm()->select('val4')->toInt()->getScript());
+        $this->assertEquals("parseInt(trim(' value '))", rq('.')->trim(' value ')->toInt()->getScript());
+    }
+
     /**
      * @throws SetupException
      */
@@ -118,6 +126,10 @@ class CallTest extends TestCase
         $this->assertEquals(
             "$('.div').click(function(){jxnVar1=$('#div').val;Sample.method(jxnVar1);})",
             jq('.div')->click(rq('Sample')->method(jq('#div')->val))->jsonSerialize()
+        );
+        $this->assertEquals(
+            "$('.div').click(function(){jxnVar1=parseInt($(this).attr('param'));Sample.method(jxnVar1);})",
+            jq('.div')->click(rq('Sample')->method(jq()->attr('param')->toInt()))->jsonSerialize()
         );
     }
 }

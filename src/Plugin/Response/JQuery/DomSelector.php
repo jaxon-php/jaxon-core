@@ -48,6 +48,13 @@ class DomSelector implements JsonSerializable, ParameterInterface
     protected $aCalls;
 
     /**
+     * Convert the selector value to integer
+     *
+     * @var bool
+     */
+    protected $bToInt = false;
+
+    /**
      * The constructor.
      *
      * @param string $jQueryNs    The jQuery symbol
@@ -122,17 +129,27 @@ class DomSelector implements JsonSerializable, ParameterInterface
     }
 
     /**
+     * @return DomSelector
+     */
+    public function toInt(): DomSelector
+    {
+        $this->bToInt = true;
+        return $this;
+    }
+
+    /**
      * Generate the jQuery call.
      *
      * @return string
      */
     public function getScript(): string
     {
-        if(count($this->aCalls) === 0)
+        $sScript = $this->sPath;
+        if(count($this->aCalls) > 0)
         {
-            return $this->sPath;
+            $sScript .= '.' . implode('.', $this->aCalls);
         }
-        return $this->sPath . '.' . implode('.', $this->aCalls);
+        return $this->bToInt ? "parseInt($sScript)" : $sScript;
     }
 
     /**
