@@ -11,7 +11,7 @@ use Jaxon\Plugin\Request\CallableFunction\CallableFunctionPlugin;
 use Jaxon\Utils\Http\UriException;
 use PHPUnit\Framework\TestCase;
 use Sample;
-use function jaxon;
+use function Jaxon\jaxon;
 use function strlen;
 use function trim;
 

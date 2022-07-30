@@ -10,7 +10,7 @@ use Lagdo\TwitterFeed\Package as TwitterPackage;
 use PHPUnit\Framework\TestCase;
 use SamplePackage;
 
-use function jaxon;
+use function Jaxon\jaxon;
 
 class PackageTest extends TestCase
 {

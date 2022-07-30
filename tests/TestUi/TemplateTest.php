@@ -4,7 +4,7 @@ namespace Jaxon\Tests\TestUi;
 
 use PHPUnit\Framework\TestCase;
 
-use function jaxon;
+use function Jaxon\jaxon;
 use function trim;
 
 class TemplateTest extends TestCase

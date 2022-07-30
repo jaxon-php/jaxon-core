@@ -25,6 +25,8 @@
 
 namespace Jaxon\App;
 
+use Jaxon\Jaxon;
+use Jaxon\Di\Container;
 use Jaxon\App\Config\ConfigManager;
 use Jaxon\App\Dialog\Library\DialogLibraryManager;
 use Jaxon\App\I18n\Translator;
@@ -32,10 +34,8 @@ use Jaxon\App\Session\SessionInterface;
 use Jaxon\App\Traits\AjaxSendTrait;
 use Jaxon\App\Traits\AjaxTrait;
 use Jaxon\App\View\ViewRenderer;
-use Jaxon\Di\Container;
 use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;
-use Jaxon\Jaxon;
 use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Request\Call\Paginator;
 use Jaxon\Request\Factory\Psr\PsrFactory;

@@ -9,7 +9,7 @@ use Jaxon\Plugin\Request\CallableClass\CallableObject;
 use Jaxon\Plugin\Request\CallableDir\CallableDirPlugin;
 use PHPUnit\Framework\TestCase;
 
-use function jaxon;
+use function Jaxon\jaxon;
 use function strlen;
 
 class DirectoryTest extends TestCase

@@ -15,7 +15,7 @@ use Psr\Container\NotFoundExceptionInterface;
 use ReflectionException;
 
 use function get_class;
-use function jaxon;
+use function Jaxon\jaxon;
 
 class ContainerTest extends TestCase
 {

@@ -13,7 +13,7 @@ use PHPUnit\Framework\TestCase;
 use Annotated;
 use Excluded;
 
-use function jaxon;
+use function Jaxon\jaxon;
 use function Jaxon\Annotations\registerAnnotations;
 
 class AnnotationTest extends TestCase

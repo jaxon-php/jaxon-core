@@ -7,9 +7,9 @@ use Jaxon\Exception\SetupException;
 use Jaxon\Request\Call\Parameter;
 use PHPUnit\Framework\TestCase;
 
-use function jaxon;
-use function rq;
-use function pm;
+use function Jaxon\jaxon;
+use function Jaxon\rq;
+use function Jaxon\pm;
 
 class CallTest extends TestCase
 {

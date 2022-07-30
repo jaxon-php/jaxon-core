@@ -14,9 +14,9 @@
 
 namespace Jaxon\App;
 
+use Jaxon\Di\Container;
 use Jaxon\App\Traits\AjaxSendTrait;
 use Jaxon\App\Traits\AppTrait;
-use Jaxon\Di\Container;
 use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;
 

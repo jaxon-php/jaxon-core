@@ -19,7 +19,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\NullLogger;
 use PHPUnit\Framework\TestCase;
 
-use function jaxon;
+use function Jaxon\jaxon;
 use function Jaxon\Upload\registerUpload;
 
 class PsrRequestHandlerTest extends TestCase

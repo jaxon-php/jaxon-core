@@ -6,9 +6,9 @@ use Jaxon\Jaxon;
 use PHPUnit\Framework\TestCase;
 use Jaxon\Exception\SetupException;
 
-use function jaxon;
-use function rq;
-use function pm;
+use function Jaxon\jaxon;
+use function Jaxon\rq;
+use function Jaxon\pm;
 
 class ClassTest extends TestCase
 {

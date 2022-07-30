@@ -21,7 +21,7 @@ use Dialog;
 use TestDialogLibrary;
 
 use function get_class;
-use function jaxon;
+use function Jaxon\jaxon;
 
 class DialogTest extends TestCase
 {
