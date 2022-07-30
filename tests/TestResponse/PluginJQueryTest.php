@@ -10,6 +10,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use PHPUnit\Framework\TestCase;
 
 use function Jaxon\jaxon;
+use function Jaxon\jq;
 
 class PluginJQueryTest extends TestCase
 {

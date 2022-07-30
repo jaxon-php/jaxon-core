@@ -8,10 +8,10 @@ use Jaxon\Exception\SetupException;
 use Nyholm\Psr7Server\ServerRequestCreator;
 use Psr\Http\Message\ServerRequestInterface;
 use PHPUnit\Framework\TestCase;
-
 use Jaxon\NsTests\DirA\ClassA;
 use Jaxon\NsTests\DirB\ClassB;
 use Jaxon\NsTests\DirC\ClassC;
+use function Jaxon\jaxon;
 
 class NamespaceTest extends TestCase
 {

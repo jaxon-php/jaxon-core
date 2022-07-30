@@ -10,6 +10,7 @@ use PHPUnit\Framework\TestCase;
 use function Jaxon\jaxon;
 use function Jaxon\rq;
 use function Jaxon\pm;
+use function Jaxon\jq;
 
 class PaginatorTest extends TestCase
 {

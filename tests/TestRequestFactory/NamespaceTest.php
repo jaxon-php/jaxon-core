@@ -5,9 +5,10 @@ namespace Jaxon\Tests\TestRequestFactory;
 use Jaxon\Jaxon;
 use Jaxon\Exception\SetupException;
 use PHPUnit\Framework\TestCase;
-
 use Jaxon\NsTests\DirA\ClassA;
 use Jaxon\NsTests\DirB\ClassB;
+use function Jaxon\jaxon;
+use function Jaxon\rq;
 
 class NamespaceTest extends TestCase
 {

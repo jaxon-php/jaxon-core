@@ -3,6 +3,7 @@
 namespace Jaxon\NsTests\DirA;
 
 use Jaxon\Response\Response;
+use function Jaxon\jaxon;
 
 class ClassA
 {

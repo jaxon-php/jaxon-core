@@ -2,6 +2,7 @@
 
 namespace Jaxon\Tests\TestRegistrationApp;
 
+require_once __DIR__ . '/../../../jaxon-dialogs/src/start.php';
 require_once __DIR__ . '/../src/classes.php';
 
 use Jaxon\Exception\RequestException;
@@ -13,11 +14,13 @@ use Psr\Http\Message\ServerRequestInterface;
 use PHPUnit\Framework\TestCase;
 
 use function Jaxon\jaxon;
+use function Jaxon\Dialogs\registerDialogLibraries;
 
 class RegistrationTest extends TestCase
 {
     public function setUp(): void
     {
+        registerDialogLibraries();
         jaxon()->app()->asset(true, true, 'http://example.test/js', realpath(__DIR__ . '/../src/js'));
         jaxon()->app()->setup(__DIR__ . '/../config/app/app.php');
     }

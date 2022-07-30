@@ -8,6 +8,7 @@ use Jaxon\Request\Call\Parameter;
 use PHPUnit\Framework\TestCase;
 
 use function Jaxon\jaxon;
+use function Jaxon\jq;
 use function Jaxon\rq;
 use function Jaxon\pm;
 

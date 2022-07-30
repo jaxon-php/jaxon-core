@@ -9,6 +9,8 @@ use Jaxon\Utils\Http\UriException;
 use Lagdo\TwitterFeed\Package as TwitterPackage;
 use PHPUnit\Framework\TestCase;
 use SamplePackage;
+use function Jaxon\jaxon;
+use function Jaxon\pm;
 
 class PackageTest extends TestCase
 {
