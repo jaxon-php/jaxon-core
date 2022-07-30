@@ -52,7 +52,7 @@ class AssetManager
     }
 
     /**
-     * Get js options
+     * Get app js options
      *
      * @return string
      */
@@ -141,8 +141,8 @@ class AssetManager
         // - The js.app.export option must be set to true
         // - The js.app.uri and js.app.dir options must be set to non null values
         if(!$this->xConfigManager->getOption('js.app.export', false) ||
-            !$this->xConfigManager->hasOption('js.app.uri') ||
-            !$this->xConfigManager->hasOption('js.app.dir'))
+            !$this->xConfigManager->getOption('js.app.uri') ||
+            !$this->xConfigManager->getOption('js.app.dir'))
         {
             return false;
         }
@@ -152,15 +152,19 @@ class AssetManager
     /**
      * Write javascript files and return the corresponding URI
      *
-     * @param string $sHash
-     * @param string $sJsCode
+     * @param CodeGenerator $codeGenerator
      *
      * @return string
      */
-    public function createJsFiles(string $sHash, string $sJsCode): string
+    public function createJsFiles(CodeGenerator $xCodeGenerator): string
     {
+        if(!$this->shallCreateJsFiles())
+        {
+            return '';
+        }
+
         // Check dir access
-        $sJsFileName = $this->xConfigManager->getOption('js.app.file', $sHash);
+        $sJsFileName = $this->xConfigManager->getOption('js.app.file') ?: $xCodeGenerator->getHash();
         $sJsDirectory = rtrim($this->xConfigManager->getOption('js.app.dir'), '\/') . DIRECTORY_SEPARATOR;
         // - The js.app.dir must be writable
         if(!$sJsFileName || !is_dir($sJsDirectory) || !is_writable($sJsDirectory))
@@ -171,7 +175,7 @@ class AssetManager
         $sJsFilePath = $sJsDirectory . $sJsFileName . '.js';
         $sJsMinFilePath = $sJsDirectory . $sJsFileName . '.min.js';
         $sJsFileUri = rtrim($this->xConfigManager->getOption('js.app.uri'), '/') . "/$sJsFileName";
-        if(!is_file($sJsFilePath) && !@file_put_contents($sJsFilePath, $sJsCode))
+        if(!is_file($sJsFilePath) && !@file_put_contents($sJsFilePath, $xCodeGenerator->getJsScript()))
         {
             return '';
         }

@@ -202,6 +202,11 @@ class CodeGenerator
         }
         $this->renderCodes();
 
+        $sJsConfigVars = $this->render('config.js', $this->xAssetManager->getOptionVars());
+        // These three parts are always rendered together
+        $this->sJsScript = trim($sJsConfigVars) . "\n\n" .
+            trim($this->sJsScript) . "\n\n" . trim($this->sJsReadyScript);
+
         // The codes are already generated.
         $this->bGenerated = true;
     }
@@ -229,6 +234,16 @@ class CodeGenerator
     }
 
     /**
+     * Get the generated javascript code
+     *
+     * @return string
+     */
+    public function getJsScript(): string
+    {
+        return $this->sJsScript;
+    }
+
+    /**
      * Get the javascript code to be sent to the browser
      *
      * @param bool $bIncludeJs Also get the JS files
@@ -250,16 +265,13 @@ class CodeGenerator
             $sScript .= $this->getJs() . "\n";
         }
 
-        $sJsConfigVars = $this->render('config.js', $this->xAssetManager->getOptionVars());
-        // These three parts are always rendered together
-        $sJsScript = trim($sJsConfigVars) . "\n\n" . trim($this->sJsScript) . "\n\n" . trim($this->sJsReadyScript);
-        if($this->xAssetManager->shallCreateJsFiles() &&
-            ($sUrl = $this->xAssetManager->createJsFiles($this->getHash(), $sJsScript)))
+        if(!($sUrl = $this->xAssetManager->createJsFiles($this)))
         {
-            return trim($sScript) . "\n\n" . trim($this->render('include.js', ['sUrl' => $sUrl])) . "\n\n" .
-                $this->render('wrapper.js', ['sScript' => $this->sJsInlineScript]);
+            return trim($sScript) . "\n\n" . $this->render('wrapper.js',
+                ['sScript' => trim($this->sJsScript) . "\n\n" . trim($this->sJsInlineScript)]);
         }
-        return trim($sScript) . "\n\n" . $this->render('wrapper.js',
-            ['sScript' => trim($sJsScript) . "\n\n" . trim($this->sJsInlineScript)]);
+
+        return trim($sScript) . "\n\n" . trim($this->render('include.js', ['sUrl' => $sUrl])) .
+            "\n\n" . $this->render('wrapper.js', ['sScript' => $this->sJsInlineScript]);
     }
 }
