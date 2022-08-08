@@ -245,7 +245,7 @@ class DialogLibraryManager implements ConfigListenerInterface
      */
     protected function registerLibraries()
     {
-        $aLibraries = $this->xConfigManager->getOption('dialogs.libraries', []);
+        $aLibraries = $this->xConfigManager->getOption('dialogs.lib.ext', []);
         foreach($aLibraries as $sLibraryName => $sClassName)
         {
             $this->registerLibrary($sClassName, $sLibraryName);
@@ -284,12 +284,11 @@ class DialogLibraryManager implements ConfigListenerInterface
      * Set the libraries in use.
      *
      * @return void
-     * @throws SetupException
      */
     protected function setUsedLibraries()
     {
         // Set the other libraries in use
-        $aLibraries = $this->xConfigManager->getOption('dialogs.used', []);
+        $aLibraries = $this->xConfigManager->getOption('dialogs.lib.use', []);
         foreach($aLibraries as $sLibraryName)
         {
             if(isset($this->aLibraries[$sLibraryName])) // Make sure the library exists
@@ -329,19 +328,19 @@ class DialogLibraryManager implements ConfigListenerInterface
             $this->setUsedLibraries();
             return;
         }
-        if(substr($sName, 0, 17) === 'dialogs.libraries')
+        $sPrefix = substr($sName, 0, 15);
+        switch($sPrefix)
         {
+        case 'dialogs.default':
+            $this->setDefaultLibraries();
+            return;
+        case 'dialogs.lib.ext':
             $this->registerLibraries();
             return;
-        }
-        if(substr($sName, 0, 15) === 'dialogs.default')
-        {
-            $this->setDefaultLibraries();
-        }
-        if(substr($sName, 0, 12) === 'dialogs.used')
-        {
+        case 'dialogs.lib.use':
             $this->setUsedLibraries();
             return;
+        default:
         }
     }
 }
