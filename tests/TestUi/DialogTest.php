@@ -113,6 +113,7 @@ class DialogTest extends TestCase
 
     public function testDialogJsCode()
     {
+        jaxon()->setOption('dialogs.lib.use', ['bootbox', 'bootstrap', 'toastr']);
         $sJsCode = jaxon()->js();
         $this->assertStringContainsString('bootbox.min.js', $sJsCode);
         $this->assertStringContainsString('bootstrap-dialog.min.js', $sJsCode);
@@ -121,6 +122,7 @@ class DialogTest extends TestCase
 
     public function testDialogCssCode()
     {
+        jaxon()->setOption('dialogs.lib.use', ['bootstrap', 'toastr']);
         $sCssCode = jaxon()->css();
         $this->assertStringContainsString('bootstrap-dialog.min.css', $sCssCode);
         $this->assertStringContainsString('toastr.min.css', $sCssCode);
@@ -134,6 +136,7 @@ class DialogTest extends TestCase
         jaxon()->setOption('dialogs.default.modal', 'bootstrap');
         jaxon()->setOption('dialogs.default.message', 'bootstrap');
         jaxon()->setOption('dialogs.default.question', 'bootstrap');
+        jaxon()->setOption('dialogs.lib.use', ['bootbox', 'toastr']);
         $sScriptCode = jaxon()->getScript();
         $this->assertStringContainsString('jaxon.dialogs = {}', $sScriptCode);
         $this->assertStringContainsString('jaxon.dialogs.bootstrap', $sScriptCode);
