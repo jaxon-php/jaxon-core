@@ -256,7 +256,7 @@ class Container extends PimpleContainer implements LoggerAwareInterface
         foreach($parameters as $parameter)
         {
             // Get the parameter instance from the DI
-            $parameterInstances[] = $this->get($parameter->getClass()->getName());
+            $parameterInstances[] = $this->get($parameter->getType());
         }
         return $xClass->newInstanceArgs($parameterInstances);
     }

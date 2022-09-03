@@ -10,8 +10,6 @@ use Jaxon\Tests\Ns\Lib\ServiceInterface;
 use Pimple\Container as AppContainer;
 use Pimple\Psr11\Container as PsrContainer;
 use PHPUnit\Framework\TestCase;
-use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\NotFoundExceptionInterface;
 use ReflectionException;
 
 use function get_class;
@@ -53,8 +51,7 @@ class ContainerTest extends TestCase
     }
 
     /**
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
+     * @throws SetupException
      */
     public function testAppContainer()
     {
@@ -72,9 +69,8 @@ class ContainerTest extends TestCase
     }
 
     /**
-     * @throws ContainerExceptionInterface
      * @throws ReflectionException
-     * @throws NotFoundExceptionInterface
+     * @throws SetupException
      */
     public function testMakeWithIncorrectParam()
     {
