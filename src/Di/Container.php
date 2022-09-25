@@ -29,8 +29,11 @@ use Closure;
 use Exception;
 use ReflectionClass;
 use ReflectionException;
+use ReflectionNamedType;
+use ReflectionParameter;
 use Throwable;
 
+use function array_map;
 use function realpath;
 
 class Container extends PimpleContainer implements LoggerAwareInterface
@@ -180,8 +183,10 @@ class Container extends PimpleContainer implements LoggerAwareInterface
         }
         catch(Exception|Throwable $e)
         {
+            $xLogger = $this->g(LoggerInterface::class);
             $xTranslator = $this->g(Translator::class);
-            $sMessage = $xTranslator->trans('errors.class.container', ['name' => $sClass]);
+            $sMessage = $e->getMessage() . ': ' . $xTranslator->trans('errors.class.container', ['name' => $sClass]);
+            $xLogger->error($e->getMessage(), ['message' => $sMessage]);
             throw new SetupException($sMessage);
         }
     }
@@ -228,6 +233,34 @@ class Container extends PimpleContainer implements LoggerAwareInterface
     }
 
     /**
+     * @param ReflectionClass $xClass
+     * @param ReflectionParameter $xParameter
+     *
+     * @return mixed
+     * @throws SetupException
+     */
+    protected function getParameter(ReflectionClass $xClass, ReflectionParameter $xParameter)
+    {
+        $xType = $xParameter->getType();
+        // Check the parameter class first.
+        if($xType instanceof ReflectionNamedType)
+        {
+            // Check the class + the name
+            if($this->has($xType->getName() . ' $' . $xParameter->getName()))
+            {
+                return $this->get($xType->getName() . ' $' . $xParameter->getName());
+            }
+            // Check the class only
+            if($this->get($xType->getName()))
+            {
+                return $this->get($xType->getName());
+            }
+        }
+        // Check the name only
+        return $this->get('$' . $xParameter->getName());
+    }
+
+    /**
      * Create an instance of a class, getting the constructor parameters from the DI container
      *
      * @param string|ReflectionClass $xClass The class name or the reflection class
@@ -251,14 +284,11 @@ class Container extends PimpleContainer implements LoggerAwareInterface
         {
             return $xClass->newInstance();
         }
-        $parameters = $constructor->getParameters();
-        $parameterInstances = [];
-        foreach($parameters as $parameter)
-        {
-            // Get the parameter instance from the DI
-            $parameterInstances[] = $this->get($parameter->getType());
-        }
-        return $xClass->newInstanceArgs($parameterInstances);
+        $aParameterInstances = array_map(function($xParameter) use($xClass) {
+            return $this->getParameter($xClass, $xParameter);
+        }, $constructor->getParameters());
+
+        return $xClass->newInstanceArgs($aParameterInstances);
     }
 
     /**
