@@ -15,15 +15,15 @@
 namespace Jaxon\Plugin\Code;
 
 use Jaxon\Di\Container;
-use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Plugin\Plugin;
 use Jaxon\Utils\Http\UriException;
 use Jaxon\Utils\Template\TemplateEngine;
 
 use function array_reduce;
+use function is_subclass_of;
+use function ksort;
 use function md5;
 use function trim;
-use function is_subclass_of;
 
 class CodeGenerator
 {
@@ -38,11 +38,6 @@ class CodeGenerator
     private $di;
 
     /**
-     * @var PluginManager
-     */
-    protected $xPluginManager;
-
-    /**
      * The Jaxon template engine
      *
      * @var TemplateEngine
@@ -53,6 +48,13 @@ class CodeGenerator
      * @var AssetManager
      */
     private $xAssetManager;
+
+    /**
+     * The classes that generate code
+     *
+     * @var array<string>
+     */
+    protected $aCodeGenerators = [];
 
     /**
      * @var string
@@ -94,15 +96,30 @@ class CodeGenerator
      *
      * @param string $sVersion
      * @param Container $di
-     * @param PluginManager $xPluginManager
      * @param TemplateEngine $xTemplateEngine
      */
-    public function __construct(string $sVersion, Container $di, PluginManager $xPluginManager, TemplateEngine $xTemplateEngine)
+    public function __construct(string $sVersion, Container $di, TemplateEngine $xTemplateEngine)
     {
         $this->sVersion = $sVersion;
         $this->di = $di;
-        $this->xPluginManager = $xPluginManager;
         $this->xTemplateEngine = $xTemplateEngine;
+    }
+
+    /**
+     * Add a code generator to the list
+     *
+     * @param string $sClassName    The code generator class
+     * @param int $nPriority    The desired priority, used to order the plugins
+     *
+     * @return void
+     */
+    public function addCodeGenerator(string $sClassName, int $nPriority)
+    {
+        while(isset($this->aCodeGenerators[$nPriority]))
+        {
+            $nPriority++;
+        }
+        $this->aCodeGenerators[$nPriority] = $sClassName;
     }
 
     /**
@@ -112,7 +129,7 @@ class CodeGenerator
      */
     public function getHash(): string
     {
-        return md5(array_reduce($this->xPluginManager->getCodeGenerators(), function($sHash, $sClassName) {
+        return md5(array_reduce($this->aCodeGenerators, function($sHash, $sClassName) {
             return $sHash . $this->di->g($sClassName)->getHash();
         }, $this->sVersion));
     }
@@ -186,6 +203,7 @@ class CodeGenerator
      * Generate the Jaxon CSS ans js codes
      *
      * @return void
+     * @throws UriException
      */
     private function generateCodes()
     {
@@ -194,9 +212,12 @@ class CodeGenerator
             return;
         }
 
+        // Sort the code generators by ascending priority
+        ksort($this->aCodeGenerators);
+
         $this->xAssetManager = $this->di->getAssetManager();
         $this->sJsOptions = $this->xAssetManager->getJsOptions();
-        foreach($this->xPluginManager->getCodeGenerators() as $sClassName)
+        foreach($this->aCodeGenerators as $sClassName)
         {
             $this->generatePluginCodes($sClassName);
         }
@@ -215,6 +236,7 @@ class CodeGenerator
      * Get the HTML tags to include Jaxon CSS code and files into the page
      *
      * @return string
+     * @throws UriException
      */
     public function getCss(): string
     {
@@ -226,6 +248,7 @@ class CodeGenerator
      * Get the HTML tags to include Jaxon javascript files into the page
      *
      * @return string
+     * @throws UriException
      */
     public function getJs(): string
     {
@@ -270,7 +293,6 @@ class CodeGenerator
             return trim($sScript) . "\n\n" . $this->render('wrapper.js',
                 ['sScript' => trim($this->sJsScript) . "\n\n" . trim($this->sJsInlineScript)]);
         }
-
         return trim($sScript) . "\n\n" . trim($this->render('include.js', ['sUrl' => $sUrl])) .
             "\n\n" . $this->render('wrapper.js', ['sScript' => $this->sJsInlineScript]);
     }

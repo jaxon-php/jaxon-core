@@ -31,12 +31,13 @@ trait PluginTrait
     {
         // Plugin manager
         $this->set(PluginManager::class, function($c) {
-            return new PluginManager($c->g(Container::class), $c->g(Translator::class));
+            return new PluginManager($c->g(Container::class),
+                $c->g(CodeGenerator::class), $c->g(Translator::class));
         });
         // Package manager
         $this->set(PackageManager::class, function($c) {
-            return new PackageManager($c->g(Container::class), $c->g(PluginManager::class),
-                $c->g(ConfigManager::class), $c->g(ViewRenderer::class), $c->g(Translator::class));
+            return new PackageManager($c->g(Container::class), $c->g(PluginManager::class), $c->g(ConfigManager::class),
+                $c->g(CodeGenerator::class), $c->g(ViewRenderer::class), $c->g(Translator::class));
         });
         // Code Generation
         $this->set(MinifierInterface::class, function() {
@@ -48,8 +49,7 @@ trait PluginTrait
                 $c->g(MinifierInterface::class));
         });
         $this->set(CodeGenerator::class, function($c) {
-            return new CodeGenerator(Jaxon::VERSION, $c->g(Container::class), $c->g(PluginManager::class),
-                $c->g(TemplateEngine::class));
+            return new CodeGenerator(Jaxon::VERSION, $c->g(Container::class), $c->g(TemplateEngine::class));
         });
 
         // JQuery response plugin

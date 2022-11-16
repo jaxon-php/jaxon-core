@@ -25,6 +25,7 @@ use Jaxon\App\I18n\Translator;
 use Jaxon\Di\Container;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\CallableRegistryInterface;
+use Jaxon\Plugin\Code\CodeGenerator;
 use Jaxon\Plugin\CodeGeneratorInterface;
 use Jaxon\Plugin\Request\CallableClass\CallableClassPlugin;
 use Jaxon\Plugin\Request\CallableDir\CallableDirPlugin;
@@ -40,7 +41,6 @@ use Jaxon\Response\Response;
 
 use function class_implements;
 use function in_array;
-use function ksort;
 
 class PluginManager
 {
@@ -50,16 +50,14 @@ class PluginManager
     protected $di;
 
     /**
+     * @var CodeGenerator
+     */
+    private $xCodeGenerator;
+
+    /**
      * @var Translator
      */
     protected $xTranslator;
-
-    /**
-     * The classes that generate code
-     *
-     * @var array<string>
-     */
-    protected $aCodeGenerators = [];
 
     /**
      * Request plugins, indexed by name
@@ -86,41 +84,14 @@ class PluginManager
      * The constructor
      *
      * @param Container $di
+     * @param CodeGenerator $xCodeGenerator
      * @param Translator $xTranslator
      */
-    public function __construct(Container $di, Translator $xTranslator)
+    public function __construct(Container $di, CodeGenerator $xCodeGenerator, Translator $xTranslator)
     {
         $this->di = $di;
+        $this->xCodeGenerator = $xCodeGenerator;
         $this->xTranslator = $xTranslator;
-    }
-
-    /**
-     * Add a code generator to the list
-     *
-     * @param string $sClassName    The code generator class
-     * @param int $nPriority    The desired priority, used to order the plugins
-     *
-     * @return void
-     */
-    public function addCodeGenerator(string $sClassName, int $nPriority)
-    {
-        while(isset($this->aCodeGenerators[$nPriority]))
-        {
-            $nPriority++;
-        }
-        $this->aCodeGenerators[$nPriority] = $sClassName;
-        // Sort the array by ascending keys
-        ksort($this->aCodeGenerators);
-    }
-
-    /**
-     * Get the code generators
-     *
-     * @return string[]
-     */
-    public function getCodeGenerators(): array
-    {
-        return $this->aCodeGenerators;
     }
 
     /**
@@ -154,7 +125,7 @@ class PluginManager
         $aInterfaces = class_implements($sClassName);
         if(in_array(CodeGeneratorInterface::class, $aInterfaces))
         {
-            $this->addCodeGenerator($sClassName, $nPriority);
+            $this->xCodeGenerator->addCodeGenerator($sClassName, $nPriority);
             $bIsUsed = true;
         }
         if(in_array(CallableRegistryInterface::class, $aInterfaces))
