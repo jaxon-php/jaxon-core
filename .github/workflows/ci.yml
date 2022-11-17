@@ -17,6 +17,8 @@ jobs:
 
      - name: Install composer and dependencies
        uses: php-actions/composer@v6
+       with:
+         php_version: '7.2'
 
      - name: PHPUnit Tests
        uses: php-actions/phpunit@v3
