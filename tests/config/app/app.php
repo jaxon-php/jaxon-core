@@ -79,9 +79,6 @@ return [
             ],
         ],
         'dialogs' => [
-            'classes' => [
-                BootboxLibrary::NAME => BootboxLibrary::class,
-            ],
             'default' => [
                 'modal' => BootboxLibrary::NAME,
                 'message' => BootboxLibrary::NAME,

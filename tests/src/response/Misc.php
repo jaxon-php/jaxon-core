@@ -3,6 +3,7 @@
 use Jaxon\App\CallableClass;
 use Jaxon\Response\Response;
 use Jaxon\Upload\UploadResponse;
+use function Jaxon\jaxon;
 
 class Misc extends CallableClass
 {

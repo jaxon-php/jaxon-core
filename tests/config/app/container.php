@@ -2,6 +2,8 @@
 
 use Jaxon\Tests\Ns\Lib\Service;
 use Jaxon\Tests\Ns\Lib\ServiceAuto;
+use Jaxon\Tests\Ns\Lib\ServiceAutoClassParam;
+use Jaxon\Tests\Ns\Lib\ServiceAutoParam;
 use Jaxon\Tests\Ns\Lib\ServiceInterface;
 
 return [
@@ -15,14 +17,28 @@ return [
             ],
             'set' => [
                 Service::class => function($c) {
-                    return new Service($c->g('service_config'));
-                }
+                    $service = new Service($c->g('service_config'));
+                    $service->setSource('Class only');
+                    return $service;
+                },
+                Service::class . ' $serv' => function($c) {
+                    $service = new Service($c->g('service_config'));
+                    $service->setSource('Class + parameter');
+                    return $service;
+                },
+                '$service' => function($c) {
+                    $service = new Service($c->g('service_config'));
+                    $service->setSource('Parameter only');
+                    return $service;
+                },
             ],
             'alias' => [
                 ServiceInterface::class => Service::class,
             ],
             'auto' => [
                 ServiceAuto::class,
+                ServiceAutoClassParam::class,
+                ServiceAutoParam::class,
             ],
         ],
     ],

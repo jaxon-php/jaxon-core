@@ -2,16 +2,16 @@
 
 namespace Jaxon\Tests\Ns\Lib;
 
-class ServiceAuto
+class ServiceAutoParam
 {
     /**
      * @var Service $service
      */
     private $service;
 
-    public function __construct(Service $s)
+    public function __construct($service)
     {
-        $this->service = $s;
+        $this->service = $service;
     }
 
     public function serviceSource(): string

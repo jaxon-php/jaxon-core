@@ -6,6 +6,7 @@ use Jaxon\App\CallableClass;
 use Jaxon\Exception\SetupException;
 use Jaxon\NsTests\DirB\ClassB;
 use Jaxon\Response\Response;
+use function Jaxon\jaxon;
 
 class ClassC extends CallableClass
 {

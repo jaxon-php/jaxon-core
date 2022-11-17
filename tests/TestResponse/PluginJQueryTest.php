@@ -9,7 +9,8 @@ use Nyholm\Psr7Server\ServerRequestCreator;
 use Psr\Http\Message\ServerRequestInterface;
 use PHPUnit\Framework\TestCase;
 
-use function jaxon;
+use function Jaxon\jaxon;
+use function Jaxon\jq;
 
 class PluginJQueryTest extends TestCase
 {

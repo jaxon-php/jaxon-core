@@ -43,21 +43,6 @@ class DialogLibraryManager implements ConfigListenerInterface
     protected $aLibraries = [];
 
     /**
-     * @var array
-     */
-    protected $aQuestionLibraries = [];
-
-    /**
-     * @var array
-     */
-    protected $aMessageLibraries = [];
-
-    /**
-     * @var array
-     */
-    protected $aModalLibraries = [];
-
-    /**
      * The QuestionInterface class name
      *
      * @var string
@@ -121,40 +106,36 @@ class DialogLibraryManager implements ConfigListenerInterface
      */
     public function registerLibrary(string $sClassName, string $sLibraryName)
     {
-        $bIsUsed = false;
-        $aInterfaces = class_implements($sClassName);
-        if(in_array(QuestionInterface::class, $aInterfaces))
+        if(isset($this->aLibraries[$sLibraryName]))
         {
-            $this->aQuestionLibraries[$sLibraryName] = $bIsUsed = true;
+            return;
         }
-        if(in_array(MessageInterface::class, $aInterfaces))
-        {
-            $this->aMessageLibraries[$sLibraryName] = $bIsUsed = true;
-        }
-        if(in_array(ModalInterface::class, $aInterfaces))
-        {
-            $this->aModalLibraries[$sLibraryName] = $bIsUsed = true;
-        }
-        if(!$bIsUsed)
+        if(!($aInterfaces = class_implements($sClassName)))
         {
             // The class is invalid.
             $sMessage = $this->xTranslator->trans('errors.register.invalid', ['name' => $sClassName]);
             throw new SetupException($sMessage);
         }
-        // Register the library in the container
-        $this->di->registerDialogLibrary($sClassName, $sLibraryName);
-    }
 
-    /**
-     * Get the library class instances
-     *
-     * @return LibraryInterface[]
-     */
-    public function getLibraries(): array
-    {
-        return array_map(function($sLibraryName) {
-            return $this->di->getDialogLibrary($sLibraryName);
-        }, array_keys($this->aLibraries));
+        $bIsQuestion = in_array(QuestionInterface::class, $aInterfaces);
+        $bIsMessage = in_array(MessageInterface::class, $aInterfaces);
+        $bIsModal = in_array(ModalInterface::class, $aInterfaces);
+        if(!$bIsQuestion && !$bIsMessage && !$bIsModal)
+        {
+            // The class is invalid.
+            $sMessage = $this->xTranslator->trans('errors.register.invalid', ['name' => $sClassName]);
+            throw new SetupException($sMessage);
+        }
+
+        // Save the library
+        $this->aLibraries[$sLibraryName] = [
+            'question' => $bIsQuestion,
+            'message' => $bIsMessage,
+            'modal' => $bIsModal,
+            'used' => false,
+        ];
+        // Register the library class in the container
+        $this->di->registerDialogLibrary($sClassName, $sLibraryName);
     }
 
     /**
@@ -167,14 +148,13 @@ class DialogLibraryManager implements ConfigListenerInterface
      */
     public function setQuestionLibrary(string $sLibraryName)
     {
-        if(!isset($this->aQuestionLibraries[$sLibraryName]))
+        if(!isset($this->aLibraries[$sLibraryName]) || !$this->aLibraries[$sLibraryName]['question'])
         {
             $sMessage = $this->xTranslator->trans('errors.dialog.library',
                 ['type' => 'question', 'name' => $sLibraryName]);
             throw new SetupException($sMessage);
         }
         $this->sQuestionLibrary = $sLibraryName;
-        $this->aLibraries[$sLibraryName] = true;
     }
 
     /**
@@ -197,14 +177,13 @@ class DialogLibraryManager implements ConfigListenerInterface
      */
     public function setMessageLibrary(string $sLibraryName)
     {
-        if(!isset($this->aMessageLibraries[$sLibraryName]))
+        if(!isset($this->aLibraries[$sLibraryName]) || !$this->aLibraries[$sLibraryName]['message'])
         {
             $sMessage = $this->xTranslator->trans('errors.dialog.library',
                 ['type' => 'message', 'name' => $sLibraryName]);
             throw new SetupException($sMessage);
         }
         $this->sMessageLibrary = $sLibraryName;
-        $this->aLibraries[$sLibraryName] = true;
     }
 
     /**
@@ -227,14 +206,13 @@ class DialogLibraryManager implements ConfigListenerInterface
      */
     public function setModalLibrary(string $sLibraryName)
     {
-        if(!isset($this->aModalLibraries[$sLibraryName]))
+        if(!isset($this->aLibraries[$sLibraryName]) || !$this->aLibraries[$sLibraryName]['modal'])
         {
             $sMessage = $this->xTranslator->trans('errors.dialog.library',
                 ['type' => 'modal', 'name' => $sLibraryName]);
             throw new SetupException($sMessage);
         }
         $this->sModalLibrary = $sLibraryName;
-        $this->aLibraries[$sLibraryName] = true;
     }
 
     /**
@@ -267,24 +245,10 @@ class DialogLibraryManager implements ConfigListenerInterface
      */
     protected function registerLibraries()
     {
-        $aLibraries = $this->xConfigManager->getOption('dialogs.classes', []);
+        $aLibraries = $this->xConfigManager->getOption('dialogs.lib.ext', []);
         foreach($aLibraries as $sLibraryName => $sClassName)
         {
             $this->registerLibrary($sClassName, $sLibraryName);
-        }
-    }
-
-    /**
-     * Update the javascript dialog libraries list.
-     *
-     * @return void
-     */
-    protected function updateLibraries()
-    {
-        $aLibraries = $this->xConfigManager->getOption('dialogs.libraries', []);
-        foreach($aLibraries as $sLibraryName)
-        {
-            $this->aLibraries[$sLibraryName] = true;
         }
     }
 
@@ -300,17 +264,54 @@ class DialogLibraryManager implements ConfigListenerInterface
         if(($sLibraryName = $this->xConfigManager->getOption('dialogs.default.modal', '')))
         {
             $this->setModalLibrary($sLibraryName);
+            $this->aLibraries[$sLibraryName]['used'] = true;
         }
         // Set the default message library
         if(($sLibraryName = $this->xConfigManager->getOption('dialogs.default.message', '')))
         {
             $this->setMessageLibrary($sLibraryName);
+            $this->aLibraries[$sLibraryName]['used'] = true;
         }
         // Set the default question library
         if(($sLibraryName = $this->xConfigManager->getOption('dialogs.default.question', '')))
         {
             $this->setQuestionLibrary($sLibraryName);
+            $this->aLibraries[$sLibraryName]['used'] = true;
         }
+    }
+
+    /**
+     * Set the libraries in use.
+     *
+     * @return void
+     */
+    protected function setUsedLibraries()
+    {
+        // Set the other libraries in use
+        $aLibraries = $this->xConfigManager->getOption('dialogs.lib.use', []);
+        foreach($aLibraries as $sLibraryName)
+        {
+            if(isset($this->aLibraries[$sLibraryName])) // Make sure the library exists
+            {
+                $this->aLibraries[$sLibraryName]['used'] = true;
+            }
+        }
+    }
+
+    /**
+     * Get the dialog libraries class instances
+     *
+     * @return LibraryInterface[]
+     */
+    public function getLibraries(): array
+    {
+        // Only return the libraries that are used.
+        $aLibraries = array_filter($this->aLibraries, function($aLibrary) {
+            return $aLibrary['used'];
+        });
+        return array_map(function($sLibraryName) {
+            return $this->di->getDialogLibrary($sLibraryName);
+        }, array_keys($aLibraries));
     }
 
     /**
@@ -323,23 +324,23 @@ class DialogLibraryManager implements ConfigListenerInterface
         {
             // Reset the default libraries any time the config is changed.
             $this->registerLibraries();
-            $this->updateLibraries();
             $this->setDefaultLibraries();
+            $this->setUsedLibraries();
             return;
         }
-        if(substr($sName, 0, 15) === 'dialogs.classes')
+        $sPrefix = substr($sName, 0, 15);
+        switch($sPrefix)
         {
+        case 'dialogs.default':
+            $this->setDefaultLibraries();
+            return;
+        case 'dialogs.lib.ext':
             $this->registerLibraries();
             return;
-        }
-        if($sName === 'dialogs.libraries')
-        {
-            $this->updateLibraries();
+        case 'dialogs.lib.use':
+            $this->setUsedLibraries();
             return;
-        }
-        if(substr($sName, 0, 15) === 'dialogs.default')
-        {
-            $this->setDefaultLibraries();
+        default:
         }
     }
 }

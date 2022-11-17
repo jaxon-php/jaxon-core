@@ -64,6 +64,13 @@ class Parameter implements ParameterInterface
     protected $xValue;
 
     /**
+     * Convert the parameter value to integer
+     *
+     * @var bool
+     */
+    protected $bToInt = false;
+
+    /**
      * The constructor.
      *
      * @param string $sType    The parameter type
@@ -105,6 +112,15 @@ class Parameter implements ParameterInterface
     public function setValue($xValue)
     {
         $this->xValue = $xValue;
+    }
+
+    /**
+     * @return ParameterInterface
+     */
+    public function toInt(): ParameterInterface
+    {
+        $this->bToInt = true;
+        return $this;
     }
 
     /**
@@ -277,7 +293,8 @@ class Parameter implements ParameterInterface
         {
             return '';
         }
-        return $this->$sMethodName();
+        $sScript = $this->$sMethodName();
+        return $this->bToInt ? "parseInt($sScript)" : $sScript;
     }
 
     /**

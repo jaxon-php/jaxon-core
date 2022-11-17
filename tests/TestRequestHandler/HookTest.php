@@ -10,7 +10,7 @@ use Nyholm\Psr7Server\ServerRequestCreator;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 
-use function jaxon;
+use function Jaxon\jaxon;
 
 class HookTest extends TestCase
 {

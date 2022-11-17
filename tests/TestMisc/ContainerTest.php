@@ -5,17 +5,17 @@ namespace Jaxon\Tests\TestMisc;
 use Jaxon\Exception\SetupException;
 use Jaxon\Tests\Ns\Lib\Service;
 use Jaxon\Tests\Ns\Lib\ServiceAuto;
+use Jaxon\Tests\Ns\Lib\ServiceAutoClassParam;
+use Jaxon\Tests\Ns\Lib\ServiceAutoParam;
 use Jaxon\Tests\Ns\Lib\ServiceExt;
 use Jaxon\Tests\Ns\Lib\ServiceInterface;
 use Pimple\Container as AppContainer;
 use Pimple\Psr11\Container as PsrContainer;
 use PHPUnit\Framework\TestCase;
-use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\NotFoundExceptionInterface;
 use ReflectionException;
 
 use function get_class;
-use function jaxon;
+use function Jaxon\jaxon;
 
 class ContainerTest extends TestCase
 {
@@ -52,9 +52,23 @@ class ContainerTest extends TestCase
         $this->assertEquals(ServiceAuto::class, get_class(jaxon()->di()->g(ServiceAuto::class)));
     }
 
+    public function testContainerServiceSources()
+    {
+        $service = jaxon()->di()->g(ServiceAuto::class);
+        $this->assertEquals(ServiceAuto::class, get_class($service));
+        $this->assertEquals('Class only', $service->serviceSource());
+
+        $service = jaxon()->di()->g(ServiceAutoClassParam::class);
+        $this->assertEquals(ServiceAutoClassParam::class, get_class($service));
+        $this->assertEquals('Class + parameter', $service->serviceSource());
+
+        $service = jaxon()->di()->g(ServiceAutoParam::class);
+        $this->assertEquals(ServiceAutoParam::class, get_class($service));
+        $this->assertEquals('Parameter only', $service->serviceSource());
+    }
+
     /**
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
+     * @throws SetupException
      */
     public function testAppContainer()
     {
@@ -72,9 +86,8 @@ class ContainerTest extends TestCase
     }
 
     /**
-     * @throws ContainerExceptionInterface
      * @throws ReflectionException
-     * @throws NotFoundExceptionInterface
+     * @throws SetupException
      */
     public function testMakeWithIncorrectParam()
     {

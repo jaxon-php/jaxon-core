@@ -2,6 +2,7 @@
 
 use Jaxon\App\CallableClass;
 use Jaxon\Response\Response;
+use function Jaxon\jq;
 
 class TestJQuery extends CallableClass
 {

@@ -5,6 +5,8 @@ namespace Jaxon\Tests\TestRequestFactory;
 use Jaxon\Jaxon;
 use Jaxon\Exception\SetupException;
 use PHPUnit\Framework\TestCase;
+use function Jaxon\jaxon;
+use function Jaxon\rq;
 
 class DirectoryTest extends TestCase
 {

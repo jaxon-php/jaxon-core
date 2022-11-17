@@ -9,7 +9,7 @@ use Jaxon\Plugin\Request\CallableClass\CallableObject;
 use PHPUnit\Framework\TestCase;
 use TheClass;
 use function file_get_contents;
-use function jaxon;
+use function Jaxon\jaxon;
 use function strlen;
 
 require_once __DIR__ . '/../src/classes.php';

@@ -5,6 +5,7 @@ namespace Jaxon\Tests\TestRegistration;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\Response\Dialog\DialogPlugin;
 use PHPUnit\Framework\TestCase;
+use function Jaxon\jaxon;
 
 class PluginTest extends TestCase
 {

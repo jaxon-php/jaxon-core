@@ -40,6 +40,13 @@ class JsCall implements JsonSerializable
     protected $aParameters = [];
 
     /**
+     * Convert the parameter value to integer
+     *
+     * @var bool
+     */
+    protected $bToInt = false;
+
+    /**
      * The constructor.
      *
      * @param string $sFunction    The javascript function
@@ -47,6 +54,15 @@ class JsCall implements JsonSerializable
     public function __construct(string $sFunction)
     {
         $this->sFunction = $sFunction;
+    }
+
+    /**
+     * @return JsCall
+     */
+    public function toInt(): JsCall
+    {
+        $this->bToInt = true;
+        return $this;
     }
 
     /**
@@ -126,7 +142,8 @@ class JsCall implements JsonSerializable
      */
     public function getScript(): string
     {
-        return $this->sFunction . '(' . implode(', ', $this->aParameters) . ')';
+        $sScript = $this->sFunction . '(' . implode(', ', $this->aParameters) . ')';
+        return $this->bToInt ? "parseInt($sScript)" : $sScript;
     }
 
     /**

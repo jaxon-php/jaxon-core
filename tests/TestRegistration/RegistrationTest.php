@@ -6,7 +6,7 @@ use Jaxon\Exception\SetupException;
 use Jaxon\Jaxon;
 use Jaxon\Plugin\Request\CallableClass\CallableClassPlugin;
 use PHPUnit\Framework\TestCase;
-use function jaxon;
+use function Jaxon\jaxon;
 use function strlen;
 
 class RegistrationTest extends TestCase

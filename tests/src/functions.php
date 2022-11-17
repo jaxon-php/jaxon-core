@@ -1,5 +1,7 @@
 <?php
 
+use function Jaxon\jaxon;
+
 function my_second_function()
 {
     // Using the global response. No need to return.

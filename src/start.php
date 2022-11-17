@@ -1,5 +1,7 @@
 <?php
 
+namespace Jaxon;
+
 use Jaxon\App\Ajax;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\Response\JQuery\DomSelector;
