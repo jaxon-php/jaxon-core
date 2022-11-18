@@ -2,7 +2,7 @@
 
 namespace Jaxon\Tests\TestRegistrationApp;
 
-require_once __DIR__ . '/../../../jaxon-dialogs/src/start.php';
+require_once __DIR__ . '/../../vendor/jaxon-php/jaxon-dialogs/src/start.php';
 require_once __DIR__ . '/../src/classes.php';
 
 use Jaxon\Exception\RequestException;
