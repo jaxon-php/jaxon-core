@@ -10,8 +10,15 @@ jobs:
      - name: Checkout Code
        uses: actions/checkout@v2
 
+     - name: Setup PHP version
+       uses: shivammathur/setup-php@v2
+       with:
+         php-version: '7.2'
+
      - name: Install composer and dependencies
        uses: php-actions/composer@v6
+       with:
+         php_version: '7.2'
 
      - name: PHPUnit Tests
        uses: php-actions/phpunit@v3
