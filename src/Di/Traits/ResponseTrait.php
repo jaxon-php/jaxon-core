@@ -9,6 +9,7 @@ use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Response\Manager\ResponseManager;
 use Jaxon\Response\Response;
 use Nyholm\Psr7\Factory\Psr17Factory;
+use Psr\Http\Message\ServerRequestInterface;
 
 use function trim;
 
@@ -23,12 +24,13 @@ trait ResponseTrait
     {
         // Global Response
         $this->set(Response::class, function($c) {
-            return new Response($c->g(Container::class), $c->g(PluginManager::class), $c->g(Psr17Factory::class));
+            return new Response($c->g(PluginManager::class),
+                $c->g(Psr17Factory::class), $c->g(ServerRequestInterface::class));
         });
         // Response Manager
         $this->set(ResponseManager::class, function($c) {
-            $sCharacterEncoding = trim($c->g(ConfigManager::class)->getOption('core.encoding', ''));
-            return new ResponseManager($sCharacterEncoding, $c->g(Container::class), $c->g(Translator::class));
+            return new ResponseManager(trim($c->g(ConfigManager::class)->getOption('core.encoding', '')),
+                $c->g(Container::class), $c->g(Translator::class));
         });
     }
 
@@ -59,8 +61,8 @@ trait ResponseTrait
      */
     public function newResponse(): Response
     {
-        return new Response($this->g(Container::class), $this->g(PluginManager::class),
-            $this->g(Psr17Factory::class));
+        return new Response($this->g(PluginManager::class),
+            $this->g(Psr17Factory::class), $this->g(ServerRequestInterface::class));
     }
 
     /**

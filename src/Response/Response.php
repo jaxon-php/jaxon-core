@@ -21,7 +21,6 @@
 
 namespace Jaxon\Response;
 
-use Jaxon\Di\Container;
 use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Plugin\Response\DataBag\DataBagContext;
 use Jaxon\Plugin\Response\JQuery\DomSelector;
@@ -29,6 +28,7 @@ use Jaxon\Plugin\ResponsePlugin;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7\Stream;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
+use Psr\Http\Message\ServerRequestInterface as PsrRequestInterface;
 
 use function array_filter;
 use function array_map;
@@ -45,13 +45,6 @@ class Response implements ResponseInterface
     use Traits\JsTrait;
 
     /**
-     * The container
-     *
-     * @var Container
-     */
-    protected $di;
-
-    /**
      * @var PluginManager
      */
     protected $xPluginManager;
@@ -62,17 +55,22 @@ class Response implements ResponseInterface
     protected $xPsr17Factory;
 
     /**
+     * @var PsrRequestInterface
+     */
+    protected $xRequest;
+
+    /**
      * The constructor
      *
-     * @param Container $di
      * @param PluginManager $xPluginManager
      * @param Psr17Factory $xPsr17Factory
+     * @param PsrRequestInterface $xRequest
      */
-    public function __construct(Container $di, PluginManager $xPluginManager, Psr17Factory $xPsr17Factory)
+    public function __construct(PluginManager $xPluginManager, Psr17Factory $xPsr17Factory, PsrRequestInterface $xRequest)
     {
-        $this->di = $di;
         $this->xPluginManager = $xPluginManager;
         $this->xPsr17Factory = $xPsr17Factory;
+        $this->xRequest = $xRequest;
     }
 
     /**
@@ -216,7 +214,7 @@ class Response implements ResponseInterface
     public function toPsr(): PsrResponseInterface
     {
         $xPsrResponse = $this->xPsr17Factory->createResponse(200);
-        if($this->di->getRequest()->getMethod() === 'GET')
+        if($this->xRequest->getMethod() === 'GET')
         {
             $xPsrResponse = $xPsrResponse
                 ->withHeader('Expires', 'Mon, 26 Jul 1997 05:00:00 GMT')
