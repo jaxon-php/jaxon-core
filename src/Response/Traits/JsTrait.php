@@ -93,7 +93,7 @@ trait JsTrait
      */
     public function redirect(string $sURL, int $nDelay = 0): Response
     {
-        $sURL = $this->di->getParameterReader()->parseUrl($sURL);
+        $sURL = $this->xPluginManager->getParameterReader()->parseUrl($sURL);
         if($nDelay <= 0)
         {
             return $this->script("window.location = '$sURL';");

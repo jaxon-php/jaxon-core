@@ -37,6 +37,7 @@ use Jaxon\Plugin\Response\Dialog\DialogPlugin;
 use Jaxon\Plugin\Response\JQuery\JQueryPlugin;
 use Jaxon\Plugin\ResponsePlugin;
 use Jaxon\Plugin\ResponsePluginInterface;
+use Jaxon\Request\Handler\ParameterReader;
 use Jaxon\Response\Response;
 
 use function class_implements;
@@ -221,5 +222,15 @@ class PluginManager
         $this->registerPlugin(JQueryPlugin::class, JQueryPlugin::NAME, 700);
         $this->registerPlugin(DataBagPlugin::class, DataBagPlugin::NAME, 700);
         $this->registerPlugin(DialogPlugin::class, DialogPlugin::NAME, 750);
+    }
+
+    /**
+     * Get the parameter reader
+     *
+     * @return ParameterReader
+     */
+    public function getParameterReader()
+    {
+        return $this->di->g(ParameterReader::class);
     }
 }

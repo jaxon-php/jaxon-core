@@ -51,7 +51,7 @@ class ResponseManager
      *
      * @var ResponseInterface
      */
-    private $xResponse;
+    private $xResponse = null;
 
     /**
      * The debug messages
@@ -70,7 +70,6 @@ class ResponseManager
         $this->di = $di;
         $this->sCharacterEncoding = $sCharacterEncoding;
         $this->xTranslator = $xTranslator;
-        $this->xResponse = $di->getResponse(); // By default, use the global response;
     }
 
     /**
@@ -80,7 +79,10 @@ class ResponseManager
      */
     public function clear()
     {
-        $this->xResponse->clearCommands();
+        if($this->xResponse !== null)
+        {
+            $this->xResponse->clearCommands();
+        }
         $this->di->getResponse()->clearCommands();
     }
 
@@ -91,6 +93,10 @@ class ResponseManager
      */
     public function getResponse(): ResponseInterface
     {
+        if(!$this->xResponse)
+        {
+            $this->xResponse = $this->di->getResponse();
+        }
         return $this->xResponse;
     }
 
@@ -108,6 +114,10 @@ class ResponseManager
      */
     public function append(ResponseInterface $xResponse)
     {
+        if(!$this->xResponse)
+        {
+            $this->xResponse = $this->di->getResponse();
+        }
         if($this->xResponse->getCommandCount() === 0)
         {
             $this->xResponse = $xResponse;
@@ -161,7 +171,7 @@ class ResponseManager
     {
         foreach($this->aDebugMessages as $sMessage)
         {
-            $this->xResponse->debug($sMessage);
+            $this->getResponse()->debug($sMessage);
         }
         $this->aDebugMessages = [];
     }
@@ -173,8 +183,8 @@ class ResponseManager
      */
     public function getContentType(): string
     {
-        return empty($this->sCharacterEncoding) ? $this->xResponse->getContentType() :
-            $this->xResponse->getContentType() . '; charset="' . $this->sCharacterEncoding . '"';
+        return empty($this->sCharacterEncoding) ? $this->getResponse()->getContentType() :
+            $this->getResponse()->getContentType() . '; charset="' . $this->sCharacterEncoding . '"';
     }
 
     /**
@@ -184,6 +194,6 @@ class ResponseManager
      */
     public function getOutput(): string
     {
-        return $this->xResponse->getOutput();
+        return $this->getResponse()->getOutput();
     }
 }
