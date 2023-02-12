@@ -40,6 +40,7 @@ use ReflectionProperty;
 use function array_filter;
 use function array_map;
 use function array_merge;
+use function array_unique;
 use function call_user_func;
 use function in_array;
 use function is_array;
@@ -286,6 +287,55 @@ class CallableObject
     }
 
     /**
+     * @param array $aCommonOptions
+     * @param array $aMethodOptions
+     * @param string $sMethodName
+     *
+     * @return mixed
+     */
+    private function getOptionValue(array $aCommonOptions, array $aMethodOptions, string $sOptionName)
+    {
+        if(!isset($aCommonOptions[$sOptionName]))
+        {
+            return $aMethodOptions[$sOptionName];
+        }
+        if(!isset($aMethodOptions[$sOptionName]))
+        {
+            return $aCommonOptions[$sOptionName];
+        }
+        // If both are not arrays, return the latest.
+        if(!is_array($aCommonOptions[$sOptionName]) && !is_array($aMethodOptions[$sOptionName]))
+        {
+            return $aMethodOptions[$sOptionName];
+        }
+
+        // Merge the options.
+        $_aCommonOptions = is_array($aCommonOptions[$sOptionName]) ?
+            $aCommonOptions[$sOptionName] : [$aCommonOptions[$sOptionName]];
+        $_aMethodOptions = is_array($aMethodOptions[$sOptionName]) ?
+            $aMethodOptions[$sOptionName] : [$aMethodOptions[$sOptionName]];
+        return array_merge($_aCommonOptions, $_aMethodOptions);
+    }
+
+    /**
+     * @param string $sMethodName
+     *
+     * @return array
+     */
+    private function getMethodOptions(string $sMethodName): array
+    {
+        $aCommonOptions = isset($this->aOptions['*']) ? $this->aOptions['*'] : [];
+        $aMethodOptions = isset($this->aOptions[$sMethodName]) ? $this->aOptions[$sMethodName] : [];
+        $aOptionNames = array_unique(array_merge(array_keys($aCommonOptions), array_keys($aMethodOptions)));
+        $aOptions = [];
+        foreach($aOptionNames as $sOptionName)
+        {
+            $aOptions[$sOptionName] = $this->getOptionValue($aCommonOptions, $aMethodOptions, $sOptionName);
+        }
+        return $aOptions;
+    }
+
+    /**
      * Return a list of methods of the callable object to export to javascript
      *
      * @param array $aProtectedMethods    The protected methods
@@ -298,15 +348,11 @@ class CallableObject
         $fConvertOption = function($xOption) {
             return is_array($xOption) ? json_encode($xOption) : $xOption;
         };
-        $aCommonConfig = isset($this->aOptions['*']) ? array_map($fConvertOption, $this->aOptions['*']) : [];
 
-        return array_map(function($sMethodName) use($fConvertOption, $aCommonConfig) {
-            // Specific options for this method
-            $aMethodConfig = isset($this->aOptions[$sMethodName]) ?
-                array_map($fConvertOption, $this->aOptions[$sMethodName]) : [];
+        return array_map(function($sMethodName) use($fConvertOption) {
             return [
                 'name' => $sMethodName,
-                'config' => array_merge($aCommonConfig, $aMethodConfig),
+                'config' => array_map($fConvertOption, $this->getMethodOptions($sMethodName)),
             ];
         }, $this->getPublicMethods($aProtectedMethods));
     }
