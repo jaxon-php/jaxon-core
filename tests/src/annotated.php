@@ -12,7 +12,6 @@ class Annotated
     /**
      * @databag('name' => 'user.name')
      * @databag('name' => 'page.number')
-     * @exclude(false)
      */
     public function withBags()
     {
