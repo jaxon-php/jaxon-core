@@ -3,6 +3,7 @@
 namespace Jaxon\Tests\TestRegistration;
 
 require __DIR__ . '/../src/annotated.php';
+require __DIR__ . '/../src/excluded.php';
 require_once(__DIR__ . '/../../vendor/jaxon-php/jaxon-annotations/src/start.php');
 
 use Jaxon\Jaxon;

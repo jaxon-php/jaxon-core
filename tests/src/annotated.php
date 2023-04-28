@@ -24,13 +24,3 @@ class Annotated
     {
     }
 }
-
-/**
- * @exclude(true)
- */
-class Excluded
-{
-    public function action()
-    {
-    }
-}
