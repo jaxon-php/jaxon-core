@@ -173,13 +173,13 @@ class Call extends JsCall
 
         $sMessageScript = $this->makeMessage();
         $sScript = parent::getScript();
-        if($this->sCondition === '__confirm__')
+        if($this->bConfirm)
         {
             $sConfirmPhrase = $this->makePhrase($this->aConfirmArgs);
             $sScript = $this->xDialogLibraryManager->getQuestionLibrary()
                 ->confirm($sConfirmPhrase, $sScript, $sMessageScript);
         }
-        elseif($this->sCondition !== '')
+        if($this->sCondition !== '')
         {
             $sScript = empty($sMessageScript) ? 'if(' . $this->sCondition . '){' . $sScript . ';}' :
                 'if(' . $this->sCondition . '){' . $sScript . ';}else{' . $sMessageScript . ';}';

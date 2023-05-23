@@ -18,6 +18,11 @@ trait CallConditionTrait
     protected $sCondition = '';
 
     /**
+     * @var bool
+     */
+    protected $bConfirm = false;
+
+    /**
      * The arguments of the confirm() call
      *
      * @var array
@@ -175,7 +180,7 @@ trait CallConditionTrait
      */
     public function confirm(string $sQuestion): Call
     {
-        $this->sCondition = '__confirm__';
+        $this->bConfirm = true;
         $this->aConfirmArgs = array_map(function($xParameter) {
             return Parameter::make($xParameter);
         }, func_get_args());
