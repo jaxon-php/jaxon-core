@@ -175,8 +175,20 @@ class DialogLibraryHelper
      */
     public function getJsCode(string $sFile): string
     {
-        $sPath = ($this->sSubDir ? $this->sSubDir . '/' : '') . ($this->sVersion ? $this->sVersion . '/' : '');
-        return '<script type="text/javascript" src="' . $this->sUri . '/' . $sPath . $sFile . '"></script>';
+        if($this->hasOption('assets.js'))
+        {
+            // If this expression evaluates to false, then the asset is not displayed.
+            if(!($sUri = $this->getOption('assets.js')))
+            {
+                return '';
+            }
+        }
+        else
+        {
+            $sUri = $this->sUri . '/' . ($this->sSubDir ? $this->sSubDir . '/' : '') .
+                ($this->sVersion ? $this->sVersion . '/' : '') . $sFile;
+        }
+        return '<script type="text/javascript" src="' . $sUri . '"></script>';
     }
 
     /**
@@ -188,8 +200,20 @@ class DialogLibraryHelper
      */
     public function getCssCode(string $sFile): string
     {
-        $sPath = ($this->sSubDir ? $this->sSubDir . '/' : '') . ($this->sVersion ? $this->sVersion . '/' : '');
-        return '<link rel="stylesheet" href="' . $this->sUri . '/' . $sPath . $sFile . '" />';
+        if($this->hasOption('assets.css'))
+        {
+            // If this expression evaluates to false, then the asset is not displayed.
+            if(!($sUri = $this->getOption('assets.css')))
+            {
+                return '';
+            }
+        }
+        else
+        {
+            $sUri = $this->sUri . '/' . ($this->sSubDir ? $this->sSubDir . '/' : '') .
+                ($this->sVersion ? $this->sVersion . '/' : '') . $sFile;
+        }
+        return '<link rel="stylesheet" href="' . $sUri . '" />';
     }
 
     /**

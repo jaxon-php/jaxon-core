@@ -70,12 +70,12 @@ class AssetManager
      */
     public function shallIncludeAssets(Plugin $xPlugin): bool
     {
-        if($this->xConfigManager->getOption('assets.include.all', true))
-        {
-            return true;
-        }
         $sPluginOptionName = 'assets.include.' . $xPlugin->getName();
-        return $this->xConfigManager->getOption($sPluginOptionName, true);
+        if($this->xConfigManager->hasOption($sPluginOptionName))
+        {
+            return $this->xConfigManager->getOption($sPluginOptionName);
+        }
+        return $this->xConfigManager->getOption('assets.include.all', true);
     }
 
     /**
