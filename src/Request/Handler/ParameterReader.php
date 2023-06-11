@@ -197,20 +197,15 @@ class ParameterReader
         switch($cType)
         {
         case 'S':
-            $value = $sValue === false ? '' : $sValue;
-            break;
+            return $sValue;
         case 'B':
-            $value = $this->convertStringToBool($sValue);
-            break;
+            return $this->convertStringToBool($sValue);
         case 'N':
-            $value = ($sValue == floor($sValue) ? (int)$sValue : (float)$sValue);
-            break;
+            return ($sValue == floor($sValue) ? (int)$sValue : (float)$sValue);
         case '*':
         default:
-            $value = null;
-            break;
+            return null;
         }
-        return $value;
     }
 
     /**
