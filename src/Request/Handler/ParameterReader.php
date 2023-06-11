@@ -197,7 +197,7 @@ class ParameterReader
         switch($cType)
         {
         case 'S':
-            $value = !$sValue ? '' : $sValue;
+            $value = $sValue === false ? '' : $sValue;
             break;
         case 'B':
             $value = $this->convertStringToBool($sValue);
