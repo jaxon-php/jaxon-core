@@ -62,13 +62,13 @@ function pm(): ParameterFactory
  * to insert jQuery's code into a javascript function, or as a parameter of a Jaxon function call.
  *
  * @param string $sPath    The jQuery selector path
- * @param string $sContext    A context associated to the selector
+ * @param mixed $xContext    A context associated to the selector
  *
  * @return DomSelector
  */
-function jq(string $sPath = '', string $sContext = ''): DomSelector
+function jq(string $sPath = '', $xContext = null): DomSelector
 {
-    return Ajax::getInstance()->di()->getJQueryPlugin()->command(false)->selector($sPath, $sContext);
+    return Ajax::getInstance()->di()->getJQueryPlugin()->command(false)->selector($sPath, $xContext);
 }
 
 // Register the Jaxon request and response plugins

@@ -80,13 +80,13 @@ class JQueryPlugin extends ResponsePlugin
      * The returned object can be used to call jQuery functions on the selected elements.
      *
      * @param string $sPath    The jQuery selector path
-     * @param string $sContext    A context associated to the selector
+     * @param mixed $xContext    A context associated to the selector
      *
      * @return DomSelector
      */
-    public function selector(string $sPath = '', string $sContext = ''): DomSelector
+    public function selector(string $sPath = '', $xContext = null): DomSelector
     {
-        $xSelector = new DomSelector($this->jQueryNs, $sPath, $sContext);
+        $xSelector = new DomSelector($this->jQueryNs, $sPath, $xContext);
         if($this->bCommand && $this->response() !== null)
         {
             $this->addCommand(['cmd' => 'jquery'], $xSelector);

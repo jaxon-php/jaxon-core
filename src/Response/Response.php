@@ -127,13 +127,13 @@ class Response implements ResponseInterface
      * This is a shortcut to the JQuery plugin.
      *
      * @param string $sPath    The jQuery selector path
-     * @param string $sContext    A context associated to the selector
+     * @param mixed $xContext    A context associated to the selector
      *
      * @return DomSelector
      */
-    public function jq(string $sPath = '', string $sContext = ''): DomSelector
+    public function jq(string $sPath = '', $xContext = null): DomSelector
     {
-        return $this->plugin('jquery')->selector($sPath, $sContext);
+        return $this->plugin('jquery')->selector($sPath, $xContext);
     }
 
     /**

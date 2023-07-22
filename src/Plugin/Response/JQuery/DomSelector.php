@@ -59,26 +59,36 @@ class DomSelector implements JsonSerializable, ParameterInterface
      *
      * @param string $jQueryNs    The jQuery symbol
      * @param string $sPath    The jQuery selector path
-     * @param string $sContext    A context associated to the selector
+     * @param mixed $xContext    A context associated to the selector
      */
-    public function __construct(string $jQueryNs, string $sPath, string $sContext)
+    public function __construct(string $jQueryNs, string $sPath, $xContext)
     {
         $sPath = trim($sPath, " \t");
-        $sContext = trim($sContext, " \t");
         $this->aCalls = [];
+        $this->sPath = $this->getPath($jQueryNs, $sPath, $xContext);
+    }
 
+    /**
+     * Get the selector js.
+     *
+     * @param string $jQueryNs    The jQuery symbol
+     * @param string $sPath    The jQuery selector path
+     * @param mixed $xContext    A context associated to the selector
+     */
+    private function getPath(string $jQueryNs, string $sPath, $xContext)
+    {
         if(!$sPath)
         {
-            $this->sPath = "$jQueryNs(this)"; // If an empty selector is given, use javascript "this" instead
+            // If an empty selector is given, use javascript "this" instead
+            return "$jQueryNs(this)";
         }
-        elseif(($sContext))
+        if(!$xContext)
         {
-            $this->sPath = "$jQueryNs('" . $sPath . "', $jQueryNs('" . $sContext . "'))";
+            return "$jQueryNs('" . $sPath . "')";
         }
-        else
-        {
-            $this->sPath = "$jQueryNs('" . $sPath . "')";
-        }
+        $sContext = is_a($xContext, self::class) ?
+            $xContext->getScript() : "$jQueryNs('" . trim("$xContext") . "')";
+        return "$jQueryNs('$sPath', $sContext)";
     }
 
     /**

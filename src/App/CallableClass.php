@@ -107,13 +107,13 @@ class CallableClass
      * Create a JQuery DomSelector, and link it to the response attribute.
      *
      * @param string $sPath    The jQuery selector path
-     * @param string $sContext    A context associated to the selector
+     * @param mixed $xContext    A context associated to the selector
      *
      * @return DomSelector
      */
-    public function jq(string $sPath = '', string $sContext = ''): DomSelector
+    public function jq(string $sPath = '', $xContext = null): DomSelector
     {
-        return $this->response->jq($sPath, $sContext);
+        return $this->response->jq($sPath, $xContext);
     }
 
     /**
