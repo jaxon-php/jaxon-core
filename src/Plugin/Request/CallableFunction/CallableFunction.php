@@ -20,8 +20,17 @@
 
 namespace Jaxon\Plugin\Request\CallableFunction;
 
+use Jaxon\Di\Container;
+
 class CallableFunction
 {
+    /**
+     * The DI container
+     *
+     * @var Container
+     */
+    protected $di;
+
     /**
      * The name of the function in the ajax call
      *
@@ -61,12 +70,14 @@ class CallableFunction
     /**
      * The constructor
      *
+     * @param Container $di
      * @param string $sFunction
      * @param string $sJsFunction
      * @param string $sPhpFunction
      */
-    public function __construct(string $sFunction, string $sJsFunction, string $sPhpFunction)
+    public function __construct(Container $di, string $sFunction, string $sJsFunction, string $sPhpFunction)
     {
+        $this->di = $di;
         $this->sFunction = $sFunction;
         $this->sJsFunction = $sJsFunction;
         $this->xPhpFunction = $sPhpFunction;
@@ -144,7 +155,7 @@ class CallableFunction
         if(is_array($this->xPhpFunction) && is_string($this->xPhpFunction[0]))
         {
             $sClassName = $this->xPhpFunction[0];
-            $this->xPhpFunction[0] = new $sClassName;
+            $this->xPhpFunction[0] = $this->di->h($sClassName) ? $this->di->g($sClassName) : new $sClassName;
         }
         return call_user_func_array($this->xPhpFunction, $aArgs);
     }

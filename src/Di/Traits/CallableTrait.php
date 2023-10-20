@@ -61,7 +61,7 @@ trait CallableTrait
         // Callable function plugin
         $this->set(CallableFunctionPlugin::class, function($c) {
             $sPrefix = $c->g(ConfigManager::class)->getOption('core.prefix.function');
-            return new CallableFunctionPlugin($sPrefix, $c->g(ParameterReader::class),
+            return new CallableFunctionPlugin($sPrefix, $c->g(Container::class), $c->g(ParameterReader::class),
                 $c->g(TemplateEngine::class), $c->g(Translator::class), $c->g(Validator::class));
         });
     }

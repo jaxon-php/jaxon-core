@@ -22,6 +22,7 @@
 namespace Jaxon\Plugin\Request\CallableFunction;
 
 use Jaxon\Jaxon;
+use Jaxon\Di\Container;
 use Jaxon\App\I18n\Translator;
 use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;
@@ -46,6 +47,13 @@ class CallableFunctionPlugin extends RequestPlugin
      * @var string
      */
     private $sPrefix;
+
+    /**
+     * The DI container
+     *
+     * @var Container
+     */
+    protected $di;
 
     /**
      * The parameter reader
@@ -89,15 +97,17 @@ class CallableFunctionPlugin extends RequestPlugin
      * The constructor
      *
      * @param string $sPrefix
+     * @param Container $di
      * @param ParameterReader $xParameterReader
      * @param TemplateEngine $xTemplateEngine
      * @param Translator $xTranslator
      * @param Validator $xValidator
      */
-    public function __construct(string $sPrefix, ParameterReader $xParameterReader,
+    public function __construct(string $sPrefix, Container $di, ParameterReader $xParameterReader,
         TemplateEngine $xTemplateEngine, Translator $xTranslator, Validator $xValidator)
     {
         $this->sPrefix = $sPrefix;
+        $this->di = $di;
         $this->xParameterReader = $xParameterReader;
         $this->xTemplateEngine = $xTemplateEngine;
         $this->xTranslator = $xTranslator;
@@ -175,7 +185,8 @@ class CallableFunctionPlugin extends RequestPlugin
         {
             return null;
         }
-        $xCallable = new CallableFunction($sFunction, $this->sPrefix . $sFunction, $this->aFunctions[$sFunction]);
+        $xCallable = new CallableFunction($this->di, $sFunction,
+            $this->sPrefix . $sFunction, $this->aFunctions[$sFunction]);
         foreach($this->aOptions[$sFunction] as $sName => $sValue)
         {
             $xCallable->configure($sName, $sValue);
