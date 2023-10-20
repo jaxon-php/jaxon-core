@@ -63,21 +63,21 @@ class PluginManager
     /**
      * Request plugins, indexed by name
      *
-     * @var array<CallableRegistryInterface>
+     * @var array<string>
      */
     private $aRegistryPlugins = [];
 
     /**
      * Request handlers, indexed by name
      *
-     * @var array<RequestHandlerInterface>
+     * @var array<string>
      */
     private $aRequestHandlers = [];
 
     /**
      * Response plugins, indexed by name
      *
-     * @var array<ResponsePluginInterface>
+     * @var array<string>
      */
     private $aResponsePlugins = [];
 
