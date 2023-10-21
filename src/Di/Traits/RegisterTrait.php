@@ -110,6 +110,12 @@ trait RegisterTrait
         $sCallableObject = $sClassName . '_CallableObject';
         $sReflectionClass = $sClassName . '_ReflectionClass';
 
+        // Prevent duplication
+        if($this->h($sReflectionClass)) // It's important not to use the class name here.
+        {
+            return;
+        }
+
         // Make sure the registered class exists
         if(isset($aOptions['include']))
         {
@@ -142,10 +148,15 @@ trait RegisterTrait
             return new RequestFactory($sJsClass, $c->g(DialogLibraryManager::class), $c->g(Paginator::class));
         });
 
-        // Register the user class
-        $this->set($sClassName, function($c) use($sClassName, $sReflectionClass) {
-            $xRegisteredObject = $this->make($c->g($sReflectionClass));
-            // Initialize the object
+        // Register the user class, but only if the user already didn't.
+        if(!$this->h($sClassName))
+        {
+            $this->set($sClassName, function($c) use($sReflectionClass) {
+                return $this->make($c->g($sReflectionClass));
+            });
+        }
+        // Initialize the user class instance
+        $this->extend($sClassName, function($xRegisteredObject, $c) use($sClassName) {
             if($xRegisteredObject instanceof CallableClass)
             {
                 // Set the protected attributes of the object
@@ -157,7 +168,7 @@ trait RegisterTrait
                 call_user_func($cSetter->bindTo($xRegisteredObject, $xRegisteredObject), $c, $sClassName);
             }
 
-            // Run the callback for class initialisation
+            // Run the callbacks for class initialisation
             $aCallbacks = $c->g(CallbackManager::class)->getInitCallbacks();
             foreach($aCallbacks as $xCallback)
             {

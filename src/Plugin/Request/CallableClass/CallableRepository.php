@@ -324,10 +324,7 @@ class CallableRepository
         $aCallableObjects = [];
         foreach($this->aClasses as $sClassName => $aOptions)
         {
-            if(!$this->di->h($sClassName))
-            {
-                $this->di->registerCallableClass($sClassName, $aOptions);
-            }
+            $this->di->registerCallableClass($sClassName, $aOptions);
             $aCallableObjects[$sClassName] = $this->di->getCallableObject($sClassName);
         }
         return $aCallableObjects;
