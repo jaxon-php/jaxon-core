@@ -155,7 +155,8 @@ class CallableFunction
         if(is_array($this->xPhpFunction) && is_string($this->xPhpFunction[0]))
         {
             $sClassName = $this->xPhpFunction[0];
-            $this->xPhpFunction[0] = $this->di->h($sClassName) ? $this->di->g($sClassName) : new $sClassName;
+            $this->xPhpFunction[0] = $this->di->h($sClassName) ?
+                $this->di->g($sClassName) : $this->di->make($sClassName);
         }
         return call_user_func_array($this->xPhpFunction, $aArgs);
     }
