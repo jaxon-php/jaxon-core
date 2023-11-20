@@ -102,19 +102,19 @@ class CallTest extends TestCase
     public function testRequestWithJQueryParam()
     {
         $this->assertEquals(
-            "jxnVar1=$('#div').val;Sample.method(jxnVar1)",
+            "Sample.method($('#div').val)",
             rq('Sample')->method(jq('#div')->val)->jsonSerialize()
         );
         $this->assertEquals(
-            "jxnVar1=$('#div').val;Sample.method(jxnVar1, jxnVar1)",
+            "Sample.method($('#div').val, $('#div').val)",
             rq('Sample')->method(jq('#div')->val, jq('#div')->val)->jsonSerialize()
         );
         $this->assertEquals(
-            "jxnVar1=$('#div').val;jxnVar2=$('#div2').val;Sample.method(jxnVar1, jxnVar2, jxnVar1)",
-            rq('Sample')->method(jq('#div')->val, jq('#div2')->val, jq('#div')->val)->jsonSerialize()
+            "Sample.method($('#div1').val, $('#div2').val, $('#div1').val)",
+            rq('Sample')->method(jq('#div1')->val, jq('#div2')->val, jq('#div1')->val)->jsonSerialize()
         );
         $this->assertEquals(
-            "jxnVar1=$('#div1').val;jxnVar2=$('#div2').val;Sample.method(jxnVar1, jxnVar2)",
+            "Sample.method($('#div1').val, $('#div2').val)",
             rq('Sample')->method(jq('#div1')->val, jq('#div2')->val)->jsonSerialize()
         );
     }
@@ -125,11 +125,11 @@ class CallTest extends TestCase
     public function testRequestWithJsEvent()
     {
         $this->assertEquals(
-            "$('.div').click(function(){jxnVar1=$('#div').val;Sample.method(jxnVar1);})",
+            "$('.div').click((e) => {Sample.method($('#div').val);})",
             jq('.div')->click(rq('Sample')->method(jq('#div')->val))->jsonSerialize()
         );
         $this->assertEquals(
-            "$('.div').click(function(){jxnVar1=parseInt($(this).attr('param'));Sample.method(jxnVar1);})",
+            "$('.div').click((e) => {Sample.method(parseInt($(e.currentTarget).attr('param')));})",
             jq('.div')->click(rq('Sample')->method(jq()->attr('param')->toInt()))->jsonSerialize()
         );
     }

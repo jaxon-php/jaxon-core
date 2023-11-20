@@ -91,7 +91,7 @@ class DataBagPlugin extends ResponsePlugin
     public function getReadyScript(): string
     {
         return '
-    jaxon.command.handler.register("bags.set", function(args) {
+    jaxon.command.handler.register("bags.set", (args) => {
         for (const bag in args.data) {
             jaxon.ajax.parameters.bags[bag] = args.data[bag];
         }

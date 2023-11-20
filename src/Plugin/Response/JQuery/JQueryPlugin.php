@@ -67,9 +67,7 @@ class JQueryPlugin extends ResponsePlugin
     public function getReadyScript(): string
     {
         return '
-    jaxon.command.handler.register("jquery", function(args) {
-        jaxon.cmd.script.execute(args);
-    });
+    jaxon.command.handler.register("jquery", (args) => jaxon.cmd.script.execute(args));
 ';
     }
 

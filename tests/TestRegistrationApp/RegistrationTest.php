@@ -18,11 +18,14 @@ use function Jaxon\Dialogs\registerDialogLibraries;
 
 class RegistrationTest extends TestCase
 {
+    private $jsDir = '';
+
     public function setUp(): void
     {
+        $this->jsDir = realpath(__DIR__ . '/../src/js');
         registerDialogLibraries();
-        jaxon()->app()->asset(true, true, 'http://example.test/js', realpath(__DIR__ . '/../src/js'));
         jaxon()->app()->setup(__DIR__ . '/../config/app/app.php');
+        jaxon()->app()->asset(true, true, 'http://example.test/js', $this->jsDir);
     }
 
     /**
@@ -31,10 +34,9 @@ class RegistrationTest extends TestCase
     public function tearDown(): void
     {
         // Delete the generated js files
-        $jsDir = realpath(__DIR__ . '/../src/js');
         $sHash = jaxon()->di()->getCodeGenerator()->getHash();
-        @unlink("$jsDir/$sHash.js");
-        @unlink("$jsDir/$sHash.min.js");
+        @unlink($this->jsDir . "/$sHash.js");
+        @unlink($this->jsDir . "/$sHash.min.js");
 
         jaxon()->reset();
         parent::tearDown();
@@ -47,6 +49,7 @@ class RegistrationTest extends TestCase
     {
         jaxon()->setOption('js.app.minify', true);
         $sScript = jaxon()->getScript();
+        // Check that the return value is a file URI, and not js code.
         $this->assertStringNotContainsString('SamplePackageClass = {}', $sScript);
         $this->assertStringContainsString('http://example.test/js', $sScript);
         $this->assertStringContainsString('.min.js', $sScript);
@@ -59,6 +62,7 @@ class RegistrationTest extends TestCase
     {
         jaxon()->setOption('js.app.minify', false);
         $sScript = jaxon()->getScript();
+        // Check that the return value is a file URI, and not js code.
         $this->assertStringNotContainsString('SamplePackageClass = {}', $sScript);
         $this->assertStringContainsString('http://example.test/js', $sScript);
         $this->assertStringNotContainsString('.min.js', $sScript);
@@ -82,6 +86,7 @@ class RegistrationTest extends TestCase
         // The js file must be generated but not minified.
         jaxon()->setOption('js.app.minify', true);
         $sScript = jaxon()->getScript();
+        // Check that the return value is a file URI, and not js code.
         $this->assertStringNotContainsString('SamplePackageClass = {}', $sScript);
         $this->assertStringContainsString('http://example.test/js', $sScript);
         $this->assertStringNotContainsString('.min.js', $sScript);

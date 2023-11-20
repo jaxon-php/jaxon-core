@@ -386,11 +386,10 @@ class DialogTest extends TestCase
         jaxon()->di()->getRequestHandler()->processRequest();
 
         $aCommands = jaxon()->getResponse()->getCommands();
-        $this->assertCount(3, $aCommands);
-        // The bootbox plugin issues one assign and two script commands.
+        $this->assertCount(2, $aCommands);
+        // The bootbox plugin issues one assign and one script command.
         $this->assertEquals('as', $aCommands[0]['cmd']);
         $this->assertEquals('js', $aCommands[1]['cmd']);
-        $this->assertEquals('js', $aCommands[2]['cmd']);
     }
 
     /**
@@ -415,11 +414,10 @@ class DialogTest extends TestCase
         jaxon()->di()->getRequestHandler()->processRequest();
 
         $aCommands = jaxon()->getResponse()->getCommands();
-        $this->assertCount(3, $aCommands);
-        // The bootbox plugin issues one assign and two script commands.
+        $this->assertCount(2, $aCommands);
+        // The bootbox plugin issues one assign and one script command.
         $this->assertEquals('as', $aCommands[0]['cmd']);
         $this->assertEquals('js', $aCommands[1]['cmd']);
-        $this->assertEquals('js', $aCommands[2]['cmd']);
     }
 
     /**
@@ -458,8 +456,8 @@ class DialogTest extends TestCase
         jaxon()->setOption('dialogs.default.message', 'toastr');
         jaxon()->setOption('dialogs.default.question', 'noty');
         $this->assertEquals(
-            "jaxon.dialogs.noty.confirm('Really?','',function(){Sample.method(jaxon.$('elt_id').innerHTML);}," .
-                "function(){toastr.success('No confirm');})",
+            "jaxon.dialogs.noty.confirm('Really?','',() => {Sample.method(jaxon.$('elt_id').innerHTML);}," .
+                "() => {toastr.success('No confirm');})",
             rq('Sample')->method(pm()->html('elt_id'))->confirm("Really?")
                 ->elseSuccess("No confirm")->getScript()
         );
@@ -474,8 +472,8 @@ class DialogTest extends TestCase
         jaxon()->setOption('dialogs.default.message', 'toastr');
         jaxon()->setOption('dialogs.default.question', 'noty');
         $this->assertEquals(
-            "jaxon.dialogs.noty.confirm('Really?','',function(){Sample.method(jaxon.$('elt_id').innerHTML);}," .
-                "function(){toastr.info('No confirm');})",
+            "jaxon.dialogs.noty.confirm('Really?','',() => {Sample.method(jaxon.$('elt_id').innerHTML);}," .
+                "() => {toastr.info('No confirm');})",
             rq('Sample')->method(pm()->html('elt_id'))->confirm("Really?")
                 ->elseInfo("No confirm")->getScript()
         );
@@ -490,8 +488,8 @@ class DialogTest extends TestCase
         jaxon()->setOption('dialogs.default.message', 'toastr');
         jaxon()->setOption('dialogs.default.question', 'noty');
         $this->assertEquals(
-            "jaxon.dialogs.noty.confirm('Really?','',function(){Sample.method(jaxon.$('elt_id').innerHTML);}," .
-                "function(){toastr.warning('No confirm');})",
+            "jaxon.dialogs.noty.confirm('Really?','',() => {Sample.method(jaxon.$('elt_id').innerHTML);}," .
+                "() => {toastr.warning('No confirm');})",
             rq('Sample')->method(pm()->html('elt_id'))->confirm("Really?")
                 ->elseWarning("No confirm")->getScript()
         );
@@ -506,8 +504,8 @@ class DialogTest extends TestCase
         jaxon()->setOption('dialogs.default.message', 'toastr');
         jaxon()->setOption('dialogs.default.question', 'noty');
         $this->assertEquals(
-            "jaxon.dialogs.noty.confirm('Really?','',function(){Sample.method(jaxon.$('elt_id').innerHTML);}," .
-                "function(){toastr.error('No confirm');})",
+            "jaxon.dialogs.noty.confirm('Really?','',() => {Sample.method(jaxon.$('elt_id').innerHTML);}," .
+                "() => {toastr.error('No confirm');})",
             rq('Sample')->method(pm()->html('elt_id'))->confirm("Really?")
                 ->elseError("No confirm")->getScript()
         );

@@ -79,8 +79,8 @@ class DomSelector implements JsonSerializable, ParameterInterface
     {
         if(!$sPath)
         {
-            // If an empty selector is given, use javascript "this" instead
-            return "$jQueryNs(this)";
+            // If an empty selector is given, use the event target instead
+            return "$jQueryNs(e.currentTarget)";
         }
         if(!$xContext)
         {

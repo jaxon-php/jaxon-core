@@ -116,12 +116,12 @@ class PluginJQueryTest extends TestCase
 
         $this->assertEquals('jquery', $aCommands[0]['plg']);
         $this->assertEquals('jquery', $aCommands[0]['cmd']);
-        $this->assertEquals("$('#path1').click(function(){jxnVar1=$(this).attr('data-value');" .
-            "TestJQuery.html(jxnVar1);})", (string)$aCommands[0]['data']);
+        $this->assertEquals("$('#path1').click((e) => " .
+            "{TestJQuery.html($(e.currentTarget).attr('data-value'));})", (string)$aCommands[0]['data']);
 
         $this->assertEquals('jquery', $aCommands[1]['plg']);
         $this->assertEquals('jquery', $aCommands[1]['cmd']);
-        $this->assertEquals("$('#path1').click(function(){jxnVar1=$('.path', $('#context'));" .
-            "TestJQuery.html(jxnVar1);})", (string)$aCommands[1]['data']);
+        $this->assertEquals("$('#path1').click((e) => " .
+            "{TestJQuery.html($('.path', $('#context')));})", (string)$aCommands[1]['data']);
     }
 }

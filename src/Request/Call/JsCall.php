@@ -123,14 +123,7 @@ class JsCall implements JsonSerializable
     {
         foreach($aParameters as $xParameter)
         {
-            if($xParameter instanceof JsCall)
-            {
-                $this->addParameter(Parameter::JS_VALUE, 'function(){' . $xParameter->getScript() . ';}');
-            }
-            else
-            {
-                $this->pushParameter(Parameter::make($xParameter));
-            }
+            $this->pushParameter(Parameter::make($xParameter));
         }
         return $this;
     }

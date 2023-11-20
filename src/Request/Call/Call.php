@@ -71,36 +71,6 @@ class Call extends JsCall
     }
 
     /**
-     * Make unique js vars for parameters of type DomSelector
-     *
-     * @param ParameterInterface $xParameter
-     *
-     * @return ParameterInterface
-     */
-    private function _makeUniqueJsVar(ParameterInterface $xParameter): ParameterInterface
-    {
-        if($xParameter instanceof DomSelector)
-        {
-            $sParameterStr = $xParameter->getScript();
-            if(!isset($this->aVariables[$sParameterStr]))
-            {
-                // The value is not yet defined. A new variable is created.
-                $sVarName = 'jxnVar' . $this->nVarId;
-                $this->aVariables[$sParameterStr] = $sVarName;
-                $this->sVars .= "$sVarName=$xParameter;";
-                $this->nVarId++;
-            }
-            else
-            {
-                // The value is already defined. The corresponding variable is assigned.
-                $sVarName = $this->aVariables[$sParameterStr];
-            }
-            $xParameter = new Parameter(Parameter::JS_VALUE, $sVarName);
-        }
-        return $xParameter;
-    }
-
-    /**
      * Make a phrase to be displayed in js code
      *
      * @param array $aArgs
@@ -122,12 +92,10 @@ class Call extends JsCall
         $nParamId = 1;
         foreach($aArgs as &$xParameter)
         {
-            $xParameter = $this->_makeUniqueJsVar($xParameter);
             $xParameter = "'$nParamId':" . $xParameter->getScript();
             $nParamId++;
         }
-        $sPhrase .= '.supplant({' . implode(',', $aArgs) . '})';
-        return $sPhrase;
+        return $sPhrase . '.supplant({' . implode(',', $aArgs) . '})';
     }
 
     /**
@@ -154,23 +122,6 @@ class Call extends JsCall
      */
     public function getScript(): string
     {
-        /*
-         * JQuery variables sometimes depend on the context where they are used, eg. when their value depends on $(this).
-         * When a confirmation question is added, the Jaxon calls are made in a different context,
-         * making those variables invalid.
-         * To avoid issues related to these context changes, the JQuery selectors values are first saved into
-         * local variables, which are then used in Jaxon function calls.
-         */
-        $this->sVars = ''; // Javascript code defining all the variables values.
-        $this->nVarId = 1; // Position of the variables, starting from 1.
-        // This array will avoid declaring multiple variables with the same value.
-        // The array key is the variable value, while the array value is the variable name.
-        $this->aVariables = []; // Array of local variables.
-        foreach($this->aParameters as &$xParameter)
-        {
-            $xParameter = $this->_makeUniqueJsVar($xParameter);
-        }
-
         $sMessageScript = $this->makeMessage();
         $sScript = parent::getScript();
         if($this->bConfirm)
@@ -232,28 +183,9 @@ class Call extends JsCall
      * @param integer $nItemsPerPage    The number of items per page
      * @param integer $nItemsTotal    The total number of items
      *
-     * @return array
-     */
-    public function pages(int $nCurrentPage, int $nItemsPerPage, int $nItemsTotal): array
-    {
-        // Append the page number to the parameter list, if not yet given.
-        if(!$this->hasPageNumber())
-        {
-            $this->addParameter(Parameter::PAGE_NUMBER, 0);
-        }
-        return $this->xPaginator->setup($this, $nCurrentPage, $nItemsPerPage, $nItemsTotal)->pages();
-    }
-
-    /**
-     * Make the pagination links for this request
-     *
-     * @param integer $nCurrentPage    The current page
-     * @param integer $nItemsPerPage    The number of items per page
-     * @param integer $nItemsTotal    The total number of items
-     *
      * @return Paginator
      */
-    public function paginate(int $nCurrentPage, int $nItemsPerPage, int $nItemsTotal): Paginator
+    public function pg(int $nCurrentPage, int $nItemsPerPage, int $nItemsTotal): Paginator
     {
         // Append the page number to the parameter list, if not yet given.
         if(!$this->hasPageNumber())
@@ -272,8 +204,22 @@ class Call extends JsCall
      *
      * @return Paginator
      */
-    public function pg(int $nCurrentPage, int $nItemsPerPage, int $nItemsTotal): Paginator
+    public function paginate(int $nCurrentPage, int $nItemsPerPage, int $nItemsTotal): Paginator
     {
-        return $this->paginate($nCurrentPage, $nItemsPerPage, $nItemsTotal);
+        return $this->pg($nCurrentPage, $nItemsPerPage, $nItemsTotal);
+    }
+
+    /**
+     * Make the pagination links for this request
+     *
+     * @param integer $nCurrentPage    The current page
+     * @param integer $nItemsPerPage    The number of items per page
+     * @param integer $nItemsTotal    The total number of items
+     *
+     * @return array
+     */
+    public function pages(int $nCurrentPage, int $nItemsPerPage, int $nItemsTotal): array
+    {
+        return $this->pg($nCurrentPage, $nItemsPerPage, $nItemsTotal)->pages();
     }
 }
