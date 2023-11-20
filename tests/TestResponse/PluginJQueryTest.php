@@ -10,7 +10,6 @@ use Psr\Http\Message\ServerRequestInterface;
 use PHPUnit\Framework\TestCase;
 
 use function Jaxon\jaxon;
-use function Jaxon\jq;
 
 class PluginJQueryTest extends TestCase
 {
@@ -112,7 +111,7 @@ class PluginJQueryTest extends TestCase
         $this->assertTrue(jaxon()->canProcessRequest());
         jaxon()->di()->getRequestHandler()->processRequest();
         $aCommands = jaxon()->getResponse()->getCommands();
-        $this->assertCount(2, $aCommands);
+        $this->assertCount(3, $aCommands);
 
         $this->assertEquals('jquery', $aCommands[0]['plg']);
         $this->assertEquals('jquery', $aCommands[0]['cmd']);
@@ -123,5 +122,9 @@ class PluginJQueryTest extends TestCase
         $this->assertEquals('jquery', $aCommands[1]['cmd']);
         $this->assertEquals("$('#path1').click((e) => " .
             "{TestJQuery.html($('.path', $('#context')));})", (string)$aCommands[1]['data']);
+
+        $this->assertEquals('jquery', $aCommands[2]['plg']);
+        $this->assertEquals('jquery', $aCommands[2]['cmd']);
+        $this->assertEquals("$('#path1').click((e) => {\$('#path2').toggle()})", (string)$aCommands[2]['data']);
     }
 }

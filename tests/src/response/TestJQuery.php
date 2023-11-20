@@ -25,6 +25,8 @@ class TestJQuery extends CallableClass
     {
         $this->response->jq('#path1')->click($this->rq()->html(jq()->attr('data-value')));
         $this->response->jq('#path1')->click($this->rq()->html(jq('.path', '#context')));
+        // The jq('#path2')->toggle() call in the following is a callback.
+        $this->response->jq('#path1')->click(jq('#path2')->toggle());
         return $this->response;
     }
 }
