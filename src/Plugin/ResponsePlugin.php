@@ -25,21 +25,27 @@
 
 namespace Jaxon\Plugin;
 
-use Jaxon\Response\Response;
+use Jaxon\Response\ResponseInterface;
+use Jaxon\Plugin\Response\JQuery\DomSelector;
+use Jaxon\Plugin\Response\DataBag\DataBagContext;
 
+/**
+ * @method DomSelector selector(string $sPath = '', $xContext = null)
+ * @method DataBagContext bag(string $sName)
+ */
 abstract class ResponsePlugin extends Plugin implements ResponsePluginInterface
 {
     /**
      * The object used to build the response that will be sent to the client browser
      *
-     * @var Response
+     * @var ResponseInterface
      */
     protected $xResponse = null;
 
     /**
      * @inheritDoc
      */
-    public function setResponse(Response $xResponse)
+    public function setResponse(ResponseInterface $xResponse)
     {
         $this->xResponse = $xResponse;
     }
@@ -47,7 +53,7 @@ abstract class ResponsePlugin extends Plugin implements ResponsePluginInterface
     /**
      * @inheritDoc
      */
-    public function response(): ?Response
+    public function response(): ?ResponseInterface
     {
         return $this->xResponse;
     }

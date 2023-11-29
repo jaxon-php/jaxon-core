@@ -38,7 +38,7 @@ use Jaxon\Plugin\Response\JQuery\JQueryPlugin;
 use Jaxon\Plugin\ResponsePlugin;
 use Jaxon\Plugin\ResponsePluginInterface;
 use Jaxon\Request\Handler\ParameterReader;
-use Jaxon\Response\Response;
+use Jaxon\Response\ResponseInterface;
 
 use function class_implements;
 use function in_array;
@@ -98,7 +98,7 @@ class PluginManager
     /**
      * Get the request plugins
      *
-     * @return array<RequestPlugin>
+     * @return array<string>
      */
     public function getRequestHandlers(): array
     {
@@ -163,11 +163,11 @@ class PluginManager
      * Find the specified response plugin by name and return a reference to it if one exists
      *
      * @param string $sName    The name of the plugin
-     * @param Response|null $xResponse    The response to attach the plugin to
+     * @param ResponseInterface|null $xResponse    The response to attach the plugin to
      *
      * @return ResponsePlugin|null
      */
-    public function getResponsePlugin(string $sName, ?Response $xResponse = null): ?ResponsePlugin
+    public function getResponsePlugin(string $sName, ?ResponseInterface $xResponse = null): ?ResponsePlugin
     {
         if(!isset($this->aResponsePlugins[$sName]))
         {

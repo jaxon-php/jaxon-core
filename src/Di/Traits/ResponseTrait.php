@@ -8,6 +8,7 @@ use Jaxon\Di\Container;
 use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Response\Manager\ResponseManager;
 use Jaxon\Response\Response;
+use Jaxon\Response\ResponseInterface;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -47,9 +48,9 @@ trait ResponseTrait
     /**
      * Get the global Response object
      *
-     * @return Response
+     * @return ResponseInterface
      */
-    public function getResponse(): Response
+    public function getResponse(): ResponseInterface
     {
         return $this->g(Response::class);
     }
@@ -57,9 +58,9 @@ trait ResponseTrait
     /**
      * Create a new Jaxon response object
      *
-     * @return Response
+     * @return ResponseInterface
      */
-    public function newResponse(): Response
+    public function newResponse(): ResponseInterface
     {
         return new Response($this->g(PluginManager::class),
             $this->g(Psr17Factory::class), $this->g(ServerRequestInterface::class));

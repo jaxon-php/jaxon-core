@@ -41,7 +41,6 @@ use Jaxon\Request\Call\Paginator;
 use Jaxon\Request\Factory\Psr\PsrFactory;
 use Jaxon\Request\Upload\UploadHandlerInterface;
 use Jaxon\Response\Manager\ResponseManager;
-use Jaxon\Response\Response;
 use Jaxon\Response\ResponseInterface;
 use Jaxon\Utils\Template\TemplateEngine;
 
@@ -141,9 +140,9 @@ class Ajax
     /**
      * Create a new Jaxon response object
      *
-     * @return Response
+     * @return ResponseInterface
      */
-    public function newResponse(): Response
+    public function newResponse(): ResponseInterface
     {
         return $this->di()->newResponse();
     }

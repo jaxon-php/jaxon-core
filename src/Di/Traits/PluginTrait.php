@@ -36,8 +36,9 @@ trait PluginTrait
         });
         // Package manager
         $this->set(PackageManager::class, function($c) {
-            return new PackageManager($c->g(Container::class), $c->g(PluginManager::class), $c->g(ConfigManager::class),
-                $c->g(CodeGenerator::class), $c->g(ViewRenderer::class), $c->g(Translator::class));
+            return new PackageManager($c->g(Container::class), $c->g(PluginManager::class),
+                $c->g(ConfigManager::class), $c->g(CodeGenerator::class),
+                $c->g(ViewRenderer::class), $c->g(Translator::class));
         });
         // Code Generation
         $this->set(MinifierInterface::class, function() {

@@ -145,7 +145,7 @@ class Response implements ResponseInterface
      */
     public function bag(string $sName): DataBagContext
     {
-        return $this->plugin('bags')->bag($sName);;
+        return $this->plugin('bags')->bag($sName);
     }
 
     /**
@@ -154,9 +154,9 @@ class Response implements ResponseInterface
      * @param array $aAttributes    Associative array of attributes that will describe the command
      * @param mixed $mData    The data to be associated with this command
      *
-     * @return Response
+     * @return ResponseInterface
      */
-    public function addCommand(array $aAttributes, $mData): Response
+    public function addCommand(array $aAttributes, $mData): ResponseInterface
     {
         $aAttributes = array_map(function($xAttribute) {
             return is_integer($xAttribute) ? $xAttribute : trim((string)$xAttribute, " \t");
@@ -174,9 +174,10 @@ class Response implements ResponseInterface
      * @param mixed $mData    The data to be associated with this command
      * @param bool $bRemoveEmpty    If true, remove empty attributes
      *
-     * @return Response
+     * @return ResponseInterface
      */
-    protected function _addCommand(string $sName, array $aAttributes, $mData, bool $bRemoveEmpty = false): Response
+    protected function _addCommand(string $sName, array $aAttributes,
+        $mData, bool $bRemoveEmpty = false): ResponseInterface
     {
         $mData = is_array($mData) ? array_map(function($sData) {
             return trim((string)$sData, " \t\n");
@@ -198,9 +199,9 @@ class Response implements ResponseInterface
      * @param array $aAttributes    The attributes for this response command
      * @param mixed $mData    The data to be sent with this command
      *
-     * @return Response
+     * @return ResponseInterface
      */
-    public function addPluginCommand(ResponsePlugin $xPlugin, array $aAttributes, $mData): Response
+    public function addPluginCommand(ResponsePlugin $xPlugin, array $aAttributes, $mData): ResponseInterface
     {
         $aAttributes['plg'] = $xPlugin->getName();
         return $this->addCommand($aAttributes, $mData);

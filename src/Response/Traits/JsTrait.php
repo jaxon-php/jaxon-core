@@ -11,10 +11,7 @@
 namespace Jaxon\Response\Traits;
 
 use Jaxon\Response\ResponseInterface;
-use Jaxon\Response\Response;
-use Jaxon\Exception\RequestException;
 
-use function call_user_func;
 use function func_get_args;
 use function array_shift;
 
@@ -26,9 +23,9 @@ trait JsTrait
      * @param array $aAttributes    Associative array of attributes that will describe the command
      * @param mixed $mData    The data to be associated with this command
      *
-     * @return Response
+     * @return ResponseInterface
      */
-    abstract public function addCommand(array $aAttributes, $mData): Response;
+    abstract public function addCommand(array $aAttributes, $mData): ResponseInterface;
 
     /**
      * Add a response command to the array of commands that will be sent to the browser
@@ -38,9 +35,9 @@ trait JsTrait
      * @param mixed $mData    The data to be associated with this command
      * @param bool $bRemoveEmpty    If true, remove empty attributes
      *
-     * @return Response
+     * @return ResponseInterface
      */
-    abstract protected function _addCommand(string $sName, array $aAttributes, $mData, bool $bRemoveEmpty = false): Response;
+    abstract protected function _addCommand(string $sName, array $aAttributes, $mData, bool $bRemoveEmpty = false): ResponseInterface;
 
     /**
      * Response command that prompts user with [ok] [cancel] style message box
@@ -51,9 +48,9 @@ trait JsTrait
      * @param integer $nCommandCount    The number of commands to skip upon cancel
      * @param string $sMessage    The message to display to the user
      *
-     * @return Response
+     * @return ResponseInterface
      */
-    public function confirmCommands(int $nCommandCount, string $sMessage): Response
+    public function confirmCommands(int $nCommandCount, string $sMessage): ResponseInterface
     {
         $aAttributes = ['count' => $nCommandCount];
         return $this->_addCommand('cc', $aAttributes, $sMessage);
@@ -64,9 +61,9 @@ trait JsTrait
      *
      * @param string $sMessage    The message to be displayed
      *
-     * @return Response
+     * @return ResponseInterface
      */
-    public function alert(string $sMessage): Response
+    public function alert(string $sMessage): ResponseInterface
     {
         return $this->_addCommand('al', [], $sMessage);
     }
@@ -89,9 +86,9 @@ trait JsTrait
      * @param string $sURL    The relative or fully qualified URL
      * @param integer $nDelay    Number of seconds to delay before the redirect occurs
      *
-     * @return Response
+     * @return ResponseInterface
      */
-    public function redirect(string $sURL, int $nDelay = 0): Response
+    public function redirect(string $sURL, int $nDelay = 0): ResponseInterface
     {
         $sURL = $this->xPluginManager->getParameterReader()->parseUrl($sURL);
         if($nDelay <= 0)
@@ -112,9 +109,9 @@ trait JsTrait
      *
      * @param string $sJS    The script to execute
      *
-     * @return Response
+     * @return ResponseInterface
      */
-    public function script(string $sJS): Response
+    public function script(string $sJS): ResponseInterface
     {
         return $this->_addCommand('js', [], $sJS);
     }
@@ -124,9 +121,9 @@ trait JsTrait
      *
      * @param string $sFunc    The name of the function to call
      *
-     * @return Response
+     * @return ResponseInterface
      */
-    public function call(string $sFunc): Response
+    public function call(string $sFunc): ResponseInterface
     {
         $aArgs = func_get_args();
         array_shift($aArgs);
@@ -141,9 +138,9 @@ trait JsTrait
      * @param string $sEvent    The name of the event
      * @param string $sScript    The javascript to execute when the event is fired
      *
-     * @return Response
+     * @return ResponseInterface
      */
-    public function setEvent(string $sTarget, string $sEvent, string $sScript): Response
+    public function setEvent(string $sTarget, string $sEvent, string $sScript): ResponseInterface
     {
         $aAttributes = ['id' => $sTarget, 'prop' => $sEvent];
         return $this->_addCommand('ev', $aAttributes, $sScript);
@@ -155,9 +152,9 @@ trait JsTrait
      * @param string $sTarget    The id of the element that contains the event
      * @param string $sScript    The javascript to execute when the event is fired
      *
-     * @return Response
+     * @return ResponseInterface
      */
-    public function onClick(string $sTarget, string $sScript): Response
+    public function onClick(string $sTarget, string $sScript): ResponseInterface
     {
         return $this->setEvent($sTarget, 'onclick', $sScript);
     }
@@ -171,9 +168,9 @@ trait JsTrait
      * @param string $sEvent    The name of the event
      * @param string $sHandler    The name of the javascript function to call when the event is fired
      *
-     * @return Response
+     * @return ResponseInterface
      */
-    public function addHandler(string $sTarget, string $sEvent, string $sHandler): Response
+    public function addHandler(string $sTarget, string $sEvent, string $sHandler): ResponseInterface
     {
         $aAttributes = ['id' => $sTarget, 'prop' => $sEvent];
         return $this->_addCommand('ah', $aAttributes, $sHandler);
@@ -186,9 +183,9 @@ trait JsTrait
      * @param string $sEvent    The name of the event
      * @param string $sHandler    The name of the javascript function called when the event is fired
      *
-     * @return Response
+     * @return ResponseInterface
      */
-    public function removeHandler(string $sTarget, string $sEvent, string $sHandler): Response
+    public function removeHandler(string $sTarget, string $sEvent, string $sHandler): ResponseInterface
     {
         $aAttributes = ['id' => $sTarget, 'prop' => $sEvent];
         return $this->_addCommand('rh', $aAttributes, $sHandler);
@@ -201,9 +198,9 @@ trait JsTrait
      * @param string $sArgs    Comma separated list of parameter names
      * @param string $sScript    The javascript code that will become the body of the function
      *
-     * @return Response
+     * @return ResponseInterface
      */
-    public function setFunction(string $sFunction, string $sArgs, string $sScript): Response
+    public function setFunction(string $sFunction, string $sArgs, string $sScript): ResponseInterface
     {
         $aAttributes = ['func' => $sFunction, 'prop' => $sArgs];
         return $this->_addCommand('sf', $aAttributes, $sScript);
@@ -222,9 +219,9 @@ trait JsTrait
      * @param string $sReturnValueVar    The name of the variable that will retain the return value
      *                                             from the call to the original function
      *
-     * @return Response
+     * @return ResponseInterface
      */
-    public function wrapFunction(string $sFunction, string $sArgs, array $aScripts, string $sReturnValueVar): Response
+    public function wrapFunction(string $sFunction, string $sArgs, array $aScripts, string $sReturnValueVar): ResponseInterface
     {
         $aAttributes = ['cmd' => 'wpf', 'func' => $sFunction, 'prop' => $sArgs, 'type' => $sReturnValueVar];
         return $this->addCommand($aAttributes, $aScripts);
@@ -238,9 +235,9 @@ trait JsTrait
      * @param string $sType    Determines the script type. Defaults to 'text/javascript'
      * @param string $sId    The wrapper id
      *
-     * @return Response
+     * @return ResponseInterface
      */
-    private function _includeScript(bool $bIncludeOnce, string $sFileName, string $sType, string $sId): Response
+    private function _includeScript(bool $bIncludeOnce, string $sFileName, string $sType, string $sId): ResponseInterface
     {
         $aAttributes = ['type' => $sType, 'elm_id' => $sId];
         return $this->_addCommand(($bIncludeOnce ? 'ino' : 'in'), $aAttributes, $sFileName, true);
@@ -253,9 +250,9 @@ trait JsTrait
      * @param string $sType    Determines the script type. Defaults to 'text/javascript'
      * @param string $sId    The wrapper id
      *
-     * @return Response
+     * @return ResponseInterface
      */
-    public function includeScript(string $sFileName, string $sType = '', string $sId = ''): Response
+    public function includeScript(string $sFileName, string $sType = '', string $sId = ''): ResponseInterface
     {
         return $this->_includeScript(false, $sFileName, $sType, $sId);
     }
@@ -267,9 +264,9 @@ trait JsTrait
      * @param string $sType    Determines the script type. Defaults to 'text/javascript'
      * @param string $sId    The wrapper id
      *
-     * @return Response
+     * @return ResponseInterface
      */
-    public function includeScriptOnce(string $sFileName, string $sType = '', string $sId = ''): Response
+    public function includeScriptOnce(string $sFileName, string $sType = '', string $sId = ''): ResponseInterface
     {
         return $this->_includeScript(true, $sFileName, $sType, $sId);
     }
@@ -282,9 +279,9 @@ trait JsTrait
      * @param string $sFileName    The relative or fully qualified URI of the javascript file
      * @param string $sUnload    Name of a javascript function to call prior to unlaoding the file
      *
-     * @return Response
+     * @return ResponseInterface
      */
-    public function removeScript(string $sFileName, string $sUnload = ''): Response
+    public function removeScript(string $sFileName, string $sUnload = ''): ResponseInterface
     {
         $aAttributes = ['unld' => $sUnload];
         return $this->_addCommand('rjs', $aAttributes, $sFileName, true);
@@ -298,9 +295,9 @@ trait JsTrait
      * @param string $sFileName    The relative or fully qualified URI of the css file
      * @param string $sMedia    The media type of the CSS file. Defaults to 'screen'
      *
-     * @return Response
+     * @return ResponseInterface
      */
-    public function includeCSS(string $sFileName, string $sMedia = ''): Response
+    public function includeCSS(string $sFileName, string $sMedia = ''): ResponseInterface
     {
         $aAttributes = ['media' => $sMedia];
         return $this->_addCommand('css', $aAttributes, $sFileName, true);
@@ -314,9 +311,9 @@ trait JsTrait
      * @param string $sFileName The relative or fully qualified URI of the css file
      * @param string $sMedia
      *
-     * @return Response
+     * @return ResponseInterface
      */
-    public function removeCSS(string $sFileName, string $sMedia = ''): Response
+    public function removeCSS(string $sFileName, string $sMedia = ''): ResponseInterface
     {
         $aAttributes = ['media' => $sMedia];
         return $this->_addCommand('rcss', $aAttributes, $sFileName, true);
@@ -335,9 +332,9 @@ trait JsTrait
      * @param integer $nTimeout    The number of 1/10ths of a second to pause before timing out
      *                                             and continuing with the execution of the response commands
      *
-     * @return Response
+     * @return ResponseInterface
      */
-    public function waitForCSS(int $nTimeout = 600): Response
+    public function waitForCSS(int $nTimeout = 600): ResponseInterface
     {
         $aAttributes = ['cmd' => 'wcss', 'prop' => $nTimeout];
         return $this->addCommand($aAttributes, '');
@@ -354,9 +351,9 @@ trait JsTrait
      * @param integer $tenths    The number of 1/10ths of a second to wait before timing out
      *                                             and continuing with the execution of the response commands.
      *
-     * @return Response
+     * @return ResponseInterface
      */
-    public function waitFor(string $script, int $tenths): Response
+    public function waitFor(string $script, int $tenths): ResponseInterface
     {
         $aAttributes = ['cmd' => 'wf', 'prop' => $tenths];
         return $this->addCommand($aAttributes, $script);
@@ -370,9 +367,9 @@ trait JsTrait
      *
      * @param integer $tenths    The number of 1/10ths of a second to sleep
      *
-     * @return Response
+     * @return ResponseInterface
      */
-    public function sleep(int $tenths): Response
+    public function sleep(int $tenths): ResponseInterface
     {
         $aAttributes = ['cmd' =>'s', 'prop' => $tenths];
         return $this->addCommand($aAttributes, '');

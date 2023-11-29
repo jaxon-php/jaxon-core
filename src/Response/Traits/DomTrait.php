@@ -10,7 +10,7 @@
 
 namespace Jaxon\Response\Traits;
 
-use Jaxon\Response\Response;
+use Jaxon\Response\ResponseInterface;
 
 trait DomTrait
 {
@@ -22,9 +22,10 @@ trait DomTrait
      * @param mixed $mData    The data to be associated with this command
      * @param bool $bRemoveEmpty    If true, remove empty attributes
      *
-     * @return Response
+     * @return ResponseInterface
      */
-    abstract protected function _addCommand(string $sName, array $aAttributes, $mData, bool $bRemoveEmpty = false): Response;
+    abstract protected function _addCommand(string $sName, array $aAttributes,
+        $mData, bool $bRemoveEmpty = false): ResponseInterface;
 
     /**
      * Add a command to assign the specified value to the given element's attribute
@@ -33,9 +34,9 @@ trait DomTrait
      * @param string $sAttribute    The attribute to be assigned
      * @param string $sData    The value to be assigned to the attribute
      *
-     * @return Response
+     * @return ResponseInterface
      */
-    public function assign(string $sTarget, string $sAttribute, string $sData): Response
+    public function assign(string $sTarget, string $sAttribute, string $sData): ResponseInterface
     {
         $aAttributes = ['id' => $sTarget, 'prop' => $sAttribute];
         return $this->_addCommand('as', $aAttributes, $sData);
@@ -49,9 +50,9 @@ trait DomTrait
      * @param string $sTarget    The id of the html element on the browser
      * @param string $sData    The value to be assigned to the attribute
      *
-     * @return Response
+     * @return ResponseInterface
      */
-    public function html(string $sTarget, string $sData): Response
+    public function html(string $sTarget, string $sData): ResponseInterface
     {
         return $this->assign($sTarget, 'innerHTML', $sData);
     }
@@ -63,9 +64,9 @@ trait DomTrait
      * @param string $sAttribute    The name of the attribute to be appended to
      * @param string $sData    The data to be appended to the attribute
      *
-     * @return Response
+     * @return ResponseInterface
      */
-    public function append(string $sTarget, string $sAttribute, string $sData): Response
+    public function append(string $sTarget, string $sAttribute, string $sData): ResponseInterface
     {
         $aAttributes = ['id' => $sTarget, 'prop' => $sAttribute];
         return $this->_addCommand('ap', $aAttributes, $sData);
@@ -78,9 +79,9 @@ trait DomTrait
      * @param string $sAttribute    The name of the attribute to be prepended to
      * @param string $sData    The value to be prepended to the attribute
      *
-     * @return Response
+     * @return ResponseInterface
      */
-    public function prepend(string $sTarget, string $sAttribute, string $sData): Response
+    public function prepend(string $sTarget, string $sAttribute, string $sData): ResponseInterface
     {
         $aAttributes = ['id' => $sTarget, 'prop' => $sAttribute];
         return $this->_addCommand('pp', $aAttributes, $sData);
@@ -94,9 +95,9 @@ trait DomTrait
      * @param string $sSearch    The needle to search for
      * @param string $sData    The data to use in place of the needle
      *
-     * @return Response
+     * @return ResponseInterface
      */
-    public function replace(string $sTarget, string $sAttribute, string $sSearch, string $sData): Response
+    public function replace(string $sTarget, string $sAttribute, string $sSearch, string $sData): ResponseInterface
     {
         $aAttributes = ['id' => $sTarget, 'prop' => $sAttribute];
         $aData = ['s' => $sSearch, 'r' => $sData];
@@ -109,9 +110,9 @@ trait DomTrait
      * @param string $sTarget    The id of the element to be updated.
      * @param string $sAttribute    The attribute to be cleared
      *
-     * @return Response
+     * @return ResponseInterface
      */
-    public function clear(string $sTarget, string $sAttribute = 'innerHTML'): Response
+    public function clear(string $sTarget, string $sAttribute = 'innerHTML'): ResponseInterface
     {
         return $this->assign($sTarget, $sAttribute, '');
     }
@@ -125,9 +126,9 @@ trait DomTrait
      * @param string $sAttribute    The attribute to be updated
      * @param string $sData    The value to assign
      *
-     * @return Response
+     * @return ResponseInterface
      */
-    public function contextAssign(string $sAttribute, string $sData): Response
+    public function contextAssign(string $sAttribute, string $sData): ResponseInterface
     {
         $aAttributes = ['prop' => $sAttribute];
         return $this->_addCommand('c:as', $aAttributes, $sData);
@@ -142,9 +143,9 @@ trait DomTrait
      * @param string $sAttribute    The attribute to be appended to
      * @param string $sData    The value to append
      *
-     * @return Response
+     * @return ResponseInterface
      */
-    public function contextAppend(string $sAttribute, string $sData): Response
+    public function contextAppend(string $sAttribute, string $sData): ResponseInterface
     {
         $aAttributes = ['prop' => $sAttribute];
         return $this->_addCommand('c:ap', $aAttributes, $sData);
@@ -159,9 +160,9 @@ trait DomTrait
      * @param string $sAttribute    The attribute to be updated
      * @param string $sData    The value to be prepended
      *
-     * @return Response
+     * @return ResponseInterface
      */
-    public function contextPrepend(string $sAttribute, string $sData): Response
+    public function contextPrepend(string $sAttribute, string $sData): ResponseInterface
     {
         $aAttributes = ['prop' => $sAttribute];
         return $this->_addCommand('c:pp', $aAttributes, $sData);
@@ -175,9 +176,9 @@ trait DomTrait
      *
      * @param string $sAttribute    The attribute to be cleared
      *
-     * @return Response
+     * @return ResponseInterface
      */
-    public function contextClear(string $sAttribute): Response
+    public function contextClear(string $sAttribute): ResponseInterface
     {
         return $this->contextAssign($sAttribute, '');
     }
@@ -187,9 +188,9 @@ trait DomTrait
      *
      * @param string $sTarget    The id of the element to be removed
      *
-     * @return Response
+     * @return ResponseInterface
      */
-    public function remove(string $sTarget): Response
+    public function remove(string $sTarget): ResponseInterface
     {
         $aAttributes = ['id' => $sTarget];
         return $this->_addCommand('rm', $aAttributes, '');
@@ -202,9 +203,9 @@ trait DomTrait
      * @param string $sTag    The tag name to be used for the new element
      * @param string $sId    The id to assign to the new element
      *
-     * @return Response
+     * @return ResponseInterface
      */
-    public function create(string $sParent, string $sTag, string $sId): Response
+    public function create(string $sParent, string $sTag, string $sId): ResponseInterface
     {
         $aAttributes = ['id' => $sParent, 'prop' => $sId];
         return $this->_addCommand('ce', $aAttributes, $sTag);
@@ -217,9 +218,9 @@ trait DomTrait
      * @param string $sTag    The tag name to be used for the new element
      * @param string $sId    The id to assign to the new element
      *
-     * @return Response
+     * @return ResponseInterface
      */
-    public function insertBefore(string $sBefore, string $sTag, string $sId): Response
+    public function insertBefore(string $sBefore, string $sTag, string $sId): ResponseInterface
     {
         $aAttributes = ['id' => $sBefore, 'prop' => $sId];
         return $this->_addCommand('ie', $aAttributes, $sTag);
@@ -233,9 +234,9 @@ trait DomTrait
      * @param string $sTag    The tag name to be used for the new element
      * @param string $sId    The id to assign to the new element
      *
-     * @return Response
+     * @return ResponseInterface
      */
-    public function insert(string $sBefore, string $sTag, string $sId): Response
+    public function insert(string $sBefore, string $sTag, string $sId): ResponseInterface
     {
         return $this->insertBefore($sBefore, $sTag, $sId);
     }
@@ -247,9 +248,9 @@ trait DomTrait
      * @param string $sTag    The tag name to be used for the new element
      * @param string $sId    The id to assign to the new element
      *
-     * @return Response
+     * @return ResponseInterface
      */
-    public function insertAfter(string $sAfter, string $sTag, string $sId): Response
+    public function insertAfter(string $sAfter, string $sTag, string $sId): ResponseInterface
     {
         $aAttributes = ['id' => $sAfter, 'prop' => $sId];
         return $this->_addCommand('ia', $aAttributes, $sTag);
@@ -263,9 +264,9 @@ trait DomTrait
      * @param string $sName    The name of the new input element
      * @param string $sId    The id of the new element
      *
-     * @return Response
+     * @return ResponseInterface
      */
-    public function createInput(string $sParent, string $sType, string $sName, string $sId): Response
+    public function createInput(string $sParent, string $sType, string $sName, string $sId): ResponseInterface
     {
         $aAttributes = ['id' => $sParent, 'prop' => $sId, 'type' => $sType];
         return $this->_addCommand('ci', $aAttributes, $sName);
@@ -279,9 +280,9 @@ trait DomTrait
      * @param string $sName    The name of the new input element
      * @param string $sId    The id of the new element
      *
-     * @return Response
+     * @return ResponseInterface
      */
-    public function insertInput(string $sBefore, string $sType, string $sName, string $sId): Response
+    public function insertInput(string $sBefore, string $sType, string $sName, string $sId): ResponseInterface
     {
         $aAttributes = ['id' => $sBefore, 'prop' => $sId, 'type' => $sType];
         return $this->_addCommand('ii', $aAttributes, $sName);
@@ -295,9 +296,9 @@ trait DomTrait
      * @param string $sName    The name of the new input element
      * @param string $sId    The id of the new element
      *
-     * @return Response
+     * @return ResponseInterface
      */
-    public function insertInputAfter(string $sAfter, string $sType, string $sName, string $sId): Response
+    public function insertInputAfter(string $sAfter, string $sType, string $sName, string $sId): ResponseInterface
     {
         $aAttributes = ['id' => $sAfter, 'prop' => $sId, 'type' => $sType];
         return $this->_addCommand('iia', $aAttributes, $sName);

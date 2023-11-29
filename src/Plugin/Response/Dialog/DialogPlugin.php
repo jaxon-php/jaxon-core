@@ -20,7 +20,7 @@ use Jaxon\App\Dialog\MessageInterface;
 use Jaxon\App\Dialog\ModalInterface;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\ResponsePlugin;
-use Jaxon\Response\Response;
+use Jaxon\Response\ResponseInterface;
 
 use function array_reduce;
 use function trim;
@@ -74,7 +74,7 @@ class DialogPlugin extends ResponsePlugin implements ModalInterface, MessageInte
     /**
      * @inheritDoc
      */
-    public function setResponse(Response $xResponse)
+    public function setResponse(ResponseInterface $xResponse)
     {
         parent::setResponse($xResponse);
 
