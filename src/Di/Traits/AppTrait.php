@@ -19,6 +19,11 @@ use Jaxon\Utils\Config\ConfigReader;
 trait AppTrait
 {
     /**
+     * @var string
+     */
+    private $sJsLibVersion = 'jaxon_javascript_library_version';
+
+    /**
      * The default config options
      *
      * @var array
@@ -118,6 +123,13 @@ trait AppTrait
             return new Bootstrap($c->g(ConfigManager::class), $c->g(PackageManager::class),
                 $c->g(CallbackManager::class), $c->g(ViewRenderer::class));
         });
+        // The javascript library version
+        $this->set($this->sJsLibVersion, function($c) {
+            $xRequest = $c->getRequest();
+            $aParams = $xRequest->getMethod() === 'POST' ?
+                $xRequest->getParsedBody() : $xRequest->getQueryParams();
+            return $aParams['jxnv'] ?? '3.3.0';
+        });
     }
 
     /**
@@ -138,5 +150,15 @@ trait AppTrait
     public function getBootstrap(): Bootstrap
     {
         return $this->g(Bootstrap::class);
+    }
+
+    /**
+     * Get the javascript library version
+     *
+     * @return string
+     */
+    public function getJsLibVersion(): string
+    {
+        return $this->g($this->sJsLibVersion);
     }
 }
