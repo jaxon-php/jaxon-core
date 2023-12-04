@@ -88,7 +88,7 @@ class Response implements ResponseInterface
     {
         if($this->getCommandCount() === 0)
         {
-            return '';
+            return '{}';
         }
         return json_encode(['jxnobj' => $this->aCommands]);
     }
@@ -156,14 +156,28 @@ class Response implements ResponseInterface
      *
      * @return ResponseInterface
      */
+    public function addRawCommand(array $aAttributes, $mData): ResponseInterface
+    {
+        $aAttributes['data'] = $mData;
+        $this->aCommands[] = $aAttributes;
+        return $this;
+    }
+
+    /**
+     * Add a response command to the array of commands that will be sent to the browser
+     * Convert all attributes, excepted integers, to string.
+     *
+     * @param array $aAttributes    Associative array of attributes that will describe the command
+     * @param mixed $mData    The data to be associated with this command
+     *
+     * @return ResponseInterface
+     */
     public function addCommand(array $aAttributes, $mData): ResponseInterface
     {
         $aAttributes = array_map(function($xAttribute) {
             return is_integer($xAttribute) ? $xAttribute : trim((string)$xAttribute, " \t");
         }, $aAttributes);
-        $aAttributes['data'] = $mData;
-        $this->aCommands[] = $aAttributes;
-        return $this;
+        return $this->addRawCommand($aAttributes, $mData);
     }
 
     /**

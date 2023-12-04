@@ -37,7 +37,8 @@ trait JsTrait
      *
      * @return ResponseInterface
      */
-    abstract protected function _addCommand(string $sName, array $aAttributes, $mData, bool $bRemoveEmpty = false): ResponseInterface;
+    abstract protected function _addCommand(string $sName, array $aAttributes,
+        $mData, bool $bRemoveEmpty = false): ResponseInterface;
 
     /**
      * Response command that prompts user with [ok] [cancel] style message box
@@ -91,12 +92,7 @@ trait JsTrait
     public function redirect(string $sURL, int $nDelay = 0): ResponseInterface
     {
         $sURL = $this->xPluginManager->getParameterReader()->parseUrl($sURL);
-        if($nDelay <= 0)
-        {
-            return $this->script("window.location = '$sURL';");
-        }
-        $nDelay *= 1000;
-        return $this->script("window.setTimeout(function() { window.location = '$sURL'; }, $nDelay);");
+        return $this->_addCommand('rd', ['delay' => $nDelay], $sURL);
     }
 
     /**

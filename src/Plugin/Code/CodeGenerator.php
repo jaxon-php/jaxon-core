@@ -227,6 +227,23 @@ class CodeGenerator
         // These three parts are always rendered together
         $this->sJsScript = trim($sJsConfigVars) . "\n\n" .
             trim($this->sJsScript) . "\n\n" . trim($this->sJsReadyScript);
+        // For js lib versions prior to 4.0, register the redirect command.
+        $sJsLibVersion = $this->di->getJsLibVersion();
+        if((int)$sJsLibVersion[0] < 4)
+        {
+            $this->sJsScript .= '
+
+    jaxon.command.handler.register("rd", (command) => {
+        const { data: sUrl, delay: nDelay } = command;
+        if (nDelay <= 0) {
+            window.location = sUrl;
+            return true;
+        }
+        window.setTimeout(() => window.location = sUrl, nDelay * 1000);
+        return true;
+    });
+';
+        }
 
         // The codes are already generated.
         $this->bGenerated = true;
