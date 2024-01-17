@@ -38,29 +38,26 @@ class CallableClass
     /**
      * Get an instance of a Jaxon class by name
      *
-     * @param string $sName the class name
+     * @param string $sClassName the class name
      *
-     * @return object|null
+     * @return mixed
      * @throws SetupException
      */
-    public function cl(string $sName)
+    public function cl(string $sClassName)
     {
-        $xCallableClass = $this->xCallableClassHelper->xCallableRegistry->getCallableObject($sName);
-        if($xCallableClass === null)
-        {
-            return null;
-        }
-        return $xCallableClass->getRegisteredObject();
+        return $this->xCallableClassHelper->cl($sClassName);
     }
 
     /**
      * Get the request factory.
      *
+     * @param string $sClassName
+     *
      * @return RequestFactory
      */
-    public function rq(): RequestFactory
+    public function rq(string $sClassName = ''): RequestFactory
     {
-        return $this->xCallableClassHelper->xRequestFactory;
+        return $this->xCallableClassHelper->rq($sClassName);
     }
 
     /**
@@ -119,12 +116,12 @@ class CallableClass
     /**
      * Get a data bag.
      *
-     * @param string  $sName
+     * @param string  $sBagName
      *
      * @return DataBagContext
      */
-    public function bag(string $sName): DataBagContext
+    public function bag(string $sBagName): DataBagContext
     {
-        return $this->response->bag($sName);
+        return $this->response->bag($sBagName);
     }
 }

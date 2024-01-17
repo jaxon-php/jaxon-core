@@ -20,6 +20,7 @@ use Jaxon\Di\Container;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Plugin\Package;
+use Jaxon\Plugin\Request\CallableClass\CallableRegistry;
 use Jaxon\Plugin\ResponsePlugin;
 use Jaxon\Request\Factory\Factory;
 use Jaxon\Request\Factory\RequestFactory;
@@ -51,6 +52,11 @@ trait AjaxTrait
      * @var PluginManager
      */
     protected $xPluginManager;
+
+    /**
+     * @var CallableRegistry
+     */
+    protected $xCallableRegistry;
 
     /**
      * @var Translator
@@ -150,7 +156,36 @@ trait AjaxTrait
     }
 
     /**
-     * Get a request to a registered class
+     * Get an instance of a registered class
+     *
+     * @param string $sClassName The class name
+     *
+     * @return mixed
+     * @throws SetupException
+     */
+    public function cl(string $sClassName)
+    {
+        $sClassName = trim($sClassName);
+        $xCallableClass = $this->xCallableRegistry->getCallableObject($sClassName);
+        return !$xCallableClass ? null : $xCallableClass->getRegisteredObject();
+    }
+
+    /**
+     * Get the request factory to a registered class
+     *
+     * @param string $sClassName The class name
+     *
+     * @return RequestFactory|null
+     * @throws SetupException
+     */
+    public function rq(string $sClassName = ''): ?RequestFactory
+    {
+        $sClassName = trim($sClassName);
+        return $this->factory()->request($sClassName);
+    }
+
+    /**
+     * Get the request factory to a registered class
      *
      * @param string $sClassName The class name
      *
@@ -159,7 +194,7 @@ trait AjaxTrait
      */
     public function request(string $sClassName = ''): ?RequestFactory
     {
-        return $this->factory()->request($sClassName);
+        return $this->rq($sClassName);
     }
 
     /**

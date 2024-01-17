@@ -14,18 +14,17 @@
 
 namespace Jaxon\App\Traits;
 
-use Jaxon\App\AppInterface;
 use Jaxon\App\Bootstrap;
 use Jaxon\App\Config\ConfigManager;
 use Jaxon\App\I18n\Translator;
 use Jaxon\Di\Container;
 use Jaxon\Exception\RequestException;
 use Jaxon\Plugin\Manager\PluginManager;
+use Jaxon\Plugin\Request\CallableClass\CallableRegistry;
 use Jaxon\Response\Manager\ResponseManager;
 use Jaxon\Response\ResponseInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
-
 use Closure;
 
 trait AppTrait
@@ -44,6 +43,7 @@ trait AppTrait
         $this->xConfigManager = $xContainer->g(ConfigManager::class);
         $this->xResponseManager = $xContainer->g(ResponseManager::class);
         $this->xPluginManager = $xContainer->g(PluginManager::class);
+        $this->xCallableRegistry = $xContainer->g(CallableRegistry::class);
         $this->xTranslator = $xContainer->g(Translator::class);
     }
 
