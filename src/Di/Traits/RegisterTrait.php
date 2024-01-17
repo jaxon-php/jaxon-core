@@ -11,6 +11,7 @@ use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\AnnotationReaderInterface;
 use Jaxon\Plugin\Request\CallableClass\CallableClassHelper;
 use Jaxon\Plugin\Request\CallableClass\CallableObject;
+use Jaxon\Plugin\Request\CallableClass\CallableRepository;
 use Jaxon\Request\Call\Paginator;
 use Jaxon\Request\Factory\Factory;
 use Jaxon\Request\Factory\RequestFactory;
@@ -20,82 +21,10 @@ use Jaxon\Utils\Config\Config;
 use ReflectionClass;
 use ReflectionException;
 
-use function array_merge;
 use function call_user_func;
-use function explode;
-use function substr;
 
 trait RegisterTrait
 {
-    /**
-     * @param array $aConfigOptions
-     * @param array $aAnnotationOptions
-     *
-     * @return array
-     */
-    private function getCallableObjectOptions(array $aConfigOptions, array $aAnnotationOptions): array
-    {
-        $aOptions = [];
-        foreach($aConfigOptions as $sNames => $aFunctionOptions)
-        {
-            $aFunctionNames = explode(',', $sNames); // Names are in comma-separated list.
-            foreach($aFunctionNames as $sFunctionName)
-            {
-                $aOptions[$sFunctionName] = array_merge($aOptions[$sFunctionName] ?? [], $aFunctionOptions);
-            }
-        }
-        foreach($aAnnotationOptions as $sFunctionName => $aFunctionOptions)
-        {
-            $aOptions[$sFunctionName] = array_merge($aOptions[$sFunctionName] ?? [], $aFunctionOptions);
-        }
-        return $aOptions;
-    }
-
-    /**
-     * @param string $sClassName
-     * @param CallableObject $xCallableObject
-     * @param array $aOptions
-     *
-     * @return void
-     */
-    private function setCallableObjectOptions(string $sClassName, CallableObject $xCallableObject, array $aOptions)
-    {
-        $aProtectedMethods = $this->getCallableRepository()->getProtectedMethods($sClassName);
-        // Annotations options
-        $xAnnotationReader = $this->g(AnnotationReaderInterface::class);
-        $aMethods = $xCallableObject->getPublicMethods($aProtectedMethods);
-        $aProperties = $xCallableObject->getProperties();
-        [$bExcluded, $aAnnotationOptions, $aAnnotationProtected] =
-            $xAnnotationReader->getAttributes($sClassName, $aMethods, $aProperties);
-        if($bExcluded)
-        {
-            $xCallableObject->configure('excluded', true);
-            return;
-        }
-
-        $xCallableObject->configure('separator', $aOptions['separator']);
-        $xCallableObject->configure('protected', array_merge($aOptions['protected'], $aAnnotationProtected));
-
-        // Functions options
-        $aCallableOptions = [];
-        $aOptions = $this->getCallableObjectOptions($aOptions['functions'], $aAnnotationOptions);
-        foreach($aOptions as $sFunctionName => $aFunctionOptions)
-        {
-            foreach($aFunctionOptions as $sOptionName => $xOptionValue)
-            {
-                if(substr($sOptionName, 0, 2) !== '__')
-                {
-                    // Options for javascript code.
-                    $aCallableOptions[$sFunctionName][$sOptionName] = $xOptionValue;
-                    continue;
-                }
-                // Options for PHP classes. They start with "__".
-                $xCallableObject->configure($sOptionName, [$sFunctionName => $xOptionValue]);
-            }
-        }
-        $xCallableObject->setOptions($aCallableOptions);
-    }
-
     /**
      * @param mixed $xRegisteredObject
      * @param array $aDiOptions
@@ -185,10 +114,11 @@ trait RegisterTrait
         }
 
         // Register the callable object
-        $this->set($sCallableObject, function($c) use($sClassName, $sReflectionClass, $aOptions) {
-            $xCallableObject = new CallableObject($this, $c->g($sReflectionClass));
-            $this->setCallableObjectOptions($sClassName, $xCallableObject, $aOptions);
-            return $xCallableObject;
+        $this->set($sCallableObject, function($c) use($sReflectionClass, $sClassName, $aOptions) {
+            $xRepository = $c->g(CallableRepository::class);
+            $aProtectedMethods = $xRepository->getProtectedMethods($sClassName);
+            return new CallableObject($c, $c->g(AnnotationReaderInterface::class),
+                $c->g($sReflectionClass), $aOptions, $aProtectedMethods);
         });
 
         // Register the request factory

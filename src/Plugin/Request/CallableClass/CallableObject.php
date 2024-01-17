@@ -28,6 +28,7 @@ namespace Jaxon\Plugin\Request\CallableClass;
 
 use Jaxon\Di\Container;
 use Jaxon\Exception\SetupException;
+use Jaxon\Plugin\AnnotationReaderInterface;
 use Jaxon\Request\Target;
 use Jaxon\Response\ResponseInterface;
 use ReflectionClass;
@@ -38,7 +39,6 @@ use ReflectionProperty;
 use function array_filter;
 use function array_map;
 use function array_merge;
-use function array_unique;
 use function in_array;
 use function is_array;
 use function is_string;
@@ -61,13 +61,6 @@ class CallableObject
      * @var ReflectionClass
      */
     private $xReflectionClass;
-
-    /**
-     * The callable object options
-     *
-     * @var array
-     */
-    private $aOptions = [];
 
     /**
      * The user registered callable object
@@ -104,23 +97,30 @@ class CallableObject
      * The class constructor
      *
      * @param Container  $di
+     * @param AnnotationReaderInterface $xAnnotationReader
      * @param ReflectionClass $xReflectionClass    The reflection class
+     * @param array $aOptions
+     * @param array $aProtectedMethods
      */
-    public function __construct(Container $di, ReflectionClass $xReflectionClass)
+    public function __construct(Container $di, AnnotationReaderInterface $xAnnotationReader,
+        ReflectionClass $xReflectionClass, array $aOptions, array $aProtectedMethods)
     {
         $this->di = $di;
         $this->xReflectionClass = $xReflectionClass;
         $this->xOptions = new CallableObjectOptions();
-    }
 
-    /**
-     * Get callable object options
-     *
-     * @return array
-     */
-    public function getOptions(): array
-    {
-        return $this->aOptions;
+        $sClassName = $xReflectionClass->getName();
+        $aMethods = $this->getPublicMethods($aProtectedMethods);
+        $aProperties = $this->getProperties();
+        $aAnnotations = $xAnnotationReader->getAttributes($sClassName, $aMethods, $aProperties);
+        [$bExcluded,] = $aAnnotations;
+        if($bExcluded)
+        {
+            $this->configure('excluded', true);
+            return;
+        }
+
+        $this->xOptions->setOptions($aOptions, $aAnnotations);
     }
 
     /**
@@ -131,18 +131,6 @@ class CallableObject
     public function excluded(): bool
     {
         return $this->xOptions->excluded();
-    }
-
-    /**
-     * Set callable object options
-     *
-     * @param array  $aOptions
-     *
-     * @return void
-     */
-    public function setOptions(array $aOptions)
-    {
-        $this->aOptions = $aOptions;
     }
 
     /**
@@ -175,7 +163,7 @@ class CallableObject
      */
     public function configure(string $sName, $xValue)
     {
-        $this->xOptions->addValue($sName, $xValue);
+        $this->xOptions->addOption($sName, $xValue);
     }
 
     /**
@@ -196,6 +184,16 @@ class CallableObject
     {
         $aDiOptions = $this->xOptions->diOptions();
         return $aDiOptions[$sMethodName] ?? [];
+    }
+
+    /**
+     * Get the js options of the callable class
+     *
+     * @return array
+     */
+    public function getOptions(): array
+    {
+        return $this->xOptions->jsOptions();
     }
 
     /**
@@ -233,55 +231,6 @@ class CallableObject
     }
 
     /**
-     * @param array $aCommonOptions
-     * @param array $aMethodOptions
-     * @param string $sMethodName
-     *
-     * @return mixed
-     */
-    private function getOptionValue(array $aCommonOptions, array $aMethodOptions, string $sOptionName)
-    {
-        if(!isset($aCommonOptions[$sOptionName]))
-        {
-            return $aMethodOptions[$sOptionName];
-        }
-        if(!isset($aMethodOptions[$sOptionName]))
-        {
-            return $aCommonOptions[$sOptionName];
-        }
-        // If both are not arrays, return the latest.
-        if(!is_array($aCommonOptions[$sOptionName]) && !is_array($aMethodOptions[$sOptionName]))
-        {
-            return $aMethodOptions[$sOptionName];
-        }
-
-        // Merge the options.
-        $_aCommonOptions = is_array($aCommonOptions[$sOptionName]) ?
-            $aCommonOptions[$sOptionName] : [$aCommonOptions[$sOptionName]];
-        $_aMethodOptions = is_array($aMethodOptions[$sOptionName]) ?
-            $aMethodOptions[$sOptionName] : [$aMethodOptions[$sOptionName]];
-        return array_merge($_aCommonOptions, $_aMethodOptions);
-    }
-
-    /**
-     * @param string $sMethodName
-     *
-     * @return array
-     */
-    private function getMethodOptions(string $sMethodName): array
-    {
-        $aCommonOptions = isset($this->aOptions['*']) ? $this->aOptions['*'] : [];
-        $aMethodOptions = isset($this->aOptions[$sMethodName]) ? $this->aOptions[$sMethodName] : [];
-        $aOptionNames = array_unique(array_merge(array_keys($aCommonOptions), array_keys($aMethodOptions)));
-        $aOptions = [];
-        foreach($aOptionNames as $sOptionName)
-        {
-            $aOptions[$sOptionName] = $this->getOptionValue($aCommonOptions, $aMethodOptions, $sOptionName);
-        }
-        return $aOptions;
-    }
-
-    /**
      * Return a list of methods of the callable object to export to javascript
      *
      * @param array $aProtectedMethods    The protected methods
@@ -298,7 +247,7 @@ class CallableObject
         return array_map(function($sMethodName) use($fConvertOption) {
             return [
                 'name' => $sMethodName,
-                'config' => array_map($fConvertOption, $this->getMethodOptions($sMethodName)),
+                'config' => array_map($fConvertOption, $this->xOptions->getMethodOptions($sMethodName)),
             ];
         }, $this->getPublicMethods($aProtectedMethods));
     }

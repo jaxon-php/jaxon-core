@@ -14,6 +14,12 @@
 
 namespace Jaxon\Plugin\Request\CallableClass;
 
+use function array_merge;
+use function array_unique;
+use function is_array;
+use function is_string;
+use function substr;
+
 class CallableObjectOptions
 {
     /**
@@ -50,6 +56,13 @@ class CallableObjectOptions
      * @var array
      */
     private $aAfterMethods = [];
+
+    /**
+     * The javascript class options
+     *
+     * @var array
+     */
+    private $aJsOptions = [];
 
     /**
      * The DI options
@@ -89,7 +102,7 @@ class CallableObjectOptions
      */
     public function beforeMethods(): array
     {
-        return $this->aProtectedMethods;
+        return $this->aBeforeMethods;
     }
 
     /**
@@ -97,7 +110,7 @@ class CallableObjectOptions
      */
     public function afterMethods(): array
     {
-        return $this->aProtectedMethods;
+        return $this->aAfterMethods;
     }
 
     /**
@@ -106,6 +119,14 @@ class CallableObjectOptions
     public function diOptions(): array
     {
         return $this->aDiOptions;
+    }
+
+    /**
+     * @return array
+     */
+    public function jsOptions(): array
+    {
+        return $this->aJsOptions;
     }
 
     /**
@@ -131,6 +152,9 @@ class CallableObjectOptions
         }
     }
 
+    /**
+     * @param array $aDiOptions
+     */
     private function addDiOption(array $aDiOptions)
     {
         $this->aDiOptions = array_merge($this->aDiOptions, $aDiOptions);
@@ -144,7 +168,7 @@ class CallableObjectOptions
      *
      * @return void
      */
-    public function addValue(string $sName, $xValue)
+    public function addOption(string $sName, $xValue)
     {
         switch($sName)
         {
@@ -180,5 +204,126 @@ class CallableObjectOptions
         default:
             break;
         }
+    }
+
+    /**
+     * @param string $sFunctionName
+     * @param string $sOptionName
+     * @param mixed $xOptionValue
+     *
+     * @return void
+     */
+    private function _addJsArrayOption(string $sFunctionName, string $sOptionName, $xOptionValue)
+    {
+        if(is_string($xOptionValue))
+        {
+            $xOptionValue = [$xOptionValue];
+        }
+        if(!is_array($xOptionValue))
+        {
+            return; // Do not save.
+        }
+        $aOptions = $this->aJsOptions[$sFunctionName][$sOptionName] ?? [];
+        $this->aJsOptions[$sFunctionName][$sOptionName] = array_merge($aOptions, $xOptionValue);
+    }
+
+    /**
+     * @param string $sFunctionName
+     * @param string $sOptionName
+     * @param mixed $xOptionValue
+     *
+     * @return void
+     */
+    private function _setJsOption(string $sFunctionName, string $sOptionName, $xOptionValue)
+    {
+        $this->aJsOptions[$sFunctionName][$sOptionName] = $xOptionValue;
+    }
+
+    /**
+     * @param string $sFunctionName
+     * @param string $sOptionName
+     * @param mixed $xOptionValue
+     *
+     * @return void
+     */
+    private function addJsOption(string $sFunctionName, string $sOptionName, $xOptionValue)
+    {
+        switch($sOptionName)
+        {
+        // For databags, all the value are merged in a single array.
+        case 'bags':
+            $this->_addJsArrayOption($sFunctionName, $sOptionName, $xOptionValue);
+            return;
+        // For all the other options, including callback, only the last value is kept.
+        case 'callback':
+        default:
+            $this->_setJsOption($sFunctionName, $sOptionName, $xOptionValue);
+        }
+    }
+
+    /**
+     * @param string $sFunctionName
+     * @param array $aFunctionOptions
+     *
+     * @return void
+     */
+    private function addFunctionOptions(string $sFunctionName, array $aFunctionOptions)
+    {
+        foreach($aFunctionOptions as $sOptionName => $xOptionValue)
+        {
+            substr($sOptionName, 0, 2) === '__' ?
+                // Options for PHP classes. They start with "__".
+                $this->addOption($sOptionName, [$sFunctionName => $xOptionValue]) :
+                // Options for javascript code.
+                $this->addJsOption($sFunctionName, $sOptionName, $xOptionValue);
+        }
+    }
+
+    /**
+     * @param array $aOptions
+     * @param array $aAnnotations
+     *
+     * @return void
+     */
+    public function setOptions(array $aOptions, array $aAnnotations)
+    {
+        [, $aAnnotationOptions, $aAnnotationProtected] = $aAnnotations;
+
+        $this->addOption('separator', $aOptions['separator']);
+        $this->addOption('protected', array_merge($aOptions['protected'], $aAnnotationProtected));
+
+        foreach($aOptions['functions'] as $sNames => $aFunctionOptions)
+        {
+            $aFunctionNames = explode(',', $sNames); // Names are in comma-separated list.
+            foreach($aFunctionNames as $sFunctionName)
+            {
+                $this->addFunctionOptions($sFunctionName, $aFunctionOptions);
+            }
+        }
+        foreach($aAnnotationOptions as $sFunctionName => $aFunctionOptions)
+        {
+            $this->addFunctionOptions($sFunctionName, $aFunctionOptions);
+        }
+    }
+
+    /**
+     * @param string $sMethodName
+     *
+     * @return array
+     */
+    public function getMethodOptions(string $sMethodName): array
+    {
+        // First take the common options.
+        $aOptions = array_merge($this->aJsOptions['*'] ?? []); // Clone the array
+        // Then add the method options.
+        $aMethodOptions = $this->aJsOptions[$sMethodName] ?? [];
+        foreach($aMethodOptions as $sOptionName => $xOptionValue)
+        {
+            // For databags, merge the values in a single array.
+            // For all the other options, including callback, keep the last value.
+            $aOptions[$sOptionName] = $sOptionName !== 'bags' ? $xOptionValue :
+                array_unique(array_merge($aOptions[$sOptionName] ?? [], $xOptionValue));
+        }
+        return $aOptions;
     }
 }
