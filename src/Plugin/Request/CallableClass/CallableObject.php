@@ -26,12 +26,10 @@
 
 namespace Jaxon\Plugin\Request\CallableClass;
 
-use Jaxon\App\CallableClass;
 use Jaxon\Di\Container;
 use Jaxon\Exception\SetupException;
 use Jaxon\Request\Target;
 use Jaxon\Response\ResponseInterface;
-
 use ReflectionClass;
 use ReflectionException;
 use ReflectionMethod;
@@ -41,7 +39,6 @@ use function array_filter;
 use function array_map;
 use function array_merge;
 use function array_unique;
-use function call_user_func;
 use function in_array;
 use function is_array;
 use function is_string;
@@ -66,27 +63,6 @@ class CallableObject
     private $xReflectionClass;
 
     /**
-     * A list of methods of the user registered callable object the library must not export to javascript
-     *
-     * @var array
-     */
-    private $aProtectedMethods = [];
-
-    /**
-     * A list of methods to call before processing the request
-     *
-     * @var array
-     */
-    private $aBeforeMethods = [];
-
-    /**
-     * A list of methods to call after processing the request
-     *
-     * @var array
-     */
-    private $aAfterMethods = [];
-
-    /**
      * The callable object options
      *
      * @var array
@@ -94,32 +70,11 @@ class CallableObject
     private $aOptions = [];
 
     /**
-     * The character to use as separator in javascript class names
-     *
-     * @var string
-     */
-    private $sSeparator = '.';
-
-    /**
-     * Check if the js code for this object must be generated
-     *
-     * @var bool
-     */
-    private $bExcluded = false;
-
-    /**
      * The user registered callable object
      *
-     * @var object
+     * @var mixed
      */
     private $xRegisteredObject = null;
-
-    /**
-     * The attributes to inject in the user registered callable object
-     *
-     * @var array
-     */
-    private $aAttributes = [];
 
     /**
      * The target of the Jaxon call
@@ -129,16 +84,33 @@ class CallableObject
     private $xTarget;
 
     /**
+     * The options of this callable object
+     *
+     * @var CallableObjectOptions
+     */
+    private $xOptions;
+
+    /**
+     * @var int
+     */
+    private $nPropertiesFilter = ReflectionProperty::IS_PUBLIC | ReflectionProperty::IS_PROTECTED;
+
+    /**
+     * @var int
+     */
+    private $nMethodsFilter = ReflectionMethod::IS_PUBLIC;
+
+    /**
      * The class constructor
      *
      * @param Container  $di
      * @param ReflectionClass $xReflectionClass    The reflection class
-     *
      */
     public function __construct(Container $di, ReflectionClass $xReflectionClass)
     {
         $this->di = $di;
         $this->xReflectionClass = $xReflectionClass;
+        $this->xOptions = new CallableObjectOptions();
     }
 
     /**
@@ -158,7 +130,7 @@ class CallableObject
      */
     public function excluded(): bool
     {
-        return $this->bExcluded;
+        return $this->xOptions->excluded();
     }
 
     /**
@@ -174,36 +146,23 @@ class CallableObject
     }
 
     /**
+     * Get the name of the registered PHP class
+     *
+     * @return string
+     */
+    public function getClassName(): string
+    {
+        return $this->xReflectionClass->getName();
+    }
+
+    /**
      * Get the name of the corresponding javascript class
      *
      * @return string
      */
     public function getJsName(): string
     {
-        return str_replace('\\', $this->sSeparator, $this->xReflectionClass->getName());
-    }
-
-    /**
-     * Set hook methods
-     *
-     * @param array $aHookMethods    The array of hook methods
-     * @param string|array $xValue    The value of the configuration option
-     *
-     * @return void
-     */
-    private function setHookMethods(array &$aHookMethods, $xValue)
-    {
-        foreach($xValue as $sCalledMethod => $xMethodToCall)
-        {
-            if(is_array($xMethodToCall))
-            {
-                $aHookMethods[$sCalledMethod] = $xMethodToCall;
-            }
-            elseif(is_string($xMethodToCall))
-            {
-                $aHookMethods[$sCalledMethod] = [$xMethodToCall];
-            }
-        }
+        return str_replace('\\', $this->xOptions->separator(), $this->getClassName());
     }
 
     /**
@@ -216,40 +175,27 @@ class CallableObject
      */
     public function configure(string $sName, $xValue)
     {
-        switch($sName)
-        {
-        // Set the separator
-        case 'separator':
-            if($xValue === '_' || $xValue === '.')
-            {
-                $this->sSeparator = $xValue;
-            }
-            break;
-        // Set the protected methods
-        case 'protected':
-            if(is_array($xValue))
-            {
-                $this->aProtectedMethods = array_merge($this->aProtectedMethods, $xValue);
-            }
-            break;
-        // Set the methods to call before processing the request
-        case '__before':
-            $this->setHookMethods($this->aBeforeMethods, $xValue);
-            break;
-        // Set the methods to call after processing the request
-        case '__after':
-            $this->setHookMethods($this->aAfterMethods, $xValue);
-            break;
-        // Set the attributes to inject in the callable object
-        case '__di':
-            $this->aAttributes = array_merge($this->aAttributes, $xValue);
-            break;
-        case 'excluded':
-            $this->bExcluded = (bool)$xValue;
-            break;
-        default:
-            break;
-        }
+        $this->xOptions->addValue($sName, $xValue);
+    }
+
+    /**
+     * @return array
+     */
+    public function getClassDiOptions(): array
+    {
+        $aDiOptions = $this->xOptions->diOptions();
+        return $aDiOptions['*'] ?? [];
+    }
+
+    /**
+     * @param string $sMethodName
+     *
+     * @return array
+     */
+    public function getMethodDiOptions(string $sMethodName): array
+    {
+        $aDiOptions = $this->xOptions->diOptions();
+        return $aDiOptions[$sMethodName] ?? [];
     }
 
     /**
@@ -261,7 +207,7 @@ class CallableObject
     {
         return array_map(function($xProperty) {
             return $xProperty->getName();
-        }, $this->xReflectionClass->getProperties(ReflectionProperty::IS_PUBLIC | ReflectionProperty::IS_PROTECTED));
+        }, $this->xReflectionClass->getProperties($this->nPropertiesFilter));
     }
 
     /**
@@ -275,14 +221,14 @@ class CallableObject
     {
         $aMethods = array_map(function($xMethod) {
             return $xMethod->getShortName();
-        }, $this->xReflectionClass->getMethods(ReflectionMethod::IS_PUBLIC));
+        }, $this->xReflectionClass->getMethods($this->nMethodsFilter));
 
         return array_filter($aMethods, function($sMethodName) use($aProtectedMethods) {
             // Don't take magic __call, __construct, __destruct methods
             // Don't take protected methods
             return substr($sMethodName, 0, 2) !== '__' &&
                 !in_array($sMethodName, $aProtectedMethods) &&
-                !in_array($sMethodName, $this->aProtectedMethods);
+                !in_array($sMethodName, $this->xOptions->protectedMethods());
         });
     }
 
@@ -407,9 +353,6 @@ class CallableObject
     private function callHookMethods(array $aHookMethods)
     {
         $sMethod = $this->xTarget->getMethodName();
-        $aArgs = $this->xTarget->getMethodArgs();
-        // The hooks defined at method level override those defined at class level.
-        // $aMethods = $aHookMethods[$sMethod] ?? $aHookMethods['*'] ?? [];
         // The hooks defined at method level are merged with those defined at class level.
         $aMethods = array_merge($aHookMethods['*'] ?? [], $aHookMethods[$sMethod] ?? []);
         foreach($aMethods as $xKey => $xValue)
@@ -420,18 +363,6 @@ class CallableObject
             {
                 $sHookName = $xKey;
                 $aHookArgs = is_array($xValue) ? $xValue : [$xValue];
-                // The name and arguments of the method can be passed to the hooks.
-                /*$aHookArgs = array_map(function($xHookArg) use($sMethod, $aArgs) {
-                    switch($xHookArg)
-                    {
-                    case '__method__':
-                        return $sMethod;
-                    case '__args__':
-                        return $aArgs;
-                    default:
-                        return $xHookArg;
-                    }
-                }, $aHookArgs);*/
             }
             $this->callMethod($sHookName, $aHookArgs, true);
         }
@@ -448,45 +379,18 @@ class CallableObject
      */
     public function call(Target $xTarget): ?ResponseInterface
     {
-        $this->xRegisteredObject = $this->getRegisteredObject();
         $this->xTarget = $xTarget;
-        $sMethod = $xTarget->getMethodName();
-
-        // Set attributes from the DI container
-        // The attributes defined at method level override those defined at class level.
-        // $aAttributes = $this->aAttributes[$sMethod] ?? $this->aAttributes['*'] ?? [];
-        // The attributes defined at method level are merged with those defined at class level.
-        $aAttributes = array_merge($this->aAttributes['*'] ?? [], $this->aAttributes[$sMethod] ?? []);
-        foreach($aAttributes as $sName => $sClass)
-        {
-            // Set the protected attributes of the object
-            $cSetter = function($c) use($sName, $sClass) {
-                // Warning: dynamic properties will be deprecated in PHP8.2.
-                $this->$sName = $c->get($sClass);
-            };
-            // Can now access protected attributes
-            call_user_func($cSetter->bindTo($this->xRegisteredObject, $this->xRegisteredObject), $this->di);
-        }
-
-        // Set the Jaxon request target in the helper
-        if($this->xRegisteredObject instanceof CallableClass)
-        {
-            // Set the protected attributes of the object
-            $cSetter = function() use($xTarget) {
-                $this->xCallableClassHelper->xTarget = $xTarget;
-            };
-            // Can now access protected attributes
-            call_user_func($cSetter->bindTo($this->xRegisteredObject, $this->xRegisteredObject));
-        }
+        $this->xRegisteredObject = $this->di->getRegisteredObject($this, $xTarget);
 
         // Methods to call before processing the request
-        $this->callHookMethods($this->aBeforeMethods);
+        $this->callHookMethods($this->xOptions->beforeMethods());
 
         // Call the request method
+        $sMethod = $xTarget->getMethodName();
         $xResponse = $this->callMethod($sMethod, $this->xTarget->getMethodArgs(), false);
 
         // Methods to call after processing the request
-        $this->callHookMethods($this->aAfterMethods);
+        $this->callHookMethods($this->xOptions->afterMethods());
         return $xResponse;
     }
 }

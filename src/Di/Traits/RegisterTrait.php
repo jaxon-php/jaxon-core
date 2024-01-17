@@ -15,8 +15,8 @@ use Jaxon\Request\Call\Paginator;
 use Jaxon\Request\Factory\Factory;
 use Jaxon\Request\Factory\RequestFactory;
 use Jaxon\Request\Handler\CallbackManager;
+use Jaxon\Request\Target;
 use Jaxon\Utils\Config\Config;
-
 use ReflectionClass;
 use ReflectionException;
 
@@ -65,7 +65,8 @@ trait RegisterTrait
         $xAnnotationReader = $this->g(AnnotationReaderInterface::class);
         $aMethods = $xCallableObject->getPublicMethods($aProtectedMethods);
         $aProperties = $xCallableObject->getProperties();
-        [$bExcluded, $aAnnotationOptions, $aAnnotationProtected] = $xAnnotationReader->getAttributes($sClassName, $aMethods, $aProperties);
+        [$bExcluded, $aAnnotationOptions, $aAnnotationProtected] =
+            $xAnnotationReader->getAttributes($sClassName, $aMethods, $aProperties);
         if($bExcluded)
         {
             $xCallableObject->configure('excluded', true);
@@ -93,6 +94,56 @@ trait RegisterTrait
             }
         }
         $xCallableObject->setOptions($aCallableOptions);
+    }
+
+    /**
+     * @param mixed $xRegisteredObject
+     * @param array $aDiOptions
+     *
+     * @return void
+     */
+    private function setDiAttributes($xRegisteredObject, array $aDiOptions)
+    {
+        foreach($aDiOptions as $sName => $sClass)
+        {
+            // Set the protected attributes of the object
+            $cSetter = function($xInjectedObject) use($sName) {
+                // Warning: dynamic properties will be deprecated in PHP8.2.
+                $this->$sName = $xInjectedObject;
+            };
+            // Can now access protected attributes
+            call_user_func($cSetter->bindTo($xRegisteredObject, $xRegisteredObject), $this->get($sClass));
+        }
+    }
+
+    /**
+     * Get a callable object when one of its method needs to be called
+     *
+     * @param CallableObject $xCallableObject
+     * @param Target $xTarget
+     *
+     * @return mixed
+     */
+    public function getRegisteredObject(CallableObject $xCallableObject, Target $xTarget)
+    {
+        // Set attributes from the DI container.
+        // The class level DI options were set when creating the object instance.
+        // We now need to set the method level DI options.
+        $aDiOptions = $xCallableObject->getMethodDiOptions($xTarget->getMethodName());
+        $xRegisteredObject = $this->g($xCallableObject->getClassName());
+        $this->setDiAttributes($xRegisteredObject, $aDiOptions);
+
+        // Set the Jaxon request target in the helper
+        if($xRegisteredObject instanceof CallableClass)
+        {
+            // Set the protected attributes of the object
+            $cSetter = function() use($xTarget) {
+                $this->xCallableClassHelper->xTarget = $xTarget;
+            };
+            // Can now access protected attributes
+            call_user_func($cSetter->bindTo($xRegisteredObject, $xRegisteredObject));
+        }
+        return $xRegisteredObject;
     }
 
     /**
@@ -156,7 +207,7 @@ trait RegisterTrait
             });
         }
         // Initialize the user class instance
-        $this->extend($sClassName, function($xRegisteredObject, $c) use($sClassName) {
+        $this->extend($sClassName, function($xRegisteredObject, $c) use($sCallableObject, $sClassName) {
             if($xRegisteredObject instanceof CallableClass)
             {
                 // Set the protected attributes of the object
@@ -174,6 +225,14 @@ trait RegisterTrait
             {
                 call_user_func($xCallback, $xRegisteredObject);
             }
+
+            // Set attributes from the DI container.
+            // The class level DI options are set when creating the object instance.
+            // The method level DI options are set only when calling the method in the ajax request.
+            /** @var CallableObject */
+            $xCallableObject = $this->g($sCallableObject);
+            $this->setDiAttributes($xRegisteredObject, $xCallableObject->getClassDiOptions());
+
             return $xRegisteredObject;
         });
     }
