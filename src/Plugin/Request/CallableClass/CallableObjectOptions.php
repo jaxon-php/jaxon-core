@@ -72,6 +72,38 @@ class CallableObjectOptions
     private $aDiOptions = [];
 
     /**
+     * The constructor
+     *
+     * @param array $aOptions
+     * @param array $aAnnotations
+     */
+    public function __construct(array $aOptions, array $aAnnotations)
+    {
+        [$bExcluded, $aAnnotationOptions, $aAnnotationProtected] = $aAnnotations;
+        $this->bExcluded = $bExcluded || (bool)($aOptions['excluded'] ?? false);
+        if($this->bExcluded)
+        {
+            return;
+        }
+
+        $this->addOption('separator', $aOptions['separator']);
+        $this->addOption('protected', array_merge($aOptions['protected'], $aAnnotationProtected));
+
+        foreach($aOptions['functions'] as $sNames => $aFunctionOptions)
+        {
+            $aFunctionNames = explode(',', $sNames); // Names are in comma-separated list.
+            foreach($aFunctionNames as $sFunctionName)
+            {
+                $this->addFunctionOptions($sFunctionName, $aFunctionOptions);
+            }
+        }
+        foreach($aAnnotationOptions as $sFunctionName => $aFunctionOptions)
+        {
+            $this->addFunctionOptions($sFunctionName, $aFunctionOptions);
+        }
+    }
+
+    /**
      * Check if the js code for this object must be generated
      *
      * @return bool
@@ -276,33 +308,6 @@ class CallableObjectOptions
                 $this->addOption($sOptionName, [$sFunctionName => $xOptionValue]) :
                 // Options for javascript code.
                 $this->addJsOption($sFunctionName, $sOptionName, $xOptionValue);
-        }
-    }
-
-    /**
-     * @param array $aOptions
-     * @param array $aAnnotations
-     *
-     * @return void
-     */
-    public function setOptions(array $aOptions, array $aAnnotations)
-    {
-        [, $aAnnotationOptions, $aAnnotationProtected] = $aAnnotations;
-
-        $this->addOption('separator', $aOptions['separator']);
-        $this->addOption('protected', array_merge($aOptions['protected'], $aAnnotationProtected));
-
-        foreach($aOptions['functions'] as $sNames => $aFunctionOptions)
-        {
-            $aFunctionNames = explode(',', $sNames); // Names are in comma-separated list.
-            foreach($aFunctionNames as $sFunctionName)
-            {
-                $this->addFunctionOptions($sFunctionName, $aFunctionOptions);
-            }
-        }
-        foreach($aAnnotationOptions as $sFunctionName => $aFunctionOptions)
-        {
-            $this->addFunctionOptions($sFunctionName, $aFunctionOptions);
         }
     }
 

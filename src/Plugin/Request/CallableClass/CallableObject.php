@@ -94,6 +94,11 @@ class CallableObject
     private $nMethodsFilter = ReflectionMethod::IS_PUBLIC;
 
     /**
+     * @var array
+     */
+    private $aProtectedMethods;
+
+    /**
      * The class constructor
      *
      * @param Container  $di
@@ -107,20 +112,45 @@ class CallableObject
     {
         $this->di = $di;
         $this->xReflectionClass = $xReflectionClass;
-        $this->xOptions = new CallableObjectOptions();
+        $this->aProtectedMethods = $aProtectedMethods;
 
-        $sClassName = $xReflectionClass->getName();
-        $aMethods = $this->getPublicMethods($aProtectedMethods);
-        $aProperties = $this->getProperties();
-        $aAnnotations = $xAnnotationReader->getAttributes($sClassName, $aMethods, $aProperties);
-        [$bExcluded,] = $aAnnotations;
-        if($bExcluded)
-        {
-            $this->configure('excluded', true);
-            return;
-        }
+        $aAnnotations = $xAnnotationReader->getAttributes($xReflectionClass->getName(),
+            $this->getPublicMethods(), $this->getProperties());
+        $this->xOptions = new CallableObjectOptions($aOptions, $aAnnotations);
+    }
 
-        $this->xOptions->setOptions($aOptions, $aAnnotations);
+    /**
+     * Get the public and protected attributes of the callable object
+     *
+     * @return array
+     */
+    private function getProperties(): array
+    {
+        return array_map(function($xProperty) {
+            return $xProperty->getName();
+        }, $this->xReflectionClass->getProperties($this->nPropertiesFilter));
+    }
+
+    /**
+     * Get the public methods of the callable object
+     *
+     * @param array $aProtectedMethods    The protected methods
+     *
+     * @return array
+     */
+    public function getPublicMethods(array $aProtectedMethods = []): array
+    {
+        $aMethods = array_map(function($xMethod) {
+            return $xMethod->getShortName();
+        }, $this->xReflectionClass->getMethods($this->nMethodsFilter));
+
+        return array_filter($aMethods, function($sMethodName) use($aProtectedMethods) {
+            // Don't take magic __call, __construct, __destruct methods
+            // Don't take protected methods
+            return substr($sMethodName, 0, 2) !== '__' &&
+                !in_array($sMethodName, $this->aProtectedMethods) &&
+                !in_array($sMethodName, $aProtectedMethods);
+        });
     }
 
     /**
@@ -197,47 +227,11 @@ class CallableObject
     }
 
     /**
-     * Get the public and protected attributes of the callable object
-     *
-     * @return array
-     */
-    public function getProperties(): array
-    {
-        return array_map(function($xProperty) {
-            return $xProperty->getName();
-        }, $this->xReflectionClass->getProperties($this->nPropertiesFilter));
-    }
-
-    /**
-     * Get the public methods of the callable object
-     *
-     * @param array $aProtectedMethods    The protected methods
-     *
-     * @return array
-     */
-    public function getPublicMethods(array $aProtectedMethods = []): array
-    {
-        $aMethods = array_map(function($xMethod) {
-            return $xMethod->getShortName();
-        }, $this->xReflectionClass->getMethods($this->nMethodsFilter));
-
-        return array_filter($aMethods, function($sMethodName) use($aProtectedMethods) {
-            // Don't take magic __call, __construct, __destruct methods
-            // Don't take protected methods
-            return substr($sMethodName, 0, 2) !== '__' &&
-                !in_array($sMethodName, $aProtectedMethods) &&
-                !in_array($sMethodName, $this->xOptions->protectedMethods());
-        });
-    }
-
-    /**
      * Return a list of methods of the callable object to export to javascript
      *
-     * @param array $aProtectedMethods    The protected methods
-     *
      * @return array
      */
-    public function getCallableMethods(array $aProtectedMethods): array
+    public function getCallableMethods(): array
     {
         // Convert an option to a string to be displayed in the js script template.
         $fConvertOption = function($xOption) {
@@ -249,7 +243,7 @@ class CallableObject
                 'name' => $sMethodName,
                 'config' => array_map($fConvertOption, $this->xOptions->getMethodOptions($sMethodName)),
             ];
-        }, $this->getPublicMethods($aProtectedMethods));
+        }, $this->getPublicMethods($this->xOptions->protectedMethods()));
     }
 
     /**

@@ -209,12 +209,11 @@ class CallableClassPlugin extends RequestPlugin
     /**
      * Generate client side javascript code for a callable class
      *
-     * @param string $sClassName
      * @param CallableObject $xCallableObject The corresponding callable object
      *
      * @return string
      */
-    private function getCallableScript(string $sClassName, CallableObject $xCallableObject): string
+    private function getCallableScript(CallableObject $xCallableObject): string
     {
         if($xCallableObject->excluded())
         {
@@ -224,7 +223,7 @@ class CallableClassPlugin extends RequestPlugin
         return $this->xTemplateEngine->render('jaxon::callables/object.js', [
             'sPrefix' => $this->sPrefix,
             'sClass' => $xCallableObject->getJsName(),
-            'aMethods' => $xCallableObject->getCallableMethods($this->xRepository->getProtectedMethods($sClassName)),
+            'aMethods' => $xCallableObject->getCallableMethods(),
         ]);
     }
 
@@ -243,12 +242,9 @@ class CallableClassPlugin extends RequestPlugin
             return strlen($name1) - strlen($name2);
         });
 
-        $sCode = $this->getNamespacesScript();
-        foreach($aCallableObjects as $sClassName => $xCallableObject)
-        {
-            $sCode .= $this->getCallableScript($sClassName, $xCallableObject);
-        }
-        return $sCode;
+        return array_reduce($aCallableObjects, function($sCode, $xCallableObject) {
+            return $sCode . $this->getCallableScript($xCallableObject);
+        }, $this->getNamespacesScript());
     }
 
     /**
