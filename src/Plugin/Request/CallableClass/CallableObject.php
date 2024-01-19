@@ -36,10 +36,10 @@ use ReflectionException;
 use ReflectionMethod;
 use ReflectionProperty;
 
+use function array_fill_keys;
 use function array_filter;
 use function array_map;
 use function array_merge;
-use function in_array;
 use function is_array;
 use function is_string;
 use function json_encode;
@@ -79,9 +79,9 @@ class CallableObject
     /**
      * The options of this callable object
      *
-     * @var CallableObjectOptions
+     * @var CallableObjectOptions|null
      */
-    private $xOptions;
+    private $xOptions = null;
 
     /**
      * @var int
@@ -112,10 +112,10 @@ class CallableObject
     {
         $this->di = $di;
         $this->xReflectionClass = $xReflectionClass;
-        $this->aProtectedMethods = $aProtectedMethods;
+        $this->aProtectedMethods = array_fill_keys($aProtectedMethods, true);
 
         $aAnnotations = $xAnnotationReader->getAttributes($xReflectionClass->getName(),
-            $this->getPublicMethods(), $this->getProperties());
+            $this->getPublicMethods(true), $this->getProperties());
         $this->xOptions = new CallableObjectOptions($aOptions, $aAnnotations);
     }
 
@@ -132,30 +132,40 @@ class CallableObject
     }
 
     /**
+     * @param string $sMethodName
+     * @param bool $bTakeAll
+     *
+     * @return bool
+     */
+    private function isProtectedMethod(string $sMethodName, bool $bTakeAll): bool
+    {
+        // Don't take magic __call, __construct, __destruct methods
+        // Don't take protected methods
+        return substr($sMethodName, 0, 2) === '__' ||
+            isset($this->aProtectedMethods[$sMethodName]) ||
+            (!$bTakeAll && $this->xOptions !== null &&
+            $this->xOptions->isProtectedMethod($sMethodName));
+    }
+
+    /**
      * Get the public methods of the callable object
      *
-     * @param array $aProtectedMethods    The protected methods
+     * @param bool $bTakeAll
      *
      * @return array
      */
-    public function getPublicMethods(array $aProtectedMethods = []): array
+    public function getPublicMethods(bool $bTakeAll): array
     {
         $aMethods = array_map(function($xMethod) {
             return $xMethod->getShortName();
         }, $this->xReflectionClass->getMethods($this->nMethodsFilter));
 
-        return array_filter($aMethods, function($sMethodName) use($aProtectedMethods) {
-            // Don't take magic __call, __construct, __destruct methods
-            // Don't take protected methods
-            return substr($sMethodName, 0, 2) !== '__' &&
-                !in_array($sMethodName, $this->aProtectedMethods) &&
-                !in_array($sMethodName, $aProtectedMethods);
+        return array_filter($aMethods, function($sMethodName) use($bTakeAll) {
+            return !$this->isProtectedMethod($sMethodName, $bTakeAll);
         });
     }
 
     /**
-     * Check if the js code for this object must be generated
-     *
      * @return bool
      */
     public function excluded(): bool
@@ -243,7 +253,7 @@ class CallableObject
                 'name' => $sMethodName,
                 'config' => array_map($fConvertOption, $this->xOptions->getMethodOptions($sMethodName)),
             ];
-        }, $this->getPublicMethods($this->xOptions->protectedMethods()));
+        }, $this->getPublicMethods(false));
     }
 
     /**

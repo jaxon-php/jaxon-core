@@ -19,6 +19,7 @@ use function array_unique;
 use function is_array;
 use function is_string;
 use function substr;
+use function trim;
 
 class CallableObjectOptions
 {
@@ -86,8 +87,9 @@ class CallableObjectOptions
             return;
         }
 
-        $this->addOption('separator', $aOptions['separator']);
-        $this->addOption('protected', array_merge($aOptions['protected'], $aAnnotationProtected));
+        $this->setSeparator($aOptions['separator']);
+        $this->addProtectedMethods($aOptions['protected']);
+        $this->addProtectedMethods($aAnnotationProtected);
 
         foreach($aOptions['functions'] as $sNames => $aFunctionOptions)
         {
@@ -100,6 +102,37 @@ class CallableObjectOptions
         foreach($aAnnotationOptions as $sFunctionName => $aFunctionOptions)
         {
             $this->addFunctionOptions($sFunctionName, $aFunctionOptions);
+        }
+    }
+
+    /**
+     * @param string $sSeparator
+     *
+     * @return void
+     */
+    private function setSeparator(string $sSeparator)
+    {
+        if($sSeparator === '_' || $sSeparator === '.')
+        {
+            $this->sSeparator = $sSeparator;
+        }
+    }
+
+    /**
+     * @param mixed $xMethods
+     *
+     * @return void
+     */
+    private function addProtectedMethods($xMethods)
+    {
+        if(!is_array($xMethods))
+        {
+            $this->aProtectedMethods[trim((string)$xMethods)] = true;
+            return;
+        }
+        foreach($xMethods as $sMethod)
+        {
+            $this->aProtectedMethods[trim((string)$sMethod)] = true;
         }
     }
 
@@ -122,11 +155,13 @@ class CallableObjectOptions
     }
 
     /**
-     * @return array
+     * @param string $sMethodName
+     *
+     * @return bool
      */
-    public function protectedMethods(): array
+    public function isProtectedMethod(string $sMethodName): bool
     {
-        return $this->aProtectedMethods;
+        return isset($this->aProtectedMethods[$sMethodName]) || isset($this->aProtectedMethods['*']);
     }
 
     /**
@@ -206,17 +241,14 @@ class CallableObjectOptions
         {
         // Set the separator
         case 'separator':
-            if($xValue === '_' || $xValue === '.')
-            {
-                $this->sSeparator = $xValue;
-            }
+            $this->setSeparator((string)$xValue);
+            break;
+        case 'excluded':
+            $this->bExcluded = (bool)$xValue;
             break;
         // Set the protected methods
         case 'protected':
-            if(is_array($xValue))
-            {
-                $this->aProtectedMethods = array_merge($this->aProtectedMethods, $xValue);
-            }
+            $this->addProtectedMethods($xValue);
             break;
         // Set the methods to call before processing the request
         case '__before':
@@ -229,9 +261,6 @@ class CallableObjectOptions
         // Set the attributes to inject in the callable object
         case '__di':
             $this->addDiOption($xValue);
-            break;
-        case 'excluded':
-            $this->bExcluded = (bool)$xValue;
             break;
         default:
             break;
@@ -282,6 +311,12 @@ class CallableObjectOptions
     {
         switch($sOptionName)
         {
+        case 'excluded':
+            if((bool)$xOptionValue)
+            {
+                $this->addProtectedMethods($sFunctionName);
+            }
+            break;
         // For databags, all the value are merged in a single array.
         case 'bags':
             $this->_addJsArrayOption($sFunctionName, $sOptionName, $xOptionValue);
