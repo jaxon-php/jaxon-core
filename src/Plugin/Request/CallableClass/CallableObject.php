@@ -194,19 +194,6 @@ class CallableObject
     }
 
     /**
-     * Set configuration options / call options for each method
-     *
-     * @param string $sName    The name of the configuration option
-     * @param string|array $xValue    The value of the configuration option
-     *
-     * @return void
-     */
-    public function configure(string $sName, $xValue)
-    {
-        $this->xOptions->addOption($sName, $xValue);
-    }
-
-    /**
      * @return array
      */
     public function getClassDiOptions(): array
@@ -243,15 +230,18 @@ class CallableObject
      */
     public function getCallableMethods(): array
     {
-        // Convert an option to a string to be displayed in the js script template.
-        $fConvertOption = function($xOption) {
-            return is_array($xOption) ? json_encode($xOption) : $xOption;
+        // Get the method options, and convert each of them to
+        // a string to be displayed in the js script template.
+        $fGetOption = function($sMethodName) {
+            return array_map(function($xOption) {
+                return is_array($xOption) ? json_encode($xOption) : $xOption;
+            }, $this->xOptions->getMethodOptions($sMethodName));
         };
 
-        return array_map(function($sMethodName) use($fConvertOption) {
+        return array_map(function($sMethodName) use($fGetOption) {
             return [
                 'name' => $sMethodName,
-                'config' => array_map($fConvertOption, $this->xOptions->getMethodOptions($sMethodName)),
+                'config' => $fGetOption($sMethodName),
             ];
         }, $this->getPublicMethods(false));
     }
