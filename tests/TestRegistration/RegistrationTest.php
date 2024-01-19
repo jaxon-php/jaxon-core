@@ -54,12 +54,10 @@ class RegistrationTest extends TestCase
                     ],
                 ],
                 'ClassC' => [
+                    'protected' => 'methodCc',
                     'functions' => [
                         'methodCa' => [
                             'upload' => "'methodBb'",
-                        ],
-                        'methodCc' => [
-                            'excluded' => true,
                         ],
                     ],
                 ],

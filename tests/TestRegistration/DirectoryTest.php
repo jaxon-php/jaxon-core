@@ -34,11 +34,7 @@ class DirectoryTest extends TestCase
         jaxon()->register(Jaxon::CALLABLE_DIR, __DIR__ . '/../src/dir', [
             'classes' => [
                 'ClassC' => [
-                    'functions' => [
-                        'methodCc' => [
-                            'excluded' => true,
-                        ],
-                    ],
+                    'protected' => ['methodCc'],
                 ],
                 'ClassD' => [
                     'excluded' => true,
