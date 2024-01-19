@@ -38,6 +38,9 @@ class RegistrationTest extends TestCase
                 'ClassA' => [
                     'protected' => ['methodAa'],
                     'functions' => [
+                        '*' => [
+                            'bags' => 'bag.name',
+                        ],
                         'methodAb' => [
                             '__before' => 'methodAa',
                             '__after' => ['methodBb' => 'after'],
@@ -50,6 +53,8 @@ class RegistrationTest extends TestCase
                         'methodBa' => [
                             '__before' => ['methodBb' => ['before', 'one']],
                             '__after' => ['methodBb'],
+                            '__di' => ['attrName' => 'attrClass'],
+                            'bags' => true, // will be silently ignored.
                         ],
                     ],
                 ],
@@ -58,6 +63,7 @@ class RegistrationTest extends TestCase
                     'functions' => [
                         'methodCa' => [
                             'upload' => "'methodBb'",
+                            'bags' => 5, // will be silently ignored.
                         ],
                     ],
                 ],
@@ -106,7 +112,7 @@ class RegistrationTest extends TestCase
     {
         $aOptions = $this->xPlugin->getCallable('ClassA')->getOptions();
         $this->assertIsArray($aOptions);
-        $this->assertCount(0, $aOptions);
+        $this->assertCount(1, $aOptions);
     }
 
     /**
@@ -136,8 +142,8 @@ class RegistrationTest extends TestCase
     public function testCallableDirJsCode()
     {
         $this->assertEquals(32, strlen($this->xPlugin->getHash()));
-        // $this->assertEquals('adc33e67ac8195160f7648ea4289aae6', $this->xPlugin->getHash());
-        $this->assertEquals(769, strlen($this->xPlugin->getScript()));
+        // $this->assertEquals('56222468ad00b31763366f1185ec564d', $this->xPlugin->getHash());
+        $this->assertEquals(789, strlen($this->xPlugin->getScript()));
         // $this->assertEquals(file_get_contents(__DIR__ . '/../src/js/options.js'), $this->xPlugin->getScript());
     }
 

@@ -87,7 +87,11 @@ class CallableObjectOptions
             return;
         }
 
-        $this->setSeparator($aOptions['separator']);
+        $sSeparator = $aOptions['separator'];
+        if($sSeparator === '_' || $sSeparator === '.')
+        {
+            $this->sSeparator = $sSeparator;
+        }
         $this->addProtectedMethods($aOptions['protected']);
         $this->addProtectedMethods($aAnnotationProtected);
 
@@ -102,19 +106,6 @@ class CallableObjectOptions
         foreach($aAnnotationOptions as $sFunctionName => $aFunctionOptions)
         {
             $this->addFunctionOptions($sFunctionName, $aFunctionOptions);
-        }
-    }
-
-    /**
-     * @param string $sSeparator
-     *
-     * @return void
-     */
-    private function setSeparator(string $sSeparator)
-    {
-        if($sSeparator === '_' || $sSeparator === '.')
-        {
-            $this->sSeparator = $sSeparator;
         }
     }
 
@@ -235,21 +226,10 @@ class CallableObjectOptions
      *
      * @return void
      */
-    public function addOption(string $sName, $xValue)
+    private function addOption(string $sName, $xValue)
     {
         switch($sName)
         {
-        // Set the separator
-        case 'separator':
-            $this->setSeparator((string)$xValue);
-            break;
-        case 'excluded':
-            $this->bExcluded = (bool)$xValue;
-            break;
-        // Set the protected methods
-        case 'protected':
-            $this->addProtectedMethods($xValue);
-            break;
         // Set the methods to call before processing the request
         case '__before':
             $this->setHookMethods($this->aBeforeMethods, $xValue);
