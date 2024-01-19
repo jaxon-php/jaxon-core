@@ -19,7 +19,20 @@ class DirectoryTest extends TestCase
     {
         jaxon()->setOption('core.response.send', false);
         jaxon()->setOption('core.prefix.class', '');
-        jaxon()->register(Jaxon::CALLABLE_DIR, __DIR__ . '/../src/dir');
+        jaxon()->register(Jaxon::CALLABLE_DIR, __DIR__ . '/../src/dir', [
+            'classes' => [
+                'ClassC' => [
+                    'functions' => [
+                        'methodCc' => [
+                            'excluded' => true,
+                        ],
+                    ],
+                ],
+                'ClassD' => [
+                    'excluded' => true,
+                ],
+            ],
+        ]);
     }
 
     /**

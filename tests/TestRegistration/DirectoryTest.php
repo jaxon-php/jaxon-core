@@ -31,7 +31,20 @@ class DirectoryTest extends TestCase
     {
         jaxon()->setOption('core.prefix.class', 'Jxn');
 
-        jaxon()->register(Jaxon::CALLABLE_DIR, __DIR__ . '/../src/dir');
+        jaxon()->register(Jaxon::CALLABLE_DIR, __DIR__ . '/../src/dir', [
+            'classes' => [
+                'ClassC' => [
+                    'functions' => [
+                        'methodCc' => [
+                            'excluded' => true,
+                        ],
+                    ],
+                ],
+                'ClassD' => [
+                    'excluded' => true,
+                ],
+            ],
+        ]);
 
         $this->xDirPlugin = jaxon()->di()->getCallableDirPlugin();
         $this->xClassPlugin = jaxon()->di()->getCallableClassPlugin();
@@ -59,10 +72,17 @@ class DirectoryTest extends TestCase
         $xClassACallable = $this->xClassPlugin->getCallable('ClassA');
         $xClassBCallable = $this->xClassPlugin->getCallable('ClassB');
         $xClassCCallable = $this->xClassPlugin->getCallable('ClassC');
+        $xClassDCallable = $this->xClassPlugin->getCallable('ClassD');
         // Test callables classes
         $this->assertEquals(CallableObject::class, get_class($xClassACallable));
         $this->assertEquals(CallableObject::class, get_class($xClassBCallable));
         $this->assertEquals(CallableObject::class, get_class($xClassCCallable));
+        $this->assertEquals(CallableObject::class, get_class($xClassDCallable));
+        // Check export
+        $this->assertFalse($xClassACallable->excluded());
+        $this->assertFalse($xClassBCallable->excluded());
+        $this->assertFalse($xClassCCallable->excluded());
+        $this->assertTrue($xClassDCallable->excluded());
         // Check methods
         $this->assertTrue($xClassACallable->hasMethod('methodAa'));
         $this->assertTrue($xClassACallable->hasMethod('methodAb'));

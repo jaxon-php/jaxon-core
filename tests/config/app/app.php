@@ -29,7 +29,20 @@ return [
             TheClass::class,
         ],
         'directories' => [
-            $testDir . '/src/dir',
+            $testDir . '/src/dir' => [
+                'classes' => [
+                    'ClassC' => [
+                        'functions' => [
+                            'methodCc' => [
+                                'excluded' => true,
+                            ],
+                        ],
+                    ],
+                    'ClassD' => [
+                        'excluded' => true,
+                    ],
+                ],
+            ],
             $testDir . '/src/Ns/Ajax' => [
                 'namespace' => "Jaxon\\Tests\\Ns\\Ajax",
                 'autoload' => false,

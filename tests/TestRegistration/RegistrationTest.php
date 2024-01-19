@@ -58,7 +58,13 @@ class RegistrationTest extends TestCase
                         'methodCa' => [
                             'upload' => "'methodBb'",
                         ],
+                        'methodCc' => [
+                            'excluded' => true,
+                        ],
                     ],
+                ],
+                'ClassD' => [
+                    'excluded' => true,
                 ],
             ],
         ]);
