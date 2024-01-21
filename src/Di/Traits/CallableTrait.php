@@ -35,34 +35,34 @@ trait CallableTrait
             };
         });
         // Validator
-        $this->set(Validator::class, function($c) {
-            return new Validator($c->g(ConfigManager::class), $c->g(Translator::class));
+        $this->set(Validator::class, function($di) {
+            return new Validator($di->g(ConfigManager::class), $di->g(Translator::class));
         });
         // Callable objects repository
-        $this->set(CallableRepository::class, function($c) {
-            return new CallableRepository($c->g(Container::class), $c->g(Translator::class));
+        $this->set(CallableRepository::class, function($di) {
+            return new CallableRepository($di->g(Container::class), $di->g(Translator::class));
         });
         // Callable objects registry
-        $this->set(CallableRegistry::class, function($c) {
-            return new CallableRegistry($c->g(Container::class),
-                $c->g(CallableRepository::class), $c->g(Translator::class));
+        $this->set(CallableRegistry::class, function($di) {
+            return new CallableRegistry($di->g(Container::class),
+                $di->g(CallableRepository::class), $di->g(Translator::class));
         });
         // Callable class plugin
-        $this->set(CallableClassPlugin::class, function($c) {
-            $sPrefix = $c->g(ConfigManager::class)->getOption('core.prefix.class');
-            return new CallableClassPlugin($sPrefix, $c->g(Container::class), $c->g(ParameterReader::class),
-                $c->g(CallableRegistry::class), $c->g(CallableRepository::class),
-                $c->g(TemplateEngine::class), $c->g(Translator::class), $c->g(Validator::class));
+        $this->set(CallableClassPlugin::class, function($di) {
+            $sPrefix = $di->g(ConfigManager::class)->getOption('core.prefix.class');
+            return new CallableClassPlugin($sPrefix, $di->g(Container::class), $di->g(ParameterReader::class),
+                $di->g(CallableRegistry::class), $di->g(CallableRepository::class),
+                $di->g(TemplateEngine::class), $di->g(Translator::class), $di->g(Validator::class));
         });
         // Callable dir plugin
-        $this->set(CallableDirPlugin::class, function($c) {
-            return new CallableDirPlugin($c->g(CallableRegistry::class), $c->g(Translator::class));
+        $this->set(CallableDirPlugin::class, function($di) {
+            return new CallableDirPlugin($di->g(CallableRegistry::class), $di->g(Translator::class));
         });
         // Callable function plugin
-        $this->set(CallableFunctionPlugin::class, function($c) {
-            $sPrefix = $c->g(ConfigManager::class)->getOption('core.prefix.function');
-            return new CallableFunctionPlugin($sPrefix, $c->g(Container::class), $c->g(ParameterReader::class),
-                $c->g(TemplateEngine::class), $c->g(Translator::class), $c->g(Validator::class));
+        $this->set(CallableFunctionPlugin::class, function($di) {
+            $sPrefix = $di->g(ConfigManager::class)->getOption('core.prefix.function');
+            return new CallableFunctionPlugin($sPrefix, $di->g(Container::class), $di->g(ParameterReader::class),
+                $di->g(TemplateEngine::class), $di->g(Translator::class), $di->g(Validator::class));
         });
     }
 

@@ -20,8 +20,6 @@ use Jaxon\App\Session\SessionInterface;
 use Jaxon\Exception\SetupException;
 use Pimple\Container as PimpleContainer;
 use Psr\Container\ContainerInterface;
-use Psr\Log\LoggerAwareInterface;
-use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
@@ -36,10 +34,8 @@ use Throwable;
 use function array_map;
 use function realpath;
 
-class Container extends PimpleContainer implements LoggerAwareInterface
+class Container
 {
-    use LoggerAwareTrait;
-
     use Traits\AppTrait;
     use Traits\PsrTrait;
     use Traits\RequestTrait;
@@ -51,27 +47,32 @@ class Container extends PimpleContainer implements LoggerAwareInterface
     use Traits\UtilTrait;
 
     /**
-     * The Dependency Injection Container
+     * The library Dependency Injection Container
+     *
+     * @var PimpleContainer
+     */
+    private $xLibContainer;
+
+    /**
+     * The application or framework Dependency Injection Container
      *
      * @var ContainerInterface
      */
-    private $xContainer = null;
+    private $xAppContainer = null;
 
     /**
      * The class constructor
      */
     public function __construct(Ajax $jaxon)
     {
-        parent::__construct();
-
-        // Set the default logger
-        $this->setLogger(new NullLogger());
+        $this->xLibContainer = new PimpleContainer();
 
         // Save the Ajax and Container instances
         $this->val(Ajax::class, $jaxon);
         $this->val(Container::class, $this);
-        // Register the logger
-        $this->val(LoggerInterface::class, $this->logger);
+
+        // Register the null logger by default
+        $this->setLogger(new NullLogger());
 
         // Template directory
         $sTemplateDir = realpath(__DIR__ . '/../../templates');
@@ -102,13 +103,25 @@ class Container extends PimpleContainer implements LoggerAwareInterface
     }
 
     /**
+     * Set the logger
+     *
+     * @param LoggerInterface $xLogger
+     *
+     * @return void
+     */
+    public function setLogger(LoggerInterface $xLogger)
+    {
+        $this->val(LoggerInterface::class, $xLogger);
+    }
+
+    /**
      * Get the logger
      *
      * @return LoggerInterface
      */
     public function getLogger(): LoggerInterface
     {
-        return $this->logger;
+        return $this->get(LoggerInterface::class);
     }
 
     /**
@@ -120,7 +133,7 @@ class Container extends PimpleContainer implements LoggerAwareInterface
      */
     public function setContainer(ContainerInterface $xContainer)
     {
-        $this->xContainer = $xContainer;
+        $this->xAppContainer = $xContainer;
     }
 
     /**
@@ -132,7 +145,7 @@ class Container extends PimpleContainer implements LoggerAwareInterface
      */
     public function h(string $sClass): bool
     {
-        return $this->offsetExists($sClass);
+        return $this->xLibContainer->offsetExists($sClass);
     }
 
     /**
@@ -144,11 +157,11 @@ class Container extends PimpleContainer implements LoggerAwareInterface
      */
     public function has(string $sClass): bool
     {
-        if($this->xContainer != null && $this->xContainer->has($sClass))
+        if($this->xAppContainer != null && $this->xAppContainer->has($sClass))
         {
             return true;
         }
-        return $this->offsetExists($sClass);
+        return $this->xLibContainer->offsetExists($sClass);
     }
 
     /**
@@ -160,7 +173,7 @@ class Container extends PimpleContainer implements LoggerAwareInterface
      */
     public function g(string $sClass)
     {
-        return $this->offsetGet($sClass);
+        return $this->xLibContainer->offsetGet($sClass);
     }
 
     /**
@@ -175,11 +188,11 @@ class Container extends PimpleContainer implements LoggerAwareInterface
     {
         try
         {
-            if($this->xContainer != null && $this->xContainer->has($sClass))
+            if($this->xAppContainer != null && $this->xAppContainer->has($sClass))
             {
-                return $this->xContainer->get($sClass);
+                return $this->xAppContainer->get($sClass);
             }
-            return $this->offsetGet($sClass);
+            return $this->xLibContainer->offsetGet($sClass);
         }
         catch(Exception|Throwable $e)
         {
@@ -201,7 +214,9 @@ class Container extends PimpleContainer implements LoggerAwareInterface
      */
     public function set(string $sClass, Closure $xClosure)
     {
-        $this->offsetSet($sClass, $xClosure);
+       $this->xLibContainer->offsetSet($sClass, function() use($xClosure) {
+            return $xClosure($this);
+        });
     }
 
     /**
@@ -214,7 +229,7 @@ class Container extends PimpleContainer implements LoggerAwareInterface
      */
     public function val(string $sKey, $xValue)
     {
-        $this->offsetSet($sKey, $xValue);
+       $this->xLibContainer->offsetSet($sKey, $xValue);
     }
 
     /**
@@ -227,8 +242,8 @@ class Container extends PimpleContainer implements LoggerAwareInterface
      */
     public function alias(string $sAlias, string $sClass)
     {
-        $this->set($sAlias, function($c) use ($sClass) {
-            return $c->get($sClass);
+        $this->set($sAlias, function($di) use ($sClass) {
+            return $di->get($sClass);
         });
     }
 

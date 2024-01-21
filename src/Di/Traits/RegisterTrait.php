@@ -114,43 +114,44 @@ trait RegisterTrait
         }
 
         // Register the callable object
-        $this->set($sCallableObject, function($c) use($sReflectionClass, $sClassName, $aOptions) {
-            $xRepository = $c->g(CallableRepository::class);
+        $this->set($sCallableObject, function($di) use($sReflectionClass, $sClassName, $aOptions) {
+            $xRepository = $di->g(CallableRepository::class);
             $aProtectedMethods = $xRepository->getProtectedMethods($sClassName);
-            return new CallableObject($c, $c->g(AnnotationReaderInterface::class),
-                $c->g($sReflectionClass), $aOptions, $aProtectedMethods);
+            return new CallableObject($di, $di->g(AnnotationReaderInterface::class),
+                $di->g($sReflectionClass), $aOptions, $aProtectedMethods);
         });
 
         // Register the request factory
-        $this->set($sRequestFactory, function($c) use($sCallableObject) {
-            $xConfigManager = $c->g(ConfigManager::class);
-            $xCallable = $c->g($sCallableObject);
+        $this->set($sRequestFactory, function($di) use($sCallableObject) {
+            $xConfigManager = $di->g(ConfigManager::class);
+            $xCallable = $di->g($sCallableObject);
             $sJsClass = $xConfigManager->getOption('core.prefix.class') . $xCallable->getJsName() . '.';
-            return new RequestFactory($sJsClass, $c->g(DialogLibraryManager::class), $c->g(Paginator::class));
+            return new RequestFactory($sJsClass, $di->g(DialogLibraryManager::class), $di->g(Paginator::class));
         });
 
-        // Register the user class, but only if the user already didn't.
+        // Register the user class, but only if the user didn't already.
         if(!$this->h($sClassName))
         {
-            $this->set($sClassName, function($c) use($sReflectionClass) {
-                return $this->make($c->g($sReflectionClass));
+            $this->set($sClassName, function($di) use($sReflectionClass) {
+                return $this->make($di->g($sReflectionClass));
             });
         }
         // Initialize the user class instance
-        $this->extend($sClassName, function($xRegisteredObject, $c) use($sCallableObject, $sClassName) {
+        $this->xLibContainer->extend($sClassName, function($xRegisteredObject)
+            use($sCallableObject, $sClassName) {
             if($xRegisteredObject instanceof CallableClass)
             {
-                // Set the protected attributes of the object
-                $cSetter = function($c, $sClassName) {
-                    $this->xCallableClassHelper = new CallableClassHelper($c, $sClassName);
-                    $this->response = $c->getResponse();
+                $cSetter = function($di) use($sClassName) {
+                    // Set the protected attributes of the object
+                    $this->xCallableClassHelper = new CallableClassHelper($di, $sClassName);
+                    $this->response = $di->getResponse();
                 };
                 // Can now access protected attributes
-                call_user_func($cSetter->bindTo($xRegisteredObject, $xRegisteredObject), $c, $sClassName);
+                call_user_func($cSetter->bindTo($xRegisteredObject, $xRegisteredObject), $this);
             }
 
             // Run the callbacks for class initialisation
-            $aCallbacks = $c->g(CallbackManager::class)->getInitCallbacks();
+            $aCallbacks = $this->g(CallbackManager::class)->getInitCallbacks();
             foreach($aCallbacks as $xCallback)
             {
                 call_user_func($xCallback, $xRegisteredObject);
@@ -202,17 +203,16 @@ trait RegisterTrait
      */
     public function registerPackage(string $sClassName, Config $xPkgConfig)
     {
-        $this->val($sClassName . '_config', $xPkgConfig);
-        $this->set($sClassName, function($c) use($sClassName) {
+        $this->set($sClassName, function($di) use($sClassName, $xPkgConfig) {
             $xPackage = $this->make($sClassName);
-            // Set the protected attributes of the object
-            $cSetter = function($c, $sClassName) {
-                $this->xPkgConfig = $c->g($sClassName . '_config');
-                $this->xFactory = $c->g(Factory::class);
-                $this->xRenderer = $c->g(ViewRenderer::class);
+            $cSetter = function($di) use($xPkgConfig) {
+                // Set the protected attributes of the object
+                $this->xPkgConfig = $xPkgConfig;
+                $this->xFactory = $di->g(Factory::class);
+                $this->xRenderer = $di->g(ViewRenderer::class);
             };
             // Can now access protected attributes
-            call_user_func($cSetter->bindTo($xPackage, $xPackage), $c, $sClassName);
+            call_user_func($cSetter->bindTo($xPackage, $xPackage), $di);
             return $xPackage;
         });
     }

@@ -23,9 +23,9 @@ trait UtilTrait
             return new ConfigReader();
         });
         // Template engine
-        $this->set(TemplateEngine::class, function($c) {
+        $this->set(TemplateEngine::class, function($di) {
             $xTemplateEngine = new TemplateEngine();
-            $sTemplateDir = rtrim(trim($c->g('jaxon.core.dir.template')), '/\\');
+            $sTemplateDir = rtrim(trim($di->g('jaxon.core.dir.template')), '/\\');
             $sPaginationDir = $sTemplateDir . DIRECTORY_SEPARATOR . 'pagination';
             $xTemplateEngine->addNamespace('jaxon', $sTemplateDir, '.php');
             $xTemplateEngine->addNamespace('pagination', $sPaginationDir, '.php');

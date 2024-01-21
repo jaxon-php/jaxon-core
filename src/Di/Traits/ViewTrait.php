@@ -32,17 +32,17 @@ trait ViewTrait
     private function registerViews()
     {
         // Jaxon template view
-        $this->set(TemplateView::class, function($c) {
-            return new TemplateView($c->g(TemplateEngine::class));
+        $this->set(TemplateView::class, function($di) {
+            return new TemplateView($di->g(TemplateEngine::class));
         });
         // View Renderer
-        $this->set(ViewRenderer::class, function($c) {
-            $xViewRenderer = new ViewRenderer($c->g(Container::class));
+        $this->set(ViewRenderer::class, function($di) {
+            $xViewRenderer = new ViewRenderer($di->g(Container::class));
             // Add the default view renderer
-            $xViewRenderer->addRenderer('jaxon', function($c) {
-                return $c->g(TemplateView::class);
+            $xViewRenderer->addRenderer('jaxon', function($di) {
+                return $di->g(TemplateView::class);
             });
-            $sTemplateDir = rtrim(trim($c->g('jaxon.core.dir.template')), '/\\');
+            $sTemplateDir = rtrim(trim($di->g('jaxon.core.dir.template')), '/\\');
             $sPaginationDir = $sTemplateDir . DIRECTORY_SEPARATOR . 'pagination';
             // By default, render pagination templates with Jaxon.
             $xViewRenderer->addNamespace('jaxon', $sTemplateDir, '.php', 'jaxon');
@@ -51,17 +51,17 @@ trait ViewTrait
         });
 
         // Pagination Paginator
-        $this->set(Paginator::class, function($c) {
-            return new Paginator($c->g(PaginationRenderer::class));
+        $this->set(Paginator::class, function($di) {
+            return new Paginator($di->g(PaginationRenderer::class));
         });
         // Pagination Renderer
-        $this->set(PaginationRenderer::class, function($c) {
-            return new PaginationRenderer($c->g(ViewRenderer::class));
+        $this->set(PaginationRenderer::class, function($di) {
+            return new PaginationRenderer($di->g(ViewRenderer::class));
         });
 
         // Dialog library manager
-        $this->set(DialogLibraryManager::class, function($c) {
-            return new DialogLibraryManager($c->g(Container::class), $c->g(ConfigManager::class), $c->g(Translator::class));
+        $this->set(DialogLibraryManager::class, function($di) {
+            return new DialogLibraryManager($di->g(Container::class), $di->g(ConfigManager::class), $di->g(Translator::class));
         });
         $this->val(AlertLibrary::class, new AlertLibrary());
     }
@@ -76,13 +76,13 @@ trait ViewTrait
      */
     public function registerDialogLibrary(string $sClass, string $sLibraryName)
     {
-        $this->set($sClass, function($c) use($sClass) {
+        $this->set($sClass, function($di) use($sClass) {
             // Set the protected attributes of the library
-            $cSetter = function() use($c) {
-                $this->xHelper = new DialogLibraryHelper($this, $c->g(ConfigManager::class), $c->g(TemplateEngine::class));
+            $cSetter = function() use($di) {
+                $this->xHelper = new DialogLibraryHelper($this, $di->g(ConfigManager::class), $di->g(TemplateEngine::class));
             };
             // Can now access protected attributes
-            $xLibrary = $c->make($sClass);
+            $xLibrary = $di->make($sClass);
             call_user_func($cSetter->bindTo($xLibrary, $xLibrary));
             return $xLibrary;
         });

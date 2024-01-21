@@ -30,41 +30,41 @@ trait PluginTrait
     private function registerPlugins()
     {
         // Plugin manager
-        $this->set(PluginManager::class, function($c) {
-            return new PluginManager($c->g(Container::class),
-                $c->g(CodeGenerator::class), $c->g(Translator::class));
+        $this->set(PluginManager::class, function($di) {
+            return new PluginManager($di->g(Container::class),
+                $di->g(CodeGenerator::class), $di->g(Translator::class));
         });
         // Package manager
-        $this->set(PackageManager::class, function($c) {
-            return new PackageManager($c->g(Container::class), $c->g(PluginManager::class),
-                $c->g(ConfigManager::class), $c->g(CodeGenerator::class),
-                $c->g(ViewRenderer::class), $c->g(Translator::class));
+        $this->set(PackageManager::class, function($di) {
+            return new PackageManager($di->g(Container::class), $di->g(PluginManager::class),
+                $di->g(ConfigManager::class), $di->g(CodeGenerator::class),
+                $di->g(ViewRenderer::class), $di->g(Translator::class));
         });
         // Code Generation
         $this->set(MinifierInterface::class, function() {
             return new class extends FileMinifier implements MinifierInterface
             {};
         });
-        $this->set(AssetManager::class, function($c) {
-            return new AssetManager($c->g(ConfigManager::class), $c->g(ParameterReader::class),
-                $c->g(MinifierInterface::class));
+        $this->set(AssetManager::class, function($di) {
+            return new AssetManager($di->g(ConfigManager::class), $di->g(ParameterReader::class),
+                $di->g(MinifierInterface::class));
         });
-        $this->set(CodeGenerator::class, function($c) {
-            return new CodeGenerator(Jaxon::VERSION, $c->g(Container::class), $c->g(TemplateEngine::class));
+        $this->set(CodeGenerator::class, function($di) {
+            return new CodeGenerator(Jaxon::VERSION, $di->g(Container::class), $di->g(TemplateEngine::class));
         });
 
         // JQuery response plugin
-        $this->set(JQueryPlugin::class, function($c) {
-            $jQueryNs = $c->g(ConfigManager::class)->getOption('core.jquery.no_conflict', false) ? 'jQuery' : '$';
+        $this->set(JQueryPlugin::class, function($di) {
+            $jQueryNs = $di->g(ConfigManager::class)->getOption('core.jquery.no_conflict', false) ? 'jQuery' : '$';
             return new JQueryPlugin($jQueryNs);
         });
         // DataBag response plugin
-        $this->set(DataBagPlugin::class, function($c) {
-            return new DataBagPlugin($c->g(Container::class));
+        $this->set(DataBagPlugin::class, function($di) {
+            return new DataBagPlugin($di->g(Container::class));
         });
         // Dialog response plugin
-        $this->set(DialogPlugin::class, function($c) {
-            return new DialogPlugin($c->g(DialogLibraryManager::class));
+        $this->set(DialogPlugin::class, function($di) {
+            return new DialogPlugin($di->g(DialogLibraryManager::class));
         });
     }
 

@@ -32,8 +32,8 @@ trait PsrTrait
         $this->set(Psr17Factory::class, function() {
             return new Psr17Factory();
         });
-        $this->set(ServerRequestCreator::class, function($c) {
-            $xRequestFactory = $c->g(Psr17Factory::class);
+        $this->set(ServerRequestCreator::class, function($di) {
+            $xRequestFactory = $di->g(Psr17Factory::class);
             return new ServerRequestCreator(
                 $xRequestFactory, // ServerRequestFactory
                 $xRequestFactory, // UriFactory
@@ -41,26 +41,26 @@ trait PsrTrait
                 $xRequestFactory  // StreamFactory
             );
         });
-        $this->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)->fromGlobals();
+        $this->set(ServerRequestInterface::class, function($di) {
+            return $di->g(ServerRequestCreator::class)->fromGlobals();
         });
         // PSR factory
-        $this->set(PsrFactory::class, function($c) {
-            return new PsrFactory($c->g(Container::class));
+        $this->set(PsrFactory::class, function($di) {
+            return new PsrFactory($di->g(Container::class));
         });
         // PSR request handler
-        $this->set(PsrRequestHandler::class, function($c) {
-            return new PsrRequestHandler($c->g(Container::class), $c->g(RequestHandler::class),
-                $c->g(ResponseManager::class), $c->g(Translator::class));
+        $this->set(PsrRequestHandler::class, function($di) {
+            return new PsrRequestHandler($di->g(Container::class), $di->g(RequestHandler::class),
+                $di->g(ResponseManager::class), $di->g(Translator::class));
         });
         // PSR config middleware
-        $this->set(PsrConfigMiddleware::class, function($c) {
-            return new PsrConfigMiddleware($c->g(Container::class), $c->g($this->sPsrConfig));
+        $this->set(PsrConfigMiddleware::class, function($di) {
+            return new PsrConfigMiddleware($di->g(Container::class), $di->g($this->sPsrConfig));
         });
         // PSR ajax middleware
-        $this->set(PsrAjaxMiddleware::class, function($c) {
-            return new PsrAjaxMiddleware($c->g(Container::class), $c->g(RequestHandler::class),
-                $c->g(ResponseManager::class));
+        $this->set(PsrAjaxMiddleware::class, function($di) {
+            return new PsrAjaxMiddleware($di->g(Container::class), $di->g(RequestHandler::class),
+                $di->g(ResponseManager::class));
         });
     }
 

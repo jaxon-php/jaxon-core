@@ -85,9 +85,9 @@ trait AppTrait
     private function registerApp()
     {
         // Translator
-        $this->set(Translator::class, function($c) {
+        $this->set(Translator::class, function($di) {
             $xTranslator = new Translator();
-            $sResourceDir = rtrim(trim($c->g('jaxon.core.dir.translation')), '/\\');
+            $sResourceDir = rtrim(trim($di->g('jaxon.core.dir.translation')), '/\\');
             // Load the Jaxon package translations
             $xTranslator->loadTranslations($sResourceDir . '/en/errors.php', 'en');
             $xTranslator->loadTranslations($sResourceDir . '/fr/errors.php', 'fr');
@@ -100,12 +100,12 @@ trait AppTrait
         });
 
         // Config Manager
-        $this->set(ConfigEventManager::class, function($c) {
-            return new ConfigEventManager($c->g(Container::class));
+        $this->set(ConfigEventManager::class, function($di) {
+            return new ConfigEventManager($di->g(Container::class));
         });
-        $this->set(ConfigManager::class, function($c) {
-            $xEventManager = $c->g(ConfigEventManager::class);
-            $xConfigManager = new ConfigManager($c->g(ConfigReader::class), $xEventManager, $c->g(Translator::class));
+        $this->set(ConfigManager::class, function($di) {
+            $xEventManager = $di->g(ConfigEventManager::class);
+            $xConfigManager = new ConfigManager($di->g(ConfigReader::class), $xEventManager, $di->g(Translator::class));
             $xConfigManager->setOptions($this->aConfig);
             // It's important to call this after the $xConfigManager->setOptions(),
             // because we don't want to trigger the events since the listeners cannot yet be instantiated.
@@ -115,17 +115,17 @@ trait AppTrait
         });
 
         // Jaxon App
-        $this->set(AppInterface::class, function($c) {
-            return new App($c->g(Container::class));
+        $this->set(AppInterface::class, function($di) {
+            return new App($di->g(Container::class));
         });
         // Jaxon App bootstrap
-        $this->set(Bootstrap::class, function($c) {
-            return new Bootstrap($c->g(ConfigManager::class), $c->g(PackageManager::class),
-                $c->g(CallbackManager::class), $c->g(ViewRenderer::class));
+        $this->set(Bootstrap::class, function($di) {
+            return new Bootstrap($di->g(ConfigManager::class), $di->g(PackageManager::class),
+                $di->g(CallbackManager::class), $di->g(ViewRenderer::class));
         });
         // The javascript library version
-        $this->set($this->sJsLibVersion, function($c) {
-            $xRequest = $c->getRequest();
+        $this->set($this->sJsLibVersion, function($di) {
+            $xRequest = $di->getRequest();
             $aParams = $xRequest->getMethod() === 'POST' ?
                 $xRequest->getParsedBody() : $xRequest->getQueryParams();
             return $aParams['jxnv'] ?? '3.3.0';

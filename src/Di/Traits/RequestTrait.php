@@ -30,9 +30,9 @@ trait RequestTrait
     private function registerRequests()
     {
         // The parameter reader
-        $this->set(ParameterReader::class, function($c) {
-            return new ParameterReader($c->g(Container::class), $c->g(ConfigManager::class),
-                $c->g(Translator::class), $c->g(UriDetector::class));
+        $this->set(ParameterReader::class, function($di) {
+            return new ParameterReader($di->g(Container::class), $di->g(ConfigManager::class),
+                $di->g(Translator::class), $di->g(UriDetector::class));
         });
         // Callback Manager
         $this->set(CallbackManager::class, function() {
@@ -43,19 +43,19 @@ trait RequestTrait
             return null;
         });
         // Request Handler
-        $this->set(RequestHandler::class, function($c) {
-            return new RequestHandler($c->g(Container::class), $c->g(PluginManager::class),
-                $c->g(ResponseManager::class), $c->g(CallbackManager::class), $c->g(DataBagPlugin::class));
+        $this->set(RequestHandler::class, function($di) {
+            return new RequestHandler($di->g(Container::class), $di->g(PluginManager::class),
+                $di->g(ResponseManager::class), $di->g(CallbackManager::class), $di->g(DataBagPlugin::class));
         });
         // Request Factory
-        $this->set(Factory::class, function($c) {
-            return new Factory($c->g(CallableRegistry::class), $c->g(RequestFactory::class),
-                $c->g(ParameterFactory::class));
+        $this->set(Factory::class, function($di) {
+            return new Factory($di->g(CallableRegistry::class), $di->g(RequestFactory::class),
+                $di->g(ParameterFactory::class));
         });
         // Factory for requests to functions
-        $this->set(RequestFactory::class, function($c) {
-            $sPrefix = $c->g(ConfigManager::class)->getOption('core.prefix.function');
-            return new RequestFactory($sPrefix, $c->g(DialogLibraryManager::class), $c->g(Paginator::class));
+        $this->set(RequestFactory::class, function($di) {
+            $sPrefix = $di->g(ConfigManager::class)->getOption('core.prefix.function');
+            return new RequestFactory($sPrefix, $di->g(DialogLibraryManager::class), $di->g(Paginator::class));
         });
         // Parameter Factory
         $this->set(ParameterFactory::class, function() {
