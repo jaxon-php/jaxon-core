@@ -65,6 +65,28 @@ abstract class Package implements CodeGeneratorInterface
     }
 
     /**
+     * @param Config $xPkgConfig
+     * @param Factory $xFactory
+     * @param ViewRenderer $xRenderer
+     *
+     * @return void
+     */
+    protected function _init(Config $xPkgConfig, Factory $xFactory, ViewRenderer $xRenderer)
+    {
+        $this->xPkgConfig = $xPkgConfig;
+        $this->xFactory = $xFactory;
+        $this->xRenderer = $xRenderer;
+    }
+
+    /**
+     * This method is automatically called after the package instance is created and configured.
+     *
+     * @return void
+     */
+    public function init()
+    {}
+
+    /**
      * Get the value of a given package option
      *
      * @param string $sOption    The option name

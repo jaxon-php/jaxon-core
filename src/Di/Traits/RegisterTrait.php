@@ -213,12 +213,11 @@ trait RegisterTrait
         $this->xLibContainer->extend($sClassName, function($xPackage) use($xPkgConfig) {
             $cSetter = function($di) use($xPkgConfig) {
                 // Set the protected attributes of the object
-                $this->xPkgConfig = $xPkgConfig;
-                $this->xFactory = $di->g(Factory::class);
-                $this->xRenderer = $di->g(ViewRenderer::class);
+                $this->_init($xPkgConfig, $di->g(Factory::class), $di->g(ViewRenderer::class));
             };
             // Can now access protected attributes
             call_user_func($cSetter->bindTo($xPackage, $xPackage), $this);
+            $xPackage->init();
             return $xPackage;
         });
     }
