@@ -203,8 +203,14 @@ trait RegisterTrait
      */
     public function registerPackage(string $sClassName, Config $xPkgConfig)
     {
-        $this->set($sClassName, function($di) use($sClassName, $xPkgConfig) {
-            $xPackage = $this->make($sClassName);
+        // Register the user class, but only if the user didn't already.
+        if(!$this->h($sClassName))
+        {
+            $this->set($sClassName, function() use($sClassName) {
+                return $this->make($sClassName);
+            });
+        }
+        $this->xLibContainer->extend($sClassName, function($xPackage) use($xPkgConfig) {
             $cSetter = function($di) use($xPkgConfig) {
                 // Set the protected attributes of the object
                 $this->xPkgConfig = $xPkgConfig;
@@ -212,20 +218,8 @@ trait RegisterTrait
                 $this->xRenderer = $di->g(ViewRenderer::class);
             };
             // Can now access protected attributes
-            call_user_func($cSetter->bindTo($xPackage, $xPackage), $di);
+            call_user_func($cSetter->bindTo($xPackage, $xPackage), $this);
             return $xPackage;
         });
-    }
-
-    /**
-     * Get a package config
-     *
-     * @param string $sClassName    The package class name
-     *
-     * @return Config
-     */
-    public function getPackageConfig(string $sClassName): Config
-    {
-        return $this->g($sClassName . '_config');
     }
 }

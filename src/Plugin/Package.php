@@ -3,7 +3,7 @@
 /**
  * Package.php
  *
- * Package.
+ * Base class for the Jaxon packages.
  *
  * @package jaxon-core
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
@@ -53,6 +53,16 @@ abstract class Package implements CodeGeneratorInterface
      * @return string|array
      */
     abstract public static function config();
+
+    /**
+     * Get the package config object
+     *
+     * @return Config
+     */
+    public function getConfig()
+    {
+        return $this->xPkgConfig;
+    }
 
     /**
      * Get the value of a given package option

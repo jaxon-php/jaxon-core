@@ -25,6 +25,7 @@ use Jaxon\Plugin\Package;
 use Jaxon\Utils\Config\Config;
 
 use function is_array;
+use function is_callable;
 use function is_integer;
 use function is_string;
 use function is_subclass_of;
@@ -172,10 +173,10 @@ class PackageManager
      *
      * @param string $sClassName    The package class
      *
-     * @return array
+     * @return Config
      * @throws SetupException
      */
-    private function getPackageOptions(string $sClassName): array
+    private function getPackageLibConfig(string $sClassName): Config
     {
         // $this->aPackages contains packages config file paths.
         $aLibOptions = $sClassName::config();
@@ -190,7 +191,28 @@ class PackageManager
             $sMessage = $this->xTranslator->trans('errors.register.invalid', ['name' => $sClassName]);
             throw new SetupException($sMessage);
         }
-        return $aLibOptions;
+        // Add the package name to the config
+        $aLibOptions['package'] = $sClassName;
+        return $this->xConfigManager->newConfig($aLibOptions);
+    }
+
+    /**
+     * Get the options provided by the package user
+     *
+     * @param array $aUserOptions    The user provided options
+     *
+     * @return Config
+     * @throws SetupException
+     */
+    private function getPackageUserConfig(array $aUserOptions): Config
+    {
+        $xOptionsProvider = $aUserOptions['provider'] ?? null;
+        // The user can provide a callable that returns the package options.
+        if(is_callable($xOptionsProvider))
+        {
+            $aUserOptions = $xOptionsProvider($aUserOptions);
+        }
+        return $this->xConfigManager->newConfig($aUserOptions);
     }
 
     /**
@@ -210,14 +232,14 @@ class PackageManager
             $sMessage = $this->xTranslator->trans('errors.register.invalid', ['name' => $sClassName]);
             throw new SetupException($sMessage);
         }
-        $aLibOptions = $this->getPackageOptions($sClassName);
-        // Add the package name to the config
-        $aLibOptions['package'] = $sClassName;
-        $xAppConfig = $this->xConfigManager->newConfig($aLibOptions);
-        $xUserConfig = $this->xConfigManager->newConfig($aUserOptions);
-        $this->di->registerPackage($sClassName, $xUserConfig);
+
         // Register the declarations in the package config.
+        $xAppConfig = $this->getPackageLibConfig($sClassName);
+        $xUserConfig = $this->getPackageUserConfig($aUserOptions);
         $this->registerItemsFromConfig($xAppConfig, $xUserConfig);
+        // Register the package and its options in the DI
+        $this->di->registerPackage($sClassName, $xUserConfig);
+
         // Register the package as a code generator.
         $this->xCodeGenerator->addCodeGenerator($sClassName, 500);
     }
