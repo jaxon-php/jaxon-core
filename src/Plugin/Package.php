@@ -83,7 +83,7 @@ abstract class Package implements CodeGeneratorInterface
      *
      * @return void
      */
-    public function init()
+    protected function init()
     {}
 
     /**
