@@ -22,6 +22,7 @@ use Jaxon\Di\Container;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\Code\CodeGenerator;
 use Jaxon\Plugin\Package;
+use Jaxon\Request\Handler\CallbackManager;
 use Jaxon\Utils\Config\Config;
 
 use function is_array;
@@ -42,6 +43,11 @@ class PackageManager
      * @var PluginManager
      */
     protected $xPluginManager;
+
+    /**
+     * @var CallbackManager
+     */
+    protected $xCallbackManager;
 
     /**
      * @var ConfigManager
@@ -69,16 +75,19 @@ class PackageManager
      * @param Container $di
      * @param PluginManager $xPluginManager
      * @param ConfigManager $xConfigManager
+     * @param CallbackManager $xCallbackManager
      * @param CodeGenerator $xCodeGenerator
      * @param ViewRenderer $xViewRenderer
      * @param Translator $xTranslator
      */
-    public function __construct(Container $di, PluginManager $xPluginManager, ConfigManager $xConfigManager,
+    public function __construct(Container $di, PluginManager $xPluginManager,
+        ConfigManager $xConfigManager, CallbackManager $xCallbackManager,
         CodeGenerator $xCodeGenerator, ViewRenderer $xViewRenderer, Translator $xTranslator)
     {
         $this->di = $di;
         $this->xPluginManager = $xPluginManager;
         $this->xConfigManager = $xConfigManager;
+        $this->xCallbackManager = $xCallbackManager;
         $this->xCodeGenerator = $xCodeGenerator;
         $this->xViewRenderer = $xViewRenderer;
         $this->xTranslator = $xTranslator;
@@ -146,6 +155,21 @@ class PackageManager
     }
 
     /**
+     * Register exceptions handlers
+     *
+     * @param Config $xConfig
+     *
+     * @return void
+     */
+    private function registerExceptionHandlers(Config $xConfig)
+    {
+        foreach($xConfig->getOption('exceptions', []) as $sExClass => $xExHandler)
+        {
+            $this->xCallbackManager->error($xExHandler, is_string($sExClass) ? $sExClass : '');
+        }
+    }
+
+    /**
      * Read and set Jaxon options from a JSON config file
      *
      * @param Config $xConfig The config options
@@ -166,6 +190,8 @@ class PackageManager
         $this->xViewRenderer->addNamespaces($xConfig, $xUserConfig);
         // Save items in the DI container
         $this->updateContainer($xConfig);
+        // Register the exception handlers
+        $this->registerExceptionHandlers($xConfig);
     }
 
     /**
