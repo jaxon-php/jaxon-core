@@ -151,11 +151,7 @@ trait RegisterTrait
             }
 
             // Run the callbacks for class initialisation
-            $aCallbacks = $this->g(CallbackManager::class)->getInitCallbacks();
-            foreach($aCallbacks as $xCallback)
-            {
-                call_user_func($xCallback, $xRegisteredObject);
-            }
+            $this->g(CallbackManager::class)->onInit($xRegisteredObject);
 
             // Set attributes from the DI container.
             // The class level DI options are set when creating the object instance.

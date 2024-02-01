@@ -35,8 +35,8 @@ trait RequestTrait
                 $di->g(Translator::class), $di->g(UriDetector::class));
         });
         // Callback Manager
-        $this->set(CallbackManager::class, function() {
-            return new CallbackManager();
+        $this->set(CallbackManager::class, function($di) {
+            return new CallbackManager($di->g(ResponseManager::class));
         });
         // By default, register a null upload handler
         $this->set(UploadHandlerInterface::class, function() {

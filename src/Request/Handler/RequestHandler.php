@@ -27,12 +27,8 @@ use Jaxon\Plugin\RequestHandlerInterface;
 use Jaxon\Plugin\Response\DataBag\DataBagPlugin;
 use Jaxon\Request\Upload\UploadHandlerInterface;
 use Jaxon\Response\Manager\ResponseManager;
-use Jaxon\Response\ResponseInterface;
 
 use Exception;
-
-use function count;
-use function call_user_func_array;
 
 class RequestHandler
 {
@@ -98,102 +94,6 @@ class RequestHandler
         $this->xResponseManager = $xResponseManager;
         $this->xCallbackManager = $xCallbackManager;
         $this->xDataBagPlugin = $xDataBagPlugin;
-    }
-
-    /**
-     * @param callable $xCallback
-     * @param array $aParameters
-     *
-     * @return void
-     */
-    private function executeCallback(callable $xCallback, array $aParameters)
-    {
-        $xReturn = call_user_func_array($xCallback, $aParameters);
-        if($xReturn instanceof ResponseInterface)
-        {
-            $this->xResponseManager->append($xReturn);
-        }
-    }
-
-    /**
-     * These are the pre-request processing callbacks passed to the Jaxon library.
-     *
-     * @param bool $bEndRequest If set to true, the request processing is interrupted.
-     *
-     * @return void
-     * @throws RequestException
-     */
-    public function onBefore(bool &$bEndRequest)
-    {
-        $xTarget = $this->xRequestPlugin->getTarget();
-        // Call the user defined callback
-        foreach($this->xCallbackManager->getBeforeCallbacks() as $xCallback)
-        {
-            $this->executeCallback($xCallback, [$xTarget, &$bEndRequest]);
-            if($bEndRequest)
-            {
-                return;
-            }
-        }
-    }
-
-    /**
-     * These are the post-request processing callbacks passed to the Jaxon library.
-     *
-     * @return void
-     * @throws RequestException
-     */
-    public function onAfter(bool $bEndRequest)
-    {
-        foreach($this->xCallbackManager->getAfterCallbacks() as $xCallback)
-        {
-            $this->executeCallback($xCallback, [$this->xRequestPlugin->getTarget(), $bEndRequest]);
-        }
-    }
-
-    /**
-     * These callbacks are called whenever an invalid request is processed.
-     *
-     * @param RequestException $xException
-     *
-     * @return void
-     * @throws RequestException
-     */
-    public function onInvalid(RequestException $xException)
-    {
-        foreach($this->xCallbackManager->getInvalidCallbacks() as $xCallback)
-        {
-            $this->executeCallback($xCallback, [$xException]);
-        }
-        throw $xException;
-    }
-
-    /**
-     * These callbacks are called whenever an invalid request is processed.
-     *
-     * @param Exception $xException
-     *
-     * @return void
-     * @throws Exception
-     */
-    public function onError(Exception $xException)
-    {
-        $aExceptionCallbacks = $this->xCallbackManager->getExceptionCallbacks($xException);
-        foreach($aExceptionCallbacks as $xCallback)
-        {
-            $this->executeCallback($xCallback, [$xException]);
-        }
-        if(count($aExceptionCallbacks) > 0)
-        {
-            // Do not throw the exception if a custom handler is defined
-            return;
-        }
-
-        foreach($this->xCallbackManager->getErrorCallbacks() as $xCallback)
-        {
-            $this->executeCallback($xCallback, [$xException]);
-        }
-        throw $xException;
     }
 
     /**
@@ -289,7 +189,7 @@ class RequestHandler
             // Handle before processing event
             if(($this->xRequestPlugin))
             {
-                $this->onBefore($bEndRequest);
+                $this->xCallbackManager->onBefore($this->xRequestPlugin->getTarget(), $bEndRequest);
             }
             if($bEndRequest)
             {
@@ -301,7 +201,7 @@ class RequestHandler
             // Handle after processing event
             if(($this->xRequestPlugin))
             {
-                $this->onAfter($bEndRequest);
+                $this->xCallbackManager->onAfter($this->xRequestPlugin->getTarget(), $bEndRequest);
             }
         }
         // An exception was thrown while processing the request.
@@ -310,12 +210,12 @@ class RequestHandler
         catch(RequestException $e)
         {
             $this->xResponseManager->error($e->getMessage());
-            $this->onInvalid($e);
+            $this->xCallbackManager->onInvalid($e);
         }
         catch(Exception $e)
         {
             $this->xResponseManager->error($e->getMessage());
-            $this->onError($e);
+            $this->xCallbackManager->onError($e);
         }
 
         // Print the debug messages
