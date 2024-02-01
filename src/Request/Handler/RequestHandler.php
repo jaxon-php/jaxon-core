@@ -31,7 +31,7 @@ use Jaxon\Response\ResponseInterface;
 
 use Exception;
 
-use function call_user_func;
+use function count;
 use function call_user_func_array;
 
 class RequestHandler
@@ -101,6 +101,21 @@ class RequestHandler
     }
 
     /**
+     * @param callable $xCallback
+     * @param array $aParameters
+     *
+     * @return void
+     */
+    private function executeCallback(callable $xCallback, array $aParameters)
+    {
+        $xReturn = call_user_func_array($xCallback, $aParameters);
+        if($xReturn instanceof ResponseInterface)
+        {
+            $this->xResponseManager->append($xReturn);
+        }
+    }
+
+    /**
      * These are the pre-request processing callbacks passed to the Jaxon library.
      *
      * @param bool $bEndRequest If set to true, the request processing is interrupted.
@@ -114,11 +129,7 @@ class RequestHandler
         // Call the user defined callback
         foreach($this->xCallbackManager->getBeforeCallbacks() as $xCallback)
         {
-            $xReturn = call_user_func_array($xCallback, [$xTarget, &$bEndRequest]);
-            if($xReturn instanceof ResponseInterface)
-            {
-                $this->xResponseManager->append($xReturn);
-            }
+            $this->executeCallback($xCallback, [$xTarget, &$bEndRequest]);
             if($bEndRequest)
             {
                 return;
@@ -136,12 +147,7 @@ class RequestHandler
     {
         foreach($this->xCallbackManager->getAfterCallbacks() as $xCallback)
         {
-            $xReturn = call_user_func_array($xCallback,
-                [$this->xRequestPlugin->getTarget(), $bEndRequest]);
-            if($xReturn instanceof ResponseInterface)
-            {
-                $this->xResponseManager->append($xReturn);
-            }
+            $this->executeCallback($xCallback, [$this->xRequestPlugin->getTarget(), $bEndRequest]);
         }
     }
 
@@ -157,12 +163,9 @@ class RequestHandler
     {
         foreach($this->xCallbackManager->getInvalidCallbacks() as $xCallback)
         {
-            $xReturn = call_user_func($xCallback, $xException);
-            if($xReturn instanceof ResponseInterface)
-            {
-                $this->xResponseManager->append($xReturn);
-            }
+            $this->executeCallback($xCallback, [$xException]);
         }
+        throw $xException;
     }
 
     /**
@@ -171,18 +174,26 @@ class RequestHandler
      * @param Exception $xException
      *
      * @return void
-     * @throws RequestException
+     * @throws Exception
      */
     public function onError(Exception $xException)
     {
+        $aExceptionCallbacks = $this->xCallbackManager->getExceptionCallbacks($xException);
+        foreach($aExceptionCallbacks as $xCallback)
+        {
+            $this->executeCallback($xCallback, [$xException]);
+        }
+        if(count($aExceptionCallbacks) > 0)
+        {
+            // Do not throw the exception if a custom handler is defined
+            return;
+        }
+
         foreach($this->xCallbackManager->getErrorCallbacks() as $xCallback)
         {
-            $xReturn = call_user_func($xCallback, $xException);
-            if($xReturn instanceof ResponseInterface)
-            {
-                $this->xResponseManager->append($xReturn);
-            }
+            $this->executeCallback($xCallback, [$xException]);
         }
+        throw $xException;
     }
 
     /**
@@ -300,13 +311,11 @@ class RequestHandler
         {
             $this->xResponseManager->error($e->getMessage());
             $this->onInvalid($e);
-            throw $e;
         }
         catch(Exception $e)
         {
             $this->xResponseManager->error($e->getMessage());
             $this->onError($e);
-            throw $e;
         }
 
         // Print the debug messages

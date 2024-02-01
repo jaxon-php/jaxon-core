@@ -14,6 +14,12 @@
 
 namespace Jaxon\Request\Handler;
 
+use Exception;
+
+use function array_merge;
+use function array_values;
+use function is_a;
+
 class CallbackManager
 {
     /**
@@ -50,6 +56,13 @@ class CallbackManager
      * @var callable[]
      */
     protected $aErrorCallbacks = [];
+
+    /**
+     * The callbacks to run in case of exception
+     *
+     * @var callable[][]
+     */
+    protected $aExceptionCallbacks = [];
 
     /**
      * The callbacks to run when a class is instanced
@@ -105,13 +118,33 @@ class CallbackManager
     }
 
     /**
-     * Get the processing error callbacks.
+     * Get the error callbacks.
      *
      * @return callable[]
      */
     public function getErrorCallbacks(): array
     {
         return $this->aErrorCallbacks;
+    }
+
+    /**
+     * Get the exception callbacks.
+     *
+     * @param Exception $xException      The exception class
+     *
+     * @return callable[]
+     */
+    public function getExceptionCallbacks(Exception $xException): array
+    {
+        $aExceptionCallbacks = [];
+        foreach($this->aExceptionCallbacks as $sExClass => $aCallbacks)
+        {
+            if(is_a($xException, $sExClass))
+            {
+                $aExceptionCallbacks = array_merge($aExceptionCallbacks, $aCallbacks);
+            }
+        }
+        return array_values($aExceptionCallbacks);
     }
 
     /**
@@ -179,13 +212,25 @@ class CallbackManager
     /**
      * Add a processing error callback.
      *
-     * @param callable $xCallable    The callback function
+     * @param callable $xCallable   The callback function
+     * @param string $sExClass      The exception class
      *
      * @return CallbackManager
      */
-    public function error(callable $xCallable): CallbackManager
+    public function error(callable $xCallable, string $sExClass = ''): CallbackManager
     {
-        $this->aErrorCallbacks[] = $xCallable;
+        if($sExClass === '' || $sExClass === Exception::class)
+        {
+            $this->aErrorCallbacks[] = $xCallable;
+            return $this;
+        }
+        // Callback for a given exception class
+        if(isset($this->aExceptionCallbacks[$sExClass]))
+        {
+            $this->aExceptionCallbacks[$sExClass][] = $xCallable;
+            return $this;
+        }
+        $this->aExceptionCallbacks[$sExClass] = [$xCallable];
         return $this;
     }
 
