@@ -37,7 +37,8 @@ class Response implements ResponseInterface
 {
     use Traits\CommandTrait;
     use Traits\DomTrait;
-    use Traits\JsTrait;
+    use Traits\EventTrait;
+    use Traits\ScriptTrait;
 
     /**
      * @var PluginManager

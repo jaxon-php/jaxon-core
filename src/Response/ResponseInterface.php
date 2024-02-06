@@ -202,47 +202,6 @@ interface ResponseInterface
     public function insertAfter(string $sAfter, string $sTag, string $sId): ResponseInterface;
 
     /**
-     * Response command that prompts user with [ok] [cancel] style message box
-     *
-     * If the user clicks cancel, the specified number of response commands
-     * following this one, will be skipped.
-     *
-     * @param integer $nCommandCount    The number of commands to skip upon cancel
-     * @param string $sMessage    The message to display to the user
-     *
-     * @return ResponseInterface
-     */
-    public function confirmCommands(int $nCommandCount, string $sMessage): ResponseInterface;
-
-    /**
-     * Add a command to display an alert message to the user
-     *
-     * @param string $sMessage    The message to be displayed
-     *
-     * @return ResponseInterface
-     */
-    public function alert(string $sMessage): ResponseInterface;
-
-    /**
-     * Add a command to display a debug message to the user
-     *
-     * @param string $sMessage    The message to be displayed
-     *
-     * @return ResponseInterface
-     */
-    public function debug(string $sMessage): ResponseInterface;
-
-    /**
-     * Add a command to ask the browser to navigate to the specified URL
-     *
-     * @param string $sURL    The relative or fully qualified URL
-     * @param integer $nDelay    Number of seconds to delay before the redirect occurs
-     *
-     * @return ResponseInterface
-     */
-    public function redirect(string $sURL, int $nDelay = 0): ResponseInterface;
-
-    /**
      * Add a command to call the specified javascript function with the given (optional) parameters
      *
      * @param string $sFunc    The name of the function to call
@@ -252,18 +211,7 @@ interface ResponseInterface
     public function call(string $sFunc): ResponseInterface;
 
     /**
-     * Add a command to set a click handler on the browser
-     *
-     * @param string $sTarget    The id of the element that contains the event
-     * @param string $sScript    The javascript to execute when the event is fired
-     *
-     * @return ResponseInterface
-     */
-    public function onClick(string $sTarget, string $sScript): ResponseInterface;
-
-    /**
      * Add a command to install an event handler on the specified element
-     *
      * You can add more than one event handler to an element's event using this method.
      *
      * @param string $sTarget    The id of the element
@@ -286,6 +234,45 @@ interface ResponseInterface
     public function removeHandler(string $sTarget, string $sEvent, string $sHandler): ResponseInterface;
 
     /**
+     * Add a command to add an event handler on the specified element
+     * This handler can take custom parameters, and is is executed in a specific context.
+     *
+     * @param string $sTarget    The id of the element
+     * @param string $sEvent    The name of the event
+     * @param string $sHandler    The name of the javascript function to call when the event is fired
+     * @param array $aParams    The parameters to pass to the event handler
+     *
+     * @return ResponseInterface
+     */
+    public function addEventHandler(string $sTarget, string $sEvent,
+        string $sHandler, array $aParams = []): ResponseInterface;
+
+    /**
+     * Add a command to set an event handler on the specified element
+     * This handler can take custom parameters, and is is executed in a specific context.
+     *
+     * @param string $sTarget    The id of the element
+     * @param string $sEvent    The name of the event
+     * @param string $sHandler    The name of the javascript function to call when the event is fired
+     * @param array $aParams    The parameters to pass to the event handler
+     *
+     * @return ResponseInterface
+     */
+    public function setEventHandler(string $sTarget, string $sEvent,
+        string $sHandler, array $aParams = []): ResponseInterface;
+
+    /**
+     * Add a command to set a click handler on the browser
+     *
+     * @param string $sTarget    The id of the element that contains the event
+     * @param string $sHandler    The name of the javascript function to call when the event is fired
+     * @param array $aParams    The parameters to pass to the event handler
+     *
+     * @return ResponseInterface
+     */
+    public function onClick(string $sTarget, string $sHandler, array $aParams = []): ResponseInterface;
+
+    /**
      * Add a command to make Jaxon to pause execution of the response commands,
      * returning control to the browser so it can perform other commands asynchronously.
      *
@@ -296,4 +283,45 @@ interface ResponseInterface
      * @return ResponseInterface
      */
     public function sleep(int $tenths): ResponseInterface;
+
+    /**
+     * Response command that prompts user with [ok] [cancel] style message box
+     *
+     * If the user clicks cancel, the specified number of response commands
+     * following this one, will be skipped.
+     *
+     * @param integer $nCommandCount    The number of commands to skip upon cancel
+     * @param string $sMessage    The message to display to the user
+     *
+     * @return ResponseInterface
+     */
+    public function confirmCommands(int $nCommandCount, string $sMessage): ResponseInterface;
+
+    /**
+     * Add a command to display an alert message to the user
+     *
+     * @param string $sMessage    The message to be displayed
+     *
+     * @return ResponseInterface
+     */
+    public function alert(string $sMessage): ResponseInterface;
+
+    /**
+     * Add a command to ask the browser to navigate to the specified URL
+     *
+     * @param string $sURL    The relative or fully qualified URL
+     * @param integer $nDelay    Number of seconds to delay before the redirect occurs
+     *
+     * @return ResponseInterface
+     */
+    public function redirect(string $sURL, int $nDelay = 0): ResponseInterface;
+
+    /**
+     * Add a command to display a debug message to the user
+     *
+     * @param string $sMessage    The message to be displayed
+     *
+     * @return ResponseInterface
+     */
+    public function debug(string $sMessage): ResponseInterface;
 }

@@ -1,7 +1,9 @@
 <?php
 
 /**
- * JsTrait.php - Provides javascript related commands for the Response
+ * ScriptTrait.php
+ *
+ * Provides javascript related commands for the Response
  *
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
  * @license https://opensource.org/licenses/BSD-3-Clause BSD 3-Clause License
@@ -15,7 +17,7 @@ use Jaxon\Response\ResponseInterface;
 use function func_get_args;
 use function array_shift;
 
-trait JsTrait
+trait ScriptTrait
 {
     /**
      * Add a response command to the array of commands that will be sent to the browser
@@ -58,6 +60,21 @@ trait JsTrait
     }
 
     /**
+     * Add a command to call the specified javascript function with the given (optional) parameters
+     *
+     * @param string $sFunc    The name of the function to call
+     *
+     * @return ResponseInterface
+     */
+    public function call(string $sFunc): ResponseInterface
+    {
+        $aArgs = func_get_args();
+        array_shift($aArgs);
+        $aAttributes = ['cmd' => 'jc', 'func' => $sFunc];
+        return $this->addCommand($aAttributes, $aArgs);
+    }
+
+    /**
      * Add a command to display an alert message to the user
      *
      * @param string $sMessage    The message to be displayed
@@ -93,66 +110,6 @@ trait JsTrait
     {
         $sURL = $this->xPluginManager->getParameterReader()->parseUrl($sURL);
         return $this->_addCommand('rd', ['delay' => $nDelay], $sURL);
-    }
-
-    /**
-     * Add a command to call the specified javascript function with the given (optional) parameters
-     *
-     * @param string $sFunc    The name of the function to call
-     *
-     * @return ResponseInterface
-     */
-    public function call(string $sFunc): ResponseInterface
-    {
-        $aArgs = func_get_args();
-        array_shift($aArgs);
-        $aAttributes = ['cmd' => 'jc', 'func' => $sFunc];
-        return $this->addCommand($aAttributes, $aArgs);
-    }
-
-    /**
-     * Add a command to set a click handler on the browser
-     *
-     * @param string $sTarget    The id of the element that contains the event
-     * @param string $sScript    The javascript to execute when the event is fired
-     *
-     * @return ResponseInterface
-     */
-    public function onClick(string $sTarget, string $sScript): ResponseInterface
-    {
-        return $this->setEvent($sTarget, 'onclick', $sScript);
-    }
-
-    /**
-     * Add a command to install an event handler on the specified element
-     *
-     * You can add more than one event handler to an element's event using this method.
-     *
-     * @param string $sTarget    The id of the element
-     * @param string $sEvent    The name of the event
-     * @param string $sHandler    The name of the javascript function to call when the event is fired
-     *
-     * @return ResponseInterface
-     */
-    public function addHandler(string $sTarget, string $sEvent, string $sHandler): ResponseInterface
-    {
-        $aAttributes = ['id' => $sTarget, 'prop' => $sEvent];
-        return $this->_addCommand('ah', $aAttributes, $sHandler);
-    }
-
-    /**
-     * Add a command to remove an event handler from an element
-     *
-     * @param string $sTarget    The id of the element
-     * @param string $sEvent    The name of the event
-     * @param string $sHandler    The name of the javascript function called when the event is fired
-     *
-     * @return ResponseInterface
-     */
-    public function removeHandler(string $sTarget, string $sEvent, string $sHandler): ResponseInterface
-    {
-        $aAttributes = ['id' => $sTarget, 'prop' => $sEvent];
-        return $this->_addCommand('rh', $aAttributes, $sHandler);
     }
 
     /**

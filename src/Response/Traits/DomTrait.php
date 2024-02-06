@@ -1,7 +1,9 @@
 <?php
 
 /**
- * DomTrait.php - Provides DOM (HTML) related commands for the Response
+ * DomTrait.php
+ *
+ * Provides DOM (HTML) related commands for the Response
  *
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
  * @license https://opensource.org/licenses/BSD-3-Clause BSD 3-Clause License
