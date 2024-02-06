@@ -148,57 +148,6 @@ interface ResponseInterface
     public function clear(string $sTarget, string $sAttribute = 'innerHTML'): ResponseInterface;
 
     /**
-     * Add a command to assign a value to a member of a javascript object (or element)
-     * that is specified by the context member of the request
-     *
-     * The object is referenced using the 'this' keyword in the sAttribute parameter.
-     *
-     * @param string $sAttribute    The attribute to be updated
-     * @param string $sData    The value to assign
-     *
-     * @return ResponseInterface
-     */
-    public function contextAssign(string $sAttribute, string $sData): ResponseInterface;
-
-    /**
-     * Add a command to append a value onto the specified member of the javascript
-     * context object (or element) specified by the context member of the request
-     *
-     * The object is referenced using the 'this' keyword in the sAttribute parameter.
-     *
-     * @param string $sAttribute    The attribute to be appended to
-     * @param string $sData    The value to append
-     *
-     * @return ResponseInterface
-     */
-    public function contextAppend(string $sAttribute, string $sData): ResponseInterface;
-
-    /**
-     * Add a command to prepend the speicified data to the given member of the current
-     * javascript object specified by context in the current request
-     *
-     * The object is access via the 'this' keyword in the sAttribute parameter.
-     *
-     * @param string $sAttribute    The attribute to be updated
-     * @param string $sData    The value to be prepended
-     *
-     * @return ResponseInterface
-     */
-    public function contextPrepend(string $sAttribute, string $sData): ResponseInterface;
-
-    /**
-     * Add a command to to clear the value of the attribute specified in the sAttribute parameter
-     *
-     * The member is access via the 'this' keyword and can be used to update a javascript
-     * object specified by context in the request parameters.
-     *
-     * @param string $sAttribute    The attribute to be cleared
-     *
-     * @return ResponseInterface
-     */
-    public function contextClear(string $sAttribute): ResponseInterface;
-
-    /**
      * Add a command to remove an element from the document
      *
      * @param string $sTarget    The id of the element to be removed
@@ -253,42 +202,6 @@ interface ResponseInterface
     public function insertAfter(string $sAfter, string $sTag, string $sId): ResponseInterface;
 
     /**
-     * Add a command to create an input element on the browser
-     *
-     * @param string $sParent    The id of the parent element
-     * @param string $sType    The type of the new input element
-     * @param string $sName    The name of the new input element
-     * @param string $sId    The id of the new element
-     *
-     * @return ResponseInterface
-     */
-    public function createInput(string $sParent, string $sType, string $sName, string $sId): ResponseInterface;
-
-    /**
-     * Add a command to insert a new input element preceding the specified element
-     *
-     * @param string $sBefore    The id of the element to be used as the reference point for the insertion
-     * @param string $sType    The type of the new input element
-     * @param string $sName    The name of the new input element
-     * @param string $sId    The id of the new element
-     *
-     * @return ResponseInterface
-     */
-    public function insertInput(string $sBefore, string $sType, string $sName, string $sId): ResponseInterface;
-
-    /**
-     * Add a command to insert a new input element after the specified element
-     *
-     * @param string $sAfter    The id of the element to be used as the reference point for the insertion
-     * @param string $sType    The type of the new input element
-     * @param string $sName    The name of the new input element
-     * @param string $sId    The id of the new element
-     *
-     * @return ResponseInterface
-     */
-    public function insertInputAfter(string $sAfter, string $sType, string $sName, string $sId): ResponseInterface;
-
-    /**
      * Response command that prompts user with [ok] [cancel] style message box
      *
      * If the user clicks cancel, the specified number of response commands
@@ -330,20 +243,6 @@ interface ResponseInterface
     public function redirect(string $sURL, int $nDelay = 0): ResponseInterface;
 
     /**
-     * Add a command to execute a portion of javascript on the browser
-     *
-     * The script runs in its own context, so variables declared locally, using the 'var' keyword,
-     * will no longer be available after the call.
-     * To construct a variable that will be accessible globally, even after the script has executed,
-     * leave off the 'var' keyword.
-     *
-     * @param string $sJS    The script to execute
-     *
-     * @return ResponseInterface
-     */
-    public function script(string $sJS): ResponseInterface;
-
-    /**
      * Add a command to call the specified javascript function with the given (optional) parameters
      *
      * @param string $sFunc    The name of the function to call
@@ -351,17 +250,6 @@ interface ResponseInterface
      * @return ResponseInterface
      */
     public function call(string $sFunc): ResponseInterface;
-
-    /**
-     * Add a command to set an event handler on the browser
-     *
-     * @param string $sTarget    The id of the element that contains the event
-     * @param string $sEvent    The name of the event
-     * @param string $sScript    The javascript to execute when the event is fired
-     *
-     * @return ResponseInterface
-     */
-    public function setEvent(string $sTarget, string $sEvent, string $sScript): ResponseInterface;
 
     /**
      * Add a command to set a click handler on the browser
@@ -396,124 +284,6 @@ interface ResponseInterface
      * @return ResponseInterface
      */
     public function removeHandler(string $sTarget, string $sEvent, string $sHandler): ResponseInterface;
-
-    /**
-     * Add a command to construct a javascript function on the browser
-     *
-     * @param string $sFunction    The name of the function to construct
-     * @param string $sArgs    Comma separated list of parameter names
-     * @param string $sScript    The javascript code that will become the body of the function
-     *
-     * @return ResponseInterface
-     */
-    public function setFunction(string $sFunction, string $sArgs, string $sScript): ResponseInterface;
-
-    /**
-     * Add a command to construct a wrapper function around an existing javascript function on the browser
-     *
-     * @param string $sFunction    The name of the existing function to wrap
-     * @param string $sArgs    The comma separated list of parameters for the function
-     * @param array $aScripts    An array of javascript code snippets that will be used to build
-     *                                             the body of the function
-     *                                             The first piece of code specified in the array will occur before
-     *                                             the call to the original function, the second will occur after
-     *                                             the original function is called.
-     * @param string $sReturnValueVar    The name of the variable that will retain the return value
-     *                                             from the call to the original function
-     *
-     * @return ResponseInterface
-     */
-    public function wrapFunction(string $sFunction, string $sArgs, array $aScripts, string $sReturnValueVar): ResponseInterface;
-
-    /**
-     * Add a command to load a javascript file on the browser
-     *
-     * @param string $sFileName    The relative or fully qualified URI of the javascript file
-     * @param string $sType    Determines the script type. Defaults to 'text/javascript'
-     * @param string $sId    The wrapper id
-     *
-     * @return ResponseInterface
-     */
-    public function includeScript(string $sFileName, string $sType = '', string $sId = ''): ResponseInterface;
-
-    /**
-     * Add a command to include a javascript file on the browser if it has not already been loaded
-     *
-     * @param string $sFileName    The relative or fully qualified URI of the javascript file
-     * @param string $sType    Determines the script type. Defaults to 'text/javascript'
-     * @param string $sId    The wrapper id
-     *
-     * @return ResponseInterface
-     */
-    public function includeScriptOnce(string $sFileName, string $sType = '', string $sId = ''): ResponseInterface;
-
-    /**
-     * Add a command to remove a SCRIPT reference to a javascript file on the browser
-     *
-     * Optionally, you can call a javascript function just prior to the file being unloaded (for cleanup).
-     *
-     * @param string $sFileName    The relative or fully qualified URI of the javascript file
-     * @param string $sUnload    Name of a javascript function to call prior to unlaoding the file
-     *
-     * @return ResponseInterface
-     */
-    public function removeScript(string $sFileName, string $sUnload = ''): ResponseInterface;
-
-    /**
-     * Add a command to include a LINK reference to the specified CSS file on the browser.
-     *
-     * This will cause the browser to load and apply the style sheet.
-     *
-     * @param string $sFileName    The relative or fully qualified URI of the css file
-     * @param string $sMedia    The media type of the CSS file. Defaults to 'screen'
-     *
-     * @return ResponseInterface
-     */
-    public function includeCSS(string $sFileName, string $sMedia = ''): ResponseInterface;
-
-    /**
-     * Add a command to remove a LINK reference to a CSS file on the browser
-     *
-     * This causes the browser to unload the style sheet, effectively removing the style changes it caused.
-     *
-     * @param string $sFileName The relative or fully qualified URI of the css file
-     * @param string $sMedia
-     *
-     * @return ResponseInterface
-     */
-    public function removeCSS(string $sFileName, string $sMedia = ''): ResponseInterface;
-
-    /**
-     * Add a command to make Jaxon pause while the CSS files are loaded
-     *
-     * The browser is not typically a multi-threading application, with regards to javascript code.
-     * Therefore, the CSS files included or removed with <Response->includeCSS> and
-     * <Response->removeCSS> respectively, will not be loaded or removed until the browser regains
-     * control from the script.
-     * This command returns control back to the browser and pauses the execution of the response
-     * until the CSS files, included previously, are loaded.
-     *
-     * @param integer $nTimeout    The number of 1/10ths of a second to pause before timing out
-     *                                             and continuing with the execution of the response commands
-     *
-     * @return ResponseInterface
-     */
-    public function waitForCSS(int $nTimeout = 600): ResponseInterface;
-
-    /**
-     * Add a command to make Jaxon to delay execution of the response commands until a specified condition is met
-     *
-     * Note, this returns control to the browser, so that other script operations can execute.
-     * Jaxon will continue to monitor the specified condition and, when it evaluates to true,
-     * will continue processing response commands.
-     *
-     * @param string $script    A piece of javascript code that evaulates to true or false
-     * @param integer $tenths    The number of 1/10ths of a second to wait before timing out
-     *                                             and continuing with the execution of the response commands.
-     *
-     * @return ResponseInterface
-     */
-    public function waitFor(string $script, int $tenths): ResponseInterface;
 
     /**
      * Add a command to make Jaxon to pause execution of the response commands,

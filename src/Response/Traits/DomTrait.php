@@ -118,72 +118,6 @@ trait DomTrait
     }
 
     /**
-     * Add a command to assign a value to a member of a javascript object (or element)
-     * that is specified by the context member of the request
-     *
-     * The object is referenced using the 'this' keyword in the sAttribute parameter.
-     *
-     * @param string $sAttribute    The attribute to be updated
-     * @param string $sData    The value to assign
-     *
-     * @return ResponseInterface
-     */
-    public function contextAssign(string $sAttribute, string $sData): ResponseInterface
-    {
-        $aAttributes = ['prop' => $sAttribute];
-        return $this->_addCommand('c:as', $aAttributes, $sData);
-    }
-
-    /**
-     * Add a command to append a value onto the specified member of the javascript
-     * context object (or element) specified by the context member of the request
-     *
-     * The object is referenced using the 'this' keyword in the sAttribute parameter.
-     *
-     * @param string $sAttribute    The attribute to be appended to
-     * @param string $sData    The value to append
-     *
-     * @return ResponseInterface
-     */
-    public function contextAppend(string $sAttribute, string $sData): ResponseInterface
-    {
-        $aAttributes = ['prop' => $sAttribute];
-        return $this->_addCommand('c:ap', $aAttributes, $sData);
-    }
-
-    /**
-     * Add a command to prepend the speicified data to the given member of the current
-     * javascript object specified by context in the current request
-     *
-     * The object is access via the 'this' keyword in the sAttribute parameter.
-     *
-     * @param string $sAttribute    The attribute to be updated
-     * @param string $sData    The value to be prepended
-     *
-     * @return ResponseInterface
-     */
-    public function contextPrepend(string $sAttribute, string $sData): ResponseInterface
-    {
-        $aAttributes = ['prop' => $sAttribute];
-        return $this->_addCommand('c:pp', $aAttributes, $sData);
-    }
-
-    /**
-     * Add a command to to clear the value of the attribute specified in the sAttribute parameter
-     *
-     * The member is access via the 'this' keyword and can be used to update a javascript
-     * object specified by context in the request parameters.
-     *
-     * @param string $sAttribute    The attribute to be cleared
-     *
-     * @return ResponseInterface
-     */
-    public function contextClear(string $sAttribute): ResponseInterface
-    {
-        return $this->contextAssign($sAttribute, '');
-    }
-
-    /**
      * Add a command to remove an element from the document
      *
      * @param string $sTarget    The id of the element to be removed
@@ -254,53 +188,5 @@ trait DomTrait
     {
         $aAttributes = ['id' => $sAfter, 'prop' => $sId];
         return $this->_addCommand('ia', $aAttributes, $sTag);
-    }
-
-    /**
-     * Add a command to create an input element on the browser
-     *
-     * @param string $sParent    The id of the parent element
-     * @param string $sType    The type of the new input element
-     * @param string $sName    The name of the new input element
-     * @param string $sId    The id of the new element
-     *
-     * @return ResponseInterface
-     */
-    public function createInput(string $sParent, string $sType, string $sName, string $sId): ResponseInterface
-    {
-        $aAttributes = ['id' => $sParent, 'prop' => $sId, 'type' => $sType];
-        return $this->_addCommand('ci', $aAttributes, $sName);
-    }
-
-    /**
-     * Add a command to insert a new input element preceding the specified element
-     *
-     * @param string $sBefore    The id of the element to be used as the reference point for the insertion
-     * @param string $sType    The type of the new input element
-     * @param string $sName    The name of the new input element
-     * @param string $sId    The id of the new element
-     *
-     * @return ResponseInterface
-     */
-    public function insertInput(string $sBefore, string $sType, string $sName, string $sId): ResponseInterface
-    {
-        $aAttributes = ['id' => $sBefore, 'prop' => $sId, 'type' => $sType];
-        return $this->_addCommand('ii', $aAttributes, $sName);
-    }
-
-    /**
-     * Add a command to insert a new input element after the specified element
-     *
-     * @param string $sAfter    The id of the element to be used as the reference point for the insertion
-     * @param string $sType    The type of the new input element
-     * @param string $sName    The name of the new input element
-     * @param string $sId    The id of the new element
-     *
-     * @return ResponseInterface
-     */
-    public function insertInputAfter(string $sAfter, string $sType, string $sName, string $sId): ResponseInterface
-    {
-        $aAttributes = ['id' => $sAfter, 'prop' => $sId, 'type' => $sType];
-        return $this->_addCommand('iia', $aAttributes, $sName);
     }
 }
