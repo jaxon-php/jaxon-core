@@ -199,13 +199,17 @@ class CallableObjectOptions
     {
         foreach($xValue as $sCalledMethod => $xMethodToCall)
         {
+            if(!isset($aHookMethods[$sCalledMethod]))
+            {
+                $aHookMethods[$sCalledMethod] = [];
+            }
             if(is_array($xMethodToCall))
             {
-                $aHookMethods[$sCalledMethod] = $xMethodToCall;
+                $aHookMethods[$sCalledMethod] = array_merge($aHookMethods[$sCalledMethod], $xMethodToCall);
             }
             elseif(is_string($xMethodToCall))
             {
-                $aHookMethods[$sCalledMethod] = [$xMethodToCall];
+                $aHookMethods[$sCalledMethod][] = $xMethodToCall;
             }
         }
     }
