@@ -18,9 +18,6 @@ use function is_bool;
 use function is_numeric;
 use function is_object;
 use function is_string;
-use function json_encode;
-use function method_exists;
-use function str_replace;
 
 class Parameter implements ParameterInterface
 {
@@ -161,165 +158,37 @@ class Parameter implements ParameterInterface
     }
 
     /**
-     * Add quotes to a given value
+     * Convert to a value to be inserted in an array for json conversion
      *
-     * @param string $sValue    The value to be quoted
-     *
-     * @return string
+     * @return mixed
      */
-    private function getQuotedValue(string $sValue): string
+    public function forArray()
     {
-        return "'" . $sValue . "'";
-    }
-
-    /**
-     * Get a js call to Jaxon with a single parameter
-     *
-     * @param string $sFunction    The function name
-     * @param string $sParameter    The function parameter
-     *
-     * @return string
-     */
-    private function getJaxonCall(string $sFunction, string $sParameter): string
-    {
-        return 'jaxon.' . $sFunction . '(' . $this->getQuotedValue($sParameter) . ')';
-    }
-
-    /**
-     * Get the script for an array of form values.
-     *
-     * @return string
-     */
-    protected function getFormValuesScript(): string
-    {
-        return $this->getJaxonCall('getFormValues', $this->xValue);
-    }
-
-    /**
-     * Get the script for an input control.
-     *
-     * @return string
-     */
-    protected function getInputValueScript(): string
-    {
-        return $this->getJaxonCall('$', $this->xValue) . '.value';
-    }
-
-    /**
-     * Get the script for a bool value of a checkbox.
-     *
-     * @return string
-     */
-    protected function getCheckedValueScript(): string
-    {
-        return $this->getJaxonCall('$', $this->xValue) . '.checked';
-    }
-
-    /**
-     * Get the script for the innerHTML value of the element.
-     *
-     * @return string
-     */
-    protected function getElementInnerHTMLScript(): string
-    {
-        return $this->getJaxonCall('$', $this->xValue) . '.innerHTML';
-    }
-
-    /**
-     * Get the script for a quoted value (string).
-     *
-     * @return string
-     */
-    protected function getQuotedValueScript(): string
-    {
-        return $this->getQuotedValue(addslashes($this->xValue));
-    }
-
-    /**
-     * Get the script for a bool value (true or false).
-     *
-     * @return string
-     */
-    protected function getBoolValueScript(): string
-    {
-        return ($this->xValue) ? 'true' : 'false';
-    }
-
-    /**
-     * Get the script for a numeric, non-quoted value.
-     *
-     * @return string
-     */
-    protected function getNumericValueScript(): string
-    {
-        return (string)$this->xValue;
-    }
-
-    /**
-     * Get the script for a non-quoted value (evaluated by the browsers javascript engine at run time).
-     *
-     * @return string
-     */
-    protected function getUnquotedValueScript(): string
-    {
-        return (string)$this->xValue;
-    }
-
-    /**
-     * Get the script for a non-quoted value (evaluated by the browsers javascript engine at run time).
-     *
-     * @return string
-     */
-    protected function getJsonValueScript(): string
-    {
-        // Unable to use double quotes here because they cannot be handled on client side.
-        // So we are using simple quotes even if the Json standard recommends double quotes.
-        return str_replace('"', "'", json_encode($this->xValue, JSON_HEX_APOS | JSON_HEX_QUOT));
-    }
-
-    /**
-     * Get the script for an integer used to generate pagination links.
-     *
-     * @return string
-     */
-    protected function getPageNumberScript(): string
-    {
-        return (string)$this->xValue;
-    }
-
-    /**
-     * Get the script for a call to a javascript function.
-     *
-     * @return string
-     */
-    protected function getJsCallScript(): string
-    {
-        return '(e) => {' . $this->xValue->getScript() . ';}';
-    }
-
-    /**
-     * Generate the javascript code.
-     *
-     * @return string
-     */
-    public function getScript(): string
-    {
-        $sMethodName = 'get' . $this->sType . 'Script';
-        if(!method_exists($this, $sMethodName))
+        switch($this->getType())
         {
-            return '';
+        case self::JS_CALL:
+            return $this->getValue()->toArray();
+        case self::JS_VALUE:
+            return [
+                '_type' => 'expr',
+                'calls' => [['_type' => 'attr', '_name' => $this->getValue()]],
+            ];
+        case self::FORM_VALUES:
+            return ['_type' => 'form', '_name' => $this->getValue()];
+        case self::INPUT_VALUE:
+            return ['_type' => 'input', '_name' => $this->getValue()];
+        case self::CHECKED_VALUE:
+            return ['_type' => 'checked', '_name' => $this->getValue()];
+        case self::ELEMENT_INNERHTML:
+            return ['_type' => 'html', '_name' => $this->getValue()];
+        case self::QUOTED_VALUE:
+        case self::BOOL_VALUE:
+        case self::NUMERIC_VALUE:
+        case self::JSON_VALUE:
+        case self::PAGE_NUMBER:
+        default:
+            // Return the value as is.
+            return $this->getValue();
         }
-        $sScript = $this->$sMethodName();
-        return $this->bToInt ? "parseInt($sScript)" : $sScript;
-    }
-
-    /**
-     * Magic function to generate the jQuery call.
-     *
-     * @return string
-     */
-    public function __toString()
-    {
-        return $this->getScript();
     }
 }

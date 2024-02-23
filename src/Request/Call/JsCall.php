@@ -20,6 +20,8 @@ namespace Jaxon\Request\Call;
 
 use JsonSerializable;
 
+use function array_map;
+
 class JsCall implements JsonSerializable
 {
     /**
@@ -35,7 +37,7 @@ class JsCall implements JsonSerializable
     private $sQuoteCharacter = "'";
 
     /**
-     * @var array
+     * @var array<ParameterInterface>
      */
     protected $aParameters = [];
 
@@ -129,35 +131,42 @@ class JsCall implements JsonSerializable
     }
 
     /**
-     * Returns a string representation of the script output (javascript) from this request object
+     * Convert this call to array
      *
-     * @return string
+     * @return array
      */
-    public function getScript(): string
+    public function toArray(): array
     {
-        $sScript = $this->sFunction . '(' . implode(', ', $this->aParameters) . ')';
-        return $this->bToInt ? "parseInt($sScript)" : $sScript;
+        $aCalls = [[
+            '_type' => 'func',
+            '_name' => $this->sFunction,
+            'params' => array_map(function(Parameter $xParam) {
+                return $xParam->forArray();
+            }, $this->aParameters),
+        ]];
+        if($this->bToInt)
+        {
+            $aCalls[] = [
+                '_type' => 'func',
+                '_name' => 'jaxon.utils.string.toInt',
+                'params' => [[ '_type' => '_', '_name' => 'this' ]],
+            ];
+        }
+        return [
+            '_type' => 'expr',
+            'calls' => $aCalls,
+        ];
     }
 
     /**
-     * Convert this request object to string
-     *
-     * @return string
-     */
-    public function __toString()
-    {
-        return $this->getScript();
-    }
-
-    /**
-     * Convert this request object to string, when converting the response into json.
+     * Convert this call to string, when converting the response into json.
      *
      * This is a method of the JsonSerializable interface.
      *
-     * @return string
+     * @return array
      */
-    public function jsonSerialize(): string
+    public function jsonSerialize(): array
     {
-        return $this->getScript();
+        return $this->toArray();
     }
 }

@@ -15,10 +15,18 @@ namespace Jaxon\Request\Call;
 
 interface ParameterInterface
 {
+
     /**
-     * Generate the javascript code of the parameter.
+     * Get the parameter type
      *
      * @return string
      */
-    public function getScript(): string;
+    public function getType(): string;
+
+    /**
+     * Generate the javascript code of the parameter.
+     *
+     * @return mixed
+     */
+    public function forArray();
 }

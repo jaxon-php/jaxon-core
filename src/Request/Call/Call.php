@@ -20,121 +20,333 @@
 
 namespace Jaxon\Request\Call;
 
-use Jaxon\App\Dialog\Library\DialogLibraryManager;
-
-use function array_shift;
-use function implode;
+use function array_map;
+use function func_get_args;
 
 class Call extends JsCall
 {
-    use Traits\CallConditionTrait;
-    use Traits\CallMessageTrait;
-
     /**
-     * @var DialogLibraryManager
-     */
-    protected $xDialogLibraryManager;
-
-    /**
-     * @var Paginator
-     */
-    protected $xPaginator;
-
-    /**
-     * @var array
-     */
-    private $aVariables;
-
-    /**
+     * The type of the message to show
+     *
      * @var string
      */
-    private $sVars;
+    private $sMessageType = 'warning';
 
     /**
-     * @var int
-     */
-    private $nVarId;
-
-    /**
-     * The constructor.
+     * The arguments of the elseShow() call
      *
-     * @param string $sName    The javascript function or method name
-     * @param DialogLibraryManager $xDialogLibraryManager
-     * @param Paginator $xPaginator
+     * @var array
      */
-    public function __construct(string $sName, DialogLibraryManager $xDialogLibraryManager, Paginator $xPaginator)
+    protected $aMessageArgs = [];
+
+    /**
+     * A condition to check before making the call
+     *
+     * @var array
+     */
+    protected $aCondition = [];
+
+    /**
+     * @var bool
+     */
+    protected $bConfirm = false;
+
+    /**
+     * The arguments of the confirm() call
+     *
+     * @var array
+     */
+    protected $aConfirmArgs = [];
+
+    /**
+     * Set the message if the condition to the call is not met
+     *
+     * The first parameter is the message to show. The second allows inserting data from
+     * the webpage in the message using positional placeholders.
+     *
+     * @param string $sMessageType  The message to show
+     * @param array $aMessageArgs
+     *
+     * @return Call
+     */
+    private function setMessage(string $sMessageType, array $aMessageArgs): Call
     {
-        parent::__construct($sName);
-        $this->xDialogLibraryManager = $xDialogLibraryManager;
-        $this->xPaginator = $xPaginator;
+        $this->sMessageType = $sMessageType;
+        $this->aMessageArgs = array_map(function($xParameter) {
+            return Parameter::make($xParameter);
+        }, $aMessageArgs);
+        return $this;
     }
 
     /**
-     * Make a phrase to be displayed in js code
+     * Get the message
      *
-     * @param array $aArgs
-     *
-     * @return string
+     * @return array
      */
-    private function makePhrase(array $aArgs): string
+    protected function getMessage(): array
     {
-        if(empty($aArgs))
-        {
-            return '';
-        }
-        // The first array entry is the message.
-        $sPhrase = array_shift($aArgs);
-        if(empty($aArgs))
-        {
-            return $sPhrase;
-        }
-        $nParamId = 1;
-        foreach($aArgs as &$xParameter)
-        {
-            $xParameter = "'$nParamId':" . $xParameter->getScript();
-            $nParamId++;
-        }
-        return $sPhrase . '.supplant({' . implode(',', $aArgs) . '})';
+        return [
+            'type' => $this->sMessageType,
+            'message' => $this->aMessageArgs,
+        ];
     }
 
     /**
-     * Make a phrase to be displayed in js code
+     * Show a message if the condition to the call is not met
      *
-     * @return string
+     * @param string $sMessage  The message to show
+     *
+     * @return Call
      */
-    private function makeMessage(): string
+    public function elseShow(string $sMessage): Call
     {
-        if(!($sPhrase = $this->makePhrase($this->aMessageArgs)))
-        {
-            return '';
-        }
-        $sMethod = $this->sMessageType;
-        $xLibrary = $this->xDialogLibraryManager->getMessageLibrary();
-        $xLibrary->setReturnCode(true);
-        return $xLibrary->$sMethod($sPhrase);
+        return $this->setMessage('warning', func_get_args());
     }
 
     /**
-     * Returns a string representation of the script output (javascript) from this request object
+     * Show an information message if the condition to the call is not met
      *
-     * @return string
+     * @param string $sMessage  The message to show
+     *
+     * @return Call
      */
-    public function getScript(): string
+    public function elseInfo(string $sMessage): Call
     {
-        $sMessageScript = $this->makeMessage();
-        $sScript = parent::getScript();
+        return $this->setMessage('info', func_get_args());
+    }
+
+    /**
+     * Show a success message if the condition to the call is not met
+     *
+     * @param string $sMessage  The message to show
+     *
+     * @return Call
+     */
+    public function elseSuccess(string $sMessage): Call
+    {
+        return $this->setMessage('success', func_get_args());
+    }
+
+    /**
+     * Show a warning message if the condition to the call is not met
+     *
+     * @param string $sMessage  The message to show
+     *
+     * @return Call
+     */
+    public function elseWarning(string $sMessage): Call
+    {
+        return $this->setMessage('warning', func_get_args());
+    }
+
+    /**
+     * Show an error message if the condition to the call is not met
+     *
+     * @param string $sMessage  The message to show
+     *
+     * @return Call
+     */
+    public function elseError(string $sMessage): Call
+    {
+        return $this->setMessage('error', func_get_args());
+    }
+
+    /**
+     * Add a condition to the request
+     *
+     * The request is sent only if the condition is true.
+     *
+     * @param mixed $xCondition    The condition to check
+     *
+     * @return Call
+     */
+    public function when($xCondition): Call
+    {
+        $this->aCondition = [true, Parameter::make($xCondition)];
+        return $this;
+    }
+
+    /**
+     * Add a condition to the request
+     *
+     * The request is sent only if the condition is false.
+     *
+     * @param mixed $xCondition    The condition to check
+     *
+     * @return Call
+     */
+    public function unless($xCondition): Call
+    {
+        $this->aCondition = [false, Parameter::make($xCondition)];
+        return $this;
+    }
+
+    /**
+     * Check if a value is equal to another before sending the request
+     *
+     * @param mixed $xValue1    The first value to compare
+     * @param mixed $xValue2    The second value to compare
+     *
+     * @return Call
+     */
+    public function ifeq($xValue1, $xValue2): Call
+    {
+        $this->aCondition = ['==', Parameter::make($xValue1), Parameter::make($xValue2)];
+        return $this;
+    }
+
+    /**
+     * Check if a value is equal to another before sending the request
+     *
+     * @param mixed $xValue1    The first value to compare
+     * @param mixed $xValue2    The second value to compare
+     *
+     * @return Call
+     */
+    public function ifteq($xValue1, $xValue2): Call
+    {
+        $this->aCondition = ['===', Parameter::make($xValue1), Parameter::make($xValue2)];
+        return $this;
+    }
+
+    /**
+     * Check if a value is not equal to another before sending the request
+     *
+     * @param mixed $xValue1    The first value to compare
+     * @param mixed $xValue2    The second value to compare
+     *
+     * @return Call
+     */
+    public function ifne($xValue1, $xValue2): Call
+    {
+        $this->aCondition = ['!=', Parameter::make($xValue1), Parameter::make($xValue2)];
+        return $this;
+    }
+
+    /**
+     * Check if a value is not equal to another before sending the request
+     *
+     * @param mixed $xValue1    The first value to compare
+     * @param mixed $xValue2    The second value to compare
+     *
+     * @return Call
+     */
+    public function ifnte($xValue1, $xValue2): Call
+    {
+        $this->aCondition = ['!==', Parameter::make($xValue1), Parameter::make($xValue2)];
+        return $this;
+    }
+
+    /**
+     * Check if a value is greater than another before sending the request
+     *
+     * @param mixed $xValue1    The first value to compare
+     * @param mixed $xValue2    The second value to compare
+     *
+     * @return Call
+     */
+    public function ifgt($xValue1, $xValue2): Call
+    {
+        $this->aCondition = ['>', Parameter::make($xValue1), Parameter::make($xValue2)];
+        return $this;
+    }
+
+    /**
+     * Check if a value is greater or equal to another before sending the request
+     *
+     * @param mixed $xValue1    The first value to compare
+     * @param mixed $xValue2    The second value to compare
+     *
+     * @return Call
+     */
+    public function ifge($xValue1, $xValue2): Call
+    {
+        $this->aCondition = ['>=', Parameter::make($xValue1), Parameter::make($xValue2)];
+        return $this;
+    }
+
+    /**
+     * Check if a value is lower than another before sending the request
+     *
+     * @param mixed $xValue1    The first value to compare
+     * @param mixed $xValue2    The second value to compare
+     *
+     * @return Call
+     */
+    public function iflt($xValue1, $xValue2): Call
+    {
+        $this->aCondition = ['<', Parameter::make($xValue1), Parameter::make($xValue2)];
+        return $this;
+    }
+
+    /**
+     * Check if a value is lower or equal to another before sending the request
+     *
+     * @param mixed $xValue1    The first value to compare
+     * @param mixed $xValue2    The second value to compare
+     *
+     * @return Call
+     */
+    public function ifle($xValue1, $xValue2): Call
+    {
+        $this->aCondition = ['<=', Parameter::make($xValue1), Parameter::make($xValue2)];
+        return $this;
+    }
+
+    /**
+     * Add a confirmation question to the request
+     *
+     * @param string $sQuestion    The question to ask
+     *
+     * @return Call
+     */
+    public function confirm(string $sQuestion): Call
+    {
+        $this->bConfirm = true;
+        $this->aConfirmArgs = array_map(function($xParameter) {
+            return Parameter::make($xParameter);
+        }, func_get_args());
+        return $this;
+    }
+
+    /**
+     * Convert this call to array
+     *
+     * @return array
+     */
+    public function toArray(): array
+    {
+        $aCall = parent::toArray();
         if($this->bConfirm)
         {
-            $sConfirmPhrase = $this->makePhrase($this->aConfirmArgs);
-            $sScript = $this->xDialogLibraryManager->getQuestionLibrary()
-                ->confirm($sConfirmPhrase, $sScript, $sMessageScript);
+            $aCall['confirm'] = $this->aConfirmArgs;
         }
-        if($this->sCondition !== '')
+        if(($this->aCondition))
         {
-            $sScript = empty($sMessageScript) ? 'if(' . $this->sCondition . '){' . $sScript . ';}' :
-                'if(' . $this->sCondition . '){' . $sScript . ';}else{' . $sMessageScript . ';}';
+            $aCall['condition'] = $this->aCondition;
+            if(($this->aMessageArgs))
+            {
+                $aCall['else'] = $this->getMessage();
+            }
         }
-        return $this->sVars . $sScript;
+        return $aCall;
+    }
+
+    /**
+     * Check if the request has a parameter of type Parameter::PAGE_NUMBER
+     *
+     * @return ParameterInterface|null
+     */
+    private function findPageNumber(): ?ParameterInterface
+    {
+        foreach($this->aParameters as $xParameter)
+        {
+            if($xParameter->getType() === Parameter::PAGE_NUMBER)
+            {
+                return $xParameter;
+            }
+        }
+        return null;
     }
 
     /**
@@ -144,14 +356,7 @@ class Call extends JsCall
      */
     public function hasPageNumber(): bool
     {
-        foreach($this->aParameters as $xParameter)
-        {
-            if($xParameter->getType() === Parameter::PAGE_NUMBER)
-            {
-                return true;
-            }
-        }
-        return false;
+        return $this->findPageNumber() !== null;
     }
 
     /**
@@ -163,62 +368,12 @@ class Call extends JsCall
      */
     public function setPageNumber(int $nPageNumber): Call
     {
-        // Set the value of the Parameter::PAGE_NUMBER parameter
-        foreach($this->aParameters as $xParameter)
+        /** @var Parameter */
+        $xParameter = $this->findPageNumber();
+        if($xParameter !== null)
         {
-            if($xParameter->getType() === Parameter::PAGE_NUMBER)
-            {
-                $xParameter->setValue($nPageNumber);
-                break;
-            }
+            $xParameter->setValue($nPageNumber);
         }
         return $this;
-    }
-
-    /**
-     * Make the pagination links for this request
-     *
-     * @param integer $nCurrentPage    The current page
-     * @param integer $nItemsPerPage    The number of items per page
-     * @param integer $nItemsTotal    The total number of items
-     *
-     * @return Paginator
-     */
-    public function pg(int $nCurrentPage, int $nItemsPerPage, int $nItemsTotal): Paginator
-    {
-        // Append the page number to the parameter list, if not yet given.
-        if(!$this->hasPageNumber())
-        {
-            $this->addParameter(Parameter::PAGE_NUMBER, 0);
-        }
-        return $this->xPaginator->setup($this, $nCurrentPage, $nItemsPerPage, $nItemsTotal);
-    }
-
-    /**
-     * Make the pagination links for this request
-     *
-     * @param integer $nCurrentPage    The current page
-     * @param integer $nItemsPerPage    The number of items per page
-     * @param integer $nItemsTotal    The total number of items
-     *
-     * @return Paginator
-     */
-    public function paginate(int $nCurrentPage, int $nItemsPerPage, int $nItemsTotal): Paginator
-    {
-        return $this->pg($nCurrentPage, $nItemsPerPage, $nItemsTotal);
-    }
-
-    /**
-     * Make the pagination links for this request
-     *
-     * @param integer $nCurrentPage    The current page
-     * @param integer $nItemsPerPage    The number of items per page
-     * @param integer $nItemsTotal    The total number of items
-     *
-     * @return array
-     */
-    public function pages(int $nCurrentPage, int $nItemsPerPage, int $nItemsTotal): array
-    {
-        return $this->pg($nCurrentPage, $nItemsPerPage, $nItemsTotal)->pages();
     }
 }
