@@ -38,7 +38,7 @@ SOFTWARE.
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Plugin\Response\Paginator;
+namespace Jaxon\Plugin\Response\Pagination;
 
 use function array_walk;
 use function ceil;

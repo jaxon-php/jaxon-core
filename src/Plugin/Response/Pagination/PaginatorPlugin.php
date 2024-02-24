@@ -9,7 +9,7 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Plugin\Response\Paginator;
+namespace Jaxon\Plugin\Response\Pagination;
 
 use Jaxon\App\View\ViewRenderer;
 use Jaxon\App\View\Store;
@@ -33,11 +33,11 @@ use function count;
  *     'pagination' => $paginator->wrapper($wrapperId),
  * ]);
  * $this->response->html($pageWrapper, $html);
- * $this->response->pg->render($this->rq()->page(), $paginator);
+ * $this->response->pg->render($paginator, $this->rq()->page());
  * // Or, using the response shortcut
- * $this->response->paginate($this->rq()->page(), $paginator);
+ * $this->response->paginate($paginator, $this->rq()->page());
  * // Or, in a class that inherits from CallableClass
- * $this->paginate($this->rq()->page(), $paginator);
+ * $this->paginate($paginator, $this->rq()->page());
  * 
  */
 class PaginatorPlugin extends ResponsePlugin
@@ -115,13 +115,13 @@ class PaginatorPlugin extends ResponsePlugin
     /**
      * Render an HTML pagination control.
      *
-     * @param Call $xCall
      * @param Paginator $xPaginator
+     * @param Call $xCall
      * @param string $sWrapperId
      *
      * @return void
      */
-    public function render(Call $xCall, Paginator $xPaginator, string $sWrapperId = '')
+    public function render(Paginator $xPaginator, Call $xCall, string $sWrapperId = '')
     {
         $aPages = $xPaginator->pages();
         if(count($aPages) === 0)
