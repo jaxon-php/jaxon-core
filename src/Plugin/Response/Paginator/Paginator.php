@@ -38,30 +38,16 @@ SOFTWARE.
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Request\Call;
+namespace Jaxon\Plugin\Response\Paginator;
 
-use Jaxon\App\View\PaginationRenderer;
-
-use function array_map;
 use function array_walk;
 use function ceil;
 use function floor;
 use function max;
+use function trim;
 
 class Paginator
 {
-    /**
-     * The Jaxon request to be paginated
-     *
-     * @var Call
-     */
-    protected $xCall = null;
-
-    /**
-     * @var PaginationRenderer
-     */
-    protected $xRenderer;
-
     /**
      * @var integer
      */
@@ -103,13 +89,36 @@ class Paginator
     protected $sEllipsysText = '...';
 
     /**
+     * @var string
+     */
+    protected $sWrapperId = '';
+
+    /**
      * The constructor.
      *
-     * @param PaginationRenderer $xRenderer
+     * @param int $nCurrentPage     The current page number
+     * @param int $nItemsPerPage    The number of items per page
+     * @param int $nTotalItems      The total number of items
      */
-    public function __construct(PaginationRenderer $xRenderer)
+    public function __construct(int $nCurrentPage, int $nItemsPerPage, int $nTotalItems)
     {
-        $this->xRenderer = $xRenderer;
+        $this->setup($nCurrentPage, $nItemsPerPage, $nTotalItems);
+    }
+
+    /**
+     * Setup the paginator
+     *
+     * @param int $nCurrentPage     The current page number
+     * @param int $nItemsPerPage    The number of items per page
+     * @param int $nTotalItems      The total number of items
+     *
+     * @return Paginator
+     */
+    public function setup(int $nCurrentPage, int $nItemsPerPage, int $nTotalItems): Paginator
+    {
+        return $this->setCurrentPage($nCurrentPage)
+            ->setItemsPerPage($nItemsPerPage)
+            ->setTotalItems($nTotalItems);
     }
 
     /**
@@ -145,7 +154,8 @@ class Paginator
      */
     protected function updateTotalPages(): Paginator
     {
-        $this->nTotalPages = ($this->nItemsPerPage === 0 ? 0 : (int)ceil($this->nTotalItems / $this->nItemsPerPage));
+        $this->nTotalPages = ($this->nItemsPerPage === 0 ? 0 :
+            (int)ceil($this->nTotalItems / $this->nItemsPerPage));
         return $this;
     }
 
@@ -202,43 +212,27 @@ class Paginator
     }
 
     /**
-     * Get the js call to a given page
-     *
-     * @param int $pageNum    The page number
-     *
-     * @return string
-     */
-    protected function getPageCall(int $pageNum): string
-    {
-        return $this->xCall->setPageNumber($pageNum)->getScript();
-    }
-
-    /**
      * Get the previous page data.
      *
-     * @return array
+     * @return Page
      */
-    protected function getPrevLink(): array
+    protected function getPrevPage(): Page
     {
-        if($this->nCurrentPage <= 1)
-        {
-            return ['disabled', $this->sPreviousText, ''];
-        }
-        return ['enabled', $this->sPreviousText, $this->getPageCall($this->nCurrentPage - 1)];
+        return $this->nCurrentPage <= 1 ?
+            new Page('disabled', $this->sPreviousText, 0) :
+            new Page('enabled', $this->sPreviousText, $this->nCurrentPage - 1);
     }
 
     /**
      * Get the next page data.
      *
-     * @return array
+     * @return Page
      */
-    protected function getNextLink(): array
+    protected function getNextPage(): Page
     {
-        if($this->nCurrentPage >= $this->nTotalPages)
-        {
-            return ['disabled', $this->sNextText, ''];
-        }
-        return ['enabled', $this->sNextText, $this->getPageCall($this->nCurrentPage + 1)];
+        return $this->nCurrentPage >= $this->nTotalPages ?
+            new Page('disabled', $this->sNextText, 0) :
+            new Page('enabled', $this->sNextText, $this->nCurrentPage + 1);
     }
 
     /**
@@ -246,16 +240,16 @@ class Paginator
      *
      * @param integer $nNumber    The page number
      *
-     * @return array
+     * @return Page
      */
-    protected function getPageLink(int $nNumber): array
+    protected function getPage(int $nNumber): Page
     {
         if($nNumber < 1)
         {
-            return ['disabled', $this->sEllipsysText, ''];
+            return new Page('disabled', $this->sEllipsysText, 0);
         }
-        $sTemplate = ($nNumber === $this->nCurrentPage ? 'current' : 'enabled');
-        return [$sTemplate, $nNumber, $this->getPageCall($nNumber)];
+        $sType = ($nNumber === $this->nCurrentPage ? 'current' : 'enabled');
+        return new Page($sType, "$nNumber", $nNumber);
     }
 
     /**
@@ -320,24 +314,7 @@ class Paginator
     /**
      * Get the links (pages raw data).
      *
-     * @return array
-     */
-    public function links(): array
-    {
-        $aPageNumbers = $this->getPageNumbers();
-        $aPages = [$this->getPrevLink()];
-        array_walk($aPageNumbers, function($nNumber) use(&$aPages) {
-            $aPages[] = $this->getPageLink($nNumber);
-        });
-        $aPages[] = $this->getNextLink();
-
-        return $aPages;
-    }
-
-    /**
-     * Get the pages.
-     *
-     * @return array
+     * @return array<Page>
      */
     public function pages(): array
     {
@@ -346,39 +323,37 @@ class Paginator
             return [];
         }
 
-        return array_map(function($aPage) {
-            return (object)['type' => $aPage[0], 'text' => $aPage[1], 'call' => $aPage[2]];
-        }, $this->links());
+        $aPageNumbers = $this->getPageNumbers();
+        $aPages = [$this->getPrevPage()];
+        array_walk($aPageNumbers, function($nNumber) use(&$aPages) {
+            $aPages[] = $this->getPage($nNumber);
+        });
+        $aPages[] = $this->getNextPage();
+
+        return $aPages;
     }
 
     /**
-     * Setup the paginator
+     * Get the pagination wrapper HTML
      *
-     * @param Call $xCall    The call to be paginated
-     * @param int $nCurrentPage    The current page number
-     * @param int $nItemsPerPage    The number of items per page
-     * @param int $nTotalItems    The total number of items
-     *
-     * @return Paginator
-     */
-    public function setup(Call $xCall, int $nCurrentPage, int $nItemsPerPage, int $nTotalItems): Paginator
-    {
-        $this->setCurrentPage($nCurrentPage)->setItemsPerPage($nItemsPerPage)->setTotalItems($nTotalItems);
-        $this->xCall = $xCall;
-        return $this;
-    }
-
-    /**
-     * Render an HTML pagination control.
+     * @param string $sWrapperId        The pagination wrapper id
      *
      * @return string
      */
-    public function __toString()
+    public function wrapper(string $sWrapperId): string
     {
-        if($this->nTotalPages < 2)
-        {
-            return '';
-        }
-        return $this->xRenderer->render($this)->__toString();
+        $this->sWrapperId = trim($sWrapperId);
+
+        return '<nav id="' . $this->sWrapperId . '"></nav>';
+    }
+
+    /**
+     * Get the pagination wrapper id
+     *
+     * @return string
+     */
+    public function wrapperId(): string
+    {
+        return $this->sWrapperId;
     }
 }

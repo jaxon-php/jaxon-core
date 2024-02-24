@@ -1,1 +1,1 @@
-    <li><a href="javascript:;" onclick="<?php echo $this->call ?>"><?php echo $this->text ?></a></li>
+    <li data-page="<?php echo $this->page ?>"><a href="javascript:;"><?php echo $this->text ?></a></li>
