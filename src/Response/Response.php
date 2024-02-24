@@ -23,8 +23,13 @@ namespace Jaxon\Response;
 
 use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Plugin\Response\DataBag\DataBagContext;
+use Jaxon\Plugin\Response\DataBag\DataBagPlugin;
 use Jaxon\Plugin\Response\JQuery\DomSelector;
+use Jaxon\Plugin\Response\JQuery\JQueryPlugin;
+use Jaxon\Plugin\Response\Pagination\Paginator;
+use Jaxon\Plugin\Response\Pagination\PaginatorPlugin;
 use Jaxon\Plugin\ResponsePlugin;
+use Jaxon\Request\Call\Call;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7\Stream;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
@@ -129,7 +134,9 @@ class Response implements ResponseInterface
      */
     public function jq(string $sPath = '', $xContext = null): DomSelector
     {
-        return $this->plugin('jquery')->selector($sPath, $xContext);
+        /** @var JQueryPlugin */
+        $xPlugin = $this->plugin('pg');
+        return $xPlugin->selector($sPath, $xContext);
     }
 
     /**
@@ -141,7 +148,41 @@ class Response implements ResponseInterface
      */
     public function bag(string $sName): DataBagContext
     {
-        return $this->plugin('bags')->bag($sName);
+        /** @var DataBagPlugin */
+        $xPlugin = $this->plugin('pg');
+        return $xPlugin->bag($sName);
+    }
+
+    /**
+     * Create a paginator
+     *
+     * @param int $nCurrentPage     The current page number
+     * @param int $nItemsPerPage    The number of items per page
+     * @param int $nTotalItems      The total number of items
+     *
+     * @return Paginator
+     */
+    public function paginator(int $nCurrentPage, int $nItemsPerPage, int $nTotalItems): Paginator
+    {
+        /** @var PaginatorPlugin */
+        $xPlugin = $this->plugin('pg');
+        return $xPlugin->create($nCurrentPage, $nItemsPerPage, $nTotalItems);
+    }
+
+    /**
+     * Render an HTML pagination control.
+     *
+     * @param Paginator $xPaginator
+     * @param Call $xCall
+     * @param string $sWrapperId
+     *
+     * @return void
+     */
+    public function paginate(Paginator $xPaginator, Call $xCall, string $sWrapperId = '')
+    {
+        /** @var PaginatorPlugin */
+        $xPlugin = $this->plugin('pg');
+        $xPlugin->render($xPaginator, $xCall, $sWrapperId);
     }
 
     /**

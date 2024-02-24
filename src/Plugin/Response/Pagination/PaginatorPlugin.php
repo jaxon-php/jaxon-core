@@ -25,7 +25,9 @@ use function count;
 /**
  * Usage
  *
- * $paginator = $jaxon->paginator($pageNumber, $perPage, $total);
+ * $paginator = $this->response->pg->create($pageNumber, $perPage, $total);
+ * // Or, using the response shortcut
+ * $paginator = $this->response->paginator($pageNumber, $perPage, $total);
  * // Or, in a class that inherits from CallableClass
  * $paginator = $this->paginator($pageNumber, $perPage, $total);
  * $html = $this->render($pageTemplate, [
@@ -90,6 +92,20 @@ class PaginatorPlugin extends ResponsePlugin
     }
 
     /**
+     * Create a paginator
+     *
+     * @param int $nCurrentPage     The current page number
+     * @param int $nItemsPerPage    The number of items per page
+     * @param int $nTotalItems      The total number of items
+     *
+     * @return Paginator
+     */
+    public function create(int $nCurrentPage, int $nItemsPerPage, int $nTotalItems): Paginator
+    {
+        return new Paginator($nCurrentPage, $nItemsPerPage, $nTotalItems);
+    }
+
+    /**
      * @param array<Page> $aPages
      *
      * @return null|Store
@@ -139,21 +155,20 @@ class PaginatorPlugin extends ResponsePlugin
             $xCall->addParameter(Parameter::PAGE_NUMBER, 0);
         }
 
-        $xResponse = $this->response();
         // Show the pagination links
-        $xResponse->html($sWrapperId ?? $xPaginator->wrapperId(), $xStore->__toString());
+        $this->response()->html($sWrapperId ?? $xPaginator->wrapperId(), $xStore->__toString());
         // Set click handlers on the pagination links
+        $aCommand = [
+            'cmd' => 'paginate',
+            'id' => $xPaginator->wrapperId(),
+            'call' => $xCall->toArray(),
+        ];
         $aPages = array_map(function(Page $xPage) {
             return [
                 'type' => $xPage->sType,
                 'page' => $xPage->nNumber,
             ];
         }, $aPages);
-        $aCommand = [
-            'cmd' => 'paginate',
-            'id' => $xPaginator->wrapperId(),
-            'call' => $xCall->toArray(),
-        ];
         $this->addCommand($aCommand, $aPages);
     }
 }

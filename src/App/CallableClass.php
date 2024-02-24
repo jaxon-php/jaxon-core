@@ -8,6 +8,8 @@ use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\Request\CallableClass\CallableClassHelper;
 use Jaxon\Plugin\Response\DataBag\DataBagContext;
 use Jaxon\Plugin\Response\JQuery\DomSelector;
+use Jaxon\Plugin\Response\Pagination\Paginator;
+use Jaxon\Request\Call\Call;
 use Jaxon\Request\Factory\RequestFactory;
 use Jaxon\Request\TargetInterface;
 use Jaxon\Response\Response;
@@ -123,5 +125,33 @@ class CallableClass
     public function bag(string $sBagName): DataBagContext
     {
         return $this->response->bag($sBagName);
+    }
+
+    /**
+     * Create a paginator
+     *
+     * @param int $nCurrentPage     The current page number
+     * @param int $nItemsPerPage    The number of items per page
+     * @param int $nTotalItems      The total number of items
+     *
+     * @return Paginator
+     */
+    public function paginator(int $nCurrentPage, int $nItemsPerPage, int $nTotalItems): Paginator
+    {
+        return $this->response->paginator($nCurrentPage, $nItemsPerPage, $nTotalItems);
+    }
+
+    /**
+     * Render an HTML pagination control.
+     *
+     * @param Paginator $xPaginator
+     * @param Call $xCall
+     * @param string $sWrapperId
+     *
+     * @return void
+     */
+    public function paginate(Paginator $xPaginator, Call $xCall, string $sWrapperId = '')
+    {
+        $this->response->paginate($xPaginator, $xCall, $sWrapperId);
     }
 }
