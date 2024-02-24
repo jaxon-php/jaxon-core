@@ -181,11 +181,12 @@ class Parameter implements ParameterInterface
             return ['_type' => 'checked', '_name' => $this->getValue()];
         case self::ELEMENT_INNERHTML:
             return ['_type' => 'html', '_name' => $this->getValue()];
+        case self::PAGE_NUMBER:
+            return ['_type' => 'page', '_name' => ''];
         case self::QUOTED_VALUE:
         case self::BOOL_VALUE:
         case self::NUMERIC_VALUE:
         case self::JSON_VALUE:
-        case self::PAGE_NUMBER:
         default:
             // Return the value as is.
             return $this->getValue();
