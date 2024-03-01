@@ -107,7 +107,7 @@ class DataBagPlugin extends ResponsePlugin
         $this->setDataBag();
         if($this->xDataBag->touched())
         {
-            $this->addCommand(['cmd' => 'bags.set'], $this->xDataBag->getAll());
+            $this->addCommand('bags.set', $this->xDataBag->getAll());
         }
     }
 

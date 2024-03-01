@@ -13,34 +13,22 @@
 namespace Jaxon\Response\Traits;
 
 use Jaxon\Response\ResponseInterface;
+use JsonSerializable;
 
 use function func_get_args;
 use function array_shift;
 
 trait ScriptTrait
 {
-    /**
-     * Add a response command to the array of commands that will be sent to the browser
-     *
-     * @param array $aAttributes    Associative array of attributes that will describe the command
-     * @param mixed $mData    The data to be associated with this command
-     *
-     * @return ResponseInterface
-     */
-    abstract public function addCommand(array $aAttributes, $mData): ResponseInterface;
-
-    /**
+     /**
      * Add a response command to the array of commands that will be sent to the browser
      *
      * @param string $sName    The command name
-     * @param array $aAttributes    Associative array of attributes that will describe the command
-     * @param mixed $mData    The data to be associated with this command
-     * @param bool $bRemoveEmpty    If true, remove empty attributes
+     * @param array|JsonSerializable $aOptions    The command options
      *
      * @return ResponseInterface
      */
-    abstract protected function _addCommand(string $sName, array $aAttributes,
-        $mData, bool $bRemoveEmpty = false): ResponseInterface;
+    abstract public function addCommand(string $sName, array|JsonSerializable $aOptions): ResponseInterface;
 
     /**
      * Response command that prompts user with [ok] [cancel] style message box
@@ -49,14 +37,16 @@ trait ScriptTrait
      * following this one, will be skipped.
      *
      * @param integer $nCommandCount    The number of commands to skip upon cancel
-     * @param string $sMessage    The message to display to the user
+     * @param string $sQuestion    The message to display to the user
      *
      * @return ResponseInterface
      */
-    public function confirmCommands(int $nCommandCount, string $sMessage): ResponseInterface
+    public function confirmCommands(int $nCommandCount, string $sQuestion): ResponseInterface
     {
-        $aAttributes = ['count' => $nCommandCount];
-        return $this->_addCommand('cc', $aAttributes, $sMessage);
+        return $this->addCommand('cc', [
+            'count' => $nCommandCount,
+            'question' => $this->str($sQuestion),
+        ]);
     }
 
     /**
@@ -70,8 +60,7 @@ trait ScriptTrait
     {
         $aArgs = func_get_args();
         array_shift($aArgs);
-        $aAttributes = ['cmd' => 'jc', 'func' => $sFunc];
-        return $this->addCommand($aAttributes, $aArgs);
+        return $this->addCommand('jc', ['func' => $this->str($sFunc),'args' => $aArgs]);
     }
 
     /**
@@ -83,7 +72,7 @@ trait ScriptTrait
      */
     public function alert(string $sMessage): ResponseInterface
     {
-        return $this->_addCommand('al', [], $sMessage);
+        return $this->addCommand('al', ['message' => $this->str($sMessage)]);
     }
 
     /**
@@ -95,7 +84,7 @@ trait ScriptTrait
      */
     public function debug(string $sMessage): ResponseInterface
     {
-        return $this->_addCommand('dbg', [], $sMessage);
+        return $this->addCommand('dbg', ['message' => $this->str($sMessage)]);
     }
 
     /**
@@ -108,8 +97,10 @@ trait ScriptTrait
      */
     public function redirect(string $sURL, int $nDelay = 0): ResponseInterface
     {
-        $sURL = $this->xPluginManager->getParameterReader()->parseUrl($sURL);
-        return $this->_addCommand('rd', ['delay' => $nDelay], $sURL);
+        return $this->addCommand('rd', [
+            'delay' => $nDelay,
+            'url' => $this->xPluginManager->getParameterReader()->parseUrl($sURL),
+        ]);
     }
 
     /**
@@ -124,7 +115,95 @@ trait ScriptTrait
      */
     public function sleep(int $tenths): ResponseInterface
     {
-        $aAttributes = ['cmd' =>'s', 'prop' => $tenths];
-        return $this->addCommand($aAttributes, '');
+        return $this->addCommand('s', ['duration' => $tenths]);
+    }
+
+    /**
+     * Add a command to set an event handler on the specified element
+     * This handler can take custom parameters, and is is executed in a specific context.
+     *
+     * @param string $sTarget    The id of the element
+     * @param string $sEvent    The name of the event
+     * @param array $aCall    The event handler
+     *
+     * @return ResponseInterface
+     */
+    public function setEventHandler(string $sTarget, string $sEvent, array $aCall): ResponseInterface
+    {
+        return $this->addCommand('se', [
+            'id' => $this->str($sTarget),
+            'event' => $this->str($sEvent),
+            'call' => $aCall,
+        ]);
+    }
+
+    /**
+     * Add a command to set a click handler on the browser
+     *
+     * @param string $sTarget    The id of the element
+     * @param array $aCall    The event handler
+     *
+     * @return ResponseInterface
+     */
+    public function onClick(string $sTarget, array $aCall): ResponseInterface
+    {
+        return $this->setEventHandler($sTarget, 'onclick', $aCall);
+    }
+
+    /**
+     * Add a command to add an event handler on the specified element
+     * This handler can take custom parameters, and is is executed in a specific context.
+     *
+     * @param string $sTarget    The id of the element
+     * @param string $sEvent    The name of the event
+     * @param array $aCall    The event handler
+     *
+     * @return ResponseInterface
+     */
+    public function addEventHandler(string $sTarget, string $sEvent, array $aCall): ResponseInterface
+    {
+        return $this->addCommand('ae', [
+            'id' => $this->str($sTarget),
+            'event' => $this->str($sEvent),
+            'call' => $aCall,
+        ]);
+    }
+
+    /**
+     * Add a command to install an event handler on the specified element
+     *
+     * You can add more than one event handler to an element's event using this method.
+     *
+     * @param string $sTarget    The id of the element
+     * @param string $sEvent    The name of the event
+     * @param string $sHandler    The name of the javascript function to call when the event is fired
+     *
+     * @return ResponseInterface
+     */
+    public function addHandler(string $sTarget, string $sEvent, string $sHandler): ResponseInterface
+    {
+        return $this->addCommand('ah', [
+            'id' => $this->str($sTarget),
+            'event' => $this->str($sEvent),
+            'func' => $this->str($sHandler),
+        ]);
+    }
+
+    /**
+     * Add a command to remove an event handler from an element
+     *
+     * @param string $sTarget    The id of the element
+     * @param string $sEvent    The name of the event
+     * @param string $sHandler    The name of the javascript function called when the event is fired
+     *
+     * @return ResponseInterface
+     */
+    public function removeHandler(string $sTarget, string $sEvent, string $sHandler): ResponseInterface
+    {
+        return $this->addCommand('rh', [
+            'id' => $this->str($sTarget),
+            'event' => $this->str($sEvent),
+            'func' => $this->str($sHandler),
+        ]);
     }
 }

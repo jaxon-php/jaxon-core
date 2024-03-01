@@ -28,6 +28,7 @@ namespace Jaxon\Plugin;
 use Jaxon\Response\ResponseInterface;
 use Jaxon\Plugin\Response\JQuery\DomSelector;
 use Jaxon\Plugin\Response\DataBag\DataBagContext;
+use JsonSerializable;
 
 /**
  * @method DomSelector selector(string $sPath = '', $xContext = null)
@@ -65,13 +66,13 @@ abstract class ResponsePlugin extends Plugin implements ResponsePluginInterface
      * This will call <Jaxon\Response\Response->addPluginCommand> using the
      * reference provided in <Jaxon\Response\Response->setResponse>.
      *
-     * @param array $aAttributes    The attributes of the command
-     * @param mixed $xData    The data to be added to the command
+     * @param string $sName    The command name
+     * @param array|JsonSerializable $aOptions    The command options
      *
      * @return void
      */
-    public function addCommand(array $aAttributes, $xData)
+    public function addCommand(string $sName, array|JsonSerializable $aOptions)
     {
-        $this->xResponse->addPluginCommand($this, $aAttributes, $xData);
+        $this->xResponse->addPluginCommand($this, $sName, $aOptions);
     }
 }

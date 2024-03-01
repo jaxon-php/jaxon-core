@@ -15,6 +15,7 @@
 namespace Jaxon\App\Dialog\Library;
 
 use Jaxon\Response\Response;
+use JsonSerializable;
 
 trait DialogLibraryTrait
 {
@@ -100,16 +101,15 @@ trait DialogLibraryTrait
     /**
      * Add a client side plugin command to the response object
      *
-     * @param array $aAttributes The attributes of the command
-     * @param mixed $xData The data to be added to the command
+     * @param string $sName    The command name
+     * @param array|JsonSerializable $aOptions    The command options
      *
      * @return void
      */
-    final public function addCommand(array $aAttributes, $xData)
+    final public function addCommand(string $sName, array $aOptions)
     {
         // This is usually the response plugin name. We set the library name instead.
-        $aAttributes['plg'] = $this->getName();
-        $this->xResponse->addCommand($aAttributes, $xData);
+        $this->xResponse->addPluginCommand($this, $sName, $aOptions);
     }
 
     /**
