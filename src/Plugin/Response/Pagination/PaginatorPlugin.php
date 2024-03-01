@@ -21,6 +21,7 @@ use function array_map;
 use function array_pop;
 use function array_shift;
 use function count;
+use function trim;
 
 /**
  * Usage
@@ -82,16 +83,6 @@ class PaginatorPlugin extends ResponsePlugin
     }
 
     /**
-     * @inheritDoc
-     */
-    public function getReadyScript(): string
-    {
-        return '
-    jaxon.command.handler.register("paginate", (args) => jaxon.cmd.event.paginate(args));
-';
-    }
-
-    /**
      * Create a paginator
      *
      * @param int $nCurrentPage     The current page number
@@ -144,7 +135,8 @@ class PaginatorPlugin extends ResponsePlugin
         {
             return;
         }
-        if(!($xStore = $this->_render($aPages)))
+        $xStore = $this->_render($aPages);
+        if(!$xStore)
         {
             return;
         }
@@ -154,21 +146,16 @@ class PaginatorPlugin extends ResponsePlugin
         {
             $xCall->addParameter(Parameter::PAGE_NUMBER, 0);
         }
-
         // Show the pagination links
-        $this->response()->html($sWrapperId ?? $xPaginator->wrapperId(), $xStore->__toString());
+        $sWrapperId = trim($sWrapperId) ?? $xPaginator->wrapperId();
+        $this->response()->html($sWrapperId, $xStore->__toString());
         // Set click handlers on the pagination links
-        $aCommand = [
-            'cmd' => 'paginate',
-            'id' => $xPaginator->wrapperId(),
+        $this->addCommand('paginate', [
+            'id' => $sWrapperId,
             'call' => $xCall->toArray(),
-        ];
-        $aPages = array_map(function(Page $xPage) {
-            return [
-                'type' => $xPage->sType,
-                'page' => $xPage->nNumber,
-            ];
-        }, $aPages);
-        $this->addCommand($aCommand, $aPages);
+            'pages' => array_map(function(Page $xPage) {
+                return ['type' => $xPage->sType, 'number' => $xPage->nNumber];
+            }, $aPages),
+        ]);
     }
 }
