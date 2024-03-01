@@ -37,7 +37,7 @@ class DataBagPlugin extends ResponsePlugin
     /**
      * @return void
      */
-    public function setDataBag()
+    private function initDataBag()
     {
         if($this->xDataBag !== null)
         {
@@ -69,11 +69,9 @@ class DataBagPlugin extends ResponsePlugin
     private function readData($xData): array
     {
         // Todo: clean input data.
-        if(is_string($xData))
-        {
-            return json_decode($xData, true) ?: [];
-        }
-        return is_array($xData) ? $xData : [];
+        return is_string($xData) ?
+            (json_decode($xData, true) ?: []) :
+            (is_array($xData) ? $xData : []);
     }
 
     /**
@@ -86,28 +84,14 @@ class DataBagPlugin extends ResponsePlugin
     }
 
     /**
-     * @inheritDoc
-     */
-    public function getReadyScript(): string
-    {
-        return '
-    jaxon.command.handler.register("bags.set", (args) => {
-        for (const bag in args.data) {
-            jaxon.ajax.parameters.bags[bag] = args.data[bag];
-        }
-    });
-';
-    }
-
-    /**
      * @return void
      */
     public function writeCommand()
     {
-        $this->setDataBag();
+        $this->initDataBag();
         if($this->xDataBag->touched())
         {
-            $this->addCommand('bags.set', $this->xDataBag->getAll());
+            $this->addCommand('bags.set', ['bags' => $this->xDataBag]);
         }
     }
 
@@ -118,7 +102,7 @@ class DataBagPlugin extends ResponsePlugin
      */
     public function bag(string $sName): DataBagContext
     {
-        $this->setDataBag();
+        $this->initDataBag();
         return new DataBagContext($this->xDataBag, $sName);
     }
 }
