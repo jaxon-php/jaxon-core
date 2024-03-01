@@ -141,7 +141,7 @@ class JsCall implements JsonSerializable
             '_type' => 'func',
             '_name' => $this->sFunction,
             'params' => array_map(function(Parameter $xParam) {
-                return $xParam->forArray();
+                return $xParam->jsonSerialize();
             }, $this->aParameters),
         ]];
         if($this->bToInt)
@@ -159,7 +159,7 @@ class JsCall implements JsonSerializable
     }
 
     /**
-     * Convert this call to string, when converting the response into json.
+     * Convert this call to array, when converting the response into json.
      *
      * This is a method of the JsonSerializable interface.
      *

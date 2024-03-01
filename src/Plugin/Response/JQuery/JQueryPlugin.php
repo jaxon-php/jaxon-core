@@ -62,16 +62,6 @@ class JQueryPlugin extends ResponsePlugin
     }
 
     /**
-     * @inheritDoc
-     */
-    public function getReadyScript(): string
-    {
-        return '
-    jaxon.command.handler.register("jquery", (args) => jaxon.cmd.script.execute(args));
-';
-    }
-
-    /**
      * Create a JQueryPlugin DomSelector, and link it to the current response.
      *
      * Since this element is linked to a response, its code will be automatically sent to the client.
@@ -84,10 +74,10 @@ class JQueryPlugin extends ResponsePlugin
      */
     public function selector(string $sPath = '', $xContext = null): DomSelector
     {
-        $xSelector = new DomSelector($this->jQueryNs, $sPath, $xContext);
+        $xSelector = new DomSelector($sPath, $xContext);
         if($this->bCommand && $this->response() !== null)
         {
-            $this->addCommand(['cmd' => 'jquery'], $xSelector);
+            $this->addCommand('jquery', ['selector' => $xSelector]);
         }
         // Reset the command value.
         $this->bCommand = true;

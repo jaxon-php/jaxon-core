@@ -13,20 +13,14 @@
 
 namespace Jaxon\Request\Call;
 
-interface ParameterInterface
-{
+use JsonSerializable;
 
+interface ParameterInterface extends JsonSerializable
+{
     /**
      * Get the parameter type
      *
      * @return string
      */
     public function getType(): string;
-
-    /**
-     * Generate the javascript code of the parameter.
-     *
-     * @return mixed
-     */
-    public function forArray();
 }

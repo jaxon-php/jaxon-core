@@ -26,14 +26,12 @@ use Jaxon\Plugin\Response\JQuery\Call\Method;
 use Jaxon\Request\Call\JsCall;
 use Jaxon\Request\Call\ParameterInterface;
 
-use JsonSerializable;
-
+use function array_merge;
 use function count;
-use function implode;
 use function is_a;
 use function trim;
 
-class DomSelector implements JsonSerializable, ParameterInterface
+class DomSelector implements ParameterInterface
 {
     /**
      * The jQuery selector path
@@ -41,6 +39,13 @@ class DomSelector implements JsonSerializable, ParameterInterface
      * @var string
      */
     protected $sPath;
+
+    /**
+     * The jQuery selector path
+     *
+     * @var mixed
+     */
+    protected $xContext;
 
     /**
      * The actions to be applied on the selected element
@@ -70,34 +75,18 @@ class DomSelector implements JsonSerializable, ParameterInterface
      * @param string $sPath    The jQuery selector path
      * @param mixed $xContext    A context associated to the selector
      */
-    public function __construct(string $jQueryNs, string $sPath, $xContext)
+    public function __construct(string $sPath, $xContext)
     {
-        $sPath = trim($sPath, " \t");
+        $this->sPath = trim($sPath, " \t");
+        $this->xContext = $xContext;
         $this->aCalls = [];
-        $this->sPath = $this->getPath($jQueryNs, $sPath, $xContext);
     }
-
     /**
-     * Get the selector js.
-     *
-     * @param string $jQueryNs    The jQuery symbol
-     * @param string $sPath    The jQuery selector path
-     * @param mixed $xContext    A context associated to the selector
+     * @inheritDoc
      */
-    private function getPath(string $jQueryNs, string $sPath, $xContext)
+    public function getType(): string
     {
-        if(!$sPath)
-        {
-            // If an empty selector is given, use the event target instead
-            return "$jQueryNs(e.currentTarget)";
-        }
-        if(!$xContext)
-        {
-            return "$jQueryNs('" . $sPath . "')";
-        }
-        $sContext = is_a($xContext, self::class) ?
-            $xContext->getScript() : "$jQueryNs('" . trim("$xContext") . "')";
-        return "$jQueryNs('$sPath', $sContext)";
+        return 'select';
     }
 
     /**
@@ -181,29 +170,64 @@ class DomSelector implements JsonSerializable, ParameterInterface
     }
 
     /**
-     * Generate the jQuery call.
-     *
-     * @return string
+     * @return array
      */
-    public function getScript(): string
+    private function selectCalls()
     {
-        $sScript = $this->sPath;
-        if(count($this->aCalls) > 0)
+        if(!$this->sPath)
         {
-            $sScript .= '.' . implode('.', $this->aCalls);
+            // If an empty selector is given, use the event target instead
+            return [['_type' => 'select', '_name' => 'this']];
         }
-        return $this->bIsCallback ? '(e) => {' . $sScript . '}' :
-            ($this->bToInt ? "parseInt($sScript)" : $sScript);
+        if(!$this->xContext)
+        {
+            return [['_type' => 'select', '_name' => $this->sPath]];
+        }
+        // Todo: chain the 2 selectors.
+        return [
+            // ['_type' => 'select', '_name' => $this->xContext],
+            ['_type' => 'select', '_name' => $this->sPath],
+        ];
     }
 
     /**
-     * Magic function to generate the jQuery call.
-     *
-     * @return string
+     * @param Method|AttrSet|AttrGet $xParam
      */
-    public function __toString()
+    private function makeCallsArray($xParam): array
     {
-        return $this->getScript();
+        if(!is_a($xParam, Method::class))
+        {
+            // Return an array of array.
+            return [$xParam->jsonSerialize()];
+        }
+        // The param is serialized to an array of arrays.
+        $aCalls = $xParam->jsonSerialize();
+        // Set the correct type on the first call.
+        $aCalls[0]['_type'] = $this->bIsCallback ? 'event' : 'method';
+        return $aCalls;
+    }
+
+    /**
+     * @return array
+     */
+    public function toArray(): array
+    {
+        $aCalls = $this->selectCalls();
+        foreach($this->aCalls as $xCall)
+        {
+            $aCalls = array_merge($aCalls, $this->makeCallsArray($xCall));
+        }
+        if($this->bToInt)
+        {
+            $aCalls[] = [
+                '_type' => 'func',
+                '_name' => 'jaxon.utils.string.toInt',
+                'params' => [
+                    [ '_type' => '_', '_name' => 'this' ],
+                ],
+            ];
+        }
+        return $aCalls;
     }
 
     /**
@@ -211,10 +235,10 @@ class DomSelector implements JsonSerializable, ParameterInterface
      *
      * This is a method of the JsonSerializable interface.
      *
-     * @return string
+     * @return array
      */
-    public function jsonSerialize(): string
+    public function jsonSerialize(): array
     {
-        return $this->getScript();
+        return $this->toArray();
     }
 }

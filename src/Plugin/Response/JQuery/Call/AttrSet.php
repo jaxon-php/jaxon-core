@@ -4,7 +4,9 @@ namespace Jaxon\Plugin\Response\JQuery\Call;
 
 use Jaxon\Request\Call\Parameter;
 
-class AttrSet
+use JsonSerializable;
+
+class AttrSet implements JsonSerializable
 {
     /**
      * The attribute name
@@ -16,7 +18,7 @@ class AttrSet
     /**
      * The attribute value
      *
-     * @var mixed
+     * @var Parameter
      */
     private $xAttrValue;
 
@@ -33,22 +35,16 @@ class AttrSet
     }
 
     /**
-     * Returns a string representation of this call
+     * Convert this call to array, when converting the response into json.
      *
-     * @return string
+     * @return array
      */
-    public function getScript(): string
+    public function jsonSerialize(): array
     {
-        return $this->sAttrName . ' = ' . $this->xAttrValue;
-    }
-
-    /**
-     * Convert this call to string
-     *
-     * @return string
-     */
-    public function __toString()
-    {
-        return $this->getScript();
+        return [
+            '_type' => 'attr',
+            '_name' => $this->sAttrName,
+            'value' => $this->xAttrValue->jsonSerialize(),
+        ];
     }
 }
