@@ -77,7 +77,7 @@ class JQueryPlugin extends ResponsePlugin
         $xSelector = new DomSelector($sPath, $xContext);
         if($this->bCommand && $this->response() !== null)
         {
-            $this->addCommand('jquery', ['selector' => $xSelector]);
+            $this->addCommand('jquery.call', ['selector' => $xSelector]);
         }
         // Reset the command value.
         $this->bCommand = true;

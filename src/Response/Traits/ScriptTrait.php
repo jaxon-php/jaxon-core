@@ -43,7 +43,7 @@ trait ScriptTrait
      */
     public function confirmCommands(int $nCommandCount, string $sQuestion): ResponseInterface
     {
-        return $this->addCommand('cc', [
+        return $this->addCommand('script.confirm', [
             'count' => $nCommandCount,
             'question' => $this->str($sQuestion),
         ]);
@@ -60,7 +60,7 @@ trait ScriptTrait
     {
         $aArgs = func_get_args();
         array_shift($aArgs);
-        return $this->addCommand('jc', ['func' => $this->str($sFunc),'args' => $aArgs]);
+        return $this->addCommand('script.call', ['func' => $this->str($sFunc),'args' => $aArgs]);
     }
 
     /**
@@ -72,7 +72,7 @@ trait ScriptTrait
      */
     public function alert(string $sMessage): ResponseInterface
     {
-        return $this->addCommand('al', ['message' => $this->str($sMessage)]);
+        return $this->addCommand('script.alert', ['message' => $this->str($sMessage)]);
     }
 
     /**
@@ -84,7 +84,7 @@ trait ScriptTrait
      */
     public function debug(string $sMessage): ResponseInterface
     {
-        return $this->addCommand('dbg', ['message' => $this->str($sMessage)]);
+        return $this->addCommand('script.debug', ['message' => $this->str($sMessage)]);
     }
 
     /**
@@ -97,7 +97,7 @@ trait ScriptTrait
      */
     public function redirect(string $sURL, int $nDelay = 0): ResponseInterface
     {
-        return $this->addCommand('rd', [
+        return $this->addCommand('script.redirect', [
             'delay' => $nDelay,
             'url' => $this->xPluginManager->getParameterReader()->parseUrl($sURL),
         ]);
@@ -115,7 +115,7 @@ trait ScriptTrait
      */
     public function sleep(int $tenths): ResponseInterface
     {
-        return $this->addCommand('s', ['duration' => $tenths]);
+        return $this->addCommand('script.sleep', ['duration' => $tenths]);
     }
 
     /**
@@ -130,7 +130,7 @@ trait ScriptTrait
      */
     public function setEventHandler(string $sTarget, string $sEvent, array $aCall): ResponseInterface
     {
-        return $this->addCommand('se', [
+        return $this->addCommand('handler.event.set', [
             'id' => $this->str($sTarget),
             'event' => $this->str($sEvent),
             'call' => $aCall,
@@ -162,7 +162,7 @@ trait ScriptTrait
      */
     public function addEventHandler(string $sTarget, string $sEvent, array $aCall): ResponseInterface
     {
-        return $this->addCommand('ae', [
+        return $this->addCommand('handler.event.add', [
             'id' => $this->str($sTarget),
             'event' => $this->str($sEvent),
             'call' => $aCall,
@@ -182,7 +182,7 @@ trait ScriptTrait
      */
     public function addHandler(string $sTarget, string $sEvent, string $sHandler): ResponseInterface
     {
-        return $this->addCommand('ah', [
+        return $this->addCommand('handler.add', [
             'id' => $this->str($sTarget),
             'event' => $this->str($sEvent),
             'func' => $this->str($sHandler),
@@ -200,7 +200,7 @@ trait ScriptTrait
      */
     public function removeHandler(string $sTarget, string $sEvent, string $sHandler): ResponseInterface
     {
-        return $this->addCommand('rh', [
+        return $this->addCommand('handler.remove', [
             'id' => $this->str($sTarget),
             'event' => $this->str($sEvent),
             'func' => $this->str($sHandler),

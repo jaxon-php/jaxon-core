@@ -38,7 +38,7 @@ trait HtmlDomTrait
      */
     public function assign(string $sTarget, string $sAttribute, string $sValue): ResponseInterface
     {
-        return $this->addCommand('as', [
+        return $this->addCommand('dom.assign', [
             'id' => $this->str($sTarget),
             'attr' => $this->str($sAttribute),
             'value' => $this->str($sValue),
@@ -71,7 +71,7 @@ trait HtmlDomTrait
      */
     public function append(string $sTarget, string $sAttribute, string $sValue): ResponseInterface
     {
-        return $this->addCommand('ap', [
+        return $this->addCommand('dom.append', [
             'id' => $this->str($sTarget),
             'attr' => $this->str($sAttribute),
             'value' => $this->str($sValue),
@@ -89,7 +89,7 @@ trait HtmlDomTrait
      */
     public function prepend(string $sTarget, string $sAttribute, string $sValue): ResponseInterface
     {
-        return $this->addCommand('pp', [
+        return $this->addCommand('dom.prepend', [
             'id' => $this->str($sTarget),
             'attr' => $this->str($sAttribute),
             'value' => $this->str($sValue),
@@ -109,7 +109,7 @@ trait HtmlDomTrait
     public function replace(string $sTarget, string $sAttribute,
         string $sSearch, string $sReplace): ResponseInterface
     {
-        return $this->addCommand('rp', [
+        return $this->addCommand('dom.replace', [
             'id' => $this->str($sTarget),
             'attr' => $this->str($sAttribute),
             'search' => $this->str($sSearch),
@@ -127,7 +127,10 @@ trait HtmlDomTrait
      */
     public function clear(string $sTarget, string $sAttribute = 'innerHTML'): ResponseInterface
     {
-        return $this->assign($sTarget, $sAttribute, '');
+        return $this->addCommand('dom.clear', [
+            'id' => $this->str($sTarget),
+            'attr' => $this->str($sAttribute),
+        ]);
     }
 
     /**
@@ -139,7 +142,7 @@ trait HtmlDomTrait
      */
     public function remove(string $sTarget): ResponseInterface
     {
-        return $this->addCommand('rm', ['id' => $this->str($sTarget)]);
+        return $this->addCommand('dom.remove', ['id' => $this->str($sTarget)]);
     }
 
     /**
@@ -153,7 +156,7 @@ trait HtmlDomTrait
      */
     public function create(string $sParent, string $sTag, string $sId): ResponseInterface
     {
-        return $this->addCommand('ce', [
+        return $this->addCommand('dom.create', [
             'id' => $this->str($sParent),
             'tag' => [
                 'name' => $this->str($sTag),
@@ -173,7 +176,7 @@ trait HtmlDomTrait
      */
     public function insertBefore(string $sBefore, string $sTag, string $sId): ResponseInterface
     {
-        return $this->addCommand('ie', [
+        return $this->addCommand('dom.insert.before', [
             'id' => $this->str($sBefore),
             'tag' => [
                 'name' => $this->str($sTag),
@@ -208,7 +211,7 @@ trait HtmlDomTrait
      */
     public function insertAfter(string $sAfter, string $sTag, string $sId): ResponseInterface
     {
-        return $this->addCommand('ia', [
+        return $this->addCommand('dom.insert.after', [
             'id' => $this->str($sAfter),
             'tag' => [
                 'name' => $this->str($sTag),

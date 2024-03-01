@@ -150,7 +150,7 @@ class PaginatorPlugin extends ResponsePlugin
         $sWrapperId = trim($sWrapperId) ?? $xPaginator->wrapperId();
         $this->response()->html($sWrapperId, $xStore->__toString());
         // Set click handlers on the pagination links
-        $this->addCommand('paginate', [
+        $this->addCommand('pg.paginate', [
             'id' => $sWrapperId,
             'call' => $xCall->toArray(),
             'pages' => array_map(function(Page $xPage) {
