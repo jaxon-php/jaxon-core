@@ -24,11 +24,4 @@ interface DialogLibraryInterface
      * @return void
      */
     public function setResponse(Response $xResponse);
-
-    /**
-     * @param bool $bReturnCode
-     *
-     * @return void
-     */
-    public function setReturnCode(bool $bReturnCode);
 }

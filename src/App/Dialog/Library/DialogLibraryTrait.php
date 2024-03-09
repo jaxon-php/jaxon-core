@@ -32,14 +32,6 @@ trait DialogLibraryTrait
     protected $xResponse = null;
 
     /**
-     * For MessageInterface, tells if the calls to the functions shall
-     * add commands to the response or return the js code. By default, they add commands.
-     *
-     * @var bool
-     */
-    protected $bReturnCode = false;
-
-    /**
      * Get the library name
      *
      * @return string
@@ -51,7 +43,7 @@ trait DialogLibraryTrait
      *
      * @return DialogLibraryHelper
      */
-    final public function helper(): DialogLibraryHelper
+    public function helper(): DialogLibraryHelper
     {
         return $this->xHelper;
     }
@@ -63,7 +55,7 @@ trait DialogLibraryTrait
      *
      * @return void
      */
-    final public function setResponse(Response $xResponse)
+    public function setResponse(Response $xResponse)
     {
         $this->xResponse = $xResponse;
     }
@@ -73,29 +65,9 @@ trait DialogLibraryTrait
      *
      * @return Response|null
      */
-    final protected function response(): ?Response
+    protected function response(): ?Response
     {
         return $this->xResponse;
-    }
-
-    /**
-     * @param bool $bReturnCode
-     *
-     * @return void
-     */
-    final public function setReturnCode(bool $bReturnCode)
-    {
-        $this->bReturnCode = $bReturnCode;
-    }
-
-    /**
-     * Check if the library should return the js code or run it in the browser.
-     *
-     * @return bool
-     */
-    final protected function returnCode(): bool
-    {
-        return $this->bReturnCode;
     }
 
     /**
@@ -106,7 +78,7 @@ trait DialogLibraryTrait
      *
      * @return void
      */
-    final public function addCommand(string $sName, array $aOptions)
+    public function addCommand(string $sName, array $aOptions = [])
     {
         // This is usually the response plugin name. We set the library name instead.
         $this->xResponse->addPluginCommand($this, $sName, $aOptions);

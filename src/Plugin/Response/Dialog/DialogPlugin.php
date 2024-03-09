@@ -116,8 +116,6 @@ class DialogPlugin extends ResponsePlugin implements ModalInterface, MessageInte
     {
         $xLibrary = $this->xLibraryManager->getMessageLibrary();
         $xLibrary->setResponse($this->xResponse);
-        // By default, always add commands to the response
-        $xLibrary->setReturnCode(false);
         return $xLibrary;
     }
 

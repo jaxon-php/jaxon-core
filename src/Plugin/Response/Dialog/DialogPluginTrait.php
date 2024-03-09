@@ -16,9 +16,6 @@ namespace Jaxon\Plugin\Response\Dialog;
 
 trait DialogPluginTrait
 {
-    public function setReturnCode(bool $bReturnCode)
-    {}
-
     public function getUri(): string
     {
         return '';
