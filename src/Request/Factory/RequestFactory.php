@@ -40,22 +40,16 @@ class RequestFactory
     protected $xDialogLibraryManager;
 
     /**
-     * @var Paginator
-     */
-    protected $xPaginator;
-
-    /**
      * The class constructor
      *
      * @param string $sPrefix
      * @param DialogLibraryManager $xDialogLibraryManager
      * @param Paginator $xPaginator
      */
-    public function __construct(string $sPrefix, DialogLibraryManager $xDialogLibraryManager, Paginator $xPaginator)
+    public function __construct(string $sPrefix, DialogLibraryManager $xDialogLibraryManager)
     {
         $this->sPrefix = $sPrefix;
         $this->xDialogLibraryManager = $xDialogLibraryManager;
-        $this->xPaginator = $xPaginator;
     }
 
     /**
@@ -81,7 +75,7 @@ class RequestFactory
     {
         // Make the request
         $sPrefix = $this->bNoPrefix ? '' : $this->sPrefix;
-        $xCall = new Call($sPrefix . $sFunction, $this->xDialogLibraryManager, $this->xPaginator);
+        $xCall = new Call($sPrefix . $sFunction, $this->xDialogLibraryManager);
         $xCall->addParameters($aArguments);
         return $xCall;
     }

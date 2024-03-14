@@ -21,6 +21,7 @@ use Jaxon\App\Dialog\QuestionInterface;
 class AlertLibrary implements LibraryInterface, MessageInterface, QuestionInterface
 {
     use DialogLibraryTrait;
+    use MessageTrait;
 
     /**
      * Get the library name
@@ -48,76 +49,14 @@ class AlertLibrary implements LibraryInterface, MessageInterface, QuestionInterf
     }
 
     /**
-     * Print an alert message.
-     *
-     * @param string $sMessage    The text of the message
-     * @param string $sTitle    The title of the message
-     *
-     * @return string
+     * @inheritDoc
      */
-    private function alert(string $sMessage, string $sTitle): string
+    protected function alert(string $sMessage, string $sTitle, string $sType)
     {
         if(!empty($sTitle))
         {
             $sMessage = '<b>' . $sTitle . '</b><br/>' . $sMessage;
         }
-        if($this->returnCode())
-        {
-            return 'alert(' . $sMessage . ')';
-        }
         $this->xResponse->alert($sMessage, $sTitle);
-        return '';
-    }
-
-    /**
-     * Print a success message.
-     *
-     * @param string $sMessage    The text of the message
-     * @param string $sTitle    The title of the message
-     *
-     * @return string
-     */
-    public function success(string $sMessage, string $sTitle = ''): string
-    {
-        return $this->alert($sMessage, $sTitle);
-    }
-
-    /**
-     * Print an information message.
-     *
-     * @param string $sMessage    The text of the message
-     * @param string $sTitle    The title of the message
-     *
-     * @return string
-     */
-    public function info(string $sMessage, string $sTitle = ''): string
-    {
-        return $this->alert($sMessage, $sTitle);
-    }
-
-    /**
-     * Print a warning message.
-     *
-     * @param string $sMessage    The text of the message
-     * @param string $sTitle    The title of the message
-     *
-     * @return string
-     */
-    public function warning(string $sMessage, string $sTitle = ''): string
-    {
-        return $this->alert($sMessage, $sTitle);
-    }
-
-    /**
-     * Print an error message.
-     *
-     * @param string $sMessage    The text of the message
-     * @param string $sTitle    The title of the message
-     *
-     * @return string
-     */
-    public function error(string $sMessage, string $sTitle = ''): string
-    {
-        return $this->alert($sMessage, $sTitle);
     }
 }

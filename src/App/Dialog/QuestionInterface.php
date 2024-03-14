@@ -16,13 +16,12 @@ namespace Jaxon\App\Dialog;
 interface QuestionInterface extends LibraryInterface
 {
     /**
-     * Return a script which makes a call only if the user answers yes to the given question
+     * Add a confirm question to a function call.
      *
-     * @param string  $sQuestion
-     * @param string  $sYesScript
-     * @param string  $sNoScript
+     * @param string $sQuestion
+     * @param array $aArgs
      *
-     * @return string
+     * @return array
      */
-    public function confirm(string $sQuestion, string $sYesScript, string $sNoScript): string;
+    public function confirm(string $sQuestion, array $aArgs = []): array;
 }

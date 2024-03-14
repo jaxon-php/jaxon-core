@@ -20,24 +20,25 @@
 
 namespace Jaxon\Request\Call;
 
+use Jaxon\App\Dialog\Library\DialogLibraryManager;
+
 use function array_map;
+use function array_shift;
 use function func_get_args;
 
 class Call extends JsCall
 {
     /**
-     * The type of the message to show
-     *
-     * @var string
+     * @var DialogLibraryManager
      */
-    private $sMessageType = 'warning';
+    protected $xDialogLibraryManager;
 
     /**
-     * The arguments of the elseShow() call
+     * The arguments of the else() calls
      *
      * @var array
      */
-    protected $aMessageArgs = [];
+    protected $aMessage = [];
 
     /**
      * A condition to check before making the call
@@ -47,16 +48,40 @@ class Call extends JsCall
     protected $aCondition = [];
 
     /**
-     * @var bool
-     */
-    protected $bConfirm = false;
-
-    /**
      * The arguments of the confirm() call
      *
      * @var array
      */
-    protected $aConfirmArgs = [];
+    protected $aConfirm = [];
+
+    /**
+     * The constructor.
+     *
+     * @param string $sName    The javascript function or method name
+     * @param DialogLibraryManager $xDialogLibraryManager
+     */
+    public function __construct(string $sName, DialogLibraryManager $xDialogLibraryManager)
+    {
+        parent::__construct($sName);
+        $this->xDialogLibraryManager = $xDialogLibraryManager;
+    }
+
+    /**
+     * Make a phrase to be displayed in js code
+     *
+     * @param string $sPhrase
+     * @param array $aArgs
+     *
+     * @return array
+     */
+    private function makePhrase(string $sPhrase, array $aArgs = []): array
+    {
+        array_shift($aArgs);
+        return [
+            'str' => $sPhrase,
+            'args' => array_map(fn($xArg) => Parameter::make($xArg), $aArgs),
+        ];
+    }
 
     /**
      * Set the message if the condition to the call is not met
@@ -64,31 +89,20 @@ class Call extends JsCall
      * The first parameter is the message to show. The second allows inserting data from
      * the webpage in the message using positional placeholders.
      *
-     * @param string $sMessageType  The message to show
-     * @param array $aMessageArgs
+     * @param string $sType
+     * @param string $sMessage
+     * @param array $aArgs
      *
      * @return Call
      */
-    private function setMessage(string $sMessageType, array $aMessageArgs): Call
+    private function setMessage(string $sType, string $sMessage, array $aArgs): Call
     {
-        $this->sMessageType = $sMessageType;
-        $this->aMessageArgs = array_map(function($xParameter) {
-            return Parameter::make($xParameter);
-        }, $aMessageArgs);
-        return $this;
-    }
-
-    /**
-     * Get the message
-     *
-     * @return array
-     */
-    protected function getMessage(): array
-    {
-        return [
-            'type' => $this->sMessageType,
-            'message' => $this->aMessageArgs,
+        $this->aMessage = [
+            'lib' => $this->xDialogLibraryManager->getMessageLibrary()->getName(),
+            'type' => $sType,
+            'phrase' => $this->makePhrase($sMessage, $aArgs),
         ];
+        return $this;
     }
 
     /**
@@ -100,7 +114,7 @@ class Call extends JsCall
      */
     public function elseShow(string $sMessage): Call
     {
-        return $this->setMessage('warning', func_get_args());
+        return $this->setMessage('warning', $sMessage, func_get_args());
     }
 
     /**
@@ -112,7 +126,7 @@ class Call extends JsCall
      */
     public function elseInfo(string $sMessage): Call
     {
-        return $this->setMessage('info', func_get_args());
+        return $this->setMessage('info', $sMessage, func_get_args());
     }
 
     /**
@@ -124,7 +138,7 @@ class Call extends JsCall
      */
     public function elseSuccess(string $sMessage): Call
     {
-        return $this->setMessage('success', func_get_args());
+        return $this->setMessage('success', $sMessage, func_get_args());
     }
 
     /**
@@ -136,7 +150,7 @@ class Call extends JsCall
      */
     public function elseWarning(string $sMessage): Call
     {
-        return $this->setMessage('warning', func_get_args());
+        return $this->setMessage('warning', $sMessage, func_get_args());
     }
 
     /**
@@ -148,7 +162,7 @@ class Call extends JsCall
      */
     public function elseError(string $sMessage): Call
     {
-        return $this->setMessage('error', func_get_args());
+        return $this->setMessage('error', $sMessage, func_get_args());
     }
 
     /**
@@ -302,10 +316,10 @@ class Call extends JsCall
      */
     public function confirm(string $sQuestion): Call
     {
-        $this->bConfirm = true;
-        $this->aConfirmArgs = array_map(function($xParameter) {
-            return Parameter::make($xParameter);
-        }, func_get_args());
+        $this->aConfirm = [
+            'lib' => $this->xDialogLibraryManager->getQuestionLibrary()->getName(),
+            'phrase' => $this->makePhrase($sQuestion, func_get_args()),
+        ];
         return $this;
     }
 
@@ -317,17 +331,17 @@ class Call extends JsCall
     public function toArray(): array
     {
         $aCall = parent::toArray();
-        if($this->bConfirm)
+        if(($this->aConfirm))
         {
-            $aCall['confirm'] = $this->aConfirmArgs;
+            $aCall['confirm'] = $this->aConfirm;
         }
         if(($this->aCondition))
         {
             $aCall['condition'] = $this->aCondition;
-            if(($this->aMessageArgs))
-            {
-                $aCall['else'] = $this->getMessage();
-            }
+        }
+        if(($this->aMessage))
+        {
+            $aCall['else'] = $this->aMessage;
         }
         return $aCall;
     }
