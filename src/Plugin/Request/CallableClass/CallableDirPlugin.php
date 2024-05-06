@@ -19,20 +19,20 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Plugin\Request\CallableDir;
+namespace Jaxon\Plugin\Request\CallableClass;
 
 use Jaxon\Jaxon;
 use Jaxon\App\I18n\Translator;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\CallableRegistryInterface;
 use Jaxon\Plugin\PluginInterface;
-use Jaxon\Plugin\Request\CallableClass\CallableRegistry;
 
 use function is_array;
 use function is_dir;
 use function is_string;
 use function realpath;
 use function rtrim;
+use function str_replace;
 use function trim;
 
 class CallableDirPlugin implements PluginInterface, CallableRegistryInterface
