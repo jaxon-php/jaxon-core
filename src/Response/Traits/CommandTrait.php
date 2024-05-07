@@ -9,7 +9,6 @@ use JsonSerializable;
 use function array_filter;
 use function array_merge;
 use function count;
-use function trim;
 
 trait CommandTrait
 {
@@ -19,6 +18,15 @@ trait CommandTrait
      * @var array
      */
     protected $aCommands = [];
+
+    /**
+     * Convert to string
+     *
+     * @param mixed $xData
+     *
+     * @return string
+     */
+    abstract protected function str($xData): string;
 
     /**
      * Get the commands in the response
@@ -113,18 +121,6 @@ trait CommandTrait
             'options' => $aOptions,
         ];
         return $this;
-    }
-
-    /**
-     * Convert to string
-     *
-     * @param mixed $xData
-     *
-     * @return string
-     */
-    protected function str($xData): string
-    {
-        return trim((string)$xData, " \t\n");
     }
 
     /**

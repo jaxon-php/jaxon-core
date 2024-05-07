@@ -26,22 +26,20 @@ use function trim;
 /**
  * Usage
  *
- * $paginator = $this->response->pg->create($pageNumber, $perPage, $total);
- * // Or, using the response shortcut
- * $paginator = $this->response->paginator($pageNumber, $perPage, $total);
- * // Or, in a class that inherits from CallableClass
- * $paginator = $this->paginator($pageNumber, $perPage, $total);
+ * Step 1: Create a wrapper for the pagination.
+ *
  * $html = $this->render($pageTemplate, [
  *     // ...
- *     'pagination' => $paginator->wrapper($wrapperId),
+ *     'pagination' => $this->response->pg->wrapper($wrapperId),
  * ]);
- * $this->response->html($pageWrapper, $html);
- * $this->response->pg->render($paginator, $this->rq()->page());
+ *
+ * Step 2: Render the pagination into the wrapper.
+ *
+ * $this->response->pg->render($this->rq()->page(), $pageNumber, $perPage, $total);
  * // Or, using the response shortcut
- * $this->response->paginate($paginator, $this->rq()->page());
+ * $this->response->paginate($this->rq()->page(), $pageNumber, $perPage, $total);
  * // Or, in a class that inherits from CallableClass
- * $this->paginate($paginator, $this->rq()->page());
- * 
+ * $this->paginate($this->rq()->page(), $pageNumber, $perPage, $total);
  */
 class PaginatorPlugin extends ResponsePlugin
 {
@@ -54,6 +52,11 @@ class PaginatorPlugin extends ResponsePlugin
      * @var ViewRenderer
      */
     protected $xRenderer;
+
+    /**
+     * @var string
+     */
+    protected $sWrapperId = '';
 
     /**
      * The constructor.
@@ -83,17 +86,16 @@ class PaginatorPlugin extends ResponsePlugin
     }
 
     /**
-     * Create a paginator
+     * Get the pagination wrapper HTML
      *
-     * @param int $nCurrentPage     The current page number
-     * @param int $nItemsPerPage    The number of items per page
-     * @param int $nTotalItems      The total number of items
+     * @param string $sWrapperId        The pagination wrapper id
      *
-     * @return Paginator
+     * @return string
      */
-    public function create(int $nCurrentPage, int $nItemsPerPage, int $nTotalItems): Paginator
+    public function wrapper(string $sWrapperId): string
     {
-        return new Paginator($nCurrentPage, $nItemsPerPage, $nTotalItems);
+        $this->sWrapperId = trim($sWrapperId);
+        return $this->sWrapperId;
     }
 
     /**
@@ -122,14 +124,16 @@ class PaginatorPlugin extends ResponsePlugin
     /**
      * Render an HTML pagination control.
      *
-     * @param Paginator $xPaginator
      * @param Call $xCall
-     * @param string $sWrapperId
+     * @param int $nCurrentPage     The current page number
+     * @param int $nItemsPerPage    The number of items per page
+     * @param int $nTotalItems      The total number of items
      *
      * @return void
      */
-    public function render(Paginator $xPaginator, Call $xCall, string $sWrapperId = '')
+    public function render(Call $xCall, int $nCurrentPage, int $nItemsPerPage, int $nTotalItems)
     {
+        $xPaginator = new Paginator($nCurrentPage, $nItemsPerPage, $nTotalItems);
         $aPages = $xPaginator->pages();
         if(count($aPages) === 0)
         {
@@ -147,15 +151,14 @@ class PaginatorPlugin extends ResponsePlugin
             $xCall->addParameter(Parameter::PAGE_NUMBER, 0);
         }
         // Show the pagination links
-        $sWrapperId = trim($sWrapperId) ?? $xPaginator->wrapperId();
-        $this->response()->html($sWrapperId, $xStore->__toString());
+        $this->response()->html($this->sWrapperId, $xStore->__toString());
         // Set click handlers on the pagination links
         $this->addCommand('pg.paginate', [
-            'id' => $sWrapperId,
+            'id' => $this->sWrapperId,
             'call' => $xCall->toArray(),
-            'pages' => array_map(function(Page $xPage) {
-                return ['type' => $xPage->sType, 'number' => $xPage->nNumber];
-            }, $aPages),
+            // 'pages' => array_map(function(Page $xPage) {
+            //     return ['type' => $xPage->sType, 'number' => $xPage->nNumber];
+            // }, $aPages),
         ]);
     }
 }

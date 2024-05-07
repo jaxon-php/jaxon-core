@@ -28,6 +28,15 @@ trait HtmlDomTrait
     abstract public function addCommand(string $sName, array|JsonSerializable $aOptions): ResponseInterface;
 
     /**
+     * Convert to string
+     *
+     * @param mixed $xData
+     *
+     * @return string
+     */
+    abstract protected function str($xData): string;
+
+    /**
      * Add a command to assign the specified value to the given element's attribute
      *
      * @param string $sTarget    The id of the html element on the browser

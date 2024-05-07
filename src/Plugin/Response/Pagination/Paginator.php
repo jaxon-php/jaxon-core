@@ -44,7 +44,6 @@ use function array_walk;
 use function ceil;
 use function floor;
 use function max;
-use function trim;
 
 class Paginator
 {
@@ -87,11 +86,6 @@ class Paginator
      * @var string
      */
     protected $sEllipsysText = '...';
-
-    /**
-     * @var string
-     */
-    protected $sWrapperId = '';
 
     /**
      * The constructor.
@@ -331,29 +325,5 @@ class Paginator
         $aPages[] = $this->getNextPage();
 
         return $aPages;
-    }
-
-    /**
-     * Get the pagination wrapper HTML
-     *
-     * @param string $sWrapperId        The pagination wrapper id
-     *
-     * @return string
-     */
-    public function wrapper(string $sWrapperId): string
-    {
-        $this->sWrapperId = trim($sWrapperId);
-
-        return '<nav id="' . $this->sWrapperId . '"></nav>';
-    }
-
-    /**
-     * Get the pagination wrapper id
-     *
-     * @return string
-     */
-    public function wrapperId(): string
-    {
-        return $this->sWrapperId;
     }
 }

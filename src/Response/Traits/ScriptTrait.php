@@ -31,6 +31,15 @@ trait ScriptTrait
     abstract public function addCommand(string $sName, array|JsonSerializable $aOptions): ResponseInterface;
 
     /**
+     * Convert to string
+     *
+     * @param mixed $xData
+     *
+     * @return string
+     */
+    abstract protected function str($xData): string;
+
+    /**
      * Response command that prompts user with [ok] [cancel] style message box
      *
      * If the user clicks cancel, the specified number of response commands

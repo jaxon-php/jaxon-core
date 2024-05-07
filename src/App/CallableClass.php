@@ -128,30 +128,17 @@ class CallableClass
     }
 
     /**
-     * Create a paginator
+     * Render an HTML pagination control.
      *
+     * @param Call $xCall
      * @param int $nCurrentPage     The current page number
      * @param int $nItemsPerPage    The number of items per page
      * @param int $nTotalItems      The total number of items
      *
-     * @return Paginator
-     */
-    public function paginator(int $nCurrentPage, int $nItemsPerPage, int $nTotalItems): Paginator
-    {
-        return $this->response->paginator($nCurrentPage, $nItemsPerPage, $nTotalItems);
-    }
-
-    /**
-     * Render an HTML pagination control.
-     *
-     * @param Paginator $xPaginator
-     * @param Call $xCall
-     * @param string $sWrapperId
-     *
      * @return void
      */
-    public function paginate(Paginator $xPaginator, Call $xCall, string $sWrapperId = '')
+    public function paginate(Call $xCall, int $nCurrentPage, int $nItemsPerPage, int $nTotalItems)
     {
-        $this->response->paginate($xPaginator, $xCall, $sWrapperId);
+        $this->response->paginate($xCall, $nCurrentPage, $nItemsPerPage, $nTotalItems);
     }
 }

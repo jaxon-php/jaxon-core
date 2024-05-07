@@ -37,6 +37,7 @@ use Psr\Http\Message\ServerRequestInterface as PsrRequestInterface;
 
 use function gmdate;
 use function json_encode;
+use function trim;
 
 class Response implements ResponseInterface
 {
@@ -119,6 +120,18 @@ class Response implements ResponseInterface
     }
 
     /**
+     * Convert to string
+     *
+     * @param mixed $xData
+     *
+     * @return string
+     */
+    protected function str($xData): string
+    {
+        return trim((string)$xData, " \t\n");
+    }
+
+    /**
      * Create a JQuery DomSelector, and link it to the current response.
      *
      * This is a shortcut to the JQuery plugin.
@@ -150,35 +163,20 @@ class Response implements ResponseInterface
     }
 
     /**
-     * Create a paginator
+     * Render an HTML pagination control.
      *
+     * @param Call $xCall
      * @param int $nCurrentPage     The current page number
      * @param int $nItemsPerPage    The number of items per page
      * @param int $nTotalItems      The total number of items
      *
-     * @return Paginator
-     */
-    public function paginator(int $nCurrentPage, int $nItemsPerPage, int $nTotalItems): Paginator
-    {
-        /** @var PaginatorPlugin */
-        $xPlugin = $this->plugin('pg');
-        return $xPlugin->create($nCurrentPage, $nItemsPerPage, $nTotalItems);
-    }
-
-    /**
-     * Render an HTML pagination control.
-     *
-     * @param Paginator $xPaginator
-     * @param Call $xCall
-     * @param string $sWrapperId
-     *
      * @return void
      */
-    public function paginate(Paginator $xPaginator, Call $xCall, string $sWrapperId = '')
+    public function paginate(Call $xCall, int $nCurrentPage, int $nItemsPerPage, int $nTotalItems)
     {
         /** @var PaginatorPlugin */
         $xPlugin = $this->plugin('pg');
-        $xPlugin->render($xPaginator, $xCall, $sWrapperId);
+        $xPlugin->render($xCall, $nCurrentPage, $nItemsPerPage, $nTotalItems);
     }
 
     /**
