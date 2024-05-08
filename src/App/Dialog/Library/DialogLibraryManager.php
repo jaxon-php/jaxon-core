@@ -32,6 +32,10 @@ use function substr;
 
 class DialogLibraryManager implements ConfigListenerInterface
 {
+    use QuestionTrait;
+    use MessageTrait;
+    use ModalTrait;
+
     /**
      * @var Container
      */

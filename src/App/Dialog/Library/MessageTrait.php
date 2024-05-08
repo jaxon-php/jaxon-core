@@ -1,7 +1,7 @@
 <?php
 
 /**
- * MessageTrait.php - Default methods for alert messages.
+ * MessageTrait.php - Show alert messages.
  *
  * @package jaxon-core
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
@@ -12,68 +12,109 @@
 
 namespace Jaxon\App\Dialog\Library;
 
+use Jaxon\App\Dialog\MessageInterface;
+use Jaxon\Request\Call\Parameter;
+
+use function array_map;
+
 trait MessageTrait
 {
     /**
+     * The next message title
+     *
+     * @var string
+     */
+    private $sTitle = '';
+
+    /**
+     * Set the title of the next message.
+     *
+     * @param string $sTitle     The title of the message
+     *
+     * @return MessageInterface
+     */
+    public function title(string $sTitle): MessageInterface
+    {
+        $this->sTitle = $sTitle;
+
+        return $this;
+    }
+
+    /**
      * Print an alert message.
      *
-     * @param string $sContent The text of the message
-     * @param string $sTitle The title of the message
-     * @param string $sType The type of the message
+     * @param string $sType     The type of the message
+     * @param string $sMessage  The text of the message
+     * @param array $aArgs      The message arguments
      *
-     * @return void
+     * @return array
      */
-    abstract protected function alert(string $sContent, string $sTitle, string $sType);
+    private function alert(string $sType, string $sMessage, array $aArgs): array
+    {
+        $sTitle = $this->sTitle;
+        $this->sTitle = '';
+
+        return [
+            'type' => $sType,
+            'message' => [
+                'title' => $sTitle,
+                'phrase' => [
+                    'str' => $sMessage,
+                    'args' => array_map(fn($xArg) => Parameter::make($xArg), $aArgs),
+                ],
+            ],
+        ];
+    }
 
     /**
      * Show a success message.
      *
-     * @param string $sMessage    The text of the message
-     * @param string $sTitle    The title of the message
+     * @param string $sMessage  The text of the message
+     * @param array $aArgs      The message arguments
      *
-     * @return void
+     * @return array
      */
-    public function success(string $sMessage, string $sTitle = '')
+    public function success(string $sMessage, array $aArgs = []): array
     {
-        return $this->alert($sMessage, $sTitle, 'success');
+        return $this->alert('success', $sMessage, $aArgs);
     }
 
     /**
      * Show an information message.
      *
-     * @param string $sMessage    The text of the message
-     * @param string $sTitle    The title of the message
+     * @param string $sMessage  The text of the message
+     * @param array $aArgs      The message arguments
      *
-     * @return void
+     * @return array
      */
-    public function info(string $sMessage, string $sTitle = '')
+    public function info(string $sMessage, array $aArgs = []): array
     {
-        return $this->alert($sMessage, $sTitle, 'info');
+        return $this->alert('info', $sMessage, $aArgs);
     }
 
     /**
      * Show a warning message.
      *
-     * @param string $sMessage    The text of the message
-     * @param string $sTitle    The title of the message
+     * @param string $sMessage  The text of the message
+     * @param array $aArgs      The message arguments
      *
-     * @return void
+     * @return array
      */
-    public function warning(string $sMessage, string $sTitle = '')
+    public function warning(string $sMessage, array $aArgs = []): array
     {
-        return $this->alert($sMessage, $sTitle, 'warning');
+        return $this->alert('warning', $sMessage, $aArgs);
     }
 
     /**
      * Show an error message.
      *
-     * @param string $sMessage    The text of the message
-     * @param string $sTitle    The title of the message
+     * @param string $sMessage  The text of the message
+     * @param array $aArgs      The message arguments
      *
-     * @return void
+     * @return array
      */
-    public function error(string $sMessage, string $sTitle = '')
+    public function error(string $sMessage, array $aArgs = []): array
     {
-        return $this->alert($sMessage, $sTitle, 'error');
+        return $this->alert('error', $sMessage, $aArgs);
     }
 }

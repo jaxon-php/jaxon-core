@@ -1,7 +1,7 @@
 <?php
 
 /**
- * QuestionTrait.php - Default methods for confirm question.
+ * QuestionTrait.php - Show confirm question.
  *
  * @package jaxon-core
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
@@ -11,6 +11,10 @@
  */
 
 namespace Jaxon\App\Dialog\Library;
+
+use Jaxon\Request\Call\Parameter;
+
+use function array_map;
 
 trait QuestionTrait
 {
@@ -24,6 +28,11 @@ trait QuestionTrait
      */
     public function confirm(string $sQuestion, array $aArgs = []): array
     {
-        return [];
+        return [
+            'phrase' => [
+                'str' => $sQuestion,
+                'args' => array_map(fn($xArg) => Parameter::make($xArg), $aArgs),
+            ],
+        ];
     }
 }

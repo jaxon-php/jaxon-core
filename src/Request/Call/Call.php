@@ -22,7 +22,6 @@ namespace Jaxon\Request\Call;
 
 use Jaxon\App\Dialog\Library\DialogLibraryManager;
 
-use function array_map;
 use function array_shift;
 use function func_get_args;
 
@@ -31,7 +30,7 @@ class Call extends JsCall
     /**
      * @var DialogLibraryManager
      */
-    protected $xDialogLibraryManager;
+    protected $xLibraryManager;
 
     /**
      * The arguments of the else() calls
@@ -58,51 +57,23 @@ class Call extends JsCall
      * The constructor.
      *
      * @param string $sName    The javascript function or method name
-     * @param DialogLibraryManager $xDialogLibraryManager
+     * @param DialogLibraryManager $xLibraryManager
      */
-    public function __construct(string $sName, DialogLibraryManager $xDialogLibraryManager)
+    public function __construct(string $sName, DialogLibraryManager $xLibraryManager)
     {
         parent::__construct($sName);
-        $this->xDialogLibraryManager = $xDialogLibraryManager;
+        $this->xLibraryManager = $xLibraryManager;
     }
 
     /**
-     * Make a phrase to be displayed in js code
-     *
-     * @param string $sPhrase
      * @param array $aArgs
      *
      * @return array
      */
-    private function makePhrase(string $sPhrase, array $aArgs = []): array
+    private function getArgs(array $aArgs): array
     {
         array_shift($aArgs);
-        return [
-            'str' => $sPhrase,
-            'args' => array_map(fn($xArg) => Parameter::make($xArg), $aArgs),
-        ];
-    }
-
-    /**
-     * Set the message if the condition to the call is not met
-     *
-     * The first parameter is the message to show. The second allows inserting data from
-     * the webpage in the message using positional placeholders.
-     *
-     * @param string $sType
-     * @param string $sMessage
-     * @param array $aArgs
-     *
-     * @return Call
-     */
-    private function setMessage(string $sType, string $sMessage, array $aArgs): Call
-    {
-        $this->aMessage = [
-            'lib' => $this->xDialogLibraryManager->getMessageLibrary()->getName(),
-            'type' => $sType,
-            'phrase' => $this->makePhrase($sMessage, $aArgs),
-        ];
-        return $this;
+        return $aArgs;
     }
 
     /**
@@ -114,7 +85,8 @@ class Call extends JsCall
      */
     public function elseShow(string $sMessage): Call
     {
-        return $this->setMessage('warning', $sMessage, func_get_args());
+        $this->aMessage = $this->xLibraryManager->warning($sMessage, $this->getArgs(func_get_args()));
+        return $this;
     }
 
     /**
@@ -126,7 +98,8 @@ class Call extends JsCall
      */
     public function elseInfo(string $sMessage): Call
     {
-        return $this->setMessage('info', $sMessage, func_get_args());
+        $this->aMessage = $this->xLibraryManager->info($sMessage, $this->getArgs(func_get_args()));
+        return $this;
     }
 
     /**
@@ -138,7 +111,8 @@ class Call extends JsCall
      */
     public function elseSuccess(string $sMessage): Call
     {
-        return $this->setMessage('success', $sMessage, func_get_args());
+        $this->aMessage = $this->xLibraryManager->success($sMessage, $this->getArgs(func_get_args()));
+        return $this;
     }
 
     /**
@@ -150,7 +124,8 @@ class Call extends JsCall
      */
     public function elseWarning(string $sMessage): Call
     {
-        return $this->setMessage('warning', $sMessage, func_get_args());
+        $this->aMessage = $this->xLibraryManager->warning($sMessage, $this->getArgs(func_get_args()));
+        return $this;
     }
 
     /**
@@ -162,7 +137,21 @@ class Call extends JsCall
      */
     public function elseError(string $sMessage): Call
     {
-        return $this->setMessage('error', $sMessage, func_get_args());
+        $this->aMessage = $this->xLibraryManager->error($sMessage, $this->getArgs(func_get_args()));
+        return $this;
+    }
+
+    /**
+     * Add a confirmation question to the request
+     *
+     * @param string $sQuestion    The question to ask
+     *
+     * @return Call
+     */
+    public function confirm(string $sQuestion): Call
+    {
+        $this->aConfirm = $this->xLibraryManager->confirm($sQuestion, $this->getArgs(func_get_args()));
+        return $this;
     }
 
     /**
@@ -308,22 +297,6 @@ class Call extends JsCall
     }
 
     /**
-     * Add a confirmation question to the request
-     *
-     * @param string $sQuestion    The question to ask
-     *
-     * @return Call
-     */
-    public function confirm(string $sQuestion): Call
-    {
-        $this->aConfirm = [
-            'lib' => $this->xDialogLibraryManager->getQuestionLibrary()->getName(),
-            'phrase' => $this->makePhrase($sQuestion, func_get_args()),
-        ];
-        return $this;
-    }
-
-    /**
      * Convert this call to array
      *
      * @return array
@@ -333,7 +306,10 @@ class Call extends JsCall
         $aCall = parent::toArray();
         if(($this->aConfirm))
         {
-            $aCall['confirm'] = $this->aConfirm;
+            $aCall['confirm'] = [
+                ...$this->aConfirm,
+                'lib' => $this->xLibraryManager->getQuestionLibrary()->getName(),
+            ];
         }
         if(($this->aCondition))
         {
@@ -341,7 +317,10 @@ class Call extends JsCall
         }
         if(($this->aMessage))
         {
-            $aCall['else'] = $this->aMessage;
+            $aCall['else'] = [
+                ...$this->aMessage,
+                'lib' => $this->xLibraryManager->getMessageLibrary()->getName(),
+            ];
         }
         return $aCall;
     }

@@ -17,7 +17,6 @@ namespace Jaxon\Plugin\Response\Dialog;
 
 use Jaxon\App\Dialog\Library\DialogLibraryManager;
 use Jaxon\App\Dialog\MessageInterface;
-use Jaxon\App\Dialog\ModalInterface;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\ResponsePlugin;
 use Jaxon\Response\ResponseInterface;
@@ -25,7 +24,7 @@ use Jaxon\Response\ResponseInterface;
 use function array_reduce;
 use function trim;
 
-class DialogPlugin extends ResponsePlugin implements ModalInterface, MessageInterface
+class DialogPlugin extends ResponsePlugin
 {
     use DialogPluginTrait;
 
@@ -96,30 +95,6 @@ class DialogPlugin extends ResponsePlugin implements ModalInterface, MessageInte
     }
 
     /**
-     * Get the library adapter to use for modals.
-     *
-     * @return ModalInterface|null
-     */
-    protected function getModalLibrary(): ?ModalInterface
-    {
-        $xLibrary = $this->xLibraryManager->getModalLibrary();
-        $xLibrary->setResponse($this->xResponse);
-        return $xLibrary;
-    }
-
-    /**
-     * Get the library adapter to use for messages.
-     *
-     * @return MessageInterface|null
-     */
-    protected function getMessageLibrary(): ?MessageInterface
-    {
-        $xLibrary = $this->xLibraryManager->getMessageLibrary();
-        $xLibrary->setResponse($this->xResponse);
-        return $xLibrary;
-    }
-
-    /**
      * @return array
      */
     private function getLibraries(): array
@@ -173,50 +148,111 @@ class DialogPlugin extends ResponsePlugin implements ModalInterface, MessageInte
     }
 
     /**
-     * @inheritDoc
+     * Show a modal dialog.
+     *
+     * @param string $sTitle The title of the dialog
+     * @param string $sContent The content of the dialog
+     * @param array $aButtons The buttons of the dialog
+     * @param array $aOptions The options of the dialog
+     *
+     * @return void
      */
     public function show(string $sTitle, string $sContent, array $aButtons = [], array $aOptions = [])
     {
-        $this->getModalLibrary()->show($sTitle, $sContent, $aButtons, $aOptions);
+        // Show the modal dialog
+        $this->addCommand('dialog.modal.show', [
+            ...$this->xLibraryManager->show($sTitle, $sContent, $aButtons, $aOptions),
+            'lib' => $this->xLibraryManager->getModalLibrary()->getName(),
+        ]);
     }
 
     /**
-     * @inheritDoc
+     * Hide the modal dialog.
+     *
+     * @return void
      */
     public function hide()
     {
-        $this->getModalLibrary()->hide();
+        // Hide the modal dialog
+        $this->addCommand('dialog.modal.hide', [
+            ...$this->xLibraryManager->hide(),
+            'lib' => $this->xLibraryManager->getModalLibrary()->getName(),
+        ]);
     }
 
     /**
-     * @inheritDoc
+     * Set the title of the next message.
+     *
+     * @param string $sTitle     The title of the message
+     *
+     * @return MessageInterface
      */
-    public function success(string $sMessage, string $sTitle = ''): string
+    public function title(string $sTitle): MessageInterface
     {
-        return $this->getMessageLibrary()->success($sMessage, $sTitle);
+        return $this->xLibraryManager->title($sTitle);
     }
 
     /**
-     * @inheritDoc
+     * Show a success message.
+     *
+     * @param string $sMessage  The text of the message
+     * @param array $aArgs      The message arguments
+     *
+     * @return void
      */
-    public function info(string $sMessage, string $sTitle = ''): string
+    public function success(string $sMessage, array $aArgs = [])
     {
-        return $this->getMessageLibrary()->info($sMessage, $sTitle);
+        $this->addCommand('dialog.message', [
+            ...$this->xLibraryManager->success($sMessage, $aArgs),
+            'lib' => $this->xLibraryManager->getMessageLibrary()->getName(),
+        ]);
     }
 
     /**
-     * @inheritDoc
+     * Show an information message.
+     *
+     * @param string $sMessage  The text of the message
+     * @param array $aArgs      The message arguments
+     *
+     * @return void
      */
-    public function warning(string $sMessage, string $sTitle = ''): string
+    public function info(string $sMessage, array $aArgs = [])
     {
-        return $this->getMessageLibrary()->warning($sMessage, $sTitle);
+        $this->addCommand('dialog.message', [
+            ...$this->xLibraryManager->info($sMessage, $aArgs),
+            'lib' => $this->xLibraryManager->getMessageLibrary()->getName(),
+        ]);
     }
 
     /**
-     * @inheritDoc
+     * Show a warning message.
+     *
+     * @param string $sMessage  The text of the message
+     * @param array $aArgs      The message arguments
+     *
+     * @return void
      */
-    public function error(string $sMessage, string $sTitle = ''): string
+    public function warning(string $sMessage, array $aArgs = [])
     {
-        return $this->getMessageLibrary()->error($sMessage, $sTitle);
+        $this->addCommand('dialog.message', [
+            ...$this->xLibraryManager->warning($sMessage, $aArgs),
+            'lib' => $this->xLibraryManager->getMessageLibrary()->getName(),
+        ]);
+    }
+
+    /**
+     * Show an error message.
+     *
+     * @param string $sMessage  The text of the message
+     * @param array $aArgs      The message arguments
+     *
+     * @return void
+     */
+    public function error(string $sMessage, array $aArgs = [])
+    {
+        $this->addCommand('dialog.message', [
+            ...$this->xLibraryManager->error($sMessage, $aArgs),
+            'lib' => $this->xLibraryManager->getMessageLibrary()->getName(),
+        ]);
     }
 }

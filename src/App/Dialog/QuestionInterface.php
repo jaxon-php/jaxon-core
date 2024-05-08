@@ -15,13 +15,4 @@ namespace Jaxon\App\Dialog;
 
 interface QuestionInterface extends LibraryInterface
 {
-    /**
-     * Add a confirm question to a function call.
-     *
-     * @param string $sQuestion
-     * @param array $aArgs
-     *
-     * @return array
-     */
-    public function confirm(string $sQuestion, array $aArgs = []): array;
 }

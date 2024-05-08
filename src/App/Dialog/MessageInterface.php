@@ -14,43 +14,4 @@ namespace Jaxon\App\Dialog;
 
 interface MessageInterface extends LibraryInterface
 {
-    /**
-     * Show a success message.
-     *
-     * @param string $sMessage    The text of the message
-     * @param string $sTitle    The title of the message
-     *
-     * @return string
-     */
-    public function success(string $sMessage, string $sTitle = ''): string;
-
-    /**
-     * Show an information message.
-     *
-     * @param string $sMessage    The text of the message
-     * @param string $sTitle    The title of the message
-     *
-     * @return string
-     */
-    public function info(string $sMessage, string $sTitle = ''): string;
-
-    /**
-     * Show a warning message.
-     *
-     * @param string $sMessage    The text of the message
-     * @param string $sTitle    The title of the message
-     *
-     * @return string
-     */
-    public function warning(string $sMessage, string $sTitle = ''): string;
-
-    /**
-     * Show an error message.
-     *
-     * @param string $sMessage    The text of the message
-     * @param string $sTitle    The title of the message
-     *
-     * @return string
-     */
-    public function error(string $sMessage, string $sTitle = ''): string;
 }
