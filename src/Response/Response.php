@@ -26,7 +26,6 @@ use Jaxon\Plugin\Response\DataBag\DataBagContext;
 use Jaxon\Plugin\Response\DataBag\DataBagPlugin;
 use Jaxon\Plugin\Response\JQuery\DomSelector;
 use Jaxon\Plugin\Response\JQuery\JQueryPlugin;
-use Jaxon\Plugin\Response\Pagination\Paginator;
 use Jaxon\Plugin\Response\Pagination\PaginatorPlugin;
 use Jaxon\Plugin\ResponsePlugin;
 use Jaxon\Request\Call\Call;

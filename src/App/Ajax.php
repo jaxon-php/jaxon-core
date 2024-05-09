@@ -37,7 +37,6 @@ use Jaxon\App\View\ViewRenderer;
 use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\Manager\PluginManager;
-use Jaxon\Request\Call\Paginator;
 use Jaxon\Request\Factory\Psr\PsrFactory;
 use Jaxon\Request\Upload\UploadHandlerInterface;
 use Jaxon\Response\Manager\ResponseManager;
@@ -264,14 +263,6 @@ class Ajax
     public function view(): ViewRenderer
     {
         return $this->di()->getViewRenderer();
-    }
-
-    /**
-     * @return Paginator
-     */
-    public function paginator(): Paginator
-    {
-        return $this->di()->getPaginator();
     }
 
     /**

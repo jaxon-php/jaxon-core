@@ -169,4 +169,18 @@ class JsCall implements JsonSerializable
     {
         return $this->toArray();
     }
+
+    /**
+     * Returns a string representation of the script output (javascript) from this request object
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        $aParameters = array_map(function(Parameter $xParam) {
+            return $xParam->getScript();
+        }, $this->aParameters);
+        $sScript = $this->sFunction . '(' . implode(', ', $aParameters) . ')';
+        return $this->bToInt ? "parseInt($sScript)" : $sScript;
+    }
 }

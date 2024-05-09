@@ -9,7 +9,6 @@ use Jaxon\Di\Container;
 use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Plugin\Request\CallableClass\CallableRegistry;
 use Jaxon\Plugin\Response\DataBag\DataBagPlugin;
-use Jaxon\Request\Call\Paginator;
 use Jaxon\Request\Factory\Factory;
 use Jaxon\Request\Factory\ParameterFactory;
 use Jaxon\Request\Factory\RequestFactory;
@@ -55,7 +54,7 @@ trait RequestTrait
         // Factory for requests to functions
         $this->set(RequestFactory::class, function($di) {
             $sPrefix = $di->g(ConfigManager::class)->getOption('core.prefix.function');
-            return new RequestFactory($sPrefix, $di->g(DialogLibraryManager::class), $di->g(Paginator::class));
+            return new RequestFactory($sPrefix, $di->g(DialogLibraryManager::class));
         });
         // Parameter Factory
         $this->set(ParameterFactory::class, function() {

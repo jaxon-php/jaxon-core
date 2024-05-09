@@ -11,11 +11,9 @@ use Jaxon\App\Dialog\MessageInterface;
 use Jaxon\App\Dialog\ModalInterface;
 use Jaxon\App\Dialog\QuestionInterface;
 use Jaxon\App\I18n\Translator;
-use Jaxon\App\View\PaginationRenderer;
 use Jaxon\App\View\TemplateView;
 use Jaxon\App\View\ViewRenderer;
 use Jaxon\Di\Container;
-use Jaxon\Request\Call\Paginator;
 use Jaxon\Utils\Template\TemplateEngine;
 
 use function call_user_func;
@@ -48,15 +46,6 @@ trait ViewTrait
             $xViewRenderer->addNamespace('jaxon', $sTemplateDir, '.php', 'jaxon');
             $xViewRenderer->addNamespace('pagination', $sPaginationDir, '.php', 'jaxon');
             return $xViewRenderer;
-        });
-
-        // Pagination Paginator
-        $this->set(Paginator::class, function($di) {
-            return new Paginator($di->g(PaginationRenderer::class));
-        });
-        // Pagination Renderer
-        $this->set(PaginationRenderer::class, function($di) {
-            return new PaginationRenderer($di->g(ViewRenderer::class));
         });
 
         // Dialog library manager
@@ -159,15 +148,5 @@ trait ViewTrait
     public function getViewRenderer(): ViewRenderer
     {
         return $this->g(ViewRenderer::class);
-    }
-
-    /**
-     * Get the paginator
-     *
-     * @return Paginator
-     */
-    public function getPaginator(): Paginator
-    {
-        return $this->g(Paginator::class);
     }
 }

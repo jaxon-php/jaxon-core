@@ -17,7 +17,6 @@ namespace Jaxon\Request\Factory;
 
 use Jaxon\App\Dialog\Library\DialogLibraryManager;
 use Jaxon\Request\Call\Call;
-use Jaxon\Request\Call\Paginator;
 
 use function array_shift;
 use function func_get_args;
@@ -44,7 +43,6 @@ class RequestFactory
      *
      * @param string $sPrefix
      * @param DialogLibraryManager $xDialogLibraryManager
-     * @param Paginator $xPaginator
      */
     public function __construct(string $sPrefix, DialogLibraryManager $xDialogLibraryManager)
     {

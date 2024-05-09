@@ -87,11 +87,11 @@ interface ResponseInterface
      *
      * @param string $sTarget    The id of the html element on the browser
      * @param string $sAttribute    The attribute to be assigned
-     * @param string $sData    The value to be assigned to the attribute
+     * @param string $sValue    The value to be assigned to the attribute
      *
      * @return ResponseInterface
      */
-    public function assign(string $sTarget, string $sAttribute, string $sData): ResponseInterface;
+    public function assign(string $sTarget, string $sAttribute, string $sValue): ResponseInterface;
 
     /**
      * Add a command to assign the specified HTML content to the given element
@@ -99,33 +99,33 @@ interface ResponseInterface
      * This is a shortcut for assign() on the innerHTML attribute.
      *
      * @param string $sTarget    The id of the html element on the browser
-     * @param string $sData    The value to be assigned to the attribute
+     * @param string $sValue    The value to be assigned to the attribute
      *
      * @return ResponseInterface
      */
-    public function html(string $sTarget, string $sData): ResponseInterface;
+    public function html(string $sTarget, string $sValue): ResponseInterface;
 
     /**
      * Add a command to append the specified data to the given element's attribute
      *
      * @param string $sTarget    The id of the element to be updated
      * @param string $sAttribute    The name of the attribute to be appended to
-     * @param string $sData    The data to be appended to the attribute
+     * @param string $sValue    The data to be appended to the attribute
      *
      * @return ResponseInterface
      */
-    public function append(string $sTarget, string $sAttribute, string $sData): ResponseInterface;
+    public function append(string $sTarget, string $sAttribute, string $sValue): ResponseInterface;
 
     /**
      * Add a command to prepend the specified data to the given element's attribute
      *
      * @param string $sTarget    The id of the element to be updated
      * @param string $sAttribute    The name of the attribute to be prepended to
-     * @param string $sData    The value to be prepended to the attribute
+     * @param string $sValue    The value to be prepended to the attribute
      *
      * @return ResponseInterface
      */
-    public function prepend(string $sTarget, string $sAttribute, string $sData): ResponseInterface;
+    public function prepend(string $sTarget, string $sAttribute, string $sValue): ResponseInterface;
 
     /**
      * Add a command to replace a specified value with another value within the given element's attribute
@@ -133,11 +133,12 @@ interface ResponseInterface
      * @param string $sTarget    The id of the element to update
      * @param string $sAttribute    The attribute to be updated
      * @param string $sSearch    The needle to search for
-     * @param string $sData    The data to use in place of the needle
+     * @param string $sReplace    The data to use in place of the needle
      *
      * @return ResponseInterface
      */
-    public function replace(string $sTarget, string $sAttribute, string $sSearch, string $sData): ResponseInterface;
+    public function replace(string $sTarget, string $sAttribute,
+        string $sSearch, string $sReplace): ResponseInterface;
 
     /**
      * Add a command to clear the specified attribute of the given element
@@ -214,6 +215,7 @@ interface ResponseInterface
 
     /**
      * Add a command to install an event handler on the specified element
+     *
      * You can add more than one event handler to an element's event using this method.
      *
      * @param string $sTarget    The id of the element
@@ -241,13 +243,11 @@ interface ResponseInterface
      *
      * @param string $sTarget    The id of the element
      * @param string $sEvent    The name of the event
-     * @param string $sHandler    The name of the javascript function to call when the event is fired
-     * @param array $aParams    The parameters to pass to the event handler
+     * @param array $aCall    The event handler
      *
      * @return ResponseInterface
      */
-    public function addEventHandler(string $sTarget, string $sEvent,
-        string $sHandler, array $aParams = []): ResponseInterface;
+    public function addEventHandler(string $sTarget, string $sEvent, array $aCall): ResponseInterface;
 
     /**
      * Add a command to set an event handler on the specified element
@@ -255,24 +255,21 @@ interface ResponseInterface
      *
      * @param string $sTarget    The id of the element
      * @param string $sEvent    The name of the event
-     * @param string $sHandler    The name of the javascript function to call when the event is fired
-     * @param array $aParams    The parameters to pass to the event handler
+     * @param array $aCall    The event handler
      *
      * @return ResponseInterface
      */
-    public function setEventHandler(string $sTarget, string $sEvent,
-        string $sHandler, array $aParams = []): ResponseInterface;
+    public function setEventHandler(string $sTarget, string $sEvent, array $aCall): ResponseInterface;
 
     /**
      * Add a command to set a click handler on the browser
      *
-     * @param string $sTarget    The id of the element that contains the event
-     * @param string $sHandler    The name of the javascript function to call when the event is fired
-     * @param array $aParams    The parameters to pass to the event handler
+     * @param string $sTarget    The id of the element
+     * @param array $aCall    The event handler
      *
      * @return ResponseInterface
      */
-    public function onClick(string $sTarget, string $sHandler, array $aParams = []): ResponseInterface;
+    public function onClick(string $sTarget, array $aCall): ResponseInterface;
 
     /**
      * Add a command to make Jaxon to pause execution of the response commands,

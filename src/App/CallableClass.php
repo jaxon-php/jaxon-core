@@ -8,7 +8,6 @@ use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\Request\CallableClass\CallableClassHelper;
 use Jaxon\Plugin\Response\DataBag\DataBagContext;
 use Jaxon\Plugin\Response\JQuery\DomSelector;
-use Jaxon\Plugin\Response\Pagination\Paginator;
 use Jaxon\Request\Call\Call;
 use Jaxon\Request\Factory\RequestFactory;
 use Jaxon\Request\TargetInterface;
