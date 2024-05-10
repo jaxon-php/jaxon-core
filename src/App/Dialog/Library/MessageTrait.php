@@ -31,9 +31,9 @@ trait MessageTrait
      *
      * @param string $sTitle     The title of the message
      *
-     * @return MessageInterface
+     * @return self
      */
-    public function title(string $sTitle): MessageInterface
+    public function title(string $sTitle)
     {
         $this->sTitle = $sTitle;
 

@@ -183,11 +183,12 @@ class DialogPlugin extends ResponsePlugin
      *
      * @param string $sTitle     The title of the message
      *
-     * @return MessageInterface
+     * @return DialogPlugin
      */
-    public function title(string $sTitle): MessageInterface
+    public function title(string $sTitle): DialogPlugin
     {
-        return $this->xLibraryManager->title($sTitle);
+        $this->xLibraryManager->title($sTitle);
+        return $this;
     }
 
     /**
