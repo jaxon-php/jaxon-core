@@ -160,10 +160,9 @@ class DialogPlugin extends ResponsePlugin
     public function show(string $sTitle, string $sContent, array $aButtons = [], array $aOptions = [])
     {
         // Show the modal dialog
-        $this->addCommand('dialog.modal.show', [
-            ...$this->xLibraryManager->show($sTitle, $sContent, $aButtons, $aOptions),
-            'lib' => $this->xLibraryManager->getModalLibrary()->getName(),
-        ]);
+        $aResponse = $this->xLibraryManager->show($sTitle, $sContent, $aButtons, $aOptions);
+        $aResponse['lib'] = $this->xLibraryManager->getModalLibrary()->getName();
+        $this->addCommand('dialog.modal.show', $aResponse);
     }
 
     /**
@@ -174,10 +173,9 @@ class DialogPlugin extends ResponsePlugin
     public function hide()
     {
         // Hide the modal dialog
-        $this->addCommand('dialog.modal.hide', [
-            ...$this->xLibraryManager->hide(),
-            'lib' => $this->xLibraryManager->getModalLibrary()->getName(),
-        ]);
+        $aResponse = $this->xLibraryManager->hide();
+        $aResponse['lib'] = $this->xLibraryManager->getModalLibrary()->getName();
+        $this->addCommand('dialog.modal.hide', $aResponse);
     }
 
     /**
@@ -202,10 +200,9 @@ class DialogPlugin extends ResponsePlugin
      */
     public function success(string $sMessage, array $aArgs = [])
     {
-        $this->addCommand('dialog.message', [
-            ...$this->xLibraryManager->success($sMessage, $aArgs),
-            'lib' => $this->xLibraryManager->getMessageLibrary()->getName(),
-        ]);
+        $aResponse = $this->xLibraryManager->success($sMessage, $aArgs);
+        $aResponse['lib'] = $this->xLibraryManager->getMessageLibrary()->getName();
+        $this->addCommand('dialog.message', $aResponse);
     }
 
     /**
@@ -218,10 +215,9 @@ class DialogPlugin extends ResponsePlugin
      */
     public function info(string $sMessage, array $aArgs = [])
     {
-        $this->addCommand('dialog.message', [
-            ...$this->xLibraryManager->info($sMessage, $aArgs),
-            'lib' => $this->xLibraryManager->getMessageLibrary()->getName(),
-        ]);
+        $aResponse = $this->xLibraryManager->info($sMessage, $aArgs);
+        $aResponse['lib'] = $this->xLibraryManager->getMessageLibrary()->getName();
+        $this->addCommand('dialog.message', $aResponse);
     }
 
     /**
@@ -234,10 +230,9 @@ class DialogPlugin extends ResponsePlugin
      */
     public function warning(string $sMessage, array $aArgs = [])
     {
-        $this->addCommand('dialog.message', [
-            ...$this->xLibraryManager->warning($sMessage, $aArgs),
-            'lib' => $this->xLibraryManager->getMessageLibrary()->getName(),
-        ]);
+        $aResponse = $this->xLibraryManager->warning($sMessage, $aArgs);
+        $aResponse['lib'] = $this->xLibraryManager->getMessageLibrary()->getName();
+        $this->addCommand('dialog.message', $aResponse);
     }
 
     /**
@@ -250,9 +245,8 @@ class DialogPlugin extends ResponsePlugin
      */
     public function error(string $sMessage, array $aArgs = [])
     {
-        $this->addCommand('dialog.message', [
-            ...$this->xLibraryManager->error($sMessage, $aArgs),
-            'lib' => $this->xLibraryManager->getMessageLibrary()->getName(),
-        ]);
+        $aResponse = $this->xLibraryManager->error($sMessage, $aArgs);
+        $aResponse['lib'] = $this->xLibraryManager->getMessageLibrary()->getName();
+        $this->addCommand('dialog.message', $aResponse);
     }
 }
