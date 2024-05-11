@@ -12,6 +12,7 @@
 
 namespace Jaxon\Response\Traits;
 
+use Jaxon\Request\Call\JsCall;
 use Jaxon\Response\ResponseInterface;
 use JsonSerializable;
 
@@ -133,16 +134,16 @@ trait ScriptTrait
      *
      * @param string $sTarget    The id of the element
      * @param string $sEvent    The name of the event
-     * @param array $aCall    The event handler
+     * @param JsCall $xCall    The event handler
      *
      * @return ResponseInterface
      */
-    public function setEventHandler(string $sTarget, string $sEvent, array $aCall): ResponseInterface
+    public function setEventHandler(string $sTarget, string $sEvent, JsCall $xCall): ResponseInterface
     {
         return $this->addCommand('handler.event.set', [
             'id' => $this->str($sTarget),
             'event' => $this->str($sEvent),
-            'call' => $aCall,
+            'func' => $xCall,
         ]);
     }
 
@@ -150,13 +151,13 @@ trait ScriptTrait
      * Add a command to set a click handler on the browser
      *
      * @param string $sTarget    The id of the element
-     * @param array $aCall    The event handler
+     * @param JsCall $xCall    The event handler
      *
      * @return ResponseInterface
      */
-    public function onClick(string $sTarget, array $aCall): ResponseInterface
+    public function onClick(string $sTarget, JsCall $xCall): ResponseInterface
     {
-        return $this->setEventHandler($sTarget, 'onclick', $aCall);
+        return $this->setEventHandler($sTarget, 'onclick', $xCall);
     }
 
     /**
@@ -165,16 +166,16 @@ trait ScriptTrait
      *
      * @param string $sTarget    The id of the element
      * @param string $sEvent    The name of the event
-     * @param array $aCall    The event handler
+     * @param JsCall $xCall    The event handler
      *
      * @return ResponseInterface
      */
-    public function addEventHandler(string $sTarget, string $sEvent, array $aCall): ResponseInterface
+    public function addEventHandler(string $sTarget, string $sEvent, JsCall $xCall): ResponseInterface
     {
         return $this->addCommand('handler.event.add', [
             'id' => $this->str($sTarget),
             'event' => $this->str($sEvent),
-            'call' => $aCall,
+            'func' => $xCall,
         ]);
     }
 

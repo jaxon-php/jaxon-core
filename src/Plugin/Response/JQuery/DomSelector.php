@@ -22,13 +22,11 @@ namespace Jaxon\Plugin\Response\JQuery;
 
 use Jaxon\Plugin\Response\JQuery\Call\AttrGet;
 use Jaxon\Plugin\Response\JQuery\Call\AttrSet;
+use Jaxon\Plugin\Response\JQuery\Call\Event;
 use Jaxon\Plugin\Response\JQuery\Call\Method;
-use Jaxon\Request\Call\JsCall;
+use Jaxon\Request\Call\Call;
 use Jaxon\Request\Call\ParameterInterface;
 
-use function array_merge;
-use function count;
-use function is_a;
 use function trim;
 
 class DomSelector implements ParameterInterface
@@ -41,7 +39,7 @@ class DomSelector implements ParameterInterface
     protected $sPath;
 
     /**
-     * The jQuery selector path
+     * The jQuery selector context
      *
      * @var mixed
      */
@@ -52,7 +50,7 @@ class DomSelector implements ParameterInterface
      *
      * @var array
      */
-    protected $aCalls;
+    protected $aCalls = [];
 
     /**
      * Convert the selector value to integer
@@ -60,13 +58,6 @@ class DomSelector implements ParameterInterface
      * @var bool
      */
     protected $bToInt = false;
-
-    /**
-     * True if this selector is a callback
-     *
-     * @var bool|null
-     */
-    protected $bIsCallback = null;
 
     /**
      * The constructor.
@@ -79,14 +70,14 @@ class DomSelector implements ParameterInterface
     {
         $this->sPath = trim($sPath, " \t");
         $this->xContext = $xContext;
-        $this->aCalls = [];
     }
+
     /**
      * @inheritDoc
      */
     public function getType(): string
     {
-        return 'select';
+        return 'selector';
     }
 
     /**
@@ -99,18 +90,7 @@ class DomSelector implements ParameterInterface
      */
     public function __call(string $sMethod, array $aArguments)
     {
-        if(count($aArguments) === 1)
-        {
-            // If the only parameter is a selector, and the first call
-            // on that selector is a method, then the selector is a callback.
-            $xArgument = $aArguments[0];
-            if(is_a($xArgument, self::class) && $xArgument->bIsCallback === null &&
-                count($xArgument->aCalls) > 0 && is_a($xArgument->aCalls[0], JsCall::class))
-            {
-                $xArgument->bIsCallback = true;
-            }
-        }
-        // Push the action into the array
+        // Append the action into the array
         $this->aCalls[] = new Method($sMethod, $aArguments);
         // Return $this so the calls can be chained
         return $this;
@@ -125,7 +105,7 @@ class DomSelector implements ParameterInterface
      */
     public function __get(string $sAttribute)
     {
-        // Push the action into the array
+        // Append the action into the array
         $this->aCalls[] = new AttrGet($sAttribute);
         // Return $this so the calls can be chained
         return $this;
@@ -135,29 +115,41 @@ class DomSelector implements ParameterInterface
      * Set the value of an attribute on the first selected element
      *
      * @param string $sAttribute
-     * @param $xValue
+     * @param mixed $xValue
      *
      * @return void
      */
     public function __set(string $sAttribute, $xValue)
     {
-        // Push the action into the array
+        // Append the action into the array
         $this->aCalls[] = new AttrSet($sAttribute, $xValue);
         // No other call is allowed after a set
         // return $this;
     }
 
     /**
-     * Explicitely declare the selector as a callback.
+     * Set an event handler on the first selected element
      *
-     * @param bool $bIsCallback
+     * @param string $sName
+     * @param Call $xHandler
      *
-     * @return DomSelector
+     * @return void
      */
-    public function cb(bool $bIsCallback = true): DomSelector
+    public function on(string $sName, Call $xHandler)
     {
-        $this->bIsCallback = $bIsCallback;
-        return $this;
+        $this->aCalls[] = new Event($sName, $xHandler);
+    }
+
+    /**
+     * Set an "click" event handler on the first selected element
+     *
+     * @param Call $xHandler
+     *
+     * @return void
+     */
+    public function click(Call $xHandler)
+    {
+        $this->aCalls[] = new Event('click', $xHandler);
     }
 
     /**
@@ -172,39 +164,15 @@ class DomSelector implements ParameterInterface
     /**
      * @return array
      */
-    private function selectCalls()
+    private function selector()
     {
-        if(!$this->sPath)
+        $sName = $this->sPath ?? 'this';
+        $aCall = ['_type' => 'select', '_name' => $sName];
+        if(($this->xContext))
         {
-            // If an empty selector is given, use the event target instead
-            return [['_type' => 'select', '_name' => 'this']];
+            $aCall['context'] = $this->xContext;
         }
-        if(!$this->xContext)
-        {
-            return [['_type' => 'select', '_name' => $this->sPath]];
-        }
-        // Todo: chain the 2 selectors.
-        return [
-            // ['_type' => 'select', '_name' => $this->xContext],
-            ['_type' => 'select', '_name' => $this->sPath],
-        ];
-    }
-
-    /**
-     * @param Method|AttrSet|AttrGet $xParam
-     */
-    private function makeCallsArray($xParam): array
-    {
-        if(!is_a($xParam, Method::class))
-        {
-            // Return an array of array.
-            return [$xParam->jsonSerialize()];
-        }
-        // The param is serialized to an array of arrays.
-        $aCalls = $xParam->jsonSerialize();
-        // Set the correct type on the first call.
-        $aCalls[0]['_type'] = $this->bIsCallback ? 'event' : 'method';
-        return $aCalls;
+        return $aCall;
     }
 
     /**
@@ -212,27 +180,24 @@ class DomSelector implements ParameterInterface
      */
     public function toArray(): array
     {
-        $aCalls = $this->selectCalls();
+        $aCalls = [$this->selector()];
         foreach($this->aCalls as $xCall)
         {
-            $aCalls = array_merge($aCalls, $this->makeCallsArray($xCall));
+            $aCalls[] = $xCall->jsonSerialize();
         }
         if($this->bToInt)
         {
             $aCalls[] = [
                 '_type' => 'func',
-                '_name' => 'jaxon.utils.string.toInt',
-                'params' => [
-                    [ '_type' => '_', '_name' => 'this' ],
-                ],
+                '_name' => 'toInt',
+                'args' => [[ '_type' => '_', '_name' => 'this' ]],
             ];
         }
-        return $aCalls;
+        return ['_type' => 'expr', 'calls' => $aCalls];
     }
 
     /**
      * Generate the jQuery call, when converting the response into json.
-     *
      * This is a method of the JsonSerializable interface.
      *
      * @return array

@@ -3,6 +3,7 @@
 namespace Jaxon\Response;
 
 use Jaxon\Plugin\ResponsePlugin;
+use Jaxon\Request\Call\JsCall;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 use JsonSerializable;
 
@@ -243,11 +244,11 @@ interface ResponseInterface
      *
      * @param string $sTarget    The id of the element
      * @param string $sEvent    The name of the event
-     * @param array $aCall    The event handler
+     * @param JsCall $xCall    The event handler
      *
      * @return ResponseInterface
      */
-    public function addEventHandler(string $sTarget, string $sEvent, array $aCall): ResponseInterface;
+    public function addEventHandler(string $sTarget, string $sEvent, JsCall $xCall): ResponseInterface;
 
     /**
      * Add a command to set an event handler on the specified element
@@ -255,21 +256,21 @@ interface ResponseInterface
      *
      * @param string $sTarget    The id of the element
      * @param string $sEvent    The name of the event
-     * @param array $aCall    The event handler
+     * @param JsCall $xCall    The event handler
      *
      * @return ResponseInterface
      */
-    public function setEventHandler(string $sTarget, string $sEvent, array $aCall): ResponseInterface;
+    public function setEventHandler(string $sTarget, string $sEvent, JsCall $xCall): ResponseInterface;
 
     /**
      * Add a command to set a click handler on the browser
      *
      * @param string $sTarget    The id of the element
-     * @param array $aCall    The event handler
+     * @param JsCall $xCall    The event handler
      *
      * @return ResponseInterface
      */
-    public function onClick(string $sTarget, array $aCall): ResponseInterface;
+    public function onClick(string $sTarget, JsCall $xCall): ResponseInterface;
 
     /**
      * Add a command to make Jaxon to pause execution of the response commands,

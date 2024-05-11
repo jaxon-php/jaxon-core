@@ -140,7 +140,7 @@ class JsCall implements JsonSerializable
         $aCalls = [[
             '_type' => 'func',
             '_name' => $this->sFunction,
-            'params' => array_map(function(Parameter $xParam) {
+            'args' => array_map(function(Parameter $xParam) {
                 return $xParam->jsonSerialize();
             }, $this->aParameters),
         ]];
@@ -148,14 +148,11 @@ class JsCall implements JsonSerializable
         {
             $aCalls[] = [
                 '_type' => 'func',
-                '_name' => 'jaxon.utils.string.toInt',
-                'params' => [[ '_type' => '_', '_name' => 'this' ]],
+                '_name' => 'toInt',
+                'args' => [[ '_type' => '_', '_name' => 'this' ]],
             ];
         }
-        return [
-            '_type' => 'expr',
-            'calls' => $aCalls,
-        ];
+        return ['_type' => 'expr', 'calls' => $aCalls];
     }
 
     /**
