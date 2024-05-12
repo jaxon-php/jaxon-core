@@ -86,8 +86,7 @@ class Response implements ResponseInterface
      */
     public function getOutput(): string
     {
-        return $this->getCommandCount() === 0 ? '{}' :
-            json_encode(['jxnobj' => $this->aCommands]);
+        return json_encode(['jxn' => ['commands' => $this->aCommands]]);
     }
 
     /**

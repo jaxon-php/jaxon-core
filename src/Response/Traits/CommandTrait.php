@@ -97,7 +97,7 @@ trait CommandTrait
     public function addCommand(string $sName, array|JsonSerializable $aOptions): ResponseInterface
     {
         $this->aCommands[] = [
-            'cmd' => $this->str($sName),
+            'name' => $this->str($sName),
             'options' => $aOptions,
         ];
         return $this;
@@ -116,8 +116,8 @@ trait CommandTrait
         array|JsonSerializable $aOptions): ResponseInterface
     {
         $this->aCommands[] = [
-            'cmd' => $this->str($sName),
-            'plg' => $xPlugin->getName(),
+            'name' => $this->str($sName),
+            'plugin' => $xPlugin->getName(),
             'options' => $aOptions,
         ];
         return $this;
