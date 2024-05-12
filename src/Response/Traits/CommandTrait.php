@@ -90,15 +90,15 @@ trait CommandTrait
      * Add a response command to the array of commands that will be sent to the browser
      *
      * @param string $sName    The command name
-     * @param array|JsonSerializable $aOptions    The command options
+     * @param array|JsonSerializable $aArgs    The command arguments
      *
      * @return ResponseInterface
      */
-    public function addCommand(string $sName, array|JsonSerializable $aOptions): ResponseInterface
+    public function addCommand(string $sName, array|JsonSerializable $aArgs): ResponseInterface
     {
         $this->aCommands[] = [
             'name' => $this->str($sName),
-            'options' => $aOptions,
+            'args' => $aArgs,
         ];
         return $this;
     }
@@ -108,17 +108,17 @@ trait CommandTrait
      *
      * @param ResponsePlugin $xPlugin    The plugin object
      * @param string $sName    The command name
-     * @param array|JsonSerializable $aOptions    The command options
+     * @param array|JsonSerializable $aArgs    The command arguments
      *
      * @return ResponseInterface
      */
     public function addPluginCommand(ResponsePlugin $xPlugin, string $sName,
-        array|JsonSerializable $aOptions): ResponseInterface
+        array|JsonSerializable $aArgs): ResponseInterface
     {
         $this->aCommands[] = [
             'name' => $this->str($sName),
             'plugin' => $xPlugin->getName(),
-            'options' => $aOptions,
+            'args' => $aArgs,
         ];
         return $this;
     }
@@ -127,20 +127,20 @@ trait CommandTrait
      * Add a response command to the array of commands that will be sent to the browser
      *
      * @param string $sName    The command name
-     * @param array|JsonSerializable $aOptions    The command options
-     * @param bool $bRemoveEmpty    If true, remove empty options
+     * @param array|JsonSerializable $aArgs    The command arguments
+     * @param bool $bRemoveEmpty    If true, remove empty arguments
      *
      * @return ResponseInterface
      */
-    protected function _addCommand(string $sName, array|JsonSerializable $aOptions,
+    protected function _addCommand(string $sName, array|JsonSerializable $aArgs,
         bool $bRemoveEmpty = false): ResponseInterface
     {
         if($bRemoveEmpty)
         {
-            $aOptions = array_filter($aOptions, function($xOption) {
-                return $xOption === '';
+            $aArgs = array_filter($aArgs, function($xArg) {
+                return $xArg === '';
             });
         }
-        return $this->addCommand($this->str($sName), $aOptions);
+        return $this->addCommand($this->str($sName), $aArgs);
     }
 }
