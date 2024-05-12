@@ -12,8 +12,17 @@
 
 namespace Jaxon\App\Dialog\Library;
 
+use Jaxon\App\Dialog\ModalInterface;
+
 trait ModalTrait
 {
+    /**
+     * Get the ModalInterface library
+     *
+     * @return ModalInterface|null
+     */
+    abstract public function getModalLibrary(): ?ModalInterface;
+
     /**
      * Show a modal dialog.
      *
@@ -36,6 +45,7 @@ trait ModalTrait
     public function show(string $sTitle, string $sContent, array $aButtons, array $aOptions = []): array
     {
         return [
+            'lib' => $this->getModalLibrary()->getName(),
             'dialog' => [
                 'title' => $sTitle,
                 'content' => $sContent,
@@ -52,6 +62,8 @@ trait ModalTrait
      */
     public function hide(): array
     {
-        return [];
+        return [
+            'lib' => $this->getModalLibrary()->getName(),
+        ];
     }
 }

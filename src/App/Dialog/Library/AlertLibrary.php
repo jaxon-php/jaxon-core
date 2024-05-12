@@ -21,7 +21,6 @@ use Jaxon\App\Dialog\QuestionInterface;
 class AlertLibrary implements LibraryInterface, MessageInterface, QuestionInterface
 {
     use DialogLibraryTrait;
-    use MessageTrait;
 
     /**
      * Get the library name
@@ -31,32 +30,5 @@ class AlertLibrary implements LibraryInterface, MessageInterface, QuestionInterf
     public function getName(): string
     {
         return ''; // No name
-    }
-
-    /**
-     * Get the script which makes a call only if the user answers yes to the given question
-     *
-     * @param string  $sQuestion
-     * @param string  $sYesScript
-     * @param string  $sNoScript
-     *
-     * @return string
-     */
-    public function confirm(string $sQuestion, string $sYesScript, string $sNoScript): string
-    {
-        return empty($sNoScript) ? 'if(confirm(' . $sQuestion . ')){' . $sYesScript . ';}' :
-            'if(confirm(' . $sQuestion . ')){' . $sYesScript . ';}else{' . $sNoScript . ';}';
-    }
-
-    /**
-     * @inheritDoc
-     */
-    protected function alert(string $sMessage, string $sTitle, string $sType)
-    {
-        if(!empty($sTitle))
-        {
-            $sMessage = '<b>' . $sTitle . '</b><br/>' . $sMessage;
-        }
-        $this->xResponse->alert($sMessage, $sTitle);
     }
 }

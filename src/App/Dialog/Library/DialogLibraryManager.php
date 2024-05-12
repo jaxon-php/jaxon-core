@@ -22,6 +22,7 @@ use Jaxon\App\Dialog\QuestionInterface;
 use Jaxon\App\I18n\Translator;
 use Jaxon\Di\Container;
 use Jaxon\Exception\SetupException;
+use Jaxon\Request\Call\Parameter;
 use Jaxon\Utils\Config\Config;
 
 use function array_map;
@@ -97,6 +98,20 @@ class DialogLibraryManager implements ConfigListenerInterface
         $this->di = $di;
         $this->xConfigManager = $xConfigManager;
         $this->xTranslator = $xTranslator;
+    }
+
+    /**
+     * @param string $sStr
+     * @param array $aArgs
+     *
+     * @return array
+     */
+    private function phrase(string $sStr, array $aArgs = []): array
+    {
+        return [
+            'str' => $sStr,
+            'args' => array_map(fn($xArg) => Parameter::make($xArg), $aArgs),
+        ];
     }
 
     /**
@@ -222,7 +237,7 @@ class DialogLibraryManager implements ConfigListenerInterface
     /**
      * Get the ModalInterface library
      *
-     * @return ModalInterface
+     * @return ModalInterface|null
      */
     public function getModalLibrary(): ?ModalInterface
     {

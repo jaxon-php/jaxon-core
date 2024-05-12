@@ -13,9 +13,6 @@
 namespace Jaxon\App\Dialog\Library;
 
 use Jaxon\App\Dialog\MessageInterface;
-use Jaxon\Request\Call\Parameter;
-
-use function array_map;
 
 trait MessageTrait
 {
@@ -25,6 +22,23 @@ trait MessageTrait
      * @var string
      */
     private $sTitle = '';
+
+    /**
+     * Get the MessageInterface library
+     *
+     * @return MessageInterface
+     */
+    abstract public function getMessageLibrary(): MessageInterface;
+
+    /**
+     * Add a confirm question to a function call.
+     *
+     * @param string $sStr
+     * @param array $aArgs
+     *
+     * @return array
+     */
+    abstract private function phrase(string $sStr, array $aArgs = []): array;
 
     /**
      * Set the title of the next message.
@@ -55,13 +69,11 @@ trait MessageTrait
         $this->sTitle = '';
 
         return [
+            'lib' => $this->getMessageLibrary()->getName(),
             'type' => $sType,
-            'message' => [
+            'content' => [
                 'title' => $sTitle,
-                'phrase' => [
-                    'str' => $sMessage,
-                    'args' => array_map(fn($xArg) => Parameter::make($xArg), $aArgs),
-                ],
+                'phrase' => $this->phrase($sMessage, $aArgs),
             ],
         ];
     }

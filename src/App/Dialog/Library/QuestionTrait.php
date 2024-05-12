@@ -12,12 +12,25 @@
 
 namespace Jaxon\App\Dialog\Library;
 
-use Jaxon\Request\Call\Parameter;
-
-use function array_map;
+use Jaxon\App\Dialog\QuestionInterface;
 
 trait QuestionTrait
 {
+    /**
+     * Get the QuestionInterface library
+     *
+     * @return QuestionInterface
+     */
+    abstract public function getQuestionLibrary(): QuestionInterface;
+
+    /**
+     * @param string $sStr
+     * @param array $aArgs
+     *
+     * @return array
+     */
+    abstract private function phrase(string $sStr, array $aArgs = []): array;
+
     /**
      * Add a confirm question to a function call.
      *
@@ -29,10 +42,8 @@ trait QuestionTrait
     public function confirm(string $sQuestion, array $aArgs = []): array
     {
         return [
-            'phrase' => [
-                'str' => $sQuestion,
-                'args' => array_map(fn($xArg) => Parameter::make($xArg), $aArgs),
-            ],
+            'lib' => $this->getQuestionLibrary()->getName(),
+            'phrase' => $this->phrase($sQuestion, $aArgs),
         ];
     }
 }

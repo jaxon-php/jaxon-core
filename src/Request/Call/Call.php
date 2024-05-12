@@ -155,36 +155,6 @@ class Call extends JsCall
     }
 
     /**
-     * Add a condition to the request
-     *
-     * The request is sent only if the condition is true.
-     *
-     * @param mixed $xCondition    The condition to check
-     *
-     * @return Call
-     */
-    public function when($xCondition): Call
-    {
-        $this->aCondition = [true, Parameter::make($xCondition)];
-        return $this;
-    }
-
-    /**
-     * Add a condition to the request
-     *
-     * The request is sent only if the condition is false.
-     *
-     * @param mixed $xCondition    The condition to check
-     *
-     * @return Call
-     */
-    public function unless($xCondition): Call
-    {
-        $this->aCondition = [false, Parameter::make($xCondition)];
-        return $this;
-    }
-
-    /**
      * Check if a value is equal to another before sending the request
      *
      * @param mixed $xValue1    The first value to compare
@@ -194,7 +164,7 @@ class Call extends JsCall
      */
     public function ifeq($xValue1, $xValue2): Call
     {
-        $this->aCondition = ['==', Parameter::make($xValue1), Parameter::make($xValue2)];
+        $this->aCondition = ['eq', Parameter::make($xValue1), Parameter::make($xValue2)];
         return $this;
     }
 
@@ -208,7 +178,7 @@ class Call extends JsCall
      */
     public function ifteq($xValue1, $xValue2): Call
     {
-        $this->aCondition = ['===', Parameter::make($xValue1), Parameter::make($xValue2)];
+        $this->aCondition = ['teq', Parameter::make($xValue1), Parameter::make($xValue2)];
         return $this;
     }
 
@@ -222,7 +192,7 @@ class Call extends JsCall
      */
     public function ifne($xValue1, $xValue2): Call
     {
-        $this->aCondition = ['!=', Parameter::make($xValue1), Parameter::make($xValue2)];
+        $this->aCondition = ['ne', Parameter::make($xValue1), Parameter::make($xValue2)];
         return $this;
     }
 
@@ -236,7 +206,7 @@ class Call extends JsCall
      */
     public function ifnte($xValue1, $xValue2): Call
     {
-        $this->aCondition = ['!==', Parameter::make($xValue1), Parameter::make($xValue2)];
+        $this->aCondition = ['nte', Parameter::make($xValue1), Parameter::make($xValue2)];
         return $this;
     }
 
@@ -250,7 +220,7 @@ class Call extends JsCall
      */
     public function ifgt($xValue1, $xValue2): Call
     {
-        $this->aCondition = ['>', Parameter::make($xValue1), Parameter::make($xValue2)];
+        $this->aCondition = ['gt', Parameter::make($xValue1), Parameter::make($xValue2)];
         return $this;
     }
 
@@ -264,7 +234,7 @@ class Call extends JsCall
      */
     public function ifge($xValue1, $xValue2): Call
     {
-        $this->aCondition = ['>=', Parameter::make($xValue1), Parameter::make($xValue2)];
+        $this->aCondition = ['ge', Parameter::make($xValue1), Parameter::make($xValue2)];
         return $this;
     }
 
@@ -278,7 +248,7 @@ class Call extends JsCall
      */
     public function iflt($xValue1, $xValue2): Call
     {
-        $this->aCondition = ['<', Parameter::make($xValue1), Parameter::make($xValue2)];
+        $this->aCondition = ['lt', Parameter::make($xValue1), Parameter::make($xValue2)];
         return $this;
     }
 
@@ -292,8 +262,36 @@ class Call extends JsCall
      */
     public function ifle($xValue1, $xValue2): Call
     {
-        $this->aCondition = ['<=', Parameter::make($xValue1), Parameter::make($xValue2)];
+        $this->aCondition = ['le', Parameter::make($xValue1), Parameter::make($xValue2)];
         return $this;
+    }
+
+    /**
+     * Add a condition to the request
+     *
+     * The request is sent only if the condition is true.
+     *
+     * @param mixed $xCondition    The condition to check
+     *
+     * @return Call
+     */
+    public function when($xCondition): Call
+    {
+        return $this->ifeq(true, $xCondition);
+    }
+
+    /**
+     * Add a condition to the request
+     *
+     * The request is sent only if the condition is false.
+     *
+     * @param mixed $xCondition    The condition to check
+     *
+     * @return Call
+     */
+    public function unless($xCondition): Call
+    {
+        return $this->ifeq(false, $xCondition);
     }
 
     /**
@@ -306,10 +304,7 @@ class Call extends JsCall
         $aCall = parent::toArray();
         if(($this->aConfirm))
         {
-            $aCall['confirm'] = [
-                ...$this->aConfirm,
-                'lib' => $this->xLibraryManager->getQuestionLibrary()->getName(),
-            ];
+            $aCall['question'] = $this->aConfirm;
         }
         if(($this->aCondition))
         {
@@ -317,10 +312,7 @@ class Call extends JsCall
         }
         if(($this->aMessage))
         {
-            $aCall['else'] = [
-                ...$this->aMessage,
-                'lib' => $this->xLibraryManager->getMessageLibrary()->getName(),
-            ];
+            $aCall['message'] = $this->aMessage;
         }
         return $aCall;
     }
