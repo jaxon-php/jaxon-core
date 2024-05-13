@@ -336,4 +336,14 @@ class Parameter implements ParameterInterface
         $sScript = $this->$sMethodName();
         return $this->bToInt ? "parseInt($sScript)" : $sScript;
     }
+
+    /**
+     * Convert this call to string
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->getScript();
+    }
 }

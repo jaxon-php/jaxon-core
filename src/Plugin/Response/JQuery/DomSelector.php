@@ -27,6 +27,7 @@ use Jaxon\Plugin\Response\JQuery\Call\Method;
 use Jaxon\Request\Call\Call;
 use Jaxon\Request\Call\ParameterInterface;
 
+use function implode;
 use function trim;
 
 class DomSelector implements ParameterInterface
@@ -62,7 +63,6 @@ class DomSelector implements ParameterInterface
     /**
      * The constructor.
      *
-     * @param string $jQueryNs    The jQuery symbol
      * @param string $sPath    The jQuery selector path
      * @param mixed $xContext    A context associated to the selector
      */
@@ -173,6 +173,41 @@ class DomSelector implements ParameterInterface
             $aCall['context'] = $this->xContext;
         }
         return $aCall;
+    }
+
+    /**
+     * Get the selector js.
+     *
+     * @return string
+     */
+    private function getPath()
+    {
+        $jQuery = 'jaxon.jq'; // The JQuery selector
+        if(!$this->sPath)
+        {
+            // If an empty selector is given, use the event target instead
+            return "$jQuery(e.currentTarget)";
+        }
+        if(!$this->xContext)
+        {
+            return "$jQuery('" . $this->sPath . "')";
+        }
+
+        $sContext = is_a($this->xContext, self::class) ?
+            $this->xContext->getScript() :
+            "$jQuery('" . trim("{$this->xContext}") . "')";
+        return "$jQuery('{$this->sPath}', $sContext)";
+    }
+
+    /**
+     * Generate the jQuery call.
+     *
+     * @return string
+     */
+    public function __toString(): string
+    {
+        $sScript = $this->getPath() . implode('', $this->aCalls);
+        return $this->bToInt ? "parseInt($sScript)" : $sScript;
     }
 
     /**

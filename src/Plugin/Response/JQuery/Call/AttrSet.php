@@ -35,6 +35,16 @@ class AttrSet implements JsonSerializable
     }
 
     /**
+     * Returns a string representation of this call
+     *
+     * @return string
+     */
+    public function __toString(): string
+    {
+        return '.' . $this->sAttrName . ' = ' . $this->xAttrValue;
+    }
+
+    /**
      * Convert this call to array, when converting the response into json.
      *
      * @return array

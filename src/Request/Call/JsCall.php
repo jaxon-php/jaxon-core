@@ -19,10 +19,11 @@
 namespace Jaxon\Request\Call;
 
 use JsonSerializable;
+use Stringable;
 
 use function array_map;
 
-class JsCall implements JsonSerializable
+class JsCall implements JsonSerializable, Stringable
 {
     /**
      * The name of the javascript function
@@ -140,7 +141,7 @@ class JsCall implements JsonSerializable
         $aCalls = [[
             '_type' => 'func',
             '_name' => $this->sFunction,
-            'args' => array_map(function(Parameter $xParam) {
+            'args' => array_map(function(JsonSerializable $xParam) {
                 return $xParam->jsonSerialize();
             }, $this->aParameters),
         ]];
@@ -174,8 +175,8 @@ class JsCall implements JsonSerializable
      */
     public function __toString()
     {
-        $aParameters = array_map(function(Parameter $xParam) {
-            return $xParam->getScript();
+        $aParameters = array_map(function(Stringable $xParam) {
+            return $xParam->__toString();
         }, $this->aParameters);
         $sScript = $this->sFunction . '(' . implode(', ', $aParameters) . ')';
         return $this->bToInt ? "parseInt($sScript)" : $sScript;

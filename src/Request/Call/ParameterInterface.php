@@ -14,8 +14,9 @@
 namespace Jaxon\Request\Call;
 
 use JsonSerializable;
+use Stringable;
 
-interface ParameterInterface extends JsonSerializable
+interface ParameterInterface extends JsonSerializable, Stringable
 {
     /**
      * Get the parameter type

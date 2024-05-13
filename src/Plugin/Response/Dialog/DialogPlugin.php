@@ -154,7 +154,7 @@ class DialogPlugin extends ResponsePlugin
     {
         return array_reduce($this->getLibraries(), function($sCode, $xLibrary) {
             return $sCode . trim($xLibrary->getScript()) . "\n\n";
-        }, "jaxon.dialogs = {};\n");
+        }, '');
     }
 
     /**

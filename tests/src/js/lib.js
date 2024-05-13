@@ -29,7 +29,5 @@ jxn_my_third_function = function() {
     return jaxon.request({ jxnfun: 'my_third_function' }, { parameters: arguments });
 };
 
-jaxon.dialogs = {};
-
 /* ]]> */
 </script>

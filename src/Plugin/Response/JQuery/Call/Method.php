@@ -18,4 +18,14 @@ class Method extends JsCall
         // Add the arguments to the parameter list
         $this->addParameters($aArguments);
     }
+
+    /**
+     * Returns a string representation of this call
+     *
+     * @return string
+     */
+    public function __toString(): string
+    {
+        return '.' . parent::__toString();
+    }
 }
