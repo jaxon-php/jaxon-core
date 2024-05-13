@@ -14,7 +14,7 @@
 
 namespace Jaxon\Request\Factory;
 
-use Jaxon\Request\Call\Parameter;
+use Jaxon\Request\Js\Parameter;
 
 class ParameterFactory
 {

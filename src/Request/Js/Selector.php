@@ -1,15 +1,15 @@
 <?php
 
 /**
- * DomSelector.php - A jQuery selector
+ * Selector.php - A jQuery selector
  *
  * This class is used to create client side requests to the Jaxon functions and callable objects.
  *
- * When inserted into a Jaxon response, a DomSelector object must be converted to the corresponding jQuery code.
- * Therefore, the DomSelector class implements the JsonSerializable interface.
+ * When inserted into a Jaxon response, a Selector object must be converted to the corresponding jQuery code.
+ * Therefore, the Selector class implements the JsonSerializable interface.
  *
- * When used as a parameter of a Jaxon call, the DomSelector must be converted to Jaxon request parameter.
- * Therefore, the DomSelector class also implements the Jaxon\Request\Call\ParameterInterface interface.
+ * When used as a parameter of a Jaxon call, the Selector must be converted to Jaxon request parameter.
+ * Therefore, the Selector class also implements the Jaxon\Request\Js\ParameterInterface interface.
  *
  * @package jaxon-jquery
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
@@ -18,19 +18,12 @@
  * @link https://github.com/jaxon-php/jaxon-jquery
  */
 
-namespace Jaxon\Plugin\Response\JQuery;
-
-use Jaxon\Plugin\Response\JQuery\Call\AttrGet;
-use Jaxon\Plugin\Response\JQuery\Call\AttrSet;
-use Jaxon\Plugin\Response\JQuery\Call\Event;
-use Jaxon\Plugin\Response\JQuery\Call\Method;
-use Jaxon\Request\Call\Call;
-use Jaxon\Request\Call\ParameterInterface;
+namespace Jaxon\Request\Js;
 
 use function implode;
 use function trim;
 
-class DomSelector implements ParameterInterface
+class Selector implements ParameterInterface
 {
     /**
      * The jQuery selector path
@@ -86,12 +79,12 @@ class DomSelector implements ParameterInterface
      * @param string  $sMethod
      * @param array  $aArguments
      *
-     * @return DomSelector
+     * @return Selector
      */
     public function __call(string $sMethod, array $aArguments)
     {
         // Append the action into the array
-        $this->aCalls[] = new Method($sMethod, $aArguments);
+        $this->aCalls[] = new Selector\Method($sMethod, $aArguments);
         // Return $this so the calls can be chained
         return $this;
     }
@@ -101,12 +94,12 @@ class DomSelector implements ParameterInterface
      *
      * @param string  $sAttribute
      *
-     * @return DomSelector
+     * @return Selector
      */
     public function __get(string $sAttribute)
     {
         // Append the action into the array
-        $this->aCalls[] = new AttrGet($sAttribute);
+        $this->aCalls[] = new Selector\AttrGet($sAttribute);
         // Return $this so the calls can be chained
         return $this;
     }
@@ -122,7 +115,7 @@ class DomSelector implements ParameterInterface
     public function __set(string $sAttribute, $xValue)
     {
         // Append the action into the array
-        $this->aCalls[] = new AttrSet($sAttribute, $xValue);
+        $this->aCalls[] = new Selector\AttrSet($sAttribute, $xValue);
         // No other call is allowed after a set
         // return $this;
     }
@@ -137,7 +130,7 @@ class DomSelector implements ParameterInterface
      */
     public function on(string $sName, Call $xHandler)
     {
-        $this->aCalls[] = new Event($sName, $xHandler);
+        $this->aCalls[] = new Selector\Event($sName, $xHandler);
     }
 
     /**
@@ -149,13 +142,13 @@ class DomSelector implements ParameterInterface
      */
     public function click(Call $xHandler)
     {
-        $this->aCalls[] = new Event('click', $xHandler);
+        $this->on('click', $xHandler);
     }
 
     /**
-     * @return DomSelector
+     * @return Selector
      */
-    public function toInt(): DomSelector
+    public function toInt(): Selector
     {
         $this->bToInt = true;
         return $this;

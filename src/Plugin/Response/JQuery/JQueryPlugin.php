@@ -3,6 +3,7 @@
 namespace Jaxon\Plugin\Response\JQuery;
 
 use Jaxon\Plugin\ResponsePlugin;
+use Jaxon\Request\Js\Selector;
 
 class JQueryPlugin extends ResponsePlugin
 {
@@ -62,7 +63,7 @@ class JQueryPlugin extends ResponsePlugin
     }
 
     /**
-     * Create a JQueryPlugin DomSelector, and link it to the current response.
+     * Create a JQueryPlugin Selector, and link it to the current response.
      *
      * Since this element is linked to a response, its code will be automatically sent to the client.
      * The returned object can be used to call jQuery functions on the selected elements.
@@ -70,11 +71,11 @@ class JQueryPlugin extends ResponsePlugin
      * @param string $sPath    The jQuery selector path
      * @param mixed $xContext    A context associated to the selector
      *
-     * @return DomSelector
+     * @return Selector
      */
-    public function selector(string $sPath = '', $xContext = null): DomSelector
+    public function selector(string $sPath = '', $xContext = null): Selector
     {
-        $xSelector = new DomSelector($sPath, $xContext);
+        $xSelector = new Selector($sPath, $xContext);
         if($this->bCommand && $this->response() !== null)
         {
             $this->addCommand('jquery.call', ['selector' => $xSelector]);

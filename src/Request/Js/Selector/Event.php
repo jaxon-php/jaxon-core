@@ -1,8 +1,8 @@
 <?php
 
-namespace Jaxon\Plugin\Response\JQuery\Call;
+namespace Jaxon\Request\Js\Selector;
 
-use Jaxon\Request\Call\Call;
+use Jaxon\Request\Js\Call;
 
 class Event
 {
@@ -38,7 +38,7 @@ class Event
         return [
             '_type' => 'event',
             '_name' => $this->sName,
-            'func' => $this->xHandler,
+            'func' => $this->xHandler->jsonSerialize(),
         ];
     }
 }

@@ -11,7 +11,7 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Request\Call;
+namespace Jaxon\Request\Js;
 
 use function is_bool;
 use function is_numeric;
@@ -148,7 +148,7 @@ class Parameter implements ParameterInterface
         {
             return new Parameter(self::BOOL_VALUE, $xValue);
         }
-        if($xValue instanceof JsCall)
+        if($xValue instanceof Call)
         {
             return new Parameter(self::JS_CALL, $xValue);
         }

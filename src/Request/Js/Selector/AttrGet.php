@@ -1,12 +1,10 @@
 <?php
 
-namespace Jaxon\Plugin\Response\JQuery\Call;
-
-use Jaxon\Request\Call\Parameter;
+namespace Jaxon\Request\Js\Selector;
 
 use JsonSerializable;
 
-class AttrSet implements JsonSerializable
+class AttrGet implements JsonSerializable
 {
     /**
      * The attribute name
@@ -16,32 +14,23 @@ class AttrSet implements JsonSerializable
     private $sAttrName;
 
     /**
-     * The attribute value
-     *
-     * @var Parameter
-     */
-    private $xAttrValue;
-
-    /**
      * The constructor.
      *
      * @param string $sAttrName    The attribute name
-     * @param mixed $xAttrValue    The attribute value
      */
-    public function __construct(string $sAttrName, $xAttrValue)
+    public function __construct(string $sAttrName)
     {
         $this->sAttrName = $sAttrName;
-        $this->xAttrValue = Parameter::make($xAttrValue);
     }
 
     /**
-     * Returns a string representation of this call
+     * Returns a string representation of the script output (javascript) from this call
      *
      * @return string
      */
     public function __toString(): string
     {
-        return '.' . $this->sAttrName . ' = ' . $this->xAttrValue;
+        return '.' . $this->sAttrName;
     }
 
     /**
@@ -54,7 +43,6 @@ class AttrSet implements JsonSerializable
         return [
             '_type' => 'attr',
             '_name' => $this->sAttrName,
-            'value' => $this->xAttrValue->jsonSerialize(),
         ];
     }
 }

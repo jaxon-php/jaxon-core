@@ -40,7 +40,7 @@ SOFTWARE.
 
 namespace Jaxon\Plugin\Response\Pagination;
 
-use Jaxon\Request\Call\Call;
+use Jaxon\Request\Js\Call;
 
 use function array_walk;
 use function ceil;

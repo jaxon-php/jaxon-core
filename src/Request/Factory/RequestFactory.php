@@ -16,7 +16,7 @@ namespace Jaxon\Request\Factory;
  */
 
 use Jaxon\App\Dialog\DialogManager;
-use Jaxon\Request\Call\Call;
+use Jaxon\Request\Js\Call;
 
 use function array_shift;
 use function func_get_args;
@@ -72,8 +72,8 @@ class RequestFactory
     public function __call(string $sFunction, array $aArguments): Call
     {
         // Make the request
-        $sPrefix = $this->bNoPrefix ? '' : $this->sPrefix;
-        $xCall = new Call($sPrefix . $sFunction, $this->xDialogManager);
+        $xCall = new Call(($this->bNoPrefix ? '' : $this->sPrefix) . $sFunction);
+        $xCall->setDialogManager($this->xDialogManager);
         $xCall->addParameters($aArguments);
         return $xCall;
     }

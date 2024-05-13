@@ -25,13 +25,13 @@
 
 namespace Jaxon\Plugin;
 
-use Jaxon\Response\ResponseInterface;
-use Jaxon\Plugin\Response\JQuery\DomSelector;
 use Jaxon\Plugin\Response\DataBag\DataBagContext;
+use Jaxon\Response\ResponseInterface;
+use Jaxon\Request\Js\Selector;
 use JsonSerializable;
 
 /**
- * @method DomSelector selector(string $sPath = '', $xContext = null)
+ * @method Selector selector(string $sPath = '', $xContext = null)
  * @method DataBagContext bag(string $sName)
  */
 abstract class ResponsePlugin extends Plugin implements ResponsePluginInterface

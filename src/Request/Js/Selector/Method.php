@@ -1,10 +1,10 @@
 <?php
 
-namespace Jaxon\Plugin\Response\JQuery\Call;
+namespace Jaxon\Request\Js\Selector;
 
-use Jaxon\Request\Call\JsCall;
+use Jaxon\Request\Js\Call;
 
-class Method extends JsCall
+class Method extends Call
 {
     /**
      * The constructor.

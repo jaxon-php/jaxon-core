@@ -7,9 +7,9 @@ use Jaxon\App\View\ViewRenderer;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\Request\CallableClass\CallableClassHelper;
 use Jaxon\Plugin\Response\DataBag\DataBagContext;
-use Jaxon\Plugin\Response\JQuery\DomSelector;
 use Jaxon\Plugin\Response\Pagination\Paginator;
 use Jaxon\Request\Factory\RequestFactory;
+use Jaxon\Request\Js\Selector;
 use Jaxon\Request\TargetInterface;
 use Jaxon\Response\Response;
 use Psr\Log\LoggerInterface;
@@ -102,14 +102,14 @@ class CallableClass
     }
 
     /**
-     * Create a JQuery DomSelector, and link it to the response attribute.
+     * Create a JQuery Selector, and link it to the response attribute.
      *
      * @param string $sPath    The jQuery selector path
      * @param mixed $xContext    A context associated to the selector
      *
-     * @return DomSelector
+     * @return Selector
      */
-    public function jq(string $sPath = '', $xContext = null): DomSelector
+    public function jq(string $sPath = '', $xContext = null): Selector
     {
         return $this->response->jq($sPath, $xContext);
     }

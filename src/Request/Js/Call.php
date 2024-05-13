@@ -18,19 +18,41 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Request\Call;
+namespace Jaxon\Request\Js;
 
 use Jaxon\App\Dialog\DialogManager;
+use JsonSerializable;
+use Stringable;
 
+use function array_map;
 use function array_shift;
 use function func_get_args;
 
-class Call extends JsCall
+class Call
 {
     /**
      * @var DialogManager
      */
     protected $xDialogManager;
+
+    /**
+     * The name of the javascript function
+     *
+     * @var string
+     */
+    private $sFunction;
+
+    /**
+     * @var array<ParameterInterface>
+     */
+    protected $aParameters = [];
+
+    /**
+     * Convert the parameter value to integer
+     *
+     * @var bool
+     */
+    protected $bToInt = false;
 
     /**
      * The arguments of the else() calls
@@ -56,13 +78,83 @@ class Call extends JsCall
     /**
      * The constructor.
      *
-     * @param string $sName    The javascript function or method name
-     * @param DialogManager $xDialogManager
+     * @param string $sFunction    The javascript function
      */
-    public function __construct(string $sName, DialogManager $xDialogManager)
+    public function __construct(string $sFunction)
     {
-        parent::__construct($sName);
-        $this->xDialogManager = $xDialogManager;
+        $this->sFunction = $sFunction;
+    }
+
+    /**
+     * @return Call
+     */
+    public function toInt(): Call
+    {
+        $this->bToInt = true;
+        return $this;
+    }
+
+    /**
+     * Clear the parameter list associated with this request
+     *
+     * @return Call
+     */
+    public function clearParameters(): Call
+    {
+        $this->aParameters = [];
+        return $this;
+    }
+
+    /**
+     * Set the value of the parameter at the given position
+     *
+     * @param ParameterInterface $xParameter    The value to be used
+     *
+     * @return Call
+     */
+    public function pushParameter(ParameterInterface $xParameter): Call
+    {
+        $this->aParameters[] = $xParameter;
+        return $this;
+    }
+
+    /**
+     * Add a parameter value to the parameter list for this request
+     *
+     * @param string $sType    The type of the value to be used
+     * @param string $sValue    The value to be used
+     *
+     * Types should be one of the following <Parameter::FORM_VALUES>, <Parameter::QUOTED_VALUE>, <Parameter::NUMERIC_VALUE>,
+     * <Parameter::JS_VALUE>, <Parameter::INPUT_VALUE>, <Parameter::CHECKED_VALUE>, <Parameter::PAGE_NUMBER>.
+     * The value should be as follows:
+     * - <Parameter::FORM_VALUES> - Use the ID of the form you want to process.
+     * - <Parameter::QUOTED_VALUE> - The string data to be passed.
+     * - <Parameter::JS_VALUE> - A string containing valid javascript
+     *   (either a javascript variable name that will be in scope at the time of the call or
+     *   a javascript function call whose return value will become the parameter).
+     *
+     * @return Call
+     */
+    public function addParameter(string $sType, string $sValue): Call
+    {
+        $this->pushParameter(new Parameter($sType, $sValue));
+        return $this;
+    }
+
+    /**
+     * Add a set of parameters to this request
+     *
+     * @param array $aParameters    The parameters
+     *
+     * @return Call
+     */
+    public function addParameters(array $aParameters): Call
+    {
+        foreach($aParameters as $xParameter)
+        {
+            $this->pushParameter(Parameter::make($xParameter));
+        }
+        return $this;
     }
 
     /**
@@ -74,6 +166,16 @@ class Call extends JsCall
     {
         array_shift($aArgs);
         return $aArgs;
+    }
+
+    /**
+     * @param DialogManager $xDialogManager
+     *
+     * @return void
+     */
+    public function setDialogManager(DialogManager $xDialogManager)
+    {
+        $this->xDialogManager = $xDialogManager;
     }
 
     /**
@@ -295,29 +397,6 @@ class Call extends JsCall
     }
 
     /**
-     * Convert this call to array
-     *
-     * @return array
-     */
-    public function toArray(): array
-    {
-        $aCall = parent::toArray();
-        if(($this->aConfirm))
-        {
-            $aCall['question'] = $this->aConfirm;
-        }
-        if(($this->aCondition))
-        {
-            $aCall['condition'] = $this->aCondition;
-        }
-        if(($this->aMessage))
-        {
-            $aCall['message'] = $this->aMessage;
-        }
-        return $aCall;
-    }
-
-    /**
      * Check if the request has a parameter of type Parameter::PAGE_NUMBER
      *
      * @return ParameterInterface|null
@@ -360,5 +439,71 @@ class Call extends JsCall
             $xParameter->setValue($nPageNumber);
         }
         return $this;
+    }
+
+    /**
+     * Convert this call to array
+     *
+     * @return array
+     */
+    public function toArray(): array
+    {
+        $aCalls = [[
+            '_type' => 'func',
+            '_name' => $this->sFunction,
+            'args' => array_map(function(JsonSerializable $xParam) {
+                return $xParam->jsonSerialize();
+            }, $this->aParameters),
+        ]];
+        if($this->bToInt)
+        {
+            $aCalls[] = [
+                '_type' => 'func',
+                '_name' => 'toInt',
+                'args' => [[ '_type' => '_', '_name' => 'this' ]],
+            ];
+        }
+
+        $aCall = ['_type' => 'expr', 'calls' => $aCalls];
+        if(($this->aConfirm))
+        {
+            $aCall['question'] = $this->aConfirm;
+        }
+        if(($this->aCondition))
+        {
+            $aCall['condition'] = $this->aCondition;
+        }
+        if(($this->aMessage))
+        {
+            $aCall['message'] = $this->aMessage;
+        }
+
+        return $aCall;
+    }
+
+    /**
+     * Convert this call to array, when converting the response into json.
+     *
+     * This is a method of the JsonSerializable interface.
+     *
+     * @return array
+     */
+    public function jsonSerialize(): array
+    {
+        return $this->toArray();
+    }
+
+    /**
+     * Returns a string representation of the script output (javascript) from this request object
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        $aParameters = array_map(function(Stringable $xParam) {
+            return $xParam->__toString();
+        }, $this->aParameters);
+        $sScript = $this->sFunction . '(' . implode(', ', $aParameters) . ')';
+        return $this->bToInt ? "parseInt($sScript)" : $sScript;
     }
 }

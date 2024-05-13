@@ -25,11 +25,11 @@ use Jaxon\App\Dialog\DialogManager;
 use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Plugin\Response\DataBag\DataBagContext;
 use Jaxon\Plugin\Response\DataBag\DataBagPlugin;
-use Jaxon\Plugin\Response\JQuery\DomSelector;
 use Jaxon\Plugin\Response\JQuery\JQueryPlugin;
 use Jaxon\Plugin\Response\Pagination\Paginator;
 use Jaxon\Plugin\Response\Pagination\PaginatorPlugin;
 use Jaxon\Plugin\ResponsePlugin;
+use Jaxon\Request\Js\Selector;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7\Stream;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
@@ -147,16 +147,16 @@ class Response implements ResponseInterface
     }
 
     /**
-     * Create a JQuery DomSelector, and link it to the current response.
+     * Create a JQuery Selector, and link it to the current response.
      *
      * This is a shortcut to the JQuery plugin.
      *
      * @param string $sPath    The jQuery selector path
      * @param mixed $xContext    A context associated to the selector
      *
-     * @return DomSelector
+     * @return Selector
      */
-    public function jq(string $sPath = '', $xContext = null): DomSelector
+    public function jq(string $sPath = '', $xContext = null): Selector
     {
         /** @var JQueryPlugin */
         $xPlugin = $this->plugin('pg');

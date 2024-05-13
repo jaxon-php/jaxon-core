@@ -4,9 +4,9 @@ namespace Jaxon;
 
 use Jaxon\App\Ajax;
 use Jaxon\Exception\SetupException;
-use Jaxon\Plugin\Response\JQuery\DomSelector;
 use Jaxon\Request\Factory\ParameterFactory;
 use Jaxon\Request\Factory\RequestFactory;
+use Jaxon\Request\Js\Selector;
 
 /**
  * start.php
@@ -56,7 +56,7 @@ function pm(): ParameterFactory
 }
 
 /**
- * Create a JQuery DomSelector with a given path
+ * Create a JQuery Selector with a given path
  *
  * The returned element is not linked to any Jaxon response, so this function shall be used
  * to insert jQuery's code into a javascript function, or as a parameter of a Jaxon function call.
@@ -64,9 +64,9 @@ function pm(): ParameterFactory
  * @param string $sPath    The jQuery selector path
  * @param mixed $xContext    A context associated to the selector
  *
- * @return DomSelector
+ * @return Selector
  */
-function jq(string $sPath = '', $xContext = null): DomSelector
+function jq(string $sPath = '', $xContext = null): Selector
 {
     return Ajax::getInstance()->di()->getJQueryPlugin()->command(false)->selector($sPath, $xContext);
 }
