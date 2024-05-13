@@ -291,11 +291,12 @@ interface ResponseInterface
      * following this one, will be skipped.
      *
      * @param integer $nCommandCount    The number of commands to skip upon cancel
-     * @param string $sMessage    The message to display to the user
+     * @param string $sQuestion    The question to ask to the user
+     * @param array $aArgs      The arguments for the placeholders in the question
      *
      * @return ResponseInterface
      */
-    public function confirmCommands(int $nCommandCount, string $sMessage): ResponseInterface;
+    public function confirmCommands(int $nCommandCount, string $sMessage, array $aArgs = []): ResponseInterface;
 
     /**
      * Add a command to display an alert message to the user

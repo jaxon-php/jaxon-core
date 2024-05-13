@@ -21,6 +21,7 @@
 
 namespace Jaxon\Response;
 
+use Jaxon\App\Dialog\Library\DialogLibraryManager;
 use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Plugin\Response\DataBag\DataBagContext;
 use Jaxon\Plugin\Response\DataBag\DataBagPlugin;
@@ -50,6 +51,11 @@ class Response implements ResponseInterface
     protected $xPluginManager;
 
     /**
+     * @var DialogLibraryManager
+     */
+    protected $xDialogManager;
+
+    /**
      * @var Psr17Factory
      */
     protected $xPsr17Factory;
@@ -62,15 +68,18 @@ class Response implements ResponseInterface
     /**
      * The constructor
      *
-     * @param PluginManager $xPluginManager
      * @param Psr17Factory $xPsr17Factory
      * @param PsrRequestInterface $xRequest
+     * @param PluginManager $xPluginManager
+     * @param DialogLibraryManager $xDialogManager
      */
-    public function __construct(PluginManager $xPluginManager, Psr17Factory $xPsr17Factory, PsrRequestInterface $xRequest)
+    public function __construct(Psr17Factory $xPsr17Factory, PsrRequestInterface $xRequest,
+        PluginManager $xPluginManager, DialogLibraryManager $xDialogManager)
     {
-        $this->xPluginManager = $xPluginManager;
         $this->xPsr17Factory = $xPsr17Factory;
         $this->xRequest = $xRequest;
+        $this->xPluginManager = $xPluginManager;
+        $this->xDialogManager = $xDialogManager;
     }
 
     /**

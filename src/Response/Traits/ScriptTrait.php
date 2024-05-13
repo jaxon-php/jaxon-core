@@ -47,15 +47,16 @@ trait ScriptTrait
      * following this one, will be skipped.
      *
      * @param integer $nCommandCount    The number of commands to skip upon cancel
-     * @param string $sQuestion    The message to display to the user
+     * @param string $sQuestion    The question to ask to the user
+     * @param array $aArgs      The arguments for the placeholders in the question
      *
      * @return ResponseInterface
      */
-    public function confirmCommands(int $nCommandCount, string $sQuestion): ResponseInterface
+    public function confirmCommands(int $nCommandCount, string $sQuestion, array $aArgs = []): ResponseInterface
     {
         return $this->addCommand('script.confirm', [
             'count' => $nCommandCount,
-            'question' => $this->str($sQuestion),
+            'question' => $this->xDialogManager->confirm($this->str($sQuestion), $aArgs),
         ]);
     }
 
@@ -82,7 +83,8 @@ trait ScriptTrait
      */
     public function alert(string $sMessage): ResponseInterface
     {
-        return $this->addCommand('script.alert', ['message' => $this->str($sMessage)]);
+        $this->plugin('dialog')->info($this->str($sMessage));
+        return $this;
     }
 
     /**
