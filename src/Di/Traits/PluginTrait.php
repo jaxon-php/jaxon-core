@@ -4,6 +4,7 @@ namespace Jaxon\Di\Traits;
 
 use Jaxon\Jaxon;
 use Jaxon\App\Config\ConfigManager;
+use Jaxon\App\Dialog\DialogManager;
 use Jaxon\App\Dialog\Library\DialogLibraryManager;
 use Jaxon\App\I18n\Translator;
 use Jaxon\App\View\ViewRenderer;
@@ -65,7 +66,7 @@ trait PluginTrait
         });
         // Dialog response plugin
         $this->set(DialogPlugin::class, function($di) {
-            return new DialogPlugin($di->g(DialogLibraryManager::class));
+            return new DialogPlugin($di->g(DialogManager::class), $di->g(DialogLibraryManager::class));
         });
     }
 

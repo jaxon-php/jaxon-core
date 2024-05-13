@@ -20,7 +20,7 @@
 
 namespace Jaxon\Request\Call;
 
-use Jaxon\App\Dialog\Library\DialogLibraryManager;
+use Jaxon\App\Dialog\DialogManager;
 
 use function array_shift;
 use function func_get_args;
@@ -28,9 +28,9 @@ use function func_get_args;
 class Call extends JsCall
 {
     /**
-     * @var DialogLibraryManager
+     * @var DialogManager
      */
-    protected $xLibraryManager;
+    protected $xDialogManager;
 
     /**
      * The arguments of the else() calls
@@ -57,12 +57,12 @@ class Call extends JsCall
      * The constructor.
      *
      * @param string $sName    The javascript function or method name
-     * @param DialogLibraryManager $xLibraryManager
+     * @param DialogManager $xDialogManager
      */
-    public function __construct(string $sName, DialogLibraryManager $xLibraryManager)
+    public function __construct(string $sName, DialogManager $xDialogManager)
     {
         parent::__construct($sName);
-        $this->xLibraryManager = $xLibraryManager;
+        $this->xDialogManager = $xDialogManager;
     }
 
     /**
@@ -85,7 +85,7 @@ class Call extends JsCall
      */
     public function elseShow(string $sMessage): Call
     {
-        $this->aMessage = $this->xLibraryManager->warning($sMessage, $this->getArgs(func_get_args()));
+        $this->aMessage = $this->xDialogManager->warning($sMessage, $this->getArgs(func_get_args()));
         return $this;
     }
 
@@ -98,7 +98,7 @@ class Call extends JsCall
      */
     public function elseInfo(string $sMessage): Call
     {
-        $this->aMessage = $this->xLibraryManager->info($sMessage, $this->getArgs(func_get_args()));
+        $this->aMessage = $this->xDialogManager->info($sMessage, $this->getArgs(func_get_args()));
         return $this;
     }
 
@@ -111,7 +111,7 @@ class Call extends JsCall
      */
     public function elseSuccess(string $sMessage): Call
     {
-        $this->aMessage = $this->xLibraryManager->success($sMessage, $this->getArgs(func_get_args()));
+        $this->aMessage = $this->xDialogManager->success($sMessage, $this->getArgs(func_get_args()));
         return $this;
     }
 
@@ -124,7 +124,7 @@ class Call extends JsCall
      */
     public function elseWarning(string $sMessage): Call
     {
-        $this->aMessage = $this->xLibraryManager->warning($sMessage, $this->getArgs(func_get_args()));
+        $this->aMessage = $this->xDialogManager->warning($sMessage, $this->getArgs(func_get_args()));
         return $this;
     }
 
@@ -137,7 +137,7 @@ class Call extends JsCall
      */
     public function elseError(string $sMessage): Call
     {
-        $this->aMessage = $this->xLibraryManager->error($sMessage, $this->getArgs(func_get_args()));
+        $this->aMessage = $this->xDialogManager->error($sMessage, $this->getArgs(func_get_args()));
         return $this;
     }
 
@@ -150,7 +150,7 @@ class Call extends JsCall
      */
     public function confirm(string $sQuestion): Call
     {
-        $this->aConfirm = $this->xLibraryManager->confirm($sQuestion, $this->getArgs(func_get_args()));
+        $this->aConfirm = $this->xDialogManager->confirm($sQuestion, $this->getArgs(func_get_args()));
         return $this;
     }
 

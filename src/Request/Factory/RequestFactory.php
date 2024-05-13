@@ -15,7 +15,7 @@ namespace Jaxon\Request\Factory;
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-use Jaxon\App\Dialog\Library\DialogLibraryManager;
+use Jaxon\App\Dialog\DialogManager;
 use Jaxon\Request\Call\Call;
 
 use function array_shift;
@@ -34,20 +34,20 @@ class RequestFactory
     protected $bNoPrefix = false;
 
     /**
-     * @var DialogLibraryManager
+     * @var DialogManager
      */
-    protected $xDialogLibraryManager;
+    protected $xDialogManager;
 
     /**
      * The class constructor
      *
      * @param string $sPrefix
-     * @param DialogLibraryManager $xDialogLibraryManager
+     * @param DialogManager $xDialogManager
      */
-    public function __construct(string $sPrefix, DialogLibraryManager $xDialogLibraryManager)
+    public function __construct(string $sPrefix, DialogManager $xDialogManager)
     {
         $this->sPrefix = $sPrefix;
-        $this->xDialogLibraryManager = $xDialogLibraryManager;
+        $this->xDialogManager = $xDialogManager;
     }
 
     /**
@@ -73,7 +73,7 @@ class RequestFactory
     {
         // Make the request
         $sPrefix = $this->bNoPrefix ? '' : $this->sPrefix;
-        $xCall = new Call($sPrefix . $sFunction, $this->xDialogLibraryManager);
+        $xCall = new Call($sPrefix . $sFunction, $this->xDialogManager);
         $xCall->addParameters($aArguments);
         return $xCall;
     }

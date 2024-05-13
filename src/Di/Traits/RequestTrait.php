@@ -3,7 +3,7 @@
 namespace Jaxon\Di\Traits;
 
 use Jaxon\App\Config\ConfigManager;
-use Jaxon\App\Dialog\Library\DialogLibraryManager;
+use Jaxon\App\Dialog\DialogManager;
 use Jaxon\App\I18n\Translator;
 use Jaxon\Di\Container;
 use Jaxon\Plugin\Manager\PluginManager;
@@ -54,7 +54,7 @@ trait RequestTrait
         // Factory for requests to functions
         $this->set(RequestFactory::class, function($di) {
             $sPrefix = $di->g(ConfigManager::class)->getOption('core.prefix.function');
-            return new RequestFactory($sPrefix, $di->g(DialogLibraryManager::class));
+            return new RequestFactory($sPrefix, $di->g(DialogManager::class));
         });
         // Parameter Factory
         $this->set(ParameterFactory::class, function() {

@@ -4,7 +4,7 @@ namespace Jaxon\Di\Traits;
 
 use Jaxon\App\CallableClass;
 use Jaxon\App\Config\ConfigManager;
-use Jaxon\App\Dialog\Library\DialogLibraryManager;
+use Jaxon\App\Dialog\DialogManager;
 use Jaxon\App\I18n\Translator;
 use Jaxon\App\View\ViewRenderer;
 use Jaxon\Exception\SetupException;
@@ -125,7 +125,7 @@ trait RegisterTrait
             $xConfigManager = $di->g(ConfigManager::class);
             $xCallable = $di->g($sCallableObject);
             $sJsClass = $xConfigManager->getOption('core.prefix.class') . $xCallable->getJsName() . '.';
-            return new RequestFactory($sJsClass, $di->g(DialogLibraryManager::class));
+            return new RequestFactory($sJsClass, $di->g(DialogManager::class));
         });
 
         // Register the user class, but only if the user didn't already.

@@ -15,6 +15,7 @@
 
 namespace Jaxon\Plugin\Response\Dialog;
 
+use Jaxon\App\Dialog\DialogManager;
 use Jaxon\App\Dialog\Library\DialogLibraryManager;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\ResponsePlugin;
@@ -31,6 +32,11 @@ class DialogPlugin extends ResponsePlugin
     const NAME = 'dialog';
 
     /**
+     * @var DialogManager
+     */
+    protected $xDialogManager;
+
+    /**
      * @var DialogLibraryManager
      */
     protected $xLibraryManager;
@@ -43,10 +49,12 @@ class DialogPlugin extends ResponsePlugin
     /**
      * The constructor
      *
+     * @param DialogManager $xDialogManager
      * @param DialogLibraryManager $xLibraryManager
      */
-    public function __construct(DialogLibraryManager $xLibraryManager)
+    public function __construct(DialogManager $xDialogManager, DialogLibraryManager $xLibraryManager)
     {
+        $this->xDialogManager = $xDialogManager;
         $this->xLibraryManager = $xLibraryManager;
     }
 
@@ -173,7 +181,7 @@ class DialogPlugin extends ResponsePlugin
     {
         // Show the modal dialog
         $this->addCommand('dialog.modal.show',
-            $this->xLibraryManager->show($sTitle, $sContent, $aButtons, $aOptions));
+            $this->xDialogManager->show($sTitle, $sContent, $aButtons, $aOptions));
     }
 
     /**
@@ -184,7 +192,7 @@ class DialogPlugin extends ResponsePlugin
     public function hide()
     {
         // Hide the modal dialog
-        $this->addCommand('dialog.modal.hide', $this->xLibraryManager->hide());
+        $this->addCommand('dialog.modal.hide', $this->xDialogManager->hide());
     }
 
     /**
@@ -196,7 +204,7 @@ class DialogPlugin extends ResponsePlugin
      */
     public function title(string $sTitle): DialogPlugin
     {
-        $this->xLibraryManager->title($sTitle);
+        $this->xDialogManager->title($sTitle);
         return $this;
     }
 
@@ -210,7 +218,7 @@ class DialogPlugin extends ResponsePlugin
      */
     public function success(string $sMessage, array $aArgs = [])
     {
-        $this->addCommand('dialog.message', $this->xLibraryManager->success($sMessage, $aArgs));
+        $this->addCommand('dialog.message', $this->xDialogManager->success($sMessage, $aArgs));
     }
 
     /**
@@ -223,7 +231,7 @@ class DialogPlugin extends ResponsePlugin
      */
     public function info(string $sMessage, array $aArgs = [])
     {
-        $this->addCommand('dialog.message', $this->xLibraryManager->info($sMessage, $aArgs));
+        $this->addCommand('dialog.message', $this->xDialogManager->info($sMessage, $aArgs));
     }
 
     /**
@@ -236,7 +244,7 @@ class DialogPlugin extends ResponsePlugin
      */
     public function warning(string $sMessage, array $aArgs = [])
     {
-        $this->addCommand('dialog.message', $this->xLibraryManager->warning($sMessage, $aArgs));
+        $this->addCommand('dialog.message', $this->xDialogManager->warning($sMessage, $aArgs));
     }
 
     /**
@@ -249,6 +257,6 @@ class DialogPlugin extends ResponsePlugin
      */
     public function error(string $sMessage, array $aArgs = [])
     {
-        $this->addCommand('dialog.message', $this->xLibraryManager->error($sMessage, $aArgs));
+        $this->addCommand('dialog.message', $this->xDialogManager->error($sMessage, $aArgs));
     }
 }

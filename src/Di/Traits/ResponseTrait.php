@@ -3,7 +3,7 @@
 namespace Jaxon\Di\Traits;
 
 use Jaxon\App\Config\ConfigManager;
-use Jaxon\App\Dialog\Library\DialogLibraryManager;
+use Jaxon\App\Dialog\DialogManager;
 use Jaxon\App\I18n\Translator;
 use Jaxon\Di\Container;
 use Jaxon\Plugin\Manager\PluginManager;
@@ -27,7 +27,7 @@ trait ResponseTrait
         // Global Response
         $this->set(Response::class, function($di) {
             return new Response($di->g(Psr17Factory::class), $di->g(ServerRequestInterface::class),
-                $di->g(PluginManager::class), $di->g(DialogLibraryManager::class));
+                $di->g(PluginManager::class), $di->g(DialogManager::class));
         });
         // Response Manager
         $this->set(ResponseManager::class, function($di) {
@@ -64,7 +64,7 @@ trait ResponseTrait
     public function newResponse(): ResponseInterface
     {
         return new Response($this->g(Psr17Factory::class), $this->g(ServerRequestInterface::class),
-            $this->g(PluginManager::class), $this->g(DialogLibraryManager::class));
+            $this->g(PluginManager::class), $this->g(DialogManager::class));
     }
 
     /**

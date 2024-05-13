@@ -3,6 +3,7 @@
 namespace Jaxon\Di\Traits;
 
 use Jaxon\App\Config\ConfigManager;
+use Jaxon\App\Dialog\DialogManager;
 use Jaxon\App\Dialog\Library\AlertLibrary;
 use Jaxon\App\Dialog\Library\DialogLibraryHelper;
 use Jaxon\App\Dialog\Library\DialogLibraryManager;
@@ -51,6 +52,9 @@ trait ViewTrait
         // Dialog library manager
         $this->set(DialogLibraryManager::class, function($di) {
             return new DialogLibraryManager($di->g(Container::class), $di->g(ConfigManager::class), $di->g(Translator::class));
+        });
+        $this->set(DialogManager::class, function($di) {
+            return new DialogManager($di->g(DialogLibraryManager::class));
         });
         $this->val(AlertLibrary::class, new AlertLibrary());
     }
@@ -138,6 +142,16 @@ trait ViewTrait
     public function getDialogLibraryManager(): DialogLibraryManager
     {
         return $this->g(DialogLibraryManager::class);
+    }
+
+    /**
+     * Get the dialog manager
+     *
+     * @return DialogManager
+     */
+    public function getDialogManager(): DialogManager
+    {
+        return $this->g(DialogManager::class);
     }
 
     /**
