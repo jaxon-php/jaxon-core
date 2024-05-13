@@ -27,9 +27,9 @@ use Jaxon\Plugin\Response\DataBag\DataBagContext;
 use Jaxon\Plugin\Response\DataBag\DataBagPlugin;
 use Jaxon\Plugin\Response\JQuery\DomSelector;
 use Jaxon\Plugin\Response\JQuery\JQueryPlugin;
+use Jaxon\Plugin\Response\Pagination\Paginator;
 use Jaxon\Plugin\Response\Pagination\PaginatorPlugin;
 use Jaxon\Plugin\ResponsePlugin;
-use Jaxon\Request\Call\Call;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7\Stream;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
@@ -180,18 +180,17 @@ class Response implements ResponseInterface
     /**
      * Render an HTML pagination control.
      *
-     * @param Call $xCall
      * @param int $nCurrentPage     The current page number
      * @param int $nItemsPerPage    The number of items per page
      * @param int $nTotalItems      The total number of items
      *
-     * @return void
+     * @return Paginator
      */
-    public function paginate(Call $xCall, int $nCurrentPage, int $nItemsPerPage, int $nTotalItems)
+    public function paginator(int $nCurrentPage, int $nItemsPerPage, int $nTotalItems): Paginator
     {
         /** @var PaginatorPlugin */
         $xPlugin = $this->plugin('pg');
-        $xPlugin->render($xCall, $nCurrentPage, $nItemsPerPage, $nTotalItems);
+        return $xPlugin->paginator($nCurrentPage, $nItemsPerPage, $nTotalItems);
     }
 
     /**

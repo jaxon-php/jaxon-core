@@ -40,6 +40,8 @@ SOFTWARE.
 
 namespace Jaxon\Plugin\Response\Pagination;
 
+use Jaxon\Request\Call\Call;
+
 use function array_walk;
 use function ceil;
 use function floor;
@@ -88,31 +90,37 @@ class Paginator
     protected $sEllipsysText = '...';
 
     /**
+     * @var PaginatorPlugin
+     */
+    private $xPlugin;
+
+    /**
      * The constructor.
      *
+     * @param PaginatorPlugin $xPlugin
      * @param int $nCurrentPage     The current page number
      * @param int $nItemsPerPage    The number of items per page
      * @param int $nTotalItems      The total number of items
      */
-    public function __construct(int $nCurrentPage, int $nItemsPerPage, int $nTotalItems)
+    public function __construct(PaginatorPlugin $xPlugin, int $nCurrentPage, int $nItemsPerPage, int $nTotalItems)
     {
-        $this->setup($nCurrentPage, $nItemsPerPage, $nTotalItems);
+        $this->xPlugin = $xPlugin;
+        $this->setCurrentPage($nCurrentPage)
+            ->setItemsPerPage($nItemsPerPage)
+            ->setTotalItems($nTotalItems);
     }
 
     /**
-     * Setup the paginator
+     * Render the paginator
      *
-     * @param int $nCurrentPage     The current page number
-     * @param int $nItemsPerPage    The number of items per page
-     * @param int $nTotalItems      The total number of items
+     * @param Call $xCall
+     * @param string $sWrapperId
      *
-     * @return Paginator
+     * @return string
      */
-    public function setup(int $nCurrentPage, int $nItemsPerPage, int $nTotalItems): Paginator
+    public function paginate(Call $xCall, string $sWrapperId)
     {
-        return $this->setCurrentPage($nCurrentPage)
-            ->setItemsPerPage($nItemsPerPage)
-            ->setTotalItems($nTotalItems);
+        $this->xPlugin->render($this, $xCall, $sWrapperId);
     }
 
     /**

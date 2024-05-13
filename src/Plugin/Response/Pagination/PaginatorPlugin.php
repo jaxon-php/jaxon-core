@@ -26,20 +26,22 @@ use function trim;
 /**
  * Usage
  *
- * Step 1: Create a wrapper for the pagination.
+ * Step 1: Render a template containing a wrapper for the pagination.
  *
  * $html = $this->render($pageTemplate, [
  *     // ...
- *     'pagination' => $this->response->pg->wrapper($wrapperId),
  * ]);
  *
- * Step 2: Render the pagination into the wrapper.
+ * Step 2: Create a paginator and render the pagination into the wrapper.
  *
- * $this->response->pg->render($this->rq()->page(), $pageNumber, $perPage, $total);
+ * $this->response->pg->paginator($pageNumber, $perPage, $total)
+ *     ->paginate($this->rq()->page(), $wrapperId);
  * // Or, using the response shortcut
- * $this->response->paginate($this->rq()->page(), $pageNumber, $perPage, $total);
+ * $this->response->paginator($pageNumber, $perPage, $total)
+ *     ->paginate($this->rq()->page(), $wrapperId);
  * // Or, in a class that inherits from CallableClass
- * $this->paginate($this->rq()->page(), $pageNumber, $perPage, $total);
+ * $this->paginator($pageNumber, $perPage, $total)
+ *     ->paginate($this->rq()->page(), $wrapperId);
  */
 class PaginatorPlugin extends ResponsePlugin
 {
@@ -52,11 +54,6 @@ class PaginatorPlugin extends ResponsePlugin
      * @var ViewRenderer
      */
     protected $xRenderer;
-
-    /**
-     * @var string
-     */
-    protected $sWrapperId = '';
 
     /**
      * The constructor.
@@ -86,19 +83,6 @@ class PaginatorPlugin extends ResponsePlugin
     }
 
     /**
-     * Get the pagination wrapper HTML
-     *
-     * @param string $sWrapperId        The pagination wrapper id
-     *
-     * @return string
-     */
-    public function wrapper(string $sWrapperId): string
-    {
-        $this->sWrapperId = trim($sWrapperId);
-        return $this->sWrapperId;
-    }
-
-    /**
      * @param array<Page> $aPages
      *
      * @return null|Store
@@ -122,18 +106,30 @@ class PaginatorPlugin extends ResponsePlugin
     }
 
     /**
-     * Render an HTML pagination control.
+     * Create a paginator
      *
-     * @param Call $xCall
      * @param int $nCurrentPage     The current page number
      * @param int $nItemsPerPage    The number of items per page
      * @param int $nTotalItems      The total number of items
      *
+     * @return Paginator
+     */
+    public function paginator(int $nCurrentPage, int $nItemsPerPage, int $nTotalItems): Paginator
+    {
+        return new Paginator($this, $nCurrentPage, $nItemsPerPage, $nTotalItems);
+    }
+
+    /**
+     * Render an HTML pagination control.
+     *
+     * @param Paginator $xPaginator
+     * @param Call $xCall
+     * @param string $sWrapperId
+     *
      * @return void
      */
-    public function render(Call $xCall, int $nCurrentPage, int $nItemsPerPage, int $nTotalItems)
+    public function render(Paginator $xPaginator, Call $xCall, string $sWrapperId)
     {
-        $xPaginator = new Paginator($nCurrentPage, $nItemsPerPage, $nTotalItems);
         $aPages = $xPaginator->pages();
         if(count($aPages) === 0)
         {
@@ -150,15 +146,14 @@ class PaginatorPlugin extends ResponsePlugin
         {
             $xCall->addParameter(Parameter::PAGE_NUMBER, 0);
         }
+
         // Show the pagination links
-        $this->response()->html($this->sWrapperId, $xStore->__toString());
+        $sWrapperId = trim($sWrapperId);
+        $this->response()->html($sWrapperId, $xStore->__toString());
         // Set click handlers on the pagination links
         $this->addCommand('pg.paginate', [
-            'id' => $this->sWrapperId,
-            'call' => $xCall->toArray(),
-            // 'pages' => array_map(function(Page $xPage) {
-            //     return ['type' => $xPage->sType, 'number' => $xPage->nNumber];
-            // }, $aPages),
+            'id' => $sWrapperId,
+            'func' => $xCall->toArray(),
         ]);
     }
 }
