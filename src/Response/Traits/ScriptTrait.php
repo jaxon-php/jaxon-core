@@ -41,6 +41,20 @@ trait ScriptTrait
     abstract protected function str($xData): string;
 
     /**
+     * Add a command to call the specified javascript function with the given (optional) parameters
+     *
+     * @param string $sFunc    The name of the function to call
+     *
+     * @return ResponseInterface
+     */
+    public function call(string $sFunc): ResponseInterface
+    {
+        $aArgs = func_get_args();
+        array_shift($aArgs);
+        return $this->addCommand('script.call', ['func' => $this->str($sFunc),'args' => $aArgs]);
+    }
+
+    /**
      * Response command that prompts user with [ok] [cancel] style message box
      *
      * If the user clicks cancel, the specified number of response commands
@@ -61,29 +75,16 @@ trait ScriptTrait
     }
 
     /**
-     * Add a command to call the specified javascript function with the given (optional) parameters
-     *
-     * @param string $sFunc    The name of the function to call
-     *
-     * @return ResponseInterface
-     */
-    public function call(string $sFunc): ResponseInterface
-    {
-        $aArgs = func_get_args();
-        array_shift($aArgs);
-        return $this->addCommand('script.call', ['func' => $this->str($sFunc),'args' => $aArgs]);
-    }
-
-    /**
      * Add a command to display an alert message to the user
      *
      * @param string $sMessage    The message to be displayed
+     * @param array $aArgs      The arguments for the placeholders in the message
      *
      * @return ResponseInterface
      */
-    public function alert(string $sMessage): ResponseInterface
+    public function alert(string $sMessage, array $aArgs = []): ResponseInterface
     {
-        $this->plugin('dialog')->info($this->str($sMessage));
+        $this->addCommand('dialog.message', $this->xDialogManager->info($this->str($sMessage), $aArgs));
         return $this;
     }
 

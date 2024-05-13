@@ -302,10 +302,11 @@ interface ResponseInterface
      * Add a command to display an alert message to the user
      *
      * @param string $sMessage    The message to be displayed
+     * @param array $aArgs      The arguments for the placeholders in the message
      *
      * @return ResponseInterface
      */
-    public function alert(string $sMessage): ResponseInterface;
+    public function alert(string $sMessage, array $aArgs = []): ResponseInterface;
 
     /**
      * Add a command to ask the browser to navigate to the specified URL
