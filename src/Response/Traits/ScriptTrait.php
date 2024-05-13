@@ -12,10 +12,13 @@
 
 namespace Jaxon\Response\Traits;
 
+use Jaxon\App\Dialog\DialogManager;
 use Jaxon\Request\Call\JsCall;
 use Jaxon\Response\ResponseInterface;
+use Closure;
 use JsonSerializable;
 
+use function Jaxon\jaxon;
 use function func_get_args;
 use function array_shift;
 
@@ -41,6 +44,11 @@ trait ScriptTrait
     abstract protected function str($xData): string;
 
     /**
+     * @return DialogManager
+     */
+    abstract protected function dialog(): DialogManager;
+
+    /**
      * Add a command to call the specified javascript function with the given (optional) parameters
      *
      * @param string $sFunc    The name of the function to call
@@ -57,21 +65,30 @@ trait ScriptTrait
     /**
      * Response command that prompts user with [ok] [cancel] style message box
      *
-     * If the user clicks cancel, the specified number of response commands
-     * following this one, will be skipped.
+     * The provided closure will be called with a response object as unique parameter.
+     * If the user clicks cancel, the response commands defined in the closure will be skipped.
      *
-     * @param integer $nCommandCount    The number of commands to skip upon cancel
-     * @param string $sQuestion    The question to ask to the user
-     * @param array $aArgs      The arguments for the placeholders in the question
+     * @param Closure $fCalls    A closure that defines the commands that can be skipped
+     * @param string $sQuestion  The question to ask to the user
+     * @param array $aArgs       The arguments for the placeholders in the question
      *
      * @return ResponseInterface
      */
-    public function confirmCommands(int $nCommandCount, string $sQuestion, array $aArgs = []): ResponseInterface
+    public function confirm(Closure $fCalls, string $sQuestion, array $aArgs = []): ResponseInterface
     {
-        return $this->addCommand('script.confirm', [
-            'count' => $nCommandCount,
-            'question' => $this->xDialogManager->confirm($this->str($sQuestion), $aArgs),
-        ]);
+        $xResponse = jaxon()->newResponse();
+        $fCalls($xResponse);
+        if(($nCommandCount = $xResponse->getCommandCount()) > 0)
+        {
+            $this->addCommand('script.confirm', [
+                'count' => $nCommandCount,
+                'question' => $this->dialog()->confirm($this->str($sQuestion), $aArgs),
+            ]);
+
+            // Append the provided commands
+            $this->appendResponse($xResponse);
+        }
+        return $this;
     }
 
     /**
@@ -84,7 +101,7 @@ trait ScriptTrait
      */
     public function alert(string $sMessage, array $aArgs = []): ResponseInterface
     {
-        $this->addCommand('dialog.message', $this->xDialogManager->info($this->str($sMessage), $aArgs));
+        $this->addCommand('dialog.message', $this->dialog()->info($this->str($sMessage), $aArgs));
         return $this;
     }
 

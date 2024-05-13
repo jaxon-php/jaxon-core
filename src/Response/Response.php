@@ -83,6 +83,14 @@ class Response implements ResponseInterface
     }
 
     /**
+     * @return DialogManager
+     */
+    protected function dialog(): DialogManager
+    {
+        return $this->xDialogManager;
+    }
+
+    /**
      * @inheritDoc
      */
     public function getContentType(): string

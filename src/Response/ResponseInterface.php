@@ -5,6 +5,7 @@ namespace Jaxon\Response;
 use Jaxon\Plugin\ResponsePlugin;
 use Jaxon\Request\Call\JsCall;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
+use Closure;
 use JsonSerializable;
 
 interface ResponseInterface
@@ -287,16 +288,16 @@ interface ResponseInterface
     /**
      * Response command that prompts user with [ok] [cancel] style message box
      *
-     * If the user clicks cancel, the specified number of response commands
-     * following this one, will be skipped.
+     * The provided closure will be called with a response object as unique parameter.
+     * If the user clicks cancel, the response commands defined in the closure will be skipped.
      *
-     * @param integer $nCommandCount    The number of commands to skip upon cancel
-     * @param string $sQuestion    The question to ask to the user
-     * @param array $aArgs      The arguments for the placeholders in the question
+     * @param Closure $fCalls    A closure that defines the commands that can be skipped
+     * @param string $sQuestion  The question to ask to the user
+     * @param array $aArgs       The arguments for the placeholders in the question
      *
      * @return ResponseInterface
      */
-    public function confirmCommands(int $nCommandCount, string $sMessage, array $aArgs = []): ResponseInterface;
+    public function confirm(Closure $fCalls, string $sQuestion, array $aArgs = []): ResponseInterface;
 
     /**
      * Add a command to display an alert message to the user
