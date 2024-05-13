@@ -155,25 +155,11 @@ class Selector implements ParameterInterface
     }
 
     /**
-     * @return array
-     */
-    private function selector()
-    {
-        $sName = $this->sPath ?? 'this';
-        $aCall = ['_type' => 'select', '_name' => $sName];
-        if(($this->xContext))
-        {
-            $aCall['context'] = $this->xContext;
-        }
-        return $aCall;
-    }
-
-    /**
      * Get the selector js.
      *
      * @return string
      */
-    private function getPath()
+    private function getPathAsStr()
     {
         $jQuery = 'jaxon.jq'; // The JQuery selector
         if(!$this->sPath)
@@ -199,8 +185,22 @@ class Selector implements ParameterInterface
      */
     public function __toString(): string
     {
-        $sScript = $this->getPath() . implode('', $this->aCalls);
+        $sScript = $this->getPathAsStr() . implode('', $this->aCalls);
         return $this->bToInt ? "parseInt($sScript)" : $sScript;
+    }
+
+    /**
+     * @return array
+     */
+    private function getPathAsArray()
+    {
+        $sName = $this->sPath ?? 'this';
+        $aCall = ['_type' => 'select', '_name' => $sName];
+        if(($this->xContext))
+        {
+            $aCall['context'] = $this->xContext;
+        }
+        return $aCall;
     }
 
     /**
@@ -208,7 +208,7 @@ class Selector implements ParameterInterface
      */
     public function toArray(): array
     {
-        $aCalls = [$this->selector()];
+        $aCalls = [$this->getPathAsArray()];
         foreach($this->aCalls as $xCall)
         {
             $aCalls[] = $xCall->jsonSerialize();
