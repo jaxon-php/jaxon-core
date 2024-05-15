@@ -68,7 +68,7 @@ function pm(): ParameterFactory
  */
 function jq(string $sPath = '', $xContext = null): Selector
 {
-    return Ajax::getInstance()->di()->getJQueryPlugin()->command(false)->selector($sPath, $xContext);
+    return new Selector($sPath, $xContext);
 }
 
 // Register the Jaxon request and response plugins

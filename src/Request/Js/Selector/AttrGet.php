@@ -3,8 +3,9 @@
 namespace Jaxon\Request\Js\Selector;
 
 use JsonSerializable;
+use Stringable;
 
-class AttrGet implements JsonSerializable
+class AttrGet implements JsonSerializable, Stringable
 {
     /**
      * The attribute name

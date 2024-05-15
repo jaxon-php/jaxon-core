@@ -13,39 +13,6 @@ class JQueryPlugin extends ResponsePlugin
     const NAME = 'jquery';
 
     /**
-     * @var string
-     */
-    protected $jQueryNs;
-
-    /**
-     * True if the next selector is a command
-     *
-     * @var bool
-     */
-    protected $bCommand = true;
-
-    /**
-     * The class constructor
-     *
-     * @param string $jQueryNs
-     */
-    public function __construct(string $jQueryNs)
-    {
-        $this->jQueryNs = $jQueryNs;
-    }
-
-    /**
-     * @param bool $bCommand
-     *
-     * @return JQueryPlugin
-     */
-    public function command(bool $bCommand): JQueryPlugin
-    {
-        $this->bCommand = $bCommand;
-        return $this;
-    }
-
-    /**
      * @inheritDoc
      */
     public function getName(): string
@@ -76,12 +43,7 @@ class JQueryPlugin extends ResponsePlugin
     public function selector(string $sPath = '', $xContext = null): Selector
     {
         $xSelector = new Selector($sPath, $xContext);
-        if($this->bCommand && $this->response() !== null)
-        {
-            $this->addCommand('jquery.call', ['selector' => $xSelector]);
-        }
-        // Reset the command value.
-        $this->bCommand = true;
+        $this->addCommand('jquery.call', ['selector' => $xSelector]);
         return $xSelector;
     }
 }

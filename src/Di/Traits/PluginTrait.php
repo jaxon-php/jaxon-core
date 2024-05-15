@@ -57,8 +57,7 @@ trait PluginTrait
 
         // JQuery response plugin
         $this->set(JQueryPlugin::class, function($di) {
-            $jQueryNs = $di->g(ConfigManager::class)->getOption('core.jquery.no_conflict', false) ? 'jQuery' : '$';
-            return new JQueryPlugin($jQueryNs);
+            return new JQueryPlugin();
         });
         // DataBag response plugin
         $this->set(DataBagPlugin::class, function($di) {

@@ -27,8 +27,10 @@ use Stringable;
 use function array_map;
 use function array_shift;
 use function func_get_args;
+use function implode;
+use function json_encode;
 
-class Call
+class Call implements JsonSerializable, Stringable
 {
     /**
      * @var DialogManager
@@ -484,8 +486,6 @@ class Call
     /**
      * Convert this call to array, when converting the response into json.
      *
-     * This is a method of the JsonSerializable interface.
-     *
      * @return array
      */
     public function jsonSerialize(): array
@@ -494,11 +494,21 @@ class Call
     }
 
     /**
-     * Returns a string representation of the script output (javascript) from this request object
+     * Returns a call to jaxon as a string
      *
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
+    {
+        return 'jaxon.exec(' . json_encode($this->toArray()) . ')';
+    }
+
+    /**
+     * Returns the js code of the call
+     *
+     * @return string
+     */
+    public function toJs(): string
     {
         $aParameters = array_map(function(Stringable $xParam) {
             return $xParam->__toString();

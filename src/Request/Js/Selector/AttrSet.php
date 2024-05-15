@@ -5,8 +5,9 @@ namespace Jaxon\Request\Js\Selector;
 use Jaxon\Request\Js\Parameter;
 
 use JsonSerializable;
+use Stringable;
 
-class AttrSet implements JsonSerializable
+class AttrSet implements JsonSerializable, Stringable
 {
     /**
      * The attribute name

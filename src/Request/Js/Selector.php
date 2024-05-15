@@ -21,6 +21,7 @@
 namespace Jaxon\Request\Js;
 
 use function implode;
+use function is_a;
 use function trim;
 
 class Selector implements ParameterInterface
@@ -70,7 +71,7 @@ class Selector implements ParameterInterface
      */
     public function getType(): string
     {
-        return 'selector';
+        return 'expr';
     }
 
     /**
@@ -85,7 +86,6 @@ class Selector implements ParameterInterface
     {
         // Append the action into the array
         $this->aCalls[] = new Selector\Method($sMethod, $aArguments);
-        // Return $this so the calls can be chained
         return $this;
     }
 
@@ -100,7 +100,6 @@ class Selector implements ParameterInterface
     {
         // Append the action into the array
         $this->aCalls[] = new Selector\AttrGet($sAttribute);
-        // Return $this so the calls can be chained
         return $this;
     }
 
@@ -116,8 +115,7 @@ class Selector implements ParameterInterface
     {
         // Append the action into the array
         $this->aCalls[] = new Selector\AttrSet($sAttribute, $xValue);
-        // No other call is allowed after a set
-        // return $this;
+        return $this;
     }
 
     /**
@@ -126,11 +124,12 @@ class Selector implements ParameterInterface
      * @param string $sName
      * @param Call $xHandler
      *
-     * @return void
+     * @return Selector
      */
-    public function on(string $sName, Call $xHandler)
+    public function on(string $sName, Call $xHandler): Selector
     {
         $this->aCalls[] = new Selector\Event($sName, $xHandler);
+        return $this;
     }
 
     /**
@@ -138,11 +137,12 @@ class Selector implements ParameterInterface
      *
      * @param Call $xHandler
      *
-     * @return void
+     * @return Selector
      */
-    public function click(Call $xHandler)
+    public function click(Call $xHandler): Selector
     {
         $this->on('click', $xHandler);
+        return $this;
     }
 
     /**
@@ -198,7 +198,8 @@ class Selector implements ParameterInterface
         $aCall = ['_type' => 'select', '_name' => $sName];
         if(($this->xContext))
         {
-            $aCall['context'] = $this->xContext;
+            $aCall['context'] = is_a($this->xContext, self::class) ?
+                $this->xContext->jsonSerialize() :$this->xContext;
         }
         return $aCall;
     }
@@ -221,7 +222,7 @@ class Selector implements ParameterInterface
                 'args' => [[ '_type' => '_', '_name' => 'this' ]],
             ];
         }
-        return ['_type' => 'expr', 'calls' => $aCalls];
+        return ['_type' => $this->getType(), 'calls' => $aCalls];
     }
 
     /**

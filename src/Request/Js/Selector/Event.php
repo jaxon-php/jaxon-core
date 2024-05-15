@@ -3,8 +3,10 @@
 namespace Jaxon\Request\Js\Selector;
 
 use Jaxon\Request\Js\Call;
+use JsonSerializable;
+use Stringable;
 
-class Event
+class Event implements JsonSerializable, Stringable
 {
     /**
      * @var string
@@ -40,5 +42,15 @@ class Event
             '_name' => $this->sName,
             'func' => $this->xHandler->jsonSerialize(),
         ];
+    }
+
+    /**
+     * Returns a string representation of this call
+     *
+     * @return string
+     */
+    public function __toString(): string
+    {
+        return ".on('{$this->sName}', () => { " . $this->xHandler->__toString() . '; })';
     }
 }
