@@ -2,21 +2,55 @@
 
 namespace Jaxon\Request\Js\Selector;
 
-use Jaxon\Request\Js\Call;
+use Jaxon\Request\Js\Parameter;
+use JsonSerializable;
+use Stringable;
 
-class Method extends Call
+use function array_map;
+use function implode;
+
+class Method implements JsonSerializable, Stringable
 {
+    /**
+     * The name of the javascript function
+     *
+     * @var string
+     */
+    private $sName;
+
+    /**
+     * @var array<ParameterInterface>
+     */
+    private $aParameters = [];
+
     /**
      * The constructor.
      *
-     * @param string $sMethod    The jQuery function
-     * @param array $aArguments    The arguments of the jQuery function
+     * @param string $sName     The method name
+     * @param array $aArguments The method arguments
      */
-    public function __construct(string $sMethod, array $aArguments)
+    public function __construct(string $sName, array $aArguments)
     {
-        parent::__construct($sMethod);
-        // Add the arguments to the parameter list
-        $this->addParameters($aArguments);
+        $this->sName = $sName;
+        $this->aParameters = array_map(function($xArgument) {
+            return Parameter::make($xArgument);
+        }, $aArguments);
+    }
+
+    /**
+     * Convert this call to array, when converting the response into json.
+     *
+     * @return array
+     */
+    public function jsonSerialize(): array
+    {
+        return [
+            '_type' => 'method',
+            '_name' => $this->sName,
+            'args' => array_map(function(JsonSerializable $xParam) {
+                return $xParam->jsonSerialize();
+            }, $this->aParameters),
+        ];
     }
 
     /**
@@ -26,6 +60,9 @@ class Method extends Call
      */
     public function __toString(): string
     {
-        return '.' . parent::__toString();
+        $aParameters = array_map(function(Stringable $xParam) {
+            return $xParam->__toString();
+        }, $this->aParameters);
+        return '.' . $this->sName . '(' . implode(', ', $aParameters) . ')';
     }
 }

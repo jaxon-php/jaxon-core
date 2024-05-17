@@ -205,9 +205,11 @@ class Selector implements ParameterInterface
     }
 
     /**
+     * Generate the jQuery call, when converting the response into json.
+     *
      * @return array
      */
-    public function toArray(): array
+    public function jsonSerialize(): array
     {
         $aCalls = [$this->getPathAsArray()];
         foreach($this->aCalls as $xCall)
@@ -217,22 +219,11 @@ class Selector implements ParameterInterface
         if($this->bToInt)
         {
             $aCalls[] = [
-                '_type' => 'func',
+                '_type' => 'method',
                 '_name' => 'toInt',
                 'args' => [],
             ];
         }
         return ['_type' => $this->getType(), 'calls' => $aCalls];
-    }
-
-    /**
-     * Generate the jQuery call, when converting the response into json.
-     * This is a method of the JsonSerializable interface.
-     *
-     * @return array
-     */
-    public function jsonSerialize(): array
-    {
-        return $this->toArray();
     }
 }

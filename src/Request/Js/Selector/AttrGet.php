@@ -25,16 +25,6 @@ class AttrGet implements JsonSerializable, Stringable
     }
 
     /**
-     * Returns a string representation of the script output (javascript) from this call
-     *
-     * @return string
-     */
-    public function __toString(): string
-    {
-        return '.' . $this->sAttrName;
-    }
-
-    /**
      * Convert this call to array, when converting the response into json.
      *
      * @return array
@@ -45,5 +35,15 @@ class AttrGet implements JsonSerializable, Stringable
             '_type' => 'attr',
             '_name' => $this->sAttrName,
         ];
+    }
+
+    /**
+     * Returns a string representation of the script output (javascript) from this call
+     *
+     * @return string
+     */
+    public function __toString(): string
+    {
+        return '.' . $this->sAttrName;
     }
 }

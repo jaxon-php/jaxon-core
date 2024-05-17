@@ -36,16 +36,6 @@ class AttrSet implements JsonSerializable, Stringable
     }
 
     /**
-     * Returns a string representation of this call
-     *
-     * @return string
-     */
-    public function __toString(): string
-    {
-        return '.' . $this->sAttrName . ' = ' . $this->xAttrValue;
-    }
-
-    /**
      * Convert this call to array, when converting the response into json.
      *
      * @return array
@@ -57,5 +47,15 @@ class AttrSet implements JsonSerializable, Stringable
             '_name' => $this->sAttrName,
             'value' => $this->xAttrValue->jsonSerialize(),
         ];
+    }
+
+    /**
+     * Returns a string representation of this call
+     *
+     * @return string
+     */
+    public function __toString(): string
+    {
+        return '.' . $this->sAttrName . ' = ' . $this->xAttrValue;
     }
 }

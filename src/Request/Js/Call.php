@@ -460,7 +460,7 @@ class Call implements JsonSerializable, Stringable
         if($this->bToInt)
         {
             $aCalls[] = [
-                '_type' => 'func',
+                '_type' => 'method',
                 '_name' => 'toInt',
                 'args' => [],
             ];
