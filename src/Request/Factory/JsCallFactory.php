@@ -3,7 +3,7 @@
 namespace Jaxon\Request\Factory;
 
 /**
- * RequestFactory.php
+ * JsCallFactory.php
  *
  * Create Jaxon client side requests, which will generate the client script necessary
  * to invoke a jaxon request from the browser to registered objects.
@@ -21,17 +21,12 @@ use Jaxon\Request\Js\Call;
 use function array_shift;
 use function func_get_args;
 
-class RequestFactory
+class JsCallFactory
 {
     /**
      * @var string
      */
     protected $sPrefix;
-
-    /**
-     * @var bool
-     */
-    protected $bNoPrefix = false;
 
     /**
      * @var DialogManager
@@ -51,18 +46,7 @@ class RequestFactory
     }
 
     /**
-     * @param bool $bNoPrefix
-     *
-     * @return RequestFactory
-     */
-    public function noPrefix(bool $bNoPrefix): RequestFactory
-    {
-        $this->bNoPrefix = $bNoPrefix;
-        return $this;
-    }
-
-    /**
-     * Generate the javascript code for a call to a given method
+     * Generate the javascript code for a call to a given method or function
      *
      * @param string $sFunction
      * @param array $aArguments
@@ -71,8 +55,7 @@ class RequestFactory
      */
     public function __call(string $sFunction, array $aArguments): Call
     {
-        // Make the request
-        $xCall = new Call(($this->bNoPrefix ? '' : $this->sPrefix) . $sFunction);
+        $xCall = new Call($this->sPrefix . $sFunction);
         $xCall->setDialogManager($this->xDialogManager);
         $xCall->addParameters($aArguments);
         return $xCall;
@@ -84,13 +67,13 @@ class RequestFactory
      * @param string $sFunction    The function or method (without class) name
      *
      * @return Call
+     * @deprecated
      */
     public function call(string $sFunction): Call
     {
         $aArguments = func_get_args();
         // Remove the function name from the arguments array.
         array_shift($aArguments);
-        // Make the request
         return $this->__call($sFunction, $aArguments);
     }
 }

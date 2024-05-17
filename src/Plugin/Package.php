@@ -27,7 +27,7 @@ abstract class Package implements CodeGeneratorInterface
     protected $xPkgConfig;
 
     /**
-     * The request factory
+     * The factory
      * 
      * @var Factory
      */
@@ -100,7 +100,7 @@ abstract class Package implements CodeGeneratorInterface
     }
 
     /**
-     * Get the request factory
+     * Get the factory
      *
      * @return Factory
      */

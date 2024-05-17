@@ -19,7 +19,7 @@ use Jaxon\App\View\ViewRenderer;
 use Jaxon\Di\Container;
 use Jaxon\Exception\SetupException;
 use Jaxon\Request\Factory\Factory;
-use Jaxon\Request\Factory\RequestFactory;
+use Jaxon\Request\Factory\JsCallFactory;
 use Jaxon\Request\Target;
 use Jaxon\Request\Upload\UploadHandlerInterface;
 use Psr\Log\LoggerInterface;
@@ -34,9 +34,9 @@ class CallableClassHelper
     public $xFactory;
 
     /**
-     * @var RequestFactory
+     * @var JsCallFactory
      */
-    public $xRequestFactory;
+    public $xJsCallFactory;
 
     /**
      * @var ViewRenderer
@@ -79,7 +79,7 @@ class CallableClassHelper
     public function __construct(Container $di, string $sClassName)
     {
         $this->xFactory = $di->getFactory();
-        $this->xRequestFactory = $this->xFactory->request($sClassName);
+        $this->xJsCallFactory = $this->xFactory->rq($sClassName);
         $this->xCallableRegistry = $di->getCallableRegistry();
         $this->xViewRenderer = $di->getViewRenderer();
         $this->xLogger = $di->getLogger();
@@ -103,15 +103,15 @@ class CallableClassHelper
     }
 
     /**
-     * Get the request factory.
+     * Get the js call factory.
      *
      * @param string $sClassName
      *
-     * @return RequestFactory
+     * @return JsCallFactory
      */
-    public function rq(string $sClassName = ''): RequestFactory
+    public function rq(string $sClassName = ''): JsCallFactory
     {
         $sClassName = trim($sClassName);
-        return !$sClassName ? $this->xRequestFactory : $this->xFactory->request($sClassName);
+        return !$sClassName ? $this->xJsCallFactory : $this->xFactory->rq($sClassName);
     }
 }

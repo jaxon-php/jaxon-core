@@ -14,7 +14,8 @@ namespace Jaxon\Request\Factory;
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-use Jaxon\Exception\SetupException;
+ use Jaxon\App\Dialog\DialogManager;
+ use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\Request\CallableClass\CallableRegistry;
 
 use function trim;
@@ -27,9 +28,9 @@ class Factory
     private $xCallableRegistry;
 
     /**
-     * @var RequestFactory
+     * @var DialogManager
      */
-    protected $xRequestFactory;
+    protected $xDialogManager;
 
     /**
      * @var ParameterFactory
@@ -37,51 +38,74 @@ class Factory
     protected $xParameterFactory;
 
     /**
+     * @var JsCallFactory
+     */
+    protected $xRqFunctionFactory;
+
+    /**
+     * @var JsCallFactory
+     */
+    protected $xJsFunctionFactory;
+
+    /**
      * The constructor.
      *
      * @param CallableRegistry $xCallableRegistry
-     * @param RequestFactory $xRequestFactory
+     * @param DialogManager $xDialogManager
      * @param ParameterFactory $xParameterFactory
+     * @param string $sFunctionPrefix
      */
     public function __construct(CallableRegistry $xCallableRegistry,
-        RequestFactory $xRequestFactory, ParameterFactory $xParameterFactory)
+        DialogManager $xDialogManager, ParameterFactory $xParameterFactory, string $sFunctionPrefix)
     {
         $this->xCallableRegistry = $xCallableRegistry;
-        $this->xRequestFactory = $xRequestFactory;
+        $this->xDialogManager = $xDialogManager;
         $this->xParameterFactory = $xParameterFactory;
+        // Factory for registered functions
+        $this->xRqFunctionFactory = new JsCallFactory($sFunctionPrefix, $this->xDialogManager);
+        // Factory for Js functions
+        $this->xJsFunctionFactory = new JsCallFactory($sFunctionPrefix, $this->xDialogManager);
     }
 
     /**
-     * Get the ajax request factory.
+     * Get the js call factory.
      *
      * @param string $sClassName
      *
-     * @return RequestFactory|null
+     * @return JsCallFactory|null
      * @throws SetupException
      */
-    public function request(string $sClassName = ''): ?RequestFactory
+    public function rq(string $sClassName = ''): ?JsCallFactory
     {
         $sClassName = trim($sClassName);
-        if(!$sClassName)
-        {
-            // There is a single request factory for all callable functions.
-            return $this->xRequestFactory->noPrefix(false);
-        }
-        if($sClassName === '.')
-        {
-            // The request factory is for a js function, not a Jaxon call.
-            return $this->xRequestFactory->noPrefix(true);
-        }
-        // While each callable class has it own request factory.
-        return $this->xCallableRegistry->getRequestFactory($sClassName);
+        // There is a single request factory for all callable functions,
+        // while each callable class has it own request factory.
+        return !$sClassName ? $this->xRqFunctionFactory :
+            $this->xCallableRegistry->getJsCallFactory($sClassName);
     }
 
     /**
-     * Get the request parameter factory.
+     * Get the js call factory.
+     *
+     * @param string $sClassName
+     *
+     * @return JsCallFactory|null
+     */
+    public function js(string $sClassName = ''): ?JsCallFactory
+    {
+        $sClassName = trim($sClassName);
+        // There is a single request factory for all js functions,
+        // while each js object has it own request factory.
+        return !$sClassName ? $this->xJsFunctionFactory :
+            new JsCallFactory($sClassName . '.', $this->xDialogManager);
+    }
+
+    /**
+     * Get the js call parameter factory.
      *
      * @return ParameterFactory
      */
-    public function parameter(): ParameterFactory
+    public function pm(): ParameterFactory
     {
         return $this->xParameterFactory;
     }

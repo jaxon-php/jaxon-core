@@ -17,7 +17,6 @@ namespace Jaxon\App;
 use Jaxon\Plugin\Package;
 use Jaxon\Plugin\ResponsePlugin;
 use Jaxon\Request\Factory\Factory;
-use Jaxon\Request\Factory\RequestFactory;
 use Jaxon\Request\Handler\CallbackManager;
 use Jaxon\Response\ResponseInterface;
 use Jaxon\Utils\Http\UriException;
@@ -83,15 +82,6 @@ interface AppInterface
      * @return Factory
      */
     public function factory(): Factory;
-
-    /**
-     * Get a request to a registered class
-     *
-     * @param string $sClassName The class name
-     *
-     * @return RequestFactory|null
-     */
-    public function request(string $sClassName = ''): ?RequestFactory;
 
     /**
      * Get the HTML tags to include Jaxon javascript files into the page.

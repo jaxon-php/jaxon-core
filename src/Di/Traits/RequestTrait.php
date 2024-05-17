@@ -11,7 +11,6 @@ use Jaxon\Plugin\Request\CallableClass\CallableRegistry;
 use Jaxon\Plugin\Response\DataBag\DataBagPlugin;
 use Jaxon\Request\Factory\Factory;
 use Jaxon\Request\Factory\ParameterFactory;
-use Jaxon\Request\Factory\RequestFactory;
 use Jaxon\Request\Handler\CallbackManager;
 use Jaxon\Request\Handler\ParameterReader;
 use Jaxon\Request\Handler\RequestHandler;
@@ -46,15 +45,11 @@ trait RequestTrait
             return new RequestHandler($di->g(Container::class), $di->g(PluginManager::class),
                 $di->g(ResponseManager::class), $di->g(CallbackManager::class), $di->g(DataBagPlugin::class));
         });
-        // Request Factory
+        // Requests and calls Factory
         $this->set(Factory::class, function($di) {
-            return new Factory($di->g(CallableRegistry::class), $di->g(RequestFactory::class),
-                $di->g(ParameterFactory::class));
-        });
-        // Factory for requests to functions
-        $this->set(RequestFactory::class, function($di) {
-            $sPrefix = $di->g(ConfigManager::class)->getOption('core.prefix.function');
-            return new RequestFactory($sPrefix, $di->g(DialogManager::class));
+            $xConfigManager = $di->g(ConfigManager::class);
+            return new Factory($di->g(CallableRegistry::class), $di->g(DialogManager::class),
+                $di->g(ParameterFactory::class), $xConfigManager->getOption('core.prefix.function'));
         });
         // Parameter Factory
         $this->set(ParameterFactory::class, function() {

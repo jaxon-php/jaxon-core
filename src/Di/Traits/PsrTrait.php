@@ -33,12 +33,12 @@ trait PsrTrait
             return new Psr17Factory();
         });
         $this->set(ServerRequestCreator::class, function($di) {
-            $xRequestFactory = $di->g(Psr17Factory::class);
+            $xPsr17Factory = $di->g(Psr17Factory::class);
             return new ServerRequestCreator(
-                $xRequestFactory, // ServerRequestFactory
-                $xRequestFactory, // UriFactory
-                $xRequestFactory, // UploadedFileFactory
-                $xRequestFactory  // StreamFactory
+                $xPsr17Factory, // ServerRequestFactory
+                $xPsr17Factory, // UriFactory
+                $xPsr17Factory, // UploadedFileFactory
+                $xPsr17Factory, // StreamFactory
             );
         });
         $this->set(ServerRequestInterface::class, function($di) {

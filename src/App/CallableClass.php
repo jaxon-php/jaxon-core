@@ -8,7 +8,7 @@ use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\Request\CallableClass\CallableClassHelper;
 use Jaxon\Plugin\Response\DataBag\DataBagContext;
 use Jaxon\Plugin\Response\Pagination\Paginator;
-use Jaxon\Request\Factory\RequestFactory;
+use Jaxon\Request\Factory\JsCallFactory;
 use Jaxon\Request\Js\Selector;
 use Jaxon\Request\TargetInterface;
 use Jaxon\Response\Response;
@@ -50,13 +50,13 @@ class CallableClass
     }
 
     /**
-     * Get the request factory.
+     * Get the js call factory.
      *
      * @param string $sClassName
      *
-     * @return RequestFactory
+     * @return JsCallFactory
      */
-    public function rq(string $sClassName = ''): RequestFactory
+    public function rq(string $sClassName = ''): JsCallFactory
     {
         return $this->xCallableClassHelper->rq($sClassName);
     }

@@ -1,6 +1,13 @@
 Jaxon 3.x :: Quick start
 ------------------------
 
+**Import the functions**
+
+```php
+use Jaxon\jaxon;
+use Jaxon\rq;
+```
+
 **Register a single class**
 
 ```php
@@ -49,18 +56,18 @@ jaxon()->register(Jaxon::CALLABLE_FUNCTION, 'sayHello', [
 **Call a registered class**
 
 ```php
-<button onclick="<?php echo rq('HelloWorld')->call('sayHello') ?>" >Click Me</button>
+<button onclick="<?php echo rq('HelloWorld')->sayHello() ?>" >Click Me</button>
 ```
 
 **Call a registered class with a parameter**
 
 ```php
-<button onclick="<?php echo rq('HelloWorld')->call('sayHello', 0) ?>" >Click Me</button>
-<button onclick="<?php echo rq('HelloWorld')->call('setColor', pm()->select('color')) ?>" >Click Me</button>
+<button onclick="<?php echo rq('HelloWorld')->sayHello(0) ?>" >Click Me</button>
+<button onclick="<?php echo rq('HelloWorld')->setColor(pm()->select('color')) ?>" >Click Me</button>
 ```
 
 **Call a registered function**
 
 ```php
-<button onclick="<?php echo rq()->call('sayHello') ?>" >Click Me</button>
+<button onclick="<?php echo rq()->sayHello() ?>" >Click Me</button>
 ```

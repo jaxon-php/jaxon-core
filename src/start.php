@@ -5,7 +5,7 @@ namespace Jaxon;
 use Jaxon\App\Ajax;
 use Jaxon\Exception\SetupException;
 use Jaxon\Request\Factory\ParameterFactory;
-use Jaxon\Request\Factory\RequestFactory;
+use Jaxon\Request\Factory\JsCallFactory;
 use Jaxon\Request\Js\Selector;
 
 /**
@@ -33,16 +33,28 @@ function jaxon(): Ajax
 }
 
 /**
- * Get the ajax request to a PHP class or function.
+ * Factory for ajax calls to a registered PHP class or function.
  *
  * @param string $sClassName
  *
- * @return RequestFactory|null
+ * @return JsCallFactory
  * @throws SetupException
  */
-function rq(string $sClassName = ''): ?RequestFactory
+function rq(string $sClassName = ''): JsCallFactory
 {
-    return Ajax::getInstance()->factory()->request($sClassName);
+    return jaxon()->factory()->rq($sClassName);
+}
+
+/**
+ * Get the factory for calls to a js object or function.
+ *
+ * @param string $sJsObject
+ *
+ * @return JsCallFactory
+ */
+function js(string $sJsObject = ''): JsCallFactory
+{
+    return jaxon()->factory()->js($sJsObject, false);
 }
 
 /**
@@ -52,7 +64,7 @@ function rq(string $sClassName = ''): ?RequestFactory
  */
 function pm(): ParameterFactory
 {
-    return Ajax::getInstance()->factory()->parameter();
+    return jaxon()->factory()->pm();
 }
 
 /**
@@ -72,4 +84,4 @@ function jq(string $sPath = '', $xContext = null): Selector
 }
 
 // Register the Jaxon request and response plugins
-Ajax::getInstance()->di()->getPluginManager()->registerPlugins();
+jaxon()->di()->getPluginManager()->registerPlugins();

@@ -8,7 +8,7 @@
  * When inserted into a Jaxon response, a Selector object must be converted to the corresponding jQuery code.
  * Therefore, the Selector class implements the JsonSerializable interface.
  *
- * When used as a parameter of a Jaxon call, the Selector must be converted to Jaxon request parameter.
+ * When used as a parameter of a Jaxon call, the Selector must be converted to Jaxon js call parameter.
  * Therefore, the Selector class also implements the Jaxon\Request\Js\ParameterInterface interface.
  *
  * @package jaxon-jquery
@@ -219,7 +219,7 @@ class Selector implements ParameterInterface
             $aCalls[] = [
                 '_type' => 'func',
                 '_name' => 'toInt',
-                'args' => [[ '_type' => '_', '_name' => 'this' ]],
+                'args' => [],
             ];
         }
         return ['_type' => $this->getType(), 'calls' => $aCalls];

@@ -462,7 +462,7 @@ class Call implements JsonSerializable, Stringable
             $aCalls[] = [
                 '_type' => 'func',
                 '_name' => 'toInt',
-                'args' => [[ '_type' => '_', '_name' => 'this' ]],
+                'args' => [],
             ];
         }
 
@@ -508,7 +508,7 @@ class Call implements JsonSerializable, Stringable
      *
      * @return string
      */
-    public function toJs(): string
+    public function raw(): string
     {
         $aParameters = array_map(function(Stringable $xParam) {
             return $xParam->__toString();

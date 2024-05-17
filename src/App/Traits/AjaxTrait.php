@@ -23,7 +23,6 @@ use Jaxon\Plugin\Package;
 use Jaxon\Plugin\Request\CallableClass\CallableRegistry;
 use Jaxon\Plugin\ResponsePlugin;
 use Jaxon\Request\Factory\Factory;
-use Jaxon\Request\Factory\RequestFactory;
 use Jaxon\Request\Handler\CallbackManager;
 use Jaxon\Response\Manager\ResponseManager;
 use Jaxon\Utils\Http\UriException;
@@ -168,33 +167,6 @@ trait AjaxTrait
         $sClassName = trim($sClassName);
         $xCallableClass = $this->xCallableRegistry->getCallableObject($sClassName);
         return !$xCallableClass ? null : $xCallableClass->getRegisteredObject();
-    }
-
-    /**
-     * Get the request factory to a registered class
-     *
-     * @param string $sClassName The class name
-     *
-     * @return RequestFactory|null
-     * @throws SetupException
-     */
-    public function rq(string $sClassName = ''): ?RequestFactory
-    {
-        $sClassName = trim($sClassName);
-        return $this->factory()->request($sClassName);
-    }
-
-    /**
-     * Get the request factory to a registered class
-     *
-     * @param string $sClassName The class name
-     *
-     * @return RequestFactory|null
-     * @throws SetupException
-     */
-    public function request(string $sClassName = ''): ?RequestFactory
-    {
-        return $this->rq($sClassName);
     }
 
     /**

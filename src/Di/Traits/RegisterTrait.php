@@ -13,7 +13,7 @@ use Jaxon\Plugin\Request\CallableClass\CallableClassHelper;
 use Jaxon\Plugin\Request\CallableClass\CallableObject;
 use Jaxon\Plugin\Request\CallableClass\CallableRepository;
 use Jaxon\Request\Factory\Factory;
-use Jaxon\Request\Factory\RequestFactory;
+use Jaxon\Request\Factory\JsCallFactory;
 use Jaxon\Request\Handler\CallbackManager;
 use Jaxon\Request\Target;
 use Jaxon\Utils\Config\Config;
@@ -85,7 +85,7 @@ trait RegisterTrait
      */
     public function registerCallableClass(string $sClassName, array $aOptions)
     {
-        $sRequestFactory = $sClassName . '_RequestFactory';
+        $sJsCallFactory = $sClassName . '_JsCallFactory';
         $sCallableObject = $sClassName . '_CallableObject';
         $sReflectionClass = $sClassName . '_ReflectionClass';
 
@@ -120,12 +120,12 @@ trait RegisterTrait
                 $di->g($sReflectionClass), $aOptions, $aProtectedMethods);
         });
 
-        // Register the request factory
-        $this->set($sRequestFactory, function($di) use($sCallableObject) {
+        // Register the js call factory
+        $this->set($sJsCallFactory, function($di) use($sCallableObject) {
             $xConfigManager = $di->g(ConfigManager::class);
             $xCallable = $di->g($sCallableObject);
             $sJsClass = $xConfigManager->getOption('core.prefix.class') . $xCallable->getJsName() . '.';
-            return new RequestFactory($sJsClass, $di->g(DialogManager::class));
+            return new JsCallFactory($sJsClass, $di->g(DialogManager::class));
         });
 
         // Register the user class, but only if the user didn't already.
@@ -176,15 +176,15 @@ trait RegisterTrait
     }
 
     /**
-     * Get the request factory for a given class
+     * Get the js call factory for a given class
      *
      * @param string $sClassName
      *
-     * @return RequestFactory
+     * @return JsCallFactory
      */
-    public function getRequestFactory(string $sClassName): RequestFactory
+    public function getJsCallFactory(string $sClassName): JsCallFactory
     {
-        return $this->g($sClassName . '_RequestFactory');
+        return $this->g($sClassName . '_JsCallFactory');
     }
 
     /**
