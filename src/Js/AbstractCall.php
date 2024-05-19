@@ -1,9 +1,9 @@
 <?php
 
 /**
- * ToInt.php
+ * AbstractCall.php
  *
- * Trait with functions to convert selector and call value to int.
+ * Base class for js call and selector classes.
  *
  * @package jaxon-core
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
@@ -12,9 +12,9 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Js\Traits;
+namespace Jaxon\Js;
 
-trait ToInt
+abstract class AbstractCall implements ParameterInterface
 {
     /**
      * @var bool
@@ -40,5 +40,13 @@ trait ToInt
             '_name' => 'toInt',
             'args' => [],
         ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getType(): string
+    {
+        return 'expr';
     }
 }

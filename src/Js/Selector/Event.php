@@ -2,7 +2,7 @@
 
 namespace Jaxon\Js\Selector;
 
-use Jaxon\Js\Call;
+use Jaxon\Js\AbstractCall;
 use JsonSerializable;
 use Stringable;
 
@@ -14,7 +14,7 @@ class Event implements JsonSerializable, Stringable
     private $sName;
 
     /**
-     * @var Call
+     * @var AbstractCall
      */
     private $xHandler;
 
@@ -22,9 +22,9 @@ class Event implements JsonSerializable, Stringable
      * The constructor.
      *
      * @param string $sName    The event name
-     * @param Call $xHandler   The event handler
+     * @param AbstractCall $xHandler   The event handler
      */
-    public function __construct(string $sName, Call $xHandler)
+    public function __construct(string $sName, AbstractCall $xHandler)
     {
         $this->sName = $sName;
         $this->xHandler = $xHandler;

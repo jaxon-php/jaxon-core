@@ -159,7 +159,7 @@ class Response implements ResponseInterface
     public function jq(string $sPath = '', $xContext = null): Selector
     {
         /** @var JQueryPlugin */
-        $xPlugin = $this->plugin('pg');
+        $xPlugin = $this->plugin('jquery');
         return $xPlugin->selector($sPath, $xContext);
     }
 
@@ -173,7 +173,7 @@ class Response implements ResponseInterface
     public function bag(string $sName): DataBagContext
     {
         /** @var DataBagPlugin */
-        $xPlugin = $this->plugin('pg');
+        $xPlugin = $this->plugin('bags');
         return $xPlugin->bag($sName);
     }
 

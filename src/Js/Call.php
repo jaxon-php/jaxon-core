@@ -30,10 +30,8 @@ use function func_get_args;
 use function implode;
 use function json_encode;
 
-class Call implements JsonSerializable, Stringable
+class Call extends AbstractCall
 {
-    use Traits\ToInt;
-
     /**
      * @var DialogManager
      */
@@ -458,7 +456,7 @@ class Call implements JsonSerializable, Stringable
             $aCalls[] = $this->toIntCall();
         }
 
-        $aExpr = ['_type' => 'expr', 'calls' => $aCalls];
+        $aExpr = ['_type' => $this->getType(), 'calls' => $aCalls];
         if(($this->aConfirm))
         {
             $aExpr['question'] = $this->aConfirm;

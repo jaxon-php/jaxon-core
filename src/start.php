@@ -54,7 +54,7 @@ function rq(string $sClassName = ''): CallFactory
  */
 function js(string $sJsObject = ''): CallFactory
 {
-    return jaxon()->factory()->js($sJsObject, false);
+    return jaxon()->factory()->js($sJsObject);
 }
 
 /**

@@ -24,10 +24,8 @@ use function implode;
 use function is_a;
 use function trim;
 
-class Selector implements ParameterInterface
+class Selector extends AbstractCall
 {
-    use Traits\ToInt;
-
     /**
      * The jQuery selector path
      *
@@ -59,14 +57,6 @@ class Selector implements ParameterInterface
     {
         $this->sPath = trim($sPath, " \t");
         $this->xContext = $xContext;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getType(): string
-    {
-        return 'expr';
     }
 
     /**
@@ -117,11 +107,11 @@ class Selector implements ParameterInterface
      * Set an event handler on the first selected element
      *
      * @param string $sName
-     * @param Call $xHandler
+     * @param AbstractCall $xHandler
      *
      * @return Selector
      */
-    public function on(string $sName, Call $xHandler): Selector
+    public function on(string $sName, AbstractCall $xHandler): Selector
     {
         $this->aCalls[] = new Selector\Event($sName, $xHandler);
         return $this;
@@ -130,11 +120,11 @@ class Selector implements ParameterInterface
     /**
      * Set an "click" event handler on the first selected element
      *
-     * @param Call $xHandler
+     * @param AbstractCall $xHandler
      *
      * @return Selector
      */
-    public function click(Call $xHandler): Selector
+    public function click(AbstractCall $xHandler): Selector
     {
         $this->on('click', $xHandler);
         return $this;
