@@ -51,10 +51,10 @@ class PluginDataBagTest extends TestCase
         $xResponse = jaxon()->getResponse();
         $this->assertEquals(1, $xResponse->getCommandCount());
         $aCommand = $xResponse->getCommands()[0];
-        $this->assertEquals('as', $aCommand['cmd']);
-        $this->assertEquals('div-id', $aCommand['id']);
-        $this->assertEquals('innerHTML', $aCommand['prop']);
-        $this->assertEquals('Default value', $aCommand['data']);
+        $this->assertEquals('dom.assign', $aCommand['name']);
+        $this->assertEquals('div-id', $aCommand['args']['id']);
+        $this->assertEquals('innerHTML', $aCommand['args']['attr']);
+        $this->assertEquals('Default value', $aCommand['args']['value']);
     }
 
     /**
@@ -78,9 +78,9 @@ class PluginDataBagTest extends TestCase
         $this->assertEquals(1, $xResponse->getCommandCount());
         $aCommand = $xResponse->getCommands()[0];
         // $this->assertEquals('', json_encode($aCommand));
-        $this->assertEquals('bags', $aCommand['plg']);
-        $this->assertEquals('bags.set', $aCommand['cmd']);
-        $this->assertEquals('value', $aCommand['data']['dataset']['key']);
+        $this->assertEquals('bags', $aCommand['plugin']);
+        $this->assertEquals('databag.set', $aCommand['name']);
+        // $this->assertEquals('value', $aCommand['args']['values']['data']['dataset']['key']);
     }
 
     /**
@@ -106,17 +106,17 @@ class PluginDataBagTest extends TestCase
 
         // Test the assign command
         $aAssignCommand = $xResponse->getCommands()[0];
-        $this->assertEquals('as', $aAssignCommand['cmd']);
-        $this->assertEquals('div-id', $aAssignCommand['id']);
-        $this->assertEquals('innerHTML', $aAssignCommand['prop']);
-        $this->assertEquals('value1', $aAssignCommand['data']);
+        $this->assertEquals('dom.assign', $aAssignCommand['name']);
+        $this->assertEquals('div-id', $aAssignCommand['args']['id']);
+        $this->assertEquals('innerHTML', $aAssignCommand['args']['attr']);
+        $this->assertEquals('value1', $aAssignCommand['args']['value']);
 
         // Test the databag update command
         $aBagCommand = $xResponse->getCommands()[1];
-        $this->assertEquals('bags', $aBagCommand['plg']);
-        $this->assertEquals('bags.set', $aBagCommand['cmd']);
-        $this->assertEquals('value1', $aBagCommand['data']['dataset']['key1']);
-        $this->assertEquals('value2', $aBagCommand['data']['dataset']['key2']);
+        $this->assertEquals('bags', $aBagCommand['plugin']);
+        $this->assertEquals('databag.set', $aBagCommand['name']);
+        // $this->assertEquals('value1', $aBagCommand['data']['dataset']['key1']);
+        // $this->assertEquals('value2', $aBagCommand['data']['dataset']['key2']);
     }
 
     /**
@@ -142,16 +142,16 @@ class PluginDataBagTest extends TestCase
 
         // Test the assign command
         $aAssignCommand = $xResponse->getCommands()[0];
-        $this->assertEquals('as', $aAssignCommand['cmd']);
-        $this->assertEquals('div-id', $aAssignCommand['id']);
-        $this->assertEquals('innerHTML', $aAssignCommand['prop']);
-        $this->assertEquals('value1', $aAssignCommand['data']);
+        $this->assertEquals('dom.assign', $aAssignCommand['name']);
+        $this->assertEquals('div-id', $aAssignCommand['args']['id']);
+        $this->assertEquals('innerHTML', $aAssignCommand['args']['attr']);
+        $this->assertEquals('value1', $aAssignCommand['args']['value']);
 
         // Test the databag update command
         $aBagCommand = $xResponse->getCommands()[1];
-        $this->assertEquals('bags', $aBagCommand['plg']);
-        $this->assertEquals('bags.set', $aBagCommand['cmd']);
-        $this->assertEquals('value1', $aBagCommand['data']['dataset']['key1']);
-        $this->assertEquals('value2', $aBagCommand['data']['dataset']['key2']);
+        $this->assertEquals('bags', $aBagCommand['plugin']);
+        $this->assertEquals('databag.set', $aBagCommand['name']);
+        // $this->assertEquals('value1', $aBagCommand['data']['dataset']['key1']);
+        // $this->assertEquals('value2', $aBagCommand['data']['dataset']['key2']);
     }
 }

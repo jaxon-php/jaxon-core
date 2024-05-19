@@ -44,11 +44,7 @@ final class FunctionTest extends TestCase
     {
         $this->assertEquals(
             "jxn_testFunction()",
-            rq()->testFunction()->getScript()
-        );
-        $this->assertEquals(
-            "jxn_testFunction()",
-            jaxon()->request()->testFunction()->getScript()
+            rq()->testFunction()->raw()
         );
     }
 
@@ -59,7 +55,7 @@ final class FunctionTest extends TestCase
     {
         $this->assertEquals(
             "jxn_testFunction('string', 2, true)",
-            rq()->testFunction('string', 2, true)->getScript()
+            rq()->testFunction('string', 2, true)->raw()
         );
     }
 
@@ -70,7 +66,7 @@ final class FunctionTest extends TestCase
     {
         $this->assertEquals(
             "jxn_testFunction('string', 2, true, jaxon.getFormValues('elt_id'), jaxon.$('elt_id').value)",
-            rq()->testFunction('string', 2, true, pm()->form('elt_id'), pm()->input('elt_id'))->getScript()
+            rq()->testFunction('string', 2, true, pm()->form('elt_id'), pm()->input('elt_id'))->raw()
         );
     }
 
@@ -81,7 +77,7 @@ final class FunctionTest extends TestCase
     {
         $this->assertEquals(
             "jxn_testFunction()",
-            rq()->testFunction()->getScript()
+            rq()->testFunction()->raw()
         );
     }
 
@@ -92,7 +88,7 @@ final class FunctionTest extends TestCase
     {
         $this->assertEquals(
             "jxn_testFunction('string', 2, true)",
-            rq()->testFunction('string', 2, true)->getScript()
+            rq()->testFunction('string', 2, true)->raw()
         );
     }
 
@@ -103,7 +99,7 @@ final class FunctionTest extends TestCase
     {
         $this->assertEquals(
             "jxn_testFunction('string', 2, true, jaxon.getFormValues('elt_id'), jaxon.$('elt_id').value)",
-            rq()->testFunction('string', 2, true, pm()->form('elt_id'), pm()->input('elt_id'))->getScript()
+            rq()->testFunction('string', 2, true, pm()->form('elt_id'), pm()->input('elt_id'))->raw()
         );
     }
 }

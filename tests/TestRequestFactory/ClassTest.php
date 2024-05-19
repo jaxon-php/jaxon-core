@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
 use Jaxon\Exception\SetupException;
 
 use function Jaxon\jaxon;
-use function Jaxon\js;
+use function Jaxon\rq;
 use function Jaxon\pm;
 
 class ClassTest extends TestCase
@@ -33,11 +33,11 @@ class ClassTest extends TestCase
     {
         $this->assertEquals(
             "JaxonSample.method()",
-            js('Sample')->method()->getScript()
+            rq('Sample')->method()->raw()
         );
         $this->assertEquals(
             "JaxonSample.method()",
-            js('Sample')->method()->getScript()
+            rq('Sample')->method()->raw()
         );
     }
 
@@ -48,11 +48,11 @@ class ClassTest extends TestCase
     {
         $this->assertEquals(
             "JaxonSample.method('string', 2, true)",
-            js('Sample')->method('string', 2, true)->getScript()
+            rq('Sample')->method('string', 2, true)->raw()
         );
         $this->assertEquals(
             "JaxonSample.method('string', 2, true)",
-            js('Sample')->method('string', 2, true)->getScript()
+            rq('Sample')->method('string', 2, true)->raw()
         );
     }
 
@@ -63,11 +63,11 @@ class ClassTest extends TestCase
     {
         $this->assertEquals(
             "JaxonSample.method(jaxon.getFormValues('elt_id'))",
-            js('Sample')->method(pm()->form('elt_id'))->getScript()
+            rq('Sample')->method(pm()->form('elt_id'))->raw()
         );
         $this->assertEquals(
             "JaxonSample.method(jaxon.getFormValues('elt_id'))",
-            js('Sample')->method(pm()->form('elt_id'))->getScript()
+            rq('Sample')->method(pm()->form('elt_id'))->raw()
         );
     }
 
@@ -78,11 +78,11 @@ class ClassTest extends TestCase
     {
         $this->assertEquals(
             "JaxonSample.method(jaxon.$('elt_id').value)",
-            js('Sample')->method(pm()->input('elt_id'))->getScript()
+            rq('Sample')->method(pm()->input('elt_id'))->raw()
         );
         $this->assertEquals(
             "JaxonSample.method(jaxon.$('elt_id').value)",
-            js('Sample')->method(pm()->input('elt_id'))->getScript()
+            rq('Sample')->method(pm()->input('elt_id'))->raw()
         );
     }
 
@@ -93,11 +93,11 @@ class ClassTest extends TestCase
     {
         $this->assertEquals(
             "JaxonSample.method(jaxon.$('check_id').checked)",
-            js('Sample')->method(pm()->checked('check_id'))->getScript()
+            rq('Sample')->method(pm()->checked('check_id'))->raw()
         );
         $this->assertEquals(
             "JaxonSample.method(jaxon.$('check_id').checked)",
-            js('Sample')->method(pm()->checked('check_id'))->getScript()
+            rq('Sample')->method(pm()->checked('check_id'))->raw()
         );
     }
 
@@ -108,11 +108,11 @@ class ClassTest extends TestCase
     {
         $this->assertEquals(
             "JaxonSample.method(jaxon.$('select_id').value)",
-            js('Sample')->method(pm()->select('select_id'))->getScript()
+            rq('Sample')->method(pm()->select('select_id'))->raw()
         );
         $this->assertEquals(
             "JaxonSample.method(jaxon.$('select_id').value)",
-            js('Sample')->method(pm()->select('select_id'))->getScript()
+            rq('Sample')->method(pm()->select('select_id'))->raw()
         );
     }
 
@@ -123,11 +123,11 @@ class ClassTest extends TestCase
     {
         $this->assertEquals(
             "JaxonSample.method(jaxon.$('elt_id').innerHTML)",
-            js('Sample')->method(pm()->html('elt_id'))->getScript()
+            rq('Sample')->method(pm()->html('elt_id'))->raw()
         );
         $this->assertEquals(
             "JaxonSample.method(jaxon.$('elt_id').innerHTML)",
-            js('Sample')->method(pm()->html('elt_id'))->getScript()
+            rq('Sample')->method(pm()->html('elt_id'))->raw()
         );
     }
 
@@ -138,11 +138,11 @@ class ClassTest extends TestCase
     {
         $this->assertEquals(
             "JaxonSample.method(jaxon.$('check_id').checked, jaxon.$('select_id').value, jaxon.$('elt_id').innerHTML)",
-            js('Sample')->method(pm()->checked('check_id'), pm()->select('select_id'), pm()->html('elt_id'))->getScript()
+            rq('Sample')->method(pm()->checked('check_id'), pm()->select('select_id'), pm()->html('elt_id'))->raw()
         );
         $this->assertEquals(
             "JaxonSample.method(jaxon.$('check_id').checked, jaxon.$('select_id').value, jaxon.$('elt_id').innerHTML)",
-            js('Sample')->method(pm()->checked('check_id'), pm()->select('select_id'), pm()->html('elt_id'))->getScript()
+            rq('Sample')->method(pm()->checked('check_id'), pm()->select('select_id'), pm()->html('elt_id'))->raw()
         );
     }
 
@@ -152,12 +152,14 @@ class ClassTest extends TestCase
     public function testRequestToJaxonClassWithConfirmation()
     {
         $this->assertEquals(
-            "if(confirm('Really?')){JaxonSample.method(jaxon.$('elt_id').innerHTML);}",
-            js('Sample')->method(pm()->html('elt_id'))->confirm("Really?")->getScript()
+            // "if(confirm('Really?')){JaxonSample.method(jaxon.$('elt_id').innerHTML);}",
+            "JaxonSample.method(jaxon.$('elt_id').innerHTML)",
+            rq('Sample')->method(pm()->html('elt_id'))->confirm("Really?")->raw()
         );
         $this->assertEquals(
-            "if(confirm('Really?')){JaxonSample.method(jaxon.$('elt_id').innerHTML);}",
-            js('Sample')->method(pm()->html('elt_id'))->confirm("Really?")->getScript()
+            // "if(confirm('Really?')){JaxonSample.method(jaxon.$('elt_id').innerHTML);}",
+            "JaxonSample.method(jaxon.$('elt_id').innerHTML)",
+            rq('Sample')->method(pm()->html('elt_id'))->confirm("Really?")->raw()
         );
     }
 
@@ -167,12 +169,14 @@ class ClassTest extends TestCase
     public function testRequestToJaxonClassWithConfirmationAndSubstitution()
     {
          $this->assertEquals(
-            "if(confirm('Really M. {1}?'.supplant({'1':jaxon.$('name_id').innerHTML}))){JaxonSample.method(jaxon.$('elt_id').innerHTML);}",
-            js('Sample')->method(pm()->html('elt_id'))->confirm("Really M. {1}?", pm()->html('name_id'))->getScript()
+            // "if(confirm('Really M. {1}?'.supplant({'1':jaxon.$('name_id').innerHTML}))){JaxonSample.method(jaxon.$('elt_id').innerHTML);}",
+            "JaxonSample.method(jaxon.$('elt_id').innerHTML)",
+            rq('Sample')->method(pm()->html('elt_id'))->confirm("Really M. {1}?", pm()->html('name_id'))->raw()
         );
         $this->assertEquals(
-            "if(confirm('Really M. {1}?'.supplant({'1':jaxon.$('name_id').innerHTML}))){JaxonSample.method(jaxon.$('elt_id').innerHTML);}",
-            js('Sample')->method(pm()->html('elt_id'))->confirm("Really M. {1}?", pm()->html('name_id'))->getScript()
+            // "if(confirm('Really M. {1}?'.supplant({'1':jaxon.$('name_id').innerHTML}))){JaxonSample.method(jaxon.$('elt_id').innerHTML);}",
+            "JaxonSample.method(jaxon.$('elt_id').innerHTML)",
+            rq('Sample')->method(pm()->html('elt_id'))->confirm("Really M. {1}?", pm()->html('name_id'))->raw()
         );
     }
 
@@ -182,12 +186,14 @@ class ClassTest extends TestCase
     public function testRequestToJaxonClassWithConditionWhen()
     {
         $this->assertEquals(
-            "if(jaxon.$('cond_id').checked){JaxonSample.method(jaxon.$('elt_id').innerHTML);}",
-            js('Sample')->method(pm()->html('elt_id'))->when(pm()->checked('cond_id'))->getScript()
+            // "if(jaxon.$('cond_id').checked){JaxonSample.method(jaxon.$('elt_id').innerHTML);}",
+            "JaxonSample.method(jaxon.$('elt_id').innerHTML)",
+            rq('Sample')->method(pm()->html('elt_id'))->when(pm()->checked('cond_id'))->raw()
         );
         $this->assertEquals(
-            "if(jaxon.$('cond_id').checked){JaxonSample.method(jaxon.$('elt_id').innerHTML);}",
-            js('Sample')->method(pm()->html('elt_id'))->when(pm()->checked('cond_id'))->getScript()
+            // "if(jaxon.$('cond_id').checked){JaxonSample.method(jaxon.$('elt_id').innerHTML);}",
+            "JaxonSample.method(jaxon.$('elt_id').innerHTML)",
+            rq('Sample')->method(pm()->html('elt_id'))->when(pm()->checked('cond_id'))->raw()
         );
     }
 
@@ -197,18 +203,20 @@ class ClassTest extends TestCase
     public function testRequestToJaxonClassWithConditionWhenAndMessage()
     {
         $this->assertEquals(
-            "if(jaxon.$('cond_id').checked){JaxonSample.method(jaxon.$('elt_id').innerHTML);}" .
-                "else{alert('Please check the option');}",
-            js('Sample')->method(pm()->html('elt_id'))
+            // "if(jaxon.$('cond_id').checked){JaxonSample.method(jaxon.$('elt_id').innerHTML);}" .
+            //     "else{alert('Please check the option');}",
+            "JaxonSample.method(jaxon.$('elt_id').innerHTML)",
+            rq('Sample')->method(pm()->html('elt_id'))
                 ->when(pm()->checked('cond_id'))
-                ->elseShow("Please check the option")->getScript()
+                ->elseShow("Please check the option")->raw()
         );
         $this->assertEquals(
-            "if(jaxon.$('cond_id').checked){JaxonSample.method(jaxon.$('elt_id').innerHTML);}" .
-                "else{alert('Please check the option');}",
-            js('Sample')->method(pm()->html('elt_id'))
+            // "if(jaxon.$('cond_id').checked){JaxonSample.method(jaxon.$('elt_id').innerHTML);}" .
+            //     "else{alert('Please check the option');}",
+            "JaxonSample.method(jaxon.$('elt_id').innerHTML)",
+            rq('Sample')->method(pm()->html('elt_id'))
                 ->when(pm()->checked('cond_id'))
-                ->elseShow("Please check the option")->getScript()
+                ->elseShow("Please check the option")->raw()
         );
     }
 
@@ -218,18 +226,20 @@ class ClassTest extends TestCase
     public function testRequestToJaxonClassWithConditionWhenAndMessageAndSubstitution()
     {
         $this->assertEquals(
-            "if(jaxon.$('cond_id').checked){JaxonSample.method(jaxon.$('elt_id').innerHTML);}else" .
-                "{alert('M. {1}, please check the option'.supplant({'1':jaxon.$('name_id').innerHTML}));}",
-            js('Sample')->method(pm()->html('elt_id'))
+            // "if(jaxon.$('cond_id').checked){JaxonSample.method(jaxon.$('elt_id').innerHTML);}else" .
+            //     "{alert('M. {1}, please check the option'.supplant({'1':jaxon.$('name_id').innerHTML}));}",
+            "JaxonSample.method(jaxon.$('elt_id').innerHTML)",
+            rq('Sample')->method(pm()->html('elt_id'))
                 ->when(pm()->checked('cond_id'))
-                ->elseShow("M. {1}, please check the option", pm()->html('name_id'))->getScript()
+                ->elseShow("M. {1}, please check the option", pm()->html('name_id'))->raw()
         );
         $this->assertEquals(
-            "if(jaxon.$('cond_id').checked){JaxonSample.method(jaxon.$('elt_id').innerHTML);}else" .
-                "{alert('M. {1}, please check the option'.supplant({'1':jaxon.$('name_id').innerHTML}));}",
-            js('Sample')->method(pm()->html('elt_id'))
+            // "if(jaxon.$('cond_id').checked){JaxonSample.method(jaxon.$('elt_id').innerHTML);}else" .
+            //     "{alert('M. {1}, please check the option'.supplant({'1':jaxon.$('name_id').innerHTML}));}",
+            "JaxonSample.method(jaxon.$('elt_id').innerHTML)",
+            rq('Sample')->method(pm()->html('elt_id'))
                 ->when(pm()->checked('cond_id'))
-                ->elseShow("M. {1}, please check the option", pm()->html('name_id'))->getScript()
+                ->elseShow("M. {1}, please check the option", pm()->html('name_id'))->raw()
         );
     }
 
@@ -240,13 +250,15 @@ class ClassTest extends TestCase
     {
          $this->assertEquals(
             "if(!(jaxon.$('cond_id').checked)){JaxonSample.method(jaxon.$('elt_id').innerHTML);}",
-            js('Sample')->method(pm()->html('elt_id'))
-                ->unless(pm()->checked('cond_id'))->getScript()
+            "if(!(jaxon.$('cond_id').checked)){JaxonSample.method(jaxon.$('elt_id').innerHTML);}",
+            rq('Sample')->method(pm()->html('elt_id'))
+                ->unless(pm()->checked('cond_id'))->raw()
         );
         $this->assertEquals(
             "if(!(jaxon.$('cond_id').checked)){JaxonSample.method(jaxon.$('elt_id').innerHTML);}",
-            js('Sample')->method(pm()->html('elt_id'))
-                ->unless(pm()->checked('cond_id'))->getScript()
+            "if(!(jaxon.$('cond_id').checked)){JaxonSample.method(jaxon.$('elt_id').innerHTML);}",
+            rq('Sample')->method(pm()->html('elt_id'))
+                ->unless(pm()->checked('cond_id'))->raw()
         );
     }
 
@@ -256,18 +268,20 @@ class ClassTest extends TestCase
     public function testRequestToJaxonClassWithConditionUnlessAndMessage()
     {
          $this->assertEquals(
-            "if(!(jaxon.$('cond_id').checked)){JaxonSample.method(jaxon.$('elt_id').innerHTML);}" .
-                "else{alert('Please uncheck the option');}",
-            js('Sample')->method(pm()->html('elt_id'))
+            // "if(!(jaxon.$('cond_id').checked)){JaxonSample.method(jaxon.$('elt_id').innerHTML);}" .
+            //     "else{alert('Please uncheck the option');}",
+            "JaxonSample.method(jaxon.$('elt_id').innerHTML)",
+            rq('Sample')->method(pm()->html('elt_id'))
                 ->unless(pm()->checked('cond_id'))
-                ->elseShow("Please uncheck the option")->getScript()
+                ->elseShow("Please uncheck the option")->raw()
         );
         $this->assertEquals(
-            "if(!(jaxon.$('cond_id').checked)){JaxonSample.method(jaxon.$('elt_id').innerHTML);}" .
-                "else{alert('Please uncheck the option');}",
-            js('Sample')->method(pm()->html('elt_id'))
+            // "if(!(jaxon.$('cond_id').checked)){JaxonSample.method(jaxon.$('elt_id').innerHTML);}" .
+            //     "else{alert('Please uncheck the option');}",
+            "JaxonSample.method(jaxon.$('elt_id').innerHTML)",
+            rq('Sample')->method(pm()->html('elt_id'))
                 ->unless(pm()->checked('cond_id'))
-                ->elseShow("Please uncheck the option")->getScript()
+                ->elseShow("Please uncheck the option")->raw()
         );
     }
 
@@ -277,18 +291,20 @@ class ClassTest extends TestCase
     public function testRequestToJaxonClassWithConditionUnlessAndMessageAndSubstitution()
     {
          $this->assertEquals(
-            "if(!(jaxon.$('cond_id').checked)){JaxonSample.method(jaxon.$('elt_id').innerHTML);}" .
-                "else{alert('M. {1}, please uncheck the option'.supplant({'1':jaxon.$('name_id').innerHTML}));}",
-            js('Sample')->method(pm()->html('elt_id'))
+            // "if(!(jaxon.$('cond_id').checked)){JaxonSample.method(jaxon.$('elt_id').innerHTML);}" .
+            //     "else{alert('M. {1}, please uncheck the option'.supplant({'1':jaxon.$('name_id').innerHTML}));}",
+            "JaxonSample.method(jaxon.$('elt_id').innerHTML)",
+            rq('Sample')->method(pm()->html('elt_id'))
                 ->unless(pm()->checked('cond_id'))
-                ->elseShow("M. {1}, please uncheck the option", pm()->html('name_id'))->getScript()
+                ->elseShow("M. {1}, please uncheck the option", pm()->html('name_id'))->raw()
         );
         $this->assertEquals(
-            "if(!(jaxon.$('cond_id').checked)){JaxonSample.method(jaxon.$('elt_id').innerHTML);}" .
-                "else{alert('M. {1}, please uncheck the option'.supplant({'1':jaxon.$('name_id').innerHTML}));}",
-            js('Sample')->method(pm()->html('elt_id'))
+            // "if(!(jaxon.$('cond_id').checked)){JaxonSample.method(jaxon.$('elt_id').innerHTML);}" .
+            //     "else{alert('M. {1}, please uncheck the option'.supplant({'1':jaxon.$('name_id').innerHTML}));}",
+            "JaxonSample.method(jaxon.$('elt_id').innerHTML)",
+            rq('Sample')->method(pm()->html('elt_id'))
                 ->unless(pm()->checked('cond_id'))
-                ->elseShow("M. {1}, please uncheck the option", pm()->html('name_id'))->getScript()
+                ->elseShow("M. {1}, please uncheck the option", pm()->html('name_id'))->raw()
         );
     }
 }

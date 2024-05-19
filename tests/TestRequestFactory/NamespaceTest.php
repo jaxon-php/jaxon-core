@@ -37,7 +37,7 @@ class NamespaceTest extends TestCase
     {
         $this->assertEquals(
             "Jaxon.NsTests.DirA.ClassA.methodAa()",
-            rq(ClassA::class)->methodAa()->getScript()
+            rq(ClassA::class)->methodAa()->raw()
         );
     }
 
@@ -48,7 +48,7 @@ class NamespaceTest extends TestCase
     {
         $this->assertEquals(
             "Jaxon.NsTests.DirB.ClassB.methodBb('string', 2, true)",
-            rq(ClassB::class)->methodBb('string', 2, true)->getScript()
+            rq(ClassB::class)->methodBb('string', 2, true)->raw()
         );
     }
 }

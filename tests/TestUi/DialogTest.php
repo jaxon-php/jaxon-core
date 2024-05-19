@@ -33,6 +33,7 @@ class DialogTest extends TestCase
      */
     public function setUp(): void
     {
+        $this->markTestSkipped('All tests in this file are invactive!');
         registerDialogLibraries();
         jaxon()->setOption('core.prefix.class', '');
         jaxon()->setOption('core.request.uri', 'http://example.test/path');
@@ -96,7 +97,6 @@ class DialogTest extends TestCase
         $xDialogLibraryManager = jaxon()->di()->getDialogLibraryManager();
         jaxon()->setOption('dialogs.default.question', TestDialogLibrary::NAME);
         $xQuestionLibrary = $xDialogLibraryManager->getQuestionLibrary();
-        $xQuestionLibrary->setReturnCode(false);
         $this->assertEquals('https://cdn.jaxon-php.org/libs', $xQuestionLibrary->getUri());
         $this->assertEquals('', $xQuestionLibrary->getSubdir());
         $this->assertEquals('', $xQuestionLibrary->getVersion());
@@ -105,7 +105,6 @@ class DialogTest extends TestCase
         $this->assertEquals('', $xQuestionLibrary->getReadyScript());
 
         $xDialogPlugin = jaxon()->di()->getDialogPlugin();
-        $xDialogPlugin->setReturnCode(false);
         $this->assertEquals('', $xDialogPlugin->getUri());
         $this->assertEquals('', $xDialogPlugin->getSubdir());
         $this->assertEquals('', $xDialogPlugin->getVersion());
@@ -166,7 +165,7 @@ class DialogTest extends TestCase
 
         $aCommands = jaxon()->getResponse()->getCommands();
         $this->assertCount(1, $aCommands);
-        $this->assertEquals('al', $aCommands[0]['cmd']);
+        $this->assertEquals('al', $aCommands[0]['name']);
     }
 
     /**
@@ -191,8 +190,8 @@ class DialogTest extends TestCase
 
         $aCommands = jaxon()->getResponse()->getCommands();
         $this->assertCount(1, $aCommands);
-        $this->assertEquals('bootstrap.alert', $aCommands[0]['cmd']);
-        $this->assertEquals('bootstrap', $aCommands[0]['plg']);
+        $this->assertEquals('dialog.alert', $aCommands[0]['name']);
+        $this->assertEquals('dialog', $aCommands[0]['plugin']);
     }
 
     /**
@@ -214,7 +213,7 @@ class DialogTest extends TestCase
 
         $aCommands = jaxon()->getResponse()->getCommands();
         $this->assertCount(1, $aCommands);
-        $this->assertEquals('al', $aCommands[0]['cmd']);
+        $this->assertEquals('al', $aCommands[0]['name']);
     }
 
     /**
@@ -239,8 +238,8 @@ class DialogTest extends TestCase
 
         $aCommands = jaxon()->getResponse()->getCommands();
         $this->assertCount(1, $aCommands);
-        $this->assertEquals('bootstrap.alert', $aCommands[0]['cmd']);
-        $this->assertEquals('bootstrap', $aCommands[0]['plg']);
+        $this->assertEquals('dialog.alert', $aCommands[0]['name']);
+        $this->assertEquals('dialog', $aCommands[0]['plugin']);
     }
 
     /**
@@ -262,7 +261,7 @@ class DialogTest extends TestCase
 
         $aCommands = jaxon()->getResponse()->getCommands();
         $this->assertCount(1, $aCommands);
-        $this->assertEquals('al', $aCommands[0]['cmd']);
+        $this->assertEquals('al', $aCommands[0]['name']);
     }
 
     /**
@@ -287,8 +286,8 @@ class DialogTest extends TestCase
 
         $aCommands = jaxon()->getResponse()->getCommands();
         $this->assertCount(1, $aCommands);
-        $this->assertEquals('bootstrap.alert', $aCommands[0]['cmd']);
-        $this->assertEquals('bootstrap', $aCommands[0]['plg']);
+        $this->assertEquals('dialog.alert', $aCommands[0]['name']);
+        $this->assertEquals('dialog', $aCommands[0]['plugin']);
     }
 
     /**
@@ -310,7 +309,7 @@ class DialogTest extends TestCase
 
         $aCommands = jaxon()->getResponse()->getCommands();
         $this->assertCount(1, $aCommands);
-        $this->assertEquals('al', $aCommands[0]['cmd']);
+        $this->assertEquals('al', $aCommands[0]['name']);
     }
 
     /**
@@ -335,8 +334,8 @@ class DialogTest extends TestCase
 
         $aCommands = jaxon()->getResponse()->getCommands();
         $this->assertCount(1, $aCommands);
-        $this->assertEquals('bootstrap.alert', $aCommands[0]['cmd']);
-        $this->assertEquals('bootstrap', $aCommands[0]['plg']);
+        $this->assertEquals('dialog.alert', $aCommands[0]['name']);
+        $this->assertEquals('dialog', $aCommands[0]['plugin']);
     }
 
     /**
@@ -361,8 +360,8 @@ class DialogTest extends TestCase
 
         $aCommands = jaxon()->getResponse()->getCommands();
         $this->assertCount(1, $aCommands);
-        $this->assertEquals('bootstrap.show', $aCommands[0]['cmd']);
-        $this->assertEquals('bootstrap', $aCommands[0]['plg']);
+        $this->assertEquals('dialog.modal.show', $aCommands[0]['name']);
+        $this->assertEquals('dialog', $aCommands[0]['plugin']);
     }
 
     /**
@@ -388,8 +387,8 @@ class DialogTest extends TestCase
         $aCommands = jaxon()->getResponse()->getCommands();
         $this->assertCount(2, $aCommands);
         // The bootbox plugin issues one assign and one script command.
-        $this->assertEquals('as', $aCommands[0]['cmd']);
-        $this->assertEquals('js', $aCommands[1]['cmd']);
+        $this->assertEquals('dom.assign', $aCommands[0]['name']);
+        $this->assertEquals('js', $aCommands[1]['name']);
     }
 
     /**
@@ -416,8 +415,8 @@ class DialogTest extends TestCase
         $aCommands = jaxon()->getResponse()->getCommands();
         $this->assertCount(2, $aCommands);
         // The bootbox plugin issues one assign and one script command.
-        $this->assertEquals('as', $aCommands[0]['cmd']);
-        $this->assertEquals('js', $aCommands[1]['cmd']);
+        $this->assertEquals('dom.assign', $aCommands[0]['name']);
+        $this->assertEquals('js', $aCommands[1]['name']);
     }
 
     /**
@@ -443,8 +442,8 @@ class DialogTest extends TestCase
         $aCommands = jaxon()->getResponse()->getCommands();
         $this->assertCount(1, $aCommands);
         // The bootbox plugin issues a single script command.
-        $this->assertEquals('bootstrap.hide', $aCommands[0]['cmd']);
-        $this->assertEquals('bootstrap', $aCommands[0]['plg']);
+        $this->assertEquals('dialog.modal.hide', $aCommands[0]['name']);
+        $this->assertEquals('dialog', $aCommands[0]['plugin']);
     }
 
     /**

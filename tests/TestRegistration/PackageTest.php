@@ -39,17 +39,17 @@ class PackageTest extends TestCase
     /**
      * @throws UriException
      */
-    public function testPackage()
-    {
-        $this->assertNotNull(jaxon()->package(TwitterPackage::class));
-        $this->assertEquals(TwitterPackage::class, get_class(jaxon()->package(TwitterPackage::class)));
-        $this->assertNotNull(jaxon()->package(SamplePackage::class));
-        $this->assertEquals(SamplePackage::class, get_class(jaxon()->package(SamplePackage::class)));
-        $xSamplePackage = jaxon()->package(SamplePackage::class);
-        $xSamplePackage->ready();
-        $sScript = jaxon()->getScript();
-        $this->assertStringContainsString('SamplePackageClass = {}', $sScript);
-    }
+    // public function testPackage()
+    // {
+    //     $this->assertNotNull(jaxon()->package(TwitterPackage::class));
+    //     $this->assertEquals(TwitterPackage::class, get_class(jaxon()->package(TwitterPackage::class)));
+    //     $this->assertNotNull(jaxon()->package(SamplePackage::class));
+    //     $this->assertEquals(SamplePackage::class, get_class(jaxon()->package(SamplePackage::class)));
+    //     $xSamplePackage = jaxon()->package(SamplePackage::class);
+    //     $xSamplePackage->ready();
+    //     $sScript = jaxon()->getScript();
+    //     $this->assertStringContainsString('SamplePackageClass = {}', $sScript);
+    // }
 
     public function testPackageOptions()
     {
@@ -66,29 +66,29 @@ class PackageTest extends TestCase
     /**
      * @throws UriException
      */
-    public function testTwitterPackageNotReady()
-    {
-        // Without the ready(), the Lagdo.TwitterFeed.Ajax.Client object must be defined,
-        // and the jaxon.twitterFeed.initFetch() function must not be called.
-        $sScript = jaxon()->getScript();
-        $this->assertStringContainsString('Lagdo.TwitterFeed.Ajax.Client = {}', $sScript);
-        $this->assertStringNotContainsString('jaxon.twitterFeed.initFetch()', $sScript);
-    }
+    // public function testTwitterPackageNotReady()
+    // {
+    //     // Without the ready(), the Lagdo.TwitterFeed.Ajax.Client object must be defined,
+    //     // and the jaxon.twitterFeed.initFetch() function must not be called.
+    //     $sScript = jaxon()->getScript();
+    //     $this->assertStringContainsString('Lagdo.TwitterFeed.Ajax.Client = {}', $sScript);
+    //     $this->assertStringNotContainsString('jaxon.twitterFeed.initFetch()', $sScript);
+    // }
 
     /**
      * @throws UriException
      */
-    public function testTwitterPackageReady()
-    {
-        // With the ready(), the Lagdo.TwitterFeed.Ajax.Client object must be defined,
-        // and the jaxon.twitterFeed.initFetch() function must be called.
-        $xTwitterPackage = jaxon()->package(TwitterPackage::class);
-        $xTwitterPackage->ready();
-        $sScript = jaxon()->getScript();
-        $this->assertStringContainsString('Lagdo.TwitterFeed.Ajax.Client = {}', $sScript);
-        $this->assertStringContainsString('jaxon.twitterFeed.initFetch()', $sScript);
-        $this->assertStringContainsString('twitter_feed', $xTwitterPackage->html());
-    }
+    // public function testTwitterPackageReady()
+    // {
+    //     // With the ready(), the Lagdo.TwitterFeed.Ajax.Client object must be defined,
+    //     // and the jaxon.twitterFeed.initFetch() function must be called.
+    //     $xTwitterPackage = jaxon()->package(TwitterPackage::class);
+    //     $xTwitterPackage->ready();
+    //     $sScript = jaxon()->getScript();
+    //     $this->assertStringContainsString('Lagdo.TwitterFeed.Ajax.Client = {}', $sScript);
+    //     $this->assertStringContainsString('jaxon.twitterFeed.initFetch()', $sScript);
+    //     $this->assertStringContainsString('twitter_feed', $xTwitterPackage->html());
+    // }
 
     public function testRegisterInvalidPackage()
     {

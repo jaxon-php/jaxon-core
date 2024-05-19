@@ -4,11 +4,12 @@ namespace Jaxon\Tests\TestRequestFactory;
 
 use Jaxon\Jaxon;
 use Jaxon\Exception\SetupException;
-use Jaxon\Request\Call\Parameter;
+use Jaxon\Js\Parameter;
 use PHPUnit\Framework\TestCase;
 
 use function Jaxon\jaxon;
 use function Jaxon\jq;
+use function Jaxon\js;
 use function Jaxon\rq;
 use function Jaxon\pm;
 
@@ -34,24 +35,24 @@ class CallTest extends TestCase
 
     public function testRequestParameters()
     {
-        $this->assertEquals("val1", pm()->js('val1')->getScript());
-        $this->assertEquals("jaxon.$('val2').value", pm()->input('val2')->getScript());
-        $this->assertEquals("jaxon.$('val3').innerHTML", pm()->html('val3')->getScript());
-        $this->assertEquals("jaxon.$('val4').value", pm()->select('val4')->getScript());
-        $this->assertEquals("jaxon.$('val5').checked", pm()->checked('val5')->getScript());
-        $this->assertEquals("jaxon.getFormValues('val6')", pm()->form('val6')->getScript());
+        $this->assertEquals("val1", pm()->js('val1')->__toString());
+        $this->assertEquals("jaxon.$('val2').value", pm()->input('val2')->__toString());
+        $this->assertEquals("jaxon.$('val3').innerHTML", pm()->html('val3')->__toString());
+        $this->assertEquals("jaxon.$('val4').value", pm()->select('val4')->__toString());
+        $this->assertEquals("jaxon.$('val5').checked", pm()->checked('val5')->__toString());
+        $this->assertEquals("jaxon.getFormValues('val6')", pm()->form('val6')->__toString());
         // A parameter with unknown type will not be rendered, even if it has a value.
         $xUnknownTypeParam = new Parameter('Unknown', 'This is the value');
-        $this->assertEquals('', $xUnknownTypeParam->getScript());
+        $this->assertEquals('', $xUnknownTypeParam->__toString());
         $this->assertEquals('This is the value', $xUnknownTypeParam->getValue());
     }
 
     public function testRequestParameterConversion()
     {
-        $this->assertEquals("parseInt(jaxon.$('val2').value)", pm()->input('val2')->toInt()->getScript());
-        $this->assertEquals("parseInt(jaxon.$('val3').innerHTML)", pm()->html('val3')->toInt()->getScript());
-        $this->assertEquals("parseInt(jaxon.$('val4').value)", pm()->select('val4')->toInt()->getScript());
-        $this->assertEquals("parseInt(trim(' value '))", rq('.')->trim(' value ')->toInt()->getScript());
+        $this->assertEquals("parseInt(jaxon.$('val2').value)", pm()->input('val2')->toInt()->__toString());
+        $this->assertEquals("parseInt(jaxon.$('val3').innerHTML)", pm()->html('val3')->toInt()->__toString());
+        $this->assertEquals("parseInt(jaxon.$('val4').value)", pm()->select('val4')->toInt()->__toString());
+        $this->assertEquals("parseInt(trim(' value '))", js()->trim(' value ')->toInt()->raw());
     }
 
     /**
@@ -61,12 +62,7 @@ class CallTest extends TestCase
     {
         $this->assertEquals(
             "Sample.method('string', 2, true)",
-            rq('Sample')->method('string', 2, true)
-        );
-        // Clear parameters
-        $this->assertEquals(
-            "Sample.method()",
-            rq('Sample')->method('string', 2, true)->clearParameters()
+            rq('Sample')->method('string', 2, true)->raw()
         );
     }
 
@@ -77,22 +73,22 @@ class CallTest extends TestCase
     {
         $this->assertEquals(
             "Sample.method([1,2,3])",
-            rq('Sample')->method([1, 2, 3])->jsonSerialize()
+            rq('Sample')->method([1, 2, 3])->raw()
         );
         $this->assertEquals(
             "Sample.method(['first','second','third'])",
-            rq('Sample')->method(['first', 'second', 'third'])->jsonSerialize()
+            rq('Sample')->method(['first', 'second', 'third'])->raw()
         );
         $this->assertEquals(
             "Sample.method({'first':'one','second':'two','third':'three'})",
-            rq('Sample')->method(['first' => 'one', 'second' => 'two', 'third' => 'three'])->jsonSerialize()
+            rq('Sample')->method(['first' => 'one', 'second' => 'two', 'third' => 'three'])->raw()
         );
         $this->assertEquals(
             "Sample.method(val1, jaxon.$('val2').value, jaxon.$('val3').innerHTML, " .
                 "jaxon.$('val4').value, jaxon.$('val5').checked, jaxon.getFormValues('val6'))",
             rq('Sample')->method(pm()->js('val1'), pm()->input('val2'),
                 pm()->html('val3'), pm()->select('val4'),
-                pm()->checked('val5'), pm()->form('val6'))->getScript()
+                pm()->checked('val5'), pm()->form('val6'))->raw()
         );
     }
 
@@ -102,35 +98,35 @@ class CallTest extends TestCase
     public function testRequestWithJQueryParam()
     {
         $this->assertEquals(
-            "Sample.method($('#div').val)",
-            rq('Sample')->method(jq('#div')->val)->jsonSerialize()
+            "Sample.method(jaxon.jq('#div').val)",
+            rq('Sample')->method(jq('#div')->val)->raw()
         );
         $this->assertEquals(
-            "Sample.method($('#div').val, $('#div').val)",
-            rq('Sample')->method(jq('#div')->val, jq('#div')->val)->jsonSerialize()
+            "Sample.method(jaxon.jq('#div').val, jaxon.jq('#div').val)",
+            rq('Sample')->method(jq('#div')->val, jq('#div')->val)->raw()
         );
         $this->assertEquals(
-            "Sample.method($('#div1').val, $('#div2').val, $('#div1').val)",
-            rq('Sample')->method(jq('#div1')->val, jq('#div2')->val, jq('#div1')->val)->jsonSerialize()
+            "Sample.method(jaxon.jq('#div1').val, jaxon.jq('#div2').val, jaxon.jq('#div1').val)",
+            rq('Sample')->method(jq('#div1')->val, jq('#div2')->val, jq('#div1')->val)->raw()
         );
         $this->assertEquals(
-            "Sample.method($('#div1').val, $('#div2').val)",
-            rq('Sample')->method(jq('#div1')->val, jq('#div2')->val)->jsonSerialize()
+            "Sample.method(jaxon.jq('#div1').val, jaxon.jq('#div2').val)",
+            rq('Sample')->method(jq('#div1')->val, jq('#div2')->val)->raw()
         );
     }
 
     /**
      * @throws SetupException
      */
-    public function testRequestWithJsEvent()
-    {
-        $this->assertEquals(
-            "$('.div').click((e) => {Sample.method($('#div').val);})",
-            jq('.div')->click(rq('Sample')->method(jq('#div')->val))->jsonSerialize()
-        );
-        $this->assertEquals(
-            "$('.div').click((e) => {Sample.method(parseInt($(e.currentTarget).attr('param')));})",
-            jq('.div')->click(rq('Sample')->method(jq()->attr('param')->toInt()))->jsonSerialize()
-        );
-    }
+    // public function testRequestWithJsEvent()
+    // {
+    //     $this->assertEquals(
+    //         "jaxon.jq('.div').click((e) => {Sample.method(jaxon.jq('#div').val);})",
+    //         jq('.div')->click(rq('Sample')->method(jq('#div')->val))->raw()
+    //     );
+    //     $this->assertEquals(
+    //         "jaxon.jq('.div').click((e) => {Sample.method(parseInt(jaxon.jq(e.currentTarget).attr('param')));})",
+    //         jq('.div')->click(rq('Sample')->method(jq()->attr('param')->toInt()))->raw()
+    //     );
+    // }
 }

@@ -5,7 +5,7 @@ use Lagdo\TwitterFeed\Package as TwitterPackage;
 return [
     'app' => [
         'packages' => [
-            TwitterPackage::class => [],
+            // TwitterPackage::class => [],
             SamplePackage::class => [],
         ],
     ],

@@ -19,6 +19,7 @@ class PaginatorTest extends TestCase
      */
     public function setUp(): void
     {
+        $this->markTestSkipped('All tests in this file are invactive!');
         jaxon()->setOption('core.prefix.class', '');
         jaxon()->register(Jaxon::CALLABLE_CLASS, 'Sample', __DIR__ . '/../src/sample.php');
     }

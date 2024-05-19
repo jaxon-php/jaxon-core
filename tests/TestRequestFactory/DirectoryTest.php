@@ -35,7 +35,7 @@ class DirectoryTest extends TestCase
     {
         $this->assertEquals(
             "ClassA.methodAa()",
-            rq('ClassA')->methodAa()->getScript()
+            rq('ClassA')->methodAa()->raw()
         );
     }
 
@@ -46,7 +46,7 @@ class DirectoryTest extends TestCase
     {
         $this->assertEquals(
             "ClassB.methodBb('string', 2, true)",
-            rq('ClassB')->methodBb('string', 2, true)->getScript()
+            rq('ClassB')->methodBb('string', 2, true)->raw()
         );
     }
 }

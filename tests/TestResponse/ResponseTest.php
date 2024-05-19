@@ -53,7 +53,7 @@ class ResponseTest extends TestCase
             ])->withMethod('POST');
         });
 
-        $this->assertEquals('{}', jaxon()->di()->getResponseManager()->getOutput());
+        $this->assertEquals('{"jxn":{"commands":[]}}', jaxon()->di()->getResponseManager()->getOutput());
         // Process the request and get the response
         jaxon()->di()->getRequestHandler()->processRequest();
         $xResponse = jaxon()->getResponse();

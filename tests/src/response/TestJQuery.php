@@ -15,8 +15,8 @@ class TestJQuery extends CallableClass
 
     public function assign(): Response
     {
-        $this->response->jq('#path1')->value = 'This is the html content';
-        $this->response->jq('#path3')->value = jq('#path2')->value;
+        $this->response->jq('#path1')->__set('value', 'This is the html content');
+        $this->response->jq('#path3')->__set('value', jq('#path2')->value);
         $this->response->jq('#path3')->attr('name', jq('#path2')->attr('name'));
         return $this->response;
     }

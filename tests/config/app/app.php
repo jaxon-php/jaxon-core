@@ -50,7 +50,7 @@ return [
             $testDir . '/src/dir_ns' => "Jaxon\\NsTests",
         ],
         'packages' => [
-            TwitterPackage::class => [],
+            // TwitterPackage::class => [],
             SamplePackage::class => [],
         ],
         'container' => [
