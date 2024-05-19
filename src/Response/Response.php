@@ -22,6 +22,7 @@
 namespace Jaxon\Response;
 
 use Jaxon\App\Dialog\DialogManager;
+use Jaxon\Js\Selector;
 use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Plugin\Response\DataBag\DataBagContext;
 use Jaxon\Plugin\Response\DataBag\DataBagPlugin;
@@ -29,7 +30,6 @@ use Jaxon\Plugin\Response\JQuery\JQueryPlugin;
 use Jaxon\Plugin\Response\Pagination\Paginator;
 use Jaxon\Plugin\Response\Pagination\PaginatorPlugin;
 use Jaxon\Plugin\ResponsePlugin;
-use Jaxon\Request\Js\Selector;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7\Stream;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;

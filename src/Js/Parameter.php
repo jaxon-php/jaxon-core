@@ -11,7 +11,7 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Request\Js;
+namespace Jaxon\Js;
 
 use function is_bool;
 use function is_numeric;

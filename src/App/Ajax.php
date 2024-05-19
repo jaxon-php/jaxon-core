@@ -37,7 +37,7 @@ use Jaxon\App\View\ViewRenderer;
 use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\Manager\PluginManager;
-use Jaxon\Request\Factory\Psr\PsrFactory;
+use Jaxon\Request\Handler\Psr\PsrFactory;
 use Jaxon\Request\Upload\UploadHandlerInterface;
 use Jaxon\Response\Manager\ResponseManager;
 use Jaxon\Response\ResponseInterface;

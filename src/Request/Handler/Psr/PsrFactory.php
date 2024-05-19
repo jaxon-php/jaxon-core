@@ -1,6 +1,6 @@
 <?php
 
-namespace Jaxon\Request\Factory\Psr;
+namespace Jaxon\Request\Handler\Psr;
 
 /**
  * PsrFactory.php
@@ -15,9 +15,6 @@ namespace Jaxon\Request\Factory\Psr;
  */
 
 use Jaxon\Di\Container;
-use Jaxon\Request\Handler\Psr\PsrAjaxMiddleware;
-use Jaxon\Request\Handler\Psr\PsrConfigMiddleware;
-use Jaxon\Request\Handler\Psr\PsrRequestHandler;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 

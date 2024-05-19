@@ -2,8 +2,8 @@
 
 namespace Jaxon\Response;
 
+use Jaxon\Js\Call;
 use Jaxon\Plugin\ResponsePlugin;
-use Jaxon\Request\Js\Call;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 use Closure;
 use JsonSerializable;

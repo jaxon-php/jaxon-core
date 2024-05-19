@@ -4,9 +4,9 @@ namespace Jaxon;
 
 use Jaxon\App\Ajax;
 use Jaxon\Exception\SetupException;
-use Jaxon\Request\Factory\ParameterFactory;
-use Jaxon\Request\Factory\JsCallFactory;
-use Jaxon\Request\Js\Selector;
+use Jaxon\Js\CallFactory;
+use Jaxon\Js\ParameterFactory;
+use Jaxon\Js\Selector;
 
 /**
  * start.php
@@ -37,10 +37,10 @@ function jaxon(): Ajax
  *
  * @param string $sClassName
  *
- * @return JsCallFactory
+ * @return CallFactory
  * @throws SetupException
  */
-function rq(string $sClassName = ''): JsCallFactory
+function rq(string $sClassName = ''): CallFactory
 {
     return jaxon()->factory()->rq($sClassName);
 }
@@ -50,9 +50,9 @@ function rq(string $sClassName = ''): JsCallFactory
  *
  * @param string $sJsObject
  *
- * @return JsCallFactory
+ * @return CallFactory
  */
-function js(string $sJsObject = ''): JsCallFactory
+function js(string $sJsObject = ''): CallFactory
 {
     return jaxon()->factory()->js($sJsObject, false);
 }

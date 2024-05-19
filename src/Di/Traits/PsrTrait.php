@@ -4,9 +4,9 @@ namespace Jaxon\Di\Traits;
 
 use Jaxon\App\I18n\Translator;
 use Jaxon\Di\Container;
-use Jaxon\Request\Factory\Psr\PsrFactory;
 use Jaxon\Request\Handler\Psr\PsrAjaxMiddleware;
 use Jaxon\Request\Handler\Psr\PsrConfigMiddleware;
+use Jaxon\Request\Handler\Psr\PsrFactory;
 use Jaxon\Request\Handler\Psr\PsrRequestHandler;
 use Jaxon\Request\Handler\RequestHandler;
 use Jaxon\Response\Manager\ResponseManager;

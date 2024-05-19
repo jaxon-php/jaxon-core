@@ -8,12 +8,12 @@ use Jaxon\App\Dialog\DialogManager;
 use Jaxon\App\I18n\Translator;
 use Jaxon\App\View\ViewRenderer;
 use Jaxon\Exception\SetupException;
+use Jaxon\Js\Factory;
+use Jaxon\Js\CallFactory;
 use Jaxon\Plugin\AnnotationReaderInterface;
 use Jaxon\Plugin\Request\CallableClass\CallableClassHelper;
 use Jaxon\Plugin\Request\CallableClass\CallableObject;
 use Jaxon\Plugin\Request\CallableClass\CallableRepository;
-use Jaxon\Request\Factory\Factory;
-use Jaxon\Request\Factory\JsCallFactory;
 use Jaxon\Request\Handler\CallbackManager;
 use Jaxon\Request\Target;
 use Jaxon\Utils\Config\Config;
@@ -85,7 +85,7 @@ trait RegisterTrait
      */
     public function registerCallableClass(string $sClassName, array $aOptions)
     {
-        $sJsCallFactory = $sClassName . '_JsCallFactory';
+        $sCallFactory = $sClassName . '_CallFactory';
         $sCallableObject = $sClassName . '_CallableObject';
         $sReflectionClass = $sClassName . '_ReflectionClass';
 
@@ -121,11 +121,11 @@ trait RegisterTrait
         });
 
         // Register the js call factory
-        $this->set($sJsCallFactory, function($di) use($sCallableObject) {
+        $this->set($sCallFactory, function($di) use($sCallableObject) {
             $xConfigManager = $di->g(ConfigManager::class);
             $xCallable = $di->g($sCallableObject);
             $sJsClass = $xConfigManager->getOption('core.prefix.class') . $xCallable->getJsName() . '.';
-            return new JsCallFactory($sJsClass, $di->g(DialogManager::class));
+            return new CallFactory($sJsClass, $di->g(DialogManager::class));
         });
 
         // Register the user class, but only if the user didn't already.
@@ -180,11 +180,11 @@ trait RegisterTrait
      *
      * @param string $sClassName
      *
-     * @return JsCallFactory
+     * @return CallFactory
      */
-    public function getJsCallFactory(string $sClassName): JsCallFactory
+    public function getCallFactory(string $sClassName): CallFactory
     {
-        return $this->g($sClassName . '_JsCallFactory');
+        return $this->g($sClassName . '_CallFactory');
     }
 
     /**

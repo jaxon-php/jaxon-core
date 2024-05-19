@@ -1,9 +1,9 @@
 <?php
 
-namespace Jaxon\Request\Factory;
+namespace Jaxon\Js;
 
 /**
- * JsCallFactory.php
+ * CallFactory.php
  *
  * Create Jaxon client side requests, which will generate the client script necessary
  * to invoke a jaxon request from the browser to registered objects.
@@ -16,12 +16,11 @@ namespace Jaxon\Request\Factory;
  */
 
 use Jaxon\App\Dialog\DialogManager;
-use Jaxon\Request\Js\Call;
 
 use function array_shift;
 use function func_get_args;
 
-class JsCallFactory
+class CallFactory
 {
     /**
      * @var string

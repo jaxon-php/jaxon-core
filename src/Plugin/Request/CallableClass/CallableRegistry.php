@@ -14,12 +14,11 @@
 
 namespace Jaxon\Plugin\Request\CallableClass;
 
+use Composer\Autoload\ClassLoader;
 use Jaxon\App\I18n\Translator;
 use Jaxon\Di\Container;
 use Jaxon\Exception\SetupException;
-use Jaxon\Request\Factory\JsCallFactory;
-
-use Composer\Autoload\ClassLoader;
+use Jaxon\Js\CallFactory;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 
@@ -283,12 +282,12 @@ class CallableRegistry
      *
      * @param string $sClassName The class name of the callable object
      *
-     * @return JsCallFactory|null
+     * @return CallFactory|null
      * @throws SetupException
      */
-    public function getJsCallFactory(string $sClassName): ?JsCallFactory
+    public function getCallFactory(string $sClassName): ?CallFactory
     {
-        return $this->di->getJsCallFactory($this->checkCallableObject($sClassName));
+        return $this->di->getCallFactory($this->checkCallableObject($sClassName));
     }
 
     /**

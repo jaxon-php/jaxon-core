@@ -14,9 +14,9 @@
 
 namespace Jaxon\App;
 
+use Jaxon\Js\Factory;
 use Jaxon\Plugin\Package;
 use Jaxon\Plugin\ResponsePlugin;
-use Jaxon\Request\Factory\Factory;
 use Jaxon\Request\Handler\CallbackManager;
 use Jaxon\Response\ResponseInterface;
 use Jaxon\Utils\Http\UriException;

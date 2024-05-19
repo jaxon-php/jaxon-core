@@ -1,6 +1,6 @@
 <?php
 
-namespace Jaxon\Request\Factory;
+namespace Jaxon\Js;
 
 /**
  * Factory.php
@@ -14,8 +14,8 @@ namespace Jaxon\Request\Factory;
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
- use Jaxon\App\Dialog\DialogManager;
- use Jaxon\Exception\SetupException;
+use Jaxon\App\Dialog\DialogManager;
+use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\Request\CallableClass\CallableRegistry;
 
 use function trim;
@@ -38,12 +38,12 @@ class Factory
     protected $xParameterFactory;
 
     /**
-     * @var JsCallFactory
+     * @var CallFactory
      */
     protected $xRqFunctionFactory;
 
     /**
-     * @var JsCallFactory
+     * @var CallFactory
      */
     protected $xJsFunctionFactory;
 
@@ -62,9 +62,9 @@ class Factory
         $this->xDialogManager = $xDialogManager;
         $this->xParameterFactory = $xParameterFactory;
         // Factory for registered functions
-        $this->xRqFunctionFactory = new JsCallFactory($sFunctionPrefix, $this->xDialogManager);
+        $this->xRqFunctionFactory = new CallFactory($sFunctionPrefix, $this->xDialogManager);
         // Factory for Js functions
-        $this->xJsFunctionFactory = new JsCallFactory($sFunctionPrefix, $this->xDialogManager);
+        $this->xJsFunctionFactory = new CallFactory('', $this->xDialogManager);
     }
 
     /**
@@ -72,16 +72,16 @@ class Factory
      *
      * @param string $sClassName
      *
-     * @return JsCallFactory|null
+     * @return CallFactory|null
      * @throws SetupException
      */
-    public function rq(string $sClassName = ''): ?JsCallFactory
+    public function rq(string $sClassName = ''): ?CallFactory
     {
         $sClassName = trim($sClassName);
         // There is a single request factory for all callable functions,
         // while each callable class has it own request factory.
         return !$sClassName ? $this->xRqFunctionFactory :
-            $this->xCallableRegistry->getJsCallFactory($sClassName);
+            $this->xCallableRegistry->getCallFactory($sClassName);
     }
 
     /**
@@ -89,15 +89,15 @@ class Factory
      *
      * @param string $sClassName
      *
-     * @return JsCallFactory|null
+     * @return CallFactory|null
      */
-    public function js(string $sClassName = ''): ?JsCallFactory
+    public function js(string $sClassName = ''): ?CallFactory
     {
         $sClassName = trim($sClassName);
         // There is a single request factory for all js functions,
         // while each js object has it own request factory.
         return !$sClassName ? $this->xJsFunctionFactory :
-            new JsCallFactory($sClassName . '.', $this->xDialogManager);
+            new CallFactory($sClassName . '.', $this->xDialogManager);
     }
 
     /**

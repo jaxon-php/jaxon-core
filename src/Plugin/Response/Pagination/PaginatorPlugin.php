@@ -13,9 +13,9 @@ namespace Jaxon\Plugin\Response\Pagination;
 
 use Jaxon\App\View\ViewRenderer;
 use Jaxon\App\View\Store;
+use Jaxon\Js\Call;
+use Jaxon\Js\Parameter;
 use Jaxon\Plugin\ResponsePlugin;
-use Jaxon\Request\Js\Call;
-use Jaxon\Request\Js\Parameter;
 
 use function array_map;
 use function array_pop;

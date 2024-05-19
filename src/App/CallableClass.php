@@ -5,11 +5,11 @@ namespace Jaxon\App;
 use Jaxon\App\Session\SessionInterface;
 use Jaxon\App\View\ViewRenderer;
 use Jaxon\Exception\SetupException;
+use Jaxon\Js\CallFactory;
+use Jaxon\Js\Selector;
 use Jaxon\Plugin\Request\CallableClass\CallableClassHelper;
 use Jaxon\Plugin\Response\DataBag\DataBagContext;
 use Jaxon\Plugin\Response\Pagination\Paginator;
-use Jaxon\Request\Factory\JsCallFactory;
-use Jaxon\Request\Js\Selector;
 use Jaxon\Request\TargetInterface;
 use Jaxon\Response\Response;
 use Psr\Log\LoggerInterface;
@@ -54,9 +54,9 @@ class CallableClass
      *
      * @param string $sClassName
      *
-     * @return JsCallFactory
+     * @return CallFactory
      */
-    public function rq(string $sClassName = ''): JsCallFactory
+    public function rq(string $sClassName = ''): CallFactory
     {
         return $this->xCallableClassHelper->rq($sClassName);
     }

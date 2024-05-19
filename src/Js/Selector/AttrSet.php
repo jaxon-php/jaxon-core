@@ -1,8 +1,8 @@
 <?php
 
-namespace Jaxon\Request\Js\Selector;
+namespace Jaxon\Js\Selector;
 
-use Jaxon\Request\Js\Parameter;
+use Jaxon\Js\Parameter;
 
 use JsonSerializable;
 use Stringable;
