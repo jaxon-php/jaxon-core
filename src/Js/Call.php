@@ -430,39 +430,19 @@ class Call implements JsonSerializable, Stringable
     }
 
     /**
-     * Convert this call to array
+     * Convert the first call to array
      *
      * @return array
      */
     public function toArray(): array
     {
-        $aCalls = [[
+        return [
             '_type' => 'func',
             '_name' => $this->sFunction,
             'args' => array_map(function(JsonSerializable $xParam) {
                 return $xParam->jsonSerialize();
             }, $this->aParameters),
-        ]];
-        if($this->bToInt)
-        {
-            $aCalls[] = $this->toIntCall();
-        }
-
-        $aCall = ['_type' => 'expr', 'calls' => $aCalls];
-        if(($this->aConfirm))
-        {
-            $aCall['question'] = $this->aConfirm;
-        }
-        if(($this->aCondition))
-        {
-            $aCall['condition'] = $this->aCondition;
-        }
-        if(($this->aMessage))
-        {
-            $aCall['message'] = $this->aMessage;
-        }
-
-        return $aCall;
+        ];
     }
 
     /**
@@ -472,7 +452,27 @@ class Call implements JsonSerializable, Stringable
      */
     public function jsonSerialize(): array
     {
-        return $this->toArray();
+        $aCalls = [$this->toArray()];
+        if($this->bToInt)
+        {
+            $aCalls[] = $this->toIntCall();
+        }
+
+        $aExpr = ['_type' => 'expr', 'calls' => $aCalls];
+        if(($this->aConfirm))
+        {
+            $aExpr['question'] = $this->aConfirm;
+        }
+        if(($this->aCondition))
+        {
+            $aExpr['condition'] = $this->aCondition;
+        }
+        if(($this->aMessage))
+        {
+            $aExpr['message'] = $this->aMessage;
+        }
+
+        return $aExpr;
     }
 
     /**
@@ -482,7 +482,7 @@ class Call implements JsonSerializable, Stringable
      */
     public function __toString(): string
     {
-        return 'jaxon.exec(' . json_encode($this->toArray()) . ')';
+        return 'jaxon.exec(' . json_encode($this->jsonSerialize()) . ')';
     }
 
     /**

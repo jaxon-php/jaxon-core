@@ -168,7 +168,7 @@ class Parameter implements ParameterInterface
         switch($this->getType())
         {
         case self::JS_CALL:
-            return $this->getValue()->toArray();
+            return $this->getValue()->jsonSerialize();
         case self::JS_VALUE:
             return [
                 '_type' => 'expr',
