@@ -19,7 +19,7 @@ class Jaxon
     /**
      * @const string
      */
-    const VERSION = 'Jaxon 4.x';
+    const VERSION = 'Jaxon 5.x';
 
     /**
      * @const string
