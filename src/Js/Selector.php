@@ -26,6 +26,8 @@ use function trim;
 
 class Selector implements ParameterInterface
 {
+    use Traits\ToInt;
+
     /**
      * The jQuery selector path
      *
@@ -46,13 +48,6 @@ class Selector implements ParameterInterface
      * @var array
      */
     protected $aCalls = [];
-
-    /**
-     * Convert the selector value to integer
-     *
-     * @var bool
-     */
-    protected $bToInt = false;
 
     /**
      * The constructor.
@@ -146,15 +141,6 @@ class Selector implements ParameterInterface
     }
 
     /**
-     * @return Selector
-     */
-    public function toInt(): Selector
-    {
-        $this->bToInt = true;
-        return $this;
-    }
-
-    /**
      * Get the selector js.
      *
      * @return string
@@ -218,11 +204,7 @@ class Selector implements ParameterInterface
         }
         if($this->bToInt)
         {
-            $aCalls[] = [
-                '_type' => 'method',
-                '_name' => 'toInt',
-                'args' => [],
-            ];
+            $aCalls[] = $this->toIntCall();
         }
         return ['_type' => $this->getType(), 'calls' => $aCalls];
     }

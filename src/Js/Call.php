@@ -32,6 +32,8 @@ use function json_encode;
 
 class Call implements JsonSerializable, Stringable
 {
+    use Traits\ToInt;
+
     /**
      * @var DialogManager
      */
@@ -48,13 +50,6 @@ class Call implements JsonSerializable, Stringable
      * @var array<ParameterInterface>
      */
     protected $aParameters = [];
-
-    /**
-     * Convert the parameter value to integer
-     *
-     * @var bool
-     */
-    protected $bToInt = false;
 
     /**
      * The arguments of the else() calls
@@ -85,15 +80,6 @@ class Call implements JsonSerializable, Stringable
     public function __construct(string $sFunction)
     {
         $this->sFunction = $sFunction;
-    }
-
-    /**
-     * @return Call
-     */
-    public function toInt(): Call
-    {
-        $this->bToInt = true;
-        return $this;
     }
 
     /**
@@ -459,11 +445,7 @@ class Call implements JsonSerializable, Stringable
         ]];
         if($this->bToInt)
         {
-            $aCalls[] = [
-                '_type' => 'method',
-                '_name' => 'toInt',
-                'args' => [],
-            ];
+            $aCalls[] = $this->toIntCall();
         }
 
         $aCall = ['_type' => 'expr', 'calls' => $aCalls];
