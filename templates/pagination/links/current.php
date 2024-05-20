@@ -1,1 +1,1 @@
-    <li class="active"><a href="javascript:;"><?php echo $this->text ?></a></li>
+    <li class="active"><a role="link"><?php echo $this->text ?></a></li>

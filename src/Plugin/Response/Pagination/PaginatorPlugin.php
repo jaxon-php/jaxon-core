@@ -83,6 +83,20 @@ class PaginatorPlugin extends ResponsePlugin
     }
 
     /**
+     * @inheritDoc
+     */
+    public function getCss(): string
+    {
+        return '
+<style>
+  .pagination li a {
+    cursor: pointer;
+  }
+</style>
+';
+    }
+
+    /**
      * @param array<Page> $aPages
      *
      * @return null|Store
@@ -151,9 +165,9 @@ class PaginatorPlugin extends ResponsePlugin
         $sWrapperId = trim($sWrapperId);
         $this->response()->html($sWrapperId, $xStore->__toString());
         // Set click handlers on the pagination links
-        $this->addCommand('pg.paginate', [
-            'id' => $sWrapperId,
-            'func' => $xCall->toArray(),
-        ]);
+        if($xPaginator->getTotalPages() > 1)
+        {
+            $this->addCommand('pg.paginate', ['id' => $sWrapperId, 'func' => $xCall->toArray()]);
+        }
     }
 }

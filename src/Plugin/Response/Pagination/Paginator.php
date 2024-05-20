@@ -314,6 +314,16 @@ class Paginator
     }
 
     /**
+     * Get the number of pages.
+     *
+     * @return int
+     */
+    public function getTotalPages(): int
+    {
+        return $this->nTotalPages;
+    }
+
+    /**
      * Get the links (pages raw data).
      *
      * @return array<Page>
