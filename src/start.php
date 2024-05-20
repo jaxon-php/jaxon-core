@@ -23,7 +23,7 @@ use Jaxon\Js\Selector;
  */
 
 /**
- * Return the singleton instance of the Ajax class
+ * Return the single instance of the Ajax class
  *
  * @return Ajax
  */
