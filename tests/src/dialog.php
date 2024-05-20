@@ -9,22 +9,22 @@ class Dialog extends CallableClass
 {
     public function success()
     {
-        $this->response->dialog->success('This is a message!!', 'Success');
+        $this->response->dialog->title('Success')->success('This is a message!!');
     }
 
     public function info()
     {
-        $this->response->dialog->info('This is a message!!', 'Info');
+        $this->response->dialog->title('Info')->info('This is a message!!');
     }
 
     public function warning()
     {
-        $this->response->dialog->warning('This is a message!!', 'Warning');
+        $this->response->dialog->title('Warning')->warning('This is a message!!');
     }
 
     public function error()
     {
-        $this->response->dialog->error('This is a message!!', 'Error');
+        $this->response->dialog->title('Error')->error('This is a message!!');
     }
 
     public function show()
@@ -60,10 +60,5 @@ class TestDialogLibrary implements LibraryInterface, QuestionInterface
     public function getName(): string
     {
         return self::NAME;
-    }
-
-    public function confirm(string $sQuestion, string $sYesScript, string $sNoScript): string
-    {
-        return '';
     }
 }

@@ -1,12 +1,3 @@
-try {
-    if(typeof jaxon.config == undefined)
-        jaxon.config = {};
-}
-catch(e) {
-    jaxon = {};
-    jaxon.config = {};
-};
-
 jaxon.config.requestURI = "<?php echo $this->sRequestURI ?>";
 jaxon.config.statusMessages = <?php echo $this->sStatusMessages ?>;
 jaxon.config.waitCursor = <?php echo $this->sWaitCursor ?>;
@@ -26,16 +17,13 @@ jaxon.debug.verbose.active = true;
 <?php endif ?>
 <?php endif ?>
 <?php if(($this->sCsrfMetaName)): ?>
-metaTags = document.getElementsByTagName('meta');
-for(let i = 0; i < metaTags.length; i++)
-{
-    if(metaTags[i].getAttribute('name') == '<?php echo $this->sCsrfMetaName ?>')
-    {
-        if((csrfToken = metaTags[i].getAttribute('content')))
-        {
+
+const metaTags = document.getElementsByTagName('meta') || [];
+metaTags.forEach(metaTag => {
+    if (metaTag.getAttribute('name') === '<?php echo $this->sCsrfMetaName ?>') {
+        if ((csrfToken = metaTag.getAttribute('content'))) {
             jaxon.config.postHeaders = {'X-CSRF-TOKEN': csrfToken};
         }
-        break;
     }
-}
+});
 <?php endif ?>

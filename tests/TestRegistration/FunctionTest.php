@@ -132,7 +132,7 @@ final class FunctionTest extends TestCase
         $_SERVER['REQUEST_URI'] = 'http://example.test/path';
 
         $sJsCode = jaxon()->getScript(true, true);
-        $this->assertEquals(1035, strlen(trim($sJsCode)));
+        $this->assertEquals(973, strlen(trim($sJsCode)));
         // $this->assertEquals(file_get_contents(__DIR__ . '/../src/js/lib.js'), $sJsCode);
         $this->assertEquals(32, strlen(jaxon()->di()->getCodeGenerator()->getHash()));
 
@@ -154,11 +154,11 @@ final class FunctionTest extends TestCase
         // This URI will be parsed by the URI detector
         $_SERVER['REQUEST_URI'] = 'http://example.test/path';
         $sJsCode = jaxon()->getScript(true, true);
-        $this->assertEquals(1217, strlen(trim($sJsCode)));
+        $this->assertEquals(1154, strlen(trim($sJsCode)));
         $this->assertEquals(32, strlen(jaxon()->di()->getCodeGenerator()->getHash()));
 
         $sJsCode = trim(jaxon()->getCss() . "\n" . jaxon()->getJs()) . jaxon()->getScript();
-        $this->assertEquals(1217, strlen(trim($sJsCode)));
+        $this->assertEquals(1154, strlen(trim($sJsCode)));
 
         unset($_SERVER['REQUEST_URI']);
     }

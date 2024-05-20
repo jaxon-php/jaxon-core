@@ -9,7 +9,7 @@ use Jaxon\Jaxon;
 use Jaxon\App\Dialog\Library\AlertLibrary;
 use Jaxon\Dialogs\Bootbox\BootboxLibrary;
 use Jaxon\Dialogs\Bootstrap\BootstrapLibrary;
-use Jaxon\Dialogs\Toastr\ToastrLibrary;
+use Jaxon\Dialogs\CuteAlert\CuteAlertLibrary;
 use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;
 use Jaxon\Utils\Http\UriException;
@@ -33,20 +33,11 @@ class DialogTest extends TestCase
      */
     public function setUp(): void
     {
-        $this->markTestSkipped('All tests in this file are invactive!');
         registerDialogLibraries();
         jaxon()->setOption('core.prefix.class', '');
         jaxon()->setOption('core.request.uri', 'http://example.test/path');
-        jaxon()->setOption('dialogs.assets.include.all', true);
-        jaxon()->setOption('dialogs.toastr.options.closeButton', true);
-        jaxon()->setOption('dialogs.toastr.options.positionClass', 'toast-top-center');
-        jaxon()->setOption('dialogs.toastr.options.sampleArray', ['value']);
         jaxon()->register(Jaxon::CALLABLE_CLASS, Dialog::class);
         jaxon()->dialog()->registerLibrary(TestDialogLibrary::class, TestDialogLibrary::NAME);
-
-        // Register the template dir into the template renderer
-        jaxon()->template()->addNamespace('jaxon::dialogs',
-            dirname(__DIR__, 2) . '/vendor/jaxon-php/jaxon-dialogs/templates');
     }
 
     /**
@@ -84,12 +75,9 @@ class DialogTest extends TestCase
     public function testDialogOptions()
     {
         $xDialogLibraryManager = jaxon()->di()->getDialogLibraryManager();
-        jaxon()->setOption('dialogs.default.message', 'toastr');
+        jaxon()->setOption('dialogs.default.message', 'cute');
         $xMessageLibrary = $xDialogLibraryManager->getMessageLibrary();
-        $this->assertEquals(ToastrLibrary::class, get_class($xMessageLibrary));
-        $this->assertTrue($xMessageLibrary->helper()->hasOption('options.closeButton'));
-        $this->assertIsArray($xMessageLibrary->helper()->getOption('options.sampleArray'));
-        $this->assertIsString($xMessageLibrary->helper()->getOption('options.positionClass'));
+        $this->assertEquals(CuteAlertLibrary::class, get_class($xMessageLibrary));
     }
 
     public function testDialogDefaultMethods()
@@ -112,19 +100,19 @@ class DialogTest extends TestCase
 
     public function testDialogJsCode()
     {
-        jaxon()->setOption('dialogs.lib.use', ['bootbox', 'bootstrap', 'toastr']);
+        jaxon()->setOption('dialogs.lib.use', ['bootbox', 'bootstrap', 'cute']);
         $sJsCode = jaxon()->js();
         $this->assertStringContainsString('bootbox.min.js', $sJsCode);
         $this->assertStringContainsString('bootstrap-dialog.min.js', $sJsCode);
-        $this->assertStringContainsString('toastr.min.js', $sJsCode);
+        $this->assertStringContainsString('cute-alert.js', $sJsCode);
     }
 
     public function testDialogCssCode()
     {
-        jaxon()->setOption('dialogs.lib.use', ['bootstrap', 'toastr']);
+        jaxon()->setOption('dialogs.lib.use', ['bootstrap', 'cute']);
         $sCssCode = jaxon()->css();
         $this->assertStringContainsString('bootstrap-dialog.min.css', $sCssCode);
-        $this->assertStringContainsString('toastr.min.css', $sCssCode);
+        $this->assertStringContainsString('cute-alert/style.css', $sCssCode);
     }
 
     /**
@@ -135,15 +123,14 @@ class DialogTest extends TestCase
         jaxon()->setOption('dialogs.default.modal', 'bootstrap');
         jaxon()->setOption('dialogs.default.message', 'bootstrap');
         jaxon()->setOption('dialogs.default.question', 'bootstrap');
-        jaxon()->setOption('dialogs.lib.use', ['bootbox', 'toastr']);
+        jaxon()->setOption('dialogs.lib.use', ['bootbox', 'cute', 'jalert']);
+
         $sScriptCode = jaxon()->getScript();
-        $this->assertStringContainsString('jaxon.dialogs = {}', $sScriptCode);
-        $this->assertStringContainsString('jaxon.dialogs.bootstrap', $sScriptCode);
-        $this->assertStringContainsString('jaxon.dialogs.bootbox', $sScriptCode);
-        $this->assertStringContainsString('jaxon.dialogs.toastr', $sScriptCode);
-        $this->assertStringContainsString('jaxon.command.handler.register', $sScriptCode);
-        $this->assertStringContainsString('jaxon.ajax.message', $sScriptCode);
-        $this->assertStringContainsString('jaxon.dialogs.toastr', $sScriptCode);
+        $this->assertStringContainsString("jaxon.dialog.lib.register", $sScriptCode);
+        $this->assertStringContainsString("jaxon.dialog.lib.register('bootstrap'", $sScriptCode);
+        $this->assertStringContainsString("jaxon.dialog.lib.register('bootbox'", $sScriptCode);
+        $this->assertStringContainsString("jaxon.dialog.lib.register('cute'", $sScriptCode);
+        $this->assertStringContainsString("jaxon.dialog.lib.register('jalert'", $sScriptCode);
     }
 
     /**
@@ -165,7 +152,7 @@ class DialogTest extends TestCase
 
         $aCommands = jaxon()->getResponse()->getCommands();
         $this->assertCount(1, $aCommands);
-        $this->assertEquals('al', $aCommands[0]['name']);
+        $this->assertEquals('dialog.message', $aCommands[0]['name']);
     }
 
     /**
@@ -190,7 +177,7 @@ class DialogTest extends TestCase
 
         $aCommands = jaxon()->getResponse()->getCommands();
         $this->assertCount(1, $aCommands);
-        $this->assertEquals('dialog.alert', $aCommands[0]['name']);
+        $this->assertEquals('dialog.message', $aCommands[0]['name']);
         $this->assertEquals('dialog', $aCommands[0]['plugin']);
     }
 
@@ -213,7 +200,7 @@ class DialogTest extends TestCase
 
         $aCommands = jaxon()->getResponse()->getCommands();
         $this->assertCount(1, $aCommands);
-        $this->assertEquals('al', $aCommands[0]['name']);
+        $this->assertEquals('dialog.message', $aCommands[0]['name']);
     }
 
     /**
@@ -238,7 +225,7 @@ class DialogTest extends TestCase
 
         $aCommands = jaxon()->getResponse()->getCommands();
         $this->assertCount(1, $aCommands);
-        $this->assertEquals('dialog.alert', $aCommands[0]['name']);
+        $this->assertEquals('dialog.message', $aCommands[0]['name']);
         $this->assertEquals('dialog', $aCommands[0]['plugin']);
     }
 
@@ -261,7 +248,7 @@ class DialogTest extends TestCase
 
         $aCommands = jaxon()->getResponse()->getCommands();
         $this->assertCount(1, $aCommands);
-        $this->assertEquals('al', $aCommands[0]['name']);
+        $this->assertEquals('dialog.message', $aCommands[0]['name']);
     }
 
     /**
@@ -286,7 +273,7 @@ class DialogTest extends TestCase
 
         $aCommands = jaxon()->getResponse()->getCommands();
         $this->assertCount(1, $aCommands);
-        $this->assertEquals('dialog.alert', $aCommands[0]['name']);
+        $this->assertEquals('dialog.message', $aCommands[0]['name']);
         $this->assertEquals('dialog', $aCommands[0]['plugin']);
     }
 
@@ -309,7 +296,7 @@ class DialogTest extends TestCase
 
         $aCommands = jaxon()->getResponse()->getCommands();
         $this->assertCount(1, $aCommands);
-        $this->assertEquals('al', $aCommands[0]['name']);
+        $this->assertEquals('dialog.message', $aCommands[0]['name']);
     }
 
     /**
@@ -334,7 +321,7 @@ class DialogTest extends TestCase
 
         $aCommands = jaxon()->getResponse()->getCommands();
         $this->assertCount(1, $aCommands);
-        $this->assertEquals('dialog.alert', $aCommands[0]['name']);
+        $this->assertEquals('dialog.message', $aCommands[0]['name']);
         $this->assertEquals('dialog', $aCommands[0]['plugin']);
     }
 
@@ -385,10 +372,8 @@ class DialogTest extends TestCase
         jaxon()->di()->getRequestHandler()->processRequest();
 
         $aCommands = jaxon()->getResponse()->getCommands();
-        $this->assertCount(2, $aCommands);
-        // The bootbox plugin issues one assign and one script command.
-        $this->assertEquals('dom.assign', $aCommands[0]['name']);
-        $this->assertEquals('js', $aCommands[1]['name']);
+        $this->assertCount(1, $aCommands);
+        $this->assertEquals('dialog.modal.show', $aCommands[0]['name']);
     }
 
     /**
@@ -413,10 +398,8 @@ class DialogTest extends TestCase
         jaxon()->di()->getRequestHandler()->processRequest();
 
         $aCommands = jaxon()->getResponse()->getCommands();
-        $this->assertCount(2, $aCommands);
-        // The bootbox plugin issues one assign and one script command.
-        $this->assertEquals('dom.assign', $aCommands[0]['name']);
-        $this->assertEquals('js', $aCommands[1]['name']);
+        $this->assertCount(1, $aCommands);
+        $this->assertEquals('dialog.modal.show', $aCommands[0]['name']);
     }
 
     /**
@@ -441,7 +424,6 @@ class DialogTest extends TestCase
 
         $aCommands = jaxon()->getResponse()->getCommands();
         $this->assertCount(1, $aCommands);
-        // The bootbox plugin issues a single script command.
         $this->assertEquals('dialog.modal.hide', $aCommands[0]['name']);
         $this->assertEquals('dialog', $aCommands[0]['plugin']);
     }
@@ -452,13 +434,15 @@ class DialogTest extends TestCase
     public function testConfirmMessageSuccess()
     {
         jaxon()->register(Jaxon::CALLABLE_CLASS, 'Sample', __DIR__ . '/../src/sample.php');
-        jaxon()->setOption('dialogs.default.message', 'toastr');
+        jaxon()->setOption('dialogs.default.message', 'cute');
         jaxon()->setOption('dialogs.default.question', 'noty');
         $this->assertEquals(
-            "jaxon.dialogs.noty.confirm('Really?','',() => {Sample.method(jaxon.$('elt_id').innerHTML);}," .
-                "() => {toastr.success('No confirm');})",
+            'jaxon.exec({"_type":"expr","calls":[{"_type":"func","_name":"Sample.method",' .
+                '"args":[{"_type":"html","_name":"elt_id"}]}],' .
+                '"question":{"lib":"noty","phrase":{"str":"Really?","args":[]}},' .
+                '"message":{"lib":"cute","type":"success","content":{"title":"","phrase":{"str":"No confirm","args":[]}}}})',
             rq('Sample')->method(pm()->html('elt_id'))->confirm("Really?")
-                ->elseSuccess("No confirm")->getScript()
+                ->elseSuccess("No confirm")->__toString()
         );
     }
 
@@ -468,13 +452,15 @@ class DialogTest extends TestCase
     public function testConfirmMessageInfo()
     {
         jaxon()->register(Jaxon::CALLABLE_CLASS, 'Sample', __DIR__ . '/../src/sample.php');
-        jaxon()->setOption('dialogs.default.message', 'toastr');
+        jaxon()->setOption('dialogs.default.message', 'cute');
         jaxon()->setOption('dialogs.default.question', 'noty');
         $this->assertEquals(
-            "jaxon.dialogs.noty.confirm('Really?','',() => {Sample.method(jaxon.$('elt_id').innerHTML);}," .
-                "() => {toastr.info('No confirm');})",
+            'jaxon.exec({"_type":"expr","calls":[{"_type":"func","_name":"Sample.method",' .
+                '"args":[{"_type":"html","_name":"elt_id"}]}],' .
+                '"question":{"lib":"noty","phrase":{"str":"Really?","args":[]}},' .
+                '"message":{"lib":"cute","type":"info","content":{"title":"","phrase":{"str":"No confirm","args":[]}}}})',
             rq('Sample')->method(pm()->html('elt_id'))->confirm("Really?")
-                ->elseInfo("No confirm")->getScript()
+                ->elseInfo("No confirm")->__toString()
         );
     }
 
@@ -484,13 +470,15 @@ class DialogTest extends TestCase
     public function testConfirmMessageWarning()
     {
         jaxon()->register(Jaxon::CALLABLE_CLASS, 'Sample', __DIR__ . '/../src/sample.php');
-        jaxon()->setOption('dialogs.default.message', 'toastr');
+        jaxon()->setOption('dialogs.default.message', 'cute');
         jaxon()->setOption('dialogs.default.question', 'noty');
         $this->assertEquals(
-            "jaxon.dialogs.noty.confirm('Really?','',() => {Sample.method(jaxon.$('elt_id').innerHTML);}," .
-                "() => {toastr.warning('No confirm');})",
+            'jaxon.exec({"_type":"expr","calls":[{"_type":"func","_name":"Sample.method",' .
+                '"args":[{"_type":"html","_name":"elt_id"}]}],' .
+                '"question":{"lib":"noty","phrase":{"str":"Really?","args":[]}},' .
+                '"message":{"lib":"cute","type":"warning","content":{"title":"","phrase":{"str":"No confirm","args":[]}}}})',
             rq('Sample')->method(pm()->html('elt_id'))->confirm("Really?")
-                ->elseWarning("No confirm")->getScript()
+                ->elseWarning("No confirm")->__toString()
         );
     }
 
@@ -500,13 +488,15 @@ class DialogTest extends TestCase
     public function testConfirmMessageError()
     {
         jaxon()->register(Jaxon::CALLABLE_CLASS, 'Sample', __DIR__ . '/../src/sample.php');
-        jaxon()->setOption('dialogs.default.message', 'toastr');
+        jaxon()->setOption('dialogs.default.message', 'cute');
         jaxon()->setOption('dialogs.default.question', 'noty');
         $this->assertEquals(
-            "jaxon.dialogs.noty.confirm('Really?','',() => {Sample.method(jaxon.$('elt_id').innerHTML);}," .
-                "() => {toastr.error('No confirm');})",
+            'jaxon.exec({"_type":"expr","calls":[{"_type":"func","_name":"Sample.method",' .
+                '"args":[{"_type":"html","_name":"elt_id"}]}],' .
+                '"question":{"lib":"noty","phrase":{"str":"Really?","args":[]}},' .
+                '"message":{"lib":"cute","type":"error","content":{"title":"","phrase":{"str":"No confirm","args":[]}}}})',
             rq('Sample')->method(pm()->html('elt_id'))->confirm("Really?")
-                ->elseError("No confirm")->getScript()
+                ->elseError("No confirm")->__toString()
         );
     }
 
