@@ -1,6 +1,6 @@
 <?php
 
-namespace Jaxon\Js;
+namespace Jaxon\JsCall;
 
 /**
  * Factory.php

@@ -2,7 +2,7 @@
 
 namespace Jaxon\Response;
 
-use Jaxon\Js\AbstractCall;
+use Jaxon\JsCall\AbstractCall;
 use Jaxon\Plugin\ResponsePlugin;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 use Closure;

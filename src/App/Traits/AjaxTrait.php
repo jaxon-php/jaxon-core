@@ -18,7 +18,7 @@ use Jaxon\App\Config\ConfigManager;
 use Jaxon\App\I18n\Translator;
 use Jaxon\Di\Container;
 use Jaxon\Exception\SetupException;
-use Jaxon\Js\Factory;
+use Jaxon\JsCall\Factory;
 use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Plugin\Package;
 use Jaxon\Plugin\Request\CallableClass\CallableRegistry;

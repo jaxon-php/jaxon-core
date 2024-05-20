@@ -25,7 +25,7 @@
 
 namespace Jaxon\Plugin;
 
-use Jaxon\Js\Selector;
+use Jaxon\JsCall\Selector;
 use Jaxon\Plugin\Response\DataBag\DataBagContext;
 use Jaxon\Response\ResponseInterface;
 use JsonSerializable;

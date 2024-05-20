@@ -18,7 +18,7 @@ use Composer\Autoload\ClassLoader;
 use Jaxon\App\I18n\Translator;
 use Jaxon\Di\Container;
 use Jaxon\Exception\SetupException;
-use Jaxon\Js\CallFactory;
+use Jaxon\JsCall\CallFactory;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 

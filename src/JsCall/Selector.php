@@ -9,7 +9,7 @@
  * Therefore, the Selector class implements the JsonSerializable interface.
  *
  * When used as a parameter of a Jaxon call, the Selector must be converted to Jaxon js call parameter.
- * Therefore, the Selector class also implements the Jaxon\Js\ParameterInterface interface.
+ * Therefore, the Selector class also implements the Jaxon\JsCall\ParameterInterface interface.
  *
  * @package jaxon-jquery
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
@@ -18,7 +18,7 @@
  * @link https://github.com/jaxon-php/jaxon-jquery
  */
 
-namespace Jaxon\Js;
+namespace Jaxon\JsCall;
 
 use function implode;
 use function is_a;

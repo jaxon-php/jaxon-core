@@ -2,7 +2,7 @@
 
 namespace Jaxon\Plugin\Response\JQuery;
 
-use Jaxon\Js\Selector;
+use Jaxon\JsCall\Selector;
 use Jaxon\Plugin\ResponsePlugin;
 
 class JQueryPlugin extends ResponsePlugin

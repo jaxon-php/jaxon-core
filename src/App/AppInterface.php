@@ -14,7 +14,7 @@
 
 namespace Jaxon\App;
 
-use Jaxon\Js\Factory;
+use Jaxon\JsCall\Factory;
 use Jaxon\Plugin\Package;
 use Jaxon\Plugin\ResponsePlugin;
 use Jaxon\Request\Handler\CallbackManager;

@@ -13,7 +13,7 @@
 namespace Jaxon\Response\Traits;
 
 use Jaxon\App\Dialog\DialogManager;
-use Jaxon\Js\AbstractCall;
+use Jaxon\JsCall\AbstractCall;
 use Jaxon\Response\ResponseInterface;
 use Closure;
 use JsonSerializable;

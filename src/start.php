@@ -4,9 +4,9 @@ namespace Jaxon;
 
 use Jaxon\App\Ajax;
 use Jaxon\Exception\SetupException;
-use Jaxon\Js\CallFactory;
-use Jaxon\Js\ParameterFactory;
-use Jaxon\Js\Selector;
+use Jaxon\JsCall\CallFactory;
+use Jaxon\JsCall\ParameterFactory;
+use Jaxon\JsCall\Selector;
 
 /**
  * start.php

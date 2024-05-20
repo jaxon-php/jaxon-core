@@ -1,8 +1,8 @@
 <?php
 
-namespace Jaxon\Js\Selector;
+namespace Jaxon\JsCall\Selector;
 
-use Jaxon\Js\AbstractCall;
+use Jaxon\JsCall\AbstractCall;
 use JsonSerializable;
 use Stringable;
 

@@ -22,7 +22,7 @@
 namespace Jaxon\Response;
 
 use Jaxon\App\Dialog\DialogManager;
-use Jaxon\Js\Selector;
+use Jaxon\JsCall\Selector;
 use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Plugin\Response\DataBag\DataBagContext;
 use Jaxon\Plugin\Response\DataBag\DataBagPlugin;
