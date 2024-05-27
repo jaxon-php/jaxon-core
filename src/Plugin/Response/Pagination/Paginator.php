@@ -40,12 +40,14 @@ SOFTWARE.
 
 namespace Jaxon\Plugin\Response\Pagination;
 
-use Jaxon\JsCall\Call;
+use Jaxon\JsCall\JsExpr;
 
 use function array_walk;
 use function ceil;
+use function count;
 use function floor;
 use function max;
+use function trim;
 
 class Paginator
 {
@@ -108,19 +110,6 @@ class Paginator
         $this->setCurrentPage($nCurrentPage)
             ->setItemsPerPage($nItemsPerPage)
             ->setTotalItems($nTotalItems);
-    }
-
-    /**
-     * Render the paginator
-     *
-     * @param Call $xCall
-     * @param string $sWrapperId
-     *
-     * @return string
-     */
-    public function paginate(Call $xCall, string $sWrapperId)
-    {
-        $this->xPlugin->render($this, $xCall, $sWrapperId);
     }
 
     /**
@@ -343,5 +332,41 @@ class Paginator
         $aPages[] = $this->getNextPage();
 
         return $aPages;
+    }
+
+    /**
+     * Render the paginator
+     *
+     * @param JsExpr $xCall
+     * @param string $sWrapperId
+     *
+     * @return string
+     */
+    public function paginate(JsExpr $xCall, string $sWrapperId)
+    {
+        $aPages = $this->pages();
+        if(count($aPages) === 0)
+        {
+            return;
+        }
+        $xStore = $this->xPlugin->render($aPages);
+        if(!$xStore)
+        {
+            return;
+        }
+
+        // Show the pagination links
+        $sWrapperId = trim($sWrapperId);
+        $this->xPlugin->response()->html($sWrapperId, $xStore->__toString());
+
+        // Set click handlers on the pagination links
+        if($this->getTotalPages() > 1)
+        {
+            $xCall = $xCall->func();
+            $this->xPlugin->addCommand('pg.paginate', [
+                'id' => $sWrapperId,
+                'func' => !$xCall ? [] : $xCall->withPage()->jsonSerialize(),
+            ]);
+        }
     }
 }

@@ -4,9 +4,9 @@ namespace Jaxon;
 
 use Jaxon\App\Ajax;
 use Jaxon\Exception\SetupException;
-use Jaxon\JsCall\CallFactory;
+use Jaxon\JsCall\JqFactory;
+use Jaxon\JsCall\JsFactory;
 use Jaxon\JsCall\ParameterFactory;
-use Jaxon\JsCall\Selector;
 
 /**
  * start.php
@@ -37,10 +37,10 @@ function jaxon(): Ajax
  *
  * @param string $sClassName
  *
- * @return CallFactory
+ * @return JsFactory
  * @throws SetupException
  */
-function rq(string $sClassName = ''): CallFactory
+function rq(string $sClassName = ''): JsFactory
 {
     return jaxon()->factory()->rq($sClassName);
 }
@@ -50,9 +50,9 @@ function rq(string $sClassName = ''): CallFactory
  *
  * @param string $sJsObject
  *
- * @return CallFactory
+ * @return JsFactory
  */
-function js(string $sJsObject = ''): CallFactory
+function js(string $sJsObject = ''): JsFactory
 {
     return jaxon()->factory()->js($sJsObject);
 }
@@ -68,7 +68,7 @@ function pm(): ParameterFactory
 }
 
 /**
- * Create a JQuery Selector with a given path
+ * Create a JQuery JqFactory with a given path
  *
  * The returned element is not linked to any Jaxon response, so this function shall be used
  * to insert jQuery's code into a javascript function, or as a parameter of a Jaxon function call.
@@ -76,11 +76,11 @@ function pm(): ParameterFactory
  * @param string $sPath    The jQuery selector path
  * @param mixed $xContext    A context associated to the selector
  *
- * @return Selector
+ * @return JqFactory
  */
-function jq(string $sPath = '', $xContext = null): Selector
+function jq(string $sPath = '', $xContext = null): JqFactory
 {
-    return new Selector($sPath, $xContext);
+    return jaxon()->factory()->jq($sPath, $xContext);
 }
 
 // Register the Jaxon request and response plugins

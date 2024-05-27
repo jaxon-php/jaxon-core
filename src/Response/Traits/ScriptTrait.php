@@ -13,7 +13,7 @@
 namespace Jaxon\Response\Traits;
 
 use Jaxon\App\Dialog\DialogManager;
-use Jaxon\JsCall\AbstractCall;
+use Jaxon\JsCall\JsExpr;
 use Jaxon\Response\ResponseInterface;
 use Closure;
 use JsonSerializable;
@@ -154,11 +154,11 @@ trait ScriptTrait
      *
      * @param string $sTarget    The id of the element
      * @param string $sEvent    The name of the event
-     * @param AbstractCall $xCall    The event handler
+     * @param JsExpr $xCall    The event handler
      *
      * @return ResponseInterface
      */
-    public function setEventHandler(string $sTarget, string $sEvent, AbstractCall $xCall): ResponseInterface
+    public function setEventHandler(string $sTarget, string $sEvent, JsExpr $xCall): ResponseInterface
     {
         return $this->addCommand('handler.event.set', [
             'id' => $this->str($sTarget),
@@ -171,11 +171,11 @@ trait ScriptTrait
      * Add a command to set a click handler on the browser
      *
      * @param string $sTarget    The id of the element
-     * @param AbstractCall $xCall    The event handler
+     * @param JsExpr $xCall    The event handler
      *
      * @return ResponseInterface
      */
-    public function onClick(string $sTarget, AbstractCall $xCall): ResponseInterface
+    public function onClick(string $sTarget, JsExpr $xCall): ResponseInterface
     {
         return $this->setEventHandler($sTarget, 'onclick', $xCall);
     }
@@ -186,11 +186,11 @@ trait ScriptTrait
      *
      * @param string $sTarget    The id of the element
      * @param string $sEvent    The name of the event
-     * @param AbstractCall $xCall    The event handler
+     * @param JsExpr $xCall    The event handler
      *
      * @return ResponseInterface
      */
-    public function addEventHandler(string $sTarget, string $sEvent, AbstractCall $xCall): ResponseInterface
+    public function addEventHandler(string $sTarget, string $sEvent, JsExpr $xCall): ResponseInterface
     {
         return $this->addCommand('handler.event.add', [
             'id' => $this->str($sTarget),

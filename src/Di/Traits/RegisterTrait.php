@@ -9,7 +9,7 @@ use Jaxon\App\I18n\Translator;
 use Jaxon\App\View\ViewRenderer;
 use Jaxon\Exception\SetupException;
 use Jaxon\JsCall\Factory;
-use Jaxon\JsCall\CallFactory;
+use Jaxon\JsCall\JsFactory;
 use Jaxon\Plugin\AnnotationReaderInterface;
 use Jaxon\Plugin\Request\CallableClass\CallableClassHelper;
 use Jaxon\Plugin\Request\CallableClass\CallableObject;
@@ -85,7 +85,7 @@ trait RegisterTrait
      */
     public function registerCallableClass(string $sClassName, array $aOptions)
     {
-        $sCallFactory = $sClassName . '_CallFactory';
+        $sJsFactory = $sClassName . '_JsFactory';
         $sCallableObject = $sClassName . '_CallableObject';
         $sReflectionClass = $sClassName . '_ReflectionClass';
 
@@ -121,11 +121,11 @@ trait RegisterTrait
         });
 
         // Register the js call factory
-        $this->set($sCallFactory, function($di) use($sCallableObject) {
+        $this->set($sJsFactory, function($di) use($sCallableObject) {
             $xConfigManager = $di->g(ConfigManager::class);
             $xCallable = $di->g($sCallableObject);
             $sJsClass = $xConfigManager->getOption('core.prefix.class') . $xCallable->getJsName() . '.';
-            return new CallFactory($sJsClass, $di->g(DialogManager::class));
+            return new JsFactory($di->g(DialogManager::class), $sJsClass);
         });
 
         // Register the user class, but only if the user didn't already.
@@ -180,11 +180,11 @@ trait RegisterTrait
      *
      * @param string $sClassName
      *
-     * @return CallFactory
+     * @return JsFactory
      */
-    public function getCallFactory(string $sClassName): CallFactory
+    public function getJsFactory(string $sClassName): JsFactory
     {
-        return $this->g($sClassName . '_CallFactory');
+        return $this->g($sClassName . '_JsFactory');
     }
 
     /**

@@ -42,8 +42,6 @@ class Parameter implements ParameterInterface
     // Specifies that the parameter will be a non-quoted value
     // (evaluated by the browsers javascript engine at run time).
     const JS_VALUE = 'UnquotedValue';
-    // Specifies that the parameter is a call to a javascript function
-    const JS_CALL = 'JsCall';
     // Specifies that the parameter must be json encoded
     const JSON_VALUE = 'JsonValue';
     // Specifies that the parameter will be an integer used to generate pagination links.
@@ -148,10 +146,6 @@ class Parameter implements ParameterInterface
         {
             return new Parameter(self::BOOL_VALUE, $xValue);
         }
-        if($xValue instanceof Call)
-        {
-            return new Parameter(self::JS_CALL, $xValue);
-        }
         // if(is_array($xValue) || is_object($xValue))
         {
             return new Parameter(self::JSON_VALUE, $xValue);
@@ -167,8 +161,6 @@ class Parameter implements ParameterInterface
     {
         switch($this->getType())
         {
-        case self::JS_CALL:
-            return $this->getValue()->jsonSerialize();
         case self::JS_VALUE:
             return [
                 '_type' => 'expr',

@@ -5,8 +5,8 @@ namespace Jaxon\App;
 use Jaxon\App\Session\SessionInterface;
 use Jaxon\App\View\ViewRenderer;
 use Jaxon\Exception\SetupException;
-use Jaxon\JsCall\CallFactory;
-use Jaxon\JsCall\Selector;
+use Jaxon\JsCall\JqFactory;
+use Jaxon\JsCall\JsFactory;
 use Jaxon\Plugin\Request\CallableClass\CallableClassHelper;
 use Jaxon\Plugin\Response\DataBag\DataBagContext;
 use Jaxon\Plugin\Response\Pagination\Paginator;
@@ -54,9 +54,9 @@ class CallableClass
      *
      * @param string $sClassName
      *
-     * @return CallFactory
+     * @return JsFactory
      */
-    public function rq(string $sClassName = ''): CallFactory
+    public function rq(string $sClassName = ''): JsFactory
     {
         return $this->xCallableClassHelper->rq($sClassName);
     }
@@ -102,14 +102,14 @@ class CallableClass
     }
 
     /**
-     * Create a JQuery Selector, and link it to the response attribute.
+     * Create a JQuery selector expression, and link it to the response attribute.
      *
      * @param string $sPath    The jQuery selector path
      * @param mixed $xContext    A context associated to the selector
      *
-     * @return Selector
+     * @return JqFactory
      */
-    public function jq(string $sPath = '', $xContext = null): Selector
+    public function jq(string $sPath = '', $xContext = null): JqFactory
     {
         return $this->response->jq($sPath, $xContext);
     }

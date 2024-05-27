@@ -1,19 +1,13 @@
 <?php
 
 /**
- * Call.php - The Jaxon Call
+ * JsExpr.php
  *
- * This class is used to create js ajax requests to callable classes and functions.
+ * Base class for js call factory and selector classes.
  *
  * @package jaxon-core
- * @author Jared White
- * @author J. Max Wilson
- * @author Joseph Woolley
- * @author Steffen Konerow
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
- * @copyright Copyright (c) 2005-2007 by Jared White & J. Max Wilson
- * @copyright Copyright (c) 2008-2010 by Joseph Woolley, Steffen Konerow, Jared White  & J. Max Wilson
- * @copyright 2016 Thierry Feuzeu <thierry.feuzeu@gmail.com>
+ * @copyright 2024 Thierry Feuzeu <thierry.feuzeu@gmail.com>
  * @license https://opensource.org/licenses/BSD-3-Clause BSD 3-Clause License
  * @link https://github.com/jaxon-php/jaxon-core
  */
@@ -21,33 +15,34 @@
 namespace Jaxon\JsCall;
 
 use Jaxon\App\Dialog\DialogManager;
-use JsonSerializable;
+use Jaxon\JsCall\Js\Attr;
+use Jaxon\JsCall\Js\Event;
+use Jaxon\JsCall\Js\Func;
+use Jaxon\JsCall\Js\Selector;
+use Jaxon\JsCall\ParameterInterface;
+use Jaxon\JsCall\Parameter;
 use Stringable;
 
 use function array_map;
 use function array_shift;
 use function func_get_args;
 use function implode;
+use function is_a;
 use function json_encode;
 
-class Call extends AbstractCall
+class JsExpr implements ParameterInterface
 {
     /**
      * @var DialogManager
      */
-    protected $xDialogManager;
+    protected $xDialog;
 
     /**
-     * The name of the javascript function
+     * The actions to be applied on the selected element
      *
-     * @var string
+     * @var array
      */
-    private $sFunction;
-
-    /**
-     * @var array<ParameterInterface>
-     */
-    protected $aParameters = [];
+    protected $aCalls = [];
 
     /**
      * The arguments of the else() calls
@@ -71,76 +66,108 @@ class Call extends AbstractCall
     protected $aConfirm = [];
 
     /**
-     * The constructor.
-     *
-     * @param string $sFunction    The javascript function
+     * @var bool
      */
-    public function __construct(string $sFunction)
-    {
-        $this->sFunction = $sFunction;
-    }
+    protected $bToInt = false;
 
     /**
-     * Clear the parameter list associated with this request
-     *
-     * @return Call
+     * @param DialogManager $xDialog
+     * @param Selector|null $xSelector
      */
-    public function clearParameters(): Call
+    public function __construct(DialogManager $xDialog, ?Selector $xSelector = null)
     {
-        $this->aParameters = [];
-        return $this;
-    }
-
-    /**
-     * Set the value of the parameter at the given position
-     *
-     * @param ParameterInterface $xParameter    The value to be used
-     *
-     * @return Call
-     */
-    public function pushParameter(ParameterInterface $xParameter): Call
-    {
-        $this->aParameters[] = $xParameter;
-        return $this;
-    }
-
-    /**
-     * Add a parameter value to the parameter list for this request
-     *
-     * @param string $sType    The type of the value to be used
-     * @param string $sValue    The value to be used
-     *
-     * Types should be one of the following <Parameter::FORM_VALUES>, <Parameter::QUOTED_VALUE>, <Parameter::NUMERIC_VALUE>,
-     * <Parameter::JS_VALUE>, <Parameter::INPUT_VALUE>, <Parameter::CHECKED_VALUE>, <Parameter::PAGE_NUMBER>.
-     * The value should be as follows:
-     * - <Parameter::FORM_VALUES> - Use the ID of the form you want to process.
-     * - <Parameter::QUOTED_VALUE> - The string data to be passed.
-     * - <Parameter::JS_VALUE> - A string containing valid javascript
-     *   (either a javascript variable name that will be in scope at the time of the call or
-     *   a javascript function call whose return value will become the parameter).
-     *
-     * @return Call
-     */
-    public function addParameter(string $sType, string $sValue): Call
-    {
-        $this->pushParameter(new Parameter($sType, $sValue));
-        return $this;
-    }
-
-    /**
-     * Add a set of parameters to this request
-     *
-     * @param array $aParameters    The parameters
-     *
-     * @return Call
-     */
-    public function addParameters(array $aParameters): Call
-    {
-        foreach($aParameters as $xParameter)
+        $this->xDialog = $xDialog;
+        if($xSelector !== null)
         {
-            $this->pushParameter(Parameter::make($xParameter));
+            $this->aCalls[] = $xSelector;
         }
+    }
+
+    /**
+     * Get the first function in the calls
+     *
+     * @return Func|null
+     */
+    public function func(): ?Func
+    {
+        foreach($this->aCalls as $xCall)
+        {
+            if(is_a($xCall, Func::class))
+            {
+                return $xCall;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Add a call to a js function on the current object
+     *
+     * @param string  $sMethod
+     * @param array  $aArguments
+     *
+     * @return self
+     */
+    public function __call(string $sMethod, array $aArguments): self
+    {
+        // Append the action into the array
+        $this->aCalls[] = new Func($sMethod, $aArguments);
         return $this;
+    }
+
+    /**
+     * Get the value of an attribute of the current object
+     *
+     * @param string  $sAttribute
+     *
+     * @return self
+     */
+    public function __get(string $sAttribute): self
+    {
+        // Append the action into the array
+        $this->aCalls[] = Attr::get($sAttribute);
+        return $this;
+    }
+
+    /**
+     * Set the value of an attribute of the current object
+     *
+     * @param string $sAttribute
+     * @param mixed $xValue
+     *
+     * @return void
+     */
+    public function __set(string $sAttribute, $xValue)
+    {
+        // Append the action into the array
+        $this->aCalls[] = Attr::set($sAttribute, $xValue);
+        return $this;
+    }
+
+    /**
+     * Set an event handler on the first selected element
+     *
+     * @param string $sName
+     * @param JsExpr $xHandler
+     *
+     * @return self
+     */
+    public function on(string $sName, JsExpr $xHandler): self
+    {
+        $this->aCalls[] = new Event($sName, $xHandler);
+        return $this;
+    }
+
+    /**
+     * Set an "click" event handler on the first selected element
+     *
+     * @param JsExpr $xHandler
+     *
+     * @return self
+     */
+    public function click(JsExpr $xHandler): self
+    {
+        return $this->on('click', $xHandler);
     }
 
     /**
@@ -155,25 +182,15 @@ class Call extends AbstractCall
     }
 
     /**
-     * @param DialogManager $xDialogManager
-     *
-     * @return void
-     */
-    public function setDialogManager(DialogManager $xDialogManager)
-    {
-        $this->xDialogManager = $xDialogManager;
-    }
-
-    /**
      * Show a message if the condition to the call is not met
      *
      * @param string $sMessage  The message to show
      *
-     * @return Call
+     * @return self
      */
-    public function elseShow(string $sMessage): Call
+    public function elseShow(string $sMessage): self
     {
-        $this->aMessage = $this->xDialogManager->warning($sMessage, $this->getArgs(func_get_args()));
+        $this->aMessage = $this->xDialog->warning($sMessage, $this->getArgs(func_get_args()));
         return $this;
     }
 
@@ -182,11 +199,11 @@ class Call extends AbstractCall
      *
      * @param string $sMessage  The message to show
      *
-     * @return Call
+     * @return self
      */
-    public function elseInfo(string $sMessage): Call
+    public function elseInfo(string $sMessage): self
     {
-        $this->aMessage = $this->xDialogManager->info($sMessage, $this->getArgs(func_get_args()));
+        $this->aMessage = $this->xDialog->info($sMessage, $this->getArgs(func_get_args()));
         return $this;
     }
 
@@ -195,11 +212,11 @@ class Call extends AbstractCall
      *
      * @param string $sMessage  The message to show
      *
-     * @return Call
+     * @return self
      */
-    public function elseSuccess(string $sMessage): Call
+    public function elseSuccess(string $sMessage): self
     {
-        $this->aMessage = $this->xDialogManager->success($sMessage, $this->getArgs(func_get_args()));
+        $this->aMessage = $this->xDialog->success($sMessage, $this->getArgs(func_get_args()));
         return $this;
     }
 
@@ -208,11 +225,11 @@ class Call extends AbstractCall
      *
      * @param string $sMessage  The message to show
      *
-     * @return Call
+     * @return self
      */
-    public function elseWarning(string $sMessage): Call
+    public function elseWarning(string $sMessage): self
     {
-        $this->aMessage = $this->xDialogManager->warning($sMessage, $this->getArgs(func_get_args()));
+        $this->aMessage = $this->xDialog->warning($sMessage, $this->getArgs(func_get_args()));
         return $this;
     }
 
@@ -221,11 +238,11 @@ class Call extends AbstractCall
      *
      * @param string $sMessage  The message to show
      *
-     * @return Call
+     * @return self
      */
-    public function elseError(string $sMessage): Call
+    public function elseError(string $sMessage): self
     {
-        $this->aMessage = $this->xDialogManager->error($sMessage, $this->getArgs(func_get_args()));
+        $this->aMessage = $this->xDialog->error($sMessage, $this->getArgs(func_get_args()));
         return $this;
     }
 
@@ -234,11 +251,11 @@ class Call extends AbstractCall
      *
      * @param string $sQuestion    The question to ask
      *
-     * @return Call
+     * @return self
      */
-    public function confirm(string $sQuestion): Call
+    public function confirm(string $sQuestion): self
     {
-        $this->aConfirm = $this->xDialogManager->confirm($sQuestion, $this->getArgs(func_get_args()));
+        $this->aConfirm = $this->xDialog->confirm($sQuestion, $this->getArgs(func_get_args()));
         return $this;
     }
 
@@ -248,9 +265,9 @@ class Call extends AbstractCall
      * @param mixed $xValue1    The first value to compare
      * @param mixed $xValue2    The second value to compare
      *
-     * @return Call
+     * @return self
      */
-    public function ifeq($xValue1, $xValue2): Call
+    public function ifeq($xValue1, $xValue2): self
     {
         $this->aCondition = ['eq', Parameter::make($xValue1), Parameter::make($xValue2)];
         return $this;
@@ -262,9 +279,9 @@ class Call extends AbstractCall
      * @param mixed $xValue1    The first value to compare
      * @param mixed $xValue2    The second value to compare
      *
-     * @return Call
+     * @return self
      */
-    public function ifteq($xValue1, $xValue2): Call
+    public function ifteq($xValue1, $xValue2): self
     {
         $this->aCondition = ['teq', Parameter::make($xValue1), Parameter::make($xValue2)];
         return $this;
@@ -276,9 +293,9 @@ class Call extends AbstractCall
      * @param mixed $xValue1    The first value to compare
      * @param mixed $xValue2    The second value to compare
      *
-     * @return Call
+     * @return self
      */
-    public function ifne($xValue1, $xValue2): Call
+    public function ifne($xValue1, $xValue2): self
     {
         $this->aCondition = ['ne', Parameter::make($xValue1), Parameter::make($xValue2)];
         return $this;
@@ -290,9 +307,9 @@ class Call extends AbstractCall
      * @param mixed $xValue1    The first value to compare
      * @param mixed $xValue2    The second value to compare
      *
-     * @return Call
+     * @return self
      */
-    public function ifnte($xValue1, $xValue2): Call
+    public function ifnte($xValue1, $xValue2): self
     {
         $this->aCondition = ['nte', Parameter::make($xValue1), Parameter::make($xValue2)];
         return $this;
@@ -304,9 +321,9 @@ class Call extends AbstractCall
      * @param mixed $xValue1    The first value to compare
      * @param mixed $xValue2    The second value to compare
      *
-     * @return Call
+     * @return self
      */
-    public function ifgt($xValue1, $xValue2): Call
+    public function ifgt($xValue1, $xValue2): self
     {
         $this->aCondition = ['gt', Parameter::make($xValue1), Parameter::make($xValue2)];
         return $this;
@@ -318,9 +335,9 @@ class Call extends AbstractCall
      * @param mixed $xValue1    The first value to compare
      * @param mixed $xValue2    The second value to compare
      *
-     * @return Call
+     * @return self
      */
-    public function ifge($xValue1, $xValue2): Call
+    public function ifge($xValue1, $xValue2): self
     {
         $this->aCondition = ['ge', Parameter::make($xValue1), Parameter::make($xValue2)];
         return $this;
@@ -332,9 +349,9 @@ class Call extends AbstractCall
      * @param mixed $xValue1    The first value to compare
      * @param mixed $xValue2    The second value to compare
      *
-     * @return Call
+     * @return self
      */
-    public function iflt($xValue1, $xValue2): Call
+    public function iflt($xValue1, $xValue2): self
     {
         $this->aCondition = ['lt', Parameter::make($xValue1), Parameter::make($xValue2)];
         return $this;
@@ -346,9 +363,9 @@ class Call extends AbstractCall
      * @param mixed $xValue1    The first value to compare
      * @param mixed $xValue2    The second value to compare
      *
-     * @return Call
+     * @return self
      */
-    public function ifle($xValue1, $xValue2): Call
+    public function ifle($xValue1, $xValue2): self
     {
         $this->aCondition = ['le', Parameter::make($xValue1), Parameter::make($xValue2)];
         return $this;
@@ -361,9 +378,9 @@ class Call extends AbstractCall
      *
      * @param mixed $xCondition    The condition to check
      *
-     * @return Call
+     * @return self
      */
-    public function when($xCondition): Call
+    public function when($xCondition): self
     {
         return $this->ifeq(true, $xCondition);
     }
@@ -375,72 +392,50 @@ class Call extends AbstractCall
      *
      * @param mixed $xCondition    The condition to check
      *
-     * @return Call
+     * @return self
      */
-    public function unless($xCondition): Call
+    public function unless($xCondition): self
     {
         return $this->ifeq(false, $xCondition);
     }
 
     /**
-     * Check if the request has a parameter of type Parameter::PAGE_NUMBER
-     *
-     * @return ParameterInterface|null
+     * @return self
      */
-    private function findPageNumber(): ?ParameterInterface
+    public function toInt(): self
     {
-        foreach($this->aParameters as $xParameter)
-        {
-            if($xParameter->getType() === Parameter::PAGE_NUMBER)
-            {
-                return $xParameter;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Check if the request has a parameter of type Parameter::PAGE_NUMBER
-     *
-     * @return bool
-     */
-    public function hasPageNumber(): bool
-    {
-        return $this->findPageNumber() !== null;
-    }
-
-    /**
-     * Set a value to the Parameter::PAGE_NUMBER parameter
-     *
-     * @param integer $nPageNumber    The current page number
-     *
-     * @return Call
-     */
-    public function setPageNumber(int $nPageNumber): Call
-    {
-        /** @var Parameter */
-        $xParameter = $this->findPageNumber();
-        if($xParameter !== null)
-        {
-            $xParameter->setValue($nPageNumber);
-        }
+        $this->bToInt = true;
         return $this;
     }
 
     /**
-     * Convert the first call to array
+     * return array
+     */
+    protected function toIntCall(): array
+    {
+        return [
+            '_type' => 'method',
+            '_name' => 'toInt',
+            'args' => [],
+        ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getType(): string
+    {
+        return 'expr';
+    }
+
+    /**
+     * Returns the first call in the expression as an array
      *
      * @return array
      */
     public function toArray(): array
     {
-        return [
-            '_type' => 'func',
-            '_name' => $this->sFunction,
-            'args' => array_map(function(JsonSerializable $xParam) {
-                return $xParam->jsonSerialize();
-            }, $this->aParameters),
-        ];
+        return $this->aCalls[0]->jsonSerialize();
     }
 
     /**
@@ -450,27 +445,30 @@ class Call extends AbstractCall
      */
     public function jsonSerialize(): array
     {
-        $aCalls = [$this->toArray()];
+        $aCalls = [];
+        foreach($this->aCalls as $xCall)
+        {
+            $aCalls[] = $xCall->jsonSerialize();
+        }
         if($this->bToInt)
         {
             $aCalls[] = $this->toIntCall();
         }
 
-        $aExpr = ['_type' => $this->getType(), 'calls' => $aCalls];
+        $aJsExpr = ['_type' => $this->getType(), 'calls' => $aCalls];
         if(($this->aConfirm))
         {
-            $aExpr['question'] = $this->aConfirm;
+            $aJsExpr['question'] = $this->aConfirm;
         }
         if(($this->aCondition))
         {
-            $aExpr['condition'] = $this->aCondition;
+            $aJsExpr['condition'] = $this->aCondition;
         }
         if(($this->aMessage))
         {
-            $aExpr['message'] = $this->aMessage;
+            $aJsExpr['message'] = $this->aMessage;
         }
-
-        return $aExpr;
+        return $aJsExpr;
     }
 
     /**
@@ -490,10 +488,9 @@ class Call extends AbstractCall
      */
     public function raw(): string
     {
-        $aParameters = array_map(function(Stringable $xParam) {
+        $sScript = implode('.', array_map(function(Stringable $xParam) {
             return $xParam->__toString();
-        }, $this->aParameters);
-        $sScript = $this->sFunction . '(' . implode(', ', $aParameters) . ')';
+        }, $this->aCalls));
         return $this->bToInt ? "parseInt($sScript)" : $sScript;
     }
 }

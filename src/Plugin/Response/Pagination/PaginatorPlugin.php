@@ -13,15 +13,11 @@ namespace Jaxon\Plugin\Response\Pagination;
 
 use Jaxon\App\View\ViewRenderer;
 use Jaxon\App\View\Store;
-use Jaxon\JsCall\Call;
-use Jaxon\JsCall\Parameter;
 use Jaxon\Plugin\ResponsePlugin;
 
 use function array_map;
 use function array_pop;
 use function array_shift;
-use function count;
-use function trim;
 
 /**
  * Usage
@@ -97,11 +93,25 @@ class PaginatorPlugin extends ResponsePlugin
     }
 
     /**
+     * Create a paginator
+     *
+     * @param int $nCurrentPage     The current page number
+     * @param int $nItemsPerPage    The number of items per page
+     * @param int $nTotalItems      The total number of items
+     *
+     * @return Paginator
+     */
+    public function paginator(int $nCurrentPage, int $nItemsPerPage, int $nTotalItems): Paginator
+    {
+        return new Paginator($this, $nCurrentPage, $nItemsPerPage, $nTotalItems);
+    }
+
+    /**
      * @param array<Page> $aPages
      *
      * @return null|Store
      */
-    private function _render(array $aPages): ?Store
+    public function render(array $aPages): ?Store
     {
         $aPages = array_map(function($xPage) {
             return $this->xRenderer->render('pagination::links/' . $xPage->sType, [
@@ -117,57 +127,5 @@ class PaginatorPlugin extends ResponsePlugin
             'prev' => $aPrevPage,
             'next' => $aNextPage,
         ]);
-    }
-
-    /**
-     * Create a paginator
-     *
-     * @param int $nCurrentPage     The current page number
-     * @param int $nItemsPerPage    The number of items per page
-     * @param int $nTotalItems      The total number of items
-     *
-     * @return Paginator
-     */
-    public function paginator(int $nCurrentPage, int $nItemsPerPage, int $nTotalItems): Paginator
-    {
-        return new Paginator($this, $nCurrentPage, $nItemsPerPage, $nTotalItems);
-    }
-
-    /**
-     * Render an HTML pagination control.
-     *
-     * @param Paginator $xPaginator
-     * @param Call $xCall
-     * @param string $sWrapperId
-     *
-     * @return void
-     */
-    public function render(Paginator $xPaginator, Call $xCall, string $sWrapperId)
-    {
-        $aPages = $xPaginator->pages();
-        if(count($aPages) === 0)
-        {
-            return;
-        }
-        $xStore = $this->_render($aPages);
-        if(!$xStore)
-        {
-            return;
-        }
-
-        // Append the page number to the parameter list, if not yet given.
-        if(!$xCall->hasPageNumber())
-        {
-            $xCall->addParameter(Parameter::PAGE_NUMBER, 0);
-        }
-
-        // Show the pagination links
-        $sWrapperId = trim($sWrapperId);
-        $this->response()->html($sWrapperId, $xStore->__toString());
-        // Set click handlers on the pagination links
-        if($xPaginator->getTotalPages() > 1)
-        {
-            $this->addCommand('pg.paginate', ['id' => $sWrapperId, 'func' => $xCall->toArray()]);
-        }
     }
 }

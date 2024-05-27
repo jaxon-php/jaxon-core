@@ -9,6 +9,7 @@ use Jaxon\App\Dialog\Library\DialogLibraryManager;
 use Jaxon\App\I18n\Translator;
 use Jaxon\App\View\ViewRenderer;
 use Jaxon\Di\Container;
+use Jaxon\JsCall\Factory;
 use Jaxon\Plugin\Code\AssetManager;
 use Jaxon\Plugin\Code\CodeGenerator;
 use Jaxon\Plugin\Code\MinifierInterface;
@@ -57,7 +58,7 @@ trait PluginTrait
 
         // JQuery response plugin
         $this->set(JQueryPlugin::class, function($di) {
-            return new JQueryPlugin();
+            return new JQueryPlugin($di->g(Factory::class));
         });
         // DataBag response plugin
         $this->set(DataBagPlugin::class, function($di) {

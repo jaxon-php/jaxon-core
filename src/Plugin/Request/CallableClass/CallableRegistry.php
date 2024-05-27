@@ -18,7 +18,7 @@ use Composer\Autoload\ClassLoader;
 use Jaxon\App\I18n\Translator;
 use Jaxon\Di\Container;
 use Jaxon\Exception\SetupException;
-use Jaxon\JsCall\CallFactory;
+use Jaxon\JsCall\JsFactory;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 
@@ -278,16 +278,16 @@ class CallableRegistry
     }
 
     /**
-     * Get the js call factory for a given class
+     * Get the js call for a given class
      *
      * @param string $sClassName The class name of the callable object
      *
-     * @return CallFactory|null
+     * @return JsFactory|null
      * @throws SetupException
      */
-    public function getCallFactory(string $sClassName): ?CallFactory
+    public function getJsFactory(string $sClassName): ?JsFactory
     {
-        return $this->di->getCallFactory($this->checkCallableObject($sClassName));
+        return $this->di->getJsFactory($this->checkCallableObject($sClassName));
     }
 
     /**

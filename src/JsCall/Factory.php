@@ -30,7 +30,7 @@ class Factory
     /**
      * @var DialogManager
      */
-    protected $xDialogManager;
+    protected $xDialog;
 
     /**
      * @var ParameterFactory
@@ -38,66 +38,96 @@ class Factory
     protected $xParameterFactory;
 
     /**
-     * @var CallFactory
+     * @var JsFactory
      */
     protected $xRqFunctionFactory;
 
     /**
-     * @var CallFactory
+     * @var JsFactory
      */
     protected $xJsFunctionFactory;
+
+    /**
+     * @var JqFactory
+     */
+    protected $xJqThisFactory;
 
     /**
      * The constructor.
      *
      * @param CallableRegistry $xCallableRegistry
-     * @param DialogManager $xDialogManager
+     * @param DialogManager $xDialog
      * @param ParameterFactory $xParameterFactory
      * @param string $sFunctionPrefix
      */
-    public function __construct(CallableRegistry $xCallableRegistry,
-        DialogManager $xDialogManager, ParameterFactory $xParameterFactory, string $sFunctionPrefix)
+    public function __construct(CallableRegistry $xCallableRegistry, DialogManager $xDialog,
+        ParameterFactory $xParameterFactory, string $sFunctionPrefix)
     {
         $this->xCallableRegistry = $xCallableRegistry;
-        $this->xDialogManager = $xDialogManager;
+        $this->xDialog = $xDialog;
         $this->xParameterFactory = $xParameterFactory;
         // Factory for registered functions
-        $this->xRqFunctionFactory = new CallFactory($sFunctionPrefix, $this->xDialogManager);
-        // Factory for Js functions
-        $this->xJsFunctionFactory = new CallFactory('', $this->xDialogManager);
+        $this->xRqFunctionFactory = new JsFactory($this->xDialog, $sFunctionPrefix);
+        // Factory for global Js functions
+        $this->xJsFunctionFactory = new JsFactory($this->xDialog);
+        // Factory for global Js functions
+        $this->xJqThisFactory = new JqFactory($this->xDialog);
     }
 
     /**
-     * Get the js call factory.
+     * Get a factory for a js function call.
      *
      * @param string $sClassName
      *
-     * @return CallFactory|null
+     * @return JsFactory|null
      * @throws SetupException
      */
-    public function rq(string $sClassName = ''): ?CallFactory
+    public function rq(string $sClassName = ''): ?JsFactory
     {
         $sClassName = trim($sClassName);
-        // There is a single request factory for all callable functions,
-        // while each callable class has it own request factory.
-        return !$sClassName ? $this->xRqFunctionFactory :
-            $this->xCallableRegistry->getCallFactory($sClassName);
+        return !$sClassName ?
+            // Factory for calls to a Jaxon js function
+            $this->xRqFunctionFactory :
+            // Factory for calls to a Jaxon js class
+            $this->xCallableRegistry->getJsFactory($sClassName);
     }
 
     /**
-     * Get the js call factory.
+     * Get a factory for a js function call.
      *
      * @param string $sClassName
      *
-     * @return CallFactory|null
+     * @return JsFactory|null
      */
-    public function js(string $sClassName = ''): ?CallFactory
+    public function js(string $sClassName = ''): ?JsFactory
     {
         $sClassName = trim($sClassName);
-        // There is a single request factory for all js functions,
-        // while each js object has it own request factory.
-        return !$sClassName ? $this->xJsFunctionFactory :
-            new CallFactory($sClassName . '.', $this->xDialogManager);
+        return !$sClassName ?
+            // Factory for calls to a js function
+            $this->xJsFunctionFactory :
+            // Factory for calls to a js class
+            new JsFactory($this->xDialog, $sClassName);
+    }
+
+    /**
+     * Get a factory for a JQuery selector.
+     *
+     * The returned element is not linked to any Jaxon response, so this function shall be used
+     * to insert jQuery's code into a javascript function, or as a parameter of a Jaxon function call.
+     *
+     * @param string $sPath    The jQuery selector path
+     * @param mixed $xContext    A context associated to the selector
+     *
+     * @return JqFactory
+     */
+    public function jq(string $sPath = '', $xContext = null): JqFactory
+    {
+        $sPath = trim($sPath);
+        return !$sPath ?
+            // Factory for calls to the "this" jquery selector
+            $this->xJqThisFactory :
+            // Factory for calls to a jquery selector
+            new JqFactory($this->xDialog, $sPath, $xContext);
     }
 
     /**

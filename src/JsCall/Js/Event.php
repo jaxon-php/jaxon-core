@@ -1,8 +1,8 @@
 <?php
 
-namespace Jaxon\JsCall\Selector;
+namespace Jaxon\JsCall\Js;
 
-use Jaxon\JsCall\AbstractCall;
+use Jaxon\JsCall\JsExpr;
 use JsonSerializable;
 use Stringable;
 
@@ -14,7 +14,7 @@ class Event implements JsonSerializable, Stringable
     private $sName;
 
     /**
-     * @var AbstractCall
+     * @var JsExpr
      */
     private $xHandler;
 
@@ -22,9 +22,9 @@ class Event implements JsonSerializable, Stringable
      * The constructor.
      *
      * @param string $sName    The event name
-     * @param AbstractCall $xHandler   The event handler
+     * @param JsExpr $xHandler   The event handler
      */
-    public function __construct(string $sName, AbstractCall $xHandler)
+    public function __construct(string $sName, JsExpr $xHandler)
     {
         $this->sName = $sName;
         $this->xHandler = $xHandler;
@@ -51,6 +51,6 @@ class Event implements JsonSerializable, Stringable
      */
     public function __toString(): string
     {
-        return ".on('{$this->sName}', () => { " . $this->xHandler->__toString() . '; })';
+        return "on('{$this->sName}', () => { " . $this->xHandler->__toString() . '; })';
     }
 }

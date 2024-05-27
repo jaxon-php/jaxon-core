@@ -46,7 +46,7 @@ final class RequestTest extends TestCase
     {
         $this->assertEquals(
             "JaxonSample.method()",
-            rq('Sample')->call('method')->raw()
+            rq('Sample')->method()->raw()
         );
     }
 

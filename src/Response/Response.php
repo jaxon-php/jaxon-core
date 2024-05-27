@@ -22,7 +22,7 @@
 namespace Jaxon\Response;
 
 use Jaxon\App\Dialog\DialogManager;
-use Jaxon\JsCall\Selector;
+use Jaxon\JsCall\JqFactory;
 use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Plugin\Response\DataBag\DataBagContext;
 use Jaxon\Plugin\Response\DataBag\DataBagPlugin;
@@ -147,20 +147,20 @@ class Response implements ResponseInterface
     }
 
     /**
-     * Create a JQuery Selector, and link it to the current response.
+     * Create a JQuery selector expression, and link it to the current response.
      *
      * This is a shortcut to the JQuery plugin.
      *
      * @param string $sPath    The jQuery selector path
      * @param mixed $xContext    A context associated to the selector
      *
-     * @return Selector
+     * @return JqFactory
      */
-    public function jq(string $sPath = '', $xContext = null): Selector
+    public function jq(string $sPath = '', $xContext = null): JqFactory
     {
         /** @var JQueryPlugin */
         $xPlugin = $this->plugin('jquery');
-        return $xPlugin->selector($sPath, $xContext);
+        return $xPlugin->jq($sPath, $xContext);
     }
 
     /**
