@@ -44,13 +44,14 @@ class DataBagPlugin extends ResponsePlugin
             return;
         }
 
+        // Get the databag contents from the HTTP request parameters.
         $xRequest = $this->di->getRequest();
         $aBody = $xRequest->getParsedBody();
         $aParams = $xRequest->getQueryParams();
         $aData = is_array($aBody) ?
             $this->readData($aBody['jxnbags'] ?? []) :
             $this->readData($aParams['jxnbags'] ?? []);
-        $this->xDataBag = new DataBag($aData);
+        $this->xDataBag = new DataBag($this, $aData);
     }
 
     /**

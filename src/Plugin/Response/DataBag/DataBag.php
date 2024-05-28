@@ -8,6 +8,11 @@ use function is_array;
 class DataBag
 {
     /**
+     * @var DataBagPlugin
+     */
+    protected $xPlugin;
+
+    /**
      * @var array
      */
     protected $aData = [];
@@ -22,8 +27,9 @@ class DataBag
      *
      * @param array $aData
      */
-    public function __construct(array $aData)
+    public function __construct(DataBagPlugin $xPlugin, array $aData)
     {
+        $this->xPlugin = $xPlugin;
         // Ensure all contents are arrays.
         $this->aData = array_map(function($aValue) {
             return is_array($aValue) ? $aValue : [];
@@ -44,6 +50,17 @@ class DataBag
     public function getAll(): array
     {
         return $this->aData;
+    }
+
+    /**
+     * @param string $sBag
+     *
+     * @return void
+     */
+    public function clear(string $sBag)
+    {
+        $this->aData[$sBag] = [];
+        $this->xPlugin->addCommand('databag.clear', ['bag' => $sBag]);
     }
 
     /**
