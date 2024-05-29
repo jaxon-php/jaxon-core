@@ -3,13 +3,10 @@
 namespace Jaxon\Di\Traits;
 
 use Jaxon\App\CallableClass;
-use Jaxon\App\Config\ConfigManager;
-use Jaxon\App\Dialog\DialogManager;
 use Jaxon\App\I18n\Translator;
 use Jaxon\App\View\ViewRenderer;
 use Jaxon\Exception\SetupException;
 use Jaxon\JsCall\Factory;
-use Jaxon\JsCall\JsFactory;
 use Jaxon\Plugin\AnnotationReaderInterface;
 use Jaxon\Plugin\Request\CallableClass\CallableClassHelper;
 use Jaxon\Plugin\Request\CallableClass\CallableObject;
@@ -85,7 +82,6 @@ trait RegisterTrait
      */
     public function registerCallableClass(string $sClassName, array $aOptions)
     {
-        $sJsFactory = $sClassName . '_JsFactory';
         $sCallableObject = $sClassName . '_CallableObject';
         $sReflectionClass = $sClassName . '_ReflectionClass';
 
@@ -118,14 +114,6 @@ trait RegisterTrait
             $aProtectedMethods = $xRepository->getProtectedMethods($sClassName);
             return new CallableObject($di, $di->g(AnnotationReaderInterface::class),
                 $di->g($sReflectionClass), $aOptions, $aProtectedMethods);
-        });
-
-        // Register the js call factory
-        $this->set($sJsFactory, function($di) use($sCallableObject) {
-            $xConfigManager = $di->g(ConfigManager::class);
-            $xCallable = $di->g($sCallableObject);
-            $sJsClass = $xConfigManager->getOption('core.prefix.class') . $xCallable->getJsName() . '.';
-            return new JsFactory($di->g(DialogManager::class), $sJsClass);
         });
 
         // Register the user class, but only if the user didn't already.
@@ -173,18 +161,6 @@ trait RegisterTrait
     public function getCallableObject(string $sClassName): CallableObject
     {
         return $this->g($sClassName . '_CallableObject');
-    }
-
-    /**
-     * Get the js call factory for a given class
-     *
-     * @param string $sClassName
-     *
-     * @return JsFactory
-     */
-    public function getJsFactory(string $sClassName): JsFactory
-    {
-        return $this->g($sClassName . '_JsFactory');
     }
 
     /**

@@ -55,7 +55,7 @@ class JqFactory extends AbstractFactory
      *
      * @var Closure
      */
-    protected $xCb = null;
+    protected $xExprCb;
 
     /**
      * The constructor.
@@ -63,24 +63,15 @@ class JqFactory extends AbstractFactory
      * @param DialogManager $xDialog
      * @param string $sPath    The jQuery selector path
      * @param mixed $xContext    A context associated to the selector
+     * @param Closure|null $xExprCb
      */
-    public function __construct(DialogManager $xDialog, string $sPath = '', $xContext = null)
+    public function __construct(DialogManager $xDialog, string $sPath = '',
+        $xContext = null, ?Closure $xExprCb = null)
     {
         $this->xDialog = $xDialog;
         $this->sPath = trim($sPath, " \t");
         $this->xContext = $xContext;
-    }
-
-    /**
-     * Set the expression closure
-     *
-     * @param Closure $xCb
-     *
-     * @return void
-     */
-    public function cb(Closure $xCb)
-    {
-        $this->xCb = $xCb;
+        $this->xExprCb = $xExprCb;
     }
 
     /**
@@ -89,9 +80,9 @@ class JqFactory extends AbstractFactory
     protected function _expr(): JsExpr
     {
         $xJsExpr = new JsExpr($this->xDialog, new Selector($this->sPath, $this->xContext));
-        if(($xCb = $this->xCb))
+        if($this->xExprCb !== null)
         {
-            $xCb($xJsExpr);
+            ($this->xExprCb)($xJsExpr);
         }
         return $xJsExpr;
     }

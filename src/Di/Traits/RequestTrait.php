@@ -7,7 +7,6 @@ use Jaxon\App\Dialog\DialogManager;
 use Jaxon\App\I18n\Translator;
 use Jaxon\Di\Container;
 use Jaxon\JsCall\Factory;
-use Jaxon\JsCall\ParameterFactory;
 use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Plugin\Request\CallableClass\CallableRegistry;
 use Jaxon\Plugin\Response\DataBag\DataBagPlugin;
@@ -49,11 +48,7 @@ trait RequestTrait
         $this->set(Factory::class, function($di) {
             $xConfigManager = $di->g(ConfigManager::class);
             return new Factory($di->g(CallableRegistry::class), $di->g(DialogManager::class),
-                $di->g(ParameterFactory::class), $xConfigManager->getOption('core.prefix.function'));
-        });
-        // Parameter Factory
-        $this->set(ParameterFactory::class, function() {
-            return new ParameterFactory();
+                $xConfigManager->getOption('core.prefix.class'), $xConfigManager->getOption('core.prefix.function'));
         });
     }
 

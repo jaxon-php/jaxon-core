@@ -359,14 +359,16 @@ class Paginator
         $sWrapperId = trim($sWrapperId);
         $this->xPlugin->response()->html($sWrapperId, $xStore->__toString());
 
-        // Set click handlers on the pagination links
-        if($this->getTotalPages() > 1)
+        $xCall = $xCall->func();
+        if(!$xCall || $this->getTotalPages() < 2)
         {
-            $xCall = $xCall->func();
-            $this->xPlugin->addCommand('pg.paginate', [
-                'id' => $sWrapperId,
-                'func' => !$xCall ? [] : $xCall->withPage()->jsonSerialize(),
-            ]);
+            return;
         }
+
+        // Set click handlers on the pagination links
+        $this->xPlugin->addCommand('pg.paginate', [
+            'id' => $sWrapperId,
+            'func' => $xCall->withPage()->jsonSerialize(),
+        ]);
     }
 }

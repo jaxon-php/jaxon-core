@@ -59,11 +59,9 @@ class JQueryPlugin extends ResponsePlugin
      */
     public function jq(string $sPath, $xContext = null): JqFactory
     {
-        $xJqFactory = $this->xFactory->jq($sPath, $xContext);
-        $xJqFactory->cb(function(JsExpr $xJsExpr) {
+        return $this->xFactory->jq($sPath, $xContext, function(JsExpr $xJsExpr) {
             // Add the newly created expression to the response
             $this->addCommand('jquery.call', ['selector' => $xJsExpr]);
         });
-        return $xJqFactory;
     }
 }

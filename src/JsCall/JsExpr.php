@@ -21,6 +21,7 @@ use Jaxon\JsCall\Js\Func;
 use Jaxon\JsCall\Js\Selector;
 use Jaxon\JsCall\ParameterInterface;
 use Jaxon\JsCall\Parameter;
+use JsonSerializable;
 use Stringable;
 
 use function array_map;
@@ -33,6 +34,8 @@ use function json_encode;
 class JsExpr implements ParameterInterface
 {
     /**
+     * Dialog for confirm questions and messages
+     *
      * @var DialogManager
      */
     protected $xDialog;
@@ -66,6 +69,8 @@ class JsExpr implements ParameterInterface
     protected $aConfirm = [];
 
     /**
+     * Convert the expression value to int
+     *
      * @var bool
      */
     protected $bToInt = false;
@@ -145,7 +150,7 @@ class JsExpr implements ParameterInterface
     }
 
     /**
-     * Set an event handler on the first selected element
+     * Set an event handler on the selected elements
      *
      * @param string $sName
      * @param JsExpr $xHandler
@@ -159,7 +164,7 @@ class JsExpr implements ParameterInterface
     }
 
     /**
-     * Set an "click" event handler on the first selected element
+     * Set a "click" event handler on the selected elements
      *
      * @param JsExpr $xHandler
      *
@@ -429,27 +434,15 @@ class JsExpr implements ParameterInterface
     }
 
     /**
-     * Returns the first call in the expression as an array
-     *
-     * @return array
-     */
-    public function toArray(): array
-    {
-        return $this->aCalls[0]->jsonSerialize();
-    }
-
-    /**
      * Convert this call to array, when converting the response into json.
      *
      * @return array
      */
     public function jsonSerialize(): array
     {
-        $aCalls = [];
-        foreach($this->aCalls as $xCall)
-        {
-            $aCalls[] = $xCall->jsonSerialize();
-        }
+        $aCalls = array_map(function(JsonSerializable $xCall) {
+            return $xCall->jsonSerialize();
+        }, $this->aCalls);
         if($this->bToInt)
         {
             $aCalls[] = $this->toIntCall();

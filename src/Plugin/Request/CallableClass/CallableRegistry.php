@@ -278,19 +278,6 @@ class CallableRegistry
     }
 
     /**
-     * Get the js call for a given class
-     *
-     * @param string $sClassName The class name of the callable object
-     *
-     * @return JsFactory|null
-     * @throws SetupException
-     */
-    public function getJsFactory(string $sClassName): ?JsFactory
-    {
-        return $this->di->getJsFactory($this->checkCallableObject($sClassName));
-    }
-
-    /**
      * Register all the callable classes
      *
      * @return void
