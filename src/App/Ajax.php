@@ -45,7 +45,7 @@ use Jaxon\Utils\Template\TemplateEngine;
 
 use function trim;
 
-class Ajax
+final class Ajax
 {
     use AjaxTrait;
     use AjaxSendTrait;
