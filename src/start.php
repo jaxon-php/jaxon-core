@@ -4,6 +4,7 @@ namespace Jaxon;
 
 use Jaxon\App\Ajax;
 use Jaxon\Exception\SetupException;
+use Jaxon\JsCall\AttrFormatter;
 use Jaxon\JsCall\JqFactory;
 use Jaxon\JsCall\JsFactory;
 use Jaxon\JsCall\ParameterFactory;
@@ -81,6 +82,16 @@ function pm(): ParameterFactory
 function jq(string $sPath = '', $xContext = null): JqFactory
 {
     return jaxon()->factory()->jq($sPath, $xContext);
+}
+
+/**
+ * Get the custom attributes formatter
+ *
+ * @return AttrFormatter
+ */
+function attr(): AttrFormatter
+{
+    return jaxon()->di()->getCustomAttrFormatter();
 }
 
 // Register the Jaxon request and response plugins

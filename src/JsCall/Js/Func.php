@@ -39,7 +39,7 @@ class Func implements ParameterInterface
     }
 
     /**
-     * Get the parameter type
+     * Get the type
      *
      * @return string
      */

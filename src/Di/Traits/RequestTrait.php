@@ -6,6 +6,7 @@ use Jaxon\App\Config\ConfigManager;
 use Jaxon\App\Dialog\DialogManager;
 use Jaxon\App\I18n\Translator;
 use Jaxon\Di\Container;
+use Jaxon\JsCall\AttrFormatter;
 use Jaxon\JsCall\Factory;
 use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Plugin\Request\CallableClass\CallableRegistry;
@@ -42,13 +43,19 @@ trait RequestTrait
         // Request Handler
         $this->set(RequestHandler::class, function($di) {
             return new RequestHandler($di->g(Container::class), $di->g(PluginManager::class),
-                $di->g(ResponseManager::class), $di->g(CallbackManager::class), $di->g(DataBagPlugin::class));
+                $di->g(ResponseManager::class), $di->g(CallbackManager::class),
+                $di->g(DataBagPlugin::class));
         });
         // Requests and calls Factory
         $this->set(Factory::class, function($di) {
             $xConfigManager = $di->g(ConfigManager::class);
             return new Factory($di->g(CallableRegistry::class), $di->g(DialogManager::class),
-                $xConfigManager->getOption('core.prefix.class'), $xConfigManager->getOption('core.prefix.function'));
+                $xConfigManager->getOption('core.prefix.class'),
+                $xConfigManager->getOption('core.prefix.function'));
+        });
+        // Helpers for HTML custom attributes formatting
+        $this->set(AttrFormatter::class, function() {
+            return new AttrFormatter();
         });
     }
 
@@ -100,5 +107,15 @@ trait RequestTrait
     public function getParameterReader(): ParameterReader
     {
         return $this->g(ParameterReader::class);
+    }
+
+    /**
+     * Get the custom attributes formatter
+     *
+     * @return AttrFormatter
+     */
+    public function getCustomAttrFormatter(): AttrFormatter
+    {
+        return $this->g(AttrFormatter::class);
     }
 }
