@@ -18,6 +18,8 @@ namespace Jaxon\JsCall;
 use Jaxon\App\Dialog\DialogManager;
 use Jaxon\JsCall\JsExpr;
 
+use function rtrim;
+
 class JsFactory extends AbstractFactory
 {
     /**
@@ -39,10 +41,22 @@ class JsFactory extends AbstractFactory
 
     /**
      * Create a js expression
+     *
+     * @return JsExpr
      */
     protected function _expr(): JsExpr
     {
         return new JsExpr($this->xDialog);
+    }
+
+    /**
+     * Get the js class name
+     *
+     * @return string
+     */
+    public function _class(): string
+    {
+        return rtrim($this->sCallPrefix, '.');
     }
 
     /**

@@ -18,7 +18,7 @@ use Jaxon\App\I18n\Translator;
 use Jaxon\Di\Container;
 use Jaxon\Exception\RequestException;
 use Jaxon\Request\Handler\RequestHandler;
-use Jaxon\Response\Manager\ResponseManager;
+use Jaxon\Response\ResponseManager;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;

@@ -1,9 +1,9 @@
 <?php
 
 /**
- * CallableRepository.php - Jaxon callable object repository
+ * CallableRepository.php
  *
- * This class stores all the callable object already created.
+ * This class stores all the callable objects already created.
  *
  * @package jaxon-core
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
@@ -14,11 +14,11 @@
 
 namespace Jaxon\Plugin\Request\CallableClass;
 
-use Jaxon\App\CallableClass;
+use Jaxon\App\AbstractCallable;
+use Jaxon\App\Component;
 use Jaxon\App\I18n\Translator;
 use Jaxon\Di\Container;
 use Jaxon\Exception\SetupException;
-
 use ReflectionClass;
 use ReflectionMethod;
 
@@ -108,9 +108,9 @@ class CallableRepository
         $this->di = $di;
         $this->xTranslator = $xTranslator;
 
-        // The methods of the CallableClass class must not be exported
-        $xCallableClass = new ReflectionClass(CallableClass::class);
-        foreach($xCallableClass->getMethods(ReflectionMethod::IS_PUBLIC) as $xMethod)
+        // The methods of the AbstractCallable class must not be exported
+        $xAbstractCallable = new ReflectionClass(AbstractCallable::class);
+        foreach($xAbstractCallable->getMethods(ReflectionMethod::IS_PUBLIC) as $xMethod)
         {
             $this->aProtectedMethods[] = $xMethod->getName();
         }
@@ -315,7 +315,12 @@ class CallableRepository
      */
     public function getProtectedMethods(string $sClassName): array
     {
-        return is_subclass_of($sClassName, CallableClass::class) ? $this->aProtectedMethods : [];
+        if(is_subclass_of($sClassName, Component::class))
+        {
+            // Don't export the html() public method for Component objects
+            return array_merge($this->aProtectedMethods, ['html']);
+        }
+        return is_subclass_of($sClassName, AbstractCallable::class) ? $this->aProtectedMethods : [];
     }
 
     /**

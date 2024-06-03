@@ -30,7 +30,7 @@ use Jaxon\Plugin\RequestPlugin;
 use Jaxon\Request\Handler\ParameterReader;
 use Jaxon\Request\Target;
 use Jaxon\Request\Validator;
-use Jaxon\Response\ResponseInterface;
+use Jaxon\Response\AbstractResponse;
 use Jaxon\Utils\Template\TemplateEngine;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -257,7 +257,7 @@ class CallableFunctionPlugin extends RequestPlugin
      * @inheritDoc
      * @throws RequestException
      */
-    public function processRequest(): ?ResponseInterface
+    public function processRequest(): ?AbstractResponse
     {
         $sRequestedFunction = $this->xTarget->getFunctionName();
 

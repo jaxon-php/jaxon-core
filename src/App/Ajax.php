@@ -37,15 +37,16 @@ use Jaxon\App\View\ViewRenderer;
 use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\Manager\PluginManager;
+use Jaxon\Plugin\Request\CallableClass\CallableRegistry;
 use Jaxon\Request\Handler\Psr\PsrFactory;
 use Jaxon\Request\Upload\UploadHandlerInterface;
-use Jaxon\Response\Manager\ResponseManager;
-use Jaxon\Response\ResponseInterface;
+use Jaxon\Response\Response;
+use Jaxon\Response\ResponseManager;
 use Jaxon\Utils\Template\TemplateEngine;
 
 use function trim;
 
-class Ajax
+final class Ajax
 {
     use AjaxTrait;
     use AjaxSendTrait;
@@ -74,6 +75,7 @@ class Ajax
         $this->xConfigManager = $xContainer->g(ConfigManager::class);
         $this->xPluginManager = $xContainer->g(PluginManager::class);
         $this->xResponseManager = $xContainer->g(ResponseManager::class);
+        $this->xCallableRegistry = $xContainer->g(CallableRegistry::class);
     }
 
     /**
@@ -129,9 +131,9 @@ class Ajax
     /**
      * Get the global Response object
      *
-     * @return ResponseInterface
+     * @return Response
      */
-    public function getResponse(): ResponseInterface
+    public function getResponse(): Response
     {
         return $this->xResponseManager->getResponse();
     }
@@ -139,11 +141,11 @@ class Ajax
     /**
      * Create a new Jaxon response object
      *
-     * @return ResponseInterface
+     * @return Response
      */
-    public function newResponse(): ResponseInterface
+    public function newResponse(): Response
     {
-        return $this->di()->newResponse();
+        return $this->xResponseManager->newResponse();
     }
 
     /**

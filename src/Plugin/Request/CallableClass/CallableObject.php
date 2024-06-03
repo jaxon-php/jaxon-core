@@ -26,11 +26,12 @@
 
 namespace Jaxon\Plugin\Request\CallableClass;
 
+use Jaxon\App\CallableClass;
 use Jaxon\Di\Container;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\AnnotationReaderInterface;
 use Jaxon\Request\Target;
-use Jaxon\Response\ResponseInterface;
+use Jaxon\Response\AbstractResponse;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionMethod;
@@ -40,6 +41,7 @@ use function array_fill_keys;
 use function array_filter;
 use function array_map;
 use function array_merge;
+use function call_user_func;
 use function is_array;
 use function is_string;
 use function json_encode;
@@ -194,26 +196,6 @@ class CallableObject
     }
 
     /**
-     * @return array
-     */
-    public function getClassDiOptions(): array
-    {
-        $aDiOptions = $this->xOptions->diOptions();
-        return $aDiOptions['*'] ?? [];
-    }
-
-    /**
-     * @param string $sMethodName
-     *
-     * @return array
-     */
-    public function getMethodDiOptions(string $sMethodName): array
-    {
-        $aDiOptions = $this->xOptions->diOptions();
-        return $aDiOptions[$sMethodName] ?? [];
-    }
-
-    /**
      * Get the js options of the callable class
      *
      * @return array
@@ -244,16 +226,6 @@ class CallableObject
                 'config' => $fGetOption($sMethodName),
             ];
         }, $this->getPublicMethods(false));
-    }
-
-    /**
-     * Get the registered callable object
-     *
-     * @return null|object
-     */
-    public function getRegisteredObject()
-    {
-        return $this->di->g($this->xReflectionClass->getName());
     }
 
     /**
@@ -312,18 +284,94 @@ class CallableObject
     }
 
     /**
+     * @param mixed $xRegisteredObject
+     * @param array $aDiOptions
+     *
+     * @return void
+     */
+    private function setDiAttributes($xRegisteredObject, array $aDiOptions)
+    {
+        foreach($aDiOptions as $sName => $sClass)
+        {
+            // Set the protected attributes of the object
+            $cSetter = function($xInjectedObject) use($sName) {
+                // Warning: dynamic properties will be deprecated in PHP8.2.
+                $this->$sName = $xInjectedObject;
+            };
+            // Can now access protected attributes
+            call_user_func($cSetter->bindTo($xRegisteredObject, $xRegisteredObject), $this->di->get($sClass));
+        }
+    }
+
+    /**
+     * @param mixed $xRegisteredObject
+     *
+     * @return void
+     */
+    public function setDiClassAttributes($xRegisteredObject)
+    {
+        $aDiOptions = $this->xOptions->diOptions();
+        $this->setDiAttributes($xRegisteredObject, $aDiOptions['*'] ?? []);
+    }
+
+    /**
+     * @param mixed $xRegisteredObject
+     * @param string $sMethodName
+     *
+     * @return void
+     */
+    private function setDiMethodAttributes($xRegisteredObject, string $sMethodName)
+    {
+        $aDiOptions = $this->xOptions->diOptions();
+        $this->setDiAttributes($xRegisteredObject, $aDiOptions[$sMethodName] ?? []);
+    }
+
+    /**
+     * Get a callable object when one of its method needs to be called
+     *
+     * @param Target|null $xTarget
+     *
+     * @return mixed
+     */
+    public function getRegisteredObject(?Target $xTarget = null)
+    {
+        $xRegisteredObject = $this->di->g($this->getClassName());
+        if(!$xRegisteredObject || !$xTarget)
+        {
+            return $xRegisteredObject;
+        }
+
+        // Set attributes from the DI container.
+        // The class level DI options were set when creating the object instance.
+        // We now need to set the method level DI options.
+        $this->setDiMethodAttributes($xRegisteredObject, $xTarget->getMethodName());
+        // Set the Jaxon request target in the helper
+        if($xRegisteredObject instanceof CallableClass)
+        {
+            // Set the protected attributes of the object
+            $sAttr = 'xCallableClassHelper';
+            $cSetter = function() use($xTarget, $sAttr) {
+                $this->$sAttr->xTarget = $xTarget;
+            };
+            // Can now access protected attributes
+            call_user_func($cSetter->bindTo($xRegisteredObject, $xRegisteredObject));
+        }
+        return $xRegisteredObject;
+    }
+
+    /**
      * Call the specified method of the registered callable object using the specified array of arguments
      *
      * @param Target $xTarget The target of the Jaxon call
      *
-     * @return null|ResponseInterface
+     * @return null|AbstractResponse
      * @throws ReflectionException
      * @throws SetupException
      */
-    public function call(Target $xTarget): ?ResponseInterface
+    public function call(Target $xTarget): ?AbstractResponse
     {
         $this->xTarget = $xTarget;
-        $this->xRegisteredObject = $this->di->getRegisteredObject($this, $xTarget);
+        $this->xRegisteredObject = $this->getRegisteredObject($xTarget);
 
         // Methods to call before processing the request
         $this->callHookMethods($this->xOptions->beforeMethods());

@@ -98,8 +98,8 @@ class CallableClassHelper
     public function cl(string $sClassName)
     {
         $sClassName = trim($sClassName);
-        $xCallableClass = $this->xCallableRegistry->getCallableObject($sClassName);
-        return !$xCallableClass ? null : $xCallableClass->getRegisteredObject();
+        $xCallableObject = $this->xCallableRegistry->getCallableObject($sClassName);
+        return !$xCallableObject ? null : $xCallableObject->getRegisteredObject();
     }
 
     /**

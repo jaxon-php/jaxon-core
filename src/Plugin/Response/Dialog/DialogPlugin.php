@@ -19,7 +19,7 @@ use Jaxon\App\Dialog\DialogManager;
 use Jaxon\App\Dialog\Library\DialogLibraryManager;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\ResponsePlugin;
-use Jaxon\Response\ResponseInterface;
+use Jaxon\Response\AbstractResponse;
 
 use function array_reduce;
 use function trim;
@@ -93,7 +93,7 @@ class DialogPlugin extends ResponsePlugin
     /**
      * @inheritDoc
      */
-    public function setResponse(ResponseInterface $xResponse)
+    public function setResponse(AbstractResponse $xResponse)
     {
         parent::setResponse($xResponse);
 

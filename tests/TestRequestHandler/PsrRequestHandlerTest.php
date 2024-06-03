@@ -281,7 +281,7 @@ class PsrRequestHandlerTest extends TestCase
         $xPsrResponse = $this->xPsrAjaxMiddleware->process($xRequest, $this->xEmptyRequestHandler);
 
         // Both responses must have the same content and content type
-        $xJaxonResponse = jaxon()->getResponse();
+        $xJaxonResponse = jaxon()->di()->getResponseManager()->getResponse();
         $this->assertEquals($xPsrResponse->getBody()->__toString(), $xJaxonResponse->getOutput());
         $this->assertEquals($xPsrResponse->getHeader('content-type')[0], $xJaxonResponse->getContentType());
 

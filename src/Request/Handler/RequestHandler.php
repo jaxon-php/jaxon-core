@@ -26,7 +26,7 @@ use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Plugin\RequestHandlerInterface;
 use Jaxon\Plugin\Response\DataBag\DataBagPlugin;
 use Jaxon\Request\Upload\UploadHandlerInterface;
-use Jaxon\Response\Manager\ResponseManager;
+use Jaxon\Response\ResponseManager;
 
 use Exception;
 
@@ -159,7 +159,7 @@ class RequestHandler
             $xResponse = $this->xRequestPlugin->processRequest();
             if(($xResponse))
             {
-                $this->xResponseManager->append($xResponse);
+                $this->xResponseManager->setResponse($xResponse);
             }
             // Process the databag
             $this->xDataBagPlugin->writeCommand();

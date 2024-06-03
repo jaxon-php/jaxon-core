@@ -263,7 +263,7 @@ class UploadTest extends TestCase
         jaxon()->di()->getResponseManager()->debug('Testing the HTTP upload!!');
         jaxon()->processRequest();
 
-        $xResponse = jaxon()->getResponse();
+        $xResponse = jaxon()->di()->getResponseManager()->getResponse();
         $this->assertEquals(UploadResponse::class, get_class($xResponse));
         $this->assertNotEquals('', $xResponse->getUploadedFile());
         $this->assertEquals('', $xResponse->getErrorMessage());
@@ -552,7 +552,7 @@ class UploadTest extends TestCase
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
         jaxon()->processRequest();
-        $xResponse = jaxon()->getResponse();
+        $xResponse = jaxon()->di()->getResponseManager()->getResponse();
         $this->assertEquals(UploadResponse::class, get_class($xResponse));
         $this->assertEquals('', $xResponse->getUploadedFile());
         $this->assertNotEquals('', $xResponse->getErrorMessage());
@@ -573,7 +573,7 @@ class UploadTest extends TestCase
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
         jaxon()->processRequest();
-        $xResponse = jaxon()->getResponse();
+        $xResponse = jaxon()->di()->getResponseManager()->getResponse();
         $this->assertEquals(UploadResponse::class, get_class($xResponse));
         $this->assertEquals('', $xResponse->getUploadedFile());
         $this->assertNotEquals('', $xResponse->getErrorMessage());
@@ -594,7 +594,7 @@ class UploadTest extends TestCase
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
         jaxon()->processRequest();
-        $xResponse = jaxon()->getResponse();
+        $xResponse = jaxon()->di()->getResponseManager()->getResponse();
         $this->assertEquals(UploadResponse::class, get_class($xResponse));
         $this->assertEquals('', $xResponse->getUploadedFile());
         $this->assertNotEquals('', $xResponse->getErrorMessage());
@@ -616,7 +616,7 @@ class UploadTest extends TestCase
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
         jaxon()->processRequest();
-        $xResponse = jaxon()->getResponse();
+        $xResponse = jaxon()->di()->getResponseManager()->getResponse();
         $this->assertEquals(UploadResponse::class, get_class($xResponse));
         $this->assertEquals('', $xResponse->getUploadedFile());
         $this->assertNotEquals('', $xResponse->getErrorMessage());
@@ -638,7 +638,7 @@ class UploadTest extends TestCase
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
         jaxon()->processRequest();
-        $xResponse = jaxon()->getResponse();
+        $xResponse = jaxon()->di()->getResponseManager()->getResponse();
         $this->assertEquals(UploadResponse::class, get_class($xResponse));
         $this->assertEquals('', $xResponse->getUploadedFile());
         $this->assertNotEquals('', $xResponse->getErrorMessage());
@@ -671,7 +671,7 @@ class UploadTest extends TestCase
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
         jaxon()->processRequest();
-        $xResponse = jaxon()->getResponse();
+        $xResponse = jaxon()->di()->getResponseManager()->getResponse();
         $this->assertEquals(UploadResponse::class, get_class($xResponse));
         $this->assertEquals('', $xResponse->getUploadedFile());
         $this->assertNotEquals('', $xResponse->getErrorMessage());

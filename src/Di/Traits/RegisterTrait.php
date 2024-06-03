@@ -2,17 +2,15 @@
 
 namespace Jaxon\Di\Traits;
 
-use Jaxon\App\CallableClass;
+use Jaxon\App\AbstractCallable;
 use Jaxon\App\I18n\Translator;
 use Jaxon\App\View\ViewRenderer;
 use Jaxon\Exception\SetupException;
 use Jaxon\JsCall\Factory;
 use Jaxon\Plugin\AnnotationReaderInterface;
-use Jaxon\Plugin\Request\CallableClass\CallableClassHelper;
 use Jaxon\Plugin\Request\CallableClass\CallableObject;
 use Jaxon\Plugin\Request\CallableClass\CallableRepository;
 use Jaxon\Request\Handler\CallbackManager;
-use Jaxon\Request\Target;
 use Jaxon\Utils\Config\Config;
 use ReflectionClass;
 use ReflectionException;
@@ -21,56 +19,6 @@ use function call_user_func;
 
 trait RegisterTrait
 {
-    /**
-     * @param mixed $xRegisteredObject
-     * @param array $aDiOptions
-     *
-     * @return void
-     */
-    private function setDiAttributes($xRegisteredObject, array $aDiOptions)
-    {
-        foreach($aDiOptions as $sName => $sClass)
-        {
-            // Set the protected attributes of the object
-            $cSetter = function($xInjectedObject) use($sName) {
-                // Warning: dynamic properties will be deprecated in PHP8.2.
-                $this->$sName = $xInjectedObject;
-            };
-            // Can now access protected attributes
-            call_user_func($cSetter->bindTo($xRegisteredObject, $xRegisteredObject), $this->get($sClass));
-        }
-    }
-
-    /**
-     * Get a callable object when one of its method needs to be called
-     *
-     * @param CallableObject $xCallableObject
-     * @param Target $xTarget
-     *
-     * @return mixed
-     */
-    public function getRegisteredObject(CallableObject $xCallableObject, Target $xTarget)
-    {
-        // Set attributes from the DI container.
-        // The class level DI options were set when creating the object instance.
-        // We now need to set the method level DI options.
-        $aDiOptions = $xCallableObject->getMethodDiOptions($xTarget->getMethodName());
-        $xRegisteredObject = $this->g($xCallableObject->getClassName());
-        $this->setDiAttributes($xRegisteredObject, $aDiOptions);
-
-        // Set the Jaxon request target in the helper
-        if($xRegisteredObject instanceof CallableClass)
-        {
-            // Set the protected attributes of the object
-            $cSetter = function() use($xTarget) {
-                $this->xCallableClassHelper->xTarget = $xTarget;
-            };
-            // Can now access protected attributes
-            call_user_func($cSetter->bindTo($xRegisteredObject, $xRegisteredObject));
-        }
-        return $xRegisteredObject;
-    }
-
     /**
      * Register a callable class
      *
@@ -124,17 +72,10 @@ trait RegisterTrait
             });
         }
         // Initialize the user class instance
-        $this->xLibContainer->extend($sClassName, function($xRegisteredObject)
-            use($sCallableObject, $sClassName) {
-            if($xRegisteredObject instanceof CallableClass)
+        $this->xLibContainer->extend($sClassName, function($xRegisteredObject) use($sCallableObject) {
+            if($xRegisteredObject instanceof AbstractCallable)
             {
-                $cSetter = function($di) use($sClassName) {
-                    // Set the protected attributes of the object
-                    $this->xCallableClassHelper = new CallableClassHelper($di, $sClassName);
-                    $this->response = $di->getResponse();
-                };
-                // Can now access protected attributes
-                call_user_func($cSetter->bindTo($xRegisteredObject, $xRegisteredObject), $this);
+                $xRegisteredObject->_initCallable($this);
             }
 
             // Run the callbacks for class initialisation
@@ -145,7 +86,7 @@ trait RegisterTrait
             // The method level DI options are set only when calling the method in the ajax request.
             /** @var CallableObject */
             $xCallableObject = $this->g($sCallableObject);
-            $this->setDiAttributes($xRegisteredObject, $xCallableObject->getClassDiOptions());
+            $xCallableObject->setDiClassAttributes($xRegisteredObject);
 
             return $xRegisteredObject;
         });
