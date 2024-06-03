@@ -21,7 +21,7 @@ use Jaxon\Di\Container;
 use Jaxon\Exception\RequestException;
 use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Plugin\Request\CallableClass\CallableRegistry;
-use Jaxon\Response\CallableClassResponse;
+use Jaxon\Response\Response;
 use Jaxon\Response\ResponseManager;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
@@ -109,9 +109,9 @@ trait AppTrait
     /**
      * Get the Jaxon ajax response
      *
-     * @return CallableClassResponse
+     * @return Response
      */
-    public function ajaxResponse(): CallableClassResponse
+    public function ajaxResponse(): Response
     {
         return $this->xResponseManager->getResponse();
     }

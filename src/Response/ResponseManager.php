@@ -265,9 +265,9 @@ class ResponseManager
     /**
      * Create a new Jaxon response
      *
-     * @return CallableClassResponse
+     * @return Response
      */
-    public function newResponse(): CallableClassResponse
+    public function newResponse(): Response
     {
         return $this->di->newResponse();
     }
@@ -323,7 +323,7 @@ class ResponseManager
         {
             $this->addCommand('script.debug', ['message' => $this->str($sMessage)]);
         }
-        $this->aDebugMessages = [];
+        // $this->aDebugMessages = [];
     }
 
     /**
@@ -345,5 +345,15 @@ class ResponseManager
     public function getOutput(): string
     {
         return $this->getResponse()->getOutput();
+    }
+
+    /**
+     * Get the debug messages
+     *
+     * @return array
+     */
+    public function getDebugMessages(): array
+    {
+        return $this->aDebugMessages;
     }
 }

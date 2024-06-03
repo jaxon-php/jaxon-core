@@ -40,7 +40,7 @@ use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Plugin\Request\CallableClass\CallableRegistry;
 use Jaxon\Request\Handler\Psr\PsrFactory;
 use Jaxon\Request\Upload\UploadHandlerInterface;
-use Jaxon\Response\CallableClassResponse;
+use Jaxon\Response\Response;
 use Jaxon\Response\ResponseManager;
 use Jaxon\Utils\Template\TemplateEngine;
 
@@ -131,9 +131,9 @@ final class Ajax
     /**
      * Get the global Response object
      *
-     * @return CallableClassResponse
+     * @return Response
      */
-    public function getResponse(): CallableClassResponse
+    public function getResponse(): Response
     {
         return $this->xResponseManager->getResponse();
     }
@@ -141,9 +141,9 @@ final class Ajax
     /**
      * Create a new Jaxon response object
      *
-     * @return CallableClassResponse
+     * @return Response
      */
-    public function newResponse(): CallableClassResponse
+    public function newResponse(): Response
     {
         return $this->xResponseManager->newResponse();
     }

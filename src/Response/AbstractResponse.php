@@ -145,4 +145,35 @@ abstract class AbstractResponse
         $this->nCommandCount++;
         $this->xManager->addPluginCommand($xPlugin, $sName, $aArgs, $bRemoveEmpty);
     }
+
+    /**
+     * Get the commands in the response
+     *
+     * @return array
+     */
+    public function getCommands(): array
+    {
+        return $this->xManager->getCommands();
+    }
+
+    /**
+     * Get the number of commands in the response
+     *
+     * @return int
+     */
+    public function getCommandCount(): int
+    {
+        return $this->xManager->getCommandCount();
+    }
+
+    /**
+     * Clear all the commands already added to the response
+     *
+     * @return void
+     */
+    public function clearCommands()
+    {
+        $this->nCommandCount = 0;
+        $this->xManager->clearCommands();
+    }
 }

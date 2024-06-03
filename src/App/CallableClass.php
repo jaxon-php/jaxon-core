@@ -5,14 +5,14 @@ namespace Jaxon\App;
 use Jaxon\Di\Container;
 use Jaxon\Plugin\Request\CallableClass\CallableClassHelper;
 use Jaxon\Response\AjaxResponse;
-use Jaxon\Response\CallableClassResponse;
+use Jaxon\Response\Response;
 
 use function get_class;
 
 class CallableClass extends AbstractCallable
 {
     /**
-     * @var CallableClassResponse
+     * @var Response
      */
     protected $response = null;
 

@@ -8,7 +8,7 @@ use Jaxon\App\I18n\Translator;
 use Jaxon\Di\Container;
 use Jaxon\JsCall\Factory;
 use Jaxon\Plugin\Manager\PluginManager;
-use Jaxon\Response\CallableClassResponse;
+use Jaxon\Response\Response;
 use Jaxon\Response\ComponentResponse;
 use Jaxon\Response\ResponseManager;
 use Nyholm\Psr7\Factory\Psr17Factory;
@@ -26,8 +26,8 @@ trait ResponseTrait
     private function registerResponses()
     {
         // Global Response
-        $this->set(CallableClassResponse::class, function($di) {
-            return new CallableClassResponse($di->g(ResponseManager::class),
+        $this->set(Response::class, function($di) {
+            return new Response($di->g(ResponseManager::class),
                 $di->g(Psr17Factory::class), $di->g(ServerRequestInterface::class),
                 $di->g(PluginManager::class), $di->g(DialogManager::class));
         });
@@ -51,21 +51,21 @@ trait ResponseTrait
     /**
      * Get the global Response object
      *
-     * @return CallableClassResponse
+     * @return Response
      */
-    public function getResponse(): CallableClassResponse
+    public function getResponse(): Response
     {
-        return $this->g(CallableClassResponse::class);
+        return $this->g(Response::class);
     }
 
     /**
      * Create a new Jaxon response
      *
-     * @return CallableClassResponse
+     * @return Response
      */
-    public function newResponse(): CallableClassResponse
+    public function newResponse(): Response
     {
-        return new CallableClassResponse($this->g(ResponseManager::class),
+        return new Response($this->g(ResponseManager::class),
             $this->g(Psr17Factory::class), $this->g(ServerRequestInterface::class),
             $this->g(PluginManager::class), $this->g(DialogManager::class));
     }

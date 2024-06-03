@@ -1,7 +1,7 @@
 <?php
 
 /**
- * CallableClassResponse.php
+ * Response.php
  *
  * This class collects commands to be sent back to the browser in response to a jaxon request.
  * Commands are encoded and packaged in json format.
@@ -23,7 +23,7 @@ namespace Jaxon\Response;
 
 use Jaxon\JsCall\JsExpr;
 
-class CallableClassResponse extends AjaxResponse
+class Response extends AjaxResponse
 {
     /**
      * @inheritDoc
