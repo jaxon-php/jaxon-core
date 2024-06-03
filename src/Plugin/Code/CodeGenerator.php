@@ -184,12 +184,10 @@ class CodeGenerator
         $this->sCss = trim($this->sCss, " \n");
         $this->sJs = trim($this->sJs, " \n");
         $this->sJsScript = trim($this->sJsScript, " \n");
-        $this->sJsReadyScript = trim($this->sJsReadyScript, " \n");
+        $this->sJsReadyScript = $this->render('ready.js', [
+            'sScript' => trim($this->sJsReadyScript, " \n") . "\n\tjaxon.processCustomAttrs();\n",
+        ]);
         $this->sJsInlineScript = trim($this->sJsInlineScript, " \n");
-        if(($this->sJsReadyScript))
-        {
-            $this->sJsReadyScript = $this->render('ready.js', ['sScript' => $this->sJsReadyScript . "\n"]);
-        }
         if(($this->sJsInlineScript))
         {
             $this->sJsInlineScript = $this->render('ready.js', ['sScript' => $this->sJsInlineScript . "\n"]);

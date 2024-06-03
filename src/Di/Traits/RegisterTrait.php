@@ -2,13 +2,12 @@
 
 namespace Jaxon\Di\Traits;
 
-use Jaxon\App\CallableClass;
+use Jaxon\App\AbstractCallable;
 use Jaxon\App\I18n\Translator;
 use Jaxon\App\View\ViewRenderer;
 use Jaxon\Exception\SetupException;
 use Jaxon\JsCall\Factory;
 use Jaxon\Plugin\AnnotationReaderInterface;
-use Jaxon\Plugin\Request\CallableClass\CallableClassHelper;
 use Jaxon\Plugin\Request\CallableClass\CallableObject;
 use Jaxon\Plugin\Request\CallableClass\CallableRepository;
 use Jaxon\Request\Handler\CallbackManager;
@@ -73,17 +72,10 @@ trait RegisterTrait
             });
         }
         // Initialize the user class instance
-        $this->xLibContainer->extend($sClassName, function($xRegisteredObject)
-            use($sCallableObject, $sClassName) {
-            if($xRegisteredObject instanceof CallableClass)
+        $this->xLibContainer->extend($sClassName, function($xRegisteredObject) use($sCallableObject) {
+            if($xRegisteredObject instanceof AbstractCallable)
             {
-                $cSetter = function($di) use($sClassName) {
-                    // Set the protected attributes of the object
-                    $this->xCallableClassHelper = new CallableClassHelper($di, $sClassName);
-                    $this->response = $di->getResponse();
-                };
-                // Can now access protected attributes
-                call_user_func($cSetter->bindTo($xRegisteredObject, $xRegisteredObject), $this);
+                $xRegisteredObject->_initCallable($this);
             }
 
             // Run the callbacks for class initialisation

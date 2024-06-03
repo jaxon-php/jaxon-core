@@ -2,141 +2,35 @@
 
 namespace Jaxon\App;
 
-use Jaxon\App\Session\SessionInterface;
-use Jaxon\App\View\ViewRenderer;
-use Jaxon\Exception\SetupException;
-use Jaxon\JsCall\JqFactory;
-use Jaxon\JsCall\JsFactory;
+use Jaxon\Di\Container;
 use Jaxon\Plugin\Request\CallableClass\CallableClassHelper;
-use Jaxon\Plugin\Response\DataBag\DataBagContext;
-use Jaxon\Plugin\Response\Pagination\Paginator;
-use Jaxon\Request\TargetInterface;
-use Jaxon\Response\Response;
-use Psr\Log\LoggerInterface;
+use Jaxon\Response\AjaxResponse;
+use Jaxon\Response\CallableClassResponse;
 
-class CallableClass
+use function get_class;
+
+class CallableClass extends AbstractCallable
 {
     /**
-     * @var Response
+     * @var CallableClassResponse
      */
     protected $response = null;
 
     /**
-     * @var CallableClassHelper
+     * @inheritDoc
      */
-    protected $xCallableClassHelper = null;
-
-    /**
-     * Get the Jaxon request target
-     *
-     * @return TargetInterface
-     */
-    protected function target(): TargetInterface
+    final public function _initCallable(Container $di)
     {
-        return $this->xCallableClassHelper->xTarget;
+        $sClassName = get_class($this);
+        $this->xCallableClassHelper = new CallableClassHelper($di, $sClassName);
+        $this->response = $di->getResponse();
     }
 
     /**
-     * Get an instance of a Jaxon class by name
-     *
-     * @param string $sClassName the class name
-     *
-     * @return mixed
-     * @throws SetupException
+     * @inheritDoc
      */
-    public function cl(string $sClassName)
+    final protected function _response(): AjaxResponse
     {
-        return $this->xCallableClassHelper->cl($sClassName);
-    }
-
-    /**
-     * Get the js call factory.
-     *
-     * @param string $sClassName
-     *
-     * @return JsFactory
-     */
-    public function rq(string $sClassName = ''): JsFactory
-    {
-        return $this->xCallableClassHelper->rq($sClassName);
-    }
-
-    /**
-     * Get the logger
-     *
-     * @return LoggerInterface
-     */
-    public function logger(): LoggerInterface
-    {
-        return $this->xCallableClassHelper->xLogger;
-    }
-
-    /**
-     * Get the view renderer
-     *
-     * @return ViewRenderer
-     */
-    public function view(): ViewRenderer
-    {
-        return $this->xCallableClassHelper->xViewRenderer;
-    }
-
-    /**
-     * Get the session manager
-     *
-     * @return SessionInterface
-     */
-    public function session(): SessionInterface
-    {
-        return $this->xCallableClassHelper->xSessionManager;
-    }
-
-    /**
-     * Get the uploaded files
-     *
-     * @return array
-     */
-    public function files(): array
-    {
-        return $this->xCallableClassHelper->xUploadHandler->files();
-    }
-
-    /**
-     * Create a JQuery selector expression, and link it to the response attribute.
-     *
-     * @param string $sPath    The jQuery selector path
-     * @param mixed $xContext    A context associated to the selector
-     *
-     * @return JqFactory
-     */
-    public function jq(string $sPath = '', $xContext = null): JqFactory
-    {
-        return $this->response->jq($sPath, $xContext);
-    }
-
-    /**
-     * Get a data bag.
-     *
-     * @param string  $sBagName
-     *
-     * @return DataBagContext
-     */
-    public function bag(string $sBagName): DataBagContext
-    {
-        return $this->response->bag($sBagName);
-    }
-
-    /**
-     * Render an HTML pagination control.
-     *
-     * @param int $nCurrentPage     The current page number
-     * @param int $nItemsPerPage    The number of items per page
-     * @param int $nTotalItems      The total number of items
-     *
-     * @return Paginator
-     */
-    public function paginator(int $nCurrentPage, int $nItemsPerPage, int $nTotalItems): Paginator
-    {
-        return $this->response->paginator($nCurrentPage, $nItemsPerPage, $nTotalItems);
+        return $this->response;
     }
 }

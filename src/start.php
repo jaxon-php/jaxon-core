@@ -34,6 +34,19 @@ function jaxon(): Ajax
 }
 
 /**
+ * Get an instance of a registered PHP class.
+ *
+ * @param string $sClassName
+ *
+ * @return mixed
+ * @throws SetupException
+ */
+function cl(string $sClassName)
+{
+    return jaxon()->cl($sClassName);
+}
+
+/**
  * Factory for ajax calls to a registered PHP class or function.
  *
  * @param string $sClassName

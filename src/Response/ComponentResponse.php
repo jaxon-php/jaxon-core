@@ -67,7 +67,7 @@ class ComponentResponse extends AjaxResponse
      *
      * @return self
      */
-    public function item(string $sItem): self
+    public function item(string $sItem = 'main'): self
     {
         $this->aComponent['item'] = $this->str($sItem);
         return $this;

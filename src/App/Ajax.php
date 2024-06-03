@@ -37,6 +37,7 @@ use Jaxon\App\View\ViewRenderer;
 use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\Manager\PluginManager;
+use Jaxon\Plugin\Request\CallableClass\CallableRegistry;
 use Jaxon\Request\Handler\Psr\PsrFactory;
 use Jaxon\Request\Upload\UploadHandlerInterface;
 use Jaxon\Response\CallableClassResponse;
@@ -74,6 +75,7 @@ final class Ajax
         $this->xConfigManager = $xContainer->g(ConfigManager::class);
         $this->xPluginManager = $xContainer->g(PluginManager::class);
         $this->xResponseManager = $xContainer->g(ResponseManager::class);
+        $this->xCallableRegistry = $xContainer->g(CallableRegistry::class);
     }
 
     /**
