@@ -27,17 +27,18 @@ class Misc extends CallableClass
         $this->response->alert('This is the global response!');
         $xResponse = jaxon()->newResponse();
         $xResponse->debug('This is a different response!');
-        // Merge responses
-        $this->response->appendResponse($xResponse, true);
+        // Merge responses. No need. In v5, the commands are automatically merged.
+        // $this->response->appendResponse($xResponse, true);
         return $this->response;
     }
 
     public function mergeWithUpload(): UploadResponse
     {
         $this->response->alert('This is the global response!');
+        $this->response->debug('Merging with a different response!');
 
-        $xResponse = new UploadResponse(jaxon()->di()->getPsr17Factory(), 'file.txt');
-        $xResponse->debug('This is a different response!');
+        $di = jaxon()->di();
+        $xResponse = new UploadResponse($di->getResponseManager(), $di->getPsr17Factory(), 'file.txt');
         return $xResponse;
     }
 }

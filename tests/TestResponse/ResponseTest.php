@@ -7,6 +7,7 @@ use Jaxon\Exception\SetupException;
 use Jaxon\Jaxon;
 use Jaxon\Plugin\Response\DataBag\DataBagPlugin;
 use Jaxon\Plugin\Response\JQuery\JQueryPlugin;
+use Jaxon\Upload\UploadResponse;
 use Nyholm\Psr7Server\ServerRequestCreator;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
@@ -141,8 +142,10 @@ class ResponseTest extends TestCase
             ])->withMethod('POST');
         });
 
-        $this->expectException(RequestException::class);
+        // $this->expectException(RequestException::class);
         // Process the request
         jaxon()->di()->getRequestHandler()->processRequest();
+        $xResponse = jaxon()->di()->getResponseManager()->getResponse();
+        $this->assertEquals(UploadResponse::class, get_class($xResponse));
     }
 }
