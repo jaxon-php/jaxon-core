@@ -18,7 +18,7 @@ use Jaxon\JsCall\Factory;
 use Jaxon\Plugin\Package;
 use Jaxon\Plugin\ResponsePlugin;
 use Jaxon\Request\Handler\CallbackManager;
-use Jaxon\Response\ResponseInterface;
+use Jaxon\Response\CallableClassResponse;
 use Jaxon\Utils\Http\UriException;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
@@ -152,9 +152,9 @@ interface AppInterface
     /**
      * Get the Jaxon ajax response
      *
-     * @return ResponseInterface
+     * @return CallableClassResponse
      */
-    public function ajaxResponse(): ResponseInterface;
+    public function ajaxResponse(): CallableClassResponse;
 
     /**
      * Get the HTTP response

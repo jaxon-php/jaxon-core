@@ -38,7 +38,6 @@ use Jaxon\Plugin\Response\Pagination\PaginatorPlugin;
 use Jaxon\Plugin\ResponsePlugin;
 use Jaxon\Plugin\ResponsePluginInterface;
 use Jaxon\Request\Handler\ParameterReader;
-use Jaxon\Response\ResponseInterface;
 
 use function class_implements;
 use function in_array;
@@ -163,22 +162,13 @@ class PluginManager
      * Find the specified response plugin by name and return a reference to it if one exists
      *
      * @param string $sName    The name of the plugin
-     * @param ResponseInterface|null $xResponse    The response to attach the plugin to
      *
      * @return ResponsePlugin|null
      */
-    public function getResponsePlugin(string $sName, ?ResponseInterface $xResponse = null): ?ResponsePlugin
+    public function getResponsePlugin(string $sName): ?ResponsePlugin
     {
-        if(!isset($this->aResponsePlugins[$sName]))
-        {
-            return null;
-        }
-        $xPlugin = $this->di->g($this->aResponsePlugins[$sName]);
-        if(($xResponse))
-        {
-            $xPlugin->setResponse($xResponse);
-        }
-        return $xPlugin;
+        return !isset($this->aResponsePlugins[$sName]) ? null :
+            $this->di->g($this->aResponsePlugins[$sName]);
     }
 
     /**

@@ -3,7 +3,7 @@
 namespace Jaxon\Plugin;
 
 use Jaxon\Request\Target;
-use Jaxon\Response\ResponseInterface;
+use Jaxon\Response\AbstractResponse;
 use Psr\Http\Message\ServerRequestInterface;
 
 interface RequestHandlerInterface
@@ -41,7 +41,7 @@ interface RequestHandlerInterface
      * This will only occur when <Jaxon> has determined that the current request
      * is a valid (registered) jaxon enabled function via <jaxon->canProcessRequest>.
      *
-     * @return ResponseInterface|null
+     * @return AbstractResponse|null
      */
-    public function processRequest(): ?ResponseInterface;
+    public function processRequest(): ?AbstractResponse;
 }

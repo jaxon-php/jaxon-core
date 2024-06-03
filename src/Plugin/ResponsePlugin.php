@@ -27,7 +27,7 @@ namespace Jaxon\Plugin;
 
 use Jaxon\JsCall\JqFactory;
 use Jaxon\Plugin\Response\DataBag\DataBagContext;
-use Jaxon\Response\ResponseInterface;
+use Jaxon\Response\AjaxResponse;
 use JsonSerializable;
 
 /**
@@ -39,14 +39,14 @@ abstract class ResponsePlugin extends Plugin implements ResponsePluginInterface
     /**
      * The object used to build the response that will be sent to the client browser
      *
-     * @var ResponseInterface
+     * @var AjaxResponse
      */
     protected $xResponse = null;
 
     /**
      * @inheritDoc
      */
-    public function setResponse(ResponseInterface $xResponse)
+    public function setResponse(AjaxResponse $xResponse)
     {
         $this->xResponse = $xResponse;
     }
@@ -54,7 +54,7 @@ abstract class ResponsePlugin extends Plugin implements ResponsePluginInterface
     /**
      * @inheritDoc
      */
-    public function response(): ?ResponseInterface
+    public function response(): ?AjaxResponse
     {
         return $this->xResponse;
     }

@@ -23,6 +23,7 @@ namespace Jaxon\Response;
 
 use Jaxon\App\Dialog\DialogManager;
 use Jaxon\JsCall\JqFactory;
+use Jaxon\JsCall\JsExpr;
 use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Plugin\Response\DataBag\DataBagContext;
 use Jaxon\Plugin\Response\DataBag\DataBagPlugin;
@@ -34,16 +35,20 @@ use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7\Stream;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 use Psr\Http\Message\ServerRequestInterface as PsrRequestInterface;
+use Closure;
 
+use function array_shift;
+use function func_get_args;
 use function gmdate;
 use function json_encode;
 use function trim;
 
-class Response implements ResponseInterface
+abstract class AjaxResponse extends AbstractResponse
 {
-    use Traits\CommandTrait;
-    use Traits\HtmlDomTrait;
-    use Traits\ScriptTrait;
+    /**
+     * @var PsrRequestInterface
+     */
+    protected $xRequest;
 
     /**
      * @var PluginManager
@@ -56,27 +61,18 @@ class Response implements ResponseInterface
     protected $xDialogManager;
 
     /**
-     * @var Psr17Factory
-     */
-    protected $xPsr17Factory;
-
-    /**
-     * @var PsrRequestInterface
-     */
-    protected $xRequest;
-
-    /**
      * The constructor
      *
+     * @param ResponseManager $xManager
      * @param Psr17Factory $xPsr17Factory
      * @param PsrRequestInterface $xRequest
      * @param PluginManager $xPluginManager
      * @param DialogManager $xDialogManager
      */
-    public function __construct(Psr17Factory $xPsr17Factory, PsrRequestInterface $xRequest,
-        PluginManager $xPluginManager, DialogManager $xDialogManager)
+    public function __construct(ResponseManager $xManager, Psr17Factory $xPsr17Factory,
+        PsrRequestInterface $xRequest, PluginManager $xPluginManager, DialogManager $xDialogManager)
     {
-        $this->xPsr17Factory = $xPsr17Factory;
+        parent::__construct($xManager, $xPsr17Factory);
         $this->xRequest = $xRequest;
         $this->xPluginManager = $xPluginManager;
         $this->xDialogManager = $xDialogManager;
@@ -103,7 +99,129 @@ class Response implements ResponseInterface
      */
     public function getOutput(): string
     {
-        return json_encode(['jxn' => ['commands' => $this->aCommands]]);
+        return json_encode(['jxn' => ['commands' => $this->xManager->getCommands()]]);
+    }
+
+    /**
+     * Add a command to call the specified javascript function with the given (optional) parameters
+     *
+     * @param string $sFunc    The name of the function to call
+     *
+     * @return self
+     */
+    public function call(string $sFunc): self
+    {
+        $aArgs = func_get_args();
+        array_shift($aArgs);
+        $this->addCommand('script.call', ['func' => $this->str($sFunc),'args' => $aArgs]);
+        return $this;
+    }
+
+    /**
+     * Add a command to execute the specified json expression
+     *
+     * @param JsExpr $xJsExpr    The json expression to execute
+     *
+     * @return self
+     */
+    public function exec(JsExpr $xJsExpr): self
+    {
+        $this->addCommand('script.exec', ['expr' => $xJsExpr]);
+        return $this;
+    }
+
+    /**
+     * Create a new response
+     *
+     * @return AjaxResponse
+     */
+    abstract protected function newResponse(): AjaxResponse;
+
+    /**
+     * Response command that prompts user with [ok] [cancel] style message box
+     *
+     * The provided closure will be called with a response object as unique parameter.
+     * If the user clicks cancel, the response commands defined in the closure will be skipped.
+     *
+     * @param Closure $fConfirm    A closure that defines the commands that can be skipped
+     * @param string $sQuestion  The question to ask to the user
+     * @param array $aArgs       The arguments for the placeholders in the question
+     *
+     * @return self
+     */
+    public function confirm(Closure $fConfirm, string $sQuestion, array $aArgs = []): self
+    {
+        $xResponse = $this->newResponse();
+        $fConfirm($xResponse);
+        if($xResponse->nCommandCount > 0)
+        {
+            // The confirm command must be inserted before the commands to be confirmed.
+            $this->insertCommand('script.confirm', [
+                'count' => $xResponse->nCommandCount,
+                'question' => $this->dialog()->confirm($this->str($sQuestion), $aArgs),
+            ], $xResponse->nCommandCount);
+        }
+        return $this;
+    }
+
+    /**
+     * Add a command to display an alert message to the user
+     *
+     * @param string $sMessage    The message to be displayed
+     * @param array $aArgs      The arguments for the placeholders in the message
+     *
+     * @return self
+     */
+    public function alert(string $sMessage, array $aArgs = []): self
+    {
+        $this->addCommand('dialog.message', $this->dialog()->info($this->str($sMessage), $aArgs));
+        return $this;
+    }
+
+    /**
+     * Add a command to display a debug message to the user
+     *
+     * @param string $sMessage    The message to be displayed
+     *
+     * @return self
+     */
+    public function debug(string $sMessage): self
+    {
+        $this->addCommand('script.debug', ['message' => $this->str($sMessage)]);
+        return $this;
+    }
+
+    /**
+     * Add a command to ask the browser to navigate to the specified URL
+     *
+     * @param string $sURL    The relative or fully qualified URL
+     * @param integer $nDelay    Number of seconds to delay before the redirect occurs
+     *
+     * @return self
+     */
+    public function redirect(string $sURL, int $nDelay = 0): self
+    {
+        $this->addCommand('script.redirect', [
+            'delay' => $nDelay,
+            'url' => $this->xPluginManager->getParameterReader()->parseUrl($sURL),
+        ]);
+        return $this;
+    }
+
+    /**
+     * Add a command to make Jaxon to pause execution of the response commands,
+     * returning control to the browser so it can perform other commands asynchronously.
+     *
+     * After the specified delay, Jaxon will continue execution of the response commands.
+     *
+     * @param integer $tenths    The number of 1/10ths of a second to sleep
+     *
+     * @return self
+     */
+    public function sleep(int $tenths): self
+    {
+        $this->addCommand('script.sleep', ['duration' => $tenths]);
+        return $this;
     }
 
     /**
@@ -117,7 +235,12 @@ class Response implements ResponseInterface
      */
     public function plugin(string $sName): ?ResponsePlugin
     {
-        return $this->xPluginManager->getResponsePlugin($sName, $this);
+        $xResponsePlugin = $this->xPluginManager->getResponsePlugin($sName);
+        if($xResponsePlugin !== null)
+        {
+            $xResponsePlugin->setResponse($this);
+        }
+        return $xResponsePlugin;
     }
 
     /**

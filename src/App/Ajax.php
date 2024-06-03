@@ -39,8 +39,8 @@ use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Request\Handler\Psr\PsrFactory;
 use Jaxon\Request\Upload\UploadHandlerInterface;
-use Jaxon\Response\Manager\ResponseManager;
-use Jaxon\Response\ResponseInterface;
+use Jaxon\Response\CallableClassResponse;
+use Jaxon\Response\ResponseManager;
 use Jaxon\Utils\Template\TemplateEngine;
 
 use function trim;
@@ -129,9 +129,9 @@ final class Ajax
     /**
      * Get the global Response object
      *
-     * @return ResponseInterface
+     * @return CallableClassResponse
      */
-    public function getResponse(): ResponseInterface
+    public function getResponse(): CallableClassResponse
     {
         return $this->xResponseManager->getResponse();
     }
@@ -139,11 +139,11 @@ final class Ajax
     /**
      * Create a new Jaxon response object
      *
-     * @return ResponseInterface
+     * @return CallableClassResponse
      */
-    public function newResponse(): ResponseInterface
+    public function newResponse(): CallableClassResponse
     {
-        return $this->di()->newResponse();
+        return $this->xResponseManager->newResponse();
     }
 
     /**

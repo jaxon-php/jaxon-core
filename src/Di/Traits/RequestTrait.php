@@ -15,7 +15,7 @@ use Jaxon\Request\Handler\CallbackManager;
 use Jaxon\Request\Handler\ParameterReader;
 use Jaxon\Request\Handler\RequestHandler;
 use Jaxon\Request\Upload\UploadHandlerInterface;
-use Jaxon\Response\Manager\ResponseManager;
+use Jaxon\Response\ResponseManager;
 use Jaxon\Utils\Http\UriDetector;
 
 trait RequestTrait

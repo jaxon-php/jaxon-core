@@ -31,7 +31,7 @@ use Jaxon\Di\Container;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\AnnotationReaderInterface;
 use Jaxon\Request\Target;
-use Jaxon\Response\ResponseInterface;
+use Jaxon\Response\AbstractResponse;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionMethod;
@@ -364,11 +364,11 @@ class CallableObject
      *
      * @param Target $xTarget The target of the Jaxon call
      *
-     * @return null|ResponseInterface
+     * @return null|AbstractResponse
      * @throws ReflectionException
      * @throws SetupException
      */
-    public function call(Target $xTarget): ?ResponseInterface
+    public function call(Target $xTarget): ?AbstractResponse
     {
         $this->xTarget = $xTarget;
         $this->xRegisteredObject = $this->getRegisteredObject($xTarget);

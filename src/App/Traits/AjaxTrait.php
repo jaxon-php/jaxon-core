@@ -24,7 +24,7 @@ use Jaxon\Plugin\Package;
 use Jaxon\Plugin\Request\CallableClass\CallableRegistry;
 use Jaxon\Plugin\ResponsePlugin;
 use Jaxon\Request\Handler\CallbackManager;
-use Jaxon\Response\Manager\ResponseManager;
+use Jaxon\Response\ResponseManager;
 use Jaxon\Utils\Http\UriException;
 use Psr\Log\LoggerInterface;
 
