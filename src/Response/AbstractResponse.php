@@ -105,7 +105,7 @@ abstract class AbstractResponse
      *
      * @return void
      */
-    public function addCommand(string $sName, array|JsonSerializable $aArgs,
+    public function addCommand(string $sName, array|JsonSerializable $aArgs = [],
         bool $bRemoveEmpty = false)
     {
         $this->nCommandCount++;
@@ -140,7 +140,7 @@ abstract class AbstractResponse
      * @return void
      */
     public function addPluginCommand(ResponsePlugin $xPlugin, string $sName,
-        array|JsonSerializable $aArgs, bool $bRemoveEmpty = false)
+        array|JsonSerializable $aArgs = [], bool $bRemoveEmpty = false)
     {
         $this->nCommandCount++;
         $this->xManager->addPluginCommand($xPlugin, $sName, $aArgs, $bRemoveEmpty);
