@@ -44,10 +44,8 @@ use Jaxon\JsCall\JsExpr;
 
 use function array_walk;
 use function ceil;
-use function count;
 use function floor;
 use function max;
-use function trim;
 
 class Paginator
 {
@@ -342,33 +340,8 @@ class Paginator
      *
      * @return string
      */
-    public function paginate(JsExpr $xCall, string $sWrapperId)
+    public function paginate(JsExpr $xCall, string $sWrapperId = '')
     {
-        $aPages = $this->pages();
-        if(count($aPages) === 0)
-        {
-            return;
-        }
-        $xStore = $this->xPlugin->render($aPages);
-        if(!$xStore)
-        {
-            return;
-        }
-
-        // Show the pagination links
-        $sWrapperId = trim($sWrapperId);
-        $this->xPlugin->response()->html($sWrapperId, $xStore->__toString());
-
-        $xCall = $xCall->func();
-        if(!$xCall || $this->getTotalPages() < 2)
-        {
-            return;
-        }
-
-        // Set click handlers on the pagination links
-        $this->xPlugin->addCommand('pg.paginate', [
-            'id' => $sWrapperId,
-            'func' => $xCall->withPage()->jsonSerialize(),
-        ]);
+        $this->xPlugin->render($this->pages(), $xCall, $sWrapperId);
     }
 }

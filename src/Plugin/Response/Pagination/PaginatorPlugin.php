@@ -12,12 +12,18 @@
 namespace Jaxon\Plugin\Response\Pagination;
 
 use Jaxon\App\View\ViewRenderer;
-use Jaxon\App\View\Store;
+use Jaxon\JsCall\JsExpr;
+use Jaxon\JsCall\Js\Func;
 use Jaxon\Plugin\ResponsePlugin;
+use Jaxon\Response\Response;
+use Jaxon\Response\ComponentResponse;
 
 use function array_map;
 use function array_pop;
 use function array_shift;
+use function count;
+use function is_a;
+use function trim;
 
 /**
  * Usage
@@ -107,25 +113,77 @@ class PaginatorPlugin extends ResponsePlugin
     }
 
     /**
-     * @param array<Page> $aPages
+     * Show the pagination links
      *
-     * @return null|Store
+     * @param Func $xFunc
+     * @param string $sWrapperId
+     * @param string $sHtml
+     *
+     * @return void
      */
-    public function render(array $aPages): ?Store
+    private function showLinks(Func $xFunc, string $sWrapperId, string $sHtml)
     {
-        $aPages = array_map(function($xPage) {
-            return $this->xRenderer->render('pagination::links/' . $xPage->sType, [
-                'page' => $xPage->nNumber,
-                'text' => $xPage->sText,
-            ]);
-        }, $aPages);
-        $aPrevPage = array_shift($aPages); // The first entry in the array
-        $aNextPage = array_pop($aPages); // The last entry in the array
+        if(is_a($this->response(), ComponentResponse::class))
+        {
+            /** @var ComponentResponse */
+            $xResponse = $this->response();
+            $xResponse->html($sHtml);
+            if($sHtml !== '')
+            {
+                // Set click handlers on the pagination links
+                $this->addCommand('pg.paginate', [
+                    'func' => $xFunc->withPage()->jsonSerialize(),
+                ]);
+            }
+            return;
+        }
+        if(is_a($this->response(), Response::class))
+        {
+            /** @var Response */
+            $xResponse = $this->response();
+            $xResponse->html($sWrapperId, $sHtml);
+            if($sHtml !== '')
+            {
+                // Set click handlers on the pagination links
+                $this->addCommand('pg.paginate', [
+                    'id' => $sWrapperId,
+                    'func' => $xFunc->withPage()->jsonSerialize(),
+                ]);
+            }
+        }
+    }
 
-        return $this->xRenderer->render('pagination::wrapper', [
-            'links' => $aPages,
-            'prev' => $aPrevPage,
-            'next' => $aNextPage,
-        ]);
+    /**
+     * @param array<Page> $aPages
+     * @param JsExpr $xCall
+     * @param string $sWrapperId
+     *
+     * @return void
+     */
+    public function render(array $aPages, JsExpr $xCall, string $sWrapperId)
+    {
+        if(($xFunc = $xCall->func()) === null)
+        {
+            return;
+        }
+
+        $xStore = null;
+        if(count($aPages) > 0)
+        {
+            $aPages = array_map(function($xPage) {
+                return $this->xRenderer->render('pagination::links/' . $xPage->sType, [
+                    'page' => $xPage->nNumber,
+                    'text' => $xPage->sText,
+                ]);
+            }, $aPages);
+            $aPrevPage = array_shift($aPages); // The first entry in the array
+            $aNextPage = array_pop($aPages); // The last entry in the array
+            $xStore = $this->xRenderer->render('pagination::wrapper', [
+                'links' => $aPages,
+                'prev' => $aPrevPage,
+                'next' => $aNextPage,
+            ]);
+        }
+        $this->showLinks($xFunc, trim($sWrapperId), !$xStore ? '' : trim($xStore->__toString()));
     }
 }
