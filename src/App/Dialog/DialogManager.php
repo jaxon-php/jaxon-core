@@ -52,7 +52,9 @@ class DialogManager
     {
         return [
             'str' => $sStr,
-            'args' => array_map(fn($xArg) => Parameter::make($xArg), $aArgs),
+            'args' => array_map(function($xArg) {
+                return Parameter::make($xArg);
+            }, $aArgs),
         ];
     }
 
@@ -66,7 +68,6 @@ class DialogManager
     public function title(string $sTitle)
     {
         $this->sTitle = $sTitle;
-
         return $this;
     }
 
@@ -83,14 +84,11 @@ class DialogManager
     {
         $sTitle = $this->sTitle;
         $this->sTitle = '';
-
         return [
             'lib' => $this->xDialogLibraryManager->getMessageLibrary()->getName(),
             'type' => $sType,
-            'content' => [
-                'title' => $sTitle,
-                'phrase' => $this->phrase($sMessage, $aArgs),
-            ],
+            'title' => $sTitle,
+            'phrase' => $this->phrase($sMessage, $aArgs),
         ];
     }
 
@@ -200,8 +198,11 @@ class DialogManager
      */
     public function confirm(string $sQuestion, array $aArgs = []): array
     {
+        $sTitle = $this->sTitle;
+        $this->sTitle = '';
         return [
             'lib' => $this->xDialogLibraryManager->getQuestionLibrary()->getName(),
+            'title' => $sTitle,
             'phrase' => $this->phrase($sQuestion, $aArgs),
         ];
     }
