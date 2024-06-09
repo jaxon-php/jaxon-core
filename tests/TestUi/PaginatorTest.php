@@ -68,15 +68,17 @@ class PaginatorTest extends TestCase
 
         $this->xPaginatorPlugin->paginator(1, 10, 0)
             ->paginate(rq('Sample')->method(jq('#div')->val), 'wrapper');
-        $this->assertCount(0, $this->xResponse->getCommands());
+        $this->assertCount(1, $this->xResponse->getCommands());
 
+        $this->xResponse->clearCommands();
         $this->xPaginatorPlugin->paginator(1, 10, 7)
             ->paginate(rq('Sample')->method(jq('#div')->val), 'wrapper');
-        $this->assertCount(0, $this->xResponse->getCommands());
+        $this->assertCount(1, $this->xResponse->getCommands());
 
+        $this->xResponse->clearCommands();
         $this->xPaginatorPlugin->paginator(1, 10, 10)
             ->paginate(rq('Sample')->method(jq('#div')->val), 'wrapper');
-        $this->assertCount(0, $this->xResponse->getCommands());
+        $this->assertCount(1, $this->xResponse->getCommands());
     }
 
     /**

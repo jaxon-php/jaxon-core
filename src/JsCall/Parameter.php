@@ -334,7 +334,7 @@ class Parameter implements ParameterInterface
      *
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->getScript();
     }

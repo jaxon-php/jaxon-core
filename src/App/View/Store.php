@@ -117,7 +117,7 @@ class Store implements JsonSerializable
      *
      * @return string        The string representation of the view
      */
-    public function __toString()
+    public function __toString(): string
     {
         return !$this->xRenderer ? '' : $this->xRenderer->render($this);
     }
