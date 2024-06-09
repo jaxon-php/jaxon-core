@@ -22,18 +22,25 @@ class ViewRenderer
     protected $di;
 
     /**
-     * The view namespaces
+     * The view data store
      *
-     * @var array
+     * @var Store
      */
-    protected $aNamespaces = [];
+    protected $xStore = null;
 
     /**
      * The view data store
      *
      * @var Store
      */
-    protected $xStore = null;
+    protected $xEmptyStore = null;
+
+    /**
+     * The view namespaces
+     *
+     * @var array
+     */
+    protected $aNamespaces = [];
 
     /**
      * The default namespace
@@ -57,6 +64,7 @@ class ViewRenderer
     public function __construct(Container $di)
     {
         $this->di = $di;
+        $this->xEmptyStore = new Store();
     }
 
     /**
@@ -266,9 +274,9 @@ class ViewRenderer
      * @param string $sViewName    The view name
      * @param array $aViewData    The view data
      *
-     * @return null|Store   A store populated with the view data
+     * @return Store   A store populated with the view data
      */
-    public function render(string $sViewName, array $aViewData = []): ?Store
+    public function render(string $sViewName, array $aViewData = []): Store
     {
         $xStore = $this->store();
         // Get the default view namespace
@@ -283,9 +291,11 @@ class ViewRenderer
         if(!$xRenderer)
         {
             // Cannot render a view if there's no renderer corresponding to the namespace.
-            return null;
+            return $this->xEmptyStore;
         }
-        $xStore->setData(array_merge($this->aViewData, $aViewData))->setView($xRenderer, $sNamespace, $sViewName);
+
+        $xStore->setData(array_merge($this->aViewData, $aViewData))
+            ->setView($xRenderer, $sNamespace, $sViewName);
         // Set the store to null so a new store will be created for the next view.
         $this->xStore = null;
         // Return the store

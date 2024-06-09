@@ -119,7 +119,7 @@ class Store implements JsonSerializable
      */
     public function __toString()
     {
-        return ($this->xRenderer) ? $this->xRenderer->render($this) : '';
+        return !$this->xRenderer ? '' : $this->xRenderer->render($this);
     }
 
     /**
