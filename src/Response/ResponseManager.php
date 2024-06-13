@@ -77,6 +77,13 @@ class ResponseManager
     protected $aCommands = [];
 
     /**
+     * The latest added command
+     *
+     * @var array|null
+     */
+    protected $aLastCommand = null;
+
+    /**
      * @param Container $di
      * @param Translator $xTranslator
      * @param string $sCharacterEncoding
@@ -181,10 +188,11 @@ class ResponseManager
     public function addCommand(string $sName, array|JsonSerializable $aArgs,
         bool $bRemoveEmpty = false)
     {
-        $this->aCommands[] = [
+        $this->aLastCommand = [
             'name' => $this->str($sName),
             'args' => $this->getCommandArgs($aArgs, $bRemoveEmpty),
         ];
+        $this->aCommands[] = $this->aLastCommand;
     }
 
     /**
@@ -210,10 +218,27 @@ class ResponseManager
         {
             $this->aCommands[$nPos] = $this->aCommands[$nPos - 1];
         }
-        $this->aCommands[$nInsertPosition] = [
+        $this->aLastCommand = [
             'name' => $this->str($sName),
             'args' => $this->getCommandArgs($aArgs, $bRemoveEmpty),
         ];
+        $this->aCommands[$nInsertPosition] = $this->aLastCommand;
+    }
+
+    /**
+     * Set a component on the last command
+     *
+     * @param array $aComponent
+     *
+     * @return void
+     */
+    public function setComponent(array $aComponent)
+    {
+        if(!$this->aLastCommand)
+        {
+            return;
+        }
+        $this->aLastCommand['component'] = $aComponent;
     }
 
     /**
@@ -229,11 +254,12 @@ class ResponseManager
     public function addPluginCommand(ResponsePlugin $xPlugin, string $sName,
         array|JsonSerializable $aArgs, bool $bRemoveEmpty = false)
     {
-        $this->aCommands[] = [
+        $this->aLastCommand = [
             'name' => $this->str($sName),
             'plugin' => $xPlugin->getName(),
             'args' => $this->getCommandArgs($aArgs, $bRemoveEmpty),
         ];
+        $this->aCommands[] = $this->aLastCommand;
     }
 
     /**

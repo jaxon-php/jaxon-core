@@ -87,8 +87,25 @@ class ComponentResponse extends AjaxResponse
     public function addCommand(string $sName, array|JsonSerializable $aArgs = [],
         bool $bRemoveEmpty = false)
     {
-        $aArgs['component'] = $this->aComponent;
         parent::addCommand($sName, $aArgs, $bRemoveEmpty);
+        $this->xManager->setComponent($this->aComponent);
+    }
+
+    /**
+     * Insert a response command before a given number of commands
+     *
+     * @param string $sName    The command name
+     * @param array|JsonSerializable $aArgs    The command arguments
+     * @param int $nBefore    The number of commands to move
+     * @param bool $bRemoveEmpty
+     *
+     * @return void
+     */
+    public function insertCommand(string $sName, array|JsonSerializable $aArgs,
+        int $nBefore, bool $bRemoveEmpty = false)
+    {
+        parent::insertCommand($sName, $aArgs, $nBefore, $bRemoveEmpty);
+        $this->xManager->setComponent($this->aComponent);
     }
 
     /**
@@ -104,8 +121,8 @@ class ComponentResponse extends AjaxResponse
     public function addPluginCommand(ResponsePlugin $xPlugin, string $sName,
         array|JsonSerializable $aArgs = [], bool $bRemoveEmpty = false)
     {
-        $aArgs['component'] = $this->aComponent;
         parent::addPluginCommand($xPlugin, $sName, $aArgs, $bRemoveEmpty);
+        $this->xManager->setComponent($this->aComponent);
     }
 
     /**
