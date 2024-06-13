@@ -9,7 +9,7 @@ use Jaxon\Response\ComponentResponse;
 
 use function get_class;
 
-class Component extends AbstractCallable
+abstract class Component extends AbstractCallable
 {
     /**
      * @var ComponentResponse
@@ -36,21 +36,11 @@ class Component extends AbstractCallable
     }
 
     /**
-     * Get the HTML code of the component.
-     *
-     * @return string
-     */
-    public function html(): string
-    {
-        return '';
-    }
-
-    /**
      * Update the attached DOM node content with the component HTML code.
      *
      * @return ComponentResponse
      */
-    final public function show()
+    final public function show(): ComponentResponse
     {
         $this->response->html($this->html());
         return $this->response;
