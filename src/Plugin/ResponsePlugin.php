@@ -73,6 +73,7 @@ abstract class ResponsePlugin extends Plugin implements ResponsePluginInterface
      */
     public function addCommand(string $sName, array|JsonSerializable $aOptions)
     {
-        $this->xResponse->addPluginCommand($this, $sName, $aOptions);
+        $this->xResponse->addCommand($sName, $aOptions);
+        $this->xResponse->setOption('plugin', $this->getName());
     }
 }
