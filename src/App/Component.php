@@ -56,4 +56,26 @@ abstract class Component extends AbstractCallable
         $this->response->clear();
         return $this->response;
     }
+
+    /**
+     * Show the attached DOM node.
+     *
+     * @return ComponentResponse
+     */
+    final public function show(): ComponentResponse
+    {
+        $this->jq()->show();
+        return $this->response;
+    }
+
+    /**
+     * Hide the attached DOM node.
+     *
+     * @return ComponentResponse
+     */
+    final public function hide(): ComponentResponse
+    {
+        $this->jq()->hide();
+        return $this->response;
+    }
 }
