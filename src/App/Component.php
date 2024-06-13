@@ -36,13 +36,24 @@ abstract class Component extends AbstractCallable
     }
 
     /**
-     * Update the attached DOM node content with the component HTML code.
+     * Set the attached DOM node content with the component HTML code.
      *
      * @return ComponentResponse
      */
-    final public function show(): ComponentResponse
+    final public function refresh(): ComponentResponse
     {
         $this->response->html($this->html());
+        return $this->response;
+    }
+
+    /**
+     * Clear the attached DOM node content.
+     *
+     * @return ComponentResponse
+     */
+    final public function clear(): ComponentResponse
+    {
+        $this->response->clear();
         return $this->response;
     }
 }

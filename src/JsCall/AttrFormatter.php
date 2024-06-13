@@ -26,7 +26,7 @@ class AttrFormatter
      *
      * @return string
      */
-    public function name(JsFactory $xJsFactory): string
+    public function show(JsFactory $xJsFactory): string
     {
         return $xJsFactory->_class();
     }
