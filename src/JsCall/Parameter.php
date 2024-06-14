@@ -157,7 +157,7 @@ class Parameter implements ParameterInterface
      *
      * @return mixed
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         switch($this->getType())
         {
