@@ -78,7 +78,7 @@ class PluginDataBagTest extends TestCase
         $this->assertEquals(1, $xResponse->getCommandCount());
         $aCommand = $xResponse->getCommands()[0];
         // $this->assertEquals('', json_encode($aCommand));
-        $this->assertEquals('bags', $aCommand['plugin']);
+        $this->assertEquals('bags', $aCommand['options']['plugin']);
         $this->assertEquals('databag.set', $aCommand['name']);
         // $this->assertEquals('value', $aCommand['args']['values']['data']['dataset']['key']);
     }
@@ -113,7 +113,7 @@ class PluginDataBagTest extends TestCase
 
         // Test the databag update command
         $aBagCommand = $xResponse->getCommands()[1];
-        $this->assertEquals('bags', $aBagCommand['plugin']);
+        $this->assertEquals('bags', $aBagCommand['options']['plugin']);
         $this->assertEquals('databag.set', $aBagCommand['name']);
         // $this->assertEquals('value1', $aBagCommand['data']['dataset']['key1']);
         // $this->assertEquals('value2', $aBagCommand['data']['dataset']['key2']);
@@ -149,7 +149,7 @@ class PluginDataBagTest extends TestCase
 
         // Test the databag update command
         $aBagCommand = $xResponse->getCommands()[1];
-        $this->assertEquals('bags', $aBagCommand['plugin']);
+        $this->assertEquals('bags', $aBagCommand['options']['plugin']);
         $this->assertEquals('databag.set', $aBagCommand['name']);
         // $this->assertEquals('value1', $aBagCommand['data']['dataset']['key1']);
         // $this->assertEquals('value2', $aBagCommand['data']['dataset']['key2']);

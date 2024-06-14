@@ -70,6 +70,31 @@ class ResponseTest extends TestCase
     /**
      * @throws RequestException
      */
+    public function testCommandOption()
+    {
+        // Send a request to the registered class
+        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
+            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
+                'jxncls' => 'Misc',
+                'jxnmthd' => 'simple',
+                'jxnargs' => [],
+            ])->withMethod('POST');
+        });
+
+        // Process the request and get the response
+        jaxon()->di()->getRequestHandler()->processRequest();
+        $xResponse = jaxon()->getResponse();
+        $xResponse->setOption('name', 'value');
+
+        $aCommands = $xResponse->getCommands();
+        $this->assertCount(1, $aCommands);
+        // Set an option on the response
+        $this->assertEquals('value', $aCommands[0]['options']['name']);
+    }
+
+    /**
+     * @throws RequestException
+     */
     public function testMergeResponse()
     {
         // Send a request to the registered class

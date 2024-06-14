@@ -52,7 +52,7 @@ class CallTest extends TestCase
         $this->assertEquals("parseInt(jaxon.$('val2').value)", pm()->input('val2')->toInt()->__toString());
         $this->assertEquals("parseInt(jaxon.$('val3').innerHTML)", pm()->html('val3')->toInt()->__toString());
         $this->assertEquals("parseInt(jaxon.$('val4').value)", pm()->select('val4')->toInt()->__toString());
-        $this->assertEquals("parseInt(trim(' value '))", js()->trim(' value ')->toInt()->raw());
+        $this->assertEquals("parseInt(window.trim(' value '))", js('window')->trim(' value ')->toInt()->raw());
     }
 
     /**
@@ -102,7 +102,7 @@ class CallTest extends TestCase
         //     rq('Sample')->method(jq('#div')->val)->raw()
         // );
         $this->assertEquals(
-            'Sample.method(jaxon.exec({"_type":"expr","calls":[{"_type":"select","_name":"#div"}' .
+            'Sample.method(jaxon.exec({"_type":"expr","calls":[{"_type":"select","_name":"#div","mode":"jq"}' .
                 ',{"_type":"attr","_name":"val"}]}))',
             rq('Sample')->method(jq('#div')->val)->raw()
         );
@@ -132,7 +132,7 @@ class CallTest extends TestCase
         $this->assertEquals(
             'jaxon.jq(\'.div\').on(\'click\', () => ' .
                 '{ jaxon.exec({"_type":"expr","calls":[{"_type":"func","_name":"Sample.method",' .
-                '"args":[{"_type":"expr","calls":[{"_type":"select","_name":""},' .
+                '"args":[{"_type":"expr","calls":[{"_type":"select","_name":"","mode":"jq"},' .
                 '{"_type":"func","_name":"attr","args":["param"]},' .
                 '{"_type":"method","_name":"toInt","args":[]}]}]}]}); })',
             jq('.div')->click(rq('Sample')->method(jq()->attr('param')->toInt()))->raw()
