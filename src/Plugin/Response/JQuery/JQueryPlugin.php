@@ -5,6 +5,7 @@ namespace Jaxon\Plugin\Response\JQuery;
 use Jaxon\JsCall\Factory;
 use Jaxon\JsCall\JqFactory;
 use Jaxon\JsCall\JsExpr;
+use Jaxon\JsCall\JsFactory;
 use Jaxon\Plugin\ResponsePlugin;
 
 class JQueryPlugin extends ResponsePlugin
@@ -57,11 +58,29 @@ class JQueryPlugin extends ResponsePlugin
      *
      * @return JqFactory
      */
-    public function jq(string $sPath, $xContext = null): JqFactory
+    public function jq(string $sPath = '', $xContext = null): JqFactory
     {
         return $this->xFactory->jq($sPath, $xContext, function(JsExpr $xJsExpr) {
             // Add the newly created expression to the response
-            $this->addCommand('jquery.call', ['selector' => $xJsExpr]);
+            $this->addCommand('script.exec', ['expr' => $xJsExpr]);;
+        });
+    }
+
+    /**
+     * Create a js expression, and link it to the current response.
+     *
+     * Since this element is linked to a response, its code will be automatically sent to the client.
+     * The returned object can be used to call jQuery functions on the selected elements.
+     *
+     * @param string $sObject
+     *
+     * @return JsFactory
+     */
+    public function js(string $sObject = ''): JsFactory
+    {
+        return $this->xFactory->js($sObject, function(JsExpr $xJsExpr) {
+            // Add the newly created expression to the response
+            $this->addCommand('script.exec', ['expr' => $xJsExpr]);;
         });
     }
 }

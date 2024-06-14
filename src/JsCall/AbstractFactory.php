@@ -15,6 +15,7 @@
 namespace Jaxon\JsCall;
 
 use Jaxon\App\Dialog\DialogManager;
+use Closure;
 
 abstract class AbstractFactory
 {
@@ -22,6 +23,25 @@ abstract class AbstractFactory
      * @var DialogManager
      */
     protected $xDialog;
+
+    /**
+     * A function to call when the expression is created
+     *
+     * @var Closure
+     */
+    protected $xExprCb;
+
+    /**
+     * The constructor.
+     *
+     * @param DialogManager $xDialog
+     * @param Closure|null $xExprCb
+     */
+    protected function __construct(DialogManager $xDialog, ?Closure $xExprCb)
+    {
+        $this->xDialog = $xDialog;
+        $this->xExprCb = $xExprCb;
+    }
 
     /**
      * Create a js expression

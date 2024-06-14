@@ -17,6 +17,8 @@ namespace Jaxon\JsCall;
 
 use Jaxon\App\Dialog\DialogManager;
 use Jaxon\JsCall\JsExpr;
+use Jaxon\JsCall\Js\Selector;
+use Closure;
 
 use function rtrim;
 
@@ -28,15 +30,22 @@ class JsFactory extends AbstractFactory
     protected $sCallPrefix;
 
     /**
+     * @var Selector
+     */
+    protected $xSelector = null;
+
+    /**
      * The class constructor
      *
      * @param DialogManager $xDialog
      * @param string $sCallPrefix
+     * @param Closure|null $xExprCb
      */
-    public function __construct(DialogManager $xDialog, string $sCallPrefix = '')
+    public function __construct(DialogManager $xDialog, string $sCallPrefix = '',
+        ?Closure $xExprCb = null)
     {
-        $this->xDialog = $xDialog;
-        $this->sCallPrefix = $sCallPrefix;
+        parent::__construct($xDialog, $xExprCb);
+        $this->sCallPrefix = $sCallPrefix === 'window' ? 'window.' : $sCallPrefix;
     }
 
     /**
@@ -46,7 +55,12 @@ class JsFactory extends AbstractFactory
      */
     protected function _expr(): JsExpr
     {
-        return new JsExpr($this->xDialog);
+        $xJsExpr = $this->sCallPrefix !== '' ?
+            new JsExpr($this->xDialog) :
+            new JsExpr($this->xDialog, new Selector('this', 'js'));
+        $this->xExprCb !== null && ($this->xExprCb)($xJsExpr);
+
+        return $xJsExpr;
     }
 
     /**

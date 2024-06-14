@@ -71,16 +71,8 @@ class Factory
             return new ParameterFactory();
         });
         // Factory for registered functions
-        $this->xContainer->offsetSet(JsFactory::class . '_RqFactory', function() {
-            return new JsFactory($this->xDialog, $this->sFunctionPrefix);
-        });
-        // Factory for global Js functions
         $this->xContainer->offsetSet(JsFactory::class, function() {
-            return new JsFactory($this->xDialog);
-        });
-        // Factory for global Js functions
-        $this->xContainer->offsetSet(JqFactory::class, function() {
-            return new JqFactory($this->xDialog);
+            return new JsFactory($this->xDialog, $this->sFunctionPrefix);
         });
     }
 
@@ -91,10 +83,9 @@ class Factory
      */
     private function getRqFactory(string $sClassName): ?JsFactory
     {
-        $sKey = $sClassName . '_RqFactory';
-        if(!$this->xContainer->offsetExists($sKey))
+        if(!$this->xContainer->offsetExists($sClassName))
         {
-            $this->xContainer->offsetSet($sKey, function() use($sClassName) {
+            $this->xContainer->offsetSet($sClassName, function() use($sClassName) {
                 if(!($xCallable = $this->xCallableRegistry->getCallableObject($sClassName)))
                 {
                     return null;
@@ -103,7 +94,7 @@ class Factory
                 return new JsFactory($this->xDialog, $sJsObject . '.');
             });
         }
-        return $this->xContainer->offsetGet($sKey);
+        return $this->xContainer->offsetGet($sClassName);
     }
 
     /**
@@ -116,46 +107,25 @@ class Factory
      */
     public function rq(string $sClassName = ''): ?JsFactory
     {
-        $sClassName = trim($sClassName);
-        return !$sClassName ?
-            // Factory for calls to a Jaxon js function
-            $this->xContainer->offsetGet(JsFactory::class . '_RqFactory') :
-            // Factory for calls to a Jaxon js class
-            $this->getRqFactory($sClassName);
-    }
-
-    /**
-     * @param string $sObject
-     *
-     * @return JsFactory
-     */
-    private function getJsFactory(string $sObject): JsFactory
-    {
-        $sKey = JsFactory::class . "_$sObject";
-        if(!$this->xContainer->offsetExists($sKey))
-        {
-            $this->xContainer->offsetSet($sKey, function() use($sObject) {
-                return new JsFactory($this->xDialog, $sObject);
-            });
-        }
-        return $this->xContainer->offsetGet($sKey);
+        return $this->getRqFactory(trim($sClassName) ?: JsFactory::class);
     }
 
     /**
      * Get a factory for a js function call.
      *
      * @param string $sObject
+     * @param Closure|null $xExprCb
      *
      * @return JsFactory|null
      */
-    public function js(string $sObject = ''): ?JsFactory
+    public function js(string $sObject = '', ?Closure $xExprCb = null): ?JsFactory
     {
-        $sObject = trim($sObject);
-        return !$sObject ?
-            // Factory for calls to a global js function
-            $this->xContainer->offsetGet(JsFactory::class) :
-            // Factory for calls to a function of js object
-            $this->getJsFactory($sObject);
+        /*
+         * The provided closure will be called each time a js expression is created with this factory,
+         * with the expression as the only parameter.
+         * It is currently used to attach the expression to a Jaxon response.
+         */
+        return new JsFactory($this->xDialog, trim($sObject), $xExprCb);
     }
 
     /**
@@ -172,14 +142,9 @@ class Factory
         /*
          * The provided closure will be called each time a js expression is created with this factory,
          * with the expression as the only parameter.
-         * It is currently used to attch the expression to a Jaxon response.
+         * It is currently used to attach the expression to a Jaxon response.
          */
-        $sPath = trim($sPath);
-        return !$sPath ?
-            // Factory for calls to the "this" jquery selector
-            $this->xContainer->offsetGet(JqFactory::class) :
-            // Factory for calls to a jquery selector
-            new JqFactory($this->xDialog, $sPath, $xContext, $xExprCb);
+        return new JqFactory($this->xDialog, trim($sPath), $xContext, $xExprCb);
     }
 
     /**

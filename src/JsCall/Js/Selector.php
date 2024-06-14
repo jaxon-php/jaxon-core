@@ -5,6 +5,9 @@ namespace Jaxon\JsCall\Js;
 use JsonSerializable;
 use Stringable;
 
+use function is_a;
+use function trim;
+
 class Selector implements JsonSerializable, Stringable
 {
     /**
@@ -20,46 +23,42 @@ class Selector implements JsonSerializable, Stringable
     /**
      * The constructor.
      *
-     * @param string $sPath    The jQuery selector path
+     * @param string $sPath    The selector path
+     * @param string $sMode    The selector mode: 'jq' or 'js'
      * @param mixed $xContext    A context associated to the selector
      */
-    public function __construct(string $sPath, $xContext)
+    public function __construct(string $sPath, string $sMode, $xContext = null)
     {
-        $this->sScript = $this->getPathAsStr($sPath, $xContext);
-
         $sName = $sPath ?? 'this';
-        $this->aCall = ['_type' => 'select', '_name' => $sName];
-        if(($xContext))
+        $this->aCall = ['_type' => 'select', '_name' => $sName, 'mode' => $sMode];
+        if(($sPath) && ($xContext))
         {
             $this->aCall['context'] = is_a($xContext, JsonSerializable::class) ?
                 $xContext->jsonSerialize() : $xContext;
         }
+
+        $this->sScript = $this->getPathAsStr($sName, $sMode, $xContext);
     }
 
     /**
      * Get the selector js.
      *
      * @param string $sPath    The jQuery selector path
+     * @param string $sMode    The selector mode: 'jq' or 'js'
      * @param mixed $xContext    A context associated to the selector
      *
      * @return string
      */
-    private function getPathAsStr(string $sPath, $xContext)
+    private function getPathAsStr(string $sPath, string $sMode, $xContext)
     {
-        $jQuery = 'jaxon.jq'; // The JQuery selector
-        if(!$sPath)
-        {
-            // If an empty selector is given, use the event target instead
-            return "$jQuery(e.currentTarget)";
-        }
         if(!$xContext)
         {
-            return "$jQuery('" . $sPath . "')";
+            return $sMode === 'jq' ? "jaxon.jq('$sPath')" : $sPath;
         }
 
         $sContext = is_a($xContext, self::class) ? $xContext->getScript() :
-            "$jQuery('" . trim("{$xContext}") . "')";
-        return "$jQuery('{$sPath}', $sContext)";
+            "jaxon.jq('" . trim("{$xContext}") . "')";
+        return "jaxon.jq('{$sPath}', $sContext)";
     }
 
     /**
