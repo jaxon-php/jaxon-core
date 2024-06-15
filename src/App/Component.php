@@ -44,6 +44,11 @@ abstract class Component extends AbstractCallable
     }
 
     /**
+     * @return string
+     */
+    abstract public function html(): string;
+
+    /**
      * Set the attached DOM node content with the component HTML code.
      *
      * @return ComponentResponse
@@ -72,7 +77,7 @@ abstract class Component extends AbstractCallable
      */
     final public function show(): ComponentResponse
     {
-        $this->jq()->show();
+        $this->response->jq()->show();
         return $this->response;
     }
 
@@ -83,7 +88,7 @@ abstract class Component extends AbstractCallable
      */
     final public function hide(): ComponentResponse
     {
-        $this->jq()->hide();
+        $this->response->jq()->hide();
         return $this->response;
     }
 }
