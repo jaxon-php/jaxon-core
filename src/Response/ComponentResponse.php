@@ -24,9 +24,6 @@ namespace Jaxon\Response;
 use Jaxon\App\Dialog\DialogManager;
 use Jaxon\JsCall\JsExpr;
 use Jaxon\Plugin\Manager\PluginManager;
-use Jaxon\Plugin\ResponsePlugin;
-use Nyholm\Psr7\Factory\Psr17Factory;
-use Psr\Http\Message\ServerRequestInterface as PsrRequestInterface;
 use JsonSerializable;
 
 class ComponentResponse extends AjaxResponse
@@ -40,17 +37,14 @@ class ComponentResponse extends AjaxResponse
      * The constructor
      *
      * @param ResponseManager $xManager
-     * @param Psr17Factory $xPsr17Factory
-     * @param PsrRequestInterface $xRequest
      * @param PluginManager $xPluginManager
      * @param DialogManager $xDialogManager
      * @param string $sComponentName
      */
-    public function __construct(ResponseManager $xManager, Psr17Factory $xPsr17Factory,
-        PsrRequestInterface $xRequest, PluginManager $xPluginManager,
+    public function __construct(ResponseManager $xManager, PluginManager $xPluginManager,
         DialogManager $xDialogManager, string $sComponentName)
     {
-        parent::__construct($xManager, $xPsr17Factory, $xRequest, $xPluginManager, $xDialogManager);
+        parent::__construct($xManager, $xPluginManager, $xDialogManager);
         $this->aComponent['name'] = $this->str($sComponentName);
     }
 

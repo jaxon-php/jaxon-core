@@ -11,8 +11,6 @@ use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Response\Response;
 use Jaxon\Response\ComponentResponse;
 use Jaxon\Response\ResponseManager;
-use Nyholm\Psr7\Factory\Psr17Factory;
-use Psr\Http\Message\ServerRequestInterface;
 
 use function trim;
 
@@ -28,7 +26,6 @@ trait ResponseTrait
         // Global Response
         $this->set(Response::class, function($di) {
             return new Response($di->g(ResponseManager::class),
-                $di->g(Psr17Factory::class), $di->g(ServerRequestInterface::class),
                 $di->g(PluginManager::class), $di->g(DialogManager::class));
         });
         // Response Manager
@@ -66,7 +63,6 @@ trait ResponseTrait
     public function newResponse(): Response
     {
         return new Response($this->g(ResponseManager::class),
-            $this->g(Psr17Factory::class), $this->g(ServerRequestInterface::class),
             $this->g(PluginManager::class), $this->g(DialogManager::class));
     }
 
@@ -83,17 +79,6 @@ trait ResponseTrait
         $xFactory = $this->g(Factory::class);
         $sComponentName = $xFactory->rq($sComponentClass)->_class();
         return new ComponentResponse($this->g(ResponseManager::class),
-            $this->g(Psr17Factory::class), $this->g(ServerRequestInterface::class),
             $this->g(PluginManager::class), $this->g(DialogManager::class), $sComponentName);
-    }
-
-    /**
-     * Get the Psr17 factory
-     *
-     * @return Psr17Factory
-     */
-    public function getPsr17Factory(): Psr17Factory
-    {
-        return $this->g(Psr17Factory::class);
     }
 }

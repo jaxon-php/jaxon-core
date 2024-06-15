@@ -1,5 +1,16 @@
 <?php
 
+/**
+ * JsPlugin.php
+ *
+ * Adds more js commands to the Jaxon response.
+ *
+ * @package jaxon-core
+ * @copyright 2024 Thierry Feuzeu
+ * @license https://opensource.org/licenses/MIT MIT License
+ * @link https://github.com/jaxon-php/jaxon-core
+ */
+
 namespace Jaxon\Plugin\Response\JQuery;
 
 use Jaxon\JsCall\Factory;
@@ -44,7 +55,7 @@ class JQueryPlugin extends ResponsePlugin
     public function getHash(): string
     {
         // Use the version number as hash
-        return '4.0.0';
+        return '5.0.0';
     }
 
     /**

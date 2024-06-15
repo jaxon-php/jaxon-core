@@ -4,6 +4,7 @@ namespace Jaxon\Di\Traits;
 
 use Jaxon\App\I18n\Translator;
 use Jaxon\Di\Container;
+use Jaxon\Plugin\Response\Psr\PsrPlugin;
 use Jaxon\Request\Handler\Psr\PsrAjaxMiddleware;
 use Jaxon\Request\Handler\Psr\PsrConfigMiddleware;
 use Jaxon\Request\Handler\Psr\PsrFactory;
@@ -62,6 +63,10 @@ trait PsrTrait
             return new PsrAjaxMiddleware($di->g(Container::class), $di->g(RequestHandler::class),
                 $di->g(ResponseManager::class));
         });
+        // The PSR response plugin
+        $this->set(PsrPlugin::class, function($di) {
+            return new PsrPlugin($di->g(Psr17Factory::class), $di->g(ServerRequestInterface::class));
+        });
     }
 
     /**
@@ -82,6 +87,16 @@ trait PsrTrait
     public function getPsrFactory(): PsrFactory
     {
         return $this->g(PsrFactory::class);
+    }
+
+    /**
+     * Get the Psr17 factory
+     *
+     * @return Psr17Factory
+     */
+    public function getPsr17Factory(): Psr17Factory
+    {
+        return $this->g(Psr17Factory::class);
     }
 
     /**

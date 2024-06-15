@@ -21,8 +21,9 @@
 
 namespace Jaxon\Response;
 
+use Jaxon\Plugin\Manager\PluginManager;
+use Jaxon\Plugin\ResponsePlugin;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
-use Nyholm\Psr7\Factory\Psr17Factory;
 use JsonSerializable;
 
 use function trim;
@@ -35,9 +36,9 @@ abstract class AbstractResponse
     protected $xManager;
 
     /**
-     * @var Psr17Factory
+     * @var PluginManager
      */
-    protected $xPsr17Factory;
+    protected $xPluginManager;
 
     /**
      * @var int
@@ -48,12 +49,12 @@ abstract class AbstractResponse
      * The constructor
      *
      * @param ResponseManager $xManager
-     * @param Psr17Factory $xPsr17Factory
+     * @param PluginManager $xPluginManager
      */
-    public function __construct(ResponseManager $xManager, Psr17Factory $xPsr17Factory)
+    public function __construct(ResponseManager $xManager, PluginManager $xPluginManager)
     {
-        $this->xPsr17Factory = $xPsr17Factory;
         $this->xManager = $xManager;
+        $this->xPluginManager = $xPluginManager;
     }
 
     /**
@@ -170,5 +171,36 @@ abstract class AbstractResponse
     {
         $this->nCommandCount = 0;
         $this->xManager->clearCommands();
+    }
+
+    /**
+     * Provides access to registered response plugins
+     *
+     * @param string $sName    The name of the plugin
+     *
+     * @return null|ResponsePlugin
+     */
+    public function plugin(string $sName): ?ResponsePlugin
+    {
+        $xResponsePlugin = $this->xPluginManager->getResponsePlugin($sName);
+        if($xResponsePlugin !== null)
+        {
+            $xResponsePlugin->setResponse($this);
+        }
+        return $xResponsePlugin;
+    }
+
+    /**
+     * Magic PHP function
+     *
+     * Used to permit plugins to be called as if they were native members of the Response instance.
+     *
+     * @param string $sPluginName    The name of the plugin
+     *
+     * @return null|ResponsePlugin
+     */
+    public function __get(string $sPluginName)
+    {
+        return $this->plugin($sPluginName);
     }
 }

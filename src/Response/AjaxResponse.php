@@ -30,31 +30,16 @@ use Jaxon\Plugin\Response\DataBag\DataBagPlugin;
 use Jaxon\Plugin\Response\JQuery\JQueryPlugin;
 use Jaxon\Plugin\Response\Pagination\Paginator;
 use Jaxon\Plugin\Response\Pagination\PaginatorPlugin;
-use Jaxon\Plugin\ResponsePlugin;
-use Nyholm\Psr7\Factory\Psr17Factory;
-use Nyholm\Psr7\Stream;
+use Jaxon\Plugin\Response\Psr\PsrPlugin;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
-use Psr\Http\Message\ServerRequestInterface as PsrRequestInterface;
 use Closure;
 
 use function array_shift;
 use function func_get_args;
-use function gmdate;
 use function json_encode;
-use function trim;
 
 abstract class AjaxResponse extends AbstractResponse
 {
-    /**
-     * @var PsrRequestInterface
-     */
-    protected $xRequest;
-
-    /**
-     * @var PluginManager
-     */
-    protected $xPluginManager;
-
     /**
      * @var DialogManager
      */
@@ -64,17 +49,13 @@ abstract class AjaxResponse extends AbstractResponse
      * The constructor
      *
      * @param ResponseManager $xManager
-     * @param Psr17Factory $xPsr17Factory
-     * @param PsrRequestInterface $xRequest
      * @param PluginManager $xPluginManager
      * @param DialogManager $xDialogManager
      */
-    public function __construct(ResponseManager $xManager, Psr17Factory $xPsr17Factory,
-        PsrRequestInterface $xRequest, PluginManager $xPluginManager, DialogManager $xDialogManager)
+    public function __construct(ResponseManager $xManager, PluginManager $xPluginManager,
+        DialogManager $xDialogManager)
     {
-        parent::__construct($xManager, $xPsr17Factory);
-        $this->xRequest = $xRequest;
-        $this->xPluginManager = $xPluginManager;
+        parent::__construct($xManager, $xPluginManager);
         $this->xDialogManager = $xDialogManager;
     }
 
@@ -225,51 +206,6 @@ abstract class AjaxResponse extends AbstractResponse
     }
 
     /**
-     * Provides access to registered response plugins
-     *
-     * Pass the plugin name as the first argument and the plugin object will be returned.
-     *
-     * @param string $sName    The name of the plugin
-     *
-     * @return null|ResponsePlugin
-     */
-    public function plugin(string $sName): ?ResponsePlugin
-    {
-        $xResponsePlugin = $this->xPluginManager->getResponsePlugin($sName);
-        if($xResponsePlugin !== null)
-        {
-            $xResponsePlugin->setResponse($this);
-        }
-        return $xResponsePlugin;
-    }
-
-    /**
-     * Magic PHP function
-     *
-     * Used to permit plugins to be called as if they were native members of the Response instance.
-     *
-     * @param string $sPluginName    The name of the plugin
-     *
-     * @return null|ResponsePlugin
-     */
-    public function __get(string $sPluginName)
-    {
-        return $this->plugin($sPluginName);
-    }
-
-    /**
-     * Convert to string
-     *
-     * @param mixed $xData
-     *
-     * @return string
-     */
-    protected function str($xData): string
-    {
-        return trim((string)$xData, " \t\n");
-    }
-
-    /**
      * Create a JQuery selector expression, and link it to the current response.
      *
      * This is a shortcut to the JQuery plugin.
@@ -323,17 +259,8 @@ abstract class AjaxResponse extends AbstractResponse
      */
     public function toPsr(): PsrResponseInterface
     {
-        $xPsrResponse = $this->xPsr17Factory->createResponse(200);
-        if($this->xRequest->getMethod() === 'GET')
-        {
-            $xPsrResponse = $xPsrResponse
-                ->withHeader('Expires', 'Mon, 26 Jul 1997 05:00:00 GMT')
-                ->withHeader('Last-Modified', gmdate("D, d M Y H:i:s") . ' GMT')
-                ->withHeader('Cache-Control', 'no-cache, must-revalidate')
-                ->withHeader('Pragma', 'no-cache');
-        }
-        return $xPsrResponse
-            ->withHeader('content-type', $this->getContentType())
-            ->withBody(Stream::create($this->getOutput()));
+        /** @var PsrPlugin */
+        $xPlugin = $this->plugin('psr');
+        return $xPlugin->ajax();
     }
 }

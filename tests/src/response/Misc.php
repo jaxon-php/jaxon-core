@@ -38,7 +38,7 @@ class Misc extends CallableClass
         $this->response->debug('Merging with a different response!');
 
         $di = jaxon()->di();
-        $xResponse = new UploadResponse($di->getResponseManager(), $di->getPsr17Factory(), 'file.txt');
+        $xResponse = new UploadResponse($di->getResponseManager(), $di->getPluginManager(), 'file.txt');
         return $xResponse;
     }
 }

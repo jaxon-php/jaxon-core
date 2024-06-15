@@ -2,23 +2,23 @@
 
 namespace Jaxon\Plugin;
 
-use Jaxon\Response\AjaxResponse;
+use Jaxon\Response\AbstractResponse;
 
 interface ResponsePluginInterface
 {
     /**
-     * Set the <Jaxon\Response\AjaxResponse> object
+     * Set the <Jaxon\Response\AbstractResponse> object
      *
-     * @param AjaxResponse $xResponse    The response
+     * @param AbstractResponse $xResponse    The response
      *
      * @return void
      */
-    public function setResponse(AjaxResponse $xResponse);
+    public function setResponse(AbstractResponse $xResponse);
 
     /**
-     * Get the <Jaxon\Response\AjaxResponse> object
+     * Get the <Jaxon\Response\AbstractResponse> object
      *
-     * @return AjaxResponse|null
+     * @return AbstractResponse|null
      */
-    public function response(): ?AjaxResponse;
+    public function response(): ?AbstractResponse;
 }
