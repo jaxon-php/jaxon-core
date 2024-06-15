@@ -22,7 +22,7 @@
 namespace Jaxon\Response;
 
 use Jaxon\Plugin\Manager\PluginManager;
-use Jaxon\Plugin\ResponsePlugin;
+use Jaxon\Plugin\AbstractResponsePlugin;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 use JsonSerializable;
 
@@ -178,9 +178,9 @@ abstract class AbstractResponse
      *
      * @param string $sName    The name of the plugin
      *
-     * @return null|ResponsePlugin
+     * @return null|AbstractResponsePlugin
      */
-    public function plugin(string $sName): ?ResponsePlugin
+    public function plugin(string $sName): ?AbstractResponsePlugin
     {
         $xResponsePlugin = $this->xPluginManager->getResponsePlugin($sName);
         if($xResponsePlugin !== null)
@@ -197,7 +197,7 @@ abstract class AbstractResponse
      *
      * @param string $sPluginName    The name of the plugin
      *
-     * @return null|ResponsePlugin
+     * @return null|AbstractResponsePlugin
      */
     public function __get(string $sPluginName)
     {

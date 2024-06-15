@@ -1,7 +1,7 @@
 <?php
 
 /**
- * RequestPlugin.php - Jaxon Request interface
+ * AbstractRequestPlugin.php - Jaxon Request interface
  *
  * Interface for Jaxon Request plugins.
  *
@@ -28,7 +28,7 @@ namespace Jaxon\Plugin;
 
 use Jaxon\Request\Target;
 
-abstract class RequestPlugin extends Plugin implements CallableRegistryInterface, RequestHandlerInterface
+abstract class AbstractRequestPlugin extends AbstractPlugin implements CallableRegistryInterface, RequestHandlerInterface
 {
     /**
      * @var Target

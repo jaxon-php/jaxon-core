@@ -5,7 +5,7 @@ namespace Jaxon\Tests\TestRegistration;
 require_once __DIR__ . '/../src/packages.php';
 
 use Jaxon\Exception\SetupException;
-use Jaxon\Plugin\Package;
+use Jaxon\Plugin\AbstractPackage;
 use Jaxon\Utils\Http\UriException;
 use Lagdo\TwitterFeed\Package as TwitterPackage;
 use PHPUnit\Framework\TestCase;
@@ -53,7 +53,7 @@ class PackageTest extends TestCase
 
     public function testPackageOptions()
     {
-        /** @var Package */
+        /** @var AbstractPackage */
         $xPackage = jaxon()->di()->g(SamplePackage::class);
         $xPackageConfig = $xPackage->getConfig();
         $this->assertEquals('value1', $xPackageConfig->getOption('option1'));

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * RequestHandler.php - Jaxon RequestPlugin Handler
+ * RequestHandler.php - Jaxon Request Handler
  *
  * This class processes an incoming jaxon request.
  *

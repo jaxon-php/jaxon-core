@@ -18,13 +18,13 @@ namespace Jaxon\Plugin\Response\Dialog;
 use Jaxon\App\Dialog\DialogManager;
 use Jaxon\App\Dialog\Library\DialogLibraryManager;
 use Jaxon\Exception\SetupException;
-use Jaxon\Plugin\ResponsePlugin;
+use Jaxon\Plugin\AbstractResponsePlugin;
 use Jaxon\Response\AbstractResponse;
 
 use function array_reduce;
 use function trim;
 
-class DialogPlugin extends ResponsePlugin
+class DialogPlugin extends AbstractResponsePlugin
 {
     /**
      * @const The plugin name

@@ -21,7 +21,7 @@ use Jaxon\App\View\ViewRenderer;
 use Jaxon\Di\Container;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\Code\CodeGenerator;
-use Jaxon\Plugin\Package;
+use Jaxon\Plugin\AbstractPackage;
 use Jaxon\Request\Handler\CallbackManager;
 use Jaxon\Utils\Config\Config;
 
@@ -253,7 +253,7 @@ class PackageManager
     public function registerPackage(string $sClassName, array $aUserOptions)
     {
         $sClassName = trim($sClassName, '\\ ');
-        if(!is_subclass_of($sClassName, Package::class))
+        if(!is_subclass_of($sClassName, AbstractPackage::class))
         {
             $sMessage = $this->xTranslator->trans('errors.register.invalid', ['name' => $sClassName]);
             throw new SetupException($sMessage);
@@ -275,9 +275,9 @@ class PackageManager
      *
      * @param string $sClassName    The package class name
      *
-     * @return Package|null
+     * @return AbstractPackage|null
      */
-    public function getPackage(string $sClassName): ?Package
+    public function getPackage(string $sClassName): ?AbstractPackage
     {
         $sClassName = trim($sClassName, '\\ ');
         return $this->di->h($sClassName) ? $this->di->g($sClassName) : null;

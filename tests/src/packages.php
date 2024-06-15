@@ -1,7 +1,7 @@
 <?php
 
 use Jaxon\App\CallableClass;
-use Jaxon\Plugin\Package;
+use Jaxon\Plugin\AbstractPackage;
 use Jaxon\Response\Response;
 
 class SamplePackageClass extends CallableClass
@@ -13,7 +13,7 @@ class SamplePackageClass extends CallableClass
     }
 }
 
-class SamplePackage extends Package
+class SamplePackage extends AbstractPackage
 {
     /**
      * @inheritDoc
@@ -47,7 +47,7 @@ class SamplePackage extends Package
     }
 }
 
-class BadConfigPackage extends Package
+class BadConfigPackage extends AbstractPackage
 {
     /**
      * @inheritDoc

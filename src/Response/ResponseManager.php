@@ -4,7 +4,7 @@
  * ResponseManager.php - Jaxon Response Manager
  *
  * This class stores and tracks the response that will be returned after processing a request.
- * The Response Manager represents a single point of contact for working with <ResponsePlugin> objects.
+ * The Response Manager represents a single point of contact for working with <AbstractResponsePlugin> objects.
  *
  * @package jaxon-core
  * @author Jared White
@@ -309,7 +309,7 @@ class ResponseManager
      * Appends a debug message on the end of the debug message queue
      *
      * Debug messages will be sent to the client with the normal response
-     * (if the response object supports the sending of debug messages, see: <ResponsePlugin>)
+     * (if the response object supports the sending of debug messages, see: <AbstractResponsePlugin>)
      *
      * @param string $sMessage    The debug message
      *

@@ -3,7 +3,7 @@
 namespace Jaxon\Plugin\Code;
 
 use Jaxon\App\Config\ConfigManager;
-use Jaxon\Plugin\Plugin;
+use Jaxon\Plugin\AbstractPlugin;
 use Jaxon\Request\Handler\ParameterReader;
 use Jaxon\Utils\Http\UriException;
 
@@ -64,11 +64,11 @@ class AssetManager
     /**
      * Check if the assets of this plugin shall be included in Jaxon generated code.
      *
-     * @param Plugin $xPlugin
+     * @param AbstractPlugin $xPlugin
      *
      * @return bool
      */
-    public function shallIncludeAssets(Plugin $xPlugin): bool
+    public function shallIncludeAssets(AbstractPlugin $xPlugin): bool
     {
         $sPluginOptionName = 'assets.include.' . $xPlugin->getName();
         if($this->xConfigManager->hasOption($sPluginOptionName))

@@ -26,7 +26,7 @@ use Jaxon\Di\Container;
 use Jaxon\App\I18n\Translator;
 use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;
-use Jaxon\Plugin\RequestPlugin;
+use Jaxon\Plugin\AbstractRequestPlugin;
 use Jaxon\Request\Handler\ParameterReader;
 use Jaxon\Request\Target;
 use Jaxon\Request\Validator;
@@ -41,7 +41,7 @@ use function is_string;
 use function md5;
 use function trim;
 
-class CallableFunctionPlugin extends RequestPlugin
+class CallableFunctionPlugin extends AbstractRequestPlugin
 {
     /**
      * @var string

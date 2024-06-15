@@ -13,7 +13,7 @@
 
 namespace Jaxon\Plugin\Response\Psr;
 
-use Jaxon\Plugin\ResponsePlugin;
+use Jaxon\Plugin\AbstractResponsePlugin;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7\Stream;
 use Psr\Http\Message\ResponseInterface;
@@ -21,7 +21,7 @@ use Psr\Http\Message\ServerRequestInterface as RequestInterface;
 
 use function gmdate;
 
-class PsrPlugin extends ResponsePlugin
+class PsrPlugin extends AbstractResponsePlugin
 {
     /**
      * @const The plugin name

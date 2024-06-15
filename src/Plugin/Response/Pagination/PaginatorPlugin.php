@@ -13,7 +13,7 @@ namespace Jaxon\Plugin\Response\Pagination;
 
 use Jaxon\App\View\ViewRenderer;
 use Jaxon\JsCall\JsExpr;
-use Jaxon\Plugin\ResponsePlugin;
+use Jaxon\Plugin\AbstractResponsePlugin;
 use Jaxon\Response\Response;
 use Jaxon\Response\ComponentResponse;
 
@@ -44,7 +44,7 @@ use function trim;
  * $this->paginator($pageNumber, $perPage, $total)
  *     ->paginate($this->rq()->page(), $wrapperId);
  */
-class PaginatorPlugin extends ResponsePlugin
+class PaginatorPlugin extends AbstractResponsePlugin
 {
     /**
      * @const The plugin name

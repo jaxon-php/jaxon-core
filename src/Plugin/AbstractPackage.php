@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Package.php
+ * AbstractPackage.php
  *
  * Base class for the Jaxon packages.
  *
@@ -17,7 +17,7 @@ use Jaxon\App\View\ViewRenderer;
 use Jaxon\JsCall\Factory;
 use Jaxon\Utils\Config\Config;
 
-abstract class Package implements CodeGeneratorInterface
+abstract class AbstractPackage implements CodeGeneratorInterface
 {
     /**
      * The configuration options of the package

@@ -3,13 +3,13 @@
 namespace Jaxon\Plugin\Response\DataBag;
 
 use Jaxon\Di\Container;
-use Jaxon\Plugin\ResponsePlugin;
+use Jaxon\Plugin\AbstractResponsePlugin;
 
 use function is_array;
 use function is_string;
 use function json_decode;
 
-class DataBagPlugin extends ResponsePlugin
+class DataBagPlugin extends AbstractResponsePlugin
 {
     /**
      * @const The plugin name

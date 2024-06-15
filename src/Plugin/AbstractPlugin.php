@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Plugin.php - Plugin interface
+ * AbstractPlugin.php - Plugin interface
  *
  * Generic interface for all Jaxon plugins.
  *
@@ -20,7 +20,7 @@
 
 namespace Jaxon\Plugin;
 
-abstract class Plugin implements PluginInterface, CodeGeneratorInterface
+abstract class AbstractPlugin implements PluginInterface, CodeGeneratorInterface
 {
     /**
      * @inheritDoc

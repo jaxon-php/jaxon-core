@@ -17,10 +17,10 @@ use Jaxon\JsCall\Factory;
 use Jaxon\JsCall\JqFactory;
 use Jaxon\JsCall\JsExpr;
 use Jaxon\JsCall\JsFactory;
-use Jaxon\Plugin\ResponsePlugin;
+use Jaxon\Plugin\AbstractResponsePlugin;
 use Closure;
 
-class ScriptPlugin extends ResponsePlugin
+class ScriptPlugin extends AbstractResponsePlugin
 {
     /**
      * @const The plugin name

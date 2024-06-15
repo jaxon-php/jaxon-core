@@ -20,9 +20,9 @@ use Jaxon\Di\Container;
 use Jaxon\Exception\SetupException;
 use Jaxon\JsCall\Factory;
 use Jaxon\Plugin\Manager\PluginManager;
-use Jaxon\Plugin\Package;
+use Jaxon\Plugin\AbstractPackage;
+use Jaxon\Plugin\AbstractResponsePlugin;
 use Jaxon\Plugin\Request\CallableClass\CallableRegistry;
-use Jaxon\Plugin\ResponsePlugin;
 use Jaxon\Request\Handler\CallbackManager;
 use Jaxon\Response\ResponseManager;
 use Jaxon\Utils\Http\UriException;
@@ -255,9 +255,9 @@ trait AjaxTrait
      *
      * @param string $sName    The name of the plugin
      *
-     * @return ResponsePlugin|null
+     * @return AbstractResponsePlugin|null
      */
-    public function plugin(string $sName): ?ResponsePlugin
+    public function plugin(string $sName): ?AbstractResponsePlugin
     {
         return $this->xPluginManager->getResponsePlugin($sName);
     }
@@ -267,9 +267,9 @@ trait AjaxTrait
      *
      * @param string $sClassName    The package class name
      *
-     * @return Package|null
+     * @return AbstractPackage|null
      */
-    public function package(string $sClassName): ?Package
+    public function package(string $sClassName): ?AbstractPackage
     {
         return $this->di()->getPackageManager()->getPackage($sClassName);
     }

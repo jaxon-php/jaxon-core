@@ -15,7 +15,7 @@
 namespace Jaxon\Plugin\Code;
 
 use Jaxon\Di\Container;
-use Jaxon\Plugin\Plugin;
+use Jaxon\Plugin\AbstractPlugin;
 use Jaxon\Utils\Http\UriException;
 use Jaxon\Utils\Template\TemplateEngine;
 
@@ -158,7 +158,7 @@ class CodeGenerator
     private function generatePluginCodes(string $sClassName)
     {
         $xGenerator = $this->di->g($sClassName);
-        if(!is_subclass_of($xGenerator, Plugin::class) || $this->xAssetManager->shallIncludeAssets($xGenerator))
+        if(!is_subclass_of($xGenerator, AbstractPlugin::class) || $this->xAssetManager->shallIncludeAssets($xGenerator))
         {
             // HTML tags for CSS
             $this->sCss = trim($this->sCss) . "\n" . trim($xGenerator->getCss(), " \n");

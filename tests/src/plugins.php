@@ -1,8 +1,8 @@
 <?php
 
-use Jaxon\Plugin\ResponsePlugin;
+use Jaxon\Plugin\AbstractResponsePlugin;
 
-class SamplePlugin extends ResponsePlugin
+class SamplePlugin extends AbstractResponsePlugin
 {
     public function getName(): string
     {

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * ResponsePlugin.php
+ * AbstractResponsePlugin.php
  *
  * Interface for Jaxon Response plugins.
  *
@@ -34,7 +34,7 @@ use JsonSerializable;
  * @method JqFactory jq(string $sPath = '', $xContext = null)
  * @method DataBagContext bag(string $sName)
  */
-abstract class ResponsePlugin extends Plugin implements ResponsePluginInterface
+abstract class AbstractResponsePlugin extends AbstractPlugin implements ResponsePluginInterface
 {
     /**
      * The object used to build the response that will be sent to the client browser
