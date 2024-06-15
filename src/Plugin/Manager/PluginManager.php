@@ -33,7 +33,7 @@ use Jaxon\Plugin\Request\CallableFunction\CallableFunctionPlugin;
 use Jaxon\Plugin\RequestHandlerInterface;
 use Jaxon\Plugin\Response\DataBag\DataBagPlugin;
 use Jaxon\Plugin\Response\Dialog\DialogPlugin;
-use Jaxon\Plugin\Response\JQuery\JQueryPlugin;
+use Jaxon\Plugin\Response\Script\ScriptPlugin;
 use Jaxon\Plugin\Response\Pagination\PaginatorPlugin;
 use Jaxon\Plugin\Response\Psr\PsrPlugin;
 use Jaxon\Plugin\ResponsePlugin;
@@ -210,7 +210,7 @@ class PluginManager
         $this->registerPlugin(CallableDirPlugin::class, Jaxon::CALLABLE_DIR, 103);
 
         // Response plugins
-        $this->registerPlugin(JQueryPlugin::class, JQueryPlugin::NAME, 700);
+        $this->registerPlugin(ScriptPlugin::class, ScriptPlugin::NAME, 700);
         $this->registerPlugin(DataBagPlugin::class, DataBagPlugin::NAME, 700);
         $this->registerPlugin(DialogPlugin::class, DialogPlugin::NAME, 750);
         $this->registerPlugin(PaginatorPlugin::class, PaginatorPlugin::NAME, 800);

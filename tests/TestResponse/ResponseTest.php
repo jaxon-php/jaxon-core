@@ -6,7 +6,7 @@ use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;
 use Jaxon\Jaxon;
 use Jaxon\Plugin\Response\DataBag\DataBagPlugin;
-use Jaxon\Plugin\Response\JQuery\JQueryPlugin;
+use Jaxon\Plugin\Response\Script\ScriptPlugin;
 use Jaxon\Upload\UploadResponse;
 use Nyholm\Psr7Server\ServerRequestCreator;
 use PHPUnit\Framework\TestCase;
@@ -36,7 +36,7 @@ class ResponseTest extends TestCase
     public function testResponsePluginAccess()
     {
         $this->assertEquals(DataBagPlugin::class, get_class(jaxon()->getResponse()->bags));
-        $this->assertEquals(JQueryPlugin::class, get_class(jaxon()->getResponse()->jquery));
+        $this->assertEquals(ScriptPlugin::class, get_class(jaxon()->getResponse()->script));
         $this->assertNull(jaxon()->getResponse()->noname);
     }
 

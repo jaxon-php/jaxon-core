@@ -27,7 +27,6 @@ use Jaxon\Plugin\RequestHandlerInterface;
 use Jaxon\Plugin\Response\DataBag\DataBagPlugin;
 use Jaxon\Request\Upload\UploadHandlerInterface;
 use Jaxon\Response\ResponseManager;
-
 use Exception;
 
 class RequestHandler

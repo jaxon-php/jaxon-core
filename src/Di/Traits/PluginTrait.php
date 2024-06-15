@@ -17,7 +17,7 @@ use Jaxon\Plugin\Manager\PackageManager;
 use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Plugin\Response\DataBag\DataBagPlugin;
 use Jaxon\Plugin\Response\Dialog\DialogPlugin;
-use Jaxon\Plugin\Response\JQuery\JQueryPlugin;
+use Jaxon\Plugin\Response\Script\ScriptPlugin;
 use Jaxon\Request\Handler\CallbackManager;
 use Jaxon\Request\Handler\ParameterReader;
 use Jaxon\Utils\File\FileMinifier;
@@ -56,9 +56,9 @@ trait PluginTrait
             return new CodeGenerator(Jaxon::VERSION, $di->g(Container::class), $di->g(TemplateEngine::class));
         });
 
-        // JQuery response plugin
-        $this->set(JQueryPlugin::class, function($di) {
-            return new JQueryPlugin($di->g(Factory::class));
+        // Script response plugin
+        $this->set(ScriptPlugin::class, function($di) {
+            return new ScriptPlugin($di->g(Factory::class));
         });
         // DataBag response plugin
         $this->set(DataBagPlugin::class, function($di) {
@@ -113,11 +113,11 @@ trait PluginTrait
     /**
      * Get the jQuery plugin
      *
-     * @return JQueryPlugin
+     * @return ScriptPlugin
      */
-    public function getJQueryPlugin(): JQueryPlugin
+    public function getScriptPlugin(): ScriptPlugin
     {
-        return $this->g(JQueryPlugin::class);
+        return $this->g(ScriptPlugin::class);
     }
 
     /**

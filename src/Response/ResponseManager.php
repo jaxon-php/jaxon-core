@@ -280,11 +280,7 @@ class ResponseManager
      */
     public function getResponse()
     {
-        if(!$this->xResponse)
-        {
-            $this->xResponse = $this->di->getResponse();
-        }
-        return $this->xResponse;
+        return $this->xResponse ?: $this->di->getResponse();
     }
 
     /**

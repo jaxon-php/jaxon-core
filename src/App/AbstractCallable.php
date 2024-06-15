@@ -6,7 +6,6 @@ use Jaxon\Di\Container;
 use Jaxon\App\Session\SessionInterface;
 use Jaxon\App\View\ViewRenderer;
 use Jaxon\Exception\SetupException;
-use Jaxon\JsCall\JqFactory;
 use Jaxon\JsCall\JsFactory;
 use Jaxon\Plugin\Request\CallableClass\CallableClassHelper;
 use Jaxon\Plugin\Response\DataBag\DataBagContext;
@@ -111,19 +110,6 @@ abstract class AbstractCallable
     public function files(): array
     {
         return $this->xCallableClassHelper->xUploadHandler->files();
-    }
-
-    /**
-     * Create a JQuery selector expression, and link it to the response attribute.
-     *
-     * @param string $sPath    The jQuery selector path
-     * @param mixed $xContext    A context associated to the selector
-     *
-     * @return JqFactory
-     */
-    public function jq(string $sPath = '', $xContext = null): JqFactory
-    {
-        return $this->_response()->jq($sPath, $xContext);
     }
 
     /**

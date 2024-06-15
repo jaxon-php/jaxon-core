@@ -11,7 +11,7 @@ use PHPUnit\Framework\TestCase;
 
 use function Jaxon\jaxon;
 
-class PluginJQueryTest extends TestCase
+class PluginScriptTest extends TestCase
 {
     /**
      * @throws SetupException
@@ -51,11 +51,11 @@ class PluginJQueryTest extends TestCase
         $aCommands = jaxon()->getResponse()->getCommands();
         $this->assertCount(2, $aCommands);
 
-        $this->assertEquals('jquery', $aCommands[0]['options']['plugin']);
+        $this->assertEquals('script', $aCommands[0]['options']['plugin']);
         $this->assertEquals('script.exec', $aCommands[0]['name']);
         // $this->assertEquals("$('#path1').html('This is the html content')", (string)$aCommands[0]['data']);
 
-        $this->assertEquals('jquery', $aCommands[1]['options']['plugin']);
+        $this->assertEquals('script', $aCommands[1]['options']['plugin']);
         $this->assertEquals('script.exec', $aCommands[1]['name']);
         // $this->assertEquals("$('.path2', $('#context')).html('This is the html content')", (string)$aCommands[1]['data']);
     }
@@ -80,15 +80,15 @@ class PluginJQueryTest extends TestCase
         $aCommands = jaxon()->getResponse()->getCommands();
         $this->assertCount(3, $aCommands);
 
-        $this->assertEquals('jquery', $aCommands[0]['options']['plugin']);
+        $this->assertEquals('script', $aCommands[0]['options']['plugin']);
         $this->assertEquals('script.exec', $aCommands[0]['name']);
         // $this->assertEquals("$('#path1').value = 'This is the html content'", (string)$aCommands[0]['data']);
 
-        $this->assertEquals('jquery', $aCommands[1]['options']['plugin']);
+        $this->assertEquals('script', $aCommands[1]['options']['plugin']);
         $this->assertEquals('script.exec', $aCommands[1]['name']);
         // $this->assertEquals("$('#path3').value = $('#path2').value", (string)$aCommands[1]['data']);
 
-        $this->assertEquals('jquery', $aCommands[2]['options']['plugin']);
+        $this->assertEquals('script', $aCommands[2]['options']['plugin']);
         $this->assertEquals('script.exec', $aCommands[2]['name']);
         // $this->assertEquals("$('#path3').attr('name', $('#path2').attr('name'))", (string)$aCommands[2]['data']);
     }
@@ -113,17 +113,17 @@ class PluginJQueryTest extends TestCase
         $aCommands = jaxon()->getResponse()->getCommands();
         $this->assertCount(3, $aCommands);
 
-        $this->assertEquals('jquery', $aCommands[0]['options']['plugin']);
+        $this->assertEquals('script', $aCommands[0]['options']['plugin']);
         $this->assertEquals('script.exec', $aCommands[0]['name']);
         // $this->assertEquals("$('#path1').click((e) => " .
         //     "{TestJQuery.html($(e.currentTarget).attr('data-value'));})", (string)$aCommands[0]['data']);
 
-        $this->assertEquals('jquery', $aCommands[1]['options']['plugin']);
+        $this->assertEquals('script', $aCommands[1]['options']['plugin']);
         $this->assertEquals('script.exec', $aCommands[1]['name']);
         // $this->assertEquals("$('#path1').click((e) => " .
         //     "{TestJQuery.html($('.path', $('#context')));})", (string)$aCommands[1]['data']);
 
-        $this->assertEquals('jquery', $aCommands[2]['options']['plugin']);
+        $this->assertEquals('script', $aCommands[2]['options']['plugin']);
         $this->assertEquals('script.exec', $aCommands[2]['name']);
         // $this->assertEquals("$('#path1').click((e) => {\$('#path2').toggle()})", (string)$aCommands[2]['data']);
     }

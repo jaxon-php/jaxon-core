@@ -24,13 +24,14 @@ namespace Jaxon\Response;
 use Jaxon\App\Dialog\DialogManager;
 use Jaxon\JsCall\JqFactory;
 use Jaxon\JsCall\JsExpr;
+use Jaxon\JsCall\JsFactory;
 use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Plugin\Response\DataBag\DataBagContext;
 use Jaxon\Plugin\Response\DataBag\DataBagPlugin;
-use Jaxon\Plugin\Response\JQuery\JQueryPlugin;
 use Jaxon\Plugin\Response\Pagination\Paginator;
 use Jaxon\Plugin\Response\Pagination\PaginatorPlugin;
 use Jaxon\Plugin\Response\Psr\PsrPlugin;
+use Jaxon\Plugin\Response\Script\ScriptPlugin;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 use Closure;
 
@@ -208,8 +209,6 @@ abstract class AjaxResponse extends AbstractResponse
     /**
      * Create a JQuery selector expression, and link it to the current response.
      *
-     * This is a shortcut to the JQuery plugin.
-     *
      * @param string $sPath    The jQuery selector path
      * @param mixed $xContext    A context associated to the selector
      *
@@ -217,9 +216,23 @@ abstract class AjaxResponse extends AbstractResponse
      */
     public function jq(string $sPath = '', $xContext = null): JqFactory
     {
-        /** @var JQueryPlugin */
-        $xPlugin = $this->plugin('jquery');
+        /** @var ScriptPlugin */
+        $xPlugin = $this->plugin('script');
         return $xPlugin->jq($sPath, $xContext);
+    }
+
+    /**
+     * Create a js expression, and link it to the current response.
+     *
+     * @param string $sObject
+     *
+     * @return JsFactory
+     */
+    public function js(string $sObject = ''): JsFactory
+    {
+        /** @var ScriptPlugin */
+        $xPlugin = $this->plugin('script');
+        return $xPlugin->js($sObject);
     }
 
     /**

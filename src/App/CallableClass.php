@@ -19,7 +19,7 @@ class CallableClass extends AbstractCallable
     /**
      * @inheritDoc
      */
-    final public function _initCallable(Container $di)
+    public function _initCallable(Container $di)
     {
         $sClassName = get_class($this);
         $this->xCallableClassHelper = new CallableClassHelper($di, $sClassName);
