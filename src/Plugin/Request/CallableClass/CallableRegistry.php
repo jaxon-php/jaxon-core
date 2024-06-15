@@ -18,7 +18,6 @@ use Composer\Autoload\ClassLoader;
 use Jaxon\App\I18n\Translator;
 use Jaxon\Di\Container;
 use Jaxon\Exception\SetupException;
-use Jaxon\JsCall\JsFactory;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 
@@ -219,7 +218,7 @@ class CallableRegistry
             foreach($itFile as $xFile)
             {
                 // skip everything except PHP files
-                if(!$xFile->isFile() || $xFile->getExtension() != 'php')
+                if(!$xFile->isFile() || $xFile->getExtension() !== 'php')
                 {
                     continue;
                 }

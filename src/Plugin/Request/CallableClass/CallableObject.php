@@ -172,7 +172,7 @@ class CallableObject
      */
     public function excluded(): bool
     {
-        return $this->xOptions->excluded();
+        return $this->xReflectionClass->isAbstract() || $this->xOptions->excluded();
     }
 
     /**

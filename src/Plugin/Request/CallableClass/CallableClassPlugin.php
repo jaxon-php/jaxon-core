@@ -33,7 +33,6 @@ use Jaxon\Request\Validator;
 use Jaxon\Response\AbstractResponse;
 use Jaxon\Utils\Template\TemplateEngine;
 use Psr\Http\Message\ServerRequestInterface;
-
 use ReflectionException;
 
 use function is_array;
