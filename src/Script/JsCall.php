@@ -21,7 +21,7 @@ use Closure;
 
 use function rtrim;
 
-class JsCall extends AbstractFactory
+class JsCall extends AbstractCall
 {
     /**
      * @var string

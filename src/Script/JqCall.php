@@ -26,7 +26,7 @@ use Closure;
 
 use function trim;
 
-class JqCall extends AbstractFactory
+class JqCall extends AbstractCall
 {
     /**
      * The dialog manager

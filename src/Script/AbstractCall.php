@@ -1,7 +1,7 @@
 <?php
 
 /**
- * AbstractFactory.php
+ * AbstractCall.php
  *
  * Base class for js call and selector factory.
  *
@@ -17,7 +17,7 @@ namespace Jaxon\Script;
 use Jaxon\App\Dialog\DialogManager;
 use Closure;
 
-abstract class AbstractFactory
+abstract class AbstractCall
 {
     /**
      * @var DialogManager
