@@ -20,6 +20,13 @@ class Func implements ParameterInterface
     private $sName;
 
     /**
+     * The name of the javascript function
+     *
+     * @var string
+     */
+    private $sType;
+
+    /**
      * @var array<ParameterInterface>
      */
     private $aArguments = [];
@@ -29,9 +36,11 @@ class Func implements ParameterInterface
      *
      * @param string $sName     The method name
      * @param array $aArguments The method arguments
+     * @param bool $bIsMethod
      */
-    public function __construct(string $sName, array $aArguments)
+    public function __construct(string $sName, array $aArguments, bool $bIsMethod)
     {
+        $this->sType = $bIsMethod ? 'method' : 'func';
         $this->sName = $sName;
         $this->aArguments = array_map(function($xArgument) {
             return Parameter::make($xArgument);
@@ -45,7 +54,7 @@ class Func implements ParameterInterface
      */
     public function getType(): string
     {
-        return 'func';
+        return $this->sType;
     }
 
     /**

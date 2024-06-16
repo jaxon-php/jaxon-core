@@ -24,6 +24,7 @@ use Stringable;
 
 use function array_map;
 use function array_shift;
+use function count;
 use function func_get_args;
 use function implode;
 use function is_a;
@@ -113,8 +114,9 @@ class JsExpr implements ParameterInterface
      */
     public function __call(string $sMethod, array $aArguments): self
     {
+        $bIsMethod = count($this->aCalls) > 0;
         // Append the action into the array
-        $this->aCalls[] = new Func($sMethod, $aArguments);
+        $this->aCalls[] = new Func($sMethod, $aArguments, $bIsMethod);
         return $this;
     }
 

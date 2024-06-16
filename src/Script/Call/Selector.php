@@ -29,7 +29,7 @@ class Selector implements JsonSerializable, Stringable
      */
     public function __construct(string $sPath, string $sMode, $xContext = null)
     {
-        $sName = $sPath ?? 'this';
+        $sName = trim($sPath) ?: 'this';
         $this->aCall = ['_type' => 'select', '_name' => $sName, 'mode' => $sMode];
         if(($sPath) && ($xContext))
         {
