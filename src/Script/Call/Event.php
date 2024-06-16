@@ -1,8 +1,8 @@
 <?php
 
-namespace Jaxon\JsCall\Js;
+namespace Jaxon\Script\Call;
 
-use Jaxon\JsCall\JsExpr;
+use Jaxon\Script\JsExpr;
 use JsonSerializable;
 use Stringable;
 

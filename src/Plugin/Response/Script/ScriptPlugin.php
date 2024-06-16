@@ -13,10 +13,10 @@
 
 namespace Jaxon\Plugin\Response\Script;
 
-use Jaxon\JsCall\Factory;
-use Jaxon\JsCall\JqFactory;
-use Jaxon\JsCall\JsExpr;
-use Jaxon\JsCall\JsFactory;
+use Jaxon\Script\Factory;
+use Jaxon\Script\JqCall;
+use Jaxon\Script\JsExpr;
+use Jaxon\Script\JsCall;
 use Jaxon\Plugin\AbstractResponsePlugin;
 use Closure;
 
@@ -74,9 +74,9 @@ class ScriptPlugin extends AbstractResponsePlugin
      * @param string $sPath    The jQuery selector path
      * @param mixed $xContext    A context associated to the selector
      *
-     * @return JqFactory
+     * @return JqCall
      */
-    public function jq(string $sPath = '', $xContext = null): JqFactory
+    public function jq(string $sPath = '', $xContext = null): JqCall
     {
         return $this->xFactory->jq($sPath, $xContext, $this->xCallback);
     }
@@ -86,9 +86,9 @@ class ScriptPlugin extends AbstractResponsePlugin
      *
      * @param string $sObject
      *
-     * @return JsFactory
+     * @return JsCall
      */
-    public function js(string $sObject = ''): JsFactory
+    public function js(string $sObject = ''): JsCall
     {
         return $this->xFactory->js($sObject, $this->xCallback);
     }

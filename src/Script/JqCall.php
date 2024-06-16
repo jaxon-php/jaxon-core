@@ -1,15 +1,15 @@
 <?php
 
 /**
- * JqFactory.php - A jQuery selector
+ * JqCall.php - A jQuery selector
  *
  * This class is used to create client side requests to the Jaxon functions and callable objects.
  *
- * When inserted into a Jaxon response, a JqFactory object must be converted to the corresponding jQuery code.
- * Therefore, the JqFactory class implements the JsonSerializable interface.
+ * When inserted into a Jaxon response, a JqCall object must be converted to the corresponding jQuery code.
+ * Therefore, the JqCall class implements the JsonSerializable interface.
  *
- * When used as a parameter of a Jaxon call, the JqFactory must be converted to Jaxon js call parameter.
- * Therefore, the JqFactory class also implements the Jaxon\JsCall\ParameterInterface interface.
+ * When used as a parameter of a Jaxon call, the JqCall must be converted to Jaxon js call parameter.
+ * Therefore, the JqCall class also implements the Jaxon\Script\ParameterInterface interface.
  *
  * @package jaxon-jquery
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
@@ -18,16 +18,15 @@
  * @link https://github.com/jaxon-php/jaxon-jquery
  */
 
-namespace Jaxon\JsCall;
+namespace Jaxon\Script;
 
 use Jaxon\App\Dialog\DialogManager;
-use Jaxon\JsCall\JsExpr;
-use Jaxon\JsCall\Js\Selector;
+use Jaxon\Script\Call\Selector;
 use Closure;
 
 use function trim;
 
-class JqFactory extends AbstractFactory
+class JqCall extends AbstractFactory
 {
     /**
      * The dialog manager

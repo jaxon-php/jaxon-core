@@ -22,7 +22,7 @@
 namespace Jaxon\Response;
 
 use Jaxon\App\Dialog\DialogManager;
-use Jaxon\JsCall\JsExpr;
+use Jaxon\Script\JsExpr;
 use Jaxon\Plugin\Manager\PluginManager;
 use JsonSerializable;
 

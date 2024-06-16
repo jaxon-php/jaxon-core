@@ -4,10 +4,10 @@ namespace Jaxon;
 
 use Jaxon\App\Ajax\Lib;
 use Jaxon\Exception\SetupException;
-use Jaxon\JsCall\AttrFormatter;
-use Jaxon\JsCall\JqFactory;
-use Jaxon\JsCall\JsFactory;
-use Jaxon\JsCall\ParameterFactory;
+use Jaxon\Script\AttrFormatter;
+use Jaxon\Script\JqCall;
+use Jaxon\Script\JsCall;
+use Jaxon\Script\ParameterFactory;
 
 /**
  * start.php
@@ -51,10 +51,10 @@ function cl(string $sClassName)
  *
  * @param string $sClassName
  *
- * @return JsFactory
+ * @return JsCall
  * @throws SetupException
  */
-function rq(string $sClassName = ''): JsFactory
+function rq(string $sClassName = ''): JsCall
 {
     return jaxon()->factory()->rq($sClassName);
 }
@@ -64,9 +64,9 @@ function rq(string $sClassName = ''): JsFactory
  *
  * @param string $sJsObject
  *
- * @return JsFactory
+ * @return JsCall
  */
-function js(string $sJsObject = ''): JsFactory
+function js(string $sJsObject = ''): JsCall
 {
     return jaxon()->factory()->js($sJsObject);
 }
@@ -82,7 +82,7 @@ function pm(): ParameterFactory
 }
 
 /**
- * Create a JQuery JqFactory with a given path
+ * Create a JQuery JqCall with a given path
  *
  * The returned element is not linked to any Jaxon response, so this function shall be used
  * to insert jQuery's code into a javascript function, or as a parameter of a Jaxon function call.
@@ -90,9 +90,9 @@ function pm(): ParameterFactory
  * @param string $sPath    The jQuery selector path
  * @param mixed $xContext    A context associated to the selector
  *
- * @return JqFactory
+ * @return JqCall
  */
-function jq(string $sPath = '', $xContext = null): JqFactory
+function jq(string $sPath = '', $xContext = null): JqCall
 {
     return jaxon()->factory()->jq($sPath, $xContext);
 }

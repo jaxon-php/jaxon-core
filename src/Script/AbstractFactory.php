@@ -12,7 +12,7 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\JsCall;
+namespace Jaxon\Script;
 
 use Jaxon\App\Dialog\DialogManager;
 use Closure;

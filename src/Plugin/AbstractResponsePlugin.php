@@ -25,13 +25,13 @@
 
 namespace Jaxon\Plugin;
 
-use Jaxon\JsCall\JqFactory;
+use Jaxon\Script\JqCall;
 use Jaxon\Plugin\Response\DataBag\DataBagContext;
 use Jaxon\Response\AbstractResponse;
 use JsonSerializable;
 
 /**
- * @method JqFactory jq(string $sPath = '', $xContext = null)
+ * @method JqCall jq(string $sPath = '', $xContext = null)
  * @method DataBagContext bag(string $sName)
  */
 abstract class AbstractResponsePlugin extends AbstractPlugin implements ResponsePluginInterface

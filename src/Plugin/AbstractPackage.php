@@ -14,7 +14,7 @@
 namespace Jaxon\Plugin;
 
 use Jaxon\App\View\ViewRenderer;
-use Jaxon\JsCall\Factory;
+use Jaxon\Script\Factory;
 use Jaxon\Utils\Config\Config;
 
 abstract class AbstractPackage implements CodeGeneratorInterface

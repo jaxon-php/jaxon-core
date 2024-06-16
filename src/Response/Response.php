@@ -21,7 +21,7 @@
 
 namespace Jaxon\Response;
 
-use Jaxon\JsCall\JsExpr;
+use Jaxon\Script\JsExpr;
 
 class Response extends AjaxResponse
 {

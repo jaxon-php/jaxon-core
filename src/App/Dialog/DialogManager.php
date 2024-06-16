@@ -14,7 +14,7 @@
 namespace Jaxon\App\Dialog;
 
 use Jaxon\App\Dialog\Library\DialogLibraryManager;
-use Jaxon\JsCall\Parameter;
+use Jaxon\Script\Parameter;
 
 use function array_map;
 

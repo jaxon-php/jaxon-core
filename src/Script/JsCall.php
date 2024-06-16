@@ -1,9 +1,9 @@
 <?php
 
-namespace Jaxon\JsCall;
+namespace Jaxon\Script;
 
 /**
- * JsFactory.php
+ * JsCall.php
  *
  * Create Jaxon client side requests, which will generate the client script necessary
  * to invoke a jaxon request from the browser to registered objects.
@@ -16,13 +16,12 @@ namespace Jaxon\JsCall;
  */
 
 use Jaxon\App\Dialog\DialogManager;
-use Jaxon\JsCall\JsExpr;
-use Jaxon\JsCall\Js\Selector;
+use Jaxon\Script\Call\Selector;
 use Closure;
 
 use function rtrim;
 
-class JsFactory extends AbstractFactory
+class JsCall extends AbstractFactory
 {
     /**
      * @var string

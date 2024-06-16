@@ -1,6 +1,6 @@
 <?php
 
-namespace Jaxon\JsCall\Js;
+namespace Jaxon\Script\Call;
 
 use JsonSerializable;
 use Stringable;

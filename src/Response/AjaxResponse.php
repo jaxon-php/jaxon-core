@@ -22,9 +22,9 @@
 namespace Jaxon\Response;
 
 use Jaxon\App\Dialog\DialogManager;
-use Jaxon\JsCall\JqFactory;
-use Jaxon\JsCall\JsExpr;
-use Jaxon\JsCall\JsFactory;
+use Jaxon\Script\JqCall;
+use Jaxon\Script\JsExpr;
+use Jaxon\Script\JsCall;
 use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Plugin\Response\DataBag\DataBagContext;
 use Jaxon\Plugin\Response\DataBag\DataBagPlugin;
@@ -212,9 +212,9 @@ abstract class AjaxResponse extends AbstractResponse
      * @param string $sPath    The jQuery selector path
      * @param mixed $xContext    A context associated to the selector
      *
-     * @return JqFactory
+     * @return JqCall
      */
-    public function jq(string $sPath = '', $xContext = null): JqFactory
+    public function jq(string $sPath = '', $xContext = null): JqCall
     {
         /** @var ScriptPlugin */
         $xPlugin = $this->plugin('script');
@@ -226,9 +226,9 @@ abstract class AjaxResponse extends AbstractResponse
      *
      * @param string $sObject
      *
-     * @return JsFactory
+     * @return JsCall
      */
-    public function js(string $sObject = ''): JsFactory
+    public function js(string $sObject = ''): JsCall
     {
         /** @var ScriptPlugin */
         $xPlugin = $this->plugin('script');

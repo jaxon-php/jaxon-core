@@ -9,7 +9,7 @@ use Jaxon\App\Dialog\Library\DialogLibraryManager;
 use Jaxon\App\I18n\Translator;
 use Jaxon\App\View\ViewRenderer;
 use Jaxon\Di\Container;
-use Jaxon\JsCall\Factory;
+use Jaxon\Script\Factory;
 use Jaxon\Plugin\Code\AssetManager;
 use Jaxon\Plugin\Code\CodeGenerator;
 use Jaxon\Plugin\Code\MinifierInterface;

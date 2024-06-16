@@ -12,15 +12,13 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\JsCall;
+namespace Jaxon\Script;
 
 use Jaxon\App\Dialog\DialogManager;
-use Jaxon\JsCall\Js\Attr;
-use Jaxon\JsCall\Js\Event;
-use Jaxon\JsCall\Js\Func;
-use Jaxon\JsCall\Js\Selector;
-use Jaxon\JsCall\ParameterInterface;
-use Jaxon\JsCall\Parameter;
+use Jaxon\Script\Call\Attr;
+use Jaxon\Script\Call\Event;
+use Jaxon\Script\Call\Func;
+use Jaxon\Script\Call\Selector;
 use JsonSerializable;
 use Stringable;
 

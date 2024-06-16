@@ -1,6 +1,6 @@
 <?php
 
-namespace Jaxon\JsCall;
+namespace Jaxon\Script;
 
 /**
  * AttrFormatter.php
@@ -22,13 +22,13 @@ class AttrFormatter
     /**
      * Format a js class name
      *
-     * @param JsFactory $xJsFactory
+     * @param JsCall $xJsCall
      *
      * @return string
      */
-    public function show(JsFactory $xJsFactory): string
+    public function show(JsCall $xJsCall): string
     {
-        return $xJsFactory->_class();
+        return $xJsCall->_class();
     }
 
     /**

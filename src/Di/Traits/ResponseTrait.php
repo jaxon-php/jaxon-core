@@ -6,7 +6,7 @@ use Jaxon\App\Config\ConfigManager;
 use Jaxon\App\Dialog\DialogManager;
 use Jaxon\App\I18n\Translator;
 use Jaxon\Di\Container;
-use Jaxon\JsCall\Factory;
+use Jaxon\Script\Factory;
 use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Response\Response;
 use Jaxon\Response\ComponentResponse;

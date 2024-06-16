@@ -1,9 +1,9 @@
 <?php
 
-namespace Jaxon\JsCall\Js;
+namespace Jaxon\Script\Call;
 
-use Jaxon\JsCall\Parameter;
-use Jaxon\JsCall\ParameterInterface;
+use Jaxon\Script\Parameter;
+use Jaxon\Script\ParameterInterface;
 
 class Attr implements ParameterInterface
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Jaxon\JsCall;
+namespace Jaxon\Script;
 
 /**
  * Factory.php
@@ -71,17 +71,17 @@ class Factory
             return new ParameterFactory();
         });
         // Factory for registered functions
-        $this->xContainer->offsetSet(JsFactory::class, function() {
-            return new JsFactory($this->xDialog, $this->sFunctionPrefix);
+        $this->xContainer->offsetSet(JsCall::class, function() {
+            return new JsCall($this->xDialog, $this->sFunctionPrefix);
         });
     }
 
     /**
      * @param string $sClassName
      *
-     * @return JsFactory
+     * @return JsCall
      */
-    private function getRqFactory(string $sClassName): ?JsFactory
+    private function getRqCall(string $sClassName): ?JsCall
     {
         if(!$this->xContainer->offsetExists($sClassName))
         {
@@ -91,7 +91,7 @@ class Factory
                     return null;
                 }
                 $sJsObject = $this->sClassPrefix . $xCallable->getJsName();
-                return new JsFactory($this->xDialog, $sJsObject . '.');
+                return new JsCall($this->xDialog, $sJsObject . '.');
             });
         }
         return $this->xContainer->offsetGet($sClassName);
@@ -102,12 +102,12 @@ class Factory
      *
      * @param string $sClassName
      *
-     * @return JsFactory|null
+     * @return JsCall|null
      * @throws SetupException
      */
-    public function rq(string $sClassName = ''): ?JsFactory
+    public function rq(string $sClassName = ''): ?JsCall
     {
-        return $this->getRqFactory(trim($sClassName) ?: JsFactory::class);
+        return $this->getRqCall(trim($sClassName) ?: JsCall::class);
     }
 
     /**
@@ -116,16 +116,16 @@ class Factory
      * @param string $sObject
      * @param Closure|null $xExprCb
      *
-     * @return JsFactory|null
+     * @return JsCall|null
      */
-    public function js(string $sObject = '', ?Closure $xExprCb = null): ?JsFactory
+    public function js(string $sObject = '', ?Closure $xExprCb = null): ?JsCall
     {
         /*
          * The provided closure will be called each time a js expression is created with this factory,
          * with the expression as the only parameter.
          * It is currently used to attach the expression to a Jaxon response.
          */
-        return new JsFactory($this->xDialog, trim($sObject), $xExprCb);
+        return new JsCall($this->xDialog, trim($sObject), $xExprCb);
     }
 
     /**
@@ -135,16 +135,16 @@ class Factory
      * @param mixed $xContext    A context associated to the selector
      * @param Closure|null $xExprCb
      *
-     * @return JqFactory
+     * @return JqCall
      */
-    public function jq(string $sPath = '', $xContext = null, ?Closure $xExprCb = null): JqFactory
+    public function jq(string $sPath = '', $xContext = null, ?Closure $xExprCb = null): JqCall
     {
         /*
          * The provided closure will be called each time a js expression is created with this factory,
          * with the expression as the only parameter.
          * It is currently used to attach the expression to a Jaxon response.
          */
-        return new JqFactory($this->xDialog, trim($sPath), $xContext, $xExprCb);
+        return new JqCall($this->xDialog, trim($sPath), $xContext, $xExprCb);
     }
 
     /**

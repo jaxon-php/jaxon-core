@@ -12,7 +12,7 @@
 namespace Jaxon\Plugin\Response\Pagination;
 
 use Jaxon\App\View\ViewRenderer;
-use Jaxon\JsCall\JsExpr;
+use Jaxon\Script\JsExpr;
 use Jaxon\Plugin\AbstractResponsePlugin;
 use Jaxon\Response\Response;
 use Jaxon\Response\ComponentResponse;

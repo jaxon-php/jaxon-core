@@ -4,7 +4,7 @@ namespace Jaxon\Tests\TestRequestFactory;
 
 use Jaxon\Jaxon;
 use Jaxon\Exception\SetupException;
-use Jaxon\JsCall\Parameter;
+use Jaxon\Script\Parameter;
 use PHPUnit\Framework\TestCase;
 
 use function Jaxon\jaxon;

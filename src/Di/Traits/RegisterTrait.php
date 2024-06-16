@@ -6,7 +6,7 @@ use Jaxon\App\AbstractCallable;
 use Jaxon\App\I18n\Translator;
 use Jaxon\App\View\ViewRenderer;
 use Jaxon\Exception\SetupException;
-use Jaxon\JsCall\Factory;
+use Jaxon\Script\Factory;
 use Jaxon\Plugin\AnnotationReaderInterface;
 use Jaxon\Plugin\Request\CallableClass\CallableObject;
 use Jaxon\Plugin\Request\CallableClass\CallableRepository;
