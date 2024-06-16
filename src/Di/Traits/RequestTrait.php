@@ -7,7 +7,8 @@ use Jaxon\App\Dialog\DialogManager;
 use Jaxon\App\I18n\Translator;
 use Jaxon\Di\Container;
 use Jaxon\Script\AttrFormatter;
-use Jaxon\Script\Factory;
+use Jaxon\Script\Factory\CallFactory;
+use Jaxon\Script\Factory\ParameterFactory;
 use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Plugin\Request\CallableClass\CallableRegistry;
 use Jaxon\Plugin\Response\DataBag\DataBagPlugin;
@@ -47,11 +48,15 @@ trait RequestTrait
                 $di->g(DataBagPlugin::class));
         });
         // Requests and calls Factory
-        $this->set(Factory::class, function($di) {
+        $this->set(CallFactory::class, function($di) {
             $xConfigManager = $di->g(ConfigManager::class);
-            return new Factory($di->g(CallableRegistry::class), $di->g(DialogManager::class),
+            return new CallFactory($di->g(CallableRegistry::class), $di->g(DialogManager::class),
                 $xConfigManager->getOption('core.prefix.class'),
                 $xConfigManager->getOption('core.prefix.function'));
+        });
+        // Factory for function parameters
+        $this->set(ParameterFactory::class, function() {
+            return new ParameterFactory();
         });
         // Helpers for HTML custom attributes formatting
         $this->set(AttrFormatter::class, function() {
@@ -60,13 +65,23 @@ trait RequestTrait
     }
 
     /**
-     * Get the factory
+     * Get the js call factory
      *
-     * @return Factory
+     * @return CallFactory
      */
-    public function getFactory(): Factory
+    public function getCallFactory(): CallFactory
     {
-        return $this->g(Factory::class);
+        return $this->g(CallFactory::class);
+    }
+
+    /**
+     * Get the js call parameter factory
+     *
+     * @return ParameterFactory
+     */
+    public function getParameterFactory(): ParameterFactory
+    {
+        return $this->g(ParameterFactory::class);
     }
 
     /**

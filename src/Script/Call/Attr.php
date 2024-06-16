@@ -2,9 +2,6 @@
 
 namespace Jaxon\Script\Call;
 
-use Jaxon\Script\Parameter;
-use Jaxon\Script\ParameterInterface;
-
 class Attr implements ParameterInterface
 {
     /**

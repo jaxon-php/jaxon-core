@@ -6,7 +6,6 @@ use Jaxon\App\AbstractCallable;
 use Jaxon\App\I18n\Translator;
 use Jaxon\App\View\ViewRenderer;
 use Jaxon\Exception\SetupException;
-use Jaxon\Script\Factory;
 use Jaxon\Plugin\AnnotationReaderInterface;
 use Jaxon\Plugin\Request\CallableClass\CallableObject;
 use Jaxon\Plugin\Request\CallableClass\CallableRepository;
@@ -138,7 +137,7 @@ trait RegisterTrait
             $di = $this;
             $cSetter = function() use($di, $sPkgConfigKey) {
                 // Set the protected attributes of the object
-                $this->_init($di->g($sPkgConfigKey), $di->g(Factory::class), $di->g(ViewRenderer::class));
+                $this->_init($di->g($sPkgConfigKey), $di->g(ViewRenderer::class));
                 $this->init();
             };
             // Can now access protected attributes

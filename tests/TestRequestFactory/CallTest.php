@@ -4,7 +4,7 @@ namespace Jaxon\Tests\TestRequestFactory;
 
 use Jaxon\Jaxon;
 use Jaxon\Exception\SetupException;
-use Jaxon\Script\Parameter;
+use Jaxon\Script\Call\Parameter;
 use PHPUnit\Framework\TestCase;
 
 use function Jaxon\jaxon;
@@ -132,8 +132,8 @@ class CallTest extends TestCase
         $this->assertEquals(
             'jaxon.jq(\'.div\').on(\'click\', () => ' .
                 '{ jaxon.exec({"_type":"expr","calls":[{"_type":"func","_name":"Sample.method",' .
-                '"args":[{"_type":"expr","calls":[{"_type":"select","_name":"","mode":"jq"},' .
-                '{"_type":"func","_name":"attr","args":["param"]},' .
+                '"args":[{"_type":"expr","calls":[{"_type":"select","_name":"this","mode":"jq"},' .
+                '{"_type":"method","_name":"attr","args":["param"]},' .
                 '{"_type":"method","_name":"toInt","args":[]}]}]}]}); })',
             jq('.div')->click(rq('Sample')->method(jq()->attr('param')->toInt()))->raw()
         );

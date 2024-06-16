@@ -11,7 +11,7 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Script;
+namespace Jaxon\Script\Call;
 
 use JsonSerializable;
 use Stringable;

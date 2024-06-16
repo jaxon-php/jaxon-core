@@ -1,9 +1,9 @@
 <?php
 
-namespace Jaxon\Script;
+namespace Jaxon\Script\Factory;
 
 /**
- * Factory.php
+ * CallFactory.php
  *
  * Creates the factories for js calls to functions or selectors.
  *
@@ -17,12 +17,14 @@ namespace Jaxon\Script;
 use Jaxon\App\Dialog\DialogManager;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\Request\CallableClass\CallableRegistry;
+use Jaxon\Script\JqCall;
+use Jaxon\Script\JsCall;
 use Pimple\Container;
 use Closure;
 
 use function trim;
 
-class Factory
+class CallFactory
 {
     /**
      * @var CallableRegistry
@@ -66,10 +68,6 @@ class Factory
         $this->sFunctionPrefix = $sFunctionPrefix;
 
         $this->xContainer = new Container();
-        // Factory for function parameters
-        $this->xContainer->offsetSet(ParameterFactory::class, function() {
-            return new ParameterFactory();
-        });
         // Factory for registered functions
         $this->xContainer->offsetSet(JsCall::class, function() {
             return new JsCall($this->xDialog, $this->sFunctionPrefix);
@@ -79,22 +77,18 @@ class Factory
     /**
      * @param string $sClassName
      *
-     * @return JsCall
+     * @return void
      */
-    private function getRqCall(string $sClassName): ?JsCall
+    private function registerCallableClass(string $sClassName)
     {
-        if(!$this->xContainer->offsetExists($sClassName))
-        {
-            $this->xContainer->offsetSet($sClassName, function() use($sClassName) {
-                if(!($xCallable = $this->xCallableRegistry->getCallableObject($sClassName)))
-                {
-                    return null;
-                }
-                $sJsObject = $this->sClassPrefix . $xCallable->getJsName();
-                return new JsCall($this->xDialog, $sJsObject . '.');
-            });
-        }
-        return $this->xContainer->offsetGet($sClassName);
+        $this->xContainer->offsetSet($sClassName, function() use($sClassName) {
+            if(!($xCallable = $this->xCallableRegistry->getCallableObject($sClassName)))
+            {
+                return null;
+            }
+            $sJsObject = $this->sClassPrefix . $xCallable->getJsName();
+            return new JsCall($this->xDialog, $sJsObject . '.');
+        });
     }
 
     /**
@@ -107,7 +101,12 @@ class Factory
      */
     public function rq(string $sClassName = ''): ?JsCall
     {
-        return $this->getRqCall(trim($sClassName) ?: JsCall::class);
+        $sClassName = trim($sClassName) ?: JsCall::class;
+        if(!$this->xContainer->offsetExists($sClassName))
+        {
+            $this->registerCallableClass($sClassName);
+        }
+        return $this->xContainer->offsetGet($sClassName);
     }
 
     /**
@@ -145,15 +144,5 @@ class Factory
          * It is currently used to attach the expression to a Jaxon response.
          */
         return new JqCall($this->xDialog, trim($sPath), $xContext, $xExprCb);
-    }
-
-    /**
-     * Get the js call parameter factory.
-     *
-     * @return ParameterFactory
-     */
-    public function pm(): ParameterFactory
-    {
-        return $this->xContainer->offsetGet(ParameterFactory::class);
     }
 }

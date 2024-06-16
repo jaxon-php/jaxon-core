@@ -12,7 +12,9 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Script;
+namespace Jaxon\Script\Factory;
+
+use Jaxon\Script\Call\Parameter;
 
 class ParameterFactory
 {

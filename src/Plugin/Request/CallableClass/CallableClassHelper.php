@@ -18,7 +18,7 @@ use Jaxon\App\Session\SessionInterface;
 use Jaxon\App\View\ViewRenderer;
 use Jaxon\Di\Container;
 use Jaxon\Exception\SetupException;
-use Jaxon\Script\Factory;
+use Jaxon\Script\Factory\CallFactory;
 use Jaxon\Script\JsCall;
 use Jaxon\Request\Target;
 use Jaxon\Request\Upload\UploadHandlerInterface;
@@ -29,7 +29,7 @@ use function trim;
 class CallableClassHelper
 {
     /**
-     * @var Factory
+     * @var CallFactory
      */
     public $xFactory;
 
@@ -78,7 +78,7 @@ class CallableClassHelper
      */
     public function __construct(Container $di, string $sClassName)
     {
-        $this->xFactory = $di->getFactory();
+        $this->xFactory = $di->getCallFactory();
         $this->xJsCall = $this->xFactory->rq($sClassName);
         $this->xCallableRegistry = $di->getCallableRegistry();
         $this->xViewRenderer = $di->getViewRenderer();

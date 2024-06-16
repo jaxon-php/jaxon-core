@@ -5,9 +5,9 @@ namespace Jaxon;
 use Jaxon\App\Ajax\Lib;
 use Jaxon\Exception\SetupException;
 use Jaxon\Script\AttrFormatter;
+use Jaxon\Script\Factory\ParameterFactory;
 use Jaxon\Script\JqCall;
 use Jaxon\Script\JsCall;
-use Jaxon\Script\ParameterFactory;
 
 /**
  * start.php
@@ -56,7 +56,7 @@ function cl(string $sClassName)
  */
 function rq(string $sClassName = ''): JsCall
 {
-    return jaxon()->factory()->rq($sClassName);
+    return jaxon()->di()->getCallFactory()->rq($sClassName);
 }
 
 /**
@@ -68,7 +68,7 @@ function rq(string $sClassName = ''): JsCall
  */
 function js(string $sJsObject = ''): JsCall
 {
-    return jaxon()->factory()->js($sJsObject);
+    return jaxon()->di()->getCallFactory()->js($sJsObject);
 }
 
 /**
@@ -78,7 +78,7 @@ function js(string $sJsObject = ''): JsCall
  */
 function pm(): ParameterFactory
 {
-    return jaxon()->factory()->pm();
+    return jaxon()->di()->getParameterFactory();
 }
 
 /**
@@ -94,7 +94,7 @@ function pm(): ParameterFactory
  */
 function jq(string $sPath = '', $xContext = null): JqCall
 {
-    return jaxon()->factory()->jq($sPath, $xContext);
+    return jaxon()->di()->getCallFactory()->jq($sPath, $xContext);
 }
 
 /**

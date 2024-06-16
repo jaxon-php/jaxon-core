@@ -14,7 +14,6 @@
 namespace Jaxon\Plugin;
 
 use Jaxon\App\View\ViewRenderer;
-use Jaxon\Script\Factory;
 use Jaxon\Utils\Config\Config;
 
 abstract class AbstractPackage implements CodeGeneratorInterface
@@ -25,13 +24,6 @@ abstract class AbstractPackage implements CodeGeneratorInterface
      * @var Config
      */
     protected $xPkgConfig;
-
-    /**
-     * The factory
-     * 
-     * @var Factory
-     */
-    protected $xFactory;
 
     /**
      * The view renderer
@@ -66,15 +58,13 @@ abstract class AbstractPackage implements CodeGeneratorInterface
 
     /**
      * @param Config $xPkgConfig
-     * @param Factory $xFactory
      * @param ViewRenderer $xRenderer
      *
      * @return void
      */
-    protected function _init(Config $xPkgConfig, Factory $xFactory, ViewRenderer $xRenderer)
+    protected function _init(Config $xPkgConfig, ViewRenderer $xRenderer)
     {
         $this->xPkgConfig = $xPkgConfig;
-        $this->xFactory = $xFactory;
         $this->xRenderer = $xRenderer;
     }
 
@@ -97,16 +87,6 @@ abstract class AbstractPackage implements CodeGeneratorInterface
     public function getOption(string $sOption, $xDefault = null)
     {
         return $this->xPkgConfig->getOption($sOption, $xDefault);
-    }
-
-    /**
-     * Get the factory
-     *
-     * @return Factory
-     */
-    public function factory(): Factory
-    {
-        return $this->xFactory;
     }
 
     /**

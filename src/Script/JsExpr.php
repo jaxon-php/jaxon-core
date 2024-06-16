@@ -18,6 +18,8 @@ use Jaxon\App\Dialog\DialogManager;
 use Jaxon\Script\Call\Attr;
 use Jaxon\Script\Call\Event;
 use Jaxon\Script\Call\Func;
+use Jaxon\Script\Call\Parameter;
+use Jaxon\Script\Call\ParameterInterface;
 use Jaxon\Script\Call\Selector;
 use JsonSerializable;
 use Stringable;

@@ -14,7 +14,6 @@
 
 namespace Jaxon\App;
 
-use Jaxon\Script\Factory;
 use Jaxon\Plugin\AbstractPackage;
 use Jaxon\Plugin\AbstractResponsePlugin;
 use Jaxon\Request\Handler\CallbackManager;
@@ -77,11 +76,6 @@ interface AppInterface
      * @return string
      */
     public function getContentType(): string;
-
-    /**
-     * @return Factory
-     */
-    public function factory(): Factory;
 
     /**
      * Get the HTML tags to include Jaxon javascript files into the page.

@@ -2,8 +2,6 @@
 
 namespace Jaxon\Script\Call;
 
-use Jaxon\Script\Parameter;
-use Jaxon\Script\ParameterInterface;
 use JsonSerializable;
 use Stringable;
 

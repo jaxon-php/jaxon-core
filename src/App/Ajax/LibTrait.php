@@ -18,7 +18,6 @@ use Jaxon\App\Config\ConfigManager;
 use Jaxon\App\I18n\Translator;
 use Jaxon\Di\Container;
 use Jaxon\Exception\SetupException;
-use Jaxon\Script\Factory;
 use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Plugin\AbstractPackage;
 use Jaxon\Plugin\AbstractResponsePlugin;
@@ -142,16 +141,6 @@ trait LibTrait
     public function getContentType(): string
     {
         return $this->xResponseManager->getContentType();
-    }
-
-    /**
-     * Get the factory for request and parameter factories
-     *
-     * @return Factory
-     */
-    public function factory(): Factory
-    {
-        return $this->di()->getFactory();
     }
 
     /**

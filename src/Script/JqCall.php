@@ -9,7 +9,7 @@
  * Therefore, the JqCall class implements the JsonSerializable interface.
  *
  * When used as a parameter of a Jaxon call, the JqCall must be converted to Jaxon js call parameter.
- * Therefore, the JqCall class also implements the Jaxon\Script\ParameterInterface interface.
+ * Therefore, the JqCall class also implements the Jaxon\Script\Call\ParameterInterface interface.
  *
  * @package jaxon-jquery
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>

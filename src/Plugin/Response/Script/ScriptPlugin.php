@@ -13,7 +13,7 @@
 
 namespace Jaxon\Plugin\Response\Script;
 
-use Jaxon\Script\Factory;
+use Jaxon\Script\Factory\CallFactory;
 use Jaxon\Script\JqCall;
 use Jaxon\Script\JsExpr;
 use Jaxon\Script\JsCall;
@@ -28,7 +28,7 @@ class ScriptPlugin extends AbstractResponsePlugin
     const NAME = 'script';
 
     /**
-     * @var Factory
+     * @var CallFactory
      */
     private $xFactory;
 
@@ -40,9 +40,9 @@ class ScriptPlugin extends AbstractResponsePlugin
     /**
      * The class constructor
      *
-     * @param Factory $xFactory
+     * @param CallFactory $xFactory
      */
-    public function __construct(Factory $xFactory)
+    public function __construct(CallFactory $xFactory)
     {
         $this->xFactory = $xFactory;
         $this->xCallback = function(JsExpr $xJsExpr) {

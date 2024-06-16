@@ -6,7 +6,7 @@ use Jaxon\App\Config\ConfigManager;
 use Jaxon\App\Dialog\DialogManager;
 use Jaxon\App\I18n\Translator;
 use Jaxon\Di\Container;
-use Jaxon\Script\Factory;
+use Jaxon\Script\Factory\CallFactory;
 use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Response\Response;
 use Jaxon\Response\ComponentResponse;
@@ -75,8 +75,8 @@ trait ResponseTrait
      */
     public function newComponentResponse(string $sComponentClass): ComponentResponse
     {
-        /** @var Factory */
-        $xFactory = $this->g(Factory::class);
+        /** @var CallFactory */
+        $xFactory = $this->g(CallFactory::class);
         $sComponentName = $xFactory->rq($sComponentClass)->_class();
         return new ComponentResponse($this->g(ResponseManager::class),
             $this->g(PluginManager::class), $this->g(DialogManager::class), $sComponentName);
