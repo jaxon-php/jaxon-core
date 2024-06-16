@@ -1,20 +1,17 @@
-<script type="text/javascript" src="https://cdn.jsdelivr.net/gh/jaxon-php/jaxon-js@3.3/dist/jaxon.core.js"  charset="UTF-8"></script>
+<style>
+  .pagination li a {
+    cursor: pointer;
+  }
+</style>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/umbrellajs@3.3.3/umbrella.min.js/"  charset="UTF-8"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/gh/jaxon-php/jaxon-js@5.0.0rc-13/dist/jaxon.core.js"  charset="UTF-8"></script>
 
 <script type="text/javascript"  charset="UTF-8">
 /* <![CDATA[ */
-try {
-    if(typeof jaxon.config == undefined)
-        jaxon.config = {};
-}
-catch(e) {
-    jaxon = {};
-    jaxon.config = {};
-};
-
 jaxon.config.requestURI = "http://example.test/path";
 jaxon.config.statusMessages = false;
 jaxon.config.waitCursor = true;
-jaxon.config.version = "Jaxon 4.x";
+jaxon.config.version = "Jaxon 5.x";
 jaxon.config.defaultMode = "asynchronous";
 jaxon.config.defaultMethod = "POST";
 jaxon.config.responseType = "JSON";
@@ -28,6 +25,11 @@ jxn_my_alias_function = function() {
 jxn_my_third_function = function() {
     return jaxon.request({ jxnfun: 'my_third_function' }, { parameters: arguments });
 };
+
+jaxon.dom.ready(function() {
+
+	jaxon.processCustomAttrs();
+});
 
 /* ]]> */
 </script>
