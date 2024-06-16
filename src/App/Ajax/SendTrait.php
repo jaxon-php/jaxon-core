@@ -1,7 +1,7 @@
 <?php
 
 /**
- * AjaxSendTrait.php
+ * SendTrait.php
  *
  * Send Jaxon ajax response.
  *
@@ -15,7 +15,7 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\App\Traits;
+namespace Jaxon\App\Ajax;
 
 use Jaxon\Exception\RequestException;
 
@@ -23,7 +23,7 @@ use function gmdate;
 use function header;
 use function headers_sent;
 
-trait AjaxSendTrait
+trait SendTrait
 {
     /**
      * Prints the response to the output stream, thus sending the response to the browser

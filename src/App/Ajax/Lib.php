@@ -1,9 +1,9 @@
 <?php
 
 /**
- * Ajax.php
+ * Lib.php
  *
- * The Jaxon class uses a modular plug-in system to facilitate the processing
+ * The Jaxon Lib class uses a modular plug-in system to facilitate the processing
  * of special Ajax requests made by a PHP page.
  * It generates Javascript that the page must include in order to make requests.
  * It handles the output of response commands (see <Jaxon\Response\Response>).
@@ -23,16 +23,15 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\App;
+namespace Jaxon\App\Ajax;
 
 use Jaxon\Jaxon;
 use Jaxon\Di\Container;
+use Jaxon\App\AppInterface;
 use Jaxon\App\Config\ConfigManager;
 use Jaxon\App\Dialog\Library\DialogLibraryManager;
 use Jaxon\App\I18n\Translator;
 use Jaxon\App\Session\SessionInterface;
-use Jaxon\App\Traits\AjaxSendTrait;
-use Jaxon\App\Traits\AjaxTrait;
 use Jaxon\App\View\ViewRenderer;
 use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;
@@ -46,13 +45,13 @@ use Jaxon\Utils\Template\TemplateEngine;
 
 use function trim;
 
-final class Ajax
+final class Lib
 {
-    use AjaxTrait;
-    use AjaxSendTrait;
+    use LibTrait;
+    use SendTrait;
 
     /**
-     * @var Ajax
+     * @var Lib
      */
     private static $xInstance = null;
 
@@ -79,14 +78,14 @@ final class Ajax
     }
 
     /**
-     * @return Ajax
+     * @return Lib
      */
-    public static function getInstance(): Ajax
+    public static function getInstance(): Lib
     {
         if(self::$xInstance === null)
         {
             // First call: create and initialize the instances.
-            self::$xInstance = new Ajax();
+            self::$xInstance = new Lib();
             self::$xInstance->init(new Container(self::$xInstance));
             return self::$xInstance;
         }
@@ -225,7 +224,7 @@ final class Ajax
      * @return void
      *
      * @throws RequestException
-     * @see <AjaxTrait::canProcessRequest>
+     * @see <LibTrait::canProcessRequest>
      */
     public function processRequest()
     {

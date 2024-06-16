@@ -12,7 +12,7 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\App\Traits;
+namespace Jaxon\App\Ajax;
 
 use Jaxon\App\Config\ConfigManager;
 use Jaxon\App\I18n\Translator;
@@ -30,7 +30,7 @@ use Psr\Log\LoggerInterface;
 
 use function trim;
 
-trait AjaxTrait
+trait LibTrait
 {
     /**
      * @var Container

@@ -12,7 +12,7 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\App;
+namespace Jaxon\App\Ajax;
 
 use Jaxon\App\Config\ConfigManager;
 use Jaxon\App\View\ViewRenderer;

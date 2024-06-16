@@ -14,7 +14,7 @@
 
 namespace Jaxon\Di;
 
-use Jaxon\App\Ajax;
+use Jaxon\App\Ajax\Lib;
 use Jaxon\App\I18n\Translator;
 use Jaxon\App\Session\SessionInterface;
 use Jaxon\Exception\SetupException;
@@ -63,12 +63,12 @@ class Container
     /**
      * The class constructor
      */
-    public function __construct(Ajax $jaxon)
+    public function __construct(Lib $jaxon)
     {
         $this->xLibContainer = new PimpleContainer();
 
-        // Save the Ajax and Container instances
-        $this->val(Ajax::class, $jaxon);
+        // Save the Lib and Container instances
+        $this->val(Lib::class, $jaxon);
         $this->val(Container::class, $this);
 
         // Register the null logger by default

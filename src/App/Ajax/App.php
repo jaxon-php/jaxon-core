@@ -12,11 +12,9 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\App;
+namespace Jaxon\App\Ajax;
 
-use Jaxon\Di\Container;
-use Jaxon\App\Traits\AjaxSendTrait;
-use Jaxon\App\Traits\AppTrait;
+use Jaxon\App\AbstractApp;
 use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;
 
@@ -25,20 +23,9 @@ use function http_response_code;
 use function intval;
 use function is_array;
 
-class App implements AppInterface
+class App extends AbstractApp
 {
-    use AppTrait;
-    use AjaxSendTrait;
-
-    /**
-     * The class constructor
-     *
-     * @param Container $xContainer
-     */
-    public function __construct(Container $xContainer)
-    {
-        $this->initApp($xContainer);
-    }
+    use SendTrait;
 
     /**
      * Read config options from a config file and set up the library

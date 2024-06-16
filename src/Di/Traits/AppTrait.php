@@ -2,9 +2,9 @@
 
 namespace Jaxon\Di\Traits;
 
-use Jaxon\App\App;
+use Jaxon\App\Ajax\App;
 use Jaxon\App\AppInterface;
-use Jaxon\App\Bootstrap;
+use Jaxon\App\Ajax\Bootstrap;
 use Jaxon\App\Config\ConfigEventManager;
 use Jaxon\App\Config\ConfigManager;
 use Jaxon\App\Dialog\Library\DialogLibraryManager;

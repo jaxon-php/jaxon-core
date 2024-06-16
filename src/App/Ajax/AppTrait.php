@@ -12,12 +12,12 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\App\Traits;
+namespace Jaxon\App\Ajax;
 
-use Jaxon\App\Bootstrap;
+use Jaxon\App\Ajax\Bootstrap;
+use Jaxon\App\Ajax\Lib;
 use Jaxon\App\Config\ConfigManager;
 use Jaxon\App\I18n\Translator;
-use Jaxon\Di\Container;
 use Jaxon\Exception\RequestException;
 use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Plugin\Request\CallableClass\CallableRegistry;
@@ -29,22 +29,20 @@ use Closure;
 
 trait AppTrait
 {
-    use AjaxTrait;
+    use LibTrait;
 
     /**
-     * @param Container $xContainer
-     *
      * @return void
      */
-    private function initApp(Container $xContainer)
+    private function initApp()
     {
-        $this->xContainer = $xContainer;
+        $this->xContainer = Lib::getInstance()->di();
         // Set the attributes from the container
-        $this->xConfigManager = $xContainer->g(ConfigManager::class);
-        $this->xResponseManager = $xContainer->g(ResponseManager::class);
-        $this->xPluginManager = $xContainer->g(PluginManager::class);
-        $this->xCallableRegistry = $xContainer->g(CallableRegistry::class);
-        $this->xTranslator = $xContainer->g(Translator::class);
+        $this->xConfigManager = $this->xContainer->g(ConfigManager::class);
+        $this->xResponseManager = $this->xContainer->g(ResponseManager::class);
+        $this->xPluginManager = $this->xContainer->g(PluginManager::class);
+        $this->xCallableRegistry = $this->xContainer->g(CallableRegistry::class);
+        $this->xTranslator = $this->xContainer->g(Translator::class);
     }
 
     /**

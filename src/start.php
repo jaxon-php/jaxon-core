@@ -2,7 +2,7 @@
 
 namespace Jaxon;
 
-use Jaxon\App\Ajax;
+use Jaxon\App\Ajax\Lib;
 use Jaxon\Exception\SetupException;
 use Jaxon\JsCall\AttrFormatter;
 use Jaxon\JsCall\JqFactory;
@@ -24,13 +24,13 @@ use Jaxon\JsCall\ParameterFactory;
  */
 
 /**
- * Return the single instance of the Ajax class
+ * Return the single instance of the Lib class
  *
- * @return Ajax
+ * @return Lib
  */
-function jaxon(): Ajax
+function jaxon(): Lib
 {
-    return Ajax::getInstance();
+    return Lib::getInstance();
 }
 
 /**
