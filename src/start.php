@@ -3,11 +3,12 @@
 namespace Jaxon;
 
 use Jaxon\App\Ajax\Lib;
+use Jaxon\App\View\AttrFormatter;
 use Jaxon\Exception\SetupException;
-use Jaxon\Script\AttrFormatter;
 use Jaxon\Script\Factory\ParameterFactory;
 use Jaxon\Script\JqCall;
 use Jaxon\Script\JsCall;
+use Jaxon\Script\JxnCall;
 
 /**
  * start.php
@@ -51,10 +52,9 @@ function cl(string $sClassName)
  *
  * @param string $sClassName
  *
- * @return JsCall
- * @throws SetupException
+ * @return JxnCall
  */
-function rq(string $sClassName = ''): JsCall
+function rq(string $sClassName = ''): JxnCall
 {
     return jaxon()->di()->getCallFactory()->rq($sClassName);
 }
@@ -82,10 +82,7 @@ function pm(): ParameterFactory
 }
 
 /**
- * Create a JQuery JqCall with a given path
- *
- * The returned element is not linked to any Jaxon response, so this function shall be used
- * to insert jQuery's code into a javascript function, or as a parameter of a Jaxon function call.
+ * Create a JQuery selector with a given path
  *
  * @param string $sPath    The jQuery selector path
  * @param mixed $xContext    A context associated to the selector

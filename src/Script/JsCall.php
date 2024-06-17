@@ -5,46 +5,38 @@ namespace Jaxon\Script;
 /**
  * JsCall.php
  *
- * Create Jaxon client side requests, which will generate the client script necessary
- * to invoke a jaxon request from the browser to registered objects.
+ * Call to a js function.
  *
  * @package jaxon-core
  * @author Thierry Feuzeu
- * @copyright 2022 Thierry Feuzeu <thierry.feuzeu@gmail.com>
+ * @copyright 2024 Thierry Feuzeu <thierry.feuzeu@gmail.com>
  * @license https://opensource.org/licenses/BSD-3-Clause BSD 3-Clause License
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
 use Jaxon\App\Dialog\DialogManager;
+use Jaxon\Script\Call\Attr;
 use Jaxon\Script\Call\Selector;
 use Closure;
 
-use function rtrim;
-
-class JsCall extends AbstractCall
+class JsCall extends AbstractJsCall
 {
     /**
      * @var string
      */
-    protected $sCallPrefix;
-
-    /**
-     * @var Selector
-     */
-    protected $xSelector = null;
+    protected $sJsObject;
 
     /**
      * The class constructor
      *
      * @param DialogManager $xDialog
-     * @param string $sCallPrefix
      * @param Closure|null $xExprCb
+     * @param string $sJsObject
      */
-    public function __construct(DialogManager $xDialog, string $sCallPrefix = '',
-        ?Closure $xExprCb = null)
+    public function __construct(DialogManager $xDialog, ?Closure $xExprCb, string $sJsObject)
     {
         parent::__construct($xDialog, $xExprCb);
-        $this->sCallPrefix = $sCallPrefix === 'window' ? 'window.' : $sCallPrefix;
+        $this->sJsObject = $sJsObject;
     }
 
     /**
@@ -54,35 +46,15 @@ class JsCall extends AbstractCall
      */
     protected function _expr(): JsExpr
     {
-        $xJsExpr = $this->sCallPrefix !== '' ?
-            new JsExpr($this->xDialog) :
-            new JsExpr($this->xDialog, new Selector('this', 'js'));
-        $this->xExprCb !== null && ($this->xExprCb)($xJsExpr);
-
-        return $xJsExpr;
-    }
-
-    /**
-     * Get the js class name
-     *
-     * @return string
-     */
-    public function _class(): string
-    {
-        return rtrim($this->sCallPrefix, '.');
-    }
-
-    /**
-     * Add a call to a js function on the current object
-     *
-     * @param string  $sMethod
-     * @param array  $aArguments
-     *
-     * @return JsExpr
-     */
-    public function __call(string $sMethod, array $aArguments): JsExpr
-    {
-        // Append the prefix to the method name
-        return parent::__call($this->sCallPrefix . $sMethod, $aArguments);
+        /*
+         * An empty string returns the js "this" var.
+         * The '.' string returns the js "window" object. No data needed.
+         * Otherwise, the corresponding js object will be returned.
+         */
+        $xJsExpr = $this->sJsObject === '' ?
+            new JsExpr($this->xDialog, new Selector('js', 'this')) :
+            ($this->sJsObject === '.' ? new JsExpr($this->xDialog) :
+            new JsExpr($this->xDialog, Attr::get($this->sJsObject)));
+        return $this->_initExpr($xJsExpr);
     }
 }

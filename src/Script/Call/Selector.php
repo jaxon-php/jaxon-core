@@ -23,11 +23,11 @@ class Selector implements JsonSerializable, Stringable
     /**
      * The constructor.
      *
-     * @param string $sPath    The selector path
      * @param string $sMode    The selector mode: 'jq' or 'js'
+     * @param string $sPath    The selector path
      * @param mixed $xContext    A context associated to the selector
      */
-    public function __construct(string $sPath, string $sMode, $xContext = null)
+    public function __construct(string $sMode, string $sPath, $xContext = null)
     {
         $sName = trim($sPath) ?: 'this';
         $this->aCall = ['_type' => 'select', '_name' => $sName, 'mode' => $sMode];

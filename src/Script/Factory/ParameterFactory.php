@@ -1,9 +1,9 @@
 <?php
 
 /**
- * ParameterFactory.php - Jaxon Call Factory
+ * ParameterFactory.php
  *
- * Create js parameters for calls to Jaxon classes.
+ * Create parameters for calls to js functions and selectors.
  *
  * @package jaxon-core
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>

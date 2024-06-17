@@ -5,7 +5,7 @@ namespace Jaxon\Script\Factory;
 /**
  * CallFactory.php
  *
- * Creates the factories for js calls to functions or selectors.
+ * Creates calls to js functions and selectors.
  *
  * @package jaxon-core
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
@@ -19,6 +19,8 @@ use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\Request\CallableClass\CallableRegistry;
 use Jaxon\Script\JqCall;
 use Jaxon\Script\JsCall;
+use Jaxon\Script\JxnCall;
+use Jaxon\Script\JxnClass;
 use Pimple\Container;
 use Closure;
 
@@ -69,8 +71,8 @@ class CallFactory
 
         $this->xContainer = new Container();
         // Factory for registered functions
-        $this->xContainer->offsetSet(JsCall::class, function() {
-            return new JsCall($this->xDialog, $this->sFunctionPrefix);
+        $this->xContainer->offsetSet(JxnCall::class, function() {
+            return new JxnCall($this->xDialog, $this->sFunctionPrefix);
         });
     }
 
@@ -87,7 +89,7 @@ class CallFactory
                 return null;
             }
             $sJsObject = $this->sClassPrefix . $xCallable->getJsName();
-            return new JsCall($this->xDialog, $sJsObject . '.');
+            return new JxnClass($this->xDialog, $sJsObject);
         });
     }
 
@@ -96,12 +98,12 @@ class CallFactory
      *
      * @param string $sClassName
      *
-     * @return JsCall|null
+     * @return JxnCall|null
      * @throws SetupException
      */
-    public function rq(string $sClassName = ''): ?JsCall
+    public function rq(string $sClassName = ''): ?JxnCall
     {
-        $sClassName = trim($sClassName) ?: JsCall::class;
+        $sClassName = trim($sClassName, " \t") ?: JxnCall::class;
         if(!$this->xContainer->offsetExists($sClassName))
         {
             $this->registerCallableClass($sClassName);
@@ -124,7 +126,7 @@ class CallFactory
          * with the expression as the only parameter.
          * It is currently used to attach the expression to a Jaxon response.
          */
-        return new JsCall($this->xDialog, trim($sObject), $xExprCb);
+        return new JsCall($this->xDialog, $xExprCb, trim($sObject, " \t"));
     }
 
     /**
@@ -143,6 +145,6 @@ class CallFactory
          * with the expression as the only parameter.
          * It is currently used to attach the expression to a Jaxon response.
          */
-        return new JqCall($this->xDialog, trim($sPath), $xContext, $xExprCb);
+        return new JqCall($this->xDialog, $xExprCb, trim($sPath, " \t"), $xContext);
     }
 }

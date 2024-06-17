@@ -12,6 +12,7 @@ use Jaxon\App\Dialog\MessageInterface;
 use Jaxon\App\Dialog\ModalInterface;
 use Jaxon\App\Dialog\QuestionInterface;
 use Jaxon\App\I18n\Translator;
+use Jaxon\App\View\AttrFormatter;
 use Jaxon\App\View\TemplateView;
 use Jaxon\App\View\ViewRenderer;
 use Jaxon\Di\Container;
@@ -57,6 +58,11 @@ trait ViewTrait
             return new DialogManager($di->g(DialogLibraryManager::class));
         });
         $this->val(AlertLibrary::class, new AlertLibrary());
+
+        // Helpers for HTML custom attributes formatting
+        $this->set(AttrFormatter::class, function() {
+            return new AttrFormatter();
+        });
     }
 
     /**
@@ -162,5 +168,15 @@ trait ViewTrait
     public function getViewRenderer(): ViewRenderer
     {
         return $this->g(ViewRenderer::class);
+    }
+
+    /**
+     * Get the custom attributes formatter
+     *
+     * @return AttrFormatter
+     */
+    public function getCustomAttrFormatter(): AttrFormatter
+    {
+        return $this->g(AttrFormatter::class);
     }
 }

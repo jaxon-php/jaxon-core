@@ -6,7 +6,7 @@ use Jaxon\Di\Container;
 use Jaxon\App\Session\SessionInterface;
 use Jaxon\App\View\ViewRenderer;
 use Jaxon\Exception\SetupException;
-use Jaxon\Script\JsCall;
+use Jaxon\Script\JxnCall;
 use Jaxon\Plugin\Request\CallableClass\CallableClassHelper;
 use Jaxon\Plugin\Response\DataBag\DataBagContext;
 use Jaxon\Plugin\Response\Pagination\Paginator;
@@ -65,9 +65,9 @@ abstract class AbstractCallable
      *
      * @param string $sClassName
      *
-     * @return JsCall
+     * @return JxnCall
      */
-    public function rq(string $sClassName = ''): JsCall
+    public function rq(string $sClassName = ''): JxnCall
     {
         return $this->xCallableClassHelper->rq($sClassName);
     }

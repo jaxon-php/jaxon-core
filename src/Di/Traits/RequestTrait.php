@@ -6,7 +6,6 @@ use Jaxon\App\Config\ConfigManager;
 use Jaxon\App\Dialog\DialogManager;
 use Jaxon\App\I18n\Translator;
 use Jaxon\Di\Container;
-use Jaxon\Script\AttrFormatter;
 use Jaxon\Script\Factory\CallFactory;
 use Jaxon\Script\Factory\ParameterFactory;
 use Jaxon\Plugin\Manager\PluginManager;
@@ -57,10 +56,6 @@ trait RequestTrait
         // Factory for function parameters
         $this->set(ParameterFactory::class, function() {
             return new ParameterFactory();
-        });
-        // Helpers for HTML custom attributes formatting
-        $this->set(AttrFormatter::class, function() {
-            return new AttrFormatter();
         });
     }
 
@@ -122,15 +117,5 @@ trait RequestTrait
     public function getParameterReader(): ParameterReader
     {
         return $this->g(ParameterReader::class);
-    }
-
-    /**
-     * Get the custom attributes formatter
-     *
-     * @return AttrFormatter
-     */
-    public function getCustomAttrFormatter(): AttrFormatter
-    {
-        return $this->g(AttrFormatter::class);
     }
 }

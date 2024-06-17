@@ -1,19 +1,13 @@
 <?php
 
 /**
- * JqCall.php - A jQuery selector
+ * JqCall.php
  *
- * This class is used to create client side requests to the Jaxon functions and callable objects.
- *
- * When inserted into a Jaxon response, a JqCall object must be converted to the corresponding jQuery code.
- * Therefore, the JqCall class implements the JsonSerializable interface.
- *
- * When used as a parameter of a Jaxon call, the JqCall must be converted to Jaxon js call parameter.
- * Therefore, the JqCall class also implements the Jaxon\Script\Call\ParameterInterface interface.
+ * Call to a jquery selector.
  *
  * @package jaxon-jquery
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
- * @copyright 2016 Thierry Feuzeu <thierry.feuzeu@gmail.com>
+ * @copyright 2024 Thierry Feuzeu <thierry.feuzeu@gmail.com>
  * @license https://opensource.org/licenses/BSD-3-Clause BSD 3-Clause License
  * @link https://github.com/jaxon-php/jaxon-jquery
  */
@@ -24,23 +18,14 @@ use Jaxon\App\Dialog\DialogManager;
 use Jaxon\Script\Call\Selector;
 use Closure;
 
-use function trim;
-
-class JqCall extends AbstractCall
+class JqCall extends AbstractJsCall
 {
-    /**
-     * The dialog manager
-     *
-     * @var DialogManager
-     */
-    protected $xDialog;
-
     /**
      * The selector path
      *
      * @var string
      */
-    protected $sPath;
+    protected $sSelector;
 
     /**
      * The selector context
@@ -53,15 +38,15 @@ class JqCall extends AbstractCall
      * The constructor.
      *
      * @param DialogManager $xDialog
-     * @param string $sPath    The jQuery selector path
-     * @param mixed $xContext    A context associated to the selector
      * @param Closure|null $xExprCb
+     * @param string $sSelector    The jQuery selector path
+     * @param mixed $xContext    A context associated to the selector
      */
-    public function __construct(DialogManager $xDialog, string $sPath = '',
-        $xContext = null, ?Closure $xExprCb = null)
+    public function __construct(DialogManager $xDialog, ?Closure $xExprCb,
+        string $sSelector, $xContext = null)
     {
         parent::__construct($xDialog, $xExprCb);
-        $this->sPath = trim($sPath, " \t");
+        $this->sSelector = $sSelector;
         $this->xContext = $xContext;
     }
 
@@ -70,10 +55,8 @@ class JqCall extends AbstractCall
      */
     protected function _expr(): JsExpr
     {
-        $xJsExpr = new JsExpr($this->xDialog, new Selector($this->sPath, 'jq', $this->xContext));
-        $this->xExprCb !== null && ($this->xExprCb)($xJsExpr);
-
-        return $xJsExpr;
+        return $this->_initExpr(new JsExpr($this->xDialog,
+            new Selector('jq', $this->sSelector, $this->xContext)));
     }
 
     /**

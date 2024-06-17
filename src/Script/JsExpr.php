@@ -3,7 +3,7 @@
 /**
  * JsExpr.php
  *
- * Base class for js call factory and selector classes.
+ * An expression to be formatted in json, that represents a call to a js function os selector.
  *
  * @package jaxon-core
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
@@ -20,7 +20,6 @@ use Jaxon\Script\Call\Event;
 use Jaxon\Script\Call\Func;
 use Jaxon\Script\Call\Parameter;
 use Jaxon\Script\Call\ParameterInterface;
-use Jaxon\Script\Call\Selector;
 use JsonSerializable;
 use Stringable;
 
@@ -78,15 +77,11 @@ class JsExpr implements ParameterInterface
 
     /**
      * @param DialogManager $xDialog
-     * @param Selector|null $xSelector
      */
-    public function __construct(DialogManager $xDialog, ?Selector $xSelector = null)
+    public function __construct(DialogManager $xDialog, ...$aCalls)
     {
         $this->xDialog = $xDialog;
-        if($xSelector !== null)
-        {
-            $this->aCalls[] = $xSelector;
-        }
+        $this->aCalls = $aCalls;
     }
 
     /**

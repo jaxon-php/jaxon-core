@@ -3,7 +3,7 @@
 /**
  * AbstractCall.php
  *
- * Base class for js call and selector factory.
+ * Base class for js calls and selectors.
  *
  * @package jaxon-core
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
@@ -15,7 +15,6 @@
 namespace Jaxon\Script;
 
 use Jaxon\App\Dialog\DialogManager;
-use Closure;
 
 abstract class AbstractCall
 {
@@ -23,25 +22,6 @@ abstract class AbstractCall
      * @var DialogManager
      */
     protected $xDialog;
-
-    /**
-     * A function to call when the expression is created
-     *
-     * @var Closure
-     */
-    protected $xExprCb;
-
-    /**
-     * The constructor.
-     *
-     * @param DialogManager $xDialog
-     * @param Closure|null $xExprCb
-     */
-    protected function __construct(DialogManager $xDialog, ?Closure $xExprCb)
-    {
-        $this->xDialog = $xDialog;
-        $this->xExprCb = $xExprCb;
-    }
 
     /**
      * Create a js expression
@@ -61,30 +41,5 @@ abstract class AbstractCall
     public function __call(string $sMethod, array $aArguments): JsExpr
     {
         return $this->_expr()->__call($sMethod, $aArguments);
-    }
-
-    /**
-     * Get the value of an attribute of the current object
-     *
-     * @param string  $sAttribute
-     *
-     * @return JsExpr
-     */
-    public function __get(string $sAttribute): JsExpr
-    {
-        return $this->_expr()->__get( $sAttribute);
-    }
-
-    /**
-     * Set the value of an attribute of the current object
-     *
-     * @param string $sAttribute
-     * @param mixed $xValue
-     *
-     * @return void
-     */
-    public function __set(string $sAttribute, $xValue)
-    {
-        return $this->_expr()->__set($sAttribute, $xValue);
     }
 }

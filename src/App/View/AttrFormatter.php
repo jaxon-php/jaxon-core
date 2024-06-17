@@ -1,6 +1,6 @@
 <?php
 
-namespace Jaxon\Script;
+namespace Jaxon\App\View;
 
 /**
  * AttrFormatter.php
@@ -14,6 +14,9 @@ namespace Jaxon\Script;
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
+use Jaxon\Script\JsExpr;
+use Jaxon\Script\JxnCall;
+
 use function json_encode;
 use function htmlentities;
 
@@ -22,11 +25,11 @@ class AttrFormatter
     /**
      * Format a js class name
      *
-     * @param JsCall $xJsCall
+     * @param JxnCall $xJsCall
      *
      * @return string
      */
-    public function show(JsCall $xJsCall): string
+    public function show(JxnCall $xJsCall): string
     {
         return $xJsCall->_class();
     }

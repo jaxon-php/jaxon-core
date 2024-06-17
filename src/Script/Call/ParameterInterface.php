@@ -3,7 +3,7 @@
 /**
  * ParameterInterface.php
  *
- * An interface for parameters to calls to Jaxon classes or functions.
+ * An interface for parameters to calls to js classes or functions.
  *
  * @package jaxon-core
  * @copyright 2016 Thierry Feuzeu <thierry.feuzeu@gmail.com>
