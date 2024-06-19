@@ -19,6 +19,26 @@ use function call_user_func;
 trait RegisterTrait
 {
     /**
+     * @param string $sClassName The callable class name
+     *
+     * @return string
+     */
+    private function getCallableObjectKey(string $sClassName): string
+    {
+        return $sClassName . '_CallableObject';
+    }
+
+    /**
+     * @param string $sClassName The callable class name
+     *
+     * @return string
+     */
+    private function getReflectionClassKey(string $sClassName): string
+    {
+        return $sClassName . '_ReflectionClass';
+    }
+
+    /**
      * Register a callable class
      *
      * @param string $sClassName The callable class name
@@ -29,24 +49,19 @@ trait RegisterTrait
      */
     public function registerCallableClass(string $sClassName, array $aOptions)
     {
-        $sCallableObject = $sClassName . '_CallableObject';
-        $sReflectionClass = $sClassName . '_ReflectionClass';
-
-        // Prevent duplication
-        if($this->h($sReflectionClass)) // It's important not to use the class name here.
+        $sCallableObject = $this->getCallableObjectKey($sClassName);
+        // Prevent duplication. It's important not to use the class name here.
+        if($this->h($sCallableObject))
         {
             return;
         }
 
-        // Make sure the registered class exists
-        if(isset($aOptions['include']))
-        {
-            require_once($aOptions['include']);
-        }
         // Register the reflection class
         try
         {
-            $this->val($sReflectionClass, new ReflectionClass($sClassName));
+            // Make sure the registered class exists
+            isset($aOptions['include']) && require_once($aOptions['include']);
+            $this->val($this->getReflectionClassKey($sClassName), new ReflectionClass($sClassName));
         }
         catch(ReflectionException $e)
         {
@@ -56,38 +71,40 @@ trait RegisterTrait
         }
 
         // Register the callable object
-        $this->set($sCallableObject, function($di) use($sReflectionClass, $sClassName, $aOptions) {
+        $this->set($sCallableObject, function($di) use($sClassName, $aOptions) {
+            $xReflectionClass = $di->g($this->getReflectionClassKey($sClassName));
             $xRepository = $di->g(CallableRepository::class);
             $aProtectedMethods = $xRepository->getProtectedMethods($sClassName);
+
             return new CallableObject($di, $di->g(AnnotationReaderInterface::class),
-                $di->g($sReflectionClass), $aOptions, $aProtectedMethods);
+                $xReflectionClass, $aOptions, $aProtectedMethods);
         });
 
         // Register the user class, but only if the user didn't already.
         if(!$this->h($sClassName))
         {
-            $this->set($sClassName, function($di) use($sReflectionClass) {
-                return $this->make($di->g($sReflectionClass));
+            $this->set($sClassName, function($di) use($sClassName) {
+                return $this->make($di->g($this->getReflectionClassKey($sClassName)));
             });
         }
         // Initialize the user class instance
-        $this->xLibContainer->extend($sClassName, function($xRegisteredObject) use($sCallableObject) {
-            if($xRegisteredObject instanceof AbstractCallable)
+        $this->xLibContainer->extend($sClassName, function($xClassInstance) use($sClassName) {
+            if($xClassInstance instanceof AbstractCallable)
             {
-                $xRegisteredObject->_initCallable($this);
+                $xClassInstance->_initCallable($this);
             }
 
             // Run the callbacks for class initialisation
-            $this->g(CallbackManager::class)->onInit($xRegisteredObject);
+            $this->g(CallbackManager::class)->onInit($xClassInstance);
 
             // Set attributes from the DI container.
             // The class level DI options are set when creating the object instance.
             // The method level DI options are set only when calling the method in the ajax request.
             /** @var CallableObject */
-            $xCallableObject = $this->g($sCallableObject);
-            $xCallableObject->setDiClassAttributes($xRegisteredObject);
+            $xCallableObject = $this->g($this->getCallableObjectKey($sClassName));
+            $xCallableObject->setDiClassAttributes($xClassInstance);
 
-            return $xRegisteredObject;
+            return $xClassInstance;
         });
     }
 
@@ -110,7 +127,7 @@ trait RegisterTrait
      */
     private function getPackageConfigKey(string $sClassName): string
     {
-        return $sClassName . '_config';
+        return $sClassName . '_PackageConfig';
     }
 
     /**
@@ -124,8 +141,6 @@ trait RegisterTrait
      */
     public function registerPackage(string $sClassName, Config $xPkgConfig)
     {
-        $sPkgConfigKey = $this->getPackageConfigKey($sClassName);
-        $this->val($sPkgConfigKey, $xPkgConfig);
         // Register the user class, but only if the user didn't already.
         if(!$this->h($sClassName))
         {
@@ -133,11 +148,18 @@ trait RegisterTrait
                 return $this->make($sClassName);
             });
         }
-        $this->xLibContainer->extend($sClassName, function($xPackage) use($sPkgConfigKey) {
-            $di = $this;
-            $cSetter = function() use($di, $sPkgConfigKey) {
-                // Set the protected attributes of the object
-                $this->_init($di->g($sPkgConfigKey), $di->g(ViewRenderer::class));
+
+        // Save the package config in the container.
+        $this->val($this->getPackageConfigKey($sClassName), $xPkgConfig);
+
+        // Initialize the package instance.
+        $this->xLibContainer->extend($sClassName, function($xPackage) use($sClassName) {
+            $xPkgConfig = $this->getPackageConfig($sClassName);
+            $xViewRenderer = $this->g(ViewRenderer::class);
+            $cSetter = function() use($xPkgConfig, $xViewRenderer) {
+                // Set the protected attributes of the Package instance.
+                $this->xPkgConfig = $xPkgConfig;
+                $this->xRenderer = $xViewRenderer;
                 $this->init();
             };
             // Can now access protected attributes

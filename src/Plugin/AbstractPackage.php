@@ -57,18 +57,6 @@ abstract class AbstractPackage implements CodeGeneratorInterface
     }
 
     /**
-     * @param Config $xPkgConfig
-     * @param ViewRenderer $xRenderer
-     *
-     * @return void
-     */
-    protected function _init(Config $xPkgConfig, ViewRenderer $xRenderer)
-    {
-        $this->xPkgConfig = $xPkgConfig;
-        $this->xRenderer = $xRenderer;
-    }
-
-    /**
      * This method is automatically called after the package instance is created and configured.
      *
      * @return void
