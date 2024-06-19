@@ -53,7 +53,7 @@ abstract class Component extends AbstractCallable
      *
      * @return ComponentResponse
      */
-    final public function display(): ComponentResponse
+    final public function render(): ComponentResponse
     {
         $this->response->html($this->html());
         return $this->response;
