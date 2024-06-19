@@ -17,7 +17,7 @@ namespace Jaxon\App;
 use Jaxon\Plugin\AbstractPackage;
 use Jaxon\Plugin\AbstractResponsePlugin;
 use Jaxon\Request\Handler\CallbackManager;
-use Jaxon\Response\Response;
+use Jaxon\Response\AjaxResponse;
 use Jaxon\Utils\Http\UriException;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
@@ -146,9 +146,9 @@ interface AppInterface
     /**
      * Get the Jaxon ajax response
      *
-     * @return Response
+     * @return AjaxResponse
      */
-    public function ajaxResponse(): Response;
+    public function ajaxResponse(): AjaxResponse;
 
     /**
      * Get the HTTP response

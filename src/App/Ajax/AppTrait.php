@@ -21,7 +21,7 @@ use Jaxon\App\I18n\Translator;
 use Jaxon\Exception\RequestException;
 use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Plugin\Request\CallableClass\CallableRegistry;
-use Jaxon\Response\Response;
+use Jaxon\Response\AjaxResponse;
 use Jaxon\Response\ResponseManager;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
@@ -107,9 +107,9 @@ trait AppTrait
     /**
      * Get the Jaxon ajax response
      *
-     * @return Response
+     * @return AjaxResponse
      */
-    public function ajaxResponse(): Response
+    public function ajaxResponse(): AjaxResponse
     {
         return $this->xResponseManager->getResponse();
     }
