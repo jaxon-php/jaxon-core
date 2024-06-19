@@ -18,12 +18,5 @@ jaxon.debug.verbose.active = true;
 <?php endif ?>
 <?php if(($this->sCsrfMetaName)): ?>
 
-const metaTags = document.getElementsByTagName('meta') || [];
-metaTags.forEach(metaTag => {
-    if (metaTag.getAttribute('name') === '<?php echo $this->sCsrfMetaName ?>') {
-        if ((csrfToken = metaTag.getAttribute('content'))) {
-            jaxon.config.postHeaders = {'X-CSRF-TOKEN': csrfToken};
-        }
-    }
-});
+jaxon.setCsrf('<?php echo $this->sCsrfMetaName ?>');
 <?php endif ?>
