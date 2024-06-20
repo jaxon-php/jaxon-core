@@ -34,11 +34,11 @@ class Func implements ParameterInterface
      *
      * @param string $sName     The method name
      * @param array $aArguments The method arguments
-     * @param bool $bIsMethod
+     * @param bool $bHasParent
      */
-    public function __construct(string $sName, array $aArguments, bool $bIsMethod)
+    public function __construct(string $sName, array $aArguments, bool $bHasParent)
     {
-        $this->sType = $bIsMethod ? 'method' : 'func';
+        $this->sType = $bHasParent ? 'method' : 'func';
         $this->sName = $sName;
         $this->aArguments = array_map(function($xArgument) {
             return Parameter::make($xArgument);

@@ -111,9 +111,9 @@ class JsExpr implements ParameterInterface
      */
     public function __call(string $sMethod, array $aArguments): self
     {
-        $bIsMethod = count($this->aCalls) > 0;
+        $bHasParent = count($this->aCalls) > 0;
         // Append the action into the array
-        $this->aCalls[] = new Func($sMethod, $aArguments, $bIsMethod);
+        $this->aCalls[] = new Func($sMethod, $aArguments, $bHasParent);
         return $this;
     }
 
@@ -126,8 +126,9 @@ class JsExpr implements ParameterInterface
      */
     public function __get(string $sAttribute): self
     {
+        $bHasParent = count($this->aCalls) > 0;
         // Append the action into the array
-        $this->aCalls[] = Attr::get($sAttribute);
+        $this->aCalls[] = Attr::get($sAttribute, $bHasParent);
         return $this;
     }
 
@@ -141,8 +142,9 @@ class JsExpr implements ParameterInterface
      */
     public function __set(string $sAttribute, $xValue)
     {
+        $bHasParent = count($this->aCalls) > 0;
         // Append the action into the array
-        $this->aCalls[] = Attr::set($sAttribute, $xValue);
+        $this->aCalls[] = Attr::set($sAttribute, $xValue, $bHasParent);
         return $this;
     }
 

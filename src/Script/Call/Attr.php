@@ -18,21 +18,22 @@ class Attr implements ParameterInterface
      */
     public function getType(): string
     {
-        return 'attr';
+        return $this->aValue['_type'];
     }
 
     /**
      * Create an abject to get the value of an attribute
      *
      * @param string $sAttrName    The attribute name
+     * @param bool $bHasParent
      *
      * @return Attr
      */
-    static public function get(string $sAttrName): Attr
+    static public function get(string $sAttrName, bool $bHasParent): Attr
     {
         $xAttr = new Attr();
         $xAttr->aValue = [
-            '_type' => 'attr',
+            '_type' => $bHasParent ? 'attr' : 'gvar',
             '_name' => $sAttrName,
         ];
         return $xAttr;
@@ -43,12 +44,15 @@ class Attr implements ParameterInterface
      *
      * @param string $sAttrName    The attribute name
      * @param mixed $xAttrValue    The attribute value
+     * @param bool $bHasParent
+     *
+     * @return Attr
      */
-    static public function set(string $sAttrName, $xAttrValue = null)
+    static public function set(string $sAttrName, $xAttrValue, bool $bHasParent)
     {
         $xAttr = new Attr();
         $xAttr->aValue = [
-            '_type' => 'attr',
+            '_type' => $bHasParent ? 'attr' : 'gvar',
             '_name' => $sAttrName,
             'value' => Parameter::make($xAttrValue),
         ];

@@ -54,7 +54,7 @@ class JsCall extends AbstractJsCall
         $xJsExpr = $this->sJsObject === '' ?
             new JsExpr($this->xDialog, new Selector('js', 'this')) :
             ($this->sJsObject === '.' ? new JsExpr($this->xDialog) :
-            new JsExpr($this->xDialog, Attr::get($this->sJsObject)));
+            new JsExpr($this->xDialog, Attr::get($this->sJsObject, false)));
         return $this->_initExpr($xJsExpr);
     }
 }
