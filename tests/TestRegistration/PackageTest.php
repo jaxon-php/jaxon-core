@@ -7,7 +7,6 @@ require_once __DIR__ . '/../src/packages.php';
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\Package;
 use Jaxon\Utils\Http\UriException;
-use Lagdo\TwitterFeed\Package as TwitterPackage;
 use PHPUnit\Framework\TestCase;
 use SamplePackage;
 
@@ -22,7 +21,6 @@ class PackageTest extends TestCase
     {
         jaxon()->setOption('core.prefix.class', '');
         jaxon()->setOption('core.request.uri', 'http://example.test/path');
-        jaxon()->registerPackage(TwitterPackage::class);
         jaxon()->registerPackage(SamplePackage::class,
             ['option1' => 'value1', 'option2' => ['option3' => 'value3']]);
     }
@@ -41,8 +39,6 @@ class PackageTest extends TestCase
      */
     public function testPackage()
     {
-        $this->assertNotNull(jaxon()->package(TwitterPackage::class));
-        $this->assertEquals(TwitterPackage::class, get_class(jaxon()->package(TwitterPackage::class)));
         $this->assertNotNull(jaxon()->package(SamplePackage::class));
         $this->assertEquals(SamplePackage::class, get_class(jaxon()->package(SamplePackage::class)));
         $xSamplePackage = jaxon()->package(SamplePackage::class);
@@ -61,33 +57,6 @@ class PackageTest extends TestCase
 
         $this->assertEquals('value1', $xPackage->getOption('option1'));
         $this->assertEquals('value3', $xPackage->getOption('option2.option3'));
-    }
-
-    /**
-     * @throws UriException
-     */
-    public function testTwitterPackageNotReady()
-    {
-        // Without the ready(), the Lagdo.TwitterFeed.Ajax.Client object must be defined,
-        // and the jaxon.twitterFeed.initFetch() function must not be called.
-        $sScript = jaxon()->getScript();
-        $this->assertStringContainsString('Lagdo.TwitterFeed.Ajax.Client = {}', $sScript);
-        $this->assertStringNotContainsString('jaxon.twitterFeed.initFetch()', $sScript);
-    }
-
-    /**
-     * @throws UriException
-     */
-    public function testTwitterPackageReady()
-    {
-        // With the ready(), the Lagdo.TwitterFeed.Ajax.Client object must be defined,
-        // and the jaxon.twitterFeed.initFetch() function must be called.
-        $xTwitterPackage = jaxon()->package(TwitterPackage::class);
-        $xTwitterPackage->ready();
-        $sScript = jaxon()->getScript();
-        $this->assertStringContainsString('Lagdo.TwitterFeed.Ajax.Client = {}', $sScript);
-        $this->assertStringContainsString('jaxon.twitterFeed.initFetch()', $sScript);
-        $this->assertStringContainsString('twitter_feed', $xTwitterPackage->html());
     }
 
     public function testRegisterInvalidPackage()

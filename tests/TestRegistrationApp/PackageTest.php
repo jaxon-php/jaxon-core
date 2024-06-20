@@ -5,8 +5,6 @@ namespace Jaxon\Tests\TestRegistrationApp;
 require_once __DIR__ . '/../src/packages.php';
 
 use Jaxon\Exception\SetupException;
-use Lagdo\TwitterFeed\Client as TwitterClient;
-use Lagdo\TwitterFeed\Package as TwitterPackage;
 use PHPUnit\Framework\TestCase;
 use SamplePackage;
 
@@ -33,8 +31,6 @@ class PackageTest extends TestCase
 
     public function testContainer()
     {
-        $this->assertTrue(jaxon()->di()->h(TwitterClient::class));
-        $this->assertTrue(jaxon()->di()->h(TwitterPackage::class));
         $this->assertTrue(jaxon()->di()->h(SamplePackage::class));
     }
 }

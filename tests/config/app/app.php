@@ -4,7 +4,6 @@ use Jaxon\Dialogs\Bootbox\BootboxLibrary;
 use Jaxon\Tests\Ns\Lib\Service;
 use Jaxon\Tests\Ns\Lib\ServiceAuto;
 use Jaxon\Tests\Ns\Lib\ServiceInterface;
-use Lagdo\TwitterFeed\Package as TwitterPackage;
 
 $testDir = realpath(__DIR__ . '/../..');
 $defsDir = realpath(__DIR__ . '/../../src');
@@ -50,7 +49,6 @@ return [
             $testDir . '/src/dir_ns' => "Jaxon\\NsTests",
         ],
         'packages' => [
-            TwitterPackage::class => [],
             SamplePackage::class => [],
         ],
         'container' => [

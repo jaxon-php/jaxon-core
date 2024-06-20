@@ -35,8 +35,7 @@
         "phpunit/phpcov": "^8.2",
         "jaxon-php/jaxon-annotations": "dev-test",
         "jaxon-php/jaxon-dialogs": "dev-test",
-        "jaxon-php/jaxon-upload": "dev-test",
-        "lagdo/twitter-feed": "dev-test"
+        "jaxon-php/jaxon-upload": "dev-test"
     },
     "autoload": {
         "psr-4": {

@@ -1,11 +1,8 @@
 <?php
 
-use Lagdo\TwitterFeed\Package as TwitterPackage;
-
 return [
     'app' => [
         'packages' => [
-            TwitterPackage::class => [],
             SamplePackage::class => [],
         ],
     ],
