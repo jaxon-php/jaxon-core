@@ -7,8 +7,6 @@ use Jaxon\Plugin\Request\CallableClass\CallableClassHelper;
 use Jaxon\Response\AjaxResponse;
 use Jaxon\Response\Response;
 
-use function get_class;
-
 class CallableClass extends AbstractCallable
 {
     /**
@@ -19,10 +17,9 @@ class CallableClass extends AbstractCallable
     /**
      * @inheritDoc
      */
-    public function _initCallable(Container $di)
+    public function _initCallable(Container $di, CallableClassHelper $xCallableClassHelper)
     {
-        $sClassName = get_class($this);
-        $this->xCallableClassHelper = new CallableClassHelper($di, $sClassName);
+        $this->xCallableClassHelper = $xCallableClassHelper;
         $this->response = $di->getResponse();
     }
 

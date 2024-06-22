@@ -20,8 +20,11 @@ use Jaxon\Plugin\Response\Dialog\DialogPlugin;
 use Jaxon\Plugin\Response\Script\ScriptPlugin;
 use Jaxon\Request\Handler\CallbackManager;
 use Jaxon\Request\Handler\ParameterReader;
+use Jaxon\Utils\Config\Config;
 use Jaxon\Utils\File\FileMinifier;
 use Jaxon\Utils\Template\TemplateEngine;
+
+use function call_user_func;
 
 trait PluginTrait
 {
@@ -128,5 +131,65 @@ trait PluginTrait
     public function getDialogPlugin(): DialogPlugin
     {
         return $this->g(DialogPlugin::class);
+    }
+
+    /**
+     * @param string $sClassName    The package class name
+     *
+     * @return string
+     */
+    private function getPackageConfigKey(string $sClassName): string
+    {
+        return $sClassName . '_PackageConfig';
+    }
+
+    /**
+     * Register a package
+     *
+     * @param string $sClassName    The package class name
+     * @param Config $xPkgConfig    The user provided package options
+     *
+     * @return void
+     * @throws SetupException
+     */
+    public function registerPackage(string $sClassName, Config $xPkgConfig)
+    {
+        // Register the user class, but only if the user didn't already.
+        if(!$this->h($sClassName))
+        {
+            $this->set($sClassName, function() use($sClassName) {
+                return $this->make($sClassName);
+            });
+        }
+
+        // Save the package config in the container.
+        $this->val($this->getPackageConfigKey($sClassName), $xPkgConfig);
+
+        // Initialize the package instance.
+        $this->xLibContainer->extend($sClassName, function($xPackage) use($sClassName) {
+            $xPkgConfig = $this->getPackageConfig($sClassName);
+            $xViewRenderer = $this->g(ViewRenderer::class);
+            $cSetter = function() use($xPkgConfig, $xViewRenderer) {
+                // Set the protected attributes of the Package instance.
+                $this->xPkgConfig = $xPkgConfig;
+                $this->xRenderer = $xViewRenderer;
+                $this->init();
+            };
+            // Can now access protected attributes
+            call_user_func($cSetter->bindTo($xPackage, $xPackage));
+            return $xPackage;
+        });
+    }
+
+    /**
+     * Get the config of a package
+     *
+     * @param string $sClassName    The package class name
+     *
+     * @return Config
+     */
+    public function getPackageConfig(string $sClassName): Config
+    {
+        return $this->g($this->getPackageConfigKey($sClassName));
     }
 }

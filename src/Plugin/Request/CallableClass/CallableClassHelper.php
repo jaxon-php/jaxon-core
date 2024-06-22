@@ -16,7 +16,6 @@ namespace Jaxon\Plugin\Request\CallableClass;
 
 use Jaxon\App\Session\SessionInterface;
 use Jaxon\App\View\ViewRenderer;
-use Jaxon\Di\Container;
 use Jaxon\Exception\SetupException;
 use Jaxon\Script\Factory\CallFactory;
 use Jaxon\Script\JxnCall;
@@ -29,41 +28,6 @@ use function trim;
 class CallableClassHelper
 {
     /**
-     * @var CallFactory
-     */
-    public $xFactory;
-
-    /**
-     * @var JxnCall
-     */
-    public $xJxnCall;
-
-    /**
-     * @var ViewRenderer
-     */
-    public $xViewRenderer;
-
-    /**
-     * @var LoggerInterface
-     */
-    public $xLogger;
-
-    /**
-     * @var UploadHandlerInterface
-     */
-    public $xUploadHandler;
-
-    /**
-     * @var CallableRegistry
-     */
-    public $xCallableRegistry;
-
-    /**
-     * @var SessionInterface
-     */
-    public $xSessionManager;
-
-    /**
      * @var Target
      */
     public $xTarget;
@@ -71,21 +35,21 @@ class CallableClassHelper
     /**
      * The constructor
      *
-     * @param Container $di
-     * @param string $sClassName
+     * @param JxnCall $xJxnCall
+     * @param CallFactory $xFactory
+     * @param CallableRegistry $xCallableRegistry
+     * @param ViewRenderer $xViewRenderer
+     * @param LoggerInterface $xLogger
+     * @param SessionInterface $xSessionManager
+     * @param UploadHandlerInterface|null $xUploadHandler
      *
      * @throws SetupException
      */
-    public function __construct(Container $di, string $sClassName)
-    {
-        $this->xFactory = $di->getCallFactory();
-        $this->xJxnCall = $this->xFactory->rq($sClassName);
-        $this->xCallableRegistry = $di->getCallableRegistry();
-        $this->xViewRenderer = $di->getViewRenderer();
-        $this->xLogger = $di->getLogger();
-        $this->xUploadHandler = $di->getUploadHandler();
-        $this->xSessionManager = $di->getSessionManager();
-    }
+    public function __construct(public JxnCall $xJxnCall, public CallFactory $xFactory,
+        public CallableRegistry $xCallableRegistry, public ViewRenderer $xViewRenderer,
+        public LoggerInterface $xLogger, public ?SessionInterface $xSessionManager,
+        public ?UploadHandlerInterface $xUploadHandler)
+    {}
 
     /**
      * Get an instance of a Jaxon class by name

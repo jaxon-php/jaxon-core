@@ -25,10 +25,11 @@ abstract class AbstractCallable
      * Initialize the callable class
      *
      * @param Container $di
+     * @param CallableClassHelper $xCallableClassHelper
      *
      * @return void
      */
-    abstract public function _initCallable(Container $di);
+    abstract public function _initCallable(Container $di, CallableClassHelper $xCallableClassHelper);
 
     /**
      * Get the Ajax response

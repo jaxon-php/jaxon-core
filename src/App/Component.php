@@ -24,15 +24,15 @@ abstract class Component extends AbstractCallable
     /**
      * @inheritDoc
      */
-    public function _initCallable(Container $di)
+    public function _initCallable(Container $di, CallableClassHelper $xCallableClassHelper)
     {
-        $sClassName = get_class($this);
-        $this->xCallableClassHelper = new CallableClassHelper($di, $sClassName);
+        $this->xCallableClassHelper = $xCallableClassHelper;
 
-        // Each component must have its own reponse object.
         // A component can overrides another one. In this case,
         // its response is attached to the overriden DOM node.
-        $this->response = $di->newComponentResponse($this->overrides ?: $sClassName);
+        $sClassName = $this->overrides ?: get_class($this);
+        // Each component must have its own reponse object.
+        $this->response = $di->newComponentResponse($sClassName);
     }
 
     /**

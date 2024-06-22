@@ -27,6 +27,7 @@
 namespace Jaxon\Plugin\Request\CallableClass;
 
 use Jaxon\App\CallableClass;
+use Jaxon\Di\ClassContainer;
 use Jaxon\Di\Container;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\AnnotationReaderInterface;
@@ -50,20 +51,6 @@ use function substr;
 
 class CallableObject
 {
-    /**
-     * The DI container
-     *
-     * @var Container
-     */
-    protected $di;
-
-    /**
-     * The reflection class of the user registered callable object
-     *
-     * @var ReflectionClass
-     */
-    private $xReflectionClass;
-
     /**
      * The user registered callable object
      *
@@ -103,17 +90,17 @@ class CallableObject
     /**
      * The class constructor
      *
-     * @param Container  $di
+     * @param ClassContainer $cls
+     * @param Container $di
+     * @param ReflectionClass $xReflectionClass
      * @param AnnotationReaderInterface $xAnnotationReader
-     * @param ReflectionClass $xReflectionClass    The reflection class
      * @param array $aOptions
      * @param array $aProtectedMethods
      */
-    public function __construct(Container $di, AnnotationReaderInterface $xAnnotationReader,
-        ReflectionClass $xReflectionClass, array $aOptions, array $aProtectedMethods)
+    public function __construct(protected ClassContainer $cls, protected Container $di,
+        private ReflectionClass $xReflectionClass, AnnotationReaderInterface $xAnnotationReader,
+        array $aOptions, array $aProtectedMethods)
     {
-        $this->di = $di;
-        $this->xReflectionClass = $xReflectionClass;
         $this->aProtectedMethods = array_fill_keys($aProtectedMethods, true);
 
         $aAnnotations = $xAnnotationReader->getAttributes($xReflectionClass->getName(),
@@ -291,15 +278,16 @@ class CallableObject
      */
     private function setDiAttributes($xRegisteredObject, array $aDiOptions)
     {
+        // Set the protected attributes of the object
+        $cSetter = function($sName, $xInjectedObject) {
+            // Warning: dynamic properties will be deprecated in PHP8.2.
+            $this->$sName = $xInjectedObject;
+        };
         foreach($aDiOptions as $sName => $sClass)
         {
-            // Set the protected attributes of the object
-            $cSetter = function($xInjectedObject) use($sName) {
-                // Warning: dynamic properties will be deprecated in PHP8.2.
-                $this->$sName = $xInjectedObject;
-            };
-            // Can now access protected attributes
-            call_user_func($cSetter->bindTo($xRegisteredObject, $xRegisteredObject), $this->di->get($sClass));
+            // The setter has access to protected attributes
+            call_user_func($cSetter->bindTo($xRegisteredObject, $xRegisteredObject),
+                $sName, $this->di->get($sClass));
         }
     }
 
@@ -335,7 +323,7 @@ class CallableObject
      */
     public function getRegisteredObject(?Target $xTarget = null)
     {
-        $xRegisteredObject = $this->di->g($this->getClassName());
+        $xRegisteredObject = $this->cls->get($this->getClassName());
         if(!$xRegisteredObject || !$xTarget)
         {
             return $xRegisteredObject;

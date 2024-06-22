@@ -16,7 +16,7 @@ namespace Jaxon\Plugin\Request\CallableClass;
 
 use Composer\Autoload\ClassLoader;
 use Jaxon\App\I18n\Translator;
-use Jaxon\Di\Container;
+use Jaxon\Di\ClassContainer;
 use Jaxon\Exception\SetupException;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -33,9 +33,9 @@ class CallableRegistry
     /**
      * The DI container
      *
-     * @var Container
+     * @var ClassContainer
      */
-    protected $di;
+    protected $cls;
 
     /**
      * The callable repository
@@ -76,13 +76,13 @@ class CallableRegistry
     /**
      * The class constructor
      *
-     * @param Container $di
+     * @param ClassContainer $cls
      * @param CallableRepository $xRepository
      * @param Translator $xTranslator
      */
-    public function __construct(Container $di, CallableRepository $xRepository, Translator $xTranslator)
+    public function __construct(ClassContainer $cls, CallableRepository $xRepository, Translator $xTranslator)
     {
-        $this->di = $di;
+        $this->cls = $cls;
         $this->xTranslator = $xTranslator;
         $this->xRepository = $xRepository;
 
@@ -259,7 +259,7 @@ class CallableRegistry
             $sClassName = trim(str_replace('_', '\\', $sClassName), '\\');
         }
         // Register the class.
-        $this->di->registerCallableClass($sClassName, $this->xRepository->getClassOptions($sClassName));
+        $this->cls->registerCallableClass($sClassName, $this->xRepository->getClassOptions($sClassName));
         return $sClassName;
     }
 
@@ -273,7 +273,7 @@ class CallableRegistry
      */
     public function getCallableObject(string $sClassName): ?CallableObject
     {
-        return $this->di->getCallableObject($this->checkCallableObject($sClassName));
+        return $this->cls->getCallableObject($this->checkCallableObject($sClassName));
     }
 
     /**

@@ -4,6 +4,7 @@ namespace Jaxon\Di\Traits;
 
 use Jaxon\App\Config\ConfigManager;
 use Jaxon\App\I18n\Translator;
+use Jaxon\Di\ClassContainer;
 use Jaxon\Di\Container;
 use Jaxon\Plugin\AnnotationReaderInterface;
 use Jaxon\Plugin\Request\CallableClass\CallableClassPlugin;
@@ -40,11 +41,11 @@ trait CallableTrait
         });
         // Callable objects repository
         $this->set(CallableRepository::class, function($di) {
-            return new CallableRepository($di->g(Container::class), $di->g(Translator::class));
+            return new CallableRepository($di->g(ClassContainer::class), $di->g(Translator::class));
         });
         // Callable objects registry
         $this->set(CallableRegistry::class, function($di) {
-            return new CallableRegistry($di->g(Container::class),
+            return new CallableRegistry($di->g(ClassContainer::class),
                 $di->g(CallableRepository::class), $di->g(Translator::class));
         });
         // Callable class plugin

@@ -19,13 +19,11 @@ abstract class PaginatorComponent extends AbstractCallable
     /**
      * @inheritDoc
      */
-    public function _initCallable(Container $di)
+    public function _initCallable(Container $di, CallableClassHelper $xCallableClassHelper)
     {
-        $sClassName = get_class($this);
-        $this->xCallableClassHelper = new CallableClassHelper($di, $sClassName);
-
+        $this->xCallableClassHelper = $xCallableClassHelper;
         // Each component must have its own reponse object.
-        $this->response = $di->newComponentResponse($sClassName);
+        $this->response = $di->newComponentResponse(get_class($this));
     }
 
     /**

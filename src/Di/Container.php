@@ -42,7 +42,6 @@ class Container
     use Traits\ResponseTrait;
     use Traits\PluginTrait;
     use Traits\CallableTrait;
-    use Traits\RegisterTrait;
     use Traits\ViewTrait;
     use Traits\UtilTrait;
 
@@ -266,7 +265,7 @@ class Container
                 return $this->get($xType->getName() . ' $' . $xParameter->getName());
             }
             // Check the class only
-            if($this->get($xType->getName()))
+            if($this->has($xType->getName()))
             {
                 return $this->get($xType->getName());
             }

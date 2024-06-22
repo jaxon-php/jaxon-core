@@ -16,6 +16,7 @@ namespace Jaxon\App\Ajax;
 
 use Jaxon\App\Config\ConfigManager;
 use Jaxon\App\I18n\Translator;
+use Jaxon\Di\ClassContainer;
 use Jaxon\Di\Container;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\Manager\PluginManager;
@@ -35,6 +36,11 @@ trait LibTrait
      * @var Container
      */
     protected $xContainer = null;
+
+    /**
+     * @var ClassContainer
+     */
+    protected $xClassContainer = null;
 
     /**
      * @var ConfigManager
@@ -67,6 +73,14 @@ trait LibTrait
     public function di(): ?Container
     {
         return $this->xContainer;
+    }
+
+    /**
+     * @return ClassContainer
+     */
+    public function cls(): ?ClassContainer
+    {
+        return $this->xClassContainer;
     }
 
     /**

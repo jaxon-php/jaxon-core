@@ -17,7 +17,7 @@ namespace Jaxon\Plugin\Request\CallableClass;
 use Jaxon\App\AbstractCallable;
 use Jaxon\App\Component;
 use Jaxon\App\I18n\Translator;
-use Jaxon\Di\Container;
+use Jaxon\Di\ClassContainer;
 use Jaxon\Exception\SetupException;
 use ReflectionClass;
 use ReflectionMethod;
@@ -33,9 +33,9 @@ class CallableRepository
     /**
      * The DI container
      *
-     * @var Container
+     * @var ClassContainer
      */
-    protected $di;
+    protected $cls;
 
     /**
      * @var Translator
@@ -88,7 +88,12 @@ class CallableRepository
     /**
      * @var array
      */
-    private $aDefaultClassOptions = ['separator' => '.', 'protected' => [], 'functions' => [], 'timestamp' => 0];
+    private $aDefaultClassOptions = [
+        'separator' => '.',
+        'protected' => [],
+        'functions' => [],
+        'timestamp' => 0,
+    ];
 
     /**
      * The methods that must not be exported to js
@@ -100,12 +105,12 @@ class CallableRepository
     /**
      * The constructor
      *
-     * @param Container $di
+     * @param ClassContainer $cls
      * @param Translator $xTranslator
      */
-    public function __construct(Container $di, Translator $xTranslator)
+    public function __construct(ClassContainer $cls, Translator $xTranslator)
     {
-        $this->di = $di;
+        $this->cls = $cls;
         $this->xTranslator = $xTranslator;
 
         // The methods of the AbstractCallable class must not be exported
@@ -295,7 +300,7 @@ class CallableRepository
             {
                 // Find options for a class registered without namespace.
                 // We then need to parse all classes to be able to find one.
-                $this->di->getCallableRegistry()->parseDirectories();
+                $this->cls->getCallableRegistry()->parseDirectories();
             }
         }
         if(isset($this->aClasses[$sClassName]))
@@ -315,12 +320,9 @@ class CallableRepository
      */
     public function getProtectedMethods(string $sClassName): array
     {
-        if(is_subclass_of($sClassName, Component::class))
-        {
-            // Don't export the html() public method for Component objects
-            return array_merge($this->aProtectedMethods, ['html']);
-        }
-        return is_subclass_of($sClassName, AbstractCallable::class) ? $this->aProtectedMethods : [];
+        // Don't export the html() public method for Component objects
+        return is_subclass_of($sClassName, Component::class) ? [...$this->aProtectedMethods, 'html'] :
+            (is_subclass_of($sClassName, AbstractCallable::class) ? $this->aProtectedMethods : []);
     }
 
     /**
@@ -334,8 +336,8 @@ class CallableRepository
         $aCallableObjects = [];
         foreach($this->aClasses as $sClassName => $aOptions)
         {
-            $this->di->registerCallableClass($sClassName, $aOptions);
-            $aCallableObjects[$sClassName] = $this->di->getCallableObject($sClassName);
+            $this->cls->registerCallableClass($sClassName, $aOptions);
+            $aCallableObjects[$sClassName] = $this->cls->getCallableObject($sClassName);
         }
         return $aCallableObjects;
     }
