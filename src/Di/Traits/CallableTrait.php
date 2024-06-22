@@ -51,13 +51,15 @@ trait CallableTrait
         // Callable class plugin
         $this->set(CallableClassPlugin::class, function($di) {
             $sPrefix = $di->g(ConfigManager::class)->getOption('core.prefix.class');
-            return new CallableClassPlugin($sPrefix, $di->g(Container::class), $di->g(ParameterReader::class),
+            return new CallableClassPlugin($sPrefix, $di->g(Container::class),
+                $di->g(ClassContainer::class), $di->g(ParameterReader::class),
                 $di->g(CallableRegistry::class), $di->g(CallableRepository::class),
                 $di->g(TemplateEngine::class), $di->g(Translator::class), $di->g(Validator::class));
         });
         // Callable dir plugin
         $this->set(CallableDirPlugin::class, function($di) {
-            return new CallableDirPlugin($di->g(CallableRegistry::class), $di->g(Translator::class));
+            return new CallableDirPlugin($di->g(ClassContainer::class),
+                $di->g(CallableRegistry::class), $di->g(Translator::class));
         });
         // Callable function plugin
         $this->set(CallableFunctionPlugin::class, function($di) {

@@ -16,6 +16,7 @@ namespace Jaxon\Plugin\Request\CallableClass;
 
 use Jaxon\App\Session\SessionInterface;
 use Jaxon\App\View\ViewRenderer;
+use Jaxon\Di\ClassContainer;
 use Jaxon\Exception\SetupException;
 use Jaxon\Script\Factory\CallFactory;
 use Jaxon\Script\JxnCall;
@@ -35,9 +36,9 @@ class CallableClassHelper
     /**
      * The constructor
      *
+     * @param ClassContainer $cls
      * @param JxnCall $xJxnCall
      * @param CallFactory $xFactory
-     * @param CallableRegistry $xCallableRegistry
      * @param ViewRenderer $xViewRenderer
      * @param LoggerInterface $xLogger
      * @param SessionInterface $xSessionManager
@@ -45,8 +46,8 @@ class CallableClassHelper
      *
      * @throws SetupException
      */
-    public function __construct(public JxnCall $xJxnCall, public CallFactory $xFactory,
-        public CallableRegistry $xCallableRegistry, public ViewRenderer $xViewRenderer,
+    public function __construct(public ClassContainer $cls, public JxnCall $xJxnCall,
+        public CallFactory $xFactory, public ViewRenderer $xViewRenderer,
         public LoggerInterface $xLogger, public ?SessionInterface $xSessionManager,
         public ?UploadHandlerInterface $xUploadHandler)
     {}
@@ -61,9 +62,7 @@ class CallableClassHelper
      */
     public function cl(string $sClassName)
     {
-        $sClassName = trim($sClassName);
-        $xCallableObject = $this->xCallableRegistry->getCallableObject($sClassName);
-        return !$xCallableObject ? null : $xCallableObject->getRegisteredObject();
+        return $this->cls->makeRegisteredObject($sClassName);
     }
 
     /**

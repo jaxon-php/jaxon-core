@@ -167,9 +167,7 @@ trait LibTrait
      */
     public function cl(string $sClassName)
     {
-        $sClassName = trim($sClassName);
-        $xCallableObject = $this->xCallableRegistry->getCallableObject($sClassName);
-        return !$xCallableObject ? null : $xCallableObject->getRegisteredObject();
+        return $this->cls()->makeRegisteredObject($sClassName);
     }
 
     /**

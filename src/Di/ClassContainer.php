@@ -35,10 +35,18 @@ use ReflectionNamedType;
 use ReflectionParameter;
 
 use function array_map;
+use function str_replace;
 use function trim;
 
 class ClassContainer
 {
+    /**
+     * If the underscore is used as separator in js class names.
+     *
+     * @var bool
+     */
+    private $bUsingUnderscore = false;
+
     /**
      * The Dependency Injection Container for registered classes
      *
@@ -59,6 +67,14 @@ class ClassContainer
             return new JxnCall($this->di->g(DialogManager::class),
                 $this->di->g(ConfigManager::class)->getOption('core.prefix.function', ''));
         });
+    }
+
+    /**
+     * @return void
+     */
+    public function useUnderscore()
+    {
+        $this->bUsingUnderscore = true;
     }
 
     /**
@@ -252,9 +268,9 @@ class ClassContainer
         // Register the helper class
         $this->set($this->getCallableHelperKey($sClassName), function() use($sClassName) {
             $xFactory = $this->di->getCallFactory();
-            return new CallableClassHelper($xFactory->rq($sClassName), $xFactory,
-                $this->di->getCallableRegistry(), $this->di->getViewRenderer(),
-                $this->di->getLogger(), $this->di->getSessionManager(), $this->di->getUploadHandler());
+            return new CallableClassHelper($this, $xFactory->rq($sClassName), $xFactory,
+                $this->di->getViewRenderer(), $this->di->getLogger(),
+                $this->di->getSessionManager(), $this->di->getUploadHandler());
         });
 
         // Register the reflection class
@@ -322,6 +338,57 @@ class ClassContainer
     }
 
     /**
+     * Check if a callable object is already in the DI, and register if not
+     *
+     * @param string $sClassName The class name of the callable object
+     *
+     * @return string
+     * @throws SetupException
+     */
+    private function checkCallableObject(string $sClassName): string
+    {
+        // Replace all separators ('.' and '_') with antislashes, and remove the antislashes
+        // at the beginning and the end of the class name.
+        $sClassName = trim(str_replace('.', '\\', $sClassName), '\\');
+        if($this->bUsingUnderscore)
+        {
+            $sClassName = trim(str_replace('_', '\\', $sClassName), '\\');
+        }
+        // Register the class.
+        $xRepository = $this->di->g(CallableRepository::class);
+        $this->registerCallableClass($sClassName, $xRepository->getClassOptions($sClassName));
+        return $sClassName;
+    }
+
+    /**
+     * Get the callable object for a given class
+     * The callable object is registered if it is not already in the DI.
+     *
+     * @param string $sClassName The class name of the callable object
+     *
+     * @return CallableObject|null
+     * @throws SetupException
+     */
+    public function makeCallableObject(string $sClassName): ?CallableObject
+    {
+        return $this->getCallableObject($this->checkCallableObject($sClassName));
+    }
+
+    /**
+     * Get an instance of a Jaxon class by name
+     *
+     * @param string $sClassName the class name
+     *
+     * @return mixed
+     * @throws SetupException
+     */
+    public function makeRegisteredObject(string $sClassName)
+    {
+        $xCallableObject = $this->makeCallableObject($sClassName);
+        return !$xCallableObject ? null : $xCallableObject->getRegisteredObject();
+    }
+
+    /**
      * Get the callable registry
      *
      * @return CallableRegistry
@@ -350,7 +417,7 @@ class ClassContainer
     private function registerRequestFactory(string $sClassName, string $sFactoryKey)
     {
         $this->xContainer->offsetSet($sFactoryKey, function() use($sClassName) {
-            if(!($xCallable = $this->getCallableRegistry()->getCallableObject($sClassName)))
+            if(!($xCallable = $this->makeCallableObject($sClassName)))
             {
                 return null;
             }

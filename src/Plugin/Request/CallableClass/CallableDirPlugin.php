@@ -23,6 +23,7 @@ namespace Jaxon\Plugin\Request\CallableClass;
 
 use Jaxon\Jaxon;
 use Jaxon\App\I18n\Translator;
+use Jaxon\Di\ClassContainer;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\CallableRegistryInterface;
 use Jaxon\Plugin\PluginInterface;
@@ -38,28 +39,15 @@ use function trim;
 class CallableDirPlugin implements PluginInterface, CallableRegistryInterface
 {
     /**
-     * The callable registry
-     *
-     * @var CallableRegistry
-     */
-    protected $xRegistry;
-
-    /**
-     * @var Translator
-     */
-    protected $xTranslator;
-
-    /**
      * The class constructor
      *
+     * @param ClassContainer $cls
      * @param CallableRegistry  $xRegistry
      * @param Translator  $xTranslator
      */
-    public function __construct(CallableRegistry $xRegistry, Translator $xTranslator)
-    {
-        $this->xRegistry = $xRegistry;
-        $this->xTranslator = $xTranslator;
-    }
+    public function __construct(protected ClassContainer $cls,
+        protected CallableRegistry $xRegistry, protected Translator $xTranslator)
+    {}
 
     /**
      * @inheritDoc
@@ -140,6 +128,6 @@ class CallableDirPlugin implements PluginInterface, CallableRegistryInterface
      */
     public function getCallable(string $sCallable)
     {
-        return $this->xRegistry->getCallableObject($sCallable);
+        return $this->cls->makeCallableObject($sCallable);
     }
 }

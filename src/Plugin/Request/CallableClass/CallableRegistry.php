@@ -17,7 +17,6 @@ namespace Jaxon\Plugin\Request\CallableClass;
 use Composer\Autoload\ClassLoader;
 use Jaxon\App\I18n\Translator;
 use Jaxon\Di\ClassContainer;
-use Jaxon\Exception\SetupException;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 
@@ -31,25 +30,6 @@ use function trim;
 class CallableRegistry
 {
     /**
-     * The DI container
-     *
-     * @var ClassContainer
-     */
-    protected $cls;
-
-    /**
-     * The callable repository
-     *
-     * @var CallableRepository
-     */
-    protected $xRepository;
-
-    /**
-     * @var Translator
-     */
-    protected $xTranslator;
-
-    /**
      * @var bool
      */
     protected $bDirectoriesParsed = false;
@@ -58,13 +38,6 @@ class CallableRegistry
      * @var bool
      */
     protected $bNamespacesParsed = false;
-
-    /**
-     * If the underscore is used as separator in js class names.
-     *
-     * @var bool
-     */
-    protected $bUsingUnderscore = false;
 
     /**
      * The Composer autoloader
@@ -80,7 +53,8 @@ class CallableRegistry
      * @param CallableRepository $xRepository
      * @param Translator $xTranslator
      */
-    public function __construct(ClassContainer $cls, CallableRepository $xRepository, Translator $xTranslator)
+    public function __construct(protected ClassContainer $cls,
+        protected CallableRepository $xRepository, protected Translator $xTranslator)
     {
         $this->cls = $cls;
         $this->xTranslator = $xTranslator;
@@ -132,7 +106,7 @@ class CallableRegistry
         }
         if($aOptions['separator'] === '_')
         {
-            $this->bUsingUnderscore = true;
+            $this->cls->useUnderscore();
         }
         // Set the autoload option default value
         if(!isset($aOptions['autoload']))
@@ -239,41 +213,6 @@ class CallableRegistry
                 $this->xRepository->addClass($sClassName, $aClassOptions, $aOptions);
             }
         }
-    }
-
-    /**
-     * Check if a callable object is already in the DI, and register if not
-     *
-     * @param string $sClassName The class name of the callable object
-     *
-     * @return string
-     * @throws SetupException
-     */
-    private function checkCallableObject(string $sClassName): string
-    {
-        // Replace all separators ('.' and '_') with antislashes, and remove the antislashes
-        // at the beginning and the end of the class name.
-        $sClassName = trim(str_replace('.', '\\', $sClassName), '\\');
-        if($this->bUsingUnderscore)
-        {
-            $sClassName = trim(str_replace('_', '\\', $sClassName), '\\');
-        }
-        // Register the class.
-        $this->cls->registerCallableClass($sClassName, $this->xRepository->getClassOptions($sClassName));
-        return $sClassName;
-    }
-
-    /**
-     * Get the callable object for a given class
-     *
-     * @param string $sClassName The class name of the callable object
-     *
-     * @return CallableObject|null
-     * @throws SetupException
-     */
-    public function getCallableObject(string $sClassName): ?CallableObject
-    {
-        return $this->cls->getCallableObject($this->checkCallableObject($sClassName));
     }
 
     /**

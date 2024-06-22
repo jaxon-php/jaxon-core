@@ -23,6 +23,7 @@ namespace Jaxon\Plugin\Request\CallableClass;
 
 use Jaxon\Jaxon;
 use Jaxon\App\I18n\Translator;
+use Jaxon\Di\ClassContainer;
 use Jaxon\Di\Container;
 use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;
@@ -45,58 +46,11 @@ use function uksort;
 class CallableClassPlugin extends AbstractRequestPlugin
 {
     /**
-     * @var string
-     */
-    protected $sPrefix;
-
-    /**
-     * @var Container
-     */
-    protected $di;
-
-    /**
-     * The parameter reader
-     *
-     * @var ParameterReader
-     */
-    protected $xParameterReader;
-
-    /**
-     * The callable registry
-     *
-     * @var CallableRegistry
-     */
-    protected $xRegistry;
-
-    /**
-     * The callable repository
-     *
-     * @var CallableRepository
-     */
-    protected $xRepository;
-
-    /**
-     * The request data validator
-     *
-     * @var Validator
-     */
-    protected $xValidator;
-
-    /**
-     * @var TemplateEngine
-     */
-    protected $xTemplateEngine;
-
-    /**
-     * @var Translator
-     */
-    protected $xTranslator;
-
-    /**
      * The class constructor
      *
      * @param string  $sPrefix
      * @param Container $di
+     * @param ClassContainer $cls
      * @param ParameterReader $xParameterReader
      * @param CallableRegistry $xRegistry    The callable class registry
      * @param CallableRepository $xRepository    The callable object repository
@@ -104,19 +58,12 @@ class CallableClassPlugin extends AbstractRequestPlugin
      * @param Translator $xTranslator
      * @param Validator $xValidator
      */
-    public function __construct(string $sPrefix, Container $di, ParameterReader $xParameterReader,
-        CallableRegistry $xRegistry, CallableRepository $xRepository,
-        TemplateEngine $xTemplateEngine, Translator $xTranslator, Validator $xValidator)
-    {
-        $this->di = $di;
-        $this->sPrefix = $sPrefix;
-        $this->xParameterReader = $xParameterReader;
-        $this->xRegistry = $xRegistry;
-        $this->xRepository = $xRepository;
-        $this->xTemplateEngine = $xTemplateEngine;
-        $this->xTranslator = $xTranslator;
-        $this->xValidator = $xValidator;
-    }
+    public function __construct(protected string $sPrefix, protected Container $di,
+        protected ClassContainer $cls, protected ParameterReader $xParameterReader,
+        protected CallableRegistry $xRegistry, protected CallableRepository $xRepository,
+        protected TemplateEngine $xTemplateEngine, protected Translator $xTranslator,
+        protected Validator $xValidator)
+    {}
 
     /**
      * @inheritDoc
@@ -163,7 +110,7 @@ class CallableClassPlugin extends AbstractRequestPlugin
      */
     public function getCallable(string $sCallable)
     {
-        return $this->xRegistry->getCallableObject($sCallable);
+        return $this->cls->makeCallableObject($sCallable);
     }
 
     /**
@@ -295,8 +242,7 @@ class CallableClassPlugin extends AbstractRequestPlugin
         // Call the requested method
         try
         {
-            $xCallableObject = $this->xRegistry->getCallableObject($sClassName);
-            return $xCallableObject->call($this->xTarget);
+            return $this->getCallable($sClassName)->call($this->xTarget);
         }
         catch(ReflectionException|SetupException $e)
         {
