@@ -15,6 +15,8 @@
 namespace Jaxon\Di;
 
 use Jaxon\App\AbstractCallable;
+use Jaxon\App\Config\ConfigManager;
+use Jaxon\App\Dialog\DialogManager;
 use Jaxon\App\I18n\Translator;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\AnnotationReaderInterface;
@@ -23,6 +25,8 @@ use Jaxon\Plugin\Request\CallableClass\CallableObject;
 use Jaxon\Plugin\Request\CallableClass\CallableRegistry;
 use Jaxon\Plugin\Request\CallableClass\CallableRepository;
 use Jaxon\Request\Handler\CallbackManager;
+use Jaxon\Script\JxnCall;
+use Jaxon\Script\JxnClass;
 use Pimple\Container as PimpleContainer;
 use Closure;
 use ReflectionClass;
@@ -31,6 +35,7 @@ use ReflectionNamedType;
 use ReflectionParameter;
 
 use function array_map;
+use function trim;
 
 class ClassContainer
 {
@@ -48,6 +53,12 @@ class ClassContainer
     {
         $this->xContainer = new PimpleContainer();
         $this->val(ClassContainer::class, $this);
+
+        // Register the call factory for registered functions
+        $this->set($this->getRequestFactoryKey(JxnCall::class), function() {
+            return new JxnCall($this->di->g(DialogManager::class),
+                $this->di->g(ConfigManager::class)->getOption('core.prefix.function', ''));
+        });
     }
 
     /**
@@ -318,5 +329,52 @@ class ClassContainer
     public function getCallableRegistry(): CallableRegistry
     {
         return $this->di->g(CallableRegistry::class);
+    }
+
+    /**
+     * @param string $sClassName The callable class name
+     *
+     * @return string
+     */
+    private function getRequestFactoryKey(string $sClassName): string
+    {
+        return $sClassName . '_RequestFactory';
+    }
+
+    /**
+     * @param string $sClassName
+     * @param string $sFactoryKey
+     *
+     * @return void
+     */
+    private function registerRequestFactory(string $sClassName, string $sFactoryKey)
+    {
+        $this->xContainer->offsetSet($sFactoryKey, function() use($sClassName) {
+            if(!($xCallable = $this->getCallableRegistry()->getCallableObject($sClassName)))
+            {
+                return null;
+            }
+            $xConfigManager = $this->di->g(ConfigManager::class);
+            $sJsObject = $xConfigManager->getOption('core.prefix.class', '') . $xCallable->getJsName();
+            return new JxnClass($this->di->g(DialogManager::class), $sJsObject);
+        });
+    }
+
+    /**
+     * Get a factory for a js function call.
+     *
+     * @param string $sClassName
+     *
+     * @return JxnCall|null
+     */
+    public function getRequestFactory(string $sClassName = ''): ?JxnCall
+    {
+        $sClassName = trim($sClassName, " \t") ?: JxnCall::class;
+        $sFactoryKey = $this->getRequestFactoryKey($sClassName);
+        if(!$this->has($sFactoryKey))
+        {
+            $this->registerRequestFactory($sClassName, $sFactoryKey);
+        }
+        return $this->get($sFactoryKey);
     }
 }

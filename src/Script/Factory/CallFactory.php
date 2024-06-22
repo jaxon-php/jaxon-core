@@ -15,13 +15,11 @@ namespace Jaxon\Script\Factory;
  */
 
 use Jaxon\App\Dialog\DialogManager;
+use Jaxon\Di\ClassContainer;
 use Jaxon\Exception\SetupException;
-use Jaxon\Plugin\Request\CallableClass\CallableRegistry;
 use Jaxon\Script\JqCall;
 use Jaxon\Script\JsCall;
 use Jaxon\Script\JxnCall;
-use Jaxon\Script\JxnClass;
-use Pimple\Container;
 use Closure;
 
 use function trim;
@@ -29,69 +27,13 @@ use function trim;
 class CallFactory
 {
     /**
-     * @var CallableRegistry
-     */
-    private $xCallableRegistry;
-
-    /**
-     * @var DialogManager
-     */
-    private $xDialog;
-
-    /**
-     * @var Container
-     */
-    private $xContainer;
-
-    /**
-     * @var string
-     */
-    protected $sClassPrefix;
-
-    /**
-     * @var string
-     */
-    protected $sFunctionPrefix;
-
-    /**
      * The constructor.
      *
-     * @param CallableRegistry $xCallableRegistry
+     * @param ClassContainer $cls
      * @param DialogManager $xDialog
-     * @param string $sClassPrefix
-     * @param string $sFunctionPrefix
      */
-    public function __construct(CallableRegistry $xCallableRegistry, DialogManager $xDialog,
-        string $sClassPrefix, string $sFunctionPrefix)
-    {
-        $this->xCallableRegistry = $xCallableRegistry;
-        $this->xDialog = $xDialog;
-        $this->sClassPrefix = $sClassPrefix;
-        $this->sFunctionPrefix = $sFunctionPrefix;
-
-        $this->xContainer = new Container();
-        // Factory for registered functions
-        $this->xContainer->offsetSet(JxnCall::class, function() {
-            return new JxnCall($this->xDialog, $this->sFunctionPrefix);
-        });
-    }
-
-    /**
-     * @param string $sClassName
-     *
-     * @return void
-     */
-    private function registerCallableClass(string $sClassName)
-    {
-        $this->xContainer->offsetSet($sClassName, function() use($sClassName) {
-            if(!($xCallable = $this->xCallableRegistry->getCallableObject($sClassName)))
-            {
-                return null;
-            }
-            $sJsObject = $this->sClassPrefix . $xCallable->getJsName();
-            return new JxnClass($this->xDialog, $sJsObject);
-        });
-    }
+    public function __construct(private ClassContainer $cls, private DialogManager $xDialog)
+    {}
 
     /**
      * Get a factory for a js function call.
@@ -103,12 +45,7 @@ class CallFactory
      */
     public function rq(string $sClassName = ''): ?JxnCall
     {
-        $sClassName = trim($sClassName, " \t") ?: JxnCall::class;
-        if(!$this->xContainer->offsetExists($sClassName))
-        {
-            $this->registerCallableClass($sClassName);
-        }
-        return $this->xContainer->offsetGet($sClassName);
+        return $this->cls->getRequestFactory($sClassName);
     }
 
     /**

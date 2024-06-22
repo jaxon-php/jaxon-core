@@ -5,11 +5,11 @@ namespace Jaxon\Di\Traits;
 use Jaxon\App\Config\ConfigManager;
 use Jaxon\App\Dialog\DialogManager;
 use Jaxon\App\I18n\Translator;
+use Jaxon\Di\ClassContainer;
 use Jaxon\Di\Container;
 use Jaxon\Script\Factory\CallFactory;
 use Jaxon\Script\Factory\ParameterFactory;
 use Jaxon\Plugin\Manager\PluginManager;
-use Jaxon\Plugin\Request\CallableClass\CallableRegistry;
 use Jaxon\Plugin\Response\DataBag\DataBagPlugin;
 use Jaxon\Request\Handler\CallbackManager;
 use Jaxon\Request\Handler\ParameterReader;
@@ -48,10 +48,7 @@ trait RequestTrait
         });
         // Requests and calls Factory
         $this->set(CallFactory::class, function($di) {
-            $xConfigManager = $di->g(ConfigManager::class);
-            return new CallFactory($di->g(CallableRegistry::class), $di->g(DialogManager::class),
-                $xConfigManager->getOption('core.prefix.class'),
-                $xConfigManager->getOption('core.prefix.function'));
+            return new CallFactory($di->g(ClassContainer::class), $di->g(DialogManager::class));
         });
         // Factory for function parameters
         $this->set(ParameterFactory::class, function() {
