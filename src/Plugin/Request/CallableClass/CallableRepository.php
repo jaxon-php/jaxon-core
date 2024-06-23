@@ -31,18 +31,6 @@ use function strncmp;
 class CallableRepository
 {
     /**
-     * The DI container
-     *
-     * @var ClassContainer
-     */
-    protected $cls;
-
-    /**
-     * @var Translator
-     */
-    protected $xTranslator;
-
-    /**
      * The namespace options
      *
      * These are the options of the registered namespaces.
@@ -108,11 +96,8 @@ class CallableRepository
      * @param ClassContainer $cls
      * @param Translator $xTranslator
      */
-    public function __construct(ClassContainer $cls, Translator $xTranslator)
+    public function __construct(protected ClassContainer $cls, protected Translator $xTranslator)
     {
-        $this->cls = $cls;
-        $this->xTranslator = $xTranslator;
-
         // The methods of the AbstractCallable class must not be exported
         $xAbstractCallable = new ReflectionClass(AbstractCallable::class);
         foreach($xAbstractCallable->getMethods(ReflectionMethod::IS_PUBLIC) as $xMethod)
@@ -321,8 +306,10 @@ class CallableRepository
     public function getProtectedMethods(string $sClassName): array
     {
         // Don't export the html() public method for Component objects
-        return is_subclass_of($sClassName, Component::class) ? [...$this->aProtectedMethods, 'html'] :
-            (is_subclass_of($sClassName, AbstractCallable::class) ? $this->aProtectedMethods : []);
+        return is_subclass_of($sClassName, Component::class) ?
+            [...$this->aProtectedMethods, 'html'] :
+            (is_subclass_of($sClassName, AbstractCallable::class) ?
+                $this->aProtectedMethods : []);
     }
 
     /**

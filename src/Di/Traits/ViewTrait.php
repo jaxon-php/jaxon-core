@@ -15,6 +15,7 @@ use Jaxon\App\I18n\Translator;
 use Jaxon\App\View\AttrFormatter;
 use Jaxon\App\View\TemplateView;
 use Jaxon\App\View\ViewRenderer;
+use Jaxon\Di\ClassContainer;
 use Jaxon\Di\Container;
 use Jaxon\Utils\Template\TemplateEngine;
 
@@ -60,8 +61,8 @@ trait ViewTrait
         $this->val(AlertLibrary::class, new AlertLibrary());
 
         // Helpers for HTML custom attributes formatting
-        $this->set(AttrFormatter::class, function() {
-            return new AttrFormatter();
+        $this->set(AttrFormatter::class, function($di) {
+            return new AttrFormatter($di->g(ClassContainer::class));
         });
     }
 
@@ -78,7 +79,8 @@ trait ViewTrait
         $this->set($sClass, function($di) use($sClass) {
             // Set the protected attributes of the library
             $cSetter = function() use($di) {
-                $this->xHelper = new DialogLibraryHelper($this, $di->g(ConfigManager::class), $di->g(TemplateEngine::class));
+                $this->xHelper = new DialogLibraryHelper($this,
+                    $di->g(ConfigManager::class), $di->g(TemplateEngine::class));
             };
             // Can now access protected attributes
             $xLibrary = $di->make($sClass);

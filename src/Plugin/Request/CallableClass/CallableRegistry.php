@@ -56,10 +56,6 @@ class CallableRegistry
     public function __construct(protected ClassContainer $cls,
         protected CallableRepository $xRepository, protected Translator $xTranslator)
     {
-        $this->cls = $cls;
-        $this->xTranslator = $xTranslator;
-        $this->xRepository = $xRepository;
-
         // Set the composer autoloader
         if(file_exists(($sAutoloadFile = __DIR__ . '/../../../../../../autoload.php')) ||
             file_exists(($sAutoloadFile = __DIR__ . '/../../../../vendor/autoload.php')))
@@ -144,7 +140,7 @@ class CallableRegistry
             foreach($itFile as $xFile)
             {
                 // Skip everything except PHP files
-                if(!$xFile->isFile() || $xFile->getExtension() != 'php')
+                if(!$xFile->isFile() || $xFile->getExtension() !== 'php')
                 {
                     continue;
                 }
