@@ -15,7 +15,6 @@
 namespace Jaxon\Plugin\Request\CallableClass;
 
 use Composer\Autoload\ClassLoader;
-use Jaxon\App\I18n\Translator;
 use Jaxon\Di\ClassContainer;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -51,10 +50,9 @@ class CallableRegistry
      *
      * @param ClassContainer $cls
      * @param CallableRepository $xRepository
-     * @param Translator $xTranslator
      */
     public function __construct(protected ClassContainer $cls,
-        protected CallableRepository $xRepository, protected Translator $xTranslator)
+        protected CallableRepository $xRepository)
     {
         // Set the composer autoloader
         if(file_exists(($sAutoloadFile = __DIR__ . '/../../../../../../autoload.php')) ||

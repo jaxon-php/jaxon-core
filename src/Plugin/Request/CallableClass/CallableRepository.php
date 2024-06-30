@@ -16,9 +16,7 @@ namespace Jaxon\Plugin\Request\CallableClass;
 
 use Jaxon\App\AbstractCallable;
 use Jaxon\App\Component;
-use Jaxon\App\I18n\Translator;
 use Jaxon\Di\ClassContainer;
-use Jaxon\Exception\SetupException;
 use ReflectionClass;
 use ReflectionMethod;
 
@@ -47,15 +45,6 @@ class CallableRepository
      * @var array
      */
     protected $aDirectoryOptions = [];
-
-    /**
-     * The classes
-     *
-     * These are all the classes, both registered and found in registered directories.
-     *
-     * @var array
-     */
-    protected $aClasses = [];
 
     /**
      * The namespaces
@@ -94,9 +83,8 @@ class CallableRepository
      * The constructor
      *
      * @param ClassContainer $cls
-     * @param Translator $xTranslator
      */
-    public function __construct(protected ClassContainer $cls, protected Translator $xTranslator)
+    public function __construct(protected ClassContainer $cls)
     {
         // The methods of the AbstractCallable class must not be exported
         $xAbstractCallable = new ReflectionClass(AbstractCallable::class);
@@ -227,8 +215,9 @@ class CallableRepository
      */
     public function addClass(string $sClassName, array $aClassOptions, array $aDirectoryOptions = [])
     {
-        $this->aClasses[$sClassName] = $this->makeClassOptions($sClassName, $aClassOptions, $aDirectoryOptions);
-        $this->sHash .= $sClassName . $this->aClasses[$sClassName]['timestamp'];
+        $aOptions = $this->makeClassOptions($sClassName, $aClassOptions, $aDirectoryOptions);
+        $this->sHash .= $sClassName . $aOptions['timestamp'];
+        $this->cls->addClass($sClassName, $aOptions);
     }
 
     /**
@@ -251,7 +240,7 @@ class CallableRepository
      *
      * @return void
      */
-    private function getNamespaceClassOptions(string $sClassName)
+    public function setNamespaceClassOptions(string $sClassName)
     {
         // Find the corresponding namespace
         foreach($this->aNamespaceOptions as $sNamespace => $aOptions)
@@ -260,40 +249,11 @@ class CallableRepository
             if(strncmp($sClassName, $sNamespace . '\\', strlen($sNamespace) + 1) === 0)
             {
                 // Save the class options
-                $this->aClasses[$sClassName] = $this->makeClassOptions($sClassName,
-                    ['namespace' => $sNamespace], $aOptions);
+                $this->cls->addClass($sClassName, $this->makeClassOptions($sClassName,
+                    ['namespace' => $sNamespace], $aOptions));
                 return;
             }
         }
-    }
-
-    /**
-     * Find the options associated with a registered class name
-     *
-     * @param string $sClassName The class name
-     *
-     * @return array
-     * @throws SetupException
-     */
-    public function getClassOptions(string $sClassName): array
-    {
-        // Find options for a class registered with namespace.
-        if(!isset($this->aClasses[$sClassName]))
-        {
-            $this->getNamespaceClassOptions($sClassName);
-            if(!isset($this->aClasses[$sClassName]))
-            {
-                // Find options for a class registered without namespace.
-                // We then need to parse all classes to be able to find one.
-                $this->cls->getCallableRegistry()->parseDirectories();
-            }
-        }
-        if(isset($this->aClasses[$sClassName]))
-        {
-            return $this->aClasses[$sClassName];
-        }
-        $sMessage = $this->xTranslator->trans('errors.class.invalid', ['name' => $sClassName]);
-        throw new SetupException($sMessage);
     }
 
     /**
@@ -310,22 +270,5 @@ class CallableRepository
             [...$this->aProtectedMethods, 'html'] :
             (is_subclass_of($sClassName, AbstractCallable::class) ?
                 $this->aProtectedMethods : []);
-    }
-
-    /**
-     * Get callable objects for known classes
-     *
-     * @return array
-     * @throws SetupException
-     */
-    public function getCallableObjects(): array
-    {
-        $aCallableObjects = [];
-        foreach($this->aClasses as $sClassName => $aOptions)
-        {
-            $this->cls->registerCallableClass($sClassName, $aOptions);
-            $aCallableObjects[$sClassName] = $this->cls->getCallableObject($sClassName);
-        }
-        return $aCallableObjects;
     }
 }

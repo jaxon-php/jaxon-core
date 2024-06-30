@@ -55,6 +55,15 @@ class ClassContainer
     private $xContainer;
 
     /**
+     * The classes
+     *
+     * These are all the classes, both registered and found in registered directories.
+     *
+     * @var array
+     */
+    protected $aClasses = [];
+
+    /**
      * The class constructor
      */
     public function __construct(private Container $di)
@@ -130,18 +139,66 @@ class ClassContainer
     }
 
     /**
-     * Set an alias in the container
      *
-     * @param string $sAlias    The alias name
-     * @param string $sClass    The class name
+     * @param string $sClassName    The class name
+     * @param array $aOptions    The class options
      *
      * @return void
      */
-    public function alias(string $sAlias, string $sClass)
+    public function addClass(string $sClassName, array $aOptions = [])
     {
-        $this->set($sAlias, function($di) use ($sClass) {
-            return $di->get($sClass);
-        });
+        $this->aClasses[$sClassName] = $aOptions;
+    }
+
+    /**
+     * Find the options associated with a registered class name
+     *
+     * @param string $sClassName The class name
+     *
+     * @return array
+     * @throws SetupException
+     */
+    private function getClassOptions(string $sClassName): array
+    {
+        // Find options for a class registered with namespace.
+        if(!isset($this->aClasses[$sClassName]))
+        {
+            /** @var CallableRepository */
+            $xRepository = $this->di->g(CallableRepository::class);
+            $xRepository->setNamespaceClassOptions($sClassName);
+            if(!isset($this->aClasses[$sClassName]))
+            {
+                // Find options for a class registered without namespace.
+                // We then need to parse all classes to be able to find one.
+                /** @var CallableRegistry */
+                $xRegistry = $this->di->g(CallableRegistry::class);
+                $xRegistry->parseDirectories();
+            }
+        }
+        if(isset($this->aClasses[$sClassName]))
+        {
+            return $this->aClasses[$sClassName];
+        }
+
+        $xTranslator = $this->di->g(Translator::class);
+        throw new SetupException($xTranslator->trans('errors.class.invalid', ['name' => $sClassName]));
+    }
+
+    /**
+     * Get callable objects for known classes
+     *
+     * @return array
+     * @throws SetupException
+     */
+    public function getCallableObjects(): array
+    {
+        $aCallableObjects = [];
+        foreach($this->aClasses as $sClassName => $_)
+        {
+            $this->registerCallableClass($sClassName);
+            $aCallableObjects[$sClassName] = $this->getCallableObject($sClassName);
+        }
+        return $aCallableObjects;
     }
 
     /**
@@ -251,12 +308,11 @@ class ClassContainer
      * Register a callable class
      *
      * @param string $sClassName The callable class name
-     * @param array $aOptions The callable object options
      *
      * @return void
      * @throws SetupException
      */
-    public function registerCallableClass(string $sClassName, array $aOptions)
+    private function registerCallableClass(string $sClassName)
     {
         $sCallableObject = $this->getCallableObjectKey($sClassName);
         // Prevent duplication. It's important not to use the class name here.
@@ -264,6 +320,8 @@ class ClassContainer
         {
             return;
         }
+
+        $aOptions = $this->getClassOptions($sClassName);
 
         // Register the helper class
         $this->set($this->getCallableHelperKey($sClassName), function() use($sClassName) {
@@ -283,8 +341,7 @@ class ClassContainer
         catch(ReflectionException $e)
         {
             $xTranslator = $this->di->g(Translator::class);
-            $sMessage = $xTranslator->trans('errors.class.invalid', ['name' => $sClassName]);
-            throw new SetupException($sMessage);
+            throw new SetupException($xTranslator->trans('errors.class.invalid', ['name' => $sClassName]));
         }
 
         // Register the callable object
@@ -354,9 +411,9 @@ class ClassContainer
         {
             $sClassName = trim(str_replace('_', '\\', $sClassName), '\\');
         }
+
         // Register the class.
-        $xRepository = $this->di->g(CallableRepository::class);
-        $this->registerCallableClass($sClassName, $xRepository->getClassOptions($sClassName));
+        $this->registerCallableClass($sClassName);
         return $sClassName;
     }
 

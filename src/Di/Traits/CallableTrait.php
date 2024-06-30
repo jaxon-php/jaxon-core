@@ -41,12 +41,11 @@ trait CallableTrait
         });
         // Callable objects repository
         $this->set(CallableRepository::class, function($di) {
-            return new CallableRepository($di->g(ClassContainer::class), $di->g(Translator::class));
+            return new CallableRepository($di->g(ClassContainer::class));
         });
         // Callable objects registry
         $this->set(CallableRegistry::class, function($di) {
-            return new CallableRegistry($di->g(ClassContainer::class),
-                $di->g(CallableRepository::class), $di->g(Translator::class));
+            return new CallableRegistry($di->g(ClassContainer::class), $di->g(CallableRepository::class));
         });
         // Callable class plugin
         $this->set(CallableClassPlugin::class, function($di) {

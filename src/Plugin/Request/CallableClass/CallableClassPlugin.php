@@ -36,10 +36,14 @@ use Jaxon\Utils\Template\TemplateEngine;
 use Psr\Http\Message\ServerRequestInterface;
 use ReflectionException;
 
+use function array_reduce;
 use function is_array;
 use function is_string;
 use function md5;
+use function str_replace;
+use function strpos;
 use function strlen;
+use function substr;
 use function trim;
 use function uksort;
 
@@ -182,7 +186,7 @@ class CallableClassPlugin extends AbstractRequestPlugin
     public function getScript(): string
     {
         $this->xRegistry->parseCallableClasses();
-        $aCallableObjects = $this->xRepository->getCallableObjects();
+        $aCallableObjects = $this->cls->getCallableObjects();
         // Sort the options by key length asc
         uksort($aCallableObjects, function($name1, $name2) {
             return strlen($name1) - strlen($name2);
