@@ -10,7 +10,6 @@ use Jaxon\Plugin\AnnotationReaderInterface;
 use Jaxon\Plugin\Request\CallableClass\CallableClassPlugin;
 use Jaxon\Plugin\Request\CallableClass\CallableDirPlugin;
 use Jaxon\Plugin\Request\CallableClass\CallableRegistry;
-use Jaxon\Plugin\Request\CallableClass\CallableRepository;
 use Jaxon\Plugin\Request\CallableFunction\CallableFunctionPlugin;
 use Jaxon\Request\Handler\ParameterReader;
 use Jaxon\Request\Validator;
@@ -39,21 +38,17 @@ trait CallableTrait
         $this->set(Validator::class, function($di) {
             return new Validator($di->g(ConfigManager::class), $di->g(Translator::class));
         });
-        // Callable objects repository
-        $this->set(CallableRepository::class, function($di) {
-            return new CallableRepository($di->g(ClassContainer::class));
-        });
         // Callable objects registry
         $this->set(CallableRegistry::class, function($di) {
-            return new CallableRegistry($di->g(ClassContainer::class), $di->g(CallableRepository::class));
+            return new CallableRegistry($di->g(ClassContainer::class));
         });
         // Callable class plugin
         $this->set(CallableClassPlugin::class, function($di) {
             $sPrefix = $di->g(ConfigManager::class)->getOption('core.prefix.class');
             return new CallableClassPlugin($sPrefix, $di->g(Container::class),
                 $di->g(ClassContainer::class), $di->g(ParameterReader::class),
-                $di->g(CallableRegistry::class), $di->g(CallableRepository::class),
-                $di->g(TemplateEngine::class), $di->g(Translator::class), $di->g(Validator::class));
+                $di->g(CallableRegistry::class), $di->g(TemplateEngine::class),
+                $di->g(Translator::class), $di->g(Validator::class));
         });
         // Callable dir plugin
         $this->set(CallableDirPlugin::class, function($di) {
@@ -76,16 +71,6 @@ trait CallableTrait
     public function getCallableRegistry(): CallableRegistry
     {
         return $this->g(CallableRegistry::class);
-    }
-
-    /**
-     * Get the callable repository
-     *
-     * @return CallableRepository
-     */
-    public function getCallableRepository(): CallableRepository
-    {
-        return $this->g(CallableRepository::class);
     }
 
     /**

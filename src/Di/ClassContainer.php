@@ -23,7 +23,6 @@ use Jaxon\Plugin\AnnotationReaderInterface;
 use Jaxon\Plugin\Request\CallableClass\CallableClassHelper;
 use Jaxon\Plugin\Request\CallableClass\CallableObject;
 use Jaxon\Plugin\Request\CallableClass\CallableRegistry;
-use Jaxon\Plugin\Request\CallableClass\CallableRepository;
 use Jaxon\Request\Handler\CallbackManager;
 use Jaxon\Script\JxnCall;
 use Jaxon\Script\JxnClass;
@@ -163,15 +162,13 @@ class ClassContainer
         // Find options for a class registered with namespace.
         if(!isset($this->aClasses[$sClassName]))
         {
-            /** @var CallableRepository */
-            $xRepository = $this->di->g(CallableRepository::class);
-            $xRepository->setNamespaceClassOptions($sClassName);
+            /** @var CallableRegistry */
+            $xRegistry = $this->di->g(CallableRegistry::class);
+            $xRegistry->setNamespaceClassOptions($sClassName);
             if(!isset($this->aClasses[$sClassName]))
             {
                 // Find options for a class registered without namespace.
                 // We then need to parse all classes to be able to find one.
-                /** @var CallableRegistry */
-                $xRegistry = $this->di->g(CallableRegistry::class);
                 $xRegistry->parseDirectories();
             }
         }
@@ -347,8 +344,8 @@ class ClassContainer
         // Register the callable object
         $this->set($sCallableObject, function() use($sClassName, $aOptions) {
             $xReflectionClass = $this->get($this->getReflectionClassKey($sClassName));
-            $xRepository = $this->di->g(CallableRepository::class);
-            $aProtectedMethods = $xRepository->getProtectedMethods($sClassName);
+            $xRegistry = $this->di->g(CallableRegistry::class);
+            $aProtectedMethods = $xRegistry->getProtectedMethods($sClassName);
 
             return new CallableObject($this, $this->di, $xReflectionClass,
                 $this->di->g(AnnotationReaderInterface::class), $aOptions, $aProtectedMethods);

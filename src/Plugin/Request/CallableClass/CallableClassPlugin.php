@@ -56,17 +56,15 @@ class CallableClassPlugin extends AbstractRequestPlugin
      * @param Container $di
      * @param ClassContainer $cls
      * @param ParameterReader $xParameterReader
-     * @param CallableRegistry $xRegistry    The callable class registry
-     * @param CallableRepository $xRepository    The callable object repository
+     * @param CallableRegistry $xRegistry
      * @param TemplateEngine $xTemplateEngine
      * @param Translator $xTranslator
      * @param Validator $xValidator
      */
     public function __construct(protected string $sPrefix, protected Container $di,
         protected ClassContainer $cls, protected ParameterReader $xParameterReader,
-        protected CallableRegistry $xRegistry, protected CallableRepository $xRepository,
-        protected TemplateEngine $xTemplateEngine, protected Translator $xTranslator,
-        protected Validator $xValidator)
+        protected CallableRegistry $xRegistry, protected TemplateEngine $xTemplateEngine,
+        protected Translator $xTranslator, protected Validator $xValidator)
     {}
 
     /**
@@ -104,7 +102,7 @@ class CallableClassPlugin extends AbstractRequestPlugin
     public function register(string $sType, string $sCallable, array $aOptions): bool
     {
         $sClassName = trim($sCallable);
-        $this->xRepository->addClass($sClassName, $aOptions);
+        $this->xRegistry->addClass($sClassName, $aOptions);
         return true;
     }
 
@@ -123,7 +121,7 @@ class CallableClassPlugin extends AbstractRequestPlugin
     public function getHash(): string
     {
         $this->xRegistry->parseCallableClasses();
-        return md5($this->xRepository->getHash());
+        return md5($this->xRegistry->getHash());
     }
 
     /**
@@ -135,8 +133,7 @@ class CallableClassPlugin extends AbstractRequestPlugin
     {
         $sCode = '';
         $aJsClasses = [];
-        $aNamespaces = $this->xRepository->getNamespaces();
-        foreach($aNamespaces as $sNamespace)
+        foreach($this->xRegistry->getNamespaces() as $sNamespace)
         {
             $offset = 0;
             $sJsNamespace = str_replace('\\', '.', $sNamespace);
