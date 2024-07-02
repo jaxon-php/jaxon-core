@@ -19,9 +19,13 @@ use Jaxon\Di\ClassContainer;
 use Jaxon\Script\JsExpr;
 use Jaxon\Script\JxnCall;
 
-use function is_a;
-use function json_encode;
+use function count;
 use function htmlentities;
+use function is_a;
+use function is_array;
+use function is_string;
+use function json_encode;
+use function trim;
 
 class AttrFormatter
 {
@@ -32,18 +36,6 @@ class AttrFormatter
      */
     public function __construct(protected ClassContainer $cls)
     {}
-
-    /**
-     * Format a js class name
-     *
-     * @param JxnCall $xJsCall
-     *
-     * @return string
-     */
-    public function show(JxnCall $xJsCall): string
-    {
-        return $xJsCall->_class();
-    }
 
     /**
      * Get the component HTML code
@@ -65,14 +57,72 @@ class AttrFormatter
     }
 
     /**
-     * Format a function call (json expression)
+     * Attach a component to a DOM node
      *
-     * @param JsExpr $xJsExpr
+     * @param JxnCall $xJsCall
+     * @param string $item
      *
      * @return string
      */
-    public function func(JsExpr $xJsExpr): string
+    public function show(JxnCall $xJsCall, string $item = ''): string
     {
-        return htmlentities(json_encode($xJsExpr->jsonSerialize()));
+        $item = trim($item);
+        return 'jxn-show="' . $xJsCall->_class() . (!$item ? '"' : '" jxn-item="' . $item . '"');
+    }
+
+    /**
+     * Set a node as a target for event handler definitions
+     *
+     * @param string $name
+     *
+     * @return string
+     */
+    public function target(string $name = ''): string
+    {
+        return 'jxn-target="' . trim($name) . '"';
+    }
+
+    /**
+     * @param array $on
+     *
+     * @return bool
+     */
+    private function checkOn(array $on)
+    {
+        return count($on) === 2 && isset($on[0]) && isset($on[1])
+            && is_string($on[0]) && is_string($on[1]);
+    }
+
+    /**
+     * Set an event handler
+     *
+     * @param string|array $on
+     * @param JsExpr $xJsExpr
+     * @param array $options
+     *
+     * @return string
+     */
+    public function on(string|array $on, JsExpr $xJsExpr, array $options = []): string
+    {
+        $select = '';
+        $event = $on;
+        if(is_array($on))
+        {
+            if(!$this->checkOn($on))
+            {
+                return '';
+            }
+            $select = $on[0];
+            $event = $on[1];
+        }
+        $select = trim($select);
+        $event = trim($event);
+
+        $code = (isset($options['target']) ? 'jxn-event="' : 'jxn-on="') . $event . '" ';
+        if($select !== '')
+        {
+            $code .= 'jxn-select="' . $select . '" ';
+        }
+        return $code . 'jxn-call="' . htmlentities(json_encode($xJsExpr->jsonSerialize())) . '"';
     }
 }
