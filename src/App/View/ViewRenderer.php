@@ -11,6 +11,7 @@ use function array_filter;
 use function array_merge;
 use function is_array;
 use function rtrim;
+use function strlen;
 use function strrpos;
 use function substr;
 
@@ -286,7 +287,9 @@ class ViewRenderer
         if($nSeparatorPosition !== false)
         {
             $sNamespace = substr($sViewName, 0, $nSeparatorPosition);
+            $sViewName = substr($sViewName, $nSeparatorPosition + 2);
         }
+
         $xRenderer = $this->getNamespaceRenderer($sNamespace);
         if(!$xRenderer)
         {
@@ -296,6 +299,7 @@ class ViewRenderer
 
         $xStore->setData(array_merge($this->aViewData, $aViewData))
             ->setView($xRenderer, $sNamespace, $sViewName);
+
         // Set the store to null so a new store will be created for the next view.
         $this->xStore = null;
         // Return the store
