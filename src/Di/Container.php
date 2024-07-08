@@ -44,6 +44,7 @@ class Container
     use Traits\CallableTrait;
     use Traits\ViewTrait;
     use Traits\UtilTrait;
+    use Traits\AttributeTrait;
 
     /**
      * The library Dependency Injection Container
@@ -99,6 +100,7 @@ class Container
         $this->registerCallables();
         $this->registerViews();
         $this->registerUtils();
+        $this->registerAttributes();
     }
 
     /**
