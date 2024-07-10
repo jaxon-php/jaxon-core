@@ -14,16 +14,19 @@
 
 namespace Jaxon\Plugin;
 
+use ReflectionClass;
+
 interface AnnotationReaderInterface
 {
     /**
      * Get the class attributes from its annotations
      *
-     * @param string $sClass
+     * @param ReflectionClass|string $xReflectionClass
      * @param array $aMethods
      * @param array $aProperties
      *
      * @return array
      */
-    public function getAttributes(string $sClass, array $aMethods = [], array $aProperties = []): array;
+    public function getAttributes(ReflectionClass|string $xReflectionClass,
+        array $aMethods = [], array $aProperties = []): array;
 }

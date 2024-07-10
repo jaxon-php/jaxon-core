@@ -112,17 +112,13 @@ class AttrFormatter
             {
                 return '';
             }
-            $select = $on[0];
+            $select = trim($on[0]);
             $event = $on[1];
         }
-        $select = trim($select);
         $event = trim($event);
 
-        $code = (isset($options['target']) ? 'jxn-event="' : 'jxn-on="') . $event . '" ';
-        if($select !== '')
-        {
-            $code .= 'jxn-select="' . $select . '" ';
-        }
-        return $code . 'jxn-call="' . htmlentities(json_encode($xJsExpr->jsonSerialize())) . '"';
+        return ($select !== '' ? 'jxn-select="' . $select . '" ' : '') .
+            (isset($options['target']) ? 'jxn-event="' : 'jxn-on="') . $event .
+            '" jxn-call="' . htmlentities(json_encode($xJsExpr->jsonSerialize())) . '"';
     }
 }

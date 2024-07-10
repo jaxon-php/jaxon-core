@@ -103,7 +103,7 @@ class CallableObject
     {
         $this->aProtectedMethods = array_fill_keys($aProtectedMethods, true);
 
-        $aAnnotations = $xAnnotationReader->getAttributes($xReflectionClass->getName(),
+        $aAnnotations = $xAnnotationReader->getAttributes($xReflectionClass,
             $this->getPublicMethods(true), $this->getProperties());
         $this->xOptions = new CallableObjectOptions($aOptions, $aAnnotations);
     }
