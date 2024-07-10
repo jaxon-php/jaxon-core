@@ -16,7 +16,10 @@
 namespace Jaxon\App\Attribute;
 
 use Attribute;
+use Jaxon\Exception\SetupException;
 
+use function count;
+use function is_array;
 use function preg_match;
 
 #[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_METHOD | Attribute::IS_REPEATABLE)]
@@ -48,20 +51,30 @@ class DataBag extends AbstractAttribute
     /**
      * @inheritDoc
      */
-    protected function validate(): bool
+    public function validateArguments(array $aArguments)
     {
-        if(preg_match('/^[a-zA-Z][a-zA-Z0-9_\-\.]*$/', $this->sName) > 0)
+        if(count($aArguments) !== 1)
         {
-            return true;
+            throw new SetupException('The DataBag attribute requires only one argument');
         }
-        $this->setError($this->sName . ' is not a valid "name" value for the @databag annotation');
-        return false;
     }
 
     /**
      * @inheritDoc
      */
-    public function getValue()
+    protected function validateValues()
+    {
+        if(preg_match('/^[a-zA-Z][a-zA-Z0-9_\-\.]*$/', $this->sName) > 0)
+        {
+            return;
+        }
+        throw new SetupException($this->sName . ' is not a valid "name" value for the @databag annotation');
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function getValue()
     {
         if(is_array($this->xPrevValue))
         {

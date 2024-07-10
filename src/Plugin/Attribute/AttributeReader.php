@@ -121,12 +121,14 @@ class AttributeReader implements AnnotationReaderInterface
             $xInstance->setTypes($this->aImportedTypes[$sClass], $this->aPropertyTypes[$sClass]);
             if($sProperty !== '')
             {
-                $xInstance->setAttr($sProperty);
+                $xInstance->setProperty($sProperty);
             }
         }
+
+        $xInstance->validateArguments($xAttribute->getArguments());
         $xInstance->setPrevValue($aValues[$sName] ?? null);
 
-        return [$sName, $xInstance->getValue()];
+        return [$sName, $xInstance->getValidatedValue()];
     }
 
     /**

@@ -16,6 +16,9 @@
 namespace Jaxon\App\Attribute;
 
 use Attribute;
+use Jaxon\Exception\SetupException;
+
+use function count;
 
 #[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_METHOD)]
 class Exclude extends AbstractAttribute
@@ -36,6 +39,17 @@ class Exclude extends AbstractAttribute
     /**
      * @inheritDoc
      */
+    public function validateArguments(array $aArguments)
+    {
+        if(count($aArguments) !== 0 && count($aArguments) !== 1)
+        {
+            throw new SetupException('the Exclude attribute requires a single boolean or no argument');
+        }
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function getName(): string
     {
         return 'protected';
@@ -44,15 +58,7 @@ class Exclude extends AbstractAttribute
     /**
      * @inheritDoc
      */
-    protected function validate(): bool
-    {
-        return true;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getValue()
+    protected function getValue()
     {
         return $this->bValue;
     }

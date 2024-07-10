@@ -14,6 +14,9 @@
 
 namespace Jaxon\App\Attribute;
 
+use Jaxon\Exception\SetupException;
+
+use function count;
 use function strtolower;
 
 abstract class AbstractCallback extends AbstractAttribute
@@ -54,21 +57,31 @@ abstract class AbstractCallback extends AbstractAttribute
     /**
      * @inheritDoc
      */
-    protected function validate(): bool
+    public function validateArguments(array $aArguments)
     {
-        if(preg_match('/^[a-zA-Z][a-zA-Z0-9_]*$/', $this->sMethodName) > 0)
+        if(count($aArguments) !== 1 && count($aArguments) !== 2)
         {
-            return true;
+            throw new SetupException('the Exclude attribute requires a single boolean or no argument');
         }
-        $this->setError($this->sMethodName . ' is not a valid value for the ' .
-            $this->getType() . ' attribute');
-        return false;
     }
 
     /**
      * @inheritDoc
      */
-    public function getValue()
+    protected function validateValues()
+    {
+        if(preg_match('/^[a-zA-Z][a-zA-Z0-9_]*$/', $this->sMethodName) > 0)
+        {
+            return;
+        }
+        throw new SetupException($this->sMethodName . ' is not a valid value for the ' .
+            $this->getType() . ' attribute');
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function getValue()
     {
         if(is_array($this->xPrevValue))
         {

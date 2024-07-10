@@ -16,7 +16,9 @@
 namespace Jaxon\App\Attribute;
 
 use Attribute;
+use Jaxon\Exception\SetupException;
 
+use function count;
 use function is_array;
 use function ltrim;
 use function preg_match;
@@ -25,18 +27,18 @@ use function preg_match;
 class DI extends AbstractAttribute
 {
     /**
-     * The injected attribute name
+     * The injected property type
      *
      * @var string
      */
-    protected $sAttr = '';
+    protected $sPropertyType = '';
 
     /**
-     * The injected attribute type
+     * The injected property name
      *
      * @var string
      */
-    protected $sType = '';
+    protected $sPropertyName = '';
 
     /**
      * Imported types for the current class.
@@ -58,18 +60,18 @@ class DI extends AbstractAttribute
      */
     public function __construct(string $type = '', string $attr = '')
     {
-        $this->sType = $type;
-        $this->sAttr = $attr;
+        $this->sPropertyType = $type;
+        $this->sPropertyName = $attr;
     }
 
     /**
-     * @param string $sAttr
+     * @param string $sPropertyName
      *
      * @return void
      */
-    public function setAttr(string $sAttr)
+    public function setProperty(string $sPropertyName)
     {
-        $this->sAttr = $sAttr;
+        $this->sPropertyName = $sPropertyName;
     }
 
     /**
@@ -93,32 +95,38 @@ class DI extends AbstractAttribute
     }
 
     /**
-     * @return string
+     * @inheritDoc
      */
-    private function getFullClassName(): string
+    public function validateArguments(array $aArguments)
     {
-        if($this->sType === '')
+        $nArgCount = count($aArguments);
+        if($nArgCount > 2)
         {
-            // If no type is provided, take the attribute type.
-            return $this->aPropertyTypes[$this->sAttr] ?? '';
+            throw new SetupException('The DI attribute requires cannot take more than two arguments.');
         }
-        if($this->sType[0] === '\\')
+        if($this->xTarget === Attribute::TARGET_CLASS)
         {
-            return ltrim($this->sType, '\\');
+            if($nArgCount !== 2)
+            {
+                throw new SetupException('When applied to a class, the DI attribute requires two arguments.');
+            }
+            return;
         }
-
-        // Try to resolve the full class name
-        $nSeparatorPosition = strpos($this->sType, '\\');
-        $sClassprefix = $nSeparatorPosition === false ? $this->sType : substr($this->sType, 0, $nSeparatorPosition);
-        if(isset($this->aImportedTypes[$sClassprefix]))
+        if($this->xTarget === Attribute::TARGET_METHOD)
         {
-            // The class namespace is imported.
-            return $nSeparatorPosition === false ? $this->aImportedTypes[$sClassprefix] :
-                $this->aImportedTypes[$sClassprefix] . substr($this->sType, $nSeparatorPosition);
+            if($nArgCount !== 1 && $nArgCount !== 2)
+            {
+                throw new SetupException('When applied to a method, the DI attribute requires one or two arguments.');
+            }
+            return;
         }
-
-        // The class is in the current namespace.
-        return $this->sNamespace . '\\'. $this->sType;
+        if($this->xTarget === Attribute::TARGET_PROPERTY)
+        {
+            if($nArgCount !== 0 && $nArgCount !== 1)
+            {
+                throw new SetupException('When applied to a property, the DI attribute requires one or no argument.');
+            }
+        }
     }
 
     /**
@@ -126,76 +134,114 @@ class DI extends AbstractAttribute
      */
     protected function validateType(): bool
     {
-        return preg_match('/^(\\\)?([a-zA-Z][a-zA-Z0-9_]*)(\\\[a-zA-Z][a-zA-Z0-9_]*)*$/', $this->sType) > 0;
+        return preg_match('/^(\\\)?([a-zA-Z][a-zA-Z0-9_]*)(\\\[a-zA-Z][a-zA-Z0-9_]*)*$/', $this->sPropertyType) > 0;
     }
 
     /**
      * @return bool
      */
-    protected function validateAttr(): bool
+    protected function validateName(): bool
     {
-        return preg_match('/^[a-zA-Z][a-zA-Z0-9_]*$/', $this->sAttr) > 0;
+        return preg_match('/^[a-zA-Z][a-zA-Z0-9_]*$/', $this->sPropertyName) > 0;
     }
 
     /**
      * @inheritDoc
      */
-    protected function validate(): bool
+    protected function validateValues()
     {
-        // For a property, the only parameter is the type. Otherwise, it is the attribute.
         if($this->xTarget === Attribute::TARGET_PROPERTY)
         {
-            if($this->sAttr !== '')
-            {
-                $this->setError('The only property of the DI attribute must be the type');
-                return false;
-            }
-            if(!$this->validateType())
-            {
-                $this->setError($this->sType . ' is not a valid "type" value for the DI attribute');
-                return false;
-            }
-
-            return true;
+            // if($this->sPropertyName !== '')
+            // {
+            //     throw new SetupException('The "property" argument must not be set on the DI attribute on a property.');
+            // }
         }
-
-        if(!$this->validateType())
+        elseif($this->xTarget === Attribute::TARGET_METHOD)
         {
-            $this->setError($this->sType . ' is not a valid "type" value for the DI attribute');
-            return false;
+            // For a method, if only one parameter is provided, then make it the attribute name.
+            if($this->sPropertyName === '' && $this->sPropertyType !== '')
+            {
+                $this->sPropertyName = $this->sPropertyType;
+                $this->sPropertyType = '';
+            }
+            if($this->sPropertyName === '')
+            {
+                throw new SetupException('The "property" argument is mandatory on the DI attribute on a method.');
+            }
         }
-        if(!$this->validateAttr())
+        else // if($this->xTarget === Attribute::TARGET_CLASS)
         {
-            $this->setError($this->sAttr . ' is not a valid "attr" value for the DI attribute');
-            return false;
+            if($this->sPropertyType === '')
+            {
+                throw new SetupException('The "type" argument is mandatory on the DI attribute on a class.');
+            }
+            if($this->sPropertyName === '')
+            {
+                throw new SetupException('The "property" argument is mandatory on the DI attribute on a class.');
+            }
         }
 
-        return true;
+        if(!$this->validateName())
+        {
+            throw new SetupException($this->sPropertyName . ' is not a valid "property" value for the DI attribute.');
+        }
+        // An empty type is allowed on properties and methods...
+        if(($this->sPropertyType !== '' || $this->xTarget === Attribute::TARGET_CLASS) && !$this->validateType())
+        {
+            throw new SetupException($this->sPropertyType . ' is not a valid "type" value for the DI attribute.');
+        }
+        // But in this case the type must be resolved from the property type.
+        $this->sPropertyType = $this->getFullClassName();
+        if($this->sPropertyType === '')
+        {
+            throw new SetupException('An empty "type" value is not allowed for the DI attribute.');
+        }
+    }
+
+    /**
+     * @return string
+     */
+    private function getFullClassName(): string
+    {
+        if($this->sPropertyType === '')
+        {
+            // If no type is provided, take the attribute type.
+            return $this->aPropertyTypes[$this->sPropertyName] ?? '';
+        }
+        if($this->sPropertyType[0] === '\\')
+        {
+            return ltrim($this->sPropertyType, '\\');
+        }
+
+        // Try to resolve the full class name
+        $nSeparatorPosition = strpos($this->sPropertyType, '\\');
+        $sClassprefix = $nSeparatorPosition === false ? $this->sPropertyType :
+            substr($this->sPropertyType, 0, $nSeparatorPosition);
+        if(isset($this->aImportedTypes[$sClassprefix]))
+        {
+            // The class namespace is imported.
+            return $nSeparatorPosition === false ? $this->aImportedTypes[$sClassprefix] :
+                $this->aImportedTypes[$sClassprefix] . substr($this->sPropertyType, $nSeparatorPosition);
+        }
+
+        // The class is in the current namespace.
+        return $this->sNamespace . '\\'. $this->sPropertyType;
     }
 
     /**
      * @inheritDoc
-     * @throws AnnotationException
+     * @throws SetupException
      */
-    public function getValue()
+    protected function getValue()
     {
-        if($this->xTarget === Attribute::TARGET_METHOD)
-        {
-            // For a method, if only one parameter is provided, then make it the attribute name.
-            if($this->sAttr === '' && $this->sType !== '')
-            {
-                $this->sAttr = $this->sType;
-                $this->sType = '';
-            }
-        }
-
         if(is_array($this->xPrevValue))
         {
             // Append the current value to the array
-            $this->xPrevValue[$this->sAttr] = $this->getFullClassName();
+            $this->xPrevValue[$this->sPropertyName] = $this->sPropertyType;
             return $this->xPrevValue;
         }
         // Return the current value in an array
-        return [$this->sAttr => $this->getFullClassName()];
+        return [$this->sPropertyName => $this->sPropertyType];
     }
 }

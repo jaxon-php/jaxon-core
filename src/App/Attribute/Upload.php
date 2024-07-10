@@ -16,7 +16,9 @@
 namespace Jaxon\App\Attribute;
 
 use Attribute;
+use Jaxon\Exception\SetupException;
 
+use function count;
 use function preg_match;
 
 #[Attribute(Attribute::TARGET_METHOD)]
@@ -46,20 +48,30 @@ class Upload extends AbstractAttribute
     /**
      * @inheritDoc
      */
-    protected function validate(): bool
+    public function validateArguments(array $aArguments)
     {
-        if(preg_match('/^[a-zA-Z][a-zA-Z0-9_\-\.]*$/', $this->sFieldId) > 0)
+        if(count($aArguments) !== 1)
         {
-            return true;
+            throw new SetupException('The Upload attribute requires only one argument');
         }
-        $this->setError($this->sFieldId . ' is not a valid "field" value for the Upload attrubute');
-        return false;
     }
 
     /**
      * @inheritDoc
      */
-    public function getValue()
+    protected function validateValues()
+    {
+        if(preg_match('/^[a-zA-Z][a-zA-Z0-9_\-\.]*$/', $this->sFieldId) > 0)
+        {
+            return;
+        }
+        throw new SetupException($this->sFieldId . ' is not a valid "field" value for the Upload attrubute');
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function getValue()
     {
         return "'" . $this->sFieldId . "'" ; // The field id is surrounded with simple quotes.
     }

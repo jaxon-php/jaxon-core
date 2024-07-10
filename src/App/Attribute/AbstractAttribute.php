@@ -14,19 +14,12 @@
 
 namespace Jaxon\App\Attribute;
 
-use Jaxon\Exception\SetupException;
-
 abstract class AbstractAttribute
 {
     /**
      * @var mixed
      */
     protected $xTarget;
-
-    /**
-     * @var string
-     */
-    protected string $sError;
 
     /**
      * @var string
@@ -61,16 +54,6 @@ abstract class AbstractAttribute
     }
 
     /**
-     * @param string $sError
-     *
-     * @return void
-     */
-    protected function setError(string $sError)
-    {
-        $this->sError = $sError;
-    }
-
-    /**
      * Get the annotation name
      * This is the corresponding option name in the Jaxon config.
      *
@@ -79,11 +62,21 @@ abstract class AbstractAttribute
     abstract public function getName(): string;
 
     /**
-     * Validate the attribute parameters
+     * Validate the attribute arguments
+     *
+     * @return void
+     */
+    abstract public function validateArguments(array $aArguments);
+
+    /**
+     * Validate the attribute values
      *
      * @return bool
      */
-    abstract protected function validate(): bool;
+    protected function validateValues()
+    {
+        return true;
+    }
 
     /**
      * Get the annotation value
@@ -107,12 +100,9 @@ abstract class AbstractAttribute
      *
      * @return mixed
      */
-    public function value()
+    public function getValidatedValue()
     {
-        if(!$this->validate())
-        {
-            throw new SetupException($this->sError);
-        }
+        $this->validateValues();
 
         return $this->getValue();
     }
