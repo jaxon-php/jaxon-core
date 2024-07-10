@@ -14,6 +14,7 @@ use Jaxon\Plugin\Request\CallableFunction\CallableFunctionPlugin;
 use Jaxon\Request\Handler\ParameterReader;
 use Jaxon\Request\Validator;
 use Jaxon\Utils\Template\TemplateEngine;
+use ReflectionClass;
 
 trait CallableTrait
 {
@@ -28,7 +29,8 @@ trait CallableTrait
         $this->set(AnnotationReaderInterface::class, function() {
             return new class implements AnnotationReaderInterface
             {
-                public function getAttributes(string $sClass, array $aMethods = [], array $aProperties = []): array
+                public function getAttributes(ReflectionClass|string $xReflectionClass,
+                    array $aMethods = [], array $aProperties = []): array
                 {
                     return [false, [], []];
                 }
