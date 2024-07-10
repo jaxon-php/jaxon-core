@@ -68,7 +68,7 @@ class DataBag extends AbstractAttribute
         {
             return;
         }
-        throw new SetupException($this->sName . ' is not a valid "name" value for the @databag annotation');
+        throw new SetupException($this->sName . ' is not a valid "name" value for the Databag attribute');
     }
 
     /**

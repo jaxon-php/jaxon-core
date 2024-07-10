@@ -65,7 +65,7 @@ class Upload extends AbstractAttribute
         {
             return;
         }
-        throw new SetupException($this->sFieldId . ' is not a valid "field" value for the Upload attrubute');
+        throw new SetupException($this->sFieldId . ' is not a valid "field" value for the Upload attribute');
     }
 
     /**
