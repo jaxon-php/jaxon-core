@@ -59,6 +59,26 @@ class AttributeReader implements AnnotationReaderInterface
     {}
 
     /**
+     * Slugify a string
+     *
+     * @param string $str
+     *
+     * @return string
+     */
+    private function slugify(string $str): string
+    {
+        return strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $str), '-'));
+    }
+
+    private function log(string $msg)
+    {
+        // Save the types in the cache file
+        $sFileName = $this->xReflectionClass->getFileName();
+        $sFilePath = $this->sCacheDir . '/' . $this->slugify($sFileName) . '.log';
+        file_put_contents($sFilePath, $msg . "\n", FILE_APPEND);
+    }
+
+    /**
      * Read the property types
      *
      * @return void
@@ -123,8 +143,20 @@ class AttributeReader implements AnnotationReaderInterface
             {
                 $xInstance->setProperty($sProperty);
             }
+            $this->log('Set types on DI: ' . json_encode([
+                'name' => $sName,
+                'class' => $sClass,
+                'target' => $xAttribute->getTarget(),
+                'property' => $sProperty,
+                'imported' => $this->aImportedTypes[$sClass],
+                'property' => $this->aPropertyTypes[$sClass],
+            ]));
         }
 
+        $this->log('Attribute arguments: ' . json_encode([
+            'name' => $sName,
+            'arguments' => $xAttribute->getArguments(),
+        ]));
         $xInstance->validateArguments($xAttribute->getArguments());
         $xInstance->setPrevValue($aValues[$sName] ?? null);
 
@@ -152,6 +184,8 @@ class AttributeReader implements AnnotationReaderInterface
             {
                 $aValues[$sName] = $xValue;
             }
+            $this->log('Attribute value: ' . json_encode(['attr' => $xAttribute->getName(),
+                'name' => $sName, 'value' => $xValue, 'values' => $aValues]));
         }
         return $aValues;
     }
