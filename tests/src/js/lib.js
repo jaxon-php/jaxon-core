@@ -4,7 +4,7 @@
   }
 </style>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/umbrellajs@3.3.3/umbrella.min.js"  charset="UTF-8"></script>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/gh/jaxon-php/jaxon-js@5.0.0rc-14/dist/jaxon.core.js"  charset="UTF-8"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/gh/jaxon-php/jaxon-js@5.0.0-beta.1/dist/jaxon.core.js"  charset="UTF-8"></script>
 
 <script type="text/javascript"  charset="UTF-8">
 /* <![CDATA[ */
