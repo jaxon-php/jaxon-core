@@ -250,9 +250,9 @@ class CallableRegistry
      */
     public function getProtectedMethods(string $sClassName): array
     {
-        // Don't export the html() public method for Component objects
+        // Don't export the item() and html() public methods for Component objects.
         return is_subclass_of($sClassName, Component::class) ?
-            [...$this->aProtectedMethods, 'html'] :
+            [...$this->aProtectedMethods, 'item', 'html'] :
             (is_subclass_of($sClassName, AbstractCallable::class) ?
                 $this->aProtectedMethods : []);
     }
