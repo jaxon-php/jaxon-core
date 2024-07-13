@@ -12,7 +12,7 @@ use Jaxon\App\Dialog\MessageInterface;
 use Jaxon\App\Dialog\ModalInterface;
 use Jaxon\App\Dialog\QuestionInterface;
 use Jaxon\App\I18n\Translator;
-use Jaxon\App\View\AttrFormatter;
+use Jaxon\App\View\AttrHelper;
 use Jaxon\App\View\TemplateView;
 use Jaxon\App\View\ViewRenderer;
 use Jaxon\Di\ClassContainer;
@@ -61,8 +61,8 @@ trait ViewTrait
         $this->val(AlertLibrary::class, new AlertLibrary());
 
         // Helpers for HTML custom attributes formatting
-        $this->set(AttrFormatter::class, function($di) {
-            return new AttrFormatter($di->g(ClassContainer::class));
+        $this->set(AttrHelper::class, function($di) {
+            return new AttrHelper($di->g(ClassContainer::class));
         });
     }
 
@@ -173,12 +173,12 @@ trait ViewTrait
     }
 
     /**
-     * Get the custom attributes formatter
+     * Get the custom attributes helper
      *
-     * @return AttrFormatter
+     * @return AttrHelper
      */
-    public function getCustomAttrFormatter(): AttrFormatter
+    public function getCustomAttrHelper(): AttrHelper
     {
-        return $this->g(AttrFormatter::class);
+        return $this->g(AttrHelper::class);
     }
 }

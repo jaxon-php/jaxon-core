@@ -3,7 +3,7 @@
 namespace Jaxon;
 
 use Jaxon\App\Ajax\Lib;
-use Jaxon\App\View\AttrFormatter;
+use Jaxon\App\View\AttrHelper;
 use Jaxon\Exception\SetupException;
 use Jaxon\Script\Factory\ParameterFactory;
 use Jaxon\Script\JqCall;
@@ -95,13 +95,13 @@ function jq(string $sPath = '', $xContext = null): JqCall
 }
 
 /**
- * Get the custom attributes formatter
+ * Get the custom attributes helper
  *
- * @return AttrFormatter
+ * @return AttrHelper
  */
-function attr(): AttrFormatter
+function attr(): AttrHelper
 {
-    return jaxon()->di()->getCustomAttrFormatter();
+    return jaxon()->di()->getCustomAttrHelper();
 }
 
 // Register the Jaxon request and response plugins

@@ -220,13 +220,4 @@ interface AppInterface
      * @return void
      */
     public function asset(bool $bExport, bool $bMinify, string $sUri = '', string $sDir = '');
-
-    /**
-     * Read config options from a config file and set up the library
-     *
-     * @param string $sConfigFile    The full path to the config file
-     *
-     * @return void
-     */
-    public function setup(string $sConfigFile);
 }
