@@ -121,4 +121,17 @@ class AttrHelper
             (isset($options['target']) ? 'jxn-event="' : 'jxn-on="') . $event .
             '" jxn-call="' . htmlentities(json_encode($xJsExpr->jsonSerialize())) . '"';
     }
+
+    /**
+     * Set an event handler
+     *
+     * @param JsExpr $xJsExpr
+     * @param array $options
+     *
+     * @return string
+     */
+    public function click(JsExpr $xJsExpr, array $options = []): string
+    {
+        return $this->on('click', $xJsExpr, $options);
+    }
 }
