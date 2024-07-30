@@ -105,7 +105,7 @@ trait AppTrait
      */
     public function getAppOption(string $sName, $xDefault = null)
     {
-        return $this->xConfigManager->getOption($sName, $xDefault);
+        return $this->xConfigManager->getAppOption($sName, $xDefault);
     }
 
     /**
@@ -117,7 +117,7 @@ trait AppTrait
      */
     public function hasAppOption(string $sName): bool
     {
-        return $this->xConfigManager->hasOption($sName);
+        return $this->xConfigManager->hasAppOption($sName);
     }
 
     /**
