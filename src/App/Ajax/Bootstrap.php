@@ -131,13 +131,15 @@ class Bootstrap
     /**
      * Set the Jaxon application options.
      *
-     * @param Config $xAppConfig    The config options
-     *
      * @return void
      * @throws SetupException
      */
-    private function setupApp(Config $xAppConfig)
+    private function setupApp()
     {
+        // Get the app config options.
+        $xAppConfig = $this->xConfigManager->newConfig($this->aAppOptions);
+        // Save the app config.
+        $this->xConfigManager->setAppConfig($xAppConfig);
         // Register user functions and classes
         $this->xPackageManager->registerFromConfig($xAppConfig);
     }
@@ -156,11 +158,9 @@ class Bootstrap
 
         // Setup the lib config options.
         $this->xConfigManager->setOptions($this->aLibOptions);
-        // Get the app config options.
-        $xAppConfig = $this->xConfigManager->newConfig($this->aAppOptions);
 
         // Setup the app.
-        $this->setupApp($xAppConfig);
+        $this->setupApp();
         $this->onBoot();
     }
 

@@ -29,7 +29,12 @@ class ConfigManager
     /**
      * @var Config
      */
-    protected $xConfig;
+    protected $xLibConfig;
+
+    /**
+     * @var Config
+     */
+    protected $xAppConfig = null;
 
     /**
      * @var ConfigReader
@@ -58,7 +63,7 @@ class ConfigManager
         $this->xConfigReader = $xConfigReader;
         $this->xEventManager = $xEventManager;
         $this->xTranslator = $xTranslator;
-        $this->xConfig = new Config();
+        $this->xLibConfig = new Config();
     }
 
     /**
@@ -111,9 +116,9 @@ class ConfigManager
         try
         {
             // Read the options and save in the config.
-            $this->xConfig->setOptions($this->read($sConfigFile), $sConfigSection);
+            $this->xLibConfig->setOptions($this->read($sConfigFile), $sConfigSection);
             // Call the config change listeners.
-            $this->xEventManager->onChange($this->xConfig, '');
+            $this->xEventManager->onChange($this->xLibConfig, '');
         }
         catch(DataDepth $e)
         {
@@ -136,12 +141,12 @@ class ConfigManager
     {
         try
         {
-            if(!$this->xConfig->setOptions($aOptions, $sKeys))
+            if(!$this->xLibConfig->setOptions($aOptions, $sKeys))
             {
                 return false;
             }
             // Call the config change listeners.
-            $this->xEventManager->onChange($this->xConfig, '');
+            $this->xEventManager->onChange($this->xLibConfig, '');
             return true;
         }
         catch(DataDepth $e)
@@ -162,9 +167,9 @@ class ConfigManager
      */
     public function setOption(string $sName, $xValue)
     {
-        $this->xConfig->setOption($sName, $xValue);
+        $this->xLibConfig->setOption($sName, $xValue);
         // Call the config change listeners.
-        $this->xEventManager->onChange($this->xConfig, $sName);
+        $this->xEventManager->onChange($this->xLibConfig, $sName);
     }
 
     /**
@@ -177,7 +182,7 @@ class ConfigManager
      */
     public function getOption(string $sName, $xDefault = null)
     {
-        return $this->xConfig->getOption($sName, $xDefault);
+        return $this->xLibConfig->getOption($sName, $xDefault);
     }
 
     /**
@@ -189,7 +194,7 @@ class ConfigManager
      */
     public function hasOption(string $sName): bool
     {
-        return $this->xConfig->hasOption($sName);
+        return $this->xLibConfig->hasOption($sName);
     }
 
     /**
@@ -201,7 +206,44 @@ class ConfigManager
      */
     public function getOptionNames(string $sPrefix): array
     {
-        return $this->xConfig->getOptionNames($sPrefix);
+        return $this->xLibConfig->getOptionNames($sPrefix);
+    }
+
+    /**
+     * Set the application config
+     *
+     * @param Config $xConfig
+     *
+     * @return void
+     */
+    public function setAppConfig(Config $xConfig)
+    {
+        $this->xAppConfig = $xConfig;
+    }
+
+    /**
+     * Get the value of an application config option
+     *
+     * @param string $sName The option name
+     * @param mixed $xDefault The default value, to be returned if the option is not defined
+     *
+     * @return mixed
+     */
+    public function getAppOption(string $sName, $xDefault = null)
+    {
+        return $this->xAppConfig->getOption($sName, $xDefault);
+    }
+
+    /**
+     * Check the presence of an application config option
+     *
+     * @param string $sName The option name
+     *
+     * @return bool
+     */
+    public function hasAppOption(string $sName): bool
+    {
+        return $this->xAppConfig->hasOption($sName);
     }
 
     /**

@@ -96,6 +96,31 @@ trait AppTrait
     }
 
     /**
+     * Get the value of an application config option
+     *
+     * @param string $sName The option name
+     * @param mixed $xDefault The default value, to be returned if the option is not defined
+     *
+     * @return mixed
+     */
+    public function getAppOption(string $sName, $xDefault = null)
+    {
+        return $this->xConfigManager->getOption($sName, $xDefault);
+    }
+
+    /**
+     * Check the presence of an application config option
+     *
+     * @param string $sName The option name
+     *
+     * @return bool
+     */
+    public function hasAppOption(string $sName): bool
+    {
+        return $this->xConfigManager->hasOption($sName);
+    }
+
+    /**
      * Get the HTTP response
      *
      * @param string $sCode    The HTTP response code
