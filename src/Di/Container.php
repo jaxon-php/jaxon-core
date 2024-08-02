@@ -210,14 +210,18 @@ class Container
      *
      * @param string $sClass    The full class name
      * @param Closure $xClosure    The closure
+     * @param bool $bIsSingleton
      *
      * @return void
      */
-    public function set(string $sClass, Closure $xClosure)
+    public function set(string $sClass, Closure $xClosure, bool $bIsSingleton = true)
     {
-       $this->xLibContainer->offsetSet($sClass, function() use($xClosure) {
+        // Wrap the user closure into a new closure, so it can take this container as a parameter.
+        $xClosure = function() use($xClosure) {
             return $xClosure($this);
-        });
+        };
+        $this->xLibContainer->offsetSet($sClass,
+            $bIsSingleton ? $xClosure : $this->xLibContainer->factory($xClosure));
     }
 
     /**
