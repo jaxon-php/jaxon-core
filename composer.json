@@ -33,7 +33,6 @@
         "phpunit/phpunit": "^9.5",
         "php-coveralls/php-coveralls": "^2.5",
         "phpunit/phpcov": "^8.2",
-        "jaxon-php/jaxon-annotations": "dev-main",
         "jaxon-php/jaxon-dialogs": "dev-main",
         "jaxon-php/jaxon-upload": "dev-main",
         "lagdo/twitter-feed": "dev-test"

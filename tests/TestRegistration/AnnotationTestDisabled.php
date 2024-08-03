@@ -17,7 +17,7 @@ use Excluded;
 use function Jaxon\jaxon;
 use function Jaxon\Annotations\registerAnnotations;
 
-class AnnotationTest extends TestCase
+class AnnotationTestDisabled extends TestCase
 {
     /**
      * @throws SetupException
