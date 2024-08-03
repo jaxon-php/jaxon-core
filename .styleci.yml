@@ -1,0 +1,11 @@
+preset: psr1
+
+risky: false
+
+finder:
+  exclude:
+    - "tests"
+    - "templates"
+    - "translations"
+  name:
+    - "*.php"

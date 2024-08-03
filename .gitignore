@@ -1,0 +1,10 @@
+.project
+.settings/*
+jaxon-core.komodoproject
+vendor/
+composer.lock
+.idea
+/build/
+.phpunit.result.cache
+tests/upload/tmp
+tests/upload/dst

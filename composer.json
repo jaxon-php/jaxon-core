@@ -1,0 +1,66 @@
+{
+    "name": "jaxon-php/jaxon-core",
+    "type": "library",
+    "description": "Jaxon is an open source PHP library for easily creating Ajax web applications",
+    "authors": [
+        {"name": "Thierry Feuzeu"},
+        {"name": "Jared White"},
+        {"name": "J. Max Wilson"},
+        {"name": "Joseph Woolley"},
+        {"name": "Steffen Konerow"}
+    ],
+    "homepage": "https://www.jaxon-php.org",
+    "license": "BSD-3-Clause",
+    "keywords": ["Jaxon", "Xajax", "Ajax", "PHP", "Asynchronous"],
+    "support": {
+        "issues": "https://github.com/jaxon-php/jaxon-core/issues",
+        "source": "https://github.com/jaxon-php/jaxon-core"
+    },
+    "require": {
+        "php": ">=8.0",
+        "ext-json": "*",
+        "psr/log": "^1.0|^2.0|^3.0",
+        "psr/container": "^1.0|^2.0",
+        "psr/http-message": "^1.0|^2.0",
+        "psr/http-server-handler": "^1.0|^2.0",
+        "psr/http-server-middleware": "^1.0|^2.0",
+        "pimple/pimple": "^3.0",
+        "nyholm/psr7": "^1.8",
+        "nyholm/psr7-server": "^1.1",
+        "jaxon-php/jaxon-utils": "^1.1.2"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.5",
+        "php-coveralls/php-coveralls": "^2.5",
+        "phpunit/phpcov": "^8.2",
+        "jaxon-php/jaxon-annotations": "dev-main",
+        "jaxon-php/jaxon-dialogs": "dev-main",
+        "jaxon-php/jaxon-upload": "dev-main",
+        "lagdo/twitter-feed": "dev-test"
+    },
+    "autoload": {
+        "psr-4": {
+            "Jaxon\\": "src/"
+        },
+        "files": [
+            "src/start.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Jaxon\\Tests\\": "tests/",
+            "Jaxon\\Tests\\App\\": "tests/src/",
+            "Jaxon\\Tests\\Ns\\": "tests/src/Ns/"
+        }
+    },
+    "scripts": {
+        "test": [
+            "@clearCache",
+            "@putenv XDEBUG_MODE=coverage",
+            "vendor/bin/phpunit"
+        ],
+        "clearCache": "rm -rf cache/*"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
