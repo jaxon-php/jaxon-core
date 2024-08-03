@@ -6,7 +6,6 @@ use Jaxon\App\Config\ConfigManager;
 use Jaxon\App\I18n\Translator;
 use Jaxon\Di\ClassContainer;
 use Jaxon\Di\Container;
-use Jaxon\Plugin\AnnotationReaderInterface;
 use Jaxon\Plugin\Request\CallableClass\CallableClassPlugin;
 use Jaxon\Plugin\Request\CallableClass\CallableDirPlugin;
 use Jaxon\Plugin\Request\CallableClass\CallableRegistry;
@@ -14,7 +13,6 @@ use Jaxon\Plugin\Request\CallableFunction\CallableFunctionPlugin;
 use Jaxon\Request\Handler\ParameterReader;
 use Jaxon\Request\Validator;
 use Jaxon\Utils\Template\TemplateEngine;
-use ReflectionClass;
 
 trait CallableTrait
 {
@@ -25,17 +23,6 @@ trait CallableTrait
      */
     private function registerCallables()
     {
-        // By default, register a fake annotation reader.
-        $this->set(AnnotationReaderInterface::class, function() {
-            return new class implements AnnotationReaderInterface
-            {
-                public function getAttributes(ReflectionClass|string $xReflectionClass,
-                    array $aMethods = [], array $aProperties = []): array
-                {
-                    return [false, [], []];
-                }
-            };
-        });
         // Validator
         $this->set(Validator::class, function($di) {
             return new Validator($di->g(ConfigManager::class), $di->g(Translator::class));

@@ -2,8 +2,10 @@
 
 namespace Jaxon\Di\Traits;
 
+use Jaxon\Plugin\AnnotationReaderInterface;
 use Jaxon\Plugin\Attribute\AttributeParser;
 use Jaxon\Plugin\Attribute\AttributeReader;
+use ReflectionClass;
 
 trait AttributeTrait
 {
@@ -22,6 +24,18 @@ trait AttributeTrait
         // Attribute reader
         $this->set(AttributeReader::class, function($di) {
             return new AttributeReader($di->g(AttributeParser::class), $di->g('jaxon_attributes_cache_dir'));
+        });
+
+        // By default, register a fake annotation reader.
+        $this->set(AnnotationReaderInterface::class, function() {
+            return new class implements AnnotationReaderInterface
+            {
+                public function getAttributes(ReflectionClass|string $xReflectionClass,
+                    array $aMethods = [], array $aProperties = []): array
+                {
+                    return [false, [], []];
+                }
+            };
         });
     }
 }
