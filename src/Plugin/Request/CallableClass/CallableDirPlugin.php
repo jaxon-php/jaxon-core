@@ -42,8 +42,8 @@ class CallableDirPlugin implements PluginInterface, CallableRegistryInterface
      * The class constructor
      *
      * @param ClassContainer $cls
-     * @param CallableRegistry  $xRegistry
-     * @param Translator  $xTranslator
+     * @param CallableRegistry $xRegistry
+     * @param Translator $xTranslator
      */
     public function __construct(protected ClassContainer $cls,
         protected CallableRegistry $xRegistry, protected Translator $xTranslator)

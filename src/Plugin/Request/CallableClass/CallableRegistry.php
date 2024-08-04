@@ -18,6 +18,7 @@ use Composer\Autoload\ClassLoader;
 use Jaxon\App\AbstractCallable;
 use Jaxon\App\Component;
 use Jaxon\Di\ClassContainer;
+use Jaxon\Utils\Config\Config;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use ReflectionClass;
@@ -62,6 +63,13 @@ class CallableRegistry
      * @var array
      */
     protected $aNamespaces = [];
+
+    /**
+     * The package providing the class or directory being registered.
+     *
+     * @var Config|null
+     */
+    protected $xCurrentConfig = null;
 
     /**
      * The string that will be used to compute the js file hash
@@ -124,6 +132,16 @@ class CallableRegistry
         {
             $this->aProtectedMethods[] = $xMethod->getName();
         }
+    }
+
+    /**
+     * @param Config|null $xConfig
+     *
+     * @return void
+     */
+    public function setCurrentConfig(Config $xConfig = null)
+    {
+        $this->xCurrentConfig = $xConfig;
     }
 
     /**
@@ -199,6 +217,10 @@ class CallableRegistry
                 $aClassOptions['functions'] = array_merge($aClassOptions['functions'], $aOptionGroup['functions']);
             }
         }
+        if(isset($aDirectoryOptions['config']) && !isset($aClassOptions['config']))
+        {
+            $aClassOptions['config'] = $aDirectoryOptions['config'];
+        }
 
         return $aClassOptions;
     }
@@ -211,11 +233,27 @@ class CallableRegistry
      *
      * @return void
      */
-    public function addClass(string $sClassName, array $aClassOptions, array $aDirectoryOptions = [])
+    private function _addClass(string $sClassName, array $aClassOptions, array $aDirectoryOptions = [])
     {
         $aOptions = $this->makeClassOptions($sClassName, $aClassOptions, $aDirectoryOptions);
         $this->sHash .= $sClassName . $aOptions['timestamp'];
         $this->cls->addClass($sClassName, $aOptions);
+    }
+
+    /**
+     *
+     * @param string $sClassName    The class name
+     * @param array $aClassOptions    The default class options
+     *
+     * @return void
+     */
+    public function addClass(string $sClassName, array $aClassOptions)
+    {
+        if($this->xCurrentConfig !== null)
+        {
+            $aClassOptions['config'] = $this->xCurrentConfig;
+        }
+        $this->_addClass($sClassName, $aClassOptions);
     }
 
     /**
@@ -228,14 +266,15 @@ class CallableRegistry
     public function setNamespaceClassOptions(string $sClassName)
     {
         // Find the corresponding namespace
-        foreach($this->aNamespaceOptions as $sNamespace => $aOptions)
+        foreach($this->aNamespaceOptions as $sNamespace => $aDirectoryOptions)
         {
             // Check if the namespace matches the class.
             if(strncmp($sClassName, $sNamespace . '\\', strlen($sNamespace) + 1) === 0)
             {
                 // Save the class options
-                $this->cls->addClass($sClassName, $this->makeClassOptions($sClassName,
-                    ['namespace' => $sNamespace], $aOptions));
+                $aClassOptions = ['namespace' => $sNamespace];
+                $aOptions = $this->makeClassOptions($sClassName, $aClassOptions, $aDirectoryOptions);
+                $this->cls->addClass($sClassName, $aOptions);
                 return;
             }
         }
@@ -270,6 +309,10 @@ class CallableRegistry
         if(!isset($aOptions['autoload']))
         {
             $aOptions['autoload'] = true;
+        }
+        if($this->xCurrentConfig !== null)
+        {
+            $aOptions['config'] = $this->xCurrentConfig;
         }
         $this->aDirectoryOptions[$sDirectory] = $aOptions;
     }
@@ -315,6 +358,10 @@ class CallableRegistry
         {
             $aOptions['autoload'] = true;
         }
+        if($this->xCurrentConfig !== null)
+        {
+            $aOptions['config'] = $this->xCurrentConfig;
+        }
         // Register the dir with PSR4 autoloading
         if(($aOptions['autoload']) && $this->xAutoloader != null)
         {
@@ -340,7 +387,7 @@ class CallableRegistry
 
         // Browse directories without namespaces and read all the files.
         $aClassMap = [];
-        foreach($this->aDirectoryOptions as $sDirectory => $aOptions)
+        foreach($this->aDirectoryOptions as $sDirectory => $aDirectoryOptions)
         {
             $itFile = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($sDirectory));
             // Iterate on dir content
@@ -355,11 +402,11 @@ class CallableRegistry
                 $sClassName = $xFile->getBasename('.php');
                 $aClassOptions = ['timestamp' => $xFile->getMTime()];
                 // No more custom classmap autoloading. The file will be included when needed.
-                if(($aOptions['autoload']))
+                if(($aDirectoryOptions['autoload']))
                 {
                     $aClassMap[$sClassName] = $xFile->getPathname();
                 }
-                $this->addClass($sClassName, $aClassOptions, $aOptions);
+                $this->_addClass($sClassName, $aClassOptions, $aDirectoryOptions);
             }
         }
         // Set classmap autoloading
@@ -385,12 +432,12 @@ class CallableRegistry
 
         // Browse directories with namespaces and read all the files.
         $sDS = DIRECTORY_SEPARATOR;
-        foreach($this->aNamespaceOptions as $sNamespace => $aOptions)
+        foreach($this->aNamespaceOptions as $sNamespace => $aDirectoryOptions)
         {
-            $this->_addNamespace($sNamespace, ['separator' => $aOptions['separator']]);
+            $this->_addNamespace($sNamespace, ['separator' => $aDirectoryOptions['separator']]);
 
             // Iterate on dir content
-            $sDirectory = $aOptions['directory'];
+            $sDirectory = $aDirectoryOptions['directory'];
             $itFile = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($sDirectory));
             foreach($itFile as $xFile)
             {
@@ -409,11 +456,11 @@ class CallableRegistry
                     $sClassPath .= '\\' . $sRelativePath;
                 }
 
-                $this->_addNamespace($sClassPath, ['separator' => $aOptions['separator']]);
+                $this->_addNamespace($sClassPath, ['separator' => $aDirectoryOptions['separator']]);
 
                 $sClassName = $sClassPath . '\\' . $xFile->getBasename('.php');
                 $aClassOptions = ['namespace' => $sNamespace, 'timestamp' => $xFile->getMTime()];
-                $this->addClass($sClassName, $aClassOptions, $aOptions);
+                $this->_addClass($sClassName, $aClassOptions, $aDirectoryOptions);
             }
         }
     }

@@ -20,8 +20,9 @@ use Jaxon\App\I18n\Translator;
 use Jaxon\App\View\ViewRenderer;
 use Jaxon\Di\Container;
 use Jaxon\Exception\SetupException;
-use Jaxon\Plugin\Code\CodeGenerator;
 use Jaxon\Plugin\AbstractPackage;
+use Jaxon\Plugin\Code\CodeGenerator;
+use Jaxon\Plugin\Request\CallableClass\CallableRegistry;
 use Jaxon\Request\Handler\CallbackManager;
 use Jaxon\Utils\Config\Config;
 
@@ -35,63 +36,22 @@ use function trim;
 class PackageManager
 {
     /**
-     * @var Container
-     */
-    protected $di;
-
-    /**
-     * @var PluginManager
-     */
-    protected $xPluginManager;
-
-    /**
-     * @var CallbackManager
-     */
-    protected $xCallbackManager;
-
-    /**
-     * @var ConfigManager
-     */
-    protected $xConfigManager;
-
-    /**
-     * @var CodeGenerator
-     */
-    private $xCodeGenerator;
-
-    /**
-     * @var ViewRenderer
-     */
-    protected $xViewRenderer;
-
-    /**
-     * @var Translator
-     */
-    protected $xTranslator;
-
-    /**
      * The constructor
      *
      * @param Container $di
+     * @param Translator $xTranslator
      * @param PluginManager $xPluginManager
      * @param ConfigManager $xConfigManager
-     * @param CallbackManager $xCallbackManager
      * @param CodeGenerator $xCodeGenerator
      * @param ViewRenderer $xViewRenderer
-     * @param Translator $xTranslator
+     * @param CallbackManager $xCallbackManager
+     * @param CallableRegistry $xRegistry
      */
-    public function __construct(Container $di, PluginManager $xPluginManager,
-        ConfigManager $xConfigManager, CallbackManager $xCallbackManager,
-        CodeGenerator $xCodeGenerator, ViewRenderer $xViewRenderer, Translator $xTranslator)
-    {
-        $this->di = $di;
-        $this->xPluginManager = $xPluginManager;
-        $this->xConfigManager = $xConfigManager;
-        $this->xCallbackManager = $xCallbackManager;
-        $this->xCodeGenerator = $xCodeGenerator;
-        $this->xViewRenderer = $xViewRenderer;
-        $this->xTranslator = $xTranslator;
-    }
+    public function __construct(private Container $di, private Translator $xTranslator,
+        private PluginManager $xPluginManager, private ConfigManager $xConfigManager,
+        private CodeGenerator $xCodeGenerator, private ViewRenderer $xViewRenderer,
+        private CallbackManager $xCallbackManager, private CallableRegistry $xRegistry)
+    {}
 
     /**
      * Save items in the DI container
@@ -180,10 +140,17 @@ class PackageManager
      */
     private function registerItemsFromConfig(Config $xConfig, ?Config $xUserConfig = null)
     {
+        // Set the config for the registered callables.
+        $this->xRegistry->setCurrentConfig($xConfig);
+
         // Register functions, classes and directories
         $this->registerCallables($xConfig->getOption('functions', []), Jaxon::CALLABLE_FUNCTION);
         $this->registerCallables($xConfig->getOption('classes', []), Jaxon::CALLABLE_CLASS);
         $this->registerCallables($xConfig->getOption('directories', []), Jaxon::CALLABLE_DIR);
+
+        // Unset the current config.
+        $this->xRegistry->setCurrentConfig();
+
         // Register the view namespaces
         // Note: the $xUserConfig can provide a "template" option, which is used to customize
         // the user defined view namespaces. That's why it is needed here.
@@ -262,7 +229,9 @@ class PackageManager
         // Register the declarations in the package config.
         $xAppConfig = $this->getPackageLibConfig($sClassName);
         $xUserConfig = $this->getPackageUserConfig($aUserOptions);
+
         $this->registerItemsFromConfig($xAppConfig, $xUserConfig);
+
         // Register the package and its options in the DI
         $this->di->registerPackage($sClassName, $xUserConfig);
 
