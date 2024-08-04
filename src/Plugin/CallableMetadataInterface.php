@@ -1,7 +1,7 @@
 <?php
 
 /**
- * AnnotationReaderInterface.php
+ * CallableMetadataInterface.php
  *
  * Read Jaxon class annotations.
  *
@@ -16,7 +16,7 @@ namespace Jaxon\Plugin;
 
 use ReflectionClass;
 
-interface AnnotationReaderInterface
+interface CallableMetadataInterface
 {
     /**
      * Get the class attributes from its annotations

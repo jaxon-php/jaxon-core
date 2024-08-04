@@ -19,7 +19,6 @@ use Jaxon\App\Config\ConfigManager;
 use Jaxon\App\Dialog\DialogManager;
 use Jaxon\App\I18n\Translator;
 use Jaxon\Exception\SetupException;
-use Jaxon\Plugin\AnnotationReaderInterface;
 use Jaxon\Plugin\Request\CallableClass\CallableClassHelper;
 use Jaxon\Plugin\Request\CallableClass\CallableObject;
 use Jaxon\Plugin\Request\CallableClass\CallableRegistry;
@@ -318,8 +317,6 @@ class ClassContainer
             return;
         }
 
-        $aOptions = $this->getClassOptions($sClassName);
-
         // Register the helper class
         $this->set($this->getCallableHelperKey($sClassName), function() use($sClassName) {
             $xFactory = $this->di->getCallFactory();
@@ -327,6 +324,8 @@ class ClassContainer
                 $this->di->getViewRenderer(), $this->di->getLogger(),
                 $this->di->getSessionManager(), $this->di->getUploadHandler());
         });
+
+        $aOptions = $this->getClassOptions($sClassName);
 
         // Register the reflection class
         try
@@ -347,8 +346,7 @@ class ClassContainer
             $xRegistry = $this->di->g(CallableRegistry::class);
             $aProtectedMethods = $xRegistry->getProtectedMethods($sClassName);
 
-            return new CallableObject($this, $this->di, $xReflectionClass,
-                $this->di->g(AnnotationReaderInterface::class), $aOptions, $aProtectedMethods);
+            return new CallableObject($this, $this->di, $xReflectionClass, $aOptions, $aProtectedMethods);
         });
 
         // Register the user class, but only if the user didn't already.

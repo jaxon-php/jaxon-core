@@ -2,7 +2,6 @@
 
 namespace Jaxon\Tests\TestUi;
 
-require_once __DIR__ . '/../../vendor/jaxon-php/jaxon-dialogs/src/start.php';
 require_once __DIR__ . '/../src/dialog.php';
 
 use Jaxon\Jaxon;

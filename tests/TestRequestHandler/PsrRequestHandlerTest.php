@@ -2,8 +2,6 @@
 
 namespace Jaxon\Tests\TestRequestHandler;
 
-require_once(__DIR__ . '/../../vendor/jaxon-php/jaxon-upload/src/start.php');
-
 use Jaxon\App\View\TemplateView;
 use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;

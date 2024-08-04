@@ -31,9 +31,8 @@ class AttributeTest extends TestCase
         $this->sCacheDir = __DIR__ . '/../cache';
         @mkdir($this->sCacheDir);
 
-        jaxon()->setOption('core.attributes.enabled', true);
         jaxon()->di()->val('jaxon_attributes_cache_dir', $this->sCacheDir);
-        $this->xAttributeReader = jaxon()->di()->g(AttributeReader::class);
+        $this->xAttributeReader = jaxon()->di()->getMetadataReader('attributes');
     }
 
     /**
@@ -68,9 +67,6 @@ class AttributeTest extends TestCase
      */
     public function testDataBagAttribute()
     {
-        // Can be called multiple times without error.
-        jaxon()->setOption('core.attributes.enabled', true);
-
         [$bExcluded, $aProperties, ] = $this->xAttributeReader->getAttributes(Attribute::class, ['withBags']);
 
         $this->assertFalse($bExcluded);

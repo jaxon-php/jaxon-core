@@ -30,9 +30,10 @@ use Jaxon\App\CallableClass;
 use Jaxon\Di\ClassContainer;
 use Jaxon\Di\Container;
 use Jaxon\Exception\SetupException;
-use Jaxon\Plugin\AnnotationReaderInterface;
+use Jaxon\Plugin\CallableMetadataInterface;
 use Jaxon\Request\Target;
 use Jaxon\Response\AbstractResponse;
+use Jaxon\Utils\Config\Config;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionMethod;
@@ -93,19 +94,32 @@ class CallableObject
      * @param ClassContainer $cls
      * @param Container $di
      * @param ReflectionClass $xReflectionClass
-     * @param AnnotationReaderInterface $xAnnotationReader
      * @param array $aOptions
      * @param array $aProtectedMethods
      */
     public function __construct(protected ClassContainer $cls, protected Container $di,
-        private ReflectionClass $xReflectionClass, AnnotationReaderInterface $xAnnotationReader,
-        array $aOptions, array $aProtectedMethods)
+        private ReflectionClass $xReflectionClass, array $aOptions, array $aProtectedMethods)
     {
         $this->aProtectedMethods = array_fill_keys($aProtectedMethods, true);
 
-        $aAnnotations = $xAnnotationReader->getAttributes($xReflectionClass,
-            $this->getPublicMethods(true), $this->getProperties());
-        $this->xOptions = new CallableObjectOptions($aOptions, $aAnnotations);
+        $aAttributes = $this->getAttributes($xReflectionClass, $aOptions);
+        $this->xOptions = new CallableObjectOptions($aOptions, $aAttributes);
+    }
+
+    private function getAttributes(ReflectionClass $xReflectionClass, array $aOptions): array
+    {
+        /** @var Config|null */
+        $xConfig = $aOptions['config'] ?? null;
+        if($xConfig === null)
+        {
+            return [false, [], []];
+        }
+
+        /** @var CallableMetadataInterface */
+        $xMetadataReader = $this->di->getMetadataReader($xConfig->getOption('metadata', ''));
+        $aMethods = $this->getPublicMethods(true);
+        $aProperties = $this->getProperties();
+        return $xMetadataReader->getAttributes($xReflectionClass, $aMethods, $aProperties);
     }
 
     /**

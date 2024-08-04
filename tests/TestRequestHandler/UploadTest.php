@@ -2,12 +2,9 @@
 
 namespace Jaxon\Tests\TestRequestHandler;
 
-require_once(__DIR__ . '/../../vendor/jaxon-php/jaxon-upload/src/start.php');
-
 use Jaxon\Jaxon;
 use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;
-use Jaxon\Request\Upload\NameGeneratorInterface;
 use Jaxon\Upload\UploadResponse;
 use Nyholm\Psr7\UploadedFile;
 use Nyholm\Psr7Server\ServerRequestCreator;

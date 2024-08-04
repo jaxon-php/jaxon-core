@@ -15,6 +15,7 @@ use Jaxon\Plugin\Code\CodeGenerator;
 use Jaxon\Plugin\Code\MinifierInterface;
 use Jaxon\Plugin\Manager\PackageManager;
 use Jaxon\Plugin\Manager\PluginManager;
+use Jaxon\Plugin\Request\CallableClass\CallableRegistry;
 use Jaxon\Plugin\Response\DataBag\DataBagPlugin;
 use Jaxon\Plugin\Response\Dialog\DialogPlugin;
 use Jaxon\Plugin\Response\Script\ScriptPlugin;
@@ -42,9 +43,10 @@ trait PluginTrait
         });
         // Package manager
         $this->set(PackageManager::class, function($di) {
-            return new PackageManager($di->g(Container::class), $di->g(PluginManager::class),
-                $di->g(ConfigManager::class), $di->g(CallbackManager::class),
-                $di->g(CodeGenerator::class), $di->g(ViewRenderer::class), $di->g(Translator::class));
+            return new PackageManager($di->g(Container::class), $di->g(Translator::class),
+                $di->g(PluginManager::class), $di->g(ConfigManager::class),
+                $di->g(CodeGenerator::class), $di->g(ViewRenderer::class),
+                $di->g(CallbackManager::class), $di->g(CallableRegistry::class));
         });
         // Code Generation
         $this->set(MinifierInterface::class, function() {

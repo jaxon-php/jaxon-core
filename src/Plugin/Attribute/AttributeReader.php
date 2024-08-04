@@ -17,7 +17,7 @@ namespace Jaxon\Plugin\Attribute;
 use Jaxon\App\Attribute\AbstractAttribute;
 use Jaxon\App\Attribute\DI as DiAttribute;
 use Jaxon\Exception\SetupException;
-use Jaxon\Plugin\AnnotationReaderInterface;
+use Jaxon\Plugin\CallableMetadataInterface;
 use Error;
 use Exception;
 use ReflectionAttribute;
@@ -30,7 +30,7 @@ use function array_merge;
 use function count;
 use function is_a;
 
-class AttributeReader implements AnnotationReaderInterface
+class AttributeReader implements CallableMetadataInterface
 {
     /**
      * @var ReflectionClass

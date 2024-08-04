@@ -100,7 +100,7 @@ class Container
         $this->registerCallables();
         $this->registerViews();
         $this->registerUtils();
-        $this->registerAttributes();
+        $this->registerMetadataReaders();
     }
 
     /**
