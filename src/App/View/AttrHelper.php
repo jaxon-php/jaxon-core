@@ -115,10 +115,9 @@ class AttrHelper
             $select = trim($on[0]);
             $event = $on[1];
         }
-        $event = trim($event);
 
         return ($select !== '' ? 'jxn-select="' . $select . '" ' : '') .
-            (isset($options['target']) ? 'jxn-event="' : 'jxn-on="') . $event .
+            (isset($options['target']) ? 'jxn-event="' : 'jxn-on="') . trim($event) .
             '" jxn-call="' . htmlentities(json_encode($xJsExpr->jsonSerialize())) . '"';
     }
 

@@ -84,24 +84,13 @@ abstract class Component extends AbstractCallable
     }
 
     /**
-     * Show the attached DOM node.
+     * Show/hide the attached DOM node.
      *
      * @return ComponentResponse
      */
-    final public function show(): ComponentResponse
+    final public function visible(bool $bVisible): ComponentResponse
     {
-        $this->response->jq()->show();
-        return $this->response;
-    }
-
-    /**
-     * Hide the attached DOM node.
-     *
-     * @return ComponentResponse
-     */
-    final public function hide(): ComponentResponse
-    {
-        $this->response->jq()->hide();
+        $bVisible ? $this->response->jq()->show() : $this->response->jq()->hide();
         return $this->response;
     }
 }
