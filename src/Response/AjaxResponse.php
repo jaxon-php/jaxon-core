@@ -252,17 +252,17 @@ abstract class AjaxResponse extends AbstractResponse
     /**
      * Render an HTML pagination control.
      *
-     * @param int $nCurrentPage     The current page number
+     * @param int $nPageNumber     The current page number
      * @param int $nItemsPerPage    The number of items per page
      * @param int $nTotalItems      The total number of items
      *
      * @return Paginator
      */
-    public function paginator(int $nCurrentPage, int $nItemsPerPage, int $nTotalItems): Paginator
+    public function paginator(int $nPageNumber, int $nItemsPerPage, int $nTotalItems): Paginator
     {
         /** @var PaginatorPlugin */
         $xPlugin = $this->plugin('pg');
-        return $xPlugin->paginator($nCurrentPage, $nItemsPerPage, $nTotalItems);
+        return $xPlugin->paginator($nPageNumber, $nItemsPerPage, $nTotalItems);
     }
 
     /**

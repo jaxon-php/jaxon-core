@@ -67,17 +67,17 @@ class PaginatorTest extends TestCase
         $this->assertCount(0, $aPages);
 
         $this->xPaginatorPlugin->paginator(1, 10, 0)
-            ->paginate(rq('Sample')->method(jq('#div')->val), 'wrapper');
+            ->render(rq('Sample')->method(jq('#div')->val), 'wrapper');
         $this->assertCount(1, $this->xResponse->getCommands());
 
         $this->xResponse->clearCommands();
         $this->xPaginatorPlugin->paginator(1, 10, 7)
-            ->paginate(rq('Sample')->method(jq('#div')->val), 'wrapper');
+            ->render(rq('Sample')->method(jq('#div')->val), 'wrapper');
         $this->assertCount(1, $this->xResponse->getCommands());
 
         $this->xResponse->clearCommands();
         $this->xPaginatorPlugin->paginator(1, 10, 10)
-            ->paginate(rq('Sample')->method(jq('#div')->val), 'wrapper');
+            ->render(rq('Sample')->method(jq('#div')->val), 'wrapper');
         $this->assertCount(1, $this->xResponse->getCommands());
     }
 
@@ -97,7 +97,7 @@ class PaginatorTest extends TestCase
             '<li class="enabled" data-page="2"><a role="link">2</a></li>' .
             '<li class="enabled" data-page="2"><a role="link">&raquo;</a></li>' .
             '</ul>';
-        $xPaginator->paginate(rq('Sample')->method('string', 26, true), 'wrapper');
+        $xPaginator->render(rq('Sample')->method('string', 26, true), 'wrapper');
         $aCommands = $this->xResponse->getCommands();
 
         $this->assertCount(2, $aCommands);
@@ -132,7 +132,7 @@ class PaginatorTest extends TestCase
             '<li class="active"><a role="link">2</a></li>' .
             '<li class="disabled"><span>&raquo;</span></li>' .
             '</ul>';
-        $xPaginator->paginate(rq('Sample')->method('string', 26, true), 'wrapper');
+        $xPaginator->render(rq('Sample')->method('string', 26, true), 'wrapper');
         $aCommands = $this->xResponse->getCommands();
 
         $this->assertCount(2, $aCommands);
@@ -164,7 +164,7 @@ class PaginatorTest extends TestCase
             '<li class="enabled" data-page="3"><a role="link">3</a></li>' .
             '<li class="enabled" data-page="3"><a role="link">&raquo;</a></li>' .
             '</ul>';
-        $xPaginator->paginate(rq('Sample')->method('string', 26, true), 'wrapper');
+        $xPaginator->render(rq('Sample')->method('string', 26, true), 'wrapper');
         $aCommands = $this->xResponse->getCommands();
 
         $this->assertCount(2, $aCommands);
@@ -196,7 +196,7 @@ class PaginatorTest extends TestCase
             '<li class="enabled" data-page="3"><a role="link">3</a></li>' .
             '<li class="enabled" data-page="2"><a role="link">&raquo;</a></li>' .
             '</ul>';
-        $xPaginator->paginate(rq('Sample')->method('string', pm()->page(), 26, true), 'wrapper');
+        $xPaginator->render(rq('Sample')->method('string', pm()->page(), 26, true), 'wrapper');
         $aCommands = $this->xResponse->getCommands();
 
         $this->assertCount(2, $aCommands);
@@ -231,7 +231,7 @@ class PaginatorTest extends TestCase
             '<li class="enabled" data-page="2"><a role="link">2</a></li>' .
             '<li class="enabled" data-page="2"><a role="link">Next</a></li>' .
             '</ul>';
-        $xPaginator->paginate(rq('Sample')->method('string', 26, true), 'wrapper');
+        $xPaginator->render(rq('Sample')->method('string', 26, true), 'wrapper');
         $aCommands = $this->xResponse->getCommands();
 
         $this->assertCount(2, $aCommands);
@@ -266,7 +266,7 @@ class PaginatorTest extends TestCase
             '<li class="enabled" data-page="10"><a role="link">10</a></li>' .
             '<li class="enabled" data-page="3"><a role="link">Next</a></li>' .
             '</ul>';
-        $xPaginator->paginate(rq('Sample')->method('string', 26, true), 'wrapper');
+        $xPaginator->render(rq('Sample')->method('string', 26, true), 'wrapper');
         $aCommands = $this->xResponse->getCommands();
 
         $this->assertCount(2, $aCommands);
@@ -301,7 +301,7 @@ class PaginatorTest extends TestCase
             '<li class="enabled" data-page="10"><a role="link">10</a></li>' .
             '<li class="enabled" data-page="7"><a role="link">Next</a></li>' .
             '</ul>';
-        $xPaginator->paginate(rq('Sample')->method('string', 26, true), 'wrapper');
+        $xPaginator->render(rq('Sample')->method('string', 26, true), 'wrapper');
         $aCommands = $this->xResponse->getCommands();
 
         $this->assertCount(2, $aCommands);
@@ -338,7 +338,7 @@ class PaginatorTest extends TestCase
             '<li class="enabled" data-page="10"><a role="link">10</a></li>' .
             '<li class="enabled" data-page="7"><a role="link">Next</a></li>' .
             '</ul>';
-        $xPaginator->paginate(rq('Sample')->method('string', 26, true), 'wrapper');
+        $xPaginator->render(rq('Sample')->method('string', 26, true), 'wrapper');
         $aCommands = $this->xResponse->getCommands();
 
         $this->assertCount(2, $aCommands);
@@ -373,7 +373,7 @@ class PaginatorTest extends TestCase
             '<li class="active"><a role="link">10</a></li>' .
             '<li class="disabled"><span>Next</span></li>' .
             '</ul>';
-        $xPaginator->paginate(rq('Sample')->method('string', 26, true), 'wrapper');
+        $xPaginator->render(rq('Sample')->method('string', 26, true), 'wrapper');
         $aCommands = $this->xResponse->getCommands();
 
         $this->assertCount(2, $aCommands);
@@ -408,7 +408,7 @@ class PaginatorTest extends TestCase
             '<li class="enabled" data-page="10"><a role="link">10</a></li>' .
             '<li class="enabled" data-page="10"><a role="link">Next</a></li>' .
             '</ul>';
-        $xPaginator->paginate(rq('Sample')->method('string', 26, true), 'wrapper');
+        $xPaginator->render(rq('Sample')->method('string', 26, true), 'wrapper');
         $aCommands = $this->xResponse->getCommands();
 
         $this->assertCount(2, $aCommands);
@@ -443,7 +443,7 @@ class PaginatorTest extends TestCase
             '<li class="enabled" data-page="10"><a role="link">10</a></li>' .
             '<li class="enabled" data-page="10"><a role="link">Next</a></li>' .
             '</ul>';
-        $xPaginator->paginate(rq('Sample')->method('string', 26, true), 'wrapper');
+        $xPaginator->render(rq('Sample')->method('string', 26, true), 'wrapper');
         $aCommands = $this->xResponse->getCommands();
 
         $this->assertCount(2, $aCommands);

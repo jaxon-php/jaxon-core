@@ -40,24 +40,33 @@ SOFTWARE.
 
 namespace Jaxon\Plugin\Response\Pagination;
 
+use Closure;
+use Jaxon\Response\Response;
+use Jaxon\Response\ComponentResponse;
 use Jaxon\Script\JsExpr;
 
 use function array_walk;
+use function array_map;
+use function array_pop;
+use function array_shift;
 use function ceil;
+use function count;
 use function floor;
+use function is_a;
 use function max;
+use function trim;
 
 class Paginator
 {
     /**
      * @var integer
      */
-    protected $nTotalItems = 0;
+    protected $nItemsCount = 0;
 
     /**
      * @var integer
      */
-    protected $nTotalPages = 0;
+    protected $nPagesCount = 0;
 
     /**
      * @var integer
@@ -67,7 +76,7 @@ class Paginator
     /**
      * @var integer
      */
-    protected $nCurrentPage = 0;
+    protected $nPageNumber = 0;
 
     /**
      * @var integer
@@ -98,16 +107,33 @@ class Paginator
      * The constructor.
      *
      * @param PaginatorPlugin $xPlugin
-     * @param int $nCurrentPage     The current page number
+     * @param int $nPageNumber     The current page number
      * @param int $nItemsPerPage    The number of items per page
-     * @param int $nTotalItems      The total number of items
+     * @param int $nItemsCount      The total number of items
      */
-    public function __construct(PaginatorPlugin $xPlugin, int $nCurrentPage, int $nItemsPerPage, int $nTotalItems)
+    public function __construct(PaginatorPlugin $xPlugin, int $nPageNumber, int $nItemsPerPage, int $nItemsCount)
     {
         $this->xPlugin = $xPlugin;
-        $this->setCurrentPage($nCurrentPage)
-            ->setItemsPerPage($nItemsPerPage)
-            ->setTotalItems($nTotalItems);
+        $this->nItemsPerPage = $nItemsPerPage > 0 ? $nItemsPerPage : 0;
+        $this->nItemsCount = $nItemsCount > 0 ? $nItemsCount : 0;
+        $this->nPageNumber = $nPageNumber < 1 ? 1 : $nPageNumber;
+        $this->updatePagesCount();
+    }
+
+    /**
+     * Update the number of pages
+     *
+     * @return Paginator
+     */
+    private function updatePagesCount(): Paginator
+    {
+        $this->nPagesCount = ($this->nItemsPerPage === 0 ? 0 :
+            (int)ceil($this->nItemsCount / $this->nItemsPerPage));
+        if($this->nPageNumber > $this->nPagesCount)
+        {
+            $this->nPageNumber = $this->nPagesCount;
+        }
+        return $this;
     }
 
     /**
@@ -137,18 +163,6 @@ class Paginator
     }
 
     /**
-     * Update the number of pages
-     *
-     * @return Paginator
-     */
-    protected function updateTotalPages(): Paginator
-    {
-        $this->nTotalPages = ($this->nItemsPerPage === 0 ? 0 :
-            (int)ceil($this->nTotalItems / $this->nItemsPerPage));
-        return $this;
-    }
-
-    /**
      * Set the max number of pages to show
      *
      * @param int $nMaxPages    The max number of pages to show
@@ -162,54 +176,15 @@ class Paginator
     }
 
     /**
-     * Set the current page number
-     *
-     * @param int $nCurrentPage    The current page number
-     *
-     * @return Paginator
-     */
-    protected function setCurrentPage(int $nCurrentPage): Paginator
-    {
-        $this->nCurrentPage = $nCurrentPage;
-        return $this;
-    }
-
-    /**
-     * Set the number of items per page
-     *
-     * @param int $nItemsPerPage    The number of items per page
-     *
-     * @return Paginator
-     */
-    protected function setItemsPerPage(int $nItemsPerPage): Paginator
-    {
-        $this->nItemsPerPage = $nItemsPerPage;
-        return $this->updateTotalPages();
-    }
-
-    /**
-     * Set the total number of items
-     *
-     * @param int $nTotalItems    The total number of items
-     *
-     * @return Paginator
-     */
-    protected function setTotalItems(int $nTotalItems): Paginator
-    {
-        $this->nTotalItems = $nTotalItems;
-        return $this->updateTotalPages();
-    }
-
-    /**
      * Get the previous page data.
      *
      * @return Page
      */
     protected function getPrevPage(): Page
     {
-        return $this->nCurrentPage <= 1 ?
+        return $this->nPageNumber <= 1 ?
             new Page('disabled', $this->sPreviousText, 0) :
-            new Page('enabled', $this->sPreviousText, $this->nCurrentPage - 1);
+            new Page('enabled', $this->sPreviousText, $this->nPageNumber - 1);
     }
 
     /**
@@ -219,9 +194,9 @@ class Paginator
      */
     protected function getNextPage(): Page
     {
-        return $this->nCurrentPage >= $this->nTotalPages ?
+        return $this->nPageNumber >= $this->nPagesCount ?
             new Page('disabled', $this->sNextText, 0) :
-            new Page('enabled', $this->sNextText, $this->nCurrentPage + 1);
+            new Page('enabled', $this->sNextText, $this->nPageNumber + 1);
     }
 
     /**
@@ -237,7 +212,7 @@ class Paginator
         {
             return new Page('disabled', $this->sEllipsysText, 0);
         }
-        $sType = ($nNumber === $this->nCurrentPage ? 'current' : 'enabled');
+        $sType = ($nNumber === $this->nPageNumber ? 'current' : 'enabled');
         return new Page($sType, "$nNumber", $nNumber);
     }
 
@@ -252,9 +227,9 @@ class Paginator
     {
         $aPageNumbers = [];
 
-        if($this->nTotalPages <= $this->nMaxPages)
+        if($this->nPagesCount <= $this->nMaxPages)
         {
-            for($i = 0; $i < $this->nTotalPages; $i++)
+            for($i = 0; $i < $this->nPagesCount; $i++)
             {
                 $aPageNumbers[] = $i + 1;
             }
@@ -266,18 +241,18 @@ class Paginator
         $nNumAdjacents = (int)floor(($this->nMaxPages - 4) / 2);
 
         $nSlidingStart = 1;
-        $nSlidingEndOffset = $nNumAdjacents + 3 - $this->nCurrentPage;
+        $nSlidingEndOffset = $nNumAdjacents + 3 - $this->nPageNumber;
         if($nSlidingEndOffset < 0)
         {
-            $nSlidingStart = $this->nCurrentPage - $nNumAdjacents;
+            $nSlidingStart = $this->nPageNumber - $nNumAdjacents;
             $nSlidingEndOffset = 0;
         }
 
-        $nSlidingEnd = $this->nTotalPages;
-        $nSlidingStartOffset = $this->nCurrentPage + $nNumAdjacents + 2 - $this->nTotalPages;
+        $nSlidingEnd = $this->nPagesCount;
+        $nSlidingStartOffset = $this->nPageNumber + $nNumAdjacents + 2 - $this->nPagesCount;
         if($nSlidingStartOffset < 0)
         {
-            $nSlidingEnd = $this->nCurrentPage + $nNumAdjacents;
+            $nSlidingEnd = $this->nPageNumber + $nNumAdjacents;
             $nSlidingStartOffset = 0;
         }
 
@@ -291,23 +266,13 @@ class Paginator
         {
             $aPageNumbers[] = $i;
         }
-        if($nSlidingEnd < $this->nTotalPages)
+        if($nSlidingEnd < $this->nPagesCount)
         {
             $aPageNumbers[] = 0; // Ellipsys;
-            $aPageNumbers[] = $this->nTotalPages;
+            $aPageNumbers[] = $this->nPagesCount;
         }
 
         return $aPageNumbers;
-    }
-
-    /**
-     * Get the number of pages.
-     *
-     * @return int
-     */
-    public function getTotalPages(): int
-    {
-        return $this->nTotalPages;
     }
 
     /**
@@ -317,7 +282,7 @@ class Paginator
      */
     public function pages(): array
     {
-        if($this->nTotalPages < 2)
+        if($this->nPagesCount < 2)
         {
             return [];
         }
@@ -333,15 +298,97 @@ class Paginator
     }
 
     /**
-     * Render the paginator
+     * Call a closure that will receive the page number as parameter.
      *
+     * @param Closure $fPageCallback
+     *
+     * @return Paginator
+     */
+    public function page(Closure $fPageCallback): Paginator
+    {
+        $fPageCallback($this->nPageNumber);
+
+        return $this;
+    }
+
+    /**
+     * Call a closure that will receive the pagination offset as parameter.
+     *
+     * @param Closure $fOffsetCallback
+     *
+     * @return Paginator
+     */
+    public function offset(Closure $fOffsetCallback): Paginator
+    {
+        $fOffsetCallback(($this->nPageNumber - 1) * $this->nItemsPerPage);
+
+        return $this;
+    }
+
+    /**
      * @param JsExpr $xCall
      * @param string $sWrapperId
      *
-     * @return string
+     * @return void
      */
-    public function paginate(JsExpr $xCall, string $sWrapperId = '')
+    public function render(JsExpr $xCall, string $sWrapperId = '')
     {
-        $this->xPlugin->render($this->pages(), $xCall, $sWrapperId);
+        if(($xFunc = $xCall->func()) === null)
+        {
+            return;
+        }
+
+        $sHtml = '';
+        $aPages = $this->pages();
+        if(count($aPages) > 0)
+        {
+            $xRenderer = $this->xPlugin->renderer();
+            $aPages = array_map(function($xPage) use($xRenderer) {
+                return $xRenderer->render('pagination::links/' . $xPage->sType, [
+                    'page' => $xPage->nNumber,
+                    'text' => $xPage->sText,
+                ]);
+            }, $aPages);
+            $aPrevPage = array_shift($aPages); // The first entry in the array
+            $aNextPage = array_pop($aPages); // The last entry in the array
+            $sHtml = trim($xRenderer->render('pagination::wrapper', [
+                'links' => $aPages,
+                'prev' => $aPrevPage,
+                'next' => $aNextPage,
+            ])->__toString());
+        }
+        // The HTML code must always be displayed, even if it is empty.
+        $aParams = $this->showLinks(trim($sWrapperId), $sHtml);
+        if($sHtml !== '')
+        {
+            // Set click handlers on the pagination links
+            $aParams['func'] = $xFunc->withPage()->jsonSerialize();
+            $this->xPlugin->addCommand('pg.paginate', $aParams);
+        }
+    }
+
+    /**
+     * Show the pagination links
+     *
+     * @param string $sWrapperId
+     * @param string $sHtml
+     *
+     * @return array
+     */
+    private function showLinks(string $sWrapperId, string $sHtml): array
+    {
+        if(is_a($this->xPlugin->response(), Response::class))
+        {
+            /** @var Response */
+            $xResponse = $this->xPlugin->response();
+            $xResponse->html($sWrapperId, $sHtml);
+            return ['id' => $sWrapperId];
+        }
+
+        // The wrapper id is not needed for the ComponentResponse
+        /** @var ComponentResponse */
+        $xResponse = $this->xPlugin->response();
+        $xResponse->html($sHtml);
+        return [];
     }
 }

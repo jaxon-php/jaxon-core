@@ -9,7 +9,6 @@ use Jaxon\Exception\SetupException;
 use Jaxon\Script\JxnCall;
 use Jaxon\Plugin\Request\CallableClass\CallableClassHelper;
 use Jaxon\Plugin\Response\DataBag\DataBagContext;
-use Jaxon\Plugin\Response\Pagination\Paginator;
 use Jaxon\Request\TargetInterface;
 use Jaxon\Response\AjaxResponse;
 use Psr\Log\LoggerInterface;
@@ -123,19 +122,5 @@ abstract class AbstractCallable
     public function bag(string $sBagName): DataBagContext
     {
         return $this->_response()->bag($sBagName);
-    }
-
-    /**
-     * Render an HTML pagination control.
-     *
-     * @param int $nCurrentPage     The current page number
-     * @param int $nItemsPerPage    The number of items per page
-     * @param int $nTotalItems      The total number of items
-     *
-     * @return Paginator
-     */
-    public function paginator(int $nCurrentPage, int $nItemsPerPage, int $nTotalItems): Paginator
-    {
-        return $this->_response()->paginator($nCurrentPage, $nItemsPerPage, $nTotalItems);
     }
 }
