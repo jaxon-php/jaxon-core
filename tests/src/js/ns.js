@@ -6,45 +6,51 @@ Jaxon.NsTests = {};
 Jaxon.NsTests.DirA = {};
 Jaxon.NsTests.DirB = {};
 Jaxon.NsTests.DirC = {};
-Jaxon.Tests.Ns.Ajax.ClassA = {};
+Jaxon_NsTests_DirA_ClassA = {};
+Jaxon_NsTests_DirA_ClassA.methodAa = function() {
+    return jaxon.request({ jxncls: 'Jaxon_NsTests_DirA_ClassA', jxnmthd: 'methodAa' }, { parameters: arguments });
+};
+Jaxon_NsTests_DirA_ClassA.methodAb = function() {
+    return jaxon.request({ jxncls: 'Jaxon_NsTests_DirA_ClassA', jxnmthd: 'methodAb' }, { parameters: arguments });
+};
+Jaxon_NsTests_DirB_ClassB = {};
+Jaxon_NsTests_DirB_ClassB.methodBa = function() {
+    return jaxon.request({ jxncls: 'Jaxon_NsTests_DirB_ClassB', jxnmthd: 'methodBa' }, { parameters: arguments });
+};
+Jaxon_NsTests_DirB_ClassB.methodBb = function() {
+    return jaxon.request({ jxncls: 'Jaxon_NsTests_DirB_ClassB', jxnmthd: 'methodBb' }, { parameters: arguments });
+};
+Jaxon_NsTests_DirC_ClassC = {};
+Jaxon_NsTests_DirC_ClassC.methodCa = function() {
+    return jaxon.request({ jxncls: 'Jaxon_NsTests_DirC_ClassC', jxnmthd: 'methodCa' }, { parameters: arguments });
+};
+Jaxon_NsTests_DirC_ClassC.methodCb = function() {
+    return jaxon.request({ jxncls: 'Jaxon_NsTests_DirC_ClassC', jxnmthd: 'methodCb' }, { parameters: arguments });
+};
+if(Jaxon.Tests.Ns.Ajax.ClassA === undefined) {
+    Jaxon.Tests.Ns.Ajax.ClassA = {};
+}
 Jaxon.Tests.Ns.Ajax.ClassA.methodAa = function() {
     return jaxon.request({ jxncls: 'Jaxon.Tests.Ns.Ajax.ClassA', jxnmthd: 'methodAa' }, { parameters: arguments });
 };
 Jaxon.Tests.Ns.Ajax.ClassA.methodAb = function() {
     return jaxon.request({ jxncls: 'Jaxon.Tests.Ns.Ajax.ClassA', jxnmthd: 'methodAb' }, { parameters: arguments });
 };
-Jaxon.Tests.Ns.Ajax.ClassB = {};
+if(Jaxon.Tests.Ns.Ajax.ClassB === undefined) {
+    Jaxon.Tests.Ns.Ajax.ClassB = {};
+}
 Jaxon.Tests.Ns.Ajax.ClassB.methodBa = function() {
     return jaxon.request({ jxncls: 'Jaxon.Tests.Ns.Ajax.ClassB', jxnmthd: 'methodBa' }, { parameters: arguments });
 };
 Jaxon.Tests.Ns.Ajax.ClassB.methodBb = function() {
     return jaxon.request({ jxncls: 'Jaxon.Tests.Ns.Ajax.ClassB', jxnmthd: 'methodBb' }, { parameters: arguments });
 };
-Jaxon.Tests.Ns.Ajax.ClassC = {};
+if(Jaxon.Tests.Ns.Ajax.ClassC === undefined) {
+    Jaxon.Tests.Ns.Ajax.ClassC = {};
+}
 Jaxon.Tests.Ns.Ajax.ClassC.methodCa = function() {
     return jaxon.request({ jxncls: 'Jaxon.Tests.Ns.Ajax.ClassC', jxnmthd: 'methodCa' }, { parameters: arguments });
 };
 Jaxon.Tests.Ns.Ajax.ClassC.methodCb = function() {
     return jaxon.request({ jxncls: 'Jaxon.Tests.Ns.Ajax.ClassC', jxnmthd: 'methodCb' }, { parameters: arguments });
-};
-Jaxon.NsTests.DirA.ClassA = {};
-Jaxon.NsTests.DirA.ClassA.methodAa = function() {
-    return jaxon.request({ jxncls: 'Jaxon.NsTests.DirA.ClassA', jxnmthd: 'methodAa' }, { parameters: arguments });
-};
-Jaxon.NsTests.DirA.ClassA.methodAb = function() {
-    return jaxon.request({ jxncls: 'Jaxon.NsTests.DirA.ClassA', jxnmthd: 'methodAb' }, { parameters: arguments });
-};
-Jaxon.NsTests.DirB.ClassB = {};
-Jaxon.NsTests.DirB.ClassB.methodBa = function() {
-    return jaxon.request({ jxncls: 'Jaxon.NsTests.DirB.ClassB', jxnmthd: 'methodBa' }, { parameters: arguments });
-};
-Jaxon.NsTests.DirB.ClassB.methodBb = function() {
-    return jaxon.request({ jxncls: 'Jaxon.NsTests.DirB.ClassB', jxnmthd: 'methodBb' }, { parameters: arguments });
-};
-Jaxon.NsTests.DirC.ClassC = {};
-Jaxon.NsTests.DirC.ClassC.methodCa = function() {
-    return jaxon.request({ jxncls: 'Jaxon.NsTests.DirC.ClassC', jxnmthd: 'methodCa' }, { parameters: arguments });
-};
-Jaxon.NsTests.DirC.ClassC.methodCb = function() {
-    return jaxon.request({ jxncls: 'Jaxon.NsTests.DirC.ClassC', jxnmthd: 'methodCb' }, { parameters: arguments });
 };
