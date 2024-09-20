@@ -89,8 +89,21 @@ class AttrHelper
      */
     private function checkOn(array $on)
     {
-        return count($on) === 2 && isset($on[0]) && isset($on[1])
-            && is_string($on[0]) && is_string($on[1]);
+        // Only accept arrays of 2 or 3 entries.
+        $count = count($on);
+        if($count !== 2 && $count !== 3)
+        {
+            return false;
+        }
+        // Only accept arrays with int index from 0, and string value.
+        for($i = 0; $i < $count; $i++)
+        {
+            if(!isset($on[$i]) || !is_string($on[$i]))
+            {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -98,26 +111,27 @@ class AttrHelper
      *
      * @param string|array $on
      * @param JsExpr $xJsExpr
-     * @param array $options
      *
      * @return string
      */
-    public function on(string|array $on, JsExpr $xJsExpr, array $options = []): string
+    public function on(string|array $on, JsExpr $xJsExpr): string
     {
         $select = '';
         $event = $on;
+        $target = null;
         if(is_array($on))
         {
             if(!$this->checkOn($on))
             {
                 return '';
             }
-            $select = trim($on[0]);
-            $event = $on[1];
+
+            [$select, $event] = $on;
+            $target = $on[2] ?? null;
         }
 
-        return ($select !== '' ? 'jxn-select="' . $select . '" ' : '') .
-            (isset($options['target']) ? 'jxn-event="' : 'jxn-on="') . trim($event) .
+        return (($select = trim($select)) !== '' ? 'jxn-select="' . $select . '" ' : '') .
+            ($target !== null ? 'jxn-event="' : 'jxn-on="') . trim($event) .
             '" jxn-call="' . htmlentities(json_encode($xJsExpr->jsonSerialize())) . '"';
     }
 
@@ -125,12 +139,11 @@ class AttrHelper
      * Set an event handler
      *
      * @param JsExpr $xJsExpr
-     * @param array $options
      *
      * @return string
      */
-    public function click(JsExpr $xJsExpr, array $options = []): string
+    public function click(JsExpr $xJsExpr): string
     {
-        return $this->on('click', $xJsExpr, $options);
+        return $this->on('click', $xJsExpr);
     }
 }
