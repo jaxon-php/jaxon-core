@@ -38,13 +38,6 @@ class AssetManager
     const JS_LIB_URL = 'https://cdn.jsdelivr.net/gh/jaxon-php/jaxon-js@5.0.0-beta.1/dist';
 
     /**
-     * Default library URL
-     *
-     * @var string
-     */
-    const JQ_LIB_URL = 'https://cdn.jsdelivr.net/npm/umbrellajs@3.3.3/umbrella.min.js';
-
-    /**
      * The constructor
      *
      * @param ConfigManager $xConfigManager
@@ -94,16 +87,21 @@ class AssetManager
     {
         $sJsExtension = $this->xConfigManager->getOption('js.app.minify') ? '.min.js' : '.js';
         // The URI for the javascript library files
-        $sJqLibUri = $this->xConfigManager->getOption('js.lib.jq', self::JQ_LIB_URL);
         $sJsLibUri = $this->xConfigManager->getOption('js.lib.uri', self::JS_LIB_URL);
+        $sJsLibUri = rtrim($sJsLibUri, '/');
+
         // Add component files to the javascript file array;
-        $aJsFiles = [$sJqLibUri, rtrim($sJsLibUri, '/') . '/jaxon.core' . $sJsExtension];
+        $aJsFiles = [
+            $this->xConfigManager->getOption('js.lib.jq', "$sJsLibUri/libs/chibi/chibi$sJsExtension"),
+            "$sJsLibUri/jaxon.core$sJsExtension",
+        ];
         if($this->xConfigManager->getOption('core.debug.on'))
         {
             $sLanguage = $this->xConfigManager->getOption('core.language');
-            $aJsFiles[] = $sJsLibUri . 'jaxon.debug' . $sJsExtension;
-            $aJsFiles[] = $sJsLibUri . 'lang/jaxon.' . $sLanguage . $sJsExtension;
+            $aJsFiles[] = "$sJsLibUri/jaxon.debug$sJsExtension";
+            $aJsFiles[] = "$sJsLibUri/lang/jaxon.$sLanguage$sJsExtension";
         }
+
         return $aJsFiles;
     }
 
