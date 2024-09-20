@@ -10,7 +10,7 @@
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
  * @copyright 2016 Thierry Feuzeu <thierry.feuzeu@gmail.com>
  * @license https://opensource.org/licenses/BSD-3-Clause BSD 3-Clause License
- * @link https://github.com/jaxon-php/jaxon-dialogs
+ * @link https://github.com/jaxon-php/jaxon-core
  */
 
 namespace Jaxon\Plugin\Response\Dialog;
@@ -24,7 +24,7 @@ use Jaxon\Response\AbstractResponse;
 use function array_reduce;
 use function trim;
 
-class DialogPlugin extends AbstractResponsePlugin
+class DialogPlugin extends AbstractResponsePlugin implements ModalInterface, MessageInterface
 {
     /**
      * @const The plugin name
@@ -168,14 +168,7 @@ class DialogPlugin extends AbstractResponsePlugin
     }
 
     /**
-     * Show a modal dialog.
-     *
-     * @param string $sTitle The title of the dialog
-     * @param string $sContent The content of the dialog
-     * @param array $aButtons The buttons of the dialog
-     * @param array $aOptions The options of the dialog
-     *
-     * @return void
+     * @inheritDoc
      */
     public function show(string $sTitle, string $sContent, array $aButtons = [], array $aOptions = [])
     {
@@ -185,9 +178,7 @@ class DialogPlugin extends AbstractResponsePlugin
     }
 
     /**
-     * Hide the modal dialog.
-     *
-     * @return void
+     * @inheritDoc
      */
     public function hide()
     {
@@ -196,25 +187,16 @@ class DialogPlugin extends AbstractResponsePlugin
     }
 
     /**
-     * Set the title of the next message.
-     *
-     * @param string $sTitle     The title of the message
-     *
-     * @return DialogPlugin
+     * @inheritDoc
      */
-    public function title(string $sTitle): DialogPlugin
+    public function title(string $sTitle): MessageInterface
     {
         $this->xDialogManager->title($sTitle);
         return $this;
     }
 
     /**
-     * Show a success message.
-     *
-     * @param string $sMessage  The text of the message
-     * @param array $aArgs      The message arguments
-     *
-     * @return void
+     * @inheritDoc
      */
     public function success(string $sMessage, array $aArgs = [])
     {
@@ -222,12 +204,7 @@ class DialogPlugin extends AbstractResponsePlugin
     }
 
     /**
-     * Show an information message.
-     *
-     * @param string $sMessage  The text of the message
-     * @param array $aArgs      The message arguments
-     *
-     * @return void
+     * @inheritDoc
      */
     public function info(string $sMessage, array $aArgs = [])
     {
@@ -235,12 +212,7 @@ class DialogPlugin extends AbstractResponsePlugin
     }
 
     /**
-     * Show a warning message.
-     *
-     * @param string $sMessage  The text of the message
-     * @param array $aArgs      The message arguments
-     *
-     * @return void
+     * @inheritDoc
      */
     public function warning(string $sMessage, array $aArgs = [])
     {
@@ -248,12 +220,7 @@ class DialogPlugin extends AbstractResponsePlugin
     }
 
     /**
-     * Show an error message.
-     *
-     * @param string $sMessage  The text of the message
-     * @param array $aArgs      The message arguments
-     *
-     * @return void
+     * @inheritDoc
      */
     public function error(string $sMessage, array $aArgs = [])
     {

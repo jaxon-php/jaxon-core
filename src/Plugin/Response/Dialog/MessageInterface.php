@@ -1,0 +1,67 @@
+<?php
+
+/**
+ * MessageInterface.php
+ *
+ * Defines the message functions of the dialog plugin.
+ *
+ * @package jaxon-core
+ * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
+ * @copyright 2024 Thierry Feuzeu <thierry.feuzeu@gmail.com>
+ * @license https://opensource.org/licenses/BSD-3-Clause BSD 3-Clause License
+ * @link https://github.com/jaxon-php/jaxon-core
+ */
+
+namespace Jaxon\Plugin\Response\Dialog;
+
+interface MessageInterface
+{
+    /**
+     * Set the title of the next message.
+     *
+     * @param string $sTitle     The title of the message
+     *
+     * @return MessageInterface
+     */
+    public function title(string $sTitle): MessageInterface;
+
+    /**
+     * Show a success message.
+     *
+     * @param string $sMessage  The text of the message
+     * @param array $aArgs      The message arguments
+     *
+     * @return void
+     */
+    public function success(string $sMessage, array $aArgs = []);
+
+    /**
+     * Show an information message.
+     *
+     * @param string $sMessage  The text of the message
+     * @param array $aArgs      The message arguments
+     *
+     * @return void
+     */
+    public function info(string $sMessage, array $aArgs = []);
+
+    /**
+     * Show a warning message.
+     *
+     * @param string $sMessage  The text of the message
+     * @param array $aArgs      The message arguments
+     *
+     * @return void
+     */
+    public function warning(string $sMessage, array $aArgs = []);
+
+    /**
+     * Show an error message.
+     *
+     * @param string $sMessage  The text of the message
+     * @param array $aArgs      The message arguments
+     *
+     * @return void
+     */
+    public function error(string $sMessage, array $aArgs = []);
+}

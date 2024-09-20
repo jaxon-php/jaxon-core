@@ -2,10 +2,12 @@
 
 namespace Jaxon\Plugin\Response\DataBag;
 
+use JsonSerializable;
+
 use function array_map;
 use function is_array;
 
-class DataBag
+class DataBag implements JsonSerializable
 {
     /**
      * @var DataBagPlugin
@@ -86,5 +88,15 @@ class DataBag
     public function get(string $sBag, string $sKey, $xValue = null)
     {
         return $this->aData[$sBag][$sKey] ?? $xValue;
+    }
+
+    /**
+     * Convert this call to array, when converting the response into json.
+     *
+     * @return array
+     */
+    public function jsonSerialize(): array
+    {
+        return $this->aData;
     }
 }
