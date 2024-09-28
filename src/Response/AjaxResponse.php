@@ -236,6 +236,16 @@ abstract class AjaxResponse extends AbstractResponse
     }
 
     /**
+     * Shortcut to get the factory for calls to a global js object or function.
+     *
+     * @return JsCall
+     */
+    public function jw(): JsCall
+    {
+        return $this->js('w');
+    }
+
+    /**
      * Get the databag with a given name
      *
      * @param string $sName

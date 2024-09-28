@@ -72,6 +72,16 @@ function js(string $sJsObject = ''): JsCall
 }
 
 /**
+ * Shortcut to get the factory for calls to a global js object or function.
+ *
+ * @return JsCall
+ */
+function jw(): JsCall
+{
+    return js('w');
+}
+
+/**
  * Get the single instance of the parameter factory
  *
  * @return ParameterFactory
