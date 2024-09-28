@@ -199,4 +199,10 @@ trait AppTrait
     {
         $this->di()->setSessionManager($xClosure);
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function setup(string $sConfigFile)
+    {}
 }

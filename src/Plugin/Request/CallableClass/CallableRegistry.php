@@ -121,6 +121,7 @@ class CallableRegistry
     {
         // Set the composer autoloader
         if(file_exists(($sAutoloadFile = __DIR__ . '/../../../../../../autoload.php')) ||
+            file_exists(($sAutoloadFile = __DIR__ . '/../../../../../vendor/autoload.php')) ||
             file_exists(($sAutoloadFile = __DIR__ . '/../../../../vendor/autoload.php')))
         {
             $this->xAutoloader = require($sAutoloadFile);

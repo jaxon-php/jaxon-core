@@ -28,11 +28,7 @@ class App extends AbstractApp
     use SendTrait;
 
     /**
-     * Read config options from a config file and set up the library
-     *
-     * @param string $sConfigFile    The full path to the config file
-     *
-     * @return void
+     * @inheritDoc
      * @throws SetupException
      */
     public function setup(string $sConfigFile)
