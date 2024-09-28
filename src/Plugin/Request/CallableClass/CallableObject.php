@@ -26,7 +26,8 @@
 
 namespace Jaxon\Plugin\Request\CallableClass;
 
-use Jaxon\App\CallableClass;
+use Jaxon\App\AbstractCallable;
+use Jaxon\App\PaginationComponent;
 use Jaxon\Di\ClassContainer;
 use Jaxon\Di\Container;
 use Jaxon\Exception\SetupException;
@@ -106,6 +107,12 @@ class CallableObject
         $this->xOptions = new CallableObjectOptions($aOptions, $aAttributes);
     }
 
+    /**
+     * @param ReflectionClass $xReflectionClass
+     * @param array $aOptions
+     *
+     * @return array
+     */
     private function getAttributes(ReflectionClass $xReflectionClass, array $aOptions): array
     {
         /** @var Config|null */
@@ -147,7 +154,7 @@ class CallableObject
         return substr($sMethodName, 0, 2) === '__' ||
             isset($this->aProtectedMethods[$sMethodName]) ||
             (!$bTakeAll && $this->xOptions !== null &&
-            $this->xOptions->isProtectedMethod($sMethodName));
+                $this->xOptions->isProtectedMethod($sMethodName));
     }
 
     /**
@@ -173,7 +180,8 @@ class CallableObject
      */
     public function excluded(): bool
     {
-        return $this->xReflectionClass->isAbstract() || $this->xOptions->excluded();
+        return $this->xOptions->excluded() || $this->xReflectionClass->isAbstract() ||
+            $this->xReflectionClass->isSubclassOf(PaginationComponent::class);
     }
 
     /**
@@ -300,8 +308,8 @@ class CallableObject
         foreach($aDiOptions as $sName => $sClass)
         {
             // The setter has access to protected attributes
-            call_user_func($cSetter->bindTo($xRegisteredObject, $xRegisteredObject),
-                $sName, $this->di->get($sClass));
+            $_cSetter = $cSetter->bindTo($xRegisteredObject, $xRegisteredObject);
+            call_user_func($_cSetter, $sName, $this->di->get($sClass));
         }
     }
 
@@ -348,7 +356,7 @@ class CallableObject
         // We now need to set the method level DI options.
         $this->setDiMethodAttributes($xRegisteredObject, $xTarget->getMethodName());
         // Set the Jaxon request target in the helper
-        if($xRegisteredObject instanceof CallableClass)
+        if($xRegisteredObject instanceof AbstractCallable)
         {
             // Set the protected attributes of the object
             $sAttr = 'xCallableClassHelper';
