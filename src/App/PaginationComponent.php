@@ -2,66 +2,68 @@
 
 namespace Jaxon\App;
 
-use Jaxon\Di\Container;
-use Jaxon\Plugin\Request\CallableClass\CallableClassHelper;
 use Jaxon\Plugin\Response\Pagination\Paginator;
-use Jaxon\Response\AjaxResponse;
-use Jaxon\Response\ComponentResponse;
 
-use function get_class;
-
-abstract class PaginationComponent extends AbstractCallable
+class PaginationComponent extends AbstractCallable
 {
-    /**
-     * @var ComponentResponse
-     */
-    private $response = null;
+    use ComponentTrait;
 
     /**
      * @var int
      */
-    private int $nPageNumber;
+    private $nPageNumber = 0;
 
     /**
      * @var int
      */
-    private int $nTotalItems;
+    private $nTotalItems = 0;
 
     /**
-     * @inheritDoc
+     * @var int
      */
-    public function _initCallable(Container $di, CallableClassHelper $xCallableClassHelper)
-    {
-        $this->xCallableClassHelper = $xCallableClassHelper;
-        // Each component must have its own reponse object.
-        $this->response = $di->newComponentResponse(get_class($this));
-    }
+    private $nItemsPerPage = 10;
 
     /**
-     * @inheritDoc
-     */
-    final protected function _response(): AjaxResponse
-    {
-        return $this->response;
-    }
-
-    /**
-     * Get the number of items to show per page.
-     *
-     * @return int
-     */
-    abstract protected function itemsPerPage(): int;
-
-    /**
-     * Set the pagination options
-     *
      * @param int $nPageNumber
+     *
+     * @return PaginationComponent
+     */
+    final public function pageNumber(int $nPageNumber): PaginationComponent
+    {
+        $this->nPageNumber = $nPageNumber;
+
+        return $this;
+    }
+
+    /**
      * @param int $nTotalItems
      *
+     * @return PaginationComponent
+     */
+    final public function totalItems(int $nTotalItems): PaginationComponent
+    {
+        $this->nTotalItems = $nTotalItems;
+
+        return $this;
+    }
+
+    /**
+     * @param int $nItemsPerPage
+     *
+     * @return PaginationComponent
+     */
+    final public function itemsPerPage(int $nItemsPerPage): PaginationComponent
+    {
+        $this->nItemsPerPage = $nItemsPerPage;
+
+        return $this;
+    }
+
+    /**
      * @return Paginator
      */
-    final public function paginator(int $nPageNumber, int $nTotalItems): Paginator
+    final public function paginator(): Paginator
     {
-        return $this->_response()->paginator($nPageNumber, $this->itemsPerPage(), $nTotalItems);
+        return $this->_response()->paginator($this->nPageNumber, $this->nItemsPerPage, $this->nTotalItems);
     }
 }
