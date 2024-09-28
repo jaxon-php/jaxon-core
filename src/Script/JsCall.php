@@ -46,14 +46,12 @@ class JsCall extends AbstractJsCall
      */
     protected function _expr(): JsExpr
     {
-        /*
-         * An empty string returns the js "this" var.
-         * The 'w' string returns the js "window" object. No data needed.
-         * Otherwise, the corresponding js object will be returned.
-         */
         $xJsExpr = match($this->sJsObject) {
+            // An empty string returns the js "this" var.
             '' => new JsExpr($this->xDialog, new Selector('js', 'this')),
+            // The 'w' string returns the js "window" object. No data needed.
             'w' => new JsExpr($this->xDialog),
+            // Otherwise, the corresponding js object will be returned.
             default => new JsExpr($this->xDialog, Attr::get($this->sJsObject, false)),
         };
         return $this->_initExpr($xJsExpr);
