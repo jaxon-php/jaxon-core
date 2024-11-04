@@ -2,11 +2,26 @@
 
 namespace Jaxon\App;
 
-use Jaxon\Response\ComponentResponse;
+use Jaxon\Di\Container;
+use Jaxon\Plugin\Request\CallableClass\CallableClassHelper;
+use Jaxon\Response\Response;
 
-abstract class Component extends AbstractCallable
+abstract class Component extends AbstractComponent
 {
-    use ComponentTrait;
+    /**
+     * @var Response
+     */
+    protected $response = null;
+
+    /**
+     * @inheritDoc
+     */
+    public function _initCallable(Container $di, CallableClassHelper $xCallableClassHelper)
+    {
+        parent::_initCallable($di, $xCallableClassHelper);
+
+        $this->response = $di->getResponse();
+    }
 
     /**
      * @return string
@@ -32,12 +47,12 @@ abstract class Component extends AbstractCallable
     /**
      * Set the attached DOM node content with the component HTML code.
      *
-     * @return ComponentResponse
+     * @return Response
      */
-    final public function render(): ComponentResponse
+    final public function render(): Response
     {
         $this->before();
-        $this->response->html($this->html());
+        $this->node()->html($this->html());
         $this->after();
 
         return $this->response;
@@ -46,11 +61,11 @@ abstract class Component extends AbstractCallable
     /**
      * Clear the attached DOM node content.
      *
-     * @return ComponentResponse
+     * @return Response
      */
-    final public function clear(): ComponentResponse
+    final public function clear(): Response
     {
-        $this->response->clear();
+        $this->node()->clear();
 
         return $this->response;
     }
@@ -58,11 +73,11 @@ abstract class Component extends AbstractCallable
     /**
      * Show/hide the attached DOM node.
      *
-     * @return ComponentResponse
+     * @return Response
      */
-    final public function visible(bool $bVisible): ComponentResponse
+    final public function visible(bool $bVisible): Response
     {
-        $bVisible ? $this->response->jq()->show() : $this->response->jq()->hide();
+        $bVisible ? $this->node()->jq()->show() : $this->node()->jq()->hide();
 
         return $this->response;
     }

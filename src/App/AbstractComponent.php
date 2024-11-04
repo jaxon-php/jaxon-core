@@ -9,12 +9,12 @@ use Jaxon\Response\ComponentResponse;
 
 use function get_class;
 
-trait ComponentTrait
+abstract class AbstractComponent extends AbstractCallable
 {
     /**
      * @var ComponentResponse
      */
-    protected $response = null;
+    protected $nodeResponse = null;
 
     /**
      * @var string
@@ -32,7 +32,7 @@ trait ComponentTrait
         // its response is attached to the overriden component DOM node.
         $sClassName = $this->overrides ?: get_class($this);
         // Each component must have its own reponse object.
-        $this->response = $di->newComponentResponse($sClassName);
+        $this->nodeResponse = $di->newComponentResponse($sClassName);
     }
 
     /**
@@ -40,7 +40,17 @@ trait ComponentTrait
      */
     final protected function _response(): AjaxResponse
     {
-        return $this->response;
+        return $this->nodeResponse;
+    }
+
+    /**
+     * Get the component response
+     *
+     * @return ComponentResponse
+     */
+    final protected function node(): ComponentResponse
+    {
+        return $this->nodeResponse;
     }
 
     /**
@@ -52,7 +62,7 @@ trait ComponentTrait
      */
     final public function item(string $item): self
     {
-        $this->response->item($item);
+        $this->node()->item($item);
 
         return $this;
     }

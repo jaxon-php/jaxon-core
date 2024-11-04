@@ -4,66 +4,19 @@ namespace Jaxon\App;
 
 use Jaxon\Plugin\Response\Pagination\Paginator;
 
-class PaginationComponent extends AbstractCallable
+abstract class PaginationComponent extends AbstractComponent
 {
-    use ComponentTrait;
-
     /**
-     * @var int
-     */
-    private $nPageNumber = 0;
-
-    /**
-     * @var int
-     */
-    private $nTotalItems = 0;
-
-    /**
-     * @var int
-     */
-    private $nItemsPerPage = 10;
-
-    /**
-     * @param int $nPageNumber
+     * Create a paginator.
      *
-     * @return PaginationComponent
-     */
-    final public function pageNumber(int $nPageNumber): PaginationComponent
-    {
-        $this->nPageNumber = $nPageNumber;
-
-        return $this;
-    }
-
-    /**
-     * @param int $nTotalItems
+     * @param int $nPageNumber     The current page number
+     * @param int $nItemsPerPage    The number of items per page
+     * @param int $nTotalItems      The total number of items
      *
-     * @return PaginationComponent
-     */
-    final public function totalItems(int $nTotalItems): PaginationComponent
-    {
-        $this->nTotalItems = $nTotalItems;
-
-        return $this;
-    }
-
-    /**
-     * @param int $nItemsPerPage
-     *
-     * @return PaginationComponent
-     */
-    final public function itemsPerPage(int $nItemsPerPage): PaginationComponent
-    {
-        $this->nItemsPerPage = $nItemsPerPage;
-
-        return $this;
-    }
-
-    /**
      * @return Paginator
      */
-    final public function paginator(): Paginator
+    final public function paginator(int $nPageNumber, int $nItemsPerPage, int $nTotalItems): Paginator
     {
-        return $this->_response()->paginator($this->nPageNumber, $this->nItemsPerPage, $this->nTotalItems);
+        return $this->_response()->paginator($nPageNumber, $nItemsPerPage, $nTotalItems);
     }
 }

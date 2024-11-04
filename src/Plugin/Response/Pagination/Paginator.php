@@ -358,7 +358,7 @@ class Paginator
             ])->__toString());
         }
         // The HTML code must always be displayed, even if it is empty.
-        $aParams = $this->showLinks(trim($sWrapperId), $sHtml);
+        $aParams = $this->showLinks($sHtml, trim($sWrapperId));
         if($sHtml !== '')
         {
             // Set click handlers on the pagination links
@@ -370,12 +370,12 @@ class Paginator
     /**
      * Show the pagination links
      *
-     * @param string $sWrapperId
      * @param string $sHtml
+     * @param string $sWrapperId
      *
      * @return array
      */
-    private function showLinks(string $sWrapperId, string $sHtml): array
+    private function showLinks(string $sHtml, string $sWrapperId): array
     {
         if(is_a($this->xPlugin->response(), Response::class))
         {

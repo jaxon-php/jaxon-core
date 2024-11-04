@@ -41,7 +41,7 @@ class CallableClass extends AbstractCallable
      *
      * @return Paginator
      */
-    public function paginator(int $nPageNumber, int $nItemsPerPage, int $nTotalItems): Paginator
+    final public function paginator(int $nPageNumber, int $nItemsPerPage, int $nTotalItems): Paginator
     {
         return $this->_response()->paginator($nPageNumber, $nItemsPerPage, $nTotalItems);
     }
