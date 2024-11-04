@@ -44,7 +44,7 @@ class Response extends AjaxResponse
      */
     public function assign(string $sTarget, string $sAttribute, string $sValue): self
     {
-        $this->addCommand('dom.assign', [
+        $this->addCommand('node.assign', [
             'id' => $this->str($sTarget),
             'attr' => $this->str($sAttribute),
             'value' => $this->str($sValue),
@@ -78,7 +78,7 @@ class Response extends AjaxResponse
      */
     public function append(string $sTarget, string $sAttribute, string $sValue): self
     {
-        $this->addCommand('dom.append', [
+        $this->addCommand('node.append', [
             'id' => $this->str($sTarget),
             'attr' => $this->str($sAttribute),
             'value' => $this->str($sValue),
@@ -97,7 +97,7 @@ class Response extends AjaxResponse
      */
     public function prepend(string $sTarget, string $sAttribute, string $sValue): self
     {
-        $this->addCommand('dom.prepend', [
+        $this->addCommand('node.prepend', [
             'id' => $this->str($sTarget),
             'attr' => $this->str($sAttribute),
             'value' => $this->str($sValue),
@@ -118,7 +118,7 @@ class Response extends AjaxResponse
     public function replace(string $sTarget, string $sAttribute,
         string $sSearch, string $sReplace): self
     {
-        $this->addCommand('dom.replace', [
+        $this->addCommand('node.replace', [
             'id' => $this->str($sTarget),
             'attr' => $this->str($sAttribute),
             'search' => $this->str($sSearch),
@@ -137,7 +137,7 @@ class Response extends AjaxResponse
      */
     public function clear(string $sTarget, string $sAttribute = 'innerHTML'): self
     {
-        $this->addCommand('dom.clear', [
+        $this->addCommand('node.clear', [
             'id' => $this->str($sTarget),
             'attr' => $this->str($sAttribute),
         ]);
@@ -153,7 +153,7 @@ class Response extends AjaxResponse
      */
     public function remove(string $sTarget): self
     {
-        $this->addCommand('dom.remove', [
+        $this->addCommand('node.remove', [
             'id' => $this->str($sTarget),
         ]);
         return $this;
@@ -170,7 +170,7 @@ class Response extends AjaxResponse
      */
     public function create(string $sParent, string $sTag, string $sId): self
     {
-        $this->addCommand('dom.create', [
+        $this->addCommand('node.create', [
             'id' => $this->str($sParent),
             'tag' => [
                 'name' => $this->str($sTag),
@@ -191,7 +191,7 @@ class Response extends AjaxResponse
      */
     public function insertBefore(string $sBefore, string $sTag, string $sId): self
     {
-        $this->addCommand('dom.insert.before', [
+        $this->addCommand('node.insert.before', [
             'id' => $this->str($sBefore),
             'tag' => [
                 'name' => $this->str($sTag),
@@ -227,7 +227,7 @@ class Response extends AjaxResponse
      */
     public function insertAfter(string $sAfter, string $sTag, string $sId): self
     {
-        $this->addCommand('dom.insert.after', [
+        $this->addCommand('node.insert.after', [
             'id' => $this->str($sAfter),
             'tag' => [
                 'name' => $this->str($sTag),
