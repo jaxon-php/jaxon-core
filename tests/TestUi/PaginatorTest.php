@@ -101,7 +101,7 @@ class PaginatorTest extends TestCase
         $aCommands = $this->xResponse->getCommands();
 
         $this->assertCount(2, $aCommands);
-        $this->assertEquals('dom.assign', $aCommands[0]['name']);
+        $this->assertEquals('node.assign', $aCommands[0]['name']);
         $this->assertEquals('wrapper', $aCommands[0]['args']['id']);
         $this->assertEquals($sHtml, trim($aCommands[0]['args']['value']));
 
@@ -136,7 +136,7 @@ class PaginatorTest extends TestCase
         $aCommands = $this->xResponse->getCommands();
 
         $this->assertCount(2, $aCommands);
-        $this->assertEquals('dom.assign', $aCommands[0]['name']);
+        $this->assertEquals('node.assign', $aCommands[0]['name']);
         $this->assertEquals('wrapper', $aCommands[0]['args']['id']);
         $this->assertEquals($sHtml, trim($aCommands[0]['args']['value']));
 
@@ -168,7 +168,7 @@ class PaginatorTest extends TestCase
         $aCommands = $this->xResponse->getCommands();
 
         $this->assertCount(2, $aCommands);
-        $this->assertEquals('dom.assign', $aCommands[0]['name']);
+        $this->assertEquals('node.assign', $aCommands[0]['name']);
         $this->assertEquals('wrapper', $aCommands[0]['args']['id']);
         $this->assertEquals($sHtml, trim($aCommands[0]['args']['value']));
 
@@ -200,7 +200,7 @@ class PaginatorTest extends TestCase
         $aCommands = $this->xResponse->getCommands();
 
         $this->assertCount(2, $aCommands);
-        $this->assertEquals('dom.assign', $aCommands[0]['name']);
+        $this->assertEquals('node.assign', $aCommands[0]['name']);
         $this->assertEquals('wrapper', $aCommands[0]['args']['id']);
         $this->assertEquals($sHtml, trim($aCommands[0]['args']['value']));
 
@@ -235,7 +235,7 @@ class PaginatorTest extends TestCase
         $aCommands = $this->xResponse->getCommands();
 
         $this->assertCount(2, $aCommands);
-        $this->assertEquals('dom.assign', $aCommands[0]['name']);
+        $this->assertEquals('node.assign', $aCommands[0]['name']);
         $this->assertEquals('wrapper', $aCommands[0]['args']['id']);
         $this->assertEquals($sHtml, trim($aCommands[0]['args']['value']));
 
@@ -270,7 +270,7 @@ class PaginatorTest extends TestCase
         $aCommands = $this->xResponse->getCommands();
 
         $this->assertCount(2, $aCommands);
-        $this->assertEquals('dom.assign', $aCommands[0]['name']);
+        $this->assertEquals('node.assign', $aCommands[0]['name']);
         $this->assertEquals('wrapper', $aCommands[0]['args']['id']);
         $this->assertEquals($sHtml, trim($aCommands[0]['args']['value']));
 
@@ -305,7 +305,7 @@ class PaginatorTest extends TestCase
         $aCommands = $this->xResponse->getCommands();
 
         $this->assertCount(2, $aCommands);
-        $this->assertEquals('dom.assign', $aCommands[0]['name']);
+        $this->assertEquals('node.assign', $aCommands[0]['name']);
         $this->assertEquals('wrapper', $aCommands[0]['args']['id']);
         $this->assertEquals($sHtml, trim($aCommands[0]['args']['value']));
 
@@ -342,7 +342,7 @@ class PaginatorTest extends TestCase
         $aCommands = $this->xResponse->getCommands();
 
         $this->assertCount(2, $aCommands);
-        $this->assertEquals('dom.assign', $aCommands[0]['name']);
+        $this->assertEquals('node.assign', $aCommands[0]['name']);
         $this->assertEquals('wrapper', $aCommands[0]['args']['id']);
         $this->assertEquals($sHtml, trim($aCommands[0]['args']['value']));
 
@@ -377,7 +377,7 @@ class PaginatorTest extends TestCase
         $aCommands = $this->xResponse->getCommands();
 
         $this->assertCount(2, $aCommands);
-        $this->assertEquals('dom.assign', $aCommands[0]['name']);
+        $this->assertEquals('node.assign', $aCommands[0]['name']);
         $this->assertEquals('wrapper', $aCommands[0]['args']['id']);
         $this->assertEquals($sHtml, trim($aCommands[0]['args']['value']));
 
@@ -412,7 +412,7 @@ class PaginatorTest extends TestCase
         $aCommands = $this->xResponse->getCommands();
 
         $this->assertCount(2, $aCommands);
-        $this->assertEquals('dom.assign', $aCommands[0]['name']);
+        $this->assertEquals('node.assign', $aCommands[0]['name']);
         $this->assertEquals('wrapper', $aCommands[0]['args']['id']);
         $this->assertEquals($sHtml, trim($aCommands[0]['args']['value']));
 
@@ -447,7 +447,7 @@ class PaginatorTest extends TestCase
         $aCommands = $this->xResponse->getCommands();
 
         $this->assertCount(2, $aCommands);
-        $this->assertEquals('dom.assign', $aCommands[0]['name']);
+        $this->assertEquals('node.assign', $aCommands[0]['name']);
         $this->assertEquals('wrapper', $aCommands[0]['args']['id']);
         $this->assertEquals($sHtml, trim($aCommands[0]['args']['value']));
 

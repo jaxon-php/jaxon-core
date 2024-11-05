@@ -51,7 +51,7 @@ class PluginDataBagTest extends TestCase
         $xResponse = jaxon()->getResponse();
         $this->assertEquals(1, $xResponse->getCommandCount());
         $aCommand = $xResponse->getCommands()[0];
-        $this->assertEquals('dom.assign', $aCommand['name']);
+        $this->assertEquals('node.assign', $aCommand['name']);
         $this->assertEquals('div-id', $aCommand['args']['id']);
         $this->assertEquals('innerHTML', $aCommand['args']['attr']);
         $this->assertEquals('Default value', $aCommand['args']['value']);
@@ -106,7 +106,7 @@ class PluginDataBagTest extends TestCase
 
         // Test the assign command
         $aAssignCommand = $xResponse->getCommands()[0];
-        $this->assertEquals('dom.assign', $aAssignCommand['name']);
+        $this->assertEquals('node.assign', $aAssignCommand['name']);
         $this->assertEquals('div-id', $aAssignCommand['args']['id']);
         $this->assertEquals('innerHTML', $aAssignCommand['args']['attr']);
         $this->assertEquals('value1', $aAssignCommand['args']['value']);
@@ -142,7 +142,7 @@ class PluginDataBagTest extends TestCase
 
         // Test the assign command
         $aAssignCommand = $xResponse->getCommands()[0];
-        $this->assertEquals('dom.assign', $aAssignCommand['name']);
+        $this->assertEquals('node.assign', $aAssignCommand['name']);
         $this->assertEquals('div-id', $aAssignCommand['args']['id']);
         $this->assertEquals('innerHTML', $aAssignCommand['args']['attr']);
         $this->assertEquals('value1', $aAssignCommand['args']['value']);
