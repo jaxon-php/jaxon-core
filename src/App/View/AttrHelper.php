@@ -89,12 +89,13 @@ class AttrHelper
      */
     private function checkOn(array $on)
     {
-        // Only accept arrays of 2 or 3 entries.
+        // Only accept arrays of 2 entries.
         $count = count($on);
-        if($count !== 2 && $count !== 3)
+        if($count !== 2)
         {
             return false;
         }
+
         // Only accept arrays with int index from 0, and string value.
         for($i = 0; $i < $count; $i++)
         {
@@ -103,11 +104,30 @@ class AttrHelper
                 return false;
             }
         }
+
         return true;
     }
 
     /**
-     * Set an event handler
+     * Get the event handler attributes
+     *
+     * @param string $select
+     * @param string $event
+     * @param string $attr
+     * @param JsExpr $xJsExpr
+     *
+     * @return string
+     */
+    private function eventAttr(string $select, string $event, string $attr, JsExpr $xJsExpr): string
+    {
+        $sCall = htmlentities(json_encode($xJsExpr->jsonSerialize()));
+
+        return "$attr=\"$event\" jxn-call=\"$sCall\"" .
+            ($select !== '' ? "jxn-select=\"$select\" " : '');
+    }
+
+    /**
+     * Set an event handler with the "on" keywork
      *
      * @param string|array $on
      * @param JsExpr $xJsExpr
@@ -118,7 +138,6 @@ class AttrHelper
     {
         $select = '';
         $event = $on;
-        $target = null;
         if(is_array($on))
         {
             if(!$this->checkOn($on))
@@ -126,17 +145,15 @@ class AttrHelper
                 return '';
             }
 
-            [$select, $event] = $on;
-            $target = $on[2] ?? null;
+            $select = trim($on[0]);
+            $event = trim($on[1]);
         }
 
-        return (($select = trim($select)) !== '' ? 'jxn-select="' . $select . '" ' : '') .
-            ($target !== null ? 'jxn-event="' : 'jxn-on="') . trim($event) .
-            '" jxn-call="' . htmlentities(json_encode($xJsExpr->jsonSerialize())) . '"';
+        return $this->eventAttr($select, $event, 'jxn-on', $xJsExpr);
     }
 
     /**
-     * Set an event handler
+     * Shortcut to set a click event handler
      *
      * @param JsExpr $xJsExpr
      *
@@ -145,5 +162,23 @@ class AttrHelper
     public function click(JsExpr $xJsExpr): string
     {
         return $this->on('click', $xJsExpr);
+    }
+
+    /**
+     * Set an event handler with the "event" keywork
+     *
+     * @param array $on
+     * @param JsExpr $xJsExpr
+     *
+     * @return string
+     */
+    public function event(array $on, JsExpr $xJsExpr): string
+    {
+        if(!$this->checkOn($on))
+        {
+            return '';
+        }
+
+        return $this->eventAttr(trim($on[0]), trim($on[1]), 'jxn-event', $xJsExpr);
     }
 }
