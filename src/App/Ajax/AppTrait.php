@@ -203,6 +203,6 @@ trait AppTrait
     /**
      * @inheritDoc
      */
-    public function setup(string $sConfigFile)
+    public function setup(string $sConfigFile = '')
     {}
 }
