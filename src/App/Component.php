@@ -5,6 +5,7 @@ namespace Jaxon\App;
 use Jaxon\Di\Container;
 use Jaxon\Plugin\Request\CallableClass\CallableClassHelper;
 use Jaxon\Response\Response;
+use Stringable;
 
 abstract class Component extends AbstractComponent
 {
@@ -24,9 +25,9 @@ abstract class Component extends AbstractComponent
     }
 
     /**
-     * @return string
+     * @return string|Stringable
      */
-    abstract public function html(): string;
+    abstract public function html(): string|Stringable;
 
     /**
      * Called before rendering the component.
@@ -52,7 +53,7 @@ abstract class Component extends AbstractComponent
     final public function render(): Response
     {
         $this->before();
-        $this->node()->html($this->html());
+        $this->node()->html((string)$this->html());
         $this->after();
 
         return $this->response;

@@ -3,10 +3,11 @@
 namespace Jaxon\App\View;
 
 use JsonSerializable;
+use Stringable;
 
 use function array_merge;
 
-class Store implements JsonSerializable
+class Store implements JsonSerializable, Stringable
 {
     /**
      * The view renderer

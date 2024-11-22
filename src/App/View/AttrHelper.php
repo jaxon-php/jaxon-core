@@ -146,8 +146,9 @@ class AttrHelper
             }
 
             $select = trim($on[0]);
-            $event = trim($on[1]);
+            $event = $on[1];
         }
+        $event = trim($event);
 
         return $this->eventAttr($select, $event, 'jxn-on', $xJsExpr);
     }
