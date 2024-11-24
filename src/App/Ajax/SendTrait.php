@@ -63,6 +63,10 @@ trait SendTrait
 
         if($this->xConfigManager->getOption('core.process.exit', false))
         {
+            ob_flush();
+            ob_end_flush();
+            session_write_close();
+            fastcgi_finish_request();
             exit();
         }
     }
