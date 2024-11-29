@@ -57,7 +57,7 @@ class Selector implements JsonSerializable, Stringable
         }
 
         $sContext = is_a($xContext, self::class) ?
-            $xContext->getScript() : "jaxon.jq('" . trim("{$xContext}") . "')";
+            $xContext->__toString() : "jaxon.jq('" . trim("{$xContext}") . "')";
         return "jaxon.jq('{$sPath}', $sContext)";
     }
 

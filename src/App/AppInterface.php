@@ -247,5 +247,5 @@ interface AppInterface
      *
      * @return void
      */
-    public function setup(string $sConfigFile);
+    public function setup(string $sConfigFile = '');
 }

@@ -31,7 +31,7 @@ class App extends AbstractApp
      * @inheritDoc
      * @throws SetupException
      */
-    public function setup(string $sConfigFile)
+    public function setup(string $sConfigFile = '')
     {
         if(!file_exists($sConfigFile))
         {
