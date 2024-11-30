@@ -64,10 +64,10 @@ class AttrHelper
      *
      * @return string
      */
-    public function show(JxnCall $xJsCall, string $item = ''): string
+    public function bind(JxnCall $xJsCall, string $item = ''): string
     {
         $item = trim($item);
-        return 'jxn-show="' . $xJsCall->_class() . (!$item ? '"' : '" jxn-item="' . $item . '"');
+        return 'jxn-bind="' . $xJsCall->_class() . (!$item ? '"' : '" jxn-item="' . $item . '"');
     }
 
     /**
@@ -145,12 +145,11 @@ class AttrHelper
                 return '';
             }
 
-            $select = trim($on[0]);
+            $select = $on[0];
             $event = $on[1];
         }
-        $event = trim($event);
 
-        return $this->eventAttr($select, $event, 'jxn-on', $xJsExpr);
+        return $this->eventAttr(trim($select), trim($event), 'jxn-on', $xJsExpr);
     }
 
     /**
