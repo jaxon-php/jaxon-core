@@ -53,7 +53,7 @@ class AttrHelper
         }
 
         $xCallable = $this->cls->makeRegisteredObject($sClassName);
-        return is_a($xCallable, Component::class) ? $xCallable->html() : '';
+        return is_a($xCallable, Component::class) ? (string)$xCallable->html() : '';
     }
 
     /**
