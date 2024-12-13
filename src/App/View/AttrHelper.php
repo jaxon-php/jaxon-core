@@ -14,6 +14,7 @@ namespace Jaxon\App\View;
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
+use Jaxon\App\Ajax\Pagination;
 use Jaxon\App\Component;
 use Jaxon\Di\ClassContainer;
 use Jaxon\Script\JsExpr;
@@ -24,18 +25,26 @@ use function htmlentities;
 use function is_a;
 use function is_array;
 use function is_string;
+use function Jaxon\rq;
 use function json_encode;
 use function trim;
 
 class AttrHelper
 {
     /**
+     * @var string
+     */
+    private $sPaginationComponent;
+
+    /**
      * The constructor
      *
      * @param ClassContainer $cls
      */
     public function __construct(protected ClassContainer $cls)
-    {}
+    {
+        $this->sPaginationComponent = rq(Pagination::class)->_class();
+    }
 
     /**
      * Get the component HTML code
@@ -68,6 +77,18 @@ class AttrHelper
     {
         $item = trim($item);
         return 'jxn-bind="' . $xJsCall->_class() . (!$item ? '"' : '" jxn-item="' . $item . '"');
+    }
+
+    /**
+     * Attach the pagination component to a DOM node
+     *
+     * @param JxnCall $xJsCall
+     *
+     * @return string
+     */
+    public function pagination(JxnCall $xJsCall): string
+    {
+        return 'jxn-bind="' . $this->sPaginationComponent . '" jxn-item="' . $xJsCall->_class() . '"';
     }
 
     /**
