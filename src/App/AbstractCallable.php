@@ -3,6 +3,7 @@
 namespace Jaxon\App;
 
 use Jaxon\Di\Container;
+use Jaxon\App\Ajax\Cache\Cache;
 use Jaxon\App\Session\SessionInterface;
 use Jaxon\App\View\ViewRenderer;
 use Jaxon\Exception\SetupException;
@@ -15,6 +16,13 @@ use Psr\Log\LoggerInterface;
 
 abstract class AbstractCallable
 {
+    /**
+     * The temp cache
+     *
+     * @var Cache
+     */
+    protected $temp = null;
+
     /**
      * @var CallableClassHelper
      */

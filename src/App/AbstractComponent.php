@@ -2,6 +2,7 @@
 
 namespace Jaxon\App;
 
+use Jaxon\App\Ajax\Cache\Cache;
 use Jaxon\Di\Container;
 use Jaxon\Plugin\Request\CallableClass\CallableClassHelper;
 use Jaxon\Response\AjaxResponse;
@@ -27,6 +28,7 @@ abstract class AbstractComponent extends AbstractCallable
     public function _initCallable(Container $di, CallableClassHelper $xCallableClassHelper)
     {
         $this->xCallableClassHelper = $xCallableClassHelper;
+        $this->temp = $di->get(Cache::class);
 
         // A component can overrides another one. In this case,
         // its response is attached to the overriden component DOM node.

@@ -2,6 +2,7 @@
 
 namespace Jaxon\App;
 
+use Jaxon\App\Ajax\Cache\Cache;
 use Jaxon\Di\Container;
 use Jaxon\Plugin\Request\CallableClass\CallableClassHelper;
 use Jaxon\Plugin\Response\Pagination\Paginator;
@@ -21,6 +22,7 @@ class CallableClass extends AbstractCallable
     public function _initCallable(Container $di, CallableClassHelper $xCallableClassHelper)
     {
         $this->xCallableClassHelper = $xCallableClassHelper;
+        $this->temp = $di->get(Cache::class);
         $this->response = $di->getResponse();
     }
 
