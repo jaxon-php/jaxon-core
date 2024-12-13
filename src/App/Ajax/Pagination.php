@@ -1,10 +1,11 @@
 <?php
 
-namespace Jaxon\App;
+namespace Jaxon\App\Ajax;
 
+use Jaxon\App\AbstractComponent;
 use Jaxon\Plugin\Response\Pagination\Paginator;
 
-abstract class PaginationComponent extends AbstractComponent
+class Pagination extends AbstractComponent
 {
     /**
      * Create a paginator.

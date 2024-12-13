@@ -2,6 +2,7 @@
 
 namespace Jaxon\Di\Traits;
 
+use Jaxon\App\Ajax\Pagination;
 use Jaxon\App\Config\ConfigManager;
 use Jaxon\App\I18n\Translator;
 use Jaxon\Di\ClassContainer;
@@ -29,7 +30,10 @@ trait CallableTrait
         });
         // Callable objects registry
         $this->set(CallableRegistry::class, function($di) {
-            return new CallableRegistry($di->g(ClassContainer::class));
+            $xRegistry = new CallableRegistry($di->g(ClassContainer::class));
+            // Register the pagination component, but do not export to js.
+            $xRegistry->addClass(Pagination::class, ['excluded' => true]);
+            return $xRegistry;
         });
         // Callable class plugin
         $this->set(CallableClassPlugin::class, function($di) {
