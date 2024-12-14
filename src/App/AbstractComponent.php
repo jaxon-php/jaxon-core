@@ -25,9 +25,9 @@ abstract class AbstractComponent extends AbstractCallable
     /**
      * @inheritDoc
      */
-    public function _initCallable(Container $di, CallableClassHelper $xCallableClassHelper)
+    public function _initCallable(Container $di, CallableClassHelper $xHelper)
     {
-        $this->xCallableClassHelper = $xCallableClassHelper;
+        $this->xHelper = $xHelper;
         $this->temp = $di->get(Cache::class);
 
         // A component can overrides another one. In this case,

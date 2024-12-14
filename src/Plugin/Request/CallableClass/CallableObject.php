@@ -359,7 +359,7 @@ class CallableObject
         if($xRegisteredObject instanceof AbstractCallable)
         {
             // Set the protected attributes of the object
-            $sAttr = 'xCallableClassHelper';
+            $sAttr = 'xHelper';
             $cSetter = function() use($xTarget, $sAttr) {
                 $this->$sAttr->xTarget = $xTarget;
             };

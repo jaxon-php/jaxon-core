@@ -15,6 +15,7 @@
 namespace Jaxon\Di;
 
 use Jaxon\App\AbstractCallable;
+use Jaxon\App\Cache\Cache;
 use Jaxon\App\Config\ConfigManager;
 use Jaxon\App\Dialog\DialogManager;
 use Jaxon\App\I18n\Translator;
@@ -320,9 +321,10 @@ class ClassContainer
         // Register the helper class
         $this->set($this->getCallableHelperKey($sClassName), function() use($sClassName) {
             $xFactory = $this->di->getCallFactory();
-            return new CallableClassHelper($this, $xFactory->rq($sClassName), $xFactory,
-                $this->di->getViewRenderer(), $this->di->getLogger(),
-                $this->di->getSessionManager(), $this->di->getUploadHandler());
+            return new CallableClassHelper($this, $xFactory->rq($sClassName),
+                $xFactory, $this->di->getViewRenderer(),
+                $this->di->getLogger(), $this->di->getSessionManager(),
+                $this->di->getCache(), $this->di->getUploadHandler());
         });
 
         $aOptions = $this->getClassOptions($sClassName);

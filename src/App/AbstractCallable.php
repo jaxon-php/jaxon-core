@@ -17,26 +17,19 @@ use Psr\Log\LoggerInterface;
 abstract class AbstractCallable
 {
     /**
-     * The temp cache
-     *
-     * @var Cache
-     */
-    protected $temp = null;
-
-    /**
      * @var CallableClassHelper
      */
-    protected $xCallableClassHelper = null;
+    protected $xHelper = null;
 
     /**
      * Initialize the callable class
      *
      * @param Container $di
-     * @param CallableClassHelper $xCallableClassHelper
+     * @param CallableClassHelper $xHelper
      *
      * @return void
      */
-    abstract public function _initCallable(Container $di, CallableClassHelper $xCallableClassHelper);
+    abstract public function _initCallable(Container $di, CallableClassHelper $xHelper);
 
     /**
      * Get the Ajax response
@@ -52,7 +45,17 @@ abstract class AbstractCallable
      */
     protected function target(): TargetInterface
     {
-        return $this->xCallableClassHelper->xTarget;
+        return $this->xHelper->xTarget;
+    }
+
+    /**
+     * Get the temp cache
+     *
+     * @return Cache
+     */
+    protected function cache(): Cache
+    {
+        return $this->xHelper->xCache;
     }
 
     /**
@@ -65,7 +68,7 @@ abstract class AbstractCallable
      */
     public function cl(string $sClassName)
     {
-        return $this->xCallableClassHelper->cl($sClassName);
+        return $this->xHelper->cl($sClassName);
     }
 
     /**
@@ -77,7 +80,7 @@ abstract class AbstractCallable
      */
     public function rq(string $sClassName = ''): JxnCall
     {
-        return $this->xCallableClassHelper->rq($sClassName);
+        return $this->xHelper->rq($sClassName);
     }
 
     /**
@@ -87,7 +90,7 @@ abstract class AbstractCallable
      */
     public function logger(): LoggerInterface
     {
-        return $this->xCallableClassHelper->xLogger;
+        return $this->xHelper->xLogger;
     }
 
     /**
@@ -97,7 +100,7 @@ abstract class AbstractCallable
      */
     public function view(): ViewRenderer
     {
-        return $this->xCallableClassHelper->xViewRenderer;
+        return $this->xHelper->xViewRenderer;
     }
 
     /**
@@ -107,7 +110,7 @@ abstract class AbstractCallable
      */
     public function session(): SessionInterface
     {
-        return $this->xCallableClassHelper->xSessionManager;
+        return $this->xHelper->xSessionManager;
     }
 
     /**
@@ -117,7 +120,7 @@ abstract class AbstractCallable
      */
     public function files(): array
     {
-        return $this->xCallableClassHelper->xUploadHandler->files();
+        return $this->xHelper->xUploadHandler->files();
     }
 
     /**

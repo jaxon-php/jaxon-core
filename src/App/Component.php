@@ -17,9 +17,9 @@ abstract class Component extends AbstractComponent
     /**
      * @inheritDoc
      */
-    public function _initCallable(Container $di, CallableClassHelper $xCallableClassHelper)
+    public function _initCallable(Container $di, CallableClassHelper $xHelper)
     {
-        parent::_initCallable($di, $xCallableClassHelper);
+        parent::_initCallable($di, $xHelper);
 
         $this->response = $di->getResponse();
     }

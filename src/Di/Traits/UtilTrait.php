@@ -2,6 +2,7 @@
 
 namespace Jaxon\Di\Traits;
 
+use Jaxon\App\Cache\Cache;
 use Jaxon\Utils\Config\ConfigReader;
 use Jaxon\Utils\Http\UriDetector;
 use Jaxon\Utils\Template\TemplateEngine;
@@ -36,6 +37,11 @@ trait UtilTrait
         $this->set(UriDetector::class, function() {
             return new UriDetector();
         });
+
+        // Temp cache for Jaxon callable classes
+        $this->set(Cache::class, function() {
+            return new Cache();
+        });
     }
 
     /**
@@ -46,5 +52,15 @@ trait UtilTrait
     public function getTemplateEngine(): TemplateEngine
     {
         return $this->g(TemplateEngine::class);
+    }
+
+    /**
+     * Get the temp cache for Jaxon callable classes
+     *
+     * @return Cache
+     */
+    public function getCache(): Cache
+    {
+        return $this->g(Cache::class);
     }
 }
