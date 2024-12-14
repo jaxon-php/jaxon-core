@@ -12,9 +12,7 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\App;
-
-use Jaxon\App\Ajax\AppTrait;
+namespace Jaxon\App\Ajax;
 
 abstract class AbstractApp implements AppInterface
 {

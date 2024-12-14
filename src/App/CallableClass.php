@@ -2,7 +2,7 @@
 
 namespace Jaxon\App;
 
-use Jaxon\App\Ajax\Cache\Cache;
+use Jaxon\App\Cache\Cache;
 use Jaxon\Di\Container;
 use Jaxon\Plugin\Request\CallableClass\CallableClassHelper;
 use Jaxon\Plugin\Response\Pagination\Paginator;

@@ -2,7 +2,6 @@
 
 namespace Jaxon\App;
 
-use Jaxon\App\Ajax\Pagination;
 use Jaxon\Plugin\Response\Pagination\Paginator;
 
 abstract class PageComponent extends Component

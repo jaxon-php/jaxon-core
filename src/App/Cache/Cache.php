@@ -1,6 +1,6 @@
 <?php
 
-namespace Jaxon\App\Ajax\Cache;
+namespace Jaxon\App\Cache;
 
 use function is_callable;
 
@@ -34,6 +34,7 @@ class Cache
         if(is_callable($value))
         {
             $value = $value();
+            // Save the value returned by the callback in the cache.
             $this->values[$key] = $value;
         }
 

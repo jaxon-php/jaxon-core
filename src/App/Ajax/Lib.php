@@ -28,7 +28,6 @@ namespace Jaxon\App\Ajax;
 use Jaxon\Jaxon;
 use Jaxon\Di\ClassContainer;
 use Jaxon\Di\Container;
-use Jaxon\App\AppInterface;
 use Jaxon\App\Config\ConfigManager;
 use Jaxon\App\Dialog\Library\DialogLibraryManager;
 use Jaxon\App\I18n\Translator;

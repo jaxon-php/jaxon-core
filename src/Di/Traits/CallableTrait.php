@@ -2,9 +2,9 @@
 
 namespace Jaxon\Di\Traits;
 
-use Jaxon\App\Ajax\Pagination;
 use Jaxon\App\Config\ConfigManager;
 use Jaxon\App\I18n\Translator;
+use Jaxon\App\Pagination;
 use Jaxon\Di\ClassContainer;
 use Jaxon\Di\Container;
 use Jaxon\Plugin\Request\CallableClass\CallableClassPlugin;

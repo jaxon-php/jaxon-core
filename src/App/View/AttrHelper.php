@@ -14,8 +14,8 @@ namespace Jaxon\App\View;
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-use Jaxon\App\Ajax\Pagination;
 use Jaxon\App\Component;
+use Jaxon\App\Pagination;
 use Jaxon\Di\ClassContainer;
 use Jaxon\Script\JsExpr;
 use Jaxon\Script\JxnCall;
@@ -88,6 +88,7 @@ class AttrHelper
      */
     public function pagination(JxnCall $xJsCall): string
     {
+        // The pagination is always rendered with the same Pagination component.
         return 'jxn-bind="' . $this->sPaginationComponent . '" jxn-item="' . $xJsCall->_class() . '"';
     }
 

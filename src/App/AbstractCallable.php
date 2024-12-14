@@ -3,7 +3,7 @@
 namespace Jaxon\App;
 
 use Jaxon\Di\Container;
-use Jaxon\App\Ajax\Cache\Cache;
+use Jaxon\App\Cache\Cache;
 use Jaxon\App\Session\SessionInterface;
 use Jaxon\App\View\ViewRenderer;
 use Jaxon\Exception\SetupException;

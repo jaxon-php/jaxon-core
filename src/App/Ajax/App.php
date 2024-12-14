@@ -14,7 +14,6 @@
 
 namespace Jaxon\App\Ajax;
 
-use Jaxon\App\AbstractApp;
 use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;
 

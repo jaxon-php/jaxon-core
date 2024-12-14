@@ -3,8 +3,8 @@
 namespace Jaxon\Di\Traits;
 
 use Jaxon\App\Ajax\App;
-use Jaxon\App\Ajax\Cache\Cache;
-use Jaxon\App\AppInterface;
+use Jaxon\App\Ajax\AppInterface;
+use Jaxon\App\Cache\Cache;
 use Jaxon\App\Ajax\Bootstrap;
 use Jaxon\App\Config\ConfigEventManager;
 use Jaxon\App\Config\ConfigManager;
@@ -116,8 +116,8 @@ trait AppTrait
         });
 
         // Jaxon App
-        $this->set(AppInterface::class, function($di) {
-            return new App($di->g(Container::class));
+        $this->set(AppInterface::class, function() {
+            return new App();
         });
         // Temp cache for Jaxon callable classes
         $this->set(Cache::class, function() {

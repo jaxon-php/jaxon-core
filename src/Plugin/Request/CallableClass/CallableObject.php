@@ -27,7 +27,7 @@
 namespace Jaxon\Plugin\Request\CallableClass;
 
 use Jaxon\App\AbstractCallable;
-use Jaxon\App\Ajax\Pagination;
+use Jaxon\App\Pagination;
 use Jaxon\Di\ClassContainer;
 use Jaxon\Di\Container;
 use Jaxon\Exception\SetupException;
