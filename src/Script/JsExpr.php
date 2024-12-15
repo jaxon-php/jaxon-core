@@ -3,7 +3,7 @@
 /**
  * JsExpr.php
  *
- * An expression to be formatted in json, that represents a call to a js function os selector.
+ * An expression to be formatted in json, that represents a call to a js function or selector.
  *
  * @package jaxon-core
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>

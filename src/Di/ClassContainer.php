@@ -15,7 +15,6 @@
 namespace Jaxon\Di;
 
 use Jaxon\App\AbstractCallable;
-use Jaxon\App\Cache\Cache;
 use Jaxon\App\Config\ConfigManager;
 use Jaxon\App\Dialog\DialogManager;
 use Jaxon\App\I18n\Translator;
