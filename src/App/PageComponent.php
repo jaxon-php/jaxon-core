@@ -11,7 +11,7 @@ abstract class PageComponent extends Component
      *
      * @var int
      */
-    private int $pageNumber = 1;
+    private int $currentPage = 1;
 
     /**
      * Get the pagination databag name.
@@ -64,11 +64,11 @@ abstract class PageComponent extends Component
     private function setPageNumber(int $pageNumber): void
     {
         $this->bag($this->bagName())->set($this->bagAttr(), $pageNumber);
-        $this->pageNumber = $pageNumber;
+        $this->currentPage = $pageNumber;
     }
 
     /**
-     * Render a page, and return a paginator for the component.
+     * Get the paginator for the component.
      *
      * @param int $pageNumber
      *
@@ -80,9 +80,9 @@ abstract class PageComponent extends Component
             // Use the js class name as component item identifier.
             ->item($this->rq()->_class())
             ->paginator($this->getPageNumber($pageNumber), $this->limit(), $this->count())
-            // This callback will receive the final value of the page number.
-            ->page(function(int $page) {
-                $this->setPageNumber($page);
+            // This callback will receive the final value of the current page number.
+            ->page(function(int $currentPage) {
+                $this->setPageNumber($currentPage);
             });
     }
 
@@ -93,6 +93,6 @@ abstract class PageComponent extends Component
      */
     protected function pageNumber(): int
     {
-        return $this->pageNumber;
+        return $this->currentPage;
     }
 }
