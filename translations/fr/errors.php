@@ -64,7 +64,12 @@ return [
             'set' => "Accès à la propriété inconnue :name avec la surcharge magique __set à la ligne :line du fichier :file.",
         ],
         'dialog' => [
-            'library' => "There is no :type library with name :name",
+            'library' => "Impossible de trouver la librarie :type avec le nom :name",
+        ],
+        'app' => [
+            'confirm' => [
+                'nested' => "Les appels à la commande confirm ne peuvent pas être imbriqués.",
+            ],
         ],
     ],
 ];

@@ -26,14 +26,6 @@ use Jaxon\Script\JsExpr;
 class Response extends AjaxResponse
 {
     /**
-     * @inheritDoc
-     */
-    protected function newResponse(): AjaxResponse
-    {
-        return $this->xManager->newResponse();
-    }
-
-    /**
      * Add a command to assign the specified value to the given element's attribute
      *
      * @param string $sTarget    The id of the html element on the browser

@@ -66,5 +66,10 @@ return [
         'dialog' => [
             'library' => "There is no :type library with name :name",
         ],
+        'app' => [
+            'confirm' => [
+                'nested' => "Calls to the confirm command cannot be nested.",
+            ],
+        ],
     ],
 ];

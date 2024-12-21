@@ -1,9 +1,9 @@
 <?php
 
 /**
- * AppException.php - Jaxon app exception
+ * RequestException.php - Jaxon request exception
  *
- * This exception is thrown when an error occurs in the application.
+ * This exception is thrown when an error occurs in the HTTP request processing.
  *
  * @package jaxon-core
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>

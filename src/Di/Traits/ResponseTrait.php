@@ -6,11 +6,11 @@ use Jaxon\App\Config\ConfigManager;
 use Jaxon\App\Dialog\DialogManager;
 use Jaxon\App\I18n\Translator;
 use Jaxon\Di\Container;
-use Jaxon\Script\Factory\CallFactory;
 use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Response\Response;
 use Jaxon\Response\ComponentResponse;
 use Jaxon\Response\ResponseManager;
+use Jaxon\Script\Factory\CallFactory;
 
 use function trim;
 
@@ -25,13 +25,13 @@ trait ResponseTrait
     {
         // Global Response
         $this->set(Response::class, function($di) {
-            return new Response($di->g(ResponseManager::class),
-                $di->g(PluginManager::class), $di->g(DialogManager::class));
+            return new Response($di->g(ResponseManager::class), $di->g(PluginManager::class));
         });
         // Response Manager
         $this->set(ResponseManager::class, function($di) {
+            $sEncoding = trim($di->g(ConfigManager::class)->getOption('core.encoding', ''));
             return new ResponseManager($di->g(Container::class), $di->g(Translator::class),
-                trim($di->g(ConfigManager::class)->getOption('core.encoding', '')));
+                $this->g(DialogManager::class), $sEncoding);
         });
     }
 
@@ -62,8 +62,7 @@ trait ResponseTrait
      */
     public function newResponse(): Response
     {
-        return new Response($this->g(ResponseManager::class),
-            $this->g(PluginManager::class), $this->g(DialogManager::class));
+        return new Response($this->g(ResponseManager::class), $this->g(PluginManager::class));
     }
 
     /**
@@ -79,6 +78,6 @@ trait ResponseTrait
         $xFactory = $this->g(CallFactory::class);
         $sComponentName = $xFactory->rq($sComponentClass)->_class();
         return new ComponentResponse($this->g(ResponseManager::class),
-            $this->g(PluginManager::class), $this->g(DialogManager::class), $sComponentName);
+            $this->g(PluginManager::class), $sComponentName);
     }
 }

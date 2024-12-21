@@ -3,8 +3,7 @@
 /**
  * ComponentResponse.php
  *
- * This class collects commands to be sent back to the browser in response to a jaxon request.
- * Commands are encoded and packaged in json format.
+ * This class is a special response class form Jaxon components.
  *
  * @package jaxon-core
  * @author Jared White
@@ -21,7 +20,6 @@
 
 namespace Jaxon\Response;
 
-use Jaxon\App\Dialog\DialogManager;
 use Jaxon\Plugin\Manager\PluginManager;
 use JsonSerializable;
 
@@ -37,22 +35,13 @@ class ComponentResponse extends AjaxResponse
      *
      * @param ResponseManager $xManager
      * @param PluginManager $xPluginManager
-     * @param DialogManager $xDialogManager
      * @param string $sComponentName
      */
     public function __construct(ResponseManager $xManager, PluginManager $xPluginManager,
-        DialogManager $xDialogManager, string $sComponentName)
+        string $sComponentName)
     {
-        parent::__construct($xManager, $xPluginManager, $xDialogManager);
+        parent::__construct($xManager, $xPluginManager);
         $this->aComponent['name'] = $this->str($sComponentName);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    protected function newResponse(): AjaxResponse
-    {
-        return $this->xManager->newComponentResponse(self::class);
     }
 
     /**
@@ -75,30 +64,13 @@ class ComponentResponse extends AjaxResponse
      * @param array|JsonSerializable $aArgs    The command arguments
      * @param bool $bRemoveEmpty
      *
-     * @return void
+     * @return Command
      */
     public function addCommand(string $sName, array|JsonSerializable $aArgs = [],
-        bool $bRemoveEmpty = false)
+        bool $bRemoveEmpty = false): Command
     {
-        parent::addCommand($sName, $aArgs, $bRemoveEmpty);
-        $this->xManager->setComponent($this->aComponent);
-    }
-
-    /**
-     * Insert a response command before a given number of commands
-     *
-     * @param string $sName    The command name
-     * @param array|JsonSerializable $aArgs    The command arguments
-     * @param int $nBefore    The number of commands to move
-     * @param bool $bRemoveEmpty
-     *
-     * @return void
-     */
-    public function insertCommand(string $sName, array|JsonSerializable $aArgs,
-        int $nBefore, bool $bRemoveEmpty = false)
-    {
-        parent::insertCommand($sName, $aArgs, $nBefore, $bRemoveEmpty);
-        $this->xManager->setComponent($this->aComponent);
+        return parent::addCommand($sName, $aArgs, $bRemoveEmpty)
+            ->setComponent($this->aComponent);
     }
 
     /**
@@ -175,8 +147,7 @@ class ComponentResponse extends AjaxResponse
      *
      * @return self
      */
-    public function replace(string $sAttribute,
-        string $sSearch, string $sReplace): self
+    public function replace(string $sAttribute, string $sSearch, string $sReplace): self
     {
         $this->addCommand('node.replace', [
             'attr' => $this->str($sAttribute),

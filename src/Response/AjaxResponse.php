@@ -22,10 +22,10 @@
 namespace Jaxon\Response;
 
 use Jaxon\App\Dialog\DialogManager;
+use Jaxon\Exception\AppException;
 use Jaxon\Script\JqCall;
 use Jaxon\Script\JsExpr;
 use Jaxon\Script\JsCall;
-use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Plugin\Response\DataBag\DataBagContext;
 use Jaxon\Plugin\Response\DataBag\DataBagPlugin;
 use Jaxon\Plugin\Response\Pagination\Paginator;
@@ -42,30 +42,11 @@ use function json_encode;
 abstract class AjaxResponse extends AbstractResponse
 {
     /**
-     * @var DialogManager
-     */
-    protected $xDialogManager;
-
-    /**
-     * The constructor
-     *
-     * @param ResponseManager $xManager
-     * @param PluginManager $xPluginManager
-     * @param DialogManager $xDialogManager
-     */
-    public function __construct(ResponseManager $xManager, PluginManager $xPluginManager,
-        DialogManager $xDialogManager)
-    {
-        parent::__construct($xManager, $xPluginManager);
-        $this->xDialogManager = $xDialogManager;
-    }
-
-    /**
      * @return DialogManager
      */
     protected function dialog(): DialogManager
     {
-        return $this->xDialogManager;
+        return $this->xManager->dialog();
     }
 
     /**
@@ -113,36 +94,23 @@ abstract class AjaxResponse extends AbstractResponse
     }
 
     /**
-     * Create a new response
-     *
-     * @return AjaxResponse
-     */
-    abstract protected function newResponse(): AjaxResponse;
-
-    /**
      * Response command that prompts user with [ok] [cancel] style message box
      *
      * The provided closure will be called with a response object as unique parameter.
      * If the user clicks cancel, the response commands defined in the closure will be skipped.
      *
-     * @param Closure $fConfirm    A closure that defines the commands that can be skipped
+     * @param Closure $fConfirm  A closure that defines the commands that can be skipped
      * @param string $sQuestion  The question to ask to the user
      * @param array $aArgs       The arguments for the placeholders in the question
+     *
+     * @throws AppException
      *
      * @return self
      */
     public function confirm(Closure $fConfirm, string $sQuestion, array $aArgs = []): self
     {
-        $xResponse = $this->newResponse();
-        $fConfirm($xResponse);
-        if($xResponse->nCommandCount > 0)
-        {
-            // The confirm command must be inserted before the commands to be confirmed.
-            $this->insertCommand('script.confirm', [
-                'count' => $xResponse->nCommandCount,
-                'question' => $this->dialog()->confirm($this->str($sQuestion), $aArgs),
-            ], $xResponse->nCommandCount);
-        }
+        $this->xManager->addConfirmCommand(fn() => $fConfirm($this),
+            $this->dialog()->confirm($this->str($sQuestion), $aArgs));
         return $this;
     }
 

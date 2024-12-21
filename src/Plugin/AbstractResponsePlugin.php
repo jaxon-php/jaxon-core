@@ -73,7 +73,7 @@ abstract class AbstractResponsePlugin extends AbstractPlugin implements Response
      */
     public function addCommand(string $sName, array|JsonSerializable $aOptions)
     {
-        $this->xResponse->addCommand($sName, $aOptions);
-        $this->xResponse->setOption('plugin', $this->getName());
+        $this->xResponse->addCommand($sName, $aOptions)
+            ->setOption('plugin', $this->getName());
     }
 }

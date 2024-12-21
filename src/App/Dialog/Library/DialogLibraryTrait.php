@@ -81,8 +81,8 @@ trait DialogLibraryTrait
     public function addCommand(string $sName, array $aOptions = [])
     {
         // This is usually the response plugin name. We set the library name instead.
-        $this->xResponse->addCommand($sName, $aOptions);
-        $this->xResponse->setOption('plugin', $this->getName());
+        $this->xResponse->addCommand($sName, $aOptions)
+            ->setOption('plugin', $this->getName());
     }
 
     /**

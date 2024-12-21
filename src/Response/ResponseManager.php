@@ -21,11 +21,16 @@
 
 namespace Jaxon\Response;
 
+use Jaxon\App\Dialog\DialogManager;
 use Jaxon\App\I18n\Translator;
+use Jaxon\Exception\AppException;
 use Jaxon\Di\Container;
+use Jaxon\Script\JxnCall;
+use Closure;
 use JsonSerializable;
 
 use function array_filter;
+use function array_merge;
 use function count;
 use function trim;
 
@@ -35,6 +40,11 @@ class ResponseManager
      * @var Container
      */
     private $di;
+
+    /**
+     * @var DialogManager
+     */
+    protected $xDialogManager;
 
     /**
      * @var Translator
@@ -76,22 +86,40 @@ class ResponseManager
     protected $aCommands = [];
 
     /**
-     * The latest added command position
+     * If the commands beeing added are to be confirmed
      *
-     * @var int
+     * @var bool
      */
-    private $nLastCommandPos = -1;
+    private $bOnConfirm = false;
+
+    /**
+     * The commands that will be sent to the browser in the response
+     *
+     * @var array
+     */
+    private $aConfirmCommands = [];
 
     /**
      * @param Container $di
      * @param Translator $xTranslator
+     * @param DialogManager $xDialogManager
      * @param string $sCharacterEncoding
      */
-    public function __construct(Container $di, Translator $xTranslator, string $sCharacterEncoding)
+    public function __construct(Container $di, Translator $xTranslator,
+        DialogManager $xDialogManager, string $sCharacterEncoding)
     {
         $this->di = $di;
         $this->xTranslator = $xTranslator;
+        $this->xDialogManager = $xDialogManager;
         $this->sCharacterEncoding = $sCharacterEncoding;
+    }
+
+    /**
+     * @return DialogManager
+     */
+    public function dialog(): DialogManager
+    {
+        return $this->xDialogManager;
     }
 
     /**
@@ -104,6 +132,19 @@ class ResponseManager
     protected function str($xData): string
     {
         return trim((string)$xData, " \t\n");
+    }
+
+    /**
+     * Get a translated string
+     *
+     * @param string $sText The key of the translated string
+     * @param array $aPlaceHolders The placeholders of the translated string
+     *
+     * @return string
+     */
+    public function trans(string $sText, array $aPlaceHolders = []): string
+    {
+        return $this->xTranslator->trans($sText, $aPlaceHolders);
     }
 
     /**
@@ -171,7 +212,7 @@ class ResponseManager
             return $aArgs;
         }
         return array_filter($aArgs, function($xArg) {
-            return empty($xArg);
+            return !empty($xArg);
         });
     }
 
@@ -182,83 +223,59 @@ class ResponseManager
      * @param array|JsonSerializable $aArgs    The command arguments
      * @param bool $bRemoveEmpty
      *
-     * @return void
+     * @return Command
      */
     public function addCommand(string $sName, array|JsonSerializable $aArgs,
-        bool $bRemoveEmpty = false)
+        bool $bRemoveEmpty = false): Command
     {
-        $this->nLastCommandPos = count($this->aCommands);
-        $this->aCommands[] = [
+        $xCommand = new Command([
             'name' => $this->str($sName),
             'args' => $this->getCommandArgs($aArgs, $bRemoveEmpty),
-        ];
+        ]);
+        if($this->bOnConfirm)
+        {
+            $this->aConfirmCommands[] = $xCommand;
+        }
+        else
+        {
+            $this->aCommands[] = $xCommand;
+        }
+        return $xCommand;
     }
 
     /**
-     * Insert a response command before a given number of commands
+     * Response command that prompts user with [ok] [cancel] style message box
      *
-     * @param string $sName    The command name
-     * @param array|JsonSerializable $aArgs    The command arguments
-     * @param int $nBefore    The number of commands to move
-     * @param bool $bRemoveEmpty
+     * The provided closure will be called with a response object as unique parameter.
+     * If the user clicks cancel, the response commands defined in the closure will be skipped.
      *
-     * @return void
+     * @param Closure $fConfirm  A closure that defines the commands that can be skipped
+     * @param array $aQuestion   The question to ask to the user
+     *
+     * @throws AppException
+     *
+     * @return self
      */
-    public function insertCommand(string $sName, array|JsonSerializable $aArgs,
-        int $nBefore, bool $bRemoveEmpty = false)
+    public function addConfirmCommand(Closure $fConfirm, array $aQuestion): self
     {
-        $nInsertPosition = count($this->aCommands) - $nBefore;
-        if($nInsertPosition < 0)
+        if($this->bOnConfirm)
         {
-            return;
+            throw new AppException($this->xTranslator->trans('errors.app.confirm.nested'));
         }
-        // Move the commands after the insert position.
-        for($nPos = count($this->aCommands); $nPos > $nInsertPosition; $nPos--)
+        $this->bOnConfirm = true;
+        $fConfirm();
+        $this->bOnConfirm = false;
+        if(($nCommandCount = count($this->aConfirmCommands)) > 0)
         {
-            $this->aCommands[$nPos] = $this->aCommands[$nPos - 1];
+            // The confirm command must be inserted before the commands to be confirmed.
+            $this->addCommand('script.confirm', [
+                'count' => $nCommandCount,
+                'question' => $aQuestion,
+            ]);
+            $this->aCommands = array_merge($this->aCommands, $this->aConfirmCommands);
+            $this->aConfirmCommands = [];
         }
-        $this->nLastCommandPos = $nInsertPosition;
-        $this->aCommands[$nInsertPosition] = [
-            'name' => $this->str($sName),
-            'args' => $this->getCommandArgs($aArgs, $bRemoveEmpty),
-        ];
-    }
-
-    /**
-     * Set a component on the last command
-     *
-     * @param array $aComponent
-     *
-     * @return void
-     */
-    public function setComponent(array $aComponent)
-    {
-        if($this->nLastCommandPos >= 0)
-        {
-            $this->aCommands[$this->nLastCommandPos]['component'] = $aComponent;
-        }
-    }
-
-    /**
-     * Add an option on the last command
-     *
-     * @param string $sName    The option name
-     * @param string|array|JsonSerializable $xValue    The option value
-     *
-     * @return void
-     */
-    public function setOption(string $sName, string|array|JsonSerializable $xValue)
-    {
-        if($this->nLastCommandPos >= 0)
-        {
-            $aCommand = &$this->aCommands[$this->nLastCommandPos];
-            if(isset($aCommand['options']))
-            {
-                $aCommand['options'][$this->str($sName)] = $xValue;
-                return;
-            }
-            $aCommand['options'] = [$this->str($sName) => $xValue];
-        }
+        return $this;
     }
 
     /**
@@ -296,13 +313,13 @@ class ResponseManager
     /**
      * Create a new reponse for a Jaxon component
      *
-     * @param string $sComponentClass
+     * @param JxnCall $xJxnCall
      *
      * @return ComponentResponse
      */
-    public function newComponentResponse(string $sComponentClass): ComponentResponse
+    public function newComponentResponse(JxnCall $xJxnCall): ComponentResponse
     {
-        return $this->di->newComponentResponse($sComponentClass);
+        return $this->di->newComponentResponse($xJxnCall);
     }
 
     /**

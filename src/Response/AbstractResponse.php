@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Response.php - The Jaxon Response
+ * AbstractResponse.php - Base class for Jaxon responses
  *
  * This class collects commands to be sent back to the browser in response to a jaxon request.
  * Commands are encoded and packaged in json format.
@@ -39,11 +39,6 @@ abstract class AbstractResponse
      * @var PluginManager
      */
     protected $xPluginManager;
-
-    /**
-     * @var int
-     */
-    protected $nCommandCount = 0;
 
     /**
      * The constructor
@@ -103,43 +98,12 @@ abstract class AbstractResponse
      * @param array|JsonSerializable $aArgs    The command arguments
      * @param bool $bRemoveEmpty
      *
-     * @return void
+     * @return Command
      */
     public function addCommand(string $sName, array|JsonSerializable $aArgs = [],
-        bool $bRemoveEmpty = false)
+        bool $bRemoveEmpty = false): Command
     {
-        $this->nCommandCount++;
-        $this->xManager->addCommand($sName, $aArgs, $bRemoveEmpty);
-    }
-
-    /**
-     * Insert a response command before a given number of commands
-     *
-     * @param string $sName    The command name
-     * @param array|JsonSerializable $aArgs    The command arguments
-     * @param int $nBefore    The number of commands to move
-     * @param bool $bRemoveEmpty
-     *
-     * @return void
-     */
-    public function insertCommand(string $sName, array|JsonSerializable $aArgs,
-        int $nBefore, bool $bRemoveEmpty = false)
-    {
-        $this->nCommandCount++;
-        $this->xManager->insertCommand($sName, $aArgs, $nBefore, $bRemoveEmpty);
-    }
-
-    /**
-     * Add an option on the last command
-     *
-     * @param string $sName    The option name
-     * @param string|array|JsonSerializable $xValue    The option value
-     *
-     * @return void
-     */
-    public function setOption(string $sName, string|array|JsonSerializable $xValue)
-    {
-        $this->xManager->setOption($sName, $xValue);
+        return $this->xManager->addCommand($sName, $aArgs, $bRemoveEmpty);
     }
 
     /**
@@ -169,7 +133,6 @@ abstract class AbstractResponse
      */
     public function clearCommands()
     {
-        $this->nCommandCount = 0;
         $this->xManager->clearCommands();
     }
 
