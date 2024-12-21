@@ -32,7 +32,8 @@ trait CallableTrait
         $this->set(CallableRegistry::class, function($di) {
             $xRegistry = new CallableRegistry($di->g(ClassContainer::class));
             // Register the pagination component, but do not export to js.
-            $xRegistry->addClass(Pagination::class, ['excluded' => true]);
+            $xRegistry->addClass(Pagination::class,
+                ['excluded' => true, 'namespace' => 'Jaxon\App']);
             return $xRegistry;
         });
         // Callable class plugin
