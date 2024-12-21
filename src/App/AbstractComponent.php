@@ -7,8 +7,6 @@ use Jaxon\Plugin\Request\CallableClass\CallableClassHelper;
 use Jaxon\Response\AjaxResponse;
 use Jaxon\Response\ComponentResponse;
 
-use function get_class;
-
 abstract class AbstractComponent extends AbstractCallable
 {
     /**
@@ -27,12 +25,10 @@ abstract class AbstractComponent extends AbstractCallable
     public function _initCallable(Container $di, CallableClassHelper $xHelper)
     {
         $this->xHelper = $xHelper;
-
+        // Each component must have its own reponse object.
         // A component can overrides another one. In this case,
         // its response is attached to the overriden component DOM node.
-        $sClassName = $this->overrides ?: get_class($this);
-        // Each component must have its own reponse object.
-        $this->nodeResponse = $di->newComponentResponse($sClassName);
+        $this->nodeResponse = $di->newComponentResponse($this->rq($this->overrides ?: ''));
     }
 
     /**
@@ -63,7 +59,6 @@ abstract class AbstractComponent extends AbstractCallable
     final public function item(string $item): self
     {
         $this->node()->item($item);
-
         return $this;
     }
 }

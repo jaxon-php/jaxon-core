@@ -10,7 +10,7 @@ use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Response\Response;
 use Jaxon\Response\ComponentResponse;
 use Jaxon\Response\ResponseManager;
-use Jaxon\Script\Factory\CallFactory;
+use Jaxon\Script\JxnCall;
 
 use function trim;
 
@@ -68,16 +68,13 @@ trait ResponseTrait
     /**
      * Create a new reponse for a Jaxon component
      *
-     * @param string $sComponentClass
+     * @param JxnCall $xJxnCall
      *
      * @return ComponentResponse
      */
-    public function newComponentResponse(string $sComponentClass): ComponentResponse
+    public function newComponentResponse(JxnCall $xJxnCall): ComponentResponse
     {
-        /** @var CallFactory */
-        $xFactory = $this->g(CallFactory::class);
-        $sComponentName = $xFactory->rq($sComponentClass)->_class();
         return new ComponentResponse($this->g(ResponseManager::class),
-            $this->g(PluginManager::class), $sComponentName);
+            $this->g(PluginManager::class), $xJxnCall);
     }
 }

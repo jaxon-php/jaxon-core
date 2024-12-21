@@ -21,6 +21,7 @@
 namespace Jaxon\Response;
 
 use Jaxon\Plugin\Manager\PluginManager;
+use Jaxon\Script\JxnCall;
 use JsonSerializable;
 
 class ComponentResponse extends AjaxResponse
@@ -35,13 +36,14 @@ class ComponentResponse extends AjaxResponse
      *
      * @param ResponseManager $xManager
      * @param PluginManager $xPluginManager
-     * @param string $sComponentName
+     * @param JxnCall $xJxnCall
      */
-    public function __construct(ResponseManager $xManager, PluginManager $xPluginManager,
-        string $sComponentName)
+    public function __construct(ResponseManager $xManager,
+        PluginManager $xPluginManager, JxnCall $xJxnCall)
     {
         parent::__construct($xManager, $xPluginManager);
-        $this->aComponent['name'] = $this->str($sComponentName);
+        // The js class name is also the component name.
+        $this->aComponent['name'] = $this->str($xJxnCall->_class());
     }
 
     /**
