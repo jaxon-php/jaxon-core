@@ -83,9 +83,8 @@ class ResponseTest extends TestCase
 
         // Process the request and get the response
         jaxon()->di()->getRequestHandler()->processRequest();
-        $xResponse = jaxon()->getResponse();
-        $xResponse->setOption('name', 'value');
 
+        $xResponse = jaxon()->getResponse();
         $aCommands = $xResponse->getCommands();
         $this->assertCount(1, $aCommands);
         // Set an option on the response

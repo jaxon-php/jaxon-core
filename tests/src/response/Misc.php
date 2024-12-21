@@ -19,6 +19,8 @@ class Misc extends CallableClass
 
         $xResponse = jaxon()->newResponse();
         $xResponse->debug('This is a different response!');
+        $aCommands = $xResponse->getCommands();
+        $aCommands[0]->setOption('name', 'value');
         return $xResponse;
     }
 

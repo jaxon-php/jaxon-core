@@ -14,11 +14,12 @@
 
 namespace Jaxon\Response;
 
+use ArrayAccess;
 use JsonSerializable;
 
 use function trim;
 
-class Command implements JsonSerializable
+class Command implements ArrayAccess, JsonSerializable
 {
     /**
      * @var array
@@ -75,10 +76,38 @@ class Command implements JsonSerializable
     }
 
     /**
-     * @return array
+     * @inheritDoc
      */
     public function jsonSerialize(): array
     {
         return $this->aCommand;
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function offsetExists($offset): bool
+    {
+        return isset($this->aCommand[$offset]);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function offsetGet($offset): mixed
+    {
+        return $this->aCommand[$offset] ?? null;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function offsetSet($offset, $value): void
+    {} // Not implemented
+
+    /**
+     * @inheritDoc
+     */
+    public function offsetUnset($offset): void
+    {} // Not implemented
 }
