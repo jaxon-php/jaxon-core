@@ -10,6 +10,8 @@ class Misc extends CallableClass
     public function simple(): Response
     {
         $this->response->alert('This is the global response!');
+        $aCommands = $this->response->getCommands();
+        $aCommands[0]->setOption('name', 'value');
         return $this->response;
     }
 
@@ -19,8 +21,6 @@ class Misc extends CallableClass
 
         $xResponse = jaxon()->newResponse();
         $xResponse->debug('This is a different response!');
-        $aCommands = $xResponse->getCommands();
-        $aCommands[0]->setOption('name', 'value');
         return $xResponse;
     }
 
