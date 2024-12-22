@@ -7,6 +7,13 @@ use Jaxon\Plugin\Response\Pagination\Paginator;
 trait PageDatabagTrait
 {
     /**
+     * The current page number.
+     *
+     * @var int
+     */
+    private int $currentPage = 1;
+
+    /**
      * Get the pagination databag name.
      *
      * @return string
@@ -65,5 +72,15 @@ trait PageDatabagTrait
             ->page(function(int $currentPage) {
                 $this->setCurrentPage($currentPage);
             });
+    }
+
+    /**
+     * Get the current page number
+     *
+     * @return int
+     */
+    protected function currentPage(): int
+    {
+        return $this->currentPage;
     }
 }
