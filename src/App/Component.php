@@ -4,13 +4,13 @@ namespace Jaxon\App;
 
 use Jaxon\Di\Container;
 use Jaxon\Plugin\Request\CallableClass\CallableClassHelper;
-use Jaxon\Response\Response;
+use Jaxon\Response\AjaxResponse;
 use Stringable;
 
 abstract class Component extends AbstractComponent
 {
     /**
-     * @var Response
+     * @var AjaxResponse
      */
     protected $response = null;
 
@@ -48,9 +48,9 @@ abstract class Component extends AbstractComponent
     /**
      * Set the attached DOM node content with the component HTML code.
      *
-     * @return Response
+     * @return AjaxResponse
      */
-    final public function render(): Response
+    final public function render(): AjaxResponse
     {
         $this->before();
         $this->node()->html((string)$this->html());
@@ -62,9 +62,9 @@ abstract class Component extends AbstractComponent
     /**
      * Clear the attached DOM node content.
      *
-     * @return Response
+     * @return AjaxResponse
      */
-    final public function clear(): Response
+    final public function clear(): AjaxResponse
     {
         $this->node()->clear();
 
@@ -74,9 +74,9 @@ abstract class Component extends AbstractComponent
     /**
      * Show/hide the attached DOM node.
      *
-     * @return Response
+     * @return AjaxResponse
      */
-    final public function visible(bool $bVisible): Response
+    final public function visible(bool $bVisible): AjaxResponse
     {
         $bVisible ? $this->node()->jq()->show() : $this->node()->jq()->hide();
 

@@ -50,6 +50,13 @@ abstract class AbstractComponent extends AbstractCallable
     }
 
     /**
+     * Set the attached DOM node content with the component HTML code.
+     *
+     * @return AjaxResponse
+     */
+    abstract public function render(): AjaxResponse;
+
+    /**
      * Set the component item.
      *
      * @param string $item
