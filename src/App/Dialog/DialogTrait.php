@@ -1,12 +1,16 @@
 <?php
 
-namespace Jaxon\App;
+namespace Jaxon\App\Dialog;
 
-use Jaxon\App\Dialog\AlertInterface;
-use Jaxon\App\Dialog\ModalInterface;
+use Jaxon\Response\AjaxResponse;
 
 trait DialogTrait
 {
+    /**
+     * @return AjaxResponse
+     */
+    abstract protected function _response(): AjaxResponse;
+
     /**
      * @return AlertInterface
      */
