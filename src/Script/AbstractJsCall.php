@@ -14,7 +14,7 @@ namespace Jaxon\Script;
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-use Jaxon\App\Dialog\DialogManager;
+use Jaxon\Plugin\Response\Dialog\DialogCommand;
 use Closure;
 
 abstract class AbstractJsCall extends AbstractCall
@@ -29,10 +29,10 @@ abstract class AbstractJsCall extends AbstractCall
     /**
      * The constructor.
      *
-     * @param DialogManager $xDialog
+     * @param DialogCommand $xDialog
      * @param Closure|null $xExprCb
      */
-    protected function __construct(DialogManager $xDialog, ?Closure $xExprCb)
+    protected function __construct(DialogCommand $xDialog, ?Closure $xExprCb)
     {
         $this->xDialog = $xDialog;
         $this->xExprCb = $xExprCb;

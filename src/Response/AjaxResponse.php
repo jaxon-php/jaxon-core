@@ -21,13 +21,13 @@
 
 namespace Jaxon\Response;
 
-use Jaxon\App\Dialog\DialogManager;
 use Jaxon\Exception\AppException;
 use Jaxon\Script\JqCall;
 use Jaxon\Script\JsExpr;
 use Jaxon\Script\JsCall;
 use Jaxon\Plugin\Response\DataBag\DataBagContext;
 use Jaxon\Plugin\Response\DataBag\DataBagPlugin;
+use Jaxon\Plugin\Response\Dialog\DialogCommand;
 use Jaxon\Plugin\Response\Pagination\Paginator;
 use Jaxon\Plugin\Response\Pagination\PaginatorPlugin;
 use Jaxon\Plugin\Response\Psr\PsrPlugin;
@@ -42,9 +42,9 @@ use function json_encode;
 abstract class AjaxResponse extends AbstractResponse
 {
     /**
-     * @return DialogManager
+     * @return DialogCommand
      */
-    protected function dialog(): DialogManager
+    protected function dialog(): DialogCommand
     {
         return $this->xManager->dialog();
     }

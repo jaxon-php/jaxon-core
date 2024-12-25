@@ -16,12 +16,12 @@ namespace Jaxon\Di;
 
 use Jaxon\App\AbstractCallable;
 use Jaxon\App\Config\ConfigManager;
-use Jaxon\App\Dialog\DialogManager;
 use Jaxon\App\I18n\Translator;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\Request\CallableClass\CallableClassHelper;
 use Jaxon\Plugin\Request\CallableClass\CallableObject;
 use Jaxon\Plugin\Request\CallableClass\CallableRegistry;
+use Jaxon\Plugin\Response\Dialog\DialogCommand;
 use Jaxon\Request\Handler\CallbackManager;
 use Jaxon\Script\JxnCall;
 use Jaxon\Script\JxnClass;
@@ -71,7 +71,7 @@ class ClassContainer
 
         // Register the call factory for registered functions
         $this->set($this->getRequestFactoryKey(JxnCall::class), function() {
-            return new JxnCall($this->di->g(DialogManager::class),
+            return new JxnCall($this->di->g(DialogCommand::class),
                 $this->di->g(ConfigManager::class)->getOption('core.prefix.function', ''));
         });
     }
@@ -476,7 +476,7 @@ class ClassContainer
             }
             $xConfigManager = $this->di->g(ConfigManager::class);
             $sJsObject = $xConfigManager->getOption('core.prefix.class', '') . $xCallable->getJsName();
-            return new JxnClass($this->di->g(DialogManager::class), $sJsObject);
+            return new JxnClass($this->di->g(DialogCommand::class), $sJsObject);
         });
     }
 

@@ -21,10 +21,10 @@
 
 namespace Jaxon\Response;
 
-use Jaxon\App\Dialog\DialogManager;
 use Jaxon\App\I18n\Translator;
 use Jaxon\Exception\AppException;
 use Jaxon\Di\Container;
+use Jaxon\Plugin\Response\Dialog\DialogCommand;
 use Jaxon\Script\JxnCall;
 use Closure;
 use JsonSerializable;
@@ -42,9 +42,9 @@ class ResponseManager
     private $di;
 
     /**
-     * @var DialogManager
+     * @var DialogCommand
      */
-    protected $xDialogManager;
+    protected $xDialogCommand;
 
     /**
      * @var Translator
@@ -102,24 +102,24 @@ class ResponseManager
     /**
      * @param Container $di
      * @param Translator $xTranslator
-     * @param DialogManager $xDialogManager
+     * @param DialogCommand $xDialogCommand
      * @param string $sCharacterEncoding
      */
     public function __construct(Container $di, Translator $xTranslator,
-        DialogManager $xDialogManager, string $sCharacterEncoding)
+        DialogCommand $xDialogCommand, string $sCharacterEncoding)
     {
         $this->di = $di;
         $this->xTranslator = $xTranslator;
-        $this->xDialogManager = $xDialogManager;
+        $this->xDialogCommand = $xDialogCommand;
         $this->sCharacterEncoding = $sCharacterEncoding;
     }
 
     /**
-     * @return DialogManager
+     * @return DialogCommand
      */
-    public function dialog(): DialogManager
+    public function dialog(): DialogCommand
     {
-        return $this->xDialogManager;
+        return $this->xDialogCommand;
     }
 
     /**

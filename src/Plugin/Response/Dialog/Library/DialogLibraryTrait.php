@@ -12,7 +12,7 @@
  * @link https://github.com/jaxon-php/jaxon-dialogs
  */
 
-namespace Jaxon\App\Dialog\Library;
+namespace Jaxon\Plugin\Response\Dialog\Library;
 
 use Jaxon\Response\AjaxResponse;
 use JsonSerializable;

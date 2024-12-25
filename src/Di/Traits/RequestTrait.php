@@ -3,7 +3,6 @@
 namespace Jaxon\Di\Traits;
 
 use Jaxon\App\Config\ConfigManager;
-use Jaxon\App\Dialog\DialogManager;
 use Jaxon\App\I18n\Translator;
 use Jaxon\Di\ClassContainer;
 use Jaxon\Di\Container;
@@ -11,6 +10,7 @@ use Jaxon\Script\Factory\CallFactory;
 use Jaxon\Script\Factory\ParameterFactory;
 use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Plugin\Response\DataBag\DataBagPlugin;
+use Jaxon\Plugin\Response\Dialog\DialogCommand;
 use Jaxon\Request\Handler\CallbackManager;
 use Jaxon\Request\Handler\ParameterReader;
 use Jaxon\Request\Handler\RequestHandler;
@@ -48,7 +48,7 @@ trait RequestTrait
         });
         // Requests and calls Factory
         $this->set(CallFactory::class, function($di) {
-            return new CallFactory($di->g(ClassContainer::class), $di->g(DialogManager::class));
+            return new CallFactory($di->g(ClassContainer::class), $di->g(DialogCommand::class));
         });
         // Factory for function parameters
         $this->set(ParameterFactory::class, function() {

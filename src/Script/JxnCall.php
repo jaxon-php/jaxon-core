@@ -14,7 +14,7 @@ namespace Jaxon\Script;
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
- use Jaxon\App\Dialog\DialogManager;
+ use Jaxon\Plugin\Response\Dialog\DialogCommand;
 
 class JxnCall extends AbstractCall
 {
@@ -28,10 +28,10 @@ class JxnCall extends AbstractCall
     /**
      * The constructor.
      *
-     * @param DialogManager $xDialog
+     * @param DialogCommand $xDialog
      * @param string $sPrefix
      */
-    public function __construct(DialogManager $xDialog, string $sPrefix)
+    public function __construct(DialogCommand $xDialog, string $sPrefix)
     {
         $this->xDialog = $xDialog;
         $this->sPrefix = $sPrefix;

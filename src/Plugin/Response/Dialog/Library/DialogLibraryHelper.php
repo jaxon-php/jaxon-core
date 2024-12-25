@@ -1,9 +1,9 @@
 <?php
 
-namespace Jaxon\App\Dialog\Library;
+namespace Jaxon\Plugin\Response\Dialog\Library;
 
 use Jaxon\App\Config\ConfigManager;
-use Jaxon\App\Dialog\LibraryInterface;
+use Jaxon\Plugin\Response\Dialog\Library\LibraryInterface;
 use Jaxon\Utils\Template\TemplateEngine;
 
 use function array_merge;

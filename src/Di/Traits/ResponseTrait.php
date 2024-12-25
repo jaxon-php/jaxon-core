@@ -3,10 +3,10 @@
 namespace Jaxon\Di\Traits;
 
 use Jaxon\App\Config\ConfigManager;
-use Jaxon\App\Dialog\DialogManager;
 use Jaxon\App\I18n\Translator;
 use Jaxon\Di\Container;
 use Jaxon\Plugin\Manager\PluginManager;
+use Jaxon\Plugin\Response\Dialog\DialogCommand;
 use Jaxon\Response\Response;
 use Jaxon\Response\ComponentResponse;
 use Jaxon\Response\ResponseManager;
@@ -31,7 +31,7 @@ trait ResponseTrait
         $this->set(ResponseManager::class, function($di) {
             $sEncoding = trim($di->g(ConfigManager::class)->getOption('core.encoding', ''));
             return new ResponseManager($di->g(Container::class), $di->g(Translator::class),
-                $this->g(DialogManager::class), $sEncoding);
+                $this->g(DialogCommand::class), $sEncoding);
         });
     }
 

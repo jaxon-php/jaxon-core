@@ -15,8 +15,8 @@
 
 namespace Jaxon\Plugin\Response\Dialog;
 
-use Jaxon\App\Dialog\DialogManager;
-use Jaxon\App\Dialog\Library\DialogLibraryManager;
+use Jaxon\App\Dialog\AlertInterface;
+use Jaxon\App\Dialog\ModalInterface;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\AbstractResponsePlugin;
 use Jaxon\Response\AbstractResponse;
@@ -24,7 +24,7 @@ use Jaxon\Response\AbstractResponse;
 use function array_reduce;
 use function trim;
 
-class DialogPlugin extends AbstractResponsePlugin implements ModalInterface, MessageInterface
+class DialogPlugin extends AbstractResponsePlugin implements ModalInterface, AlertInterface
 {
     /**
      * @const The plugin name
@@ -32,14 +32,14 @@ class DialogPlugin extends AbstractResponsePlugin implements ModalInterface, Mes
     const NAME = 'dialog';
 
     /**
+     * @var DialogCommand
+     */
+    protected $xDialogCommand;
+
+    /**
      * @var DialogManager
      */
     protected $xDialogManager;
-
-    /**
-     * @var DialogLibraryManager
-     */
-    protected $xLibraryManager;
 
     /**
      * @var array
@@ -49,13 +49,13 @@ class DialogPlugin extends AbstractResponsePlugin implements ModalInterface, Mes
     /**
      * The constructor
      *
+     * @param DialogCommand $xDialogCommand
      * @param DialogManager $xDialogManager
-     * @param DialogLibraryManager $xLibraryManager
      */
-    public function __construct(DialogManager $xDialogManager, DialogLibraryManager $xLibraryManager)
+    public function __construct(DialogCommand $xDialogCommand, DialogManager $xDialogManager)
     {
+        $this->xDialogCommand = $xDialogCommand;
         $this->xDialogManager = $xDialogManager;
-        $this->xLibraryManager = $xLibraryManager;
     }
 
     /**
@@ -98,7 +98,7 @@ class DialogPlugin extends AbstractResponsePlugin implements ModalInterface, Mes
         parent::setResponse($xResponse);
 
         // Hack the setResponse() method, to set the default libraries on each access to this plugin.
-        $this->xLibraryManager->setNextLibrary('');
+        $this->xDialogManager->setNextLibrary('');
     }
 
     /**
@@ -110,7 +110,7 @@ class DialogPlugin extends AbstractResponsePlugin implements ModalInterface, Mes
      */
     public function with(string $sLibrary): DialogPlugin
     {
-        $this->xLibraryManager->setNextLibrary($sLibrary);
+        $this->xDialogManager->setNextLibrary($sLibrary);
         return $this;
     }
 
@@ -121,7 +121,7 @@ class DialogPlugin extends AbstractResponsePlugin implements ModalInterface, Mes
     {
         if($this->aLibraries === null)
         {
-            $this->aLibraries = $this->xLibraryManager->getLibraries();
+            $this->aLibraries = $this->xDialogManager->getLibraries();
         }
         return $this->aLibraries;
     }
@@ -174,7 +174,7 @@ class DialogPlugin extends AbstractResponsePlugin implements ModalInterface, Mes
     {
         // Show the modal dialog
         $this->addCommand('dialog.modal.show',
-            $this->xDialogManager->show($sTitle, $sContent, $aButtons, $aOptions));
+            $this->xDialogCommand->show($sTitle, $sContent, $aButtons, $aOptions));
     }
 
     /**
@@ -183,15 +183,15 @@ class DialogPlugin extends AbstractResponsePlugin implements ModalInterface, Mes
     public function hide()
     {
         // Hide the modal dialog
-        $this->addCommand('dialog.modal.hide', $this->xDialogManager->hide());
+        $this->addCommand('dialog.modal.hide', $this->xDialogCommand->hide());
     }
 
     /**
      * @inheritDoc
      */
-    public function title(string $sTitle): MessageInterface
+    public function title(string $sTitle): AlertInterface
     {
-        $this->xDialogManager->title($sTitle);
+        $this->xDialogCommand->title($sTitle);
         return $this;
     }
 
@@ -200,7 +200,7 @@ class DialogPlugin extends AbstractResponsePlugin implements ModalInterface, Mes
      */
     public function success(string $sMessage, array $aArgs = [])
     {
-        $this->addCommand('dialog.message', $this->xDialogManager->success($sMessage, $aArgs));
+        $this->addCommand('dialog.message', $this->xDialogCommand->success($sMessage, $aArgs));
     }
 
     /**
@@ -208,7 +208,7 @@ class DialogPlugin extends AbstractResponsePlugin implements ModalInterface, Mes
      */
     public function info(string $sMessage, array $aArgs = [])
     {
-        $this->addCommand('dialog.message', $this->xDialogManager->info($sMessage, $aArgs));
+        $this->addCommand('dialog.message', $this->xDialogCommand->info($sMessage, $aArgs));
     }
 
     /**
@@ -216,7 +216,7 @@ class DialogPlugin extends AbstractResponsePlugin implements ModalInterface, Mes
      */
     public function warning(string $sMessage, array $aArgs = [])
     {
-        $this->addCommand('dialog.message', $this->xDialogManager->warning($sMessage, $aArgs));
+        $this->addCommand('dialog.message', $this->xDialogCommand->warning($sMessage, $aArgs));
     }
 
     /**
@@ -224,6 +224,6 @@ class DialogPlugin extends AbstractResponsePlugin implements ModalInterface, Mes
      */
     public function error(string $sMessage, array $aArgs = [])
     {
-        $this->addCommand('dialog.message', $this->xDialogManager->error($sMessage, $aArgs));
+        $this->addCommand('dialog.message', $this->xDialogCommand->error($sMessage, $aArgs));
     }
 }

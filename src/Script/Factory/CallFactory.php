@@ -14,7 +14,7 @@ namespace Jaxon\Script\Factory;
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-use Jaxon\App\Dialog\DialogManager;
+use Jaxon\Plugin\Response\Dialog\DialogCommand;
 use Jaxon\Di\ClassContainer;
 use Jaxon\Exception\SetupException;
 use Jaxon\Script\JqCall;
@@ -30,9 +30,9 @@ class CallFactory
      * The constructor.
      *
      * @param ClassContainer $cls
-     * @param DialogManager $xDialog
+     * @param DialogCommand $xDialog
      */
-    public function __construct(private ClassContainer $cls, private DialogManager $xDialog)
+    public function __construct(private ClassContainer $cls, private DialogCommand $xDialog)
     {}
 
     /**

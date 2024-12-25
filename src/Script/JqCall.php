@@ -14,7 +14,7 @@
 
 namespace Jaxon\Script;
 
-use Jaxon\App\Dialog\DialogManager;
+use Jaxon\Plugin\Response\Dialog\DialogCommand;
 use Jaxon\Script\Call\Selector;
 use Closure;
 
@@ -37,12 +37,12 @@ class JqCall extends AbstractJsCall
     /**
      * The constructor.
      *
-     * @param DialogManager $xDialog
+     * @param DialogCommand $xDialog
      * @param Closure|null $xExprCb
      * @param string $sSelector    The jQuery selector path
      * @param mixed $xContext    A context associated to the selector
      */
-    public function __construct(DialogManager $xDialog, ?Closure $xExprCb,
+    public function __construct(DialogCommand $xDialog, ?Closure $xExprCb,
         string $sSelector, $xContext = null)
     {
         parent::__construct($xDialog, $xExprCb);

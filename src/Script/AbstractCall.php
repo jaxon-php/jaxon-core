@@ -14,12 +14,12 @@
 
 namespace Jaxon\Script;
 
-use Jaxon\App\Dialog\DialogManager;
+use Jaxon\Plugin\Response\Dialog\DialogCommand;
 
 abstract class AbstractCall
 {
     /**
-     * @var DialogManager
+     * @var DialogCommand
      */
     protected $xDialog;
 

@@ -14,7 +14,7 @@
 
 namespace Jaxon\Script;
 
-use Jaxon\App\Dialog\DialogManager;
+use Jaxon\Plugin\Response\Dialog\DialogCommand;
 use Jaxon\Script\Call\Attr;
 use Jaxon\Script\Call\Event;
 use Jaxon\Script\Call\Func;
@@ -36,7 +36,7 @@ class JsExpr implements ParameterInterface
     /**
      * Dialog for confirm questions and messages
      *
-     * @var DialogManager
+     * @var DialogCommand
      */
     protected $xDialog;
 
@@ -76,9 +76,9 @@ class JsExpr implements ParameterInterface
     protected $bToInt = false;
 
     /**
-     * @param DialogManager $xDialog
+     * @param DialogCommand $xDialog
      */
-    public function __construct(DialogManager $xDialog, ...$aCalls)
+    public function __construct(DialogCommand $xDialog, ...$aCalls)
     {
         $this->xDialog = $xDialog;
         $this->aCalls = $aCalls;

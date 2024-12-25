@@ -14,7 +14,7 @@ namespace Jaxon\Script;
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-use Jaxon\App\Dialog\DialogManager;
+use Jaxon\Plugin\Response\Dialog\DialogCommand;
  
 class JxnClass extends JxnCall
 {
@@ -26,10 +26,10 @@ class JxnClass extends JxnCall
     /**
      * The class constructor
      *
-     * @param DialogManager $xDialog
+     * @param DialogCommand $xDialog
      * @param string $sJsObject
      */
-    public function __construct(DialogManager $xDialog, string $sJsObject)
+    public function __construct(DialogCommand $xDialog, string $sJsObject)
     {
         parent::__construct($xDialog, $sJsObject . '.');
         $this->sJsObject = $sJsObject;

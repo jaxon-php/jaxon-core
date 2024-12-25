@@ -10,7 +10,7 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\App\Dialog;
+namespace Jaxon\Plugin\Response\Dialog\Library;
 
 interface MessageInterface extends LibraryInterface
 {

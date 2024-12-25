@@ -3,14 +3,14 @@
 namespace Jaxon\Di\Traits;
 
 use Jaxon\App\Config\ConfigManager;
-use Jaxon\App\Dialog\DialogManager;
-use Jaxon\App\Dialog\Library\AlertLibrary;
-use Jaxon\App\Dialog\Library\DialogLibraryHelper;
-use Jaxon\App\Dialog\Library\DialogLibraryManager;
-use Jaxon\App\Dialog\LibraryInterface;
-use Jaxon\App\Dialog\MessageInterface;
-use Jaxon\App\Dialog\ModalInterface;
-use Jaxon\App\Dialog\QuestionInterface;
+use Jaxon\Plugin\Response\Dialog\DialogCommand;
+use Jaxon\Plugin\Response\Dialog\Library\AlertLibrary;
+use Jaxon\Plugin\Response\Dialog\Library\DialogLibraryHelper;
+use Jaxon\Plugin\Response\Dialog\DialogManager;
+use Jaxon\Plugin\Response\Dialog\Library\LibraryInterface;
+use Jaxon\Plugin\Response\Dialog\Library\MessageInterface;
+use Jaxon\Plugin\Response\Dialog\Library\ModalInterface;
+use Jaxon\Plugin\Response\Dialog\Library\QuestionInterface;
 use Jaxon\App\I18n\Translator;
 use Jaxon\App\View\AttrHelper;
 use Jaxon\App\View\TemplateView;
@@ -52,11 +52,11 @@ trait ViewTrait
         });
 
         // Dialog library manager
-        $this->set(DialogLibraryManager::class, function($di) {
-            return new DialogLibraryManager($di->g(Container::class), $di->g(ConfigManager::class), $di->g(Translator::class));
-        });
         $this->set(DialogManager::class, function($di) {
-            return new DialogManager($di->g(DialogLibraryManager::class));
+            return new DialogManager($di->g(Container::class), $di->g(ConfigManager::class), $di->g(Translator::class));
+        });
+        $this->set(DialogCommand::class, function($di) {
+            return new DialogCommand($di->g(DialogManager::class));
         });
         $this->val(AlertLibrary::class, new AlertLibrary());
 
@@ -145,21 +145,21 @@ trait ViewTrait
     /**
      * Get the dialog library manager
      *
-     * @return DialogLibraryManager
-     */
-    public function getDialogLibraryManager(): DialogLibraryManager
-    {
-        return $this->g(DialogLibraryManager::class);
-    }
-
-    /**
-     * Get the dialog manager
-     *
      * @return DialogManager
      */
     public function getDialogManager(): DialogManager
     {
         return $this->g(DialogManager::class);
+    }
+
+    /**
+     * Get the dialog manager
+     *
+     * @return DialogCommand
+     */
+    public function getDialogCommand(): DialogCommand
+    {
+        return $this->g(DialogCommand::class);
     }
 
     /**

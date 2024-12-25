@@ -4,8 +4,6 @@ namespace Jaxon\Di\Traits;
 
 use Jaxon\Jaxon;
 use Jaxon\App\Config\ConfigManager;
-use Jaxon\App\Dialog\DialogManager;
-use Jaxon\App\Dialog\Library\DialogLibraryManager;
 use Jaxon\App\I18n\Translator;
 use Jaxon\App\View\ViewRenderer;
 use Jaxon\Di\Container;
@@ -18,7 +16,9 @@ use Jaxon\Plugin\Manager\PackageManager;
 use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Plugin\Request\CallableClass\CallableRegistry;
 use Jaxon\Plugin\Response\DataBag\DataBagPlugin;
+use Jaxon\Plugin\Response\Dialog\DialogCommand;
 use Jaxon\Plugin\Response\Dialog\DialogPlugin;
+use Jaxon\Plugin\Response\Dialog\DialogManager;
 use Jaxon\Plugin\Response\Script\ScriptPlugin;
 use Jaxon\Request\Handler\CallbackManager;
 use Jaxon\Request\Handler\ParameterReader;
@@ -72,7 +72,7 @@ trait PluginTrait
         });
         // Dialog response plugin
         $this->set(DialogPlugin::class, function($di) {
-            return new DialogPlugin($di->g(DialogManager::class), $di->g(DialogLibraryManager::class));
+            return new DialogPlugin($di->g(DialogCommand::class), $di->g(DialogManager::class));
         });
     }
 

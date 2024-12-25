@@ -1,7 +1,7 @@
 <?php
 
 /**
- * DialogLibraryManager.php
+ * DialogManager.php
  *
  * Manage dialog library list and defaults.
  *
@@ -11,17 +11,17 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\App\Dialog\Library;
+namespace Jaxon\Plugin\Response\Dialog;
 
 use Jaxon\App\Config\ConfigListenerInterface;
 use Jaxon\App\Config\ConfigManager;
-use Jaxon\App\Dialog\LibraryInterface;
-use Jaxon\App\Dialog\MessageInterface;
-use Jaxon\App\Dialog\ModalInterface;
-use Jaxon\App\Dialog\QuestionInterface;
 use Jaxon\App\I18n\Translator;
 use Jaxon\Di\Container;
 use Jaxon\Exception\SetupException;
+use Jaxon\Plugin\Response\Dialog\Library\QuestionInterface;
+use Jaxon\Plugin\Response\Dialog\Library\LibraryInterface;
+use Jaxon\Plugin\Response\Dialog\Library\MessageInterface;
+use Jaxon\Plugin\Response\Dialog\Library\ModalInterface;
 use Jaxon\Utils\Config\Config;
 
 use function array_map;
@@ -30,7 +30,7 @@ use function class_implements;
 use function in_array;
 use function substr;
 
-class DialogLibraryManager implements ConfigListenerInterface
+class DialogManager implements ConfigListenerInterface
 {
     /**
      * @var Container

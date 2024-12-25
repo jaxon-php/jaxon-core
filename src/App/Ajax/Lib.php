@@ -29,7 +29,6 @@ use Jaxon\Jaxon;
 use Jaxon\Di\ClassContainer;
 use Jaxon\Di\Container;
 use Jaxon\App\Config\ConfigManager;
-use Jaxon\App\Dialog\Library\DialogLibraryManager;
 use Jaxon\App\I18n\Translator;
 use Jaxon\App\Session\SessionInterface;
 use Jaxon\App\View\ViewRenderer;
@@ -37,6 +36,7 @@ use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Plugin\Request\CallableClass\CallableRegistry;
+use Jaxon\Plugin\Response\Dialog\DialogManager;
 use Jaxon\Request\Handler\Psr\PsrFactory;
 use Jaxon\Request\Upload\UploadHandlerInterface;
 use Jaxon\Response\Response;
@@ -273,11 +273,11 @@ final class Lib
     }
 
     /**
-     * @return DialogLibraryManager
+     * @return DialogManager
      */
-    public function dialog(): DialogLibraryManager
+    public function dialog(): DialogManager
     {
-        return $this->di()->getDialogLibraryManager();
+        return $this->di()->getDialogManager();
     }
 
     /**

@@ -5,7 +5,7 @@ namespace Jaxon\Tests\TestUi;
 require_once __DIR__ . '/../src/dialog.php';
 
 use Jaxon\Jaxon;
-use Jaxon\App\Dialog\Library\AlertLibrary;
+use Jaxon\Plugin\Response\Dialog\Library\AlertLibrary;
 use Jaxon\Dialogs\Bootbox\BootboxLibrary;
 use Jaxon\Dialogs\Bootstrap\BootstrapLibrary;
 use Jaxon\Dialogs\CuteAlert\CuteAlertLibrary;
@@ -50,40 +50,40 @@ class DialogTest extends TestCase
 
     public function testDialogSettings()
     {
-        $xDialogLibraryManager = jaxon()->di()->getDialogLibraryManager();
-        $this->assertEquals('', $xDialogLibraryManager->getQuestionLibrary()->getName());
-        $this->assertEquals(AlertLibrary::class, get_class($xDialogLibraryManager->getQuestionLibrary()));
-        $this->assertEquals(AlertLibrary::class, get_class($xDialogLibraryManager->getMessageLibrary()));
-        $this->assertEquals(null, $xDialogLibraryManager->getModalLibrary());
+        $xDialogManager = jaxon()->di()->getDialogManager();
+        $this->assertEquals('', $xDialogManager->getQuestionLibrary()->getName());
+        $this->assertEquals(AlertLibrary::class, get_class($xDialogManager->getQuestionLibrary()));
+        $this->assertEquals(AlertLibrary::class, get_class($xDialogManager->getMessageLibrary()));
+        $this->assertEquals(null, $xDialogManager->getModalLibrary());
 
         jaxon()->setOption('dialogs.default.modal', 'bootstrap');
         jaxon()->setOption('dialogs.default.message', 'bootstrap');
         jaxon()->setOption('dialogs.default.question', 'bootstrap');
-        $this->assertEquals(BootstrapLibrary::class, get_class($xDialogLibraryManager->getQuestionLibrary()));
-        $this->assertEquals(BootstrapLibrary::class, get_class($xDialogLibraryManager->getMessageLibrary()));
-        $this->assertEquals(BootstrapLibrary::class, get_class($xDialogLibraryManager->getModalLibrary()));
+        $this->assertEquals(BootstrapLibrary::class, get_class($xDialogManager->getQuestionLibrary()));
+        $this->assertEquals(BootstrapLibrary::class, get_class($xDialogManager->getMessageLibrary()));
+        $this->assertEquals(BootstrapLibrary::class, get_class($xDialogManager->getModalLibrary()));
 
         jaxon()->setOption('dialogs.default.modal', 'bootbox');
         jaxon()->setOption('dialogs.default.message', 'bootbox');
         jaxon()->setOption('dialogs.default.question', 'bootbox');
-        $this->assertEquals(BootboxLibrary::class, get_class($xDialogLibraryManager->getQuestionLibrary()));
-        $this->assertEquals(BootboxLibrary::class, get_class($xDialogLibraryManager->getMessageLibrary()));
-        $this->assertEquals(BootboxLibrary::class, get_class($xDialogLibraryManager->getModalLibrary()));
+        $this->assertEquals(BootboxLibrary::class, get_class($xDialogManager->getQuestionLibrary()));
+        $this->assertEquals(BootboxLibrary::class, get_class($xDialogManager->getMessageLibrary()));
+        $this->assertEquals(BootboxLibrary::class, get_class($xDialogManager->getModalLibrary()));
     }
 
     public function testDialogOptions()
     {
-        $xDialogLibraryManager = jaxon()->di()->getDialogLibraryManager();
+        $xDialogManager = jaxon()->di()->getDialogManager();
         jaxon()->setOption('dialogs.default.message', 'cute');
-        $xMessageLibrary = $xDialogLibraryManager->getMessageLibrary();
+        $xMessageLibrary = $xDialogManager->getMessageLibrary();
         $this->assertEquals(CuteAlertLibrary::class, get_class($xMessageLibrary));
     }
 
     public function testDialogDefaultMethods()
     {
-        $xDialogLibraryManager = jaxon()->di()->getDialogLibraryManager();
+        $xDialogManager = jaxon()->di()->getDialogManager();
         jaxon()->setOption('dialogs.default.question', TestDialogLibrary::NAME);
-        $xQuestionLibrary = $xDialogLibraryManager->getQuestionLibrary();
+        $xQuestionLibrary = $xDialogManager->getQuestionLibrary();
         $this->assertEquals('https://cdn.jaxon-php.org/libs', $xQuestionLibrary->getUri());
         $this->assertEquals('', $xQuestionLibrary->getSubdir());
         $this->assertEquals('', $xQuestionLibrary->getVersion());

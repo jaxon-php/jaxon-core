@@ -12,11 +12,7 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\App\Dialog\Library;
-
-use Jaxon\App\Dialog\LibraryInterface;
-use Jaxon\App\Dialog\MessageInterface;
-use Jaxon\App\Dialog\QuestionInterface;
+namespace Jaxon\Plugin\Response\Dialog\Library;
 
 class AlertLibrary implements LibraryInterface, MessageInterface, QuestionInterface
 {

@@ -10,12 +10,21 @@
  * @link https://github.com/jaxon-php/jaxon-dialogs
  */
 
-namespace Jaxon\App\Dialog;
+namespace Jaxon\Plugin\Response\Dialog\Library;
 
-use Jaxon\App\Dialog\Library\DialogLibraryInterface;
+use Jaxon\Response\AjaxResponse;
 
-interface LibraryInterface extends DialogLibraryInterface
+interface LibraryInterface
 {
+    /**
+     * Set the response to attach the messages to.
+     *
+     * @param AjaxResponse $xResponse
+     *
+     * @return void
+     */
+    public function setResponse(AjaxResponse $xResponse);
+
     /**
      * Get the library name
      *

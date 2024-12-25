@@ -1,7 +1,7 @@
 <?php
 
 /**
- * MessageInterface.php
+ * AlertInterface.php
  *
  * Defines the message functions of the dialog plugin.
  *
@@ -12,18 +12,18 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Plugin\Response\Dialog;
+namespace Jaxon\App\Dialog;
 
-interface MessageInterface
+interface AlertInterface
 {
     /**
      * Set the title of the next message.
      *
      * @param string $sTitle     The title of the message
      *
-     * @return MessageInterface
+     * @return AlertInterface
      */
-    public function title(string $sTitle): MessageInterface;
+    public function title(string $sTitle): AlertInterface;
 
     /**
      * Show a success message.

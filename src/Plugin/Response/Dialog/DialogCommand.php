@@ -1,7 +1,7 @@
 <?php
 
 /**
- * DialogManager.php
+ * DialogCommand.php
  *
  * Facade for dialogs functions.
  *
@@ -11,19 +11,18 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\App\Dialog;
+namespace Jaxon\Plugin\Response\Dialog;
 
-use Jaxon\App\Dialog\Library\DialogLibraryManager;
 use Jaxon\Script\Call\Parameter;
 
 use function array_map;
 
-class DialogManager
+class DialogCommand
 {
     /**
-     * @var DialogLibraryManager
+     * @var DialogManager
      */
-    protected $xDialogLibraryManager;
+    protected $xDialogManager;
 
     /**
      * The next message title
@@ -35,11 +34,11 @@ class DialogManager
     /**
      * The constructor
      *
-     * @param DialogLibraryManager $xDialogLibraryManager
+     * @param DialogManager $xDialogManager
      */
-    public function __construct(DialogLibraryManager $xDialogLibraryManager)
+    public function __construct(DialogManager $xDialogManager)
     {
-        $this->xDialogLibraryManager = $xDialogLibraryManager;
+        $this->xDialogManager = $xDialogManager;
     }
 
     /**
@@ -85,7 +84,7 @@ class DialogManager
         $sTitle = $this->sTitle;
         $this->sTitle = '';
         return [
-            'lib' => $this->xDialogLibraryManager->getMessageLibrary()->getName(),
+            'lib' => $this->xDialogManager->getMessageLibrary()->getName(),
             'type' => $sType,
             'title' => $sTitle,
             'phrase' => $this->phrase($sMessage, $aArgs),
@@ -166,7 +165,7 @@ class DialogManager
     public function show(string $sTitle, string $sContent, array $aButtons, array $aOptions = []): array
     {
         return [
-            'lib' => $this->xDialogLibraryManager->getModalLibrary()->getName(),
+            'lib' => $this->xDialogManager->getModalLibrary()->getName(),
             'dialog' => [
                 'title' => $sTitle,
                 'content' => $sContent,
@@ -184,7 +183,7 @@ class DialogManager
     public function hide(): array
     {
         return [
-            'lib' => $this->xDialogLibraryManager->getModalLibrary()->getName(),
+            'lib' => $this->xDialogManager->getModalLibrary()->getName(),
         ];
     }
 
@@ -201,7 +200,7 @@ class DialogManager
         $sTitle = $this->sTitle;
         $this->sTitle = '';
         return [
-            'lib' => $this->xDialogLibraryManager->getQuestionLibrary()->getName(),
+            'lib' => $this->xDialogManager->getQuestionLibrary()->getName(),
             'title' => $sTitle,
             'phrase' => $this->phrase($sQuestion, $aArgs),
         ];

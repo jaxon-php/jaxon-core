@@ -7,13 +7,13 @@ use Jaxon\App\Ajax\AppInterface;
 use Jaxon\App\Ajax\Bootstrap;
 use Jaxon\App\Config\ConfigEventManager;
 use Jaxon\App\Config\ConfigManager;
-use Jaxon\App\Dialog\Library\DialogLibraryManager;
 use Jaxon\App\I18n\Translator;
 use Jaxon\App\View\ViewRenderer;
 use Jaxon\Di\Container;
 use Jaxon\Jaxon;
-use Jaxon\Plugin\Manager\PackageManager;
 use Jaxon\Request\Handler\CallbackManager;
+use Jaxon\Plugin\Manager\PackageManager;
+use Jaxon\Plugin\Response\Dialog\DialogManager;
 use Jaxon\Utils\Config\ConfigReader;
 
 trait AppTrait
@@ -110,7 +110,7 @@ trait AppTrait
             // It's important to call this after the $xConfigManager->setOptions(),
             // because we don't want to trigger the events since the listeners cannot yet be instantiated.
             $xEventManager->addListener(Translator::class);
-            $xEventManager->addListener(DialogLibraryManager::class);
+            $xEventManager->addListener(DialogManager::class);
             return $xConfigManager;
         });
 
