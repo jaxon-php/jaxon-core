@@ -19,8 +19,6 @@ use Jaxon\App\AbstractCallable;
 use Jaxon\App\Component;
 use Jaxon\Di\ClassContainer;
 use Jaxon\Utils\Config\Config;
-use RecursiveDirectoryIterator;
-use RecursiveIteratorIterator;
 use ReflectionClass;
 use ReflectionMethod;
 
@@ -394,7 +392,7 @@ class CallableRegistry
         $aClassMap = [];
         foreach($this->aDirectoryOptions as $sDirectory => $aDirectoryOptions)
         {
-            $itFile = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($sDirectory));
+            $itFile = new SortedFileIterator($sDirectory);
             // Iterate on dir content
             foreach($itFile as $xFile)
             {
@@ -438,7 +436,7 @@ class CallableRegistry
 
             // Iterate on dir content
             $sDirectory = $aDirectoryOptions['directory'];
-            $itFile = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($sDirectory));
+            $itFile = new SortedFileIterator($sDirectory);
             foreach($itFile as $xFile)
             {
                 // skip everything except PHP files
