@@ -14,6 +14,9 @@
 
 namespace Jaxon\Plugin\Request\CallableClass;
 
+use Jaxon\App\AbstractCallable;
+use ReflectionClass;
+
 use function array_merge;
 use function array_unique;
 use function is_array;
@@ -146,13 +149,15 @@ class CallableObjectOptions
     }
 
     /**
+     * @param ReflectionClass $xReflectionClass
      * @param string $sMethodName
      *
      * @return bool
      */
-    public function isProtectedMethod(string $sMethodName): bool
+    public function isProtectedMethod(ReflectionClass $xReflectionClass, string $sMethodName): bool
     {
-        return isset($this->aProtectedMethods[$sMethodName]) || isset($this->aProtectedMethods['*']);
+        return isset($this->aProtectedMethods[$sMethodName]) || isset($this->aProtectedMethods['*']) ||
+            ($xReflectionClass->isSubclassOf(AbstractCallable::class) && $sMethodName === 'paginator');
     }
 
     /**

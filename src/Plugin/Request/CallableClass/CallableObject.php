@@ -154,7 +154,7 @@ class CallableObject
         return substr($sMethodName, 0, 2) === '__' ||
             isset($this->aProtectedMethods[$sMethodName]) ||
             (!$bTakeAll && $this->xOptions !== null &&
-                $this->xOptions->isProtectedMethod($sMethodName));
+                $this->xOptions->isProtectedMethod($this->xReflectionClass, $sMethodName));
     }
 
     /**
