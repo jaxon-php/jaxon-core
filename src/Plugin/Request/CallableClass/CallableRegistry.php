@@ -228,17 +228,22 @@ class CallableRegistry
 
     /**
      *
-     * @param string $sClassName    The class name
-     * @param array $aClassOptions    The default class options
-     * @param array $aDirectoryOptions    The directory options
+     * @param string $sClassName        The class name
+     * @param array $aClassOptions      The default class options
+     * @param array $aDirectoryOptions  The directory options
+     * @param bool $bAddToHash          Add the class name to the hash value
      *
      * @return void
      */
-    private function _addClass(string $sClassName, array $aClassOptions, array $aDirectoryOptions = [])
+    private function _registerClass(string $sClassName, array $aClassOptions,
+        array $aDirectoryOptions = [], bool $bAddToHash = true)
     {
         $aOptions = $this->makeClassOptions($sClassName, $aClassOptions, $aDirectoryOptions);
-        $this->sHash .= $sClassName . $aOptions['timestamp'];
-        $this->cls->addClass($sClassName, $aOptions);
+        $this->cls->registerClass($sClassName, $aOptions);
+        if($bAddToHash)
+        {
+            $this->sHash .= $sClassName . $aOptions['timestamp'];
+        }
     }
 
     /**
@@ -248,13 +253,13 @@ class CallableRegistry
      *
      * @return void
      */
-    public function addClass(string $sClassName, array $aClassOptions)
+    public function registerClass(string $sClassName, array $aClassOptions)
     {
         if($this->xCurrentConfig !== null)
         {
             $aClassOptions['config'] = $this->xCurrentConfig;
         }
-        $this->_addClass($sClassName, $aClassOptions);
+        $this->_registerClass($sClassName, $aClassOptions);
     }
 
     /**
@@ -264,7 +269,7 @@ class CallableRegistry
      *
      * @return void
      */
-    public function setNamespaceClassOptions(string $sClassName)
+    public function registerClassFromNamespace(string $sClassName)
     {
         // Find the corresponding namespace
         foreach($this->aNamespaceOptions as $sNamespace => $aDirectoryOptions)
@@ -274,8 +279,7 @@ class CallableRegistry
             {
                 // Save the class options
                 $aClassOptions = ['namespace' => $sNamespace];
-                $aOptions = $this->makeClassOptions($sClassName, $aClassOptions, $aDirectoryOptions);
-                $this->cls->addClass($sClassName, $aOptions);
+                $this->_registerClass($sClassName, $aClassOptions, $aDirectoryOptions, false);
                 return;
             }
         }
@@ -304,7 +308,7 @@ class CallableRegistry
      *
      * @return void
      */
-    public function addDirectory(string $sDirectory, array $aOptions)
+    public function registerDirectory(string $sDirectory, array $aOptions)
     {
         // Set the autoload option default value
         if(!isset($aOptions['autoload']))
@@ -325,7 +329,7 @@ class CallableRegistry
      *
      * @return void
      */
-    private function _addNamespace(string $sNamespace, array $aOptions)
+    private function addNamespace(string $sNamespace, array $aOptions)
     {
         $this->aNamespaces[] = $sNamespace;
         $this->sHash .= $sNamespace . $aOptions['separator'];
@@ -338,7 +342,7 @@ class CallableRegistry
      *
      * @return void
      */
-    public function addNamespace(string $sNamespace, array $aOptions)
+    public function registerNamespace(string $sNamespace, array $aOptions)
     {
         // Separator default value
         if(!isset($aOptions['separator']))
@@ -407,7 +411,7 @@ class CallableRegistry
                 {
                     $aClassMap[$sClassName] = $xFile->getPathname();
                 }
-                $this->_addClass($sClassName, $aClassOptions, $aDirectoryOptions);
+                $this->_registerClass($sClassName, $aClassOptions, $aDirectoryOptions);
             }
         }
         // Set classmap autoloading
@@ -435,7 +439,7 @@ class CallableRegistry
         $sDS = DIRECTORY_SEPARATOR;
         foreach($this->aNamespaceOptions as $sNamespace => $aDirectoryOptions)
         {
-            $this->_addNamespace($sNamespace, ['separator' => $aDirectoryOptions['separator']]);
+            $this->addNamespace($sNamespace, ['separator' => $aDirectoryOptions['separator']]);
 
             // Iterate on dir content
             $sDirectory = $aDirectoryOptions['directory'];
@@ -457,11 +461,11 @@ class CallableRegistry
                     $sClassPath .= '\\' . $sRelativePath;
                 }
 
-                $this->_addNamespace($sClassPath, ['separator' => $aDirectoryOptions['separator']]);
+                $this->addNamespace($sClassPath, ['separator' => $aDirectoryOptions['separator']]);
 
                 $sClassName = $sClassPath . '\\' . $xFile->getBasename('.php');
                 $aClassOptions = ['namespace' => $sNamespace, 'timestamp' => $xFile->getMTime()];
-                $this->_addClass($sClassName, $aClassOptions, $aDirectoryOptions);
+                $this->_registerClass($sClassName, $aClassOptions, $aDirectoryOptions);
             }
         }
     }

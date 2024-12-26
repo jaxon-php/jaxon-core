@@ -115,10 +115,10 @@ class CallableDirPlugin implements PluginInterface, CallableRegistryInterface
     {
         if(($aOptions['namespace']))
         {
-            $this->xRegistry->addNamespace($aOptions['namespace'], $aOptions);
+            $this->xRegistry->registerNamespace($aOptions['namespace'], $aOptions);
             return true;
         }
-        $this->xRegistry->addDirectory($aOptions['directory'], $aOptions);
+        $this->xRegistry->registerDirectory($aOptions['directory'], $aOptions);
         return true;
     }
 

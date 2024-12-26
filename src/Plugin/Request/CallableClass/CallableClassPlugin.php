@@ -102,7 +102,7 @@ class CallableClassPlugin extends AbstractRequestPlugin
     public function register(string $sType, string $sCallable, array $aOptions): bool
     {
         $sClassName = trim($sCallable);
-        $this->xRegistry->addClass($sClassName, $aOptions);
+        $this->xRegistry->registerClass($sClassName, $aOptions);
         return true;
     }
 

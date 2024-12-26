@@ -143,7 +143,7 @@ class ClassContainer
      *
      * @return void
      */
-    public function addClass(string $sClassName, array $aOptions = [])
+    public function registerClass(string $sClassName, array $aOptions = [])
     {
         $this->aClasses[$sClassName] = $aOptions;
     }
@@ -163,7 +163,7 @@ class ClassContainer
         {
             /** @var CallableRegistry */
             $xRegistry = $this->di->g(CallableRegistry::class);
-            $xRegistry->setNamespaceClassOptions($sClassName);
+            $xRegistry->registerClassFromNamespace($sClassName);
             if(!isset($this->aClasses[$sClassName]))
             {
                 // Find options for a class registered without namespace.
