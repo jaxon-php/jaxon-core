@@ -185,6 +185,7 @@ class RegistrationTest extends TestCase
     public function testUnknownCallableClass()
     {
         // Register a class that does not exist.
+        $this->expectException(SetupException::class);
         jaxon()->register(Jaxon::CALLABLE_CLASS, 'UnknownClass');
         $this->expectException(SetupException::class);
         $this->xPlugin->getCallable('UnknownClass');

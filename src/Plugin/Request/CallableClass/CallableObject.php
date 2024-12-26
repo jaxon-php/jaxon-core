@@ -27,7 +27,6 @@
 namespace Jaxon\Plugin\Request\CallableClass;
 
 use Jaxon\App\AbstractCallable;
-use Jaxon\App\Pagination;
 use Jaxon\Di\ClassContainer;
 use Jaxon\Di\Container;
 use Jaxon\Exception\SetupException;
@@ -180,8 +179,7 @@ class CallableObject
      */
     public function excluded(): bool
     {
-        return $this->xOptions->excluded() || $this->xReflectionClass->isAbstract() ||
-            $this->xReflectionClass->isSubclassOf(Pagination::class);
+        return $this->xOptions->excluded();
     }
 
     /**

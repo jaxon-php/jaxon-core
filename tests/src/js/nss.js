@@ -33,9 +33,6 @@ Jaxon.NsTests.DirC.ClassC.methodCa = function() {
 Jaxon.NsTests.DirC.ClassC.methodCb = function() {
     return jaxon.request({ jxncls: 'Jaxon.NsTests.DirC.ClassC', jxnmthd: 'methodCb' }, { parameters: arguments });
 };
-Jaxon.NsTests.DirC.ClassC.paginator = function() {
-    return jaxon.request({ jxncls: 'Jaxon.NsTests.DirC.ClassC', jxnmthd: 'paginator' }, { parameters: arguments });
-};
 if(Jaxon.Tests.Ns.Ajax.ClassA === undefined) {
     Jaxon.Tests.Ns.Ajax.ClassA = {};
 }

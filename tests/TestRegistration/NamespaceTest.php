@@ -2,6 +2,7 @@
 
 namespace Jaxon\Tests\TestRegistration;
 
+use Jaxon\App\Pagination;
 use Jaxon\Jaxon;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\Request\CallableClass\CallableClassPlugin;
@@ -61,6 +62,16 @@ class NamespaceTest extends TestCase
     /**
      * @throws SetupException
      */
+    public function testPaginationCallable()
+    {
+        $xPaginationCallable = $this->xClassPlugin->getCallable(Pagination::class);
+        $this->assertEquals(CallableObject::class, get_class($xPaginationCallable));
+        $this->assertTrue($xPaginationCallable->excluded());
+    }
+
+    /**
+     * @throws SetupException
+     */
     public function testCallableDirClasses()
     {
         $xClassACallable = $this->xClassPlugin->getCallable(ClassA::class);
@@ -86,8 +97,7 @@ class NamespaceTest extends TestCase
         $this->assertEquals(32, strlen($this->xClassPlugin->getHash()));
         $sJsCode = $this->xClassPlugin->getScript();
         // file_put_contents(__DIR__ . '/../src/js/nss.js', $sJsCode);
-        // $this->assertEquals(file_get_contents(__DIR__ . '/../src/js/nss.js'), $sJsCode);
-        $this->assertEquals(2880, strlen($sJsCode));
+        $this->assertEquals(file_get_contents(__DIR__ . '/../src/js/nss.js'), $sJsCode);
     }
 
     /**
@@ -103,8 +113,7 @@ class NamespaceTest extends TestCase
         $this->assertEquals(32, strlen($this->xClassPlugin->getHash()));
         $sJsCode = $this->xClassPlugin->getScript();
         // file_put_contents(__DIR__ . '/../src/js/nsi.js', $sJsCode);
-        // $this->assertEquals(file_get_contents(__DIR__ . '/../src/js/nsi.js'), $sJsCode);
-        $this->assertEquals(2880, strlen($sJsCode));
+        $this->assertEquals(file_get_contents(__DIR__ . '/../src/js/nsi.js'), $sJsCode);
     }
 
     /**
@@ -122,8 +131,7 @@ class NamespaceTest extends TestCase
         $this->assertEquals(32, strlen($this->xClassPlugin->getHash()));
         $sJsCode = $this->xClassPlugin->getScript();
         // file_put_contents(__DIR__ . '/../src/js/nsu.js', $sJsCode);
-        // $this->assertEquals(file_get_contents(__DIR__ . '/../src/js/nsu.js'), $sJsCode);
-        $this->assertEquals(2724, strlen($sJsCode));
+        $this->assertEquals(file_get_contents(__DIR__ . '/../src/js/nsu.js'), $sJsCode);
 
         $xCallable = $this->xClassPlugin->getCallable('Jaxon_Tests_Ns_Ajax_ClassA');
         $this->assertEquals(CallableObject::class, get_class($xCallable));

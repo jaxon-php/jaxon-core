@@ -17,6 +17,7 @@ namespace Jaxon\Di;
 use Jaxon\App\AbstractCallable;
 use Jaxon\App\Config\ConfigManager;
 use Jaxon\App\I18n\Translator;
+use Jaxon\App\Pagination;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\Request\CallableClass\CallableClassHelper;
 use Jaxon\Plugin\Request\CallableClass\CallableObject;
@@ -63,8 +64,11 @@ class ClassContainer
 
     /**
      * The class constructor
+     *
+     * @param Container $di
+     * @param Translator $xTranslator
      */
-    public function __construct(private Container $di)
+    public function __construct(private Container $di, private Translator $xTranslator)
     {
         $this->xContainer = new PimpleContainer();
         $this->val(ClassContainer::class, $this);
@@ -145,7 +149,24 @@ class ClassContainer
      */
     public function registerClass(string $sClassName, array $aOptions = [])
     {
-        $this->aClasses[$sClassName] = $aOptions;
+        try
+        {
+            // Make sure the registered class exists
+            isset($aOptions['include']) && require_once($aOptions['include']);
+            $xReflectionClass = new ReflectionClass($sClassName);
+            // Check if the class is registrable
+            if($xReflectionClass->isInstantiable() &&
+                !$xReflectionClass->isSubclassOf(Pagination::class))
+            {
+                $this->aClasses[$sClassName] = $aOptions;
+                $this->val($this->getReflectionClassKey($sClassName), $xReflectionClass);
+            }
+        }
+        catch(ReflectionException $e)
+        {
+            throw new SetupException($this->xTranslator->trans('errors.class.invalid',
+                ['name' => $sClassName]));
+        }
     }
 
     /**
@@ -153,31 +174,29 @@ class ClassContainer
      *
      * @param string $sClassName The class name
      *
-     * @return array
+     * @return void
      * @throws SetupException
      */
-    private function getClassOptions(string $sClassName): array
+    private function registerClassOptions(string $sClassName)
     {
-        // Find options for a class registered with namespace.
         if(!isset($this->aClasses[$sClassName]))
         {
+            // Find options for a class registered with namespace.
             /** @var CallableRegistry */
             $xRegistry = $this->di->g(CallableRegistry::class);
             $xRegistry->registerClassFromNamespace($sClassName);
             if(!isset($this->aClasses[$sClassName]))
             {
                 // Find options for a class registered without namespace.
-                // We then need to parse all classes to be able to find one.
+                // We need to parse all the classes to be able to find one.
                 $xRegistry->parseDirectories();
             }
         }
-        if(isset($this->aClasses[$sClassName]))
+        if(!isset($this->aClasses[$sClassName]))
         {
-            return $this->aClasses[$sClassName];
+            throw new SetupException($this->xTranslator->trans('errors.class.invalid',
+                ['name' => $sClassName]));
         }
-
-        $xTranslator = $this->di->g(Translator::class);
-        throw new SetupException($xTranslator->trans('errors.class.invalid', ['name' => $sClassName]));
     }
 
     /**
@@ -326,20 +345,8 @@ class ClassContainer
                 $this->di->getCache(), $this->di->getUploadHandler());
         });
 
-        $aOptions = $this->getClassOptions($sClassName);
-
-        // Register the reflection class
-        try
-        {
-            // Make sure the registered class exists
-            isset($aOptions['include']) && require_once($aOptions['include']);
-            $this->val($this->getReflectionClassKey($sClassName), new ReflectionClass($sClassName));
-        }
-        catch(ReflectionException $e)
-        {
-            $xTranslator = $this->di->g(Translator::class);
-            throw new SetupException($xTranslator->trans('errors.class.invalid', ['name' => $sClassName]));
-        }
+        $this->registerClassOptions($sClassName);
+        $aOptions = $this->aClasses[$sClassName];
 
         // Register the callable object
         $this->set($sCallableObject, function() use($sClassName, $aOptions) {

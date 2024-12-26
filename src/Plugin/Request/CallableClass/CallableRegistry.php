@@ -406,18 +406,13 @@ class CallableRegistry
 
                 $sClassName = $xFile->getBasename('.php');
                 $aClassOptions = ['timestamp' => $xFile->getMTime()];
-                // No more custom classmap autoloading. The file will be included when needed.
-                if(($aDirectoryOptions['autoload']))
+                if(($aDirectoryOptions['autoload']) && $this->xAutoloader !== null)
                 {
-                    $aClassMap[$sClassName] = $xFile->getPathname();
+                    // Set classmap autoloading. Must be done before registering the class.
+                    $this->xAutoloader->addClassMap([$sClassName => $xFile->getPathname()]);
                 }
                 $this->_registerClass($sClassName, $aClassOptions, $aDirectoryOptions);
             }
-        }
-        // Set classmap autoloading
-        if(($aClassMap) && $this->xAutoloader !== null)
-        {
-            $this->xAutoloader->addClassMap($aClassMap);
         }
     }
 

@@ -51,7 +51,7 @@ class CallbackTest extends TestCase
         jaxon()->register(Jaxon::CALLABLE_FUNCTION, 'my_first_function',
             __DIR__ . '/../src/first.php');
         jaxon()->setOption('core.prefix.class', '');
-        jaxon()->register(Jaxon::CALLABLE_DIR, __DIR__ . '/../src/response');
+        jaxon()->register(Jaxon::CALLABLE_DIR, __DIR__ . '/../src/response', ['autoload' => true]);
     }
 
     /**

@@ -89,7 +89,7 @@ final class Lib
             // First call: create and initialize the instances.
             self::$xInstance = new Lib();
             $xContainer = new Container(self::$xInstance);
-            $xClassContainer = new ClassContainer($xContainer);
+            $xClassContainer = new ClassContainer($xContainer, $xContainer->g(Translator::class));
             $xContainer->val(ClassContainer::class, $xClassContainer);
 
             self::$xInstance->init($xContainer, $xClassContainer);
