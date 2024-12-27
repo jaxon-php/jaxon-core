@@ -24,7 +24,6 @@ namespace Jaxon\Response;
 use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Plugin\AbstractResponsePlugin;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
-use JsonSerializable;
 
 use function trim;
 
@@ -78,7 +77,7 @@ abstract class AbstractResponse
      */
     protected function str($xData): string
     {
-        return trim((string)$xData, " \t\n");
+        return $this->xManager->str($xData);
     }
 
     /**
@@ -89,21 +88,6 @@ abstract class AbstractResponse
     public function getErrorMessage(): string
     {
         return $this->xManager->getErrorMessage();
-    }
-
-    /**
-     * Add a response command to the array of commands
-     *
-     * @param string $sName    The command name
-     * @param array|JsonSerializable $aArgs    The command arguments
-     * @param bool $bRemoveEmpty
-     *
-     * @return Command
-     */
-    public function addCommand(string $sName, array|JsonSerializable $aArgs = [],
-        bool $bRemoveEmpty = false): Command
-    {
-        return $this->xManager->addCommand($sName, $aArgs, $bRemoveEmpty);
     }
 
     /**

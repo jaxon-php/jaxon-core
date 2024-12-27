@@ -71,7 +71,8 @@ class ComponentResponse extends AjaxResponse
     public function addCommand(string $sName, array|JsonSerializable $aArgs = [],
         bool $bRemoveEmpty = false): Command
     {
-        return parent::addCommand($sName, $aArgs, $bRemoveEmpty)
+        return $this->xManager
+            ->addCommand($sName, $aArgs, $bRemoveEmpty)
             ->setComponent($this->aComponent);
     }
 

@@ -27,7 +27,6 @@ use Jaxon\Script\JsExpr;
 use Jaxon\Script\JsCall;
 use Jaxon\Plugin\Response\DataBag\DataBagContext;
 use Jaxon\Plugin\Response\DataBag\DataBagPlugin;
-use Jaxon\Plugin\Response\Dialog\DialogCommand;
 use Jaxon\Plugin\Response\Pagination\Paginator;
 use Jaxon\Plugin\Response\Pagination\PaginatorPlugin;
 use Jaxon\Plugin\Response\Psr\PsrPlugin;
@@ -41,14 +40,6 @@ use function json_encode;
 
 abstract class AjaxResponse extends AbstractResponse
 {
-    /**
-     * @return DialogCommand
-     */
-    protected function dialog(): DialogCommand
-    {
-        return $this->xManager->dialog();
-    }
-
     /**
      * @inheritDoc
      */
@@ -76,7 +67,7 @@ abstract class AjaxResponse extends AbstractResponse
     {
         $aArgs = func_get_args();
         array_shift($aArgs);
-        $this->addCommand('script.call', ['func' => $this->str($sFunc),'args' => $aArgs]);
+        $this->xManager->addCommand('script.call', ['func' => $this->str($sFunc),'args' => $aArgs]);
         return $this;
     }
 
@@ -89,7 +80,7 @@ abstract class AjaxResponse extends AbstractResponse
      */
     public function exec(JsExpr $xJsExpr): self
     {
-        $this->addCommand('script.exec', ['expr' => $xJsExpr]);
+        $this->xManager->addCommand('script.exec', ['expr' => $xJsExpr]);
         return $this;
     }
 
@@ -109,8 +100,7 @@ abstract class AjaxResponse extends AbstractResponse
      */
     public function confirm(Closure $fConfirm, string $sQuestion, array $aArgs = []): self
     {
-        $this->xManager->addConfirmCommand(fn() => $fConfirm($this),
-            $this->dialog()->confirm($this->str($sQuestion), $aArgs));
+        $this->xManager->addConfirmCommand('script.confirm', fn() => $fConfirm($this), $sQuestion, $aArgs);
         return $this;
     }
 
@@ -124,7 +114,7 @@ abstract class AjaxResponse extends AbstractResponse
      */
     public function alert(string $sMessage, array $aArgs = []): self
     {
-        $this->addCommand('dialog.message', $this->dialog()->info($this->str($sMessage), $aArgs));
+        $this->xManager->addAlertCommand('dialog.message', $sMessage, $aArgs);
         return $this;
     }
 
@@ -137,7 +127,7 @@ abstract class AjaxResponse extends AbstractResponse
      */
     public function debug(string $sMessage): self
     {
-        $this->addCommand('script.debug', ['message' => $this->str($sMessage)]);
+        $this->xManager->addCommand('script.debug', ['message' => $this->str($sMessage)]);
         return $this;
     }
 
@@ -151,7 +141,7 @@ abstract class AjaxResponse extends AbstractResponse
      */
     public function redirect(string $sURL, int $nDelay = 0): self
     {
-        $this->addCommand('script.redirect', [
+        $this->xManager->addCommand('script.redirect', [
             'delay' => $nDelay,
             'url' => $this->xPluginManager->getParameterReader()->parseUrl($sURL),
         ]);
@@ -170,7 +160,7 @@ abstract class AjaxResponse extends AbstractResponse
      */
     public function sleep(int $tenths): self
     {
-        $this->addCommand('script.sleep', ['duration' => $tenths]);
+        $this->xManager->addCommand('script.sleep', ['duration' => $tenths]);
         return $this;
     }
 

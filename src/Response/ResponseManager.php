@@ -44,7 +44,7 @@ class ResponseManager
     /**
      * @var DialogCommand
      */
-    protected $xDialogCommand;
+    protected $xDialog;
 
     /**
      * @var Translator
@@ -102,24 +102,16 @@ class ResponseManager
     /**
      * @param Container $di
      * @param Translator $xTranslator
-     * @param DialogCommand $xDialogCommand
+     * @param DialogCommand $xDialog
      * @param string $sCharacterEncoding
      */
     public function __construct(Container $di, Translator $xTranslator,
-        DialogCommand $xDialogCommand, string $sCharacterEncoding)
+        DialogCommand $xDialog, string $sCharacterEncoding)
     {
         $this->di = $di;
         $this->xTranslator = $xTranslator;
-        $this->xDialogCommand = $xDialogCommand;
+        $this->xDialog = $xDialog;
         $this->sCharacterEncoding = $sCharacterEncoding;
-    }
-
-    /**
-     * @return DialogCommand
-     */
-    public function dialog(): DialogCommand
-    {
-        return $this->xDialogCommand;
     }
 
     /**
@@ -129,7 +121,7 @@ class ResponseManager
      *
      * @return string
      */
-    protected function str($xData): string
+    public function str($xData): string
     {
         return trim((string)$xData, " \t\n");
     }
@@ -249,14 +241,17 @@ class ResponseManager
      * The provided closure will be called with a response object as unique parameter.
      * If the user clicks cancel, the response commands defined in the closure will be skipped.
      *
-     * @param Closure $fConfirm  A closure that defines the commands that can be skipped
-     * @param array $aQuestion   The question to ask to the user
+     * @param string $sName     The command name
+     * @param Closure $fConfirm A closure that defines the commands that can be skipped
+     * @param string $sQuestion The question to ask to the user
+     * @param array $aArgs      The arguments for the placeholders in the question
      *
      * @throws AppException
      *
      * @return self
      */
-    public function addConfirmCommand(Closure $fConfirm, array $aQuestion): self
+    public function addConfirmCommand(string $sName, Closure $fConfirm,
+        string $sQuestion, array $aArgs = []): self
     {
         if($this->bOnConfirm)
         {
@@ -268,13 +263,30 @@ class ResponseManager
         if(($nCommandCount = count($this->aConfirmCommands)) > 0)
         {
             // The confirm command must be inserted before the commands to be confirmed.
-            $this->addCommand('script.confirm', [
+            $this->addCommand($sName, [
                 'count' => $nCommandCount,
-                'question' => $aQuestion,
+                'question' => $this->xDialog->confirm($this->str($sQuestion), $aArgs),
             ]);
             $this->aCommands = array_merge($this->aCommands, $this->aConfirmCommands);
             $this->aConfirmCommands = [];
         }
+        return $this;
+    }
+
+    /**
+     * Add a command to display an alert message to the user
+     *
+     * @param string $sName     The command name
+     * @param string $sMessage  The message to be displayed
+     * @param array $aArgs      The arguments for the placeholders in the message
+     *
+     * @throws AppException
+     *
+     * @return self
+     */
+    public function addAlertCommand(string $sName, string $sMessage, array $aArgs = []): self
+    {
+        $this->addCommand($sName, $this->xDialog->info($this->str($sMessage), $aArgs));
         return $this;
     }
 
