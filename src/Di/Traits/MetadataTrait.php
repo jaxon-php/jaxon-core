@@ -3,36 +3,18 @@
 namespace Jaxon\Di\Traits;
 
 use Jaxon\Plugin\CallableMetadataInterface;
-use Jaxon\Plugin\Attribute\AttributeParser;
-use Jaxon\Plugin\Attribute\AttributeReader;
 use ReflectionClass;
 
-use function sys_get_temp_dir;
-
-trait AttributeTrait
+trait MetadataTrait
 {
     /**
      * Register the values into the container
      *
      * @return void
      */
-    private function registerMetadataReaders()
+    private function registerMetadataReader()
     {
-        $sCacheDirKey = 'jaxon_attributes_cache_dir';
-        $this->val($sCacheDirKey, sys_get_temp_dir());
-    
-            // Attribute parser
-        $this->set(AttributeParser::class, function($di) use($sCacheDirKey) {
-            return new AttributeParser($di->g($sCacheDirKey));
-        });
-
-        // Attribute reader
-        $this->set(AttributeReader::class, function($di) use($sCacheDirKey) {
-            return new AttributeReader($di->g(AttributeParser::class), $di->g($sCacheDirKey));
-        });
-        $this->alias('metadata_reader_attributes', AttributeReader::class);
-
-        // By default, register a fake annotation reader.
+        // By default, register a fake metadata reader.
         $this->set('metadata_reader_null', function() {
             return new class implements CallableMetadataInterface
             {
