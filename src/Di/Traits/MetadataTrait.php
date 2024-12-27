@@ -2,7 +2,8 @@
 
 namespace Jaxon\Di\Traits;
 
-use Jaxon\Plugin\CallableMetadataInterface;
+use Jaxon\App\Metadata\MetadataInterface;
+use Jaxon\App\Metadata\MetadataReaderInterface;
 use ReflectionClass;
 
 trait MetadataTrait
@@ -16,12 +17,12 @@ trait MetadataTrait
     {
         // By default, register a fake metadata reader.
         $this->set('metadata_reader_null', function() {
-            return new class implements CallableMetadataInterface
+            return new class implements MetadataReaderInterface
             {
                 public function getAttributes(ReflectionClass|string $xReflectionClass,
-                    array $aMethods = [], array $aProperties = []): array
+                    array $aMethods = [], array $aProperties = []): ?MetadataInterface
                 {
-                    return [false, [], []];
+                    return null;
                 }
             };
         });
@@ -32,15 +33,12 @@ trait MetadataTrait
      *
      * @param string $sReaderId
      *
-     * @return CallableMetadataInterface
+     * @return MetadataReaderInterface
      */
-    public function getMetadataReader(string $sReaderId): CallableMetadataInterface
+    public function getMetadataReader(string $sReaderId): MetadataReaderInterface
     {
-        if(($sReaderId === 'attributes' || $sReaderId === 'annotations')
-            && $this->h("metadata_reader_$sReaderId"))
-        {
-            return $this->g("metadata_reader_$sReaderId");
-        }
-        return $this->g('metadata_reader_null');
+        return $this->h("metadata_reader_$sReaderId") ?
+            $this->g("metadata_reader_$sReaderId") :
+            $this->g('metadata_reader_null');
     }
 }

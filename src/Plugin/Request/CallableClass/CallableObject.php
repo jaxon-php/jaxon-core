@@ -27,10 +27,11 @@
 namespace Jaxon\Plugin\Request\CallableClass;
 
 use Jaxon\App\AbstractCallable;
+use Jaxon\App\Metadata\MetadataInterface;
+use Jaxon\App\Metadata\MetadataReaderInterface;
 use Jaxon\Di\ClassContainer;
 use Jaxon\Di\Container;
 use Jaxon\Exception\SetupException;
-use Jaxon\Plugin\CallableMetadataInterface;
 use Jaxon\Request\Target;
 use Jaxon\Response\AbstractResponse;
 use Jaxon\Utils\Config\Config;
@@ -102,26 +103,26 @@ class CallableObject
     {
         $this->aProtectedMethods = array_fill_keys($aProtectedMethods, true);
 
-        $aAttributes = $this->getAttributes($xReflectionClass, $aOptions);
-        $this->xOptions = new CallableObjectOptions($aOptions, $aAttributes);
+        $xMetadata = $this->getAttributes($xReflectionClass, $aOptions);
+        $this->xOptions = new CallableObjectOptions($aOptions, $xMetadata);
     }
 
     /**
      * @param ReflectionClass $xReflectionClass
      * @param array $aOptions
      *
-     * @return array
+     * @return MetadataInterface|null
      */
-    private function getAttributes(ReflectionClass $xReflectionClass, array $aOptions): array
+    private function getAttributes(ReflectionClass $xReflectionClass, array $aOptions): ?MetadataInterface
     {
         /** @var Config|null */
         $xConfig = $aOptions['config'] ?? null;
         if($xConfig === null)
         {
-            return [false, [], []];
+            return null;
         }
 
-        /** @var CallableMetadataInterface */
+        /** @var MetadataReaderInterface */
         $xMetadataReader = $this->di->getMetadataReader($xConfig->getOption('metadata', ''));
         $aMethods = $this->getPublicMethods(true);
         $aProperties = $this->getProperties();

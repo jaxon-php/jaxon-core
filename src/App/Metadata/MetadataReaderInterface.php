@@ -1,9 +1,9 @@
 <?php
 
 /**
- * CallableMetadataInterface.php
+ * MetadataReaderInterface.php
  *
- * Read Jaxon class annotations.
+ * Read callable class metadata.
  *
  * @package jaxon-core
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
@@ -12,21 +12,21 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Plugin;
+namespace Jaxon\App\Metadata;
 
 use ReflectionClass;
 
-interface CallableMetadataInterface
+interface MetadataReaderInterface
 {
     /**
-     * Get the class attributes from its annotations
+     * Get the callable class metadata
      *
      * @param ReflectionClass|string $xReflectionClass
      * @param array $aMethods
      * @param array $aProperties
      *
-     * @return array
+     * @return MetadataInterface|null
      */
     public function getAttributes(ReflectionClass|string $xReflectionClass,
-        array $aMethods = [], array $aProperties = []): array;
+        array $aMethods = [], array $aProperties = []): ?MetadataInterface;
 }

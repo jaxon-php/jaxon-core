@@ -15,6 +15,7 @@
 namespace Jaxon\Plugin\Request\CallableClass;
 
 use Jaxon\App\AbstractCallable;
+use Jaxon\App\Metadata\MetadataInterface;
 use ReflectionClass;
 
 use function array_merge;
@@ -79,12 +80,11 @@ class CallableObjectOptions
      * The constructor
      *
      * @param array $aOptions
-     * @param array $aAnnotations
+     * @param MetadataInterface|null $xMetadata
      */
-    public function __construct(array $aOptions, array $aAnnotations)
+    public function __construct(array $aOptions, ?MetadataInterface $xMetadata)
     {
-        [$bExcluded, $aAnnotationOptions, $aAnnotationProtected] = $aAnnotations;
-        $this->bExcluded = $bExcluded || (bool)($aOptions['excluded'] ?? false);
+        $this->bExcluded = ($xMetadata?->isExcluded() ?? false) || (bool)($aOptions['excluded'] ?? false);
         if($this->bExcluded)
         {
             return;
@@ -96,7 +96,7 @@ class CallableObjectOptions
             $this->sSeparator = $sSeparator;
         }
         $this->addProtectedMethods($aOptions['protected']);
-        $this->addProtectedMethods($aAnnotationProtected);
+        $this->addProtectedMethods($xMetadata?->getProtectedMethods() ?? []);
 
         foreach($aOptions['functions'] as $sNames => $aFunctionOptions)
         {
@@ -106,7 +106,7 @@ class CallableObjectOptions
                 $this->addFunctionOptions($sFunctionName, $aFunctionOptions);
             }
         }
-        foreach($aAnnotationOptions as $sFunctionName => $aFunctionOptions)
+        foreach($xMetadata?->getProperties() ?? [] as $sFunctionName => $aFunctionOptions)
         {
             $this->addFunctionOptions($sFunctionName, $aFunctionOptions);
         }
