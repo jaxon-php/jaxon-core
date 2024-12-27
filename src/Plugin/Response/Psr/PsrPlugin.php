@@ -84,8 +84,8 @@ class PsrPlugin extends AbstractResponsePlugin
                 ->withHeader('Pragma', 'no-cache');
         }
         return $xPsrResponse
-            ->withHeader('content-type', $this->xResponse->getContentType())
-            ->withBody(Stream::create($this->xResponse->getOutput()));
+            ->withHeader('content-type', $this->response()->getContentType())
+            ->withBody(Stream::create($this->response()->getOutput()));
     }
 
     /**
@@ -98,7 +98,7 @@ class PsrPlugin extends AbstractResponsePlugin
     public function upload(int $nHttpCode): ResponseInterface
     {
         return $this->xPsr17Factory->createResponse($nHttpCode)
-            ->withHeader('content-type', $this->xResponse->getContentType())
-            ->withBody(Stream::create($this->xResponse->getOutput()));
+            ->withHeader('content-type', $this->response()->getContentType())
+            ->withBody(Stream::create($this->response()->getOutput()));
     }
 }

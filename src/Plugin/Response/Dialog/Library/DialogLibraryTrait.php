@@ -14,9 +14,6 @@
 
 namespace Jaxon\Plugin\Response\Dialog\Library;
 
-use Jaxon\Response\AjaxResponse;
-use JsonSerializable;
-
 trait DialogLibraryTrait
 {
     /**
@@ -25,11 +22,6 @@ trait DialogLibraryTrait
      * @var DialogLibraryHelper
      */
     protected $xHelper;
-
-    /**
-     * @var AjaxResponse
-     */
-    protected $xResponse = null;
 
     /**
      * Get the library name
@@ -46,43 +38,6 @@ trait DialogLibraryTrait
     public function helper(): DialogLibraryHelper
     {
         return $this->xHelper;
-    }
-
-    /**
-     * Set the response to attach the messages to.
-     *
-     * @param AjaxResponse $xResponse    Whether to return the code
-     *
-     * @return void
-     */
-    public function setResponse(AjaxResponse $xResponse)
-    {
-        $this->xResponse = $xResponse;
-    }
-
-    /**
-     * Get the <Jaxon\Response\Response> object
-     *
-     * @return AjaxResponse|null
-     */
-    protected function response(): ?AjaxResponse
-    {
-        return $this->xResponse;
-    }
-
-    /**
-     * Add a client side plugin command to the response object
-     *
-     * @param string $sName    The command name
-     * @param array|JsonSerializable $aOptions    The command options
-     *
-     * @return void
-     */
-    public function addCommand(string $sName, array $aOptions = [])
-    {
-        // This is usually the response plugin name. We set the library name instead.
-        $this->xResponse->addCommand($sName, $aOptions)
-            ->setOption('plugin', $this->getName());
     }
 
     /**

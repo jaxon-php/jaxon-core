@@ -12,19 +12,8 @@
 
 namespace Jaxon\Plugin\Response\Dialog\Library;
 
-use Jaxon\Response\AjaxResponse;
-
 interface LibraryInterface
 {
-    /**
-     * Set the response to attach the messages to.
-     *
-     * @param AjaxResponse $xResponse
-     *
-     * @return void
-     */
-    public function setResponse(AjaxResponse $xResponse);
-
     /**
      * Get the library name
      *

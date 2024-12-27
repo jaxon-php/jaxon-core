@@ -25,8 +25,6 @@ use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Plugin\AbstractResponsePlugin;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 
-use function trim;
-
 abstract class AbstractResponse
 {
     /**
@@ -132,7 +130,7 @@ abstract class AbstractResponse
         $xResponsePlugin = $this->xPluginManager->getResponsePlugin($sName);
         if($xResponsePlugin !== null)
         {
-            $xResponsePlugin->setResponse($this);
+            $xResponsePlugin->_init($this, $this->xManager);
         }
         return $xResponsePlugin;
     }

@@ -291,7 +291,7 @@ class ResponseManager
     }
 
     /**
-     * Get the response to the Jaxon request
+     * Set the response to the Jaxon request
      *
      * @param AbstractResponse $xResponse
      *

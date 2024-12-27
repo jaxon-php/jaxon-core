@@ -19,7 +19,6 @@ use Jaxon\App\Dialog\AlertInterface;
 use Jaxon\App\Dialog\ModalInterface;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\AbstractResponsePlugin;
-use Jaxon\Response\AbstractResponse;
 
 use function array_reduce;
 use function trim;
@@ -93,11 +92,8 @@ class DialogPlugin extends AbstractResponsePlugin implements ModalInterface, Ale
     /**
      * @inheritDoc
      */
-    public function setResponse(AbstractResponse $xResponse)
+    protected function init()
     {
-        parent::setResponse($xResponse);
-
-        // Hack the setResponse() method, to set the default libraries on each access to this plugin.
         $this->xDialogManager->setNextLibrary('');
     }
 
