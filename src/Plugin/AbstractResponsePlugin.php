@@ -28,7 +28,7 @@ namespace Jaxon\Plugin;
 use Jaxon\Script\JqCall;
 use Jaxon\Plugin\Response\DataBag\DataBagContext;
 use Jaxon\Response\AbstractResponse;
-use Jaxon\Response\ResponseManager;
+use Jaxon\Response\Command;
 use JsonSerializable;
 
 /**
@@ -45,30 +45,23 @@ abstract class AbstractResponsePlugin extends AbstractPlugin implements Response
     private $xResponse = null;
 
     /**
-     * @var ResponseManager
-     */
-    private $xManager = null;
-
-    /**
+     * Initialize the plugin
+     *
      * @return void
      */
     protected function init()
     {}
 
     /**
-     * Set the <Jaxon\Response\AbstractResponse> object
-     *
      * @param AbstractResponse $xResponse   The response
-     * @param ResponseManager $xManager     The response manager
      *
-     * @return void
+     * @return self
      */
-    public function _init(AbstractResponse $xResponse, ResponseManager $xManager)
+    public function _init(AbstractResponse $xResponse): self
     {
         $this->xResponse = $xResponse;
-        $this->xManager = $xManager;
-
         $this->init();
+        return $this;
     }
 
     /**
@@ -80,20 +73,17 @@ abstract class AbstractResponsePlugin extends AbstractPlugin implements Response
     }
 
     /**
-     * Add a client side plugin command to the response object
-     *
-     * Used internally to add a command to the response command list.
-     * This will call <Jaxon\Response\Response->addPluginCommand> using the
-     * reference provided in <Jaxon\Response\Response->setResponse>.
+     * Add a plugin command to the response
      *
      * @param string $sName    The command name
      * @param array|JsonSerializable $aOptions    The command options
      *
-     * @return void
+     * @return Command
      */
-    public function addCommand(string $sName, array|JsonSerializable $aOptions)
+    public function addCommand(string $sName, array|JsonSerializable $aOptions): Command
     {
-        $this->xManager->addCommand($sName, $aOptions)
+        return $this->xResponse
+            ->addCommand($sName, $aOptions)
             ->setOption('plugin', $this->getName());
     }
 }

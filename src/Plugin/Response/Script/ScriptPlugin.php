@@ -28,11 +28,6 @@ class ScriptPlugin extends AbstractResponsePlugin
     const NAME = 'script';
 
     /**
-     * @var CallFactory
-     */
-    private $xFactory;
-
-    /**
      * @var Closure
      */
     private $xCallback;
@@ -42,9 +37,8 @@ class ScriptPlugin extends AbstractResponsePlugin
      *
      * @param CallFactory $xFactory
      */
-    public function __construct(CallFactory $xFactory)
+    public function __construct(private CallFactory $xFactory)
     {
-        $this->xFactory = $xFactory;
         $this->xCallback = function(JsExpr $xJsExpr) {
             // Add the newly created expression to the response
             $this->addCommand('script.exec', ['expr' => $xJsExpr]);;

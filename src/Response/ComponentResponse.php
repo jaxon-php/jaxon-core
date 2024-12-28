@@ -29,7 +29,7 @@ class ComponentResponse extends AjaxResponse
     /**
      * @var array
      */
-    protected $aComponent = [];
+    private $aComponent = [];
 
     /**
      * The constructor

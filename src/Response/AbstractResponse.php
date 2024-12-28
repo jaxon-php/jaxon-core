@@ -24,6 +24,7 @@ namespace Jaxon\Response;
 use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Plugin\AbstractResponsePlugin;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
+use JsonSerializable;
 
 abstract class AbstractResponse
 {
@@ -88,6 +89,21 @@ abstract class AbstractResponse
         return $this->xManager->getErrorMessage();
     }
 
+     /**
+     * Add a response command to the array of commands
+     *
+     * @param string $sName    The command name
+     * @param array|JsonSerializable $aArgs    The command arguments
+     * @param bool $bRemoveEmpty
+     *
+     * @return Command
+     */
+    public function addCommand(string $sName, array|JsonSerializable $aArgs = [],
+        bool $bRemoveEmpty = false): Command
+    {
+        return $this->xManager->addCommand($sName, $aArgs, $bRemoveEmpty);
+    }
+
     /**
      * Get the commands in the response
      *
@@ -128,11 +144,7 @@ abstract class AbstractResponse
     public function plugin(string $sName): ?AbstractResponsePlugin
     {
         $xResponsePlugin = $this->xPluginManager->getResponsePlugin($sName);
-        if($xResponsePlugin !== null)
-        {
-            $xResponsePlugin->_init($this, $this->xManager);
-        }
-        return $xResponsePlugin;
+        return !$xResponsePlugin ? null : $xResponsePlugin->_init($this);
     }
 
     /**
