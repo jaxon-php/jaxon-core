@@ -42,7 +42,7 @@ class SortedFileIterator extends SplHeap
      *
      * @return int
      */
-    public function compare($xFile1, $xFile2)
+    public function compare($xFile1, $xFile2): int
     {
         return strcmp($xFile2->getRealPath(), $xFile1->getRealPath());
     }
