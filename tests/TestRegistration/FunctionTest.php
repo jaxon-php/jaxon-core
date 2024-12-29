@@ -134,7 +134,7 @@ final class FunctionTest extends TestCase
         $sJsCode = jaxon()->getScript(true, true);
         // file_put_contents(__DIR__ . '/../src/js/lib.js', $sJsCode);
         // $this->assertEquals(file_get_contents(__DIR__ . '/../src/js/lib.js'), $sJsCode);
-        $this->assertEquals(1184, strlen(trim($sJsCode)));
+        $this->assertEquals(1186, strlen(trim($sJsCode)));
         $this->assertEquals(32, strlen(jaxon()->di()->getCodeGenerator()->getHash()));
 
         unset($_SERVER['REQUEST_URI']);
