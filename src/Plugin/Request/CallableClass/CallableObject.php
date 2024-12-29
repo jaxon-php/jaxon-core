@@ -27,6 +27,7 @@
 namespace Jaxon\Plugin\Request\CallableClass;
 
 use Jaxon\App\AbstractCallable;
+use Jaxon\App\Metadata\InputData;
 use Jaxon\App\Metadata\MetadataInterface;
 use Jaxon\App\Metadata\MetadataReaderInterface;
 use Jaxon\Di\ClassContainer;
@@ -124,9 +125,8 @@ class CallableObject
 
         /** @var MetadataReaderInterface */
         $xMetadataReader = $this->di->getMetadataReader($xConfig->getOption('metadata', ''));
-        $aMethods = $this->getPublicMethods(true);
-        $aProperties = $this->getProperties();
-        return $xMetadataReader->getAttributes($xReflectionClass, $aMethods, $aProperties);
+        return $xMetadataReader->getAttributes(new InputData($xReflectionClass,
+            $this->getPublicMethods(true), $this->getProperties()));
     }
 
     /**

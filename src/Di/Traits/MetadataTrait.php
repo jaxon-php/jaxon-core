@@ -2,9 +2,9 @@
 
 namespace Jaxon\Di\Traits;
 
+use Jaxon\App\Metadata\InputDataInterface;
 use Jaxon\App\Metadata\MetadataInterface;
 use Jaxon\App\Metadata\MetadataReaderInterface;
-use ReflectionClass;
 
 trait MetadataTrait
 {
@@ -19,8 +19,7 @@ trait MetadataTrait
         $this->set('metadata_reader_null', function() {
             return new class implements MetadataReaderInterface
             {
-                public function getAttributes(ReflectionClass|string $xReflectionClass,
-                    array $aMethods = [], array $aProperties = []): ?MetadataInterface
+                public function getAttributes(InputDataInterface $xInputData): ?MetadataInterface
                 {
                     return null;
                 }

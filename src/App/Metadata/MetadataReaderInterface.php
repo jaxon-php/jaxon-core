@@ -14,19 +14,14 @@
 
 namespace Jaxon\App\Metadata;
 
-use ReflectionClass;
-
 interface MetadataReaderInterface
 {
     /**
      * Get the callable class metadata
      *
-     * @param ReflectionClass|string $xReflectionClass
-     * @param array $aMethods
-     * @param array $aProperties
+     * @param InputDataInterface $xInput
      *
      * @return MetadataInterface|null
      */
-    public function getAttributes(ReflectionClass|string $xReflectionClass,
-        array $aMethods = [], array $aProperties = []): ?MetadataInterface;
+    public function getAttributes(InputDataInterface $xInput): ?MetadataInterface;
 }
