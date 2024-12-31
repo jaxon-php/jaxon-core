@@ -3,8 +3,8 @@
 namespace Jaxon\App;
 
 use Jaxon\Di\Container;
-use Jaxon\App\Cache\Cache;
 use Jaxon\App\Session\SessionInterface;
+use Jaxon\App\Stash\Stash;
 use Jaxon\App\View\ViewRenderer;
 use Jaxon\Exception\SetupException;
 use Jaxon\Script\JxnCall;
@@ -51,11 +51,11 @@ abstract class AbstractCallable
     /**
      * Get the temp cache
      *
-     * @return Cache
+     * @return Stash
      */
-    protected function cache(): Cache
+    protected function stash(): Stash
     {
-        return $this->xHelper->xCache;
+        return $this->xHelper->xStash;
     }
 
     /**

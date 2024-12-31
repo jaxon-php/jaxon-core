@@ -1,10 +1,10 @@
 <?php
 
-namespace Jaxon\App\Cache;
+namespace Jaxon\App\Stash;
 
 use function is_callable;
 
-class Cache
+class Stash
 {
     /**
      * @var array
@@ -34,7 +34,7 @@ class Cache
         if(is_callable($value))
         {
             $value = $value();
-            // Save the value returned by the callback in the cache.
+            // Save the value returned by the callback in the stash.
             $this->values[$key] = $value;
         }
 

@@ -2,7 +2,7 @@
 
 namespace Jaxon\Di\Traits;
 
-use Jaxon\App\Cache\Cache;
+use Jaxon\App\Stash\Stash;
 use Jaxon\Utils\Config\ConfigReader;
 use Jaxon\Utils\Http\UriDetector;
 use Jaxon\Utils\Template\TemplateEngine;
@@ -39,8 +39,8 @@ trait UtilTrait
         });
 
         // Temp cache for Jaxon callable classes
-        $this->set(Cache::class, function() {
-            return new Cache();
+        $this->set(Stash::class, function() {
+            return new Stash();
         });
     }
 
@@ -57,10 +57,10 @@ trait UtilTrait
     /**
      * Get the temp cache for Jaxon callable classes
      *
-     * @return Cache
+     * @return Stash
      */
-    public function getCache(): Cache
+    public function getStash(): Stash
     {
-        return $this->g(Cache::class);
+        return $this->g(Stash::class);
     }
 }

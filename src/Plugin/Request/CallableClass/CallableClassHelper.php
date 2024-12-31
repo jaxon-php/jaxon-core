@@ -14,8 +14,8 @@
 
 namespace Jaxon\Plugin\Request\CallableClass;
 
-use Jaxon\App\Cache\Cache;
 use Jaxon\App\Session\SessionInterface;
+use Jaxon\App\Stash\Stash;
 use Jaxon\App\View\ViewRenderer;
 use Jaxon\Di\ClassContainer;
 use Jaxon\Exception\SetupException;
@@ -50,7 +50,7 @@ class CallableClassHelper
     public function __construct(public ClassContainer $cls, public JxnCall $xJxnCall,
         public CallFactory $xFactory, public ViewRenderer $xViewRenderer,
         public LoggerInterface $xLogger, public ?SessionInterface $xSessionManager,
-        public Cache $xCache, public ?UploadHandlerInterface $xUploadHandler)
+        public Stash $xStash, public ?UploadHandlerInterface $xUploadHandler)
     {}
 
     /**

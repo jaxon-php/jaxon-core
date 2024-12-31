@@ -196,7 +196,7 @@ class DialogPlugin extends AbstractResponsePlugin implements ModalInterface, Ale
      */
     public function success(string $sMessage, array $aArgs = [])
     {
-        $this->addCommand('dialog.message', $this->xDialogCommand->success($sMessage, $aArgs));
+        $this->addCommand('dialog.alert.show', $this->xDialogCommand->success($sMessage, $aArgs));
     }
 
     /**
@@ -204,7 +204,7 @@ class DialogPlugin extends AbstractResponsePlugin implements ModalInterface, Ale
      */
     public function info(string $sMessage, array $aArgs = [])
     {
-        $this->addCommand('dialog.message', $this->xDialogCommand->info($sMessage, $aArgs));
+        $this->addCommand('dialog.alert.show', $this->xDialogCommand->info($sMessage, $aArgs));
     }
 
     /**
@@ -212,7 +212,7 @@ class DialogPlugin extends AbstractResponsePlugin implements ModalInterface, Ale
      */
     public function warning(string $sMessage, array $aArgs = [])
     {
-        $this->addCommand('dialog.message', $this->xDialogCommand->warning($sMessage, $aArgs));
+        $this->addCommand('dialog.alert.show', $this->xDialogCommand->warning($sMessage, $aArgs));
     }
 
     /**
@@ -220,6 +220,6 @@ class DialogPlugin extends AbstractResponsePlugin implements ModalInterface, Ale
      */
     public function error(string $sMessage, array $aArgs = [])
     {
-        $this->addCommand('dialog.message', $this->xDialogCommand->error($sMessage, $aArgs));
+        $this->addCommand('dialog.alert.show', $this->xDialogCommand->error($sMessage, $aArgs));
     }
 }

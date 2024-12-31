@@ -67,7 +67,8 @@ abstract class AjaxResponse extends AbstractResponse
     {
         $aArgs = func_get_args();
         array_shift($aArgs);
-        $this->xManager->addCommand('script.call', ['func' => $this->str($sFunc),'args' => $aArgs]);
+        $this->xManager->addCommand('script.exec.call',
+            ['func' => $this->str($sFunc), 'args' => $aArgs]);
         return $this;
     }
 
@@ -80,7 +81,7 @@ abstract class AjaxResponse extends AbstractResponse
      */
     public function exec(JsExpr $xJsExpr): self
     {
-        $this->xManager->addCommand('script.exec', ['expr' => $xJsExpr]);
+        $this->xManager->addCommand('script.exec.expr', ['expr' => $xJsExpr]);
         return $this;
     }
 
@@ -100,7 +101,8 @@ abstract class AjaxResponse extends AbstractResponse
      */
     public function confirm(Closure $fConfirm, string $sQuestion, array $aArgs = []): self
     {
-        $this->xManager->addConfirmCommand('script.confirm', fn() => $fConfirm($this), $sQuestion, $aArgs);
+        $this->xManager->addConfirmCommand('script.confirm',
+            fn() => $fConfirm($this), $sQuestion, $aArgs);
         return $this;
     }
 
@@ -114,7 +116,7 @@ abstract class AjaxResponse extends AbstractResponse
      */
     public function alert(string $sMessage, array $aArgs = []): self
     {
-        $this->xManager->addAlertCommand('dialog.message', $sMessage, $aArgs);
+        $this->xManager->addAlertCommand('dialog.alert.show', $sMessage, $aArgs);
         return $this;
     }
 

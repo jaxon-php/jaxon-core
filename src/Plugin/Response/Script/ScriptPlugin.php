@@ -44,7 +44,7 @@ class ScriptPlugin extends AbstractResponsePlugin
     {
         $this->xCallback = function(JsExpr $xJsExpr) {
             // Add the newly created expression to the response
-            $this->addCommand('script.exec', [
+            $this->addCommand('script.exec.expr', [
                 'expr' => $xJsExpr,
                 'context' => [
                     'component' => is_a($this->response(), ComponentResponse::class),

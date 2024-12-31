@@ -342,7 +342,7 @@ class ClassContainer
             return new CallableClassHelper($this, $xFactory->rq($sClassName),
                 $xFactory, $this->di->getViewRenderer(),
                 $this->di->getLogger(), $this->di->getSessionManager(),
-                $this->di->getCache(), $this->di->getUploadHandler());
+                $this->di->getStash(), $this->di->getUploadHandler());
         });
 
         $this->registerClassOptions($sClassName);
