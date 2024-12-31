@@ -47,7 +47,7 @@ trait DialogLibraryTrait
      */
     public function getUri(): string
     {
-        return 'https://cdn.jaxon-php.org/libs';
+        return '';
     }
 
     /**

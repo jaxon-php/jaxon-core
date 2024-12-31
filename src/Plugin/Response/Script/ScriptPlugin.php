@@ -1,7 +1,7 @@
 <?php
 
 /**
- * JsPlugin.php
+ * ScriptPlugin.php
  *
  * Adds more js commands to the Jaxon response.
  *
@@ -13,12 +13,15 @@
 
 namespace Jaxon\Plugin\Response\Script;
 
+use Jaxon\Plugin\AbstractResponsePlugin;
+use Jaxon\Response\ComponentResponse;
 use Jaxon\Script\Factory\CallFactory;
 use Jaxon\Script\JqCall;
 use Jaxon\Script\JsExpr;
 use Jaxon\Script\JsCall;
-use Jaxon\Plugin\AbstractResponsePlugin;
 use Closure;
+
+use function is_a;
 
 class ScriptPlugin extends AbstractResponsePlugin
 {
@@ -41,7 +44,12 @@ class ScriptPlugin extends AbstractResponsePlugin
     {
         $this->xCallback = function(JsExpr $xJsExpr) {
             // Add the newly created expression to the response
-            $this->addCommand('script.exec', ['expr' => $xJsExpr]);;
+            $this->addCommand('script.exec', [
+                'expr' => $xJsExpr,
+                'context' => [
+                    'component' => is_a($this->response(), ComponentResponse::class),
+                ],
+            ]);
         };
     }
 
