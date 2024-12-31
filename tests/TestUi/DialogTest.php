@@ -151,7 +151,7 @@ class DialogTest extends TestCase
 
         $aCommands = jaxon()->getResponse()->getCommands();
         $this->assertCount(1, $aCommands);
-        $this->assertEquals('dialog.message', $aCommands[0]['name']);
+        $this->assertEquals('dialog.alert.show', $aCommands[0]['name']);
     }
 
     /**
@@ -176,7 +176,7 @@ class DialogTest extends TestCase
 
         $aCommands = jaxon()->getResponse()->getCommands();
         $this->assertCount(1, $aCommands);
-        $this->assertEquals('dialog.message', $aCommands[0]['name']);
+        $this->assertEquals('dialog.alert.show', $aCommands[0]['name']);
         $this->assertEquals('dialog', $aCommands[0]['options']['plugin']);
     }
 
@@ -199,7 +199,7 @@ class DialogTest extends TestCase
 
         $aCommands = jaxon()->getResponse()->getCommands();
         $this->assertCount(1, $aCommands);
-        $this->assertEquals('dialog.message', $aCommands[0]['name']);
+        $this->assertEquals('dialog.alert.show', $aCommands[0]['name']);
     }
 
     /**
@@ -224,7 +224,7 @@ class DialogTest extends TestCase
 
         $aCommands = jaxon()->getResponse()->getCommands();
         $this->assertCount(1, $aCommands);
-        $this->assertEquals('dialog.message', $aCommands[0]['name']);
+        $this->assertEquals('dialog.alert.show', $aCommands[0]['name']);
         $this->assertEquals('dialog', $aCommands[0]['options']['plugin']);
     }
 
@@ -247,7 +247,7 @@ class DialogTest extends TestCase
 
         $aCommands = jaxon()->getResponse()->getCommands();
         $this->assertCount(1, $aCommands);
-        $this->assertEquals('dialog.message', $aCommands[0]['name']);
+        $this->assertEquals('dialog.alert.show', $aCommands[0]['name']);
     }
 
     /**
@@ -272,7 +272,7 @@ class DialogTest extends TestCase
 
         $aCommands = jaxon()->getResponse()->getCommands();
         $this->assertCount(1, $aCommands);
-        $this->assertEquals('dialog.message', $aCommands[0]['name']);
+        $this->assertEquals('dialog.alert.show', $aCommands[0]['name']);
         $this->assertEquals('dialog', $aCommands[0]['options']['plugin']);
     }
 
@@ -295,7 +295,7 @@ class DialogTest extends TestCase
 
         $aCommands = jaxon()->getResponse()->getCommands();
         $this->assertCount(1, $aCommands);
-        $this->assertEquals('dialog.message', $aCommands[0]['name']);
+        $this->assertEquals('dialog.alert.show', $aCommands[0]['name']);
     }
 
     /**
@@ -320,7 +320,7 @@ class DialogTest extends TestCase
 
         $aCommands = jaxon()->getResponse()->getCommands();
         $this->assertCount(1, $aCommands);
-        $this->assertEquals('dialog.message', $aCommands[0]['name']);
+        $this->assertEquals('dialog.alert.show', $aCommands[0]['name']);
         $this->assertEquals('dialog', $aCommands[0]['options']['plugin']);
     }
 
