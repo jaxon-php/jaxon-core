@@ -84,7 +84,7 @@ class DialogTest extends TestCase
         $xDialogManager = jaxon()->di()->getDialogManager();
         jaxon()->setOption('dialogs.default.question', TestDialogLibrary::NAME);
         $xQuestionLibrary = $xDialogManager->getQuestionLibrary();
-        $this->assertEquals('https://cdn.jaxon-php.org/libs', $xQuestionLibrary->getUri());
+        $this->assertEquals('', $xQuestionLibrary->getUri());
         $this->assertEquals('', $xQuestionLibrary->getSubdir());
         $this->assertEquals('', $xQuestionLibrary->getVersion());
         $this->assertEquals('', $xQuestionLibrary->getJs());
