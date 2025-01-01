@@ -5,7 +5,6 @@
 
 [![Latest Stable Version](https://poser.pugx.org/jaxon-php/jaxon-core/v/stable)](https://packagist.org/packages/jaxon-php/jaxon-core)
 [![Total Downloads](https://poser.pugx.org/jaxon-php/jaxon-core/downloads)](https://packagist.org/packages/jaxon-php/jaxon-core)
-[![Latest Unstable Version](https://poser.pugx.org/jaxon-php/jaxon-core/v/unstable)](https://packagist.org/packages/jaxon-php/jaxon-core)
 [![License](https://poser.pugx.org/jaxon-php/jaxon-core/license)](https://packagist.org/packages/jaxon-php/jaxon-core)
 
 The Jaxon core library
