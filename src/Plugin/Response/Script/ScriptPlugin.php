@@ -3,7 +3,7 @@
 /**
  * ScriptPlugin.php
  *
- * Adds more js commands to the Jaxon response.
+ * Adds Javascript selector and function call commands to the Jaxon response.
  *
  * @package jaxon-core
  * @copyright 2024 Thierry Feuzeu
@@ -14,6 +14,7 @@
 namespace Jaxon\Plugin\Response\Script;
 
 use Jaxon\Plugin\AbstractResponsePlugin;
+use Jaxon\Response\AjaxResponse;
 use Jaxon\Response\ComponentResponse;
 use Jaxon\Script\Factory\CallFactory;
 use Jaxon\Script\JqCall;
@@ -31,25 +32,41 @@ class ScriptPlugin extends AbstractResponsePlugin
     const NAME = 'script';
 
     /**
-     * @var Closure
-     */
-    private $xCallback;
-
-    /**
      * The class constructor
      *
      * @param CallFactory $xFactory
      */
     public function __construct(private CallFactory $xFactory)
+    {}
+
+    /**
+     * @param JsExpr $xJsExpr
+     * @param AjaxResponse $xResponse
+     *
+     * @return void
+     */
+    private function _addCommand(JsExpr $xJsExpr, AjaxResponse $xResponse)
     {
-        $this->xCallback = function(JsExpr $xJsExpr) {
-            // Add the newly created expression to the response
-            $this->addCommand('script.exec.expr', [
+        // Add the newly created expression to the response
+        $xResponse
+            ->addCommand('script.exec.expr', [
                 'expr' => $xJsExpr,
                 'context' => [
-                    'component' => is_a($this->response(), ComponentResponse::class),
+                    'component' => is_a($xResponse, ComponentResponse::class),
                 ],
-            ]);
+            ])
+            ->setOption('plugin', $this->getName());
+    }
+
+    /**
+     * @return Closure
+     */
+    private function getCallback(): Closure
+    {
+        // The closure needs to capture the response object the script plugin is called with.
+        $xResponse = $this->response();
+        return function(JsExpr $xJsExpr) use($xResponse) {
+            $this->_addCommand($xJsExpr, $xResponse);
         };
     }
 
@@ -80,7 +97,7 @@ class ScriptPlugin extends AbstractResponsePlugin
      */
     public function jq(string $sPath = '', $xContext = null): JqCall
     {
-        return $this->xFactory->jq($sPath, $xContext, $this->xCallback);
+        return $this->xFactory->jq($sPath, $xContext, $this->getCallback());
     }
 
     /**
@@ -92,6 +109,6 @@ class ScriptPlugin extends AbstractResponsePlugin
      */
     public function js(string $sObject = ''): JsCall
     {
-        return $this->xFactory->js($sObject, $this->xCallback);
+        return $this->xFactory->js($sObject, $this->getCallback());
     }
 }
