@@ -168,16 +168,6 @@ class Target implements TargetInterface
     }
 
     /**
-     * The target method args.
-     *
-     * @return array
-     */
-    public function getMethodArgs(): array
-    {
-        return $this->aMethodArgs;
-    }
-
-    /**
      * The target method name.
      *
      * @return string

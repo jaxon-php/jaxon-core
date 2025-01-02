@@ -48,10 +48,15 @@ class FunctionTest extends TestCase
     {
         // The server request
         jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)->fromGlobals()->withQueryParams([
-                'jxnfun' => 'my_first_function',
-                'jxnargs' => [],
-            ]);
+            return $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withQueryParams([
+                    'jxncall' => json_encode([
+                        'type' => 'func',
+                        'name' => 'my_first_function',
+                        'args' => [],
+                    ]),
+                ]);
         });
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
@@ -68,10 +73,16 @@ class FunctionTest extends TestCase
     {
         // The server request
         jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
-                'jxnfun' => 'my_first_function',
-                'jxnargs' => [],
-            ])->withMethod('POST');
+            return $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withParsedBody([
+                    'jxncall' => json_encode([
+                        'type' => 'func',
+                        'name' => 'my_first_function',
+                        'args' => [],
+                    ]),
+                ])
+                ->withMethod('POST');
         });
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
@@ -88,10 +99,16 @@ class FunctionTest extends TestCase
     {
         // The server request
         jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
-                'jxnfun' => 'my_alias_function',
-                'jxnargs' => [],
-            ])->withMethod('POST');
+            return $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withParsedBody([
+                    'jxncall' => json_encode([
+                        'type' => 'func',
+                        'name' => 'my_alias_function',
+                        'args' => [],
+                    ]),
+                    ])
+                ->withMethod('POST');
         });
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
@@ -107,10 +124,16 @@ class FunctionTest extends TestCase
     {
         // The server request
         jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
-                'jxnfun' => 'my_first_function',
-                'jxnargs' => [],
-            ])->withMethod('POST');
+            return $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withParsedBody([
+                    'jxncall' => json_encode([
+                        'type' => 'func',
+                        'name' => 'my_first_function',
+                        'args' => [],
+                    ]),
+                ])
+                ->withMethod('POST');
         });
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
@@ -133,10 +156,16 @@ class FunctionTest extends TestCase
     {
         // The server request
         jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
-                'jxnfun' => 'my_third_function',
-                'jxnargs' => [],
-            ])->withMethod('POST');
+            return $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withParsedBody([
+                    'jxncall' => json_encode([
+                        'type' => 'func',
+                        'name' => 'my_third_function',
+                        'args' => [],
+                    ]),
+                    ])
+                ->withMethod('POST');
         });
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
@@ -151,10 +180,16 @@ class FunctionTest extends TestCase
     {
         // The server request
         jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
-                'jxnfun' => 'my function', // A space in the function name
-                'jxnargs' => [],
-            ])->withMethod('POST');
+            return $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withParsedBody([
+                    'jxncall' => json_encode([
+                        'type' => 'func',
+                        'name' => 'my function', // A space in the function name
+                        'args' => [],
+                    ]),
+                    ])
+                ->withMethod('POST');
         });
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());

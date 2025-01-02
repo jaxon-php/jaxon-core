@@ -29,8 +29,8 @@ trait RequestTrait
     {
         // The parameter reader
         $this->set(ParameterReader::class, function($di) {
-            return new ParameterReader($di->g(Container::class), $di->g(ConfigManager::class),
-                $di->g(Translator::class), $di->g(UriDetector::class));
+            return new ParameterReader($di->g(Container::class), $di->g(Translator::class),
+                $di->g(ConfigManager::class), $di->g(UriDetector::class));
         });
         // Callback Manager
         $this->set(CallbackManager::class, function($di) {
@@ -44,7 +44,7 @@ trait RequestTrait
         $this->set(RequestHandler::class, function($di) {
             return new RequestHandler($di->g(Container::class), $di->g(PluginManager::class),
                 $di->g(ResponseManager::class), $di->g(CallbackManager::class),
-                $di->g(DataBagPlugin::class));
+                $di->g(DataBagPlugin::class), $di->g(ParameterReader::class));
         });
         // Requests and calls Factory
         $this->set(CallFactory::class, function($di) {

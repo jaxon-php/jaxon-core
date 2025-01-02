@@ -51,11 +51,16 @@ class DirectoryTest extends TestCase
     {
         // The server request
         jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)->fromGlobals()->withQueryParams([
-                'jxncls' => 'ClassA',
-                'jxnmthd' => 'methodAa',
-                'jxnargs' => [],
-            ]);
+            return $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withQueryParams([
+                    'jxncall' => json_encode([
+                        'type' => 'class',
+                        'name' => 'ClassA',
+                        'method' => 'methodAa',
+                        'args' => [],
+                    ]),
+                ]);
         });
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
@@ -70,11 +75,16 @@ class DirectoryTest extends TestCase
     {
         // The server request
         jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
-                'jxncls' => 'ClassB',
-                'jxnmthd' => 'methodBb',
-                'jxnargs' => [],
-            ]);
+            return $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withParsedBody([
+                    'jxncall' => json_encode([
+                        'type' => 'class',
+                        'name' => 'ClassB',
+                        'method' => 'methodBb',
+                        'args' => [],
+                    ]),
+                ]);
         });
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
@@ -90,11 +100,16 @@ class DirectoryTest extends TestCase
     {
         // The server request
         jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
-                'jxncls' => 'ClassC',
-                'jxnmthd' => 'methodCa',
-                'jxnargs' => [],
-            ]);
+            return $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withParsedBody([
+                    'jxncall' => json_encode([
+                        'type' => 'class',
+                        'name' => 'ClassC',
+                        'method' => 'methodCa',
+                        'args' => [],
+                    ]),
+                ]);
         });
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());

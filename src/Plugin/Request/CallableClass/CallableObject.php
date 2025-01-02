@@ -387,7 +387,7 @@ class CallableObject
 
         // Call the request method
         $sMethod = $xTarget->getMethodName();
-        $xResponse = $this->callMethod($sMethod, $this->xTarget->getMethodArgs(), false);
+        $xResponse = $this->callMethod($sMethod, $this->xTarget->args(), false);
 
         // Methods to call after processing the request
         $this->callHookMethods($this->xOptions->afterMethods());

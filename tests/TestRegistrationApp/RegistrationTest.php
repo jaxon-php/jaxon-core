@@ -132,11 +132,17 @@ class RegistrationTest extends TestCase
         jaxon()->setOption('core.annotations.on', true);
         // The server request
         jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
-                'jxncls' => 'Jaxon.NsTests.DirB.ClassB',
-                'jxnmthd' => 'methodBa',
-                'jxnargs' => [],
-            ])->withMethod('POST');
+            return $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withParsedBody([
+                    'jxncall' => json_encode([
+                        'type' => 'class',
+                        'name' => 'Jaxon.NsTests.DirB.ClassB',
+                        'method' => 'methodBa',
+                        'args' => [],
+                    ]),
+                ])
+                ->withMethod('POST');
         });
 
         $this->assertTrue(jaxon()->app()->canProcessRequest());
@@ -150,11 +156,17 @@ class RegistrationTest extends TestCase
     {
         // The server request
         jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
-                'jxncls' => 'Jaxon.NsTests.DirB.ClassB',
-                'jxnmthd' => 'methodBb',
-                'jxnargs' => [],
-            ])->withMethod('POST');
+            return $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withParsedBody([
+                    'jxncall' => json_encode([
+                        'type' => 'class',
+                        'name' => 'Jaxon.NsTests.DirB.ClassB',
+                        'method' => 'methodBb',
+                        'args' => [],
+                    ]),
+                ])
+                ->withMethod('POST');
         });
 
         $this->assertTrue(jaxon()->app()->canProcessRequest());

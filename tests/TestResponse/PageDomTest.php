@@ -39,11 +39,17 @@ class PageDomTest extends TestCase
     {
         // Send a request to the registered class
         jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
-                'jxncls' => 'TestDom',
-                'jxnmthd' => 'assign',
-                'jxnargs' => [],
-            ])->withMethod('POST');
+            return $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withParsedBody([
+                    'jxncall' => json_encode([
+                        'type' => 'class',
+                        'name' => 'TestDom',
+                        'method' => 'assign',
+                        'args' => [],
+                    ]),
+                ])
+                ->withMethod('POST');
         });
         // Process the request and get the response
         $this->assertTrue(jaxon()->canProcessRequest());
@@ -60,11 +66,17 @@ class PageDomTest extends TestCase
     {
         // Send a request to the registered class
         jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
-                'jxncls' => 'TestDom',
-                'jxnmthd' => 'html',
-                'jxnargs' => [],
-            ])->withMethod('POST');
+            return $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withParsedBody([
+                    'jxncall' => json_encode([
+                        'type' => 'class',
+                        'name' => 'TestDom',
+                        'method' => 'html',
+                        'args' => [],
+                    ]),
+                ])
+                ->withMethod('POST');
         });
         // Process the request and get the response
         $this->assertTrue(jaxon()->canProcessRequest());
@@ -81,11 +93,17 @@ class PageDomTest extends TestCase
     {
         // Send a request to the registered class
         jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
-                'jxncls' => 'TestDom',
-                'jxnmthd' => 'append',
-                'jxnargs' => [],
-            ])->withMethod('POST');
+            return $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withParsedBody([
+                    'jxncall' => json_encode([
+                        'type' => 'class',
+                        'name' => 'TestDom',
+                        'method' => 'append',
+                        'args' => [],
+                    ]),
+                ])
+                ->withMethod('POST');
         });
         // Process the request and get the response
         $this->assertTrue(jaxon()->canProcessRequest());
@@ -102,11 +120,17 @@ class PageDomTest extends TestCase
     {
         // Send a request to the registered class
         jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
-                'jxncls' => 'TestDom',
-                'jxnmthd' => 'prepend',
-                'jxnargs' => [],
-            ])->withMethod('POST');
+            return $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withParsedBody([
+                    'jxncall' => json_encode([
+                        'type' => 'class',
+                        'name' => 'TestDom',
+                        'method' => 'prepend',
+                        'args' => [],
+                    ]),
+                ])
+                ->withMethod('POST');
         });
         // Process the request and get the response
         $this->assertTrue(jaxon()->canProcessRequest());
@@ -123,11 +147,17 @@ class PageDomTest extends TestCase
     {
         // Send a request to the registered class
         jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
-                'jxncls' => 'TestDom',
-                'jxnmthd' => 'replace',
-                'jxnargs' => [],
-            ])->withMethod('POST');
+            return $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withParsedBody([
+                    'jxncall' => json_encode([
+                        'type' => 'class',
+                        'name' => 'TestDom',
+                        'method' => 'replace',
+                        'args' => [],
+                    ]),
+                ])
+                ->withMethod('POST');
         });
         // Process the request and get the response
         $this->assertTrue(jaxon()->canProcessRequest());
@@ -144,11 +174,17 @@ class PageDomTest extends TestCase
     {
         // Send a request to the registered class
         jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
-                'jxncls' => 'TestDom',
-                'jxnmthd' => 'clear',
-                'jxnargs' => [],
-            ])->withMethod('POST');
+            return $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withParsedBody([
+                    'jxncall' => json_encode([
+                        'type' => 'class',
+                        'name' => 'TestDom',
+                        'method' => 'clear',
+                        'args' => [],
+                    ]),
+                ])
+                ->withMethod('POST');
         });
         // Process the request and get the response
         $this->assertTrue(jaxon()->canProcessRequest());
@@ -165,11 +201,17 @@ class PageDomTest extends TestCase
     {
         // Send a request to the registered class
         jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
-                'jxncls' => 'TestDom',
-                'jxnmthd' => 'remove',
-                'jxnargs' => [],
-            ])->withMethod('POST');
+            return $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withParsedBody([
+                    'jxncall' => json_encode([
+                        'type' => 'class',
+                        'name' => 'TestDom',
+                        'method' => 'remove',
+                        'args' => [],
+                    ]),
+                ])
+                ->withMethod('POST');
         });
         // Process the request and get the response
         $this->assertTrue(jaxon()->canProcessRequest());
@@ -186,11 +228,17 @@ class PageDomTest extends TestCase
     {
         // Send a request to the registered class
         jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
-                'jxncls' => 'TestDom',
-                'jxnmthd' => 'insertBefore',
-                'jxnargs' => [],
-            ])->withMethod('POST');
+            return $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withParsedBody([
+                    'jxncall' => json_encode([
+                        'type' => 'class',
+                        'name' => 'TestDom',
+                        'method' => 'insertBefore',
+                        'args' => [],
+                    ]),
+                ])
+                ->withMethod('POST');
         });
         // Process the request and get the response
         $this->assertTrue(jaxon()->canProcessRequest());

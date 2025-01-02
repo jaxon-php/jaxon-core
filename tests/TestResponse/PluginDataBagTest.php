@@ -39,11 +39,17 @@ class PluginDataBagTest extends TestCase
     {
         // Send a request to the registered class
         jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
-                'jxncls' => 'TestDataBag',
-                'jxnmthd' => 'getValue',
-                'jxnargs' => [],
-            ])->withMethod('POST');
+            return $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withParsedBody([
+                    'jxncall' => json_encode([
+                        'type' => 'class',
+                        'name' => 'TestDataBag',
+                        'method' => 'getValue',
+                        'args' => [],
+                    ]),
+                ])
+                ->withMethod('POST');
         });
         // Process the request and get the response
         $this->assertTrue(jaxon()->canProcessRequest());
@@ -65,11 +71,17 @@ class PluginDataBagTest extends TestCase
     {
         // Send a request to the registered class
         jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
-                'jxncls' => 'TestDataBag',
-                'jxnmthd' => 'setValue',
-                'jxnargs' => [],
-            ])->withMethod('POST');
+            return $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withParsedBody([
+                    'jxncall' => json_encode([
+                        'type' => 'class',
+                        'name' => 'TestDataBag',
+                        'method' => 'setValue',
+                        'args' => [],
+                    ]),
+                ])
+                ->withMethod('POST');
         });
         // Process the request and get the response
         $this->assertTrue(jaxon()->canProcessRequest());
@@ -91,12 +103,18 @@ class PluginDataBagTest extends TestCase
     {
         // Send a request to the registered class
         jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
-                'jxncls' => 'TestDataBag',
-                'jxnmthd' => 'updateValue',
-                'jxnargs' => [],
-                'jxnbags' => '{"dataset":{"key1":"value1"}}',
-            ])->withMethod('POST');
+            return $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withParsedBody([
+                    'jxncall' => json_encode([
+                        'type' => 'class',
+                        'name' => 'TestDataBag',
+                        'method' => 'updateValue',
+                        'args' => [],
+                    ]),
+                    'jxnbags' => json_encode(['dataset' => ['key1' => 'value1']]),
+                ])
+                ->withMethod('POST');
         });
         // Process the request and get the response
         $this->assertTrue(jaxon()->canProcessRequest());
@@ -127,12 +145,18 @@ class PluginDataBagTest extends TestCase
     {
         // Send a request to the registered class
         jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)->fromGlobals()->withQueryParams([
-                'jxncls' => 'TestDataBag',
-                'jxnmthd' => 'updateValue',
-                'jxnargs' => [],
-                'jxnbags' => '{"dataset":{"key1":"value1"}}',
-            ])->withMethod('GET');
+            return $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withQueryParams([
+                    'jxncall' => json_encode([
+                        'type' => 'class',
+                        'name' => 'TestDataBag',
+                        'method' => 'updateValue',
+                        'args' => [],
+                    ]),
+                    'jxnbags' => json_encode(['dataset' => ['key1' => 'value1']]),
+                ])
+                ->withMethod('GET');
         });
         // Process the request and get the response
         $this->assertTrue(jaxon()->canProcessRequest());

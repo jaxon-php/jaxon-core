@@ -93,14 +93,21 @@ class UploadTest extends TestCase
         jaxon()->setOption('upload.default.dir', __DIR__ . '/../upload/dst');
         // Send a request to the registered class
         jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
-                'jxncls' => 'Sample',
-                'jxnmthd' => 'myMethod',
-                'jxnargs' => [],
-            ])->withUploadedFiles([
-                'image' => new UploadedFile($this->sPathWhite, $this->sSizeWhite,
-                    UPLOAD_ERR_OK, $this->sNameWhite, 'png'),
-            ])->withMethod('POST');
+            return $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withParsedBody([
+                    'jxncall' => json_encode([
+                        'type' => 'class',
+                        'name' => 'Sample',
+                        'method' => 'myMethod',
+                        'args' => [],
+                    ]),
+                ])
+                ->withUploadedFiles([
+                    'image' => new UploadedFile($this->sPathWhite, $this->sSizeWhite,
+                        UPLOAD_ERR_OK, $this->sNameWhite, 'png'),
+                ])
+                ->withMethod('POST');
         });
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
@@ -126,18 +133,25 @@ class UploadTest extends TestCase
         jaxon()->setOption('upload.default.dir', __DIR__ . '/../upload/dst');
         // Send a request to the registered class
         jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
-                'jxncls' => 'Sample',
-                'jxnmthd' => 'myMethod',
-                'jxnargs' => [],
-            ])->withUploadedFiles([
-                'image' => [
-                    new UploadedFile($this->sPathWhite, $this->sSizeWhite,
-                        UPLOAD_ERR_OK, $this->sNameWhite, 'png'),
-                    new UploadedFile($this->sPathBlue, $this->sSizeBlue,
-                        UPLOAD_ERR_OK, $this->sNameBlue, 'png'),
-                ],
-            ])->withMethod('POST');
+            return $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withParsedBody([
+                    'jxncall' => json_encode([
+                        'type' => 'class',
+                        'name' => 'Sample',
+                        'method' => 'myMethod',
+                        'args' => [],
+                    ]),
+                ])
+                ->withUploadedFiles([
+                    'image' => [
+                        new UploadedFile($this->sPathWhite, $this->sSizeWhite,
+                            UPLOAD_ERR_OK, $this->sNameWhite, 'png'),
+                        new UploadedFile($this->sPathBlue, $this->sSizeBlue,
+                            UPLOAD_ERR_OK, $this->sNameBlue, 'png'),
+                    ],
+                ])
+                ->withMethod('POST');
         });
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
@@ -168,20 +182,27 @@ class UploadTest extends TestCase
         jaxon()->setOption('upload.default.dir', __DIR__ . '/../upload/dst');
         // Send a request to the registered class
         jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
-                'jxncls' => 'Sample',
-                'jxnmthd' => 'myMethod',
-                'jxnargs' => [],
-            ])->withUploadedFiles([
-                'white' => [
-                    new UploadedFile($this->sPathWhite, $this->sSizeWhite,
-                        UPLOAD_ERR_OK, $this->sNameWhite, 'png'),
-                ],
-                'blue' => [
-                    new UploadedFile($this->sPathBlue, $this->sSizeBlue,
-                        UPLOAD_ERR_OK, $this->sNameBlue, 'png'),
-                ],
-            ])->withMethod('POST');
+            return $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withParsedBody([
+                    'jxncall' => json_encode([
+                        'type' => 'class',
+                        'name' => 'Sample',
+                        'method' => 'myMethod',
+                        'args' => [],
+                    ]),
+                ])
+                ->withUploadedFiles([
+                    'white' => [
+                        new UploadedFile($this->sPathWhite, $this->sSizeWhite,
+                            UPLOAD_ERR_OK, $this->sNameWhite, 'png'),
+                    ],
+                    'blue' => [
+                        new UploadedFile($this->sPathBlue, $this->sSizeBlue,
+                            UPLOAD_ERR_OK, $this->sNameBlue, 'png'),
+                    ],
+                ])
+                ->withMethod('POST');
         });
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
@@ -216,14 +237,21 @@ class UploadTest extends TestCase
         });
         // Send a request to the registered class
         jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
-                'jxncls' => 'Sample',
-                'jxnmthd' => 'myMethod',
-                'jxnargs' => [],
-            ])->withUploadedFiles([
-                'image' => new UploadedFile($this->sPathWhite, $this->sSizeWhite,
-                    UPLOAD_ERR_OK, $this->sNameWhite, 'png'),
-            ])->withMethod('POST');
+            return $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withParsedBody([
+                    'jxncall' => json_encode([
+                        'type' => 'class',
+                        'name' => 'Sample',
+                        'method' => 'myMethod',
+                        'args' => [],
+                    ]),
+                ])
+                ->withUploadedFiles([
+                    'image' => new UploadedFile($this->sPathWhite, $this->sSizeWhite,
+                        UPLOAD_ERR_OK, $this->sNameWhite, 'png'),
+                ])
+                ->withMethod('POST');
         });
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
@@ -249,10 +277,13 @@ class UploadTest extends TestCase
         jaxon()->setOption('upload.default.dir', __DIR__ . '/../upload/dst');
         // Send a request to the registered class
         jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)->fromGlobals()->withUploadedFiles([
-                'image' => new UploadedFile($this->sPathWhite, $this->sSizeWhite,
-                    UPLOAD_ERR_OK, $this->sNameWhite, 'png'),
-            ])->withMethod('POST');
+            return $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withUploadedFiles([
+                    'image' => new UploadedFile($this->sPathWhite, $this->sSizeWhite,
+                        UPLOAD_ERR_OK, $this->sNameWhite, 'png'),
+                ])
+                ->withMethod('POST');
         });
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
@@ -260,6 +291,7 @@ class UploadTest extends TestCase
         jaxon()->di()->getResponseManager()->debug('Testing the HTTP upload!!');
         jaxon()->processRequest();
 
+        /** @var UploadResponse */
         $xResponse = jaxon()->di()->getResponseManager()->getResponse();
         $this->assertEquals(UploadResponse::class, get_class($xResponse));
         $this->assertNotEquals('', $xResponse->getUploadedFile());
@@ -281,12 +313,18 @@ class UploadTest extends TestCase
         jaxon()->setOption('upload.default.dir', __DIR__ . '/../upload/dst');
         // Ajax request following an HTTP upload
         jaxon()->di()->set(ServerRequestInterface::class, function($c) use($sTempFile) {
-            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
-                'jxncls' => 'Sample',
-                'jxnmthd' => 'myMethod',
-                'jxnargs' => [],
-                'jxnupl' => $sTempFile,
-            ])->withMethod('POST');
+            return $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withParsedBody([
+                    'jxncall' => json_encode([
+                        'type' => 'class',
+                        'name' => 'Sample',
+                        'method' => 'myMethod',
+                        'args' => [],
+                    ]),
+                    'jxnupl' => $sTempFile,
+                ])
+                ->withMethod('POST');
         });
 
         $this->assertNotEquals('', $sTempFile);
@@ -314,14 +352,20 @@ class UploadTest extends TestCase
         jaxon()->setOption('upload.default.types', ['png']);
         // Send a request to the registered class
         jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
-                'jxncls' => 'Sample',
-                'jxnmthd' => 'myMethod',
-                'jxnargs' => [],
-            ])->withUploadedFiles([
-                'image' => new UploadedFile($this->sPathWhite, $this->sSizeWhite,
-                    UPLOAD_ERR_OK, $this->sNameWhite, 'png'),
-            ])->withMethod('POST');
+            return $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withParsedBody([
+                    'jxncall' => json_encode([
+                        'type' => 'class',
+                        'name' => 'Sample',
+                        'method' => 'myMethod',
+                        'args' => [],
+                    ]),
+                ])
+                ->withUploadedFiles([
+                    'image' => new UploadedFile($this->sPathWhite, $this->sSizeWhite,
+                        UPLOAD_ERR_OK, $this->sNameWhite, 'png'),
+                ])->withMethod('POST');
         });
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
@@ -346,14 +390,21 @@ class UploadTest extends TestCase
         jaxon()->setOption('upload.default.types', ['jpg']);
         // Send a request to the registered class
         jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
-                'jxncls' => 'Sample',
-                'jxnmthd' => 'myMethod',
-                'jxnargs' => [],
-            ])->withUploadedFiles([
-                'image' => new UploadedFile($this->sPathWhite, $this->sSizeWhite,
-                    UPLOAD_ERR_OK, $this->sNameWhite, 'png'),
-            ])->withMethod('POST');
+            return $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withParsedBody([
+                    'jxncall' => json_encode([
+                        'type' => 'class',
+                        'name' => 'Sample',
+                        'method' => 'myMethod',
+                        'args' => [],
+                    ]),
+                ])
+                ->withUploadedFiles([
+                    'image' => new UploadedFile($this->sPathWhite, $this->sSizeWhite,
+                        UPLOAD_ERR_OK, $this->sNameWhite, 'png'),
+                ])
+                ->withMethod('POST');
         });
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
@@ -371,14 +422,20 @@ class UploadTest extends TestCase
         jaxon()->setOption('upload.default.extensions', ['png']);
         // Send a request to the registered class
         jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
-                'jxncls' => 'Sample',
-                'jxnmthd' => 'myMethod',
-                'jxnargs' => [],
-            ])->withUploadedFiles([
-                'image' => new UploadedFile($this->sPathWhite, $this->sSizeWhite,
-                    UPLOAD_ERR_OK, $this->sNameWhite, 'png'),
-            ])->withMethod('POST');
+            return $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withParsedBody([
+                    'jxncall' => json_encode([
+                        'type' => 'class',
+                        'name' => 'Sample',
+                        'method' => 'myMethod',
+                        'args' => [],
+                    ]),
+                ])
+                ->withUploadedFiles([
+                    'image' => new UploadedFile($this->sPathWhite, $this->sSizeWhite,
+                        UPLOAD_ERR_OK, $this->sNameWhite, 'png'),
+                ])->withMethod('POST');
         });
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
@@ -403,14 +460,20 @@ class UploadTest extends TestCase
         jaxon()->setOption('upload.default.extensions', ['jpg']);
         // Send a request to the registered class
         jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
-                'jxncls' => 'Sample',
-                'jxnmthd' => 'myMethod',
-                'jxnargs' => [],
-            ])->withUploadedFiles([
-                'image' => new UploadedFile($this->sPathWhite, $this->sSizeWhite,
-                    UPLOAD_ERR_OK, $this->sNameWhite, 'png'),
-            ])->withMethod('POST');
+            return $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withParsedBody([
+                    'jxncall' => json_encode([
+                        'type' => 'class',
+                        'name' => 'Sample',
+                        'method' => 'myMethod',
+                        'args' => [],
+                    ]),
+                ])
+                ->withUploadedFiles([
+                    'image' => new UploadedFile($this->sPathWhite, $this->sSizeWhite,
+                        UPLOAD_ERR_OK, $this->sNameWhite, 'png'),
+                ])->withMethod('POST');
         });
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
@@ -428,14 +491,20 @@ class UploadTest extends TestCase
         jaxon()->setOption('upload.default.max-size', 30000);
         // Send a request to the registered class
         jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
-                'jxncls' => 'Sample',
-                'jxnmthd' => 'myMethod',
-                'jxnargs' => [],
-            ])->withUploadedFiles([
-                'image' => new UploadedFile($this->sPathWhite, $this->sSizeWhite,
-                    UPLOAD_ERR_OK, $this->sNameWhite, 'png'),
-            ])->withMethod('POST');
+            return $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withParsedBody([
+                    'jxncall' => json_encode([
+                        'type' => 'class',
+                        'name' => 'Sample',
+                        'method' => 'myMethod',
+                        'args' => [],
+                    ]),
+                ])
+                ->withUploadedFiles([
+                    'image' => new UploadedFile($this->sPathWhite, $this->sSizeWhite,
+                        UPLOAD_ERR_OK, $this->sNameWhite, 'png'),
+                ])->withMethod('POST');
         });
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
@@ -460,14 +529,20 @@ class UploadTest extends TestCase
         jaxon()->setOption('upload.default.max-size', 25000);
         // Send a request to the registered class
         jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
-                'jxncls' => 'Sample',
-                'jxnmthd' => 'myMethod',
-                'jxnargs' => [],
-            ])->withUploadedFiles([
-                'image' => new UploadedFile($this->sPathWhite, $this->sSizeWhite,
-                    UPLOAD_ERR_OK, $this->sNameWhite, 'png'),
-            ])->withMethod('POST');
+            return $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withParsedBody([
+                    'jxncall' => json_encode([
+                        'type' => 'class',
+                        'name' => 'Sample',
+                        'method' => 'myMethod',
+                        'args' => [],
+                    ]),
+                ])
+                ->withUploadedFiles([
+                    'image' => new UploadedFile($this->sPathWhite, $this->sSizeWhite,
+                        UPLOAD_ERR_OK, $this->sNameWhite, 'png'),
+                ])->withMethod('POST');
         });
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
@@ -485,14 +560,20 @@ class UploadTest extends TestCase
         jaxon()->setOption('upload.default.min-size', 25000);
         // Send a request to the registered class
         jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
-                'jxncls' => 'Sample',
-                'jxnmthd' => 'myMethod',
-                'jxnargs' => [],
-            ])->withUploadedFiles([
-                'image' => new UploadedFile($this->sPathWhite, $this->sSizeWhite,
-                    UPLOAD_ERR_OK, $this->sNameWhite, 'png'),
-            ])->withMethod('POST');
+            return $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withParsedBody([
+                    'jxncall' => json_encode([
+                        'type' => 'class',
+                        'name' => 'Sample',
+                        'method' => 'myMethod',
+                        'args' => [],
+                    ]),
+                ])
+                ->withUploadedFiles([
+                    'image' => new UploadedFile($this->sPathWhite, $this->sSizeWhite,
+                        UPLOAD_ERR_OK, $this->sNameWhite, 'png'),
+                ])->withMethod('POST');
         });
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
@@ -517,14 +598,20 @@ class UploadTest extends TestCase
         jaxon()->setOption('upload.default.min-size', 30000);
         // Send a request to the registered class
         jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
-                'jxncls' => 'Sample',
-                'jxnmthd' => 'myMethod',
-                'jxnargs' => [],
-            ])->withUploadedFiles([
-                'image' => new UploadedFile($this->sPathWhite, $this->sSizeWhite,
-                    UPLOAD_ERR_OK, $this->sNameWhite, 'png'),
-            ])->withMethod('POST');
+            return $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withParsedBody([
+                    'jxncall' => json_encode([
+                        'type' => 'class',
+                        'name' => 'Sample',
+                        'method' => 'myMethod',
+                        'args' => [],
+                    ]),
+                ])
+                ->withUploadedFiles([
+                    'image' => new UploadedFile($this->sPathWhite, $this->sSizeWhite,
+                        UPLOAD_ERR_OK, $this->sNameWhite, 'png'),
+                ])->withMethod('POST');
         });
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
@@ -541,14 +628,18 @@ class UploadTest extends TestCase
         jaxon()->setOption('upload.default.dir', __DIR__ . '/../upload/dst');
         // Send a request to the registered class
         jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)->fromGlobals()->withUploadedFiles([
-                'image' => new UploadedFile($this->sPathWhite, $this->sSizeWhite,
-                    UPLOAD_ERR_FORM_SIZE, $this->sNameWhite, 'png'),
-            ])->withMethod('POST');
+            return $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withUploadedFiles([
+                    'image' => new UploadedFile($this->sPathWhite, $this->sSizeWhite,
+                        UPLOAD_ERR_FORM_SIZE, $this->sNameWhite, 'png'),
+                ])
+                ->withMethod('POST');
         });
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
         jaxon()->processRequest();
+        /** @var UploadResponse */
         $xResponse = jaxon()->di()->getResponseManager()->getResponse();
         $this->assertEquals(UploadResponse::class, get_class($xResponse));
         $this->assertEquals('', $xResponse->getUploadedFile());
@@ -562,14 +653,18 @@ class UploadTest extends TestCase
     {
         // Send a request to the registered class
         jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)->fromGlobals()->withUploadedFiles([
-                'image' => new UploadedFile($this->sPathWhite, $this->sSizeWhite,
-                    UPLOAD_ERR_OK, $this->sNameWhite, 'png'),
-            ])->withMethod('POST');
+            return $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withUploadedFiles([
+                    'image' => new UploadedFile($this->sPathWhite, $this->sSizeWhite,
+                        UPLOAD_ERR_OK, $this->sNameWhite, 'png'),
+                ])
+                ->withMethod('POST');
         });
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
         jaxon()->processRequest();
+        /** @var UploadResponse */
         $xResponse = jaxon()->di()->getResponseManager()->getResponse();
         $this->assertEquals(UploadResponse::class, get_class($xResponse));
         $this->assertEquals('', $xResponse->getUploadedFile());
@@ -583,14 +678,18 @@ class UploadTest extends TestCase
     {
         // Send a request to the registered class
         jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)->fromGlobals()->withUploadedFiles([
-                'image' => new UploadedFile($this->sPathWhite, $this->sSizeWhite,
-                    UPLOAD_ERR_OK, $this->sNameWhite, 'png'),
-            ])->withMethod('POST');
+            return $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withUploadedFiles([
+                    'image' => new UploadedFile($this->sPathWhite, $this->sSizeWhite,
+                        UPLOAD_ERR_OK, $this->sNameWhite, 'png'),
+                ])
+                ->withMethod('POST');
         });
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
         jaxon()->processRequest();
+        /** @var UploadResponse */
         $xResponse = jaxon()->di()->getResponseManager()->getResponse();
         $this->assertEquals(UploadResponse::class, get_class($xResponse));
         $this->assertEquals('', $xResponse->getUploadedFile());
@@ -605,10 +704,13 @@ class UploadTest extends TestCase
         jaxon()->setOption('upload.default.dir', __DIR__ . '/../upload/not-found');
         // Send a request to the registered class
         jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)->fromGlobals()->withUploadedFiles([
-                'image' => new UploadedFile($this->sPathWhite, $this->sSizeWhite,
-                    UPLOAD_ERR_OK, $this->sNameWhite, 'png'),
-            ])->withMethod('POST');
+            return $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withUploadedFiles([
+                    'image' => new UploadedFile($this->sPathWhite, $this->sSizeWhite,
+                        UPLOAD_ERR_OK, $this->sNameWhite, 'png'),
+                ])
+                ->withMethod('POST');
         });
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
@@ -627,10 +729,13 @@ class UploadTest extends TestCase
         jaxon()->setOption('upload.files.image.dir', __DIR__ . '/../upload/dst');
         // Send a request to the registered class
         jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)->fromGlobals()->withUploadedFiles([
-                'image' => new UploadedFile($this->sPathWhite, $this->sSizeWhite,
-                    UPLOAD_ERR_OK, $this->sNameWhite, 'png'),
-            ])->withMethod('POST');
+            return $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withUploadedFiles([
+                    'image' => new UploadedFile($this->sPathWhite, $this->sSizeWhite,
+                        UPLOAD_ERR_OK, $this->sNameWhite, 'png'),
+                ])
+                ->withMethod('POST');
         });
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
@@ -660,10 +765,13 @@ class UploadTest extends TestCase
         });
         // Send a request to the registered class
         jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)->fromGlobals()->withUploadedFiles([
-                'image' => new UploadedFile($this->sPathWhite, $this->sSizeWhite,
-                    UPLOAD_ERR_OK, $this->sNameWhite, 'png'),
-            ])->withMethod('POST');
+            return $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withUploadedFiles([
+                    'image' => new UploadedFile($this->sPathWhite, $this->sSizeWhite,
+                        UPLOAD_ERR_OK, $this->sNameWhite, 'png'),
+                ])
+                ->withMethod('POST');
         });
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
@@ -682,10 +790,15 @@ class UploadTest extends TestCase
         jaxon()->setOption('core.upload.enabled', false);
         // Send a request to the registered class
         jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
-                'jxnwho' => 'Nobody',
-                'jxnargs' => [],
-            ])->withMethod('POST');
+            return $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withParsedBody([
+                    'jxncall' => json_encode([
+                        'who' => 'Nobody',
+                        'args' => [],
+                    ]),
+                ])
+                ->withMethod('POST');
         });
 
         $this->assertFalse(jaxon()->di()->getRequestHandler()->canProcessRequest());
@@ -699,12 +812,17 @@ class UploadTest extends TestCase
         jaxon()->setOption('upload.default.dir', __DIR__ . '/../upload/dst');
         // Ajax request following an HTTP upload
         jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
-                'jxncls' => 'Sample',
-                'jxnmthd' => 'myMethod',
-                'jxnargs' => [],
-                'jxnupl' => 'not valid',
-            ]);
+            return $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withParsedBody([
+                    'jxncall' => json_encode([
+                        'type' => 'class',
+                        'name' => 'Sample',
+                        'method' => 'myMethod',
+                        'args' => [],
+                    ]),
+                    'jxnupl' => 'not valid',
+                ]);
         });
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
@@ -721,12 +839,17 @@ class UploadTest extends TestCase
         jaxon()->setOption('upload.default.dir', __DIR__ . '/../upload/dst');
         // Ajax request following an HTTP upload
         jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
-                'jxncls' => 'Sample',
-                'jxnmthd' => 'myMethod',
-                'jxnargs' => [],
-                'jxnupl' => 'unknown',
-            ]);
+            return $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withParsedBody([
+                    'jxncall' => json_encode([
+                        'type' => 'class',
+                        'name' => 'Sample',
+                        'method' => 'myMethod',
+                        'args' => [],
+                    ]),
+                    'jxnupl' => 'unknown',
+                ]);
         });
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());

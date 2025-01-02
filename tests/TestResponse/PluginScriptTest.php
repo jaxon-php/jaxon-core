@@ -39,11 +39,17 @@ class PluginScriptTest extends TestCase
     {
         // Send a request to the registered class
         jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
-                'jxncls' => 'TestJQuery',
-                'jxnmthd' => 'html',
-                'jxnargs' => [],
-            ])->withMethod('POST');
+            return $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withParsedBody([
+                    'jxncall' => json_encode([
+                        'type' => 'class',
+                        'name' => 'TestJQuery',
+                        'method' => 'html',
+                        'args' => [],
+                    ]),
+                ])
+                ->withMethod('POST');
         });
         // Process the request and get the response
         $this->assertTrue(jaxon()->canProcessRequest());
@@ -68,11 +74,17 @@ class PluginScriptTest extends TestCase
     {
         // Send a request to the registered class
         jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
-                'jxncls' => 'TestJQuery',
-                'jxnmthd' => 'assign',
-                'jxnargs' => [],
-            ])->withMethod('POST');
+            return $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withParsedBody([
+                    'jxncall' => json_encode([
+                        'type' => 'class',
+                        'name' => 'TestJQuery',
+                        'method' => 'assign',
+                        'args' => [],
+                    ]),
+                ])
+                ->withMethod('POST');
         });
         // Process the request and get the response
         $this->assertTrue(jaxon()->canProcessRequest());
@@ -101,11 +113,17 @@ class PluginScriptTest extends TestCase
     {
         // Send a request to the registered class
         jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
-                'jxncls' => 'TestJQuery',
-                'jxnmthd' => 'click',
-                'jxnargs' => [],
-            ])->withMethod('POST');
+            return $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withParsedBody([
+                    'jxncall' => json_encode([
+                        'type' => 'class',
+                        'name' => 'TestJQuery',
+                        'method' => 'click',
+                        'args' => [],
+                    ]),
+                ])
+                ->withMethod('POST');
         });
         // Process the request and get the response
         $this->assertTrue(jaxon()->canProcessRequest());

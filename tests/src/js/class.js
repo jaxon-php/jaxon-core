@@ -1,8 +1,8 @@
 JxnSample = {};
 JxnSample.myMethod = function() {
-    return jaxon.request({ jxncls: 'Sample', jxnmthd: 'myMethod' }, { parameters: arguments });
+    return jaxon.request({ type: 'class', name: 'Sample', method: 'myMethod' }, { parameters: arguments });
 };
 JxnTheClass = {};
 JxnTheClass.theMethod = function() {
-    return jaxon.request({ jxncls: 'TheClass', jxnmthd: 'theMethod' }, { parameters: arguments });
+    return jaxon.request({ type: 'class', name: 'TheClass', method: 'theMethod' }, { parameters: arguments });
 };

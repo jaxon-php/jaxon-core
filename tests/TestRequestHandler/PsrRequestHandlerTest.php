@@ -106,12 +106,17 @@ class PsrRequestHandlerTest extends TestCase
     public function testJaxonRequestToAjaxMiddleware()
     {
         // The server request is provided to the PSR components, and not registered in the container.
-        $xRequest = jaxon()->di()->g(ServerRequestCreator::class)->fromGlobals()
+        $xRequest = jaxon()->di()->g(ServerRequestCreator::class)
+            ->fromGlobals()
             ->withParsedBody([
-                'jxncls' => 'Sample',
-                'jxnmthd' => 'myMethod',
-                'jxnargs' => [],
-            ])->withMethod('POST');
+                'jxncall' => json_encode([
+                    'type' => 'class',
+                    'name' => 'Sample',
+                    'method' => 'myMethod',
+                    'args' => [],
+                ]),
+            ])
+            ->withMethod('POST');
 
         // Call the config middleware
         $this->xPsrConfigMiddleware->process($xRequest, $this->xEmptyRequestHandler);
@@ -144,12 +149,17 @@ class PsrRequestHandlerTest extends TestCase
     public function testJaxonRequestToRequestHandler()
     {
         // The server request is provided to the PSR components, and not registered in the container.
-        $xRequest = jaxon()->di()->g(ServerRequestCreator::class)->fromGlobals()
+        $xRequest = jaxon()->di()->g(ServerRequestCreator::class)
+            ->fromGlobals()
             ->withQueryParams([
-                'jxncls' => 'Sample',
-                'jxnmthd' => 'myMethod',
-                'jxnargs' => [],
-            ])->withMethod('GET');
+                'jxncall' => json_encode([
+                    'type' => 'class',
+                    'name' => 'Sample',
+                    'method' => 'myMethod',
+                    'args' => [],
+                ]),
+            ])
+            ->withMethod('GET');
 
         // Call the config middleware
         $this->xPsrConfigMiddleware->process($xRequest, $this->xEmptyRequestHandler);
@@ -224,13 +234,18 @@ class PsrRequestHandlerTest extends TestCase
         // Send a request to the registered class
         $xRequest = jaxon()->di()->g(ServerRequestCreator::class)->fromGlobals()
             ->withParsedBody([
-                'jxncls' => 'Sample',
-                'jxnmthd' => 'myMethod',
-                'jxnargs' => [],
-            ])->withUploadedFiles([
+                'jxncall' => json_encode([
+                    'type' => 'class',
+                    'name' => 'Sample',
+                    'method' => 'myMethod',
+                    'args' => [],
+                ]),
+            ])
+            ->withUploadedFiles([
                 'image' => new UploadedFile($this->sPathWhite, $this->sSizeWhite,
                     UPLOAD_ERR_OK, $this->sNameWhite, 'png'),
-            ])->withMethod('POST');
+            ])
+            ->withMethod('POST');
 
         // Call the config middleware
         $this->xPsrConfigMiddleware->process($xRequest, $this->xEmptyRequestHandler);
@@ -267,11 +282,13 @@ class PsrRequestHandlerTest extends TestCase
         jaxon()->setOption('core.upload.enabled', true);
         jaxon()->setOption('upload.default.dir', __DIR__ . '/../upload/dst');
         // Send a request to the registered class
-        $xRequest = jaxon()->di()->g(ServerRequestCreator::class)->fromGlobals()
+        $xRequest = jaxon()->di()->g(ServerRequestCreator::class)
+            ->fromGlobals()
             ->withUploadedFiles([
                 'image' => new UploadedFile($this->sPathWhite, $this->sSizeWhite,
                     UPLOAD_ERR_OK, $this->sNameWhite, 'png'),
-            ])->withMethod('POST');
+            ])
+            ->withMethod('POST');
 
         // Call the config middleware
         $this->xPsrConfigMiddleware->process($xRequest, $this->xEmptyRequestHandler);
@@ -279,6 +296,7 @@ class PsrRequestHandlerTest extends TestCase
         $xPsrResponse = $this->xPsrAjaxMiddleware->process($xRequest, $this->xEmptyRequestHandler);
 
         // Both responses must have the same content and content type
+        /** @var UploadResponse */
         $xJaxonResponse = jaxon()->di()->getResponseManager()->getResponse();
         $this->assertEquals($xPsrResponse->getBody()->__toString(), $xJaxonResponse->getOutput());
         $this->assertEquals($xPsrResponse->getHeader('content-type')[0], $xJaxonResponse->getContentType());
@@ -305,13 +323,17 @@ class PsrRequestHandlerTest extends TestCase
 
         jaxon()->setOption('upload.default.dir', __DIR__ . '/../upload/dst');
         // Ajax request following an HTTP upload
-        $xRequest = jaxon()->di()->g(ServerRequestCreator::class)->fromGlobals()
+        $xRequest = jaxon()->di()->g(ServerRequestCreator::class)
+            ->fromGlobals()
             ->withParsedBody([
-                'jxncls' => 'Sample',
-                'jxnmthd' => 'myMethod',
-                'jxnargs' => [],
+                'jxncall' => json_encode([
+                    'type' => 'class', 'name' => 'Sample',
+                    'method' => 'myMethod',
+                    'args' => [],
+                ]),
                 'jxnupl' => $sTempFile,
-            ])->withMethod('POST');
+            ])
+            ->withMethod('POST');
 
         $this->assertNotEquals('', $sTempFile);
         // Call the config middleware

@@ -94,8 +94,7 @@ class DirectoryTest extends TestCase
         // $this->assertEquals('96d34bef2486b9b4b342ec292b4e8ed5', $this->xClassPlugin->getHash());
         $this->assertEquals(32, strlen($this->xClassPlugin->getHash()));
         // file_put_contents(__DIR__ . '/../src/js/dir.js', $this->xClassPlugin->getScript());
-        // $this->assertEquals(file_get_contents(__DIR__ . '/../src/js/dir.js'), $this->xClassPlugin->getScript());
-        $this->assertEquals(846, strlen($this->xClassPlugin->getScript()));
+        $this->assertEquals(file_get_contents(__DIR__ . '/../src/js/dir.js'), $this->xClassPlugin->getScript());
     }
 
     public function testClassNotFound()

@@ -27,7 +27,6 @@ use Jaxon\App\I18n\Translator;
 use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\AbstractRequestPlugin;
-use Jaxon\Request\Handler\ParameterReader;
 use Jaxon\Request\Target;
 use Jaxon\Request\Validator;
 use Jaxon\Response\AbstractResponse;
@@ -43,42 +42,6 @@ use function trim;
 
 class CallableFunctionPlugin extends AbstractRequestPlugin
 {
-    /**
-     * @var string
-     */
-    private $sPrefix;
-
-    /**
-     * The DI container
-     *
-     * @var Container
-     */
-    protected $di;
-
-    /**
-     * The parameter reader
-     *
-     * @var ParameterReader
-     */
-    protected $xParameterReader;
-
-    /**
-     * The request data validator
-     *
-     * @var Validator
-     */
-    protected $xValidator;
-
-    /**
-     * @var TemplateEngine
-     */
-    protected $xTemplateEngine;
-
-    /**
-     * @var Translator
-     */
-    protected $xTranslator;
-
     /**
      * The registered functions names
      *
@@ -98,21 +61,14 @@ class CallableFunctionPlugin extends AbstractRequestPlugin
      *
      * @param string $sPrefix
      * @param Container $di
-     * @param ParameterReader $xParameterReader
      * @param TemplateEngine $xTemplateEngine
      * @param Translator $xTranslator
      * @param Validator $xValidator
      */
-    public function __construct(string $sPrefix, Container $di, ParameterReader $xParameterReader,
-        TemplateEngine $xTemplateEngine, Translator $xTranslator, Validator $xValidator)
-    {
-        $this->sPrefix = $sPrefix;
-        $this->di = $di;
-        $this->xParameterReader = $xParameterReader;
-        $this->xTemplateEngine = $xTemplateEngine;
-        $this->xTranslator = $xTranslator;
-        $this->xValidator = $xValidator;
-    }
+    public function __construct(private string $sPrefix, private Container $di,
+        private TemplateEngine $xTemplateEngine, private Translator $xTranslator,
+        private Validator $xValidator)
+    {}
 
     /**
      * @inheritDoc
@@ -229,28 +185,19 @@ class CallableFunctionPlugin extends AbstractRequestPlugin
      */
     public static function canProcessRequest(ServerRequestInterface $xRequest): bool
     {
-        $aBody = $xRequest->getParsedBody();
-        if(is_array($aBody))
-        {
-            return isset($aBody['jxnfun']);
-        }
-        $aParams = $xRequest->getQueryParams();
-        return isset($aParams['jxnfun']);
+        $aCall = $xRequest->getAttribute('jxncall');
+        // throw new \Exception(json_encode(['call' => $aCall]));
+        return $aCall !== null && ($aCall['type'] ?? '') === 'func' && isset($aCall['name']);
     }
 
     /**
      * @inheritDoc
      */
-    public function setTarget(ServerRequestInterface $xRequest)
+    public function setTarget(ServerRequestInterface $xRequest): Target
     {
-        $aBody = $xRequest->getParsedBody();
-        if(is_array($aBody))
-        {
-            $this->xTarget = Target::makeFunction(trim($aBody['jxnfun']));
-            return;
-        }
-        $aParams = $xRequest->getQueryParams();
-        $this->xTarget = Target::makeFunction(trim($aParams['jxnfun']));
+        $aCall = $xRequest->getAttribute('jxncall');
+        $this->xTarget = Target::makeFunction(trim($aCall['name']));
+        return $this->xTarget;
     }
 
     /**
@@ -271,6 +218,6 @@ class CallableFunctionPlugin extends AbstractRequestPlugin
         }
 
         $xFunction = $this->getCallable($sRequestedFunction);
-        return $xFunction->call($this->xParameterReader->args());
+        return $xFunction->call($this->xTarget->args());
     }
 }

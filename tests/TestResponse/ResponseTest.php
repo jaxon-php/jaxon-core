@@ -47,11 +47,17 @@ class ResponseTest extends TestCase
     {
         // Send a request to the registered class
         jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
-                'jxncls' => 'Misc',
-                'jxnmthd' => 'simple',
-                'jxnargs' => [],
-            ])->withMethod('POST');
+            return $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withParsedBody([
+                    'jxncall' => json_encode([
+                        'type' => 'class',
+                        'name' => 'Misc',
+                        'method' => 'simple',
+                        'args' => [],
+                    ]),
+                ])
+                ->withMethod('POST');
         });
 
         $this->assertEquals('{"jxn":{"commands":[]}}', jaxon()->di()->getResponseManager()->getOutput());
@@ -74,11 +80,17 @@ class ResponseTest extends TestCase
     {
         // Send a request to the registered class
         jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
-                'jxncls' => 'Misc',
-                'jxnmthd' => 'simple',
-                'jxnargs' => [],
-            ])->withMethod('POST');
+            return $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withParsedBody([
+                    'jxncall' => json_encode([
+                        'type' => 'class',
+                        'name' => 'Misc',
+                        'method' => 'simple',
+                        'args' => [],
+                    ]),
+                ])
+                ->withMethod('POST');
         });
 
         // Process the request and get the response
@@ -98,11 +110,17 @@ class ResponseTest extends TestCase
     {
         // Send a request to the registered class
         jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
-                'jxncls' => 'Misc',
-                'jxnmthd' => 'merge',
-                'jxnargs' => [],
-            ])->withMethod('POST');
+            return $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withParsedBody([
+                    'jxncall' => json_encode([
+                        'type' => 'class',
+                        'name' => 'Misc',
+                        'method' => 'merge',
+                        'args' => [],
+                    ]),
+                ])
+                ->withMethod('POST');
         });
 
         // Process the request and get the response
@@ -118,11 +136,17 @@ class ResponseTest extends TestCase
     {
         // Send a request to the registered class
         jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
-                'jxncls' => 'Misc',
-                'jxnmthd' => 'simple',
-                'jxnargs' => [],
-            ])->withMethod('POST');
+            return $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withParsedBody([
+                    'jxncall' => json_encode([
+                        'type' => 'class',
+                        'name' => 'Misc',
+                        'method' => 'simple',
+                        'args' => [],
+                    ]),
+                ])
+                ->withMethod('POST');
         });
 
         jaxon()->di()->getResponseManager()->debug('This is the first debug message!!');
@@ -139,11 +163,17 @@ class ResponseTest extends TestCase
     {
         // Send a request to the registered class
         jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
-                'jxncls' => 'Misc',
-                'jxnmthd' => 'appendBefore',
-                'jxnargs' => [],
-            ])->withMethod('POST');
+            return $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withParsedBody([
+                    'jxncall' => json_encode([
+                        'type' => 'class',
+                        'name' => 'Misc',
+                        'method' => 'appendBefore',
+                        'args' => [],
+                    ]),
+                ])
+                ->withMethod('POST');
         });
 
         // Process the request and get the response
@@ -159,11 +189,17 @@ class ResponseTest extends TestCase
     {
         // Send a request to the registered class
         jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)->fromGlobals()->withParsedBody([
-                'jxncls' => 'Misc',
-                'jxnmthd' => 'mergeWithUpload',
-                'jxnargs' => [],
-            ])->withMethod('POST');
+            return $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withParsedBody([
+                    'jxncall' => json_encode([
+                        'type' => 'class',
+                        'name' => 'Misc',
+                        'method' => 'mergeWithUpload',
+                        'args' => [],
+                    ]),
+                ])
+                ->withMethod('POST');
         });
 
         // $this->expectException(RequestException::class);

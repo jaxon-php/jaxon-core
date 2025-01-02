@@ -143,8 +143,7 @@ class RegistrationTest extends TestCase
     {
         $this->assertEquals(32, strlen($this->xPlugin->getHash()));
         // $this->assertEquals('56222468ad00b31763366f1185ec564d', $this->xPlugin->getHash());
-        $this->assertEquals(789, strlen($this->xPlugin->getScript()));
-        // $this->assertEquals(file_get_contents(__DIR__ . '/../src/js/options.js'), $this->xPlugin->getScript());
+        $this->assertEquals(file_get_contents(__DIR__ . '/../src/js/options.js'), $this->xPlugin->getScript());
     }
 
     /**

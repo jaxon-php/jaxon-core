@@ -139,11 +139,16 @@ class DialogTest extends TestCase
     {
         // The server request
         jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)->fromGlobals()->withQueryParams([
-                'jxncls' => 'Dialog',
-                'jxnmthd' => 'success',
-                'jxnargs' => [],
-            ]);
+            return $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withQueryParams([
+                    'jxncall' => json_encode([
+                        'type' => 'class',
+                        'name' => 'Dialog',
+                        'method' => 'success',
+                        'args' => [],
+                    ]),
+                ]);
         });
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
@@ -164,11 +169,16 @@ class DialogTest extends TestCase
         jaxon()->setOption('dialogs.default.question', 'bootstrap');
         // The server request
         jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)->fromGlobals()->withQueryParams([
-                'jxncls' => 'Dialog',
-                'jxnmthd' => 'success',
-                'jxnargs' => [],
-            ]);
+            return $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withQueryParams([
+                    'jxncall' => json_encode([
+                        'type' => 'class',
+                        'name' => 'Dialog',
+                        'method' => 'success',
+                        'args' => [],
+                    ]),
+                ]);
         });
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
@@ -187,11 +197,16 @@ class DialogTest extends TestCase
     {
         // The server request
         jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)->fromGlobals()->withQueryParams([
-                'jxncls' => 'Dialog',
-                'jxnmthd' => 'warning',
-                'jxnargs' => [],
-            ]);
+            return $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withQueryParams([
+                    'jxncall' => json_encode([
+                        'type' => 'class',
+                        'name' => 'Dialog',
+                        'method' => 'warning',
+                        'args' => [],
+                    ]),
+                ]);
         });
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
@@ -212,11 +227,16 @@ class DialogTest extends TestCase
         jaxon()->setOption('dialogs.default.question', 'bootstrap');
         // The server request
         jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)->fromGlobals()->withQueryParams([
-                'jxncls' => 'Dialog',
-                'jxnmthd' => 'warning',
-                'jxnargs' => [],
-            ]);
+            return $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withQueryParams([
+                    'jxncall' => json_encode([
+                        'type' => 'class',
+                        'name' => 'Dialog',
+                        'method' => 'warning',
+                        'args' => [],
+                    ]),
+                ]);
         });
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
@@ -235,11 +255,16 @@ class DialogTest extends TestCase
     {
         // The server request
         jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)->fromGlobals()->withQueryParams([
-                'jxncls' => 'Dialog',
-                'jxnmthd' => 'info',
-                'jxnargs' => [],
-            ]);
+            return $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withQueryParams([
+                    'jxncall' => json_encode([
+                        'type' => 'class',
+                        'name' => 'Dialog',
+                        'method' => 'info',
+                        'args' => [],
+                    ]),
+                ]);
         });
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
@@ -260,11 +285,16 @@ class DialogTest extends TestCase
         jaxon()->setOption('dialogs.default.question', 'bootstrap');
         // The server request
         jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)->fromGlobals()->withQueryParams([
-                'jxncls' => 'Dialog',
-                'jxnmthd' => 'info',
-                'jxnargs' => [],
-            ]);
+            return $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withQueryParams([
+                    'jxncall' => json_encode([
+                        'type' => 'class',
+                        'name' => 'Dialog',
+                        'method' => 'info',
+                        'args' => [],
+                    ]),
+                ]);
         });
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
@@ -283,11 +313,16 @@ class DialogTest extends TestCase
     {
         // The server request
         jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)->fromGlobals()->withQueryParams([
-                'jxncls' => 'Dialog',
-                'jxnmthd' => 'error',
-                'jxnargs' => [],
-            ]);
+            return $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withQueryParams([
+                    'jxncall' => json_encode([
+                        'type' => 'class',
+                        'name' => 'Dialog',
+                        'method' => 'error',
+                        'args' => [],
+                    ]),
+                ]);
         });
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
@@ -308,10 +343,15 @@ class DialogTest extends TestCase
         jaxon()->setOption('dialogs.default.question', 'bootstrap');
         // The server request
         jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)->fromGlobals()->withQueryParams([
-                'jxncls' => 'Dialog',
-                'jxnmthd' => 'error',
-                'jxnargs' => [],
+            return $c->g(ServerRequestCreator::class)
+            ->fromGlobals()
+            ->withQueryParams([
+                'jxncall' => json_encode([
+                    'type' => 'class',
+                    'name' => 'Dialog',
+                    'method' => 'error',
+                    'args' => [],
+                ]),
             ]);
         });
 
@@ -334,11 +374,16 @@ class DialogTest extends TestCase
         jaxon()->setOption('dialogs.default.question', 'bootstrap');
         // The server request
         jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)->fromGlobals()->withQueryParams([
-                'jxncls' => 'Dialog',
-                'jxnmthd' => 'show',
-                'jxnargs' => [],
-            ]);
+            return $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withQueryParams([
+                    'jxncall' => json_encode([
+                        'type' => 'class',
+                        'name' => 'Dialog',
+                        'method' => 'show',
+                        'args' => [],
+                    ]),
+                ]);
         });
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
@@ -360,11 +405,16 @@ class DialogTest extends TestCase
         jaxon()->setOption('dialogs.default.question', 'bootbox');
         // The server request
         jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)->fromGlobals()->withQueryParams([
-                'jxncls' => 'Dialog',
-                'jxnmthd' => 'show',
-                'jxnargs' => [],
-            ]);
+            return $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withQueryParams([
+                    'jxncall' => json_encode([
+                        'type' => 'class',
+                        'name' => 'Dialog',
+                        'method' => 'show',
+                        'args' => [],
+                    ]),
+                ]);
         });
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
@@ -386,11 +436,16 @@ class DialogTest extends TestCase
         jaxon()->setOption('dialogs.default.question', 'bootstrap');
         // The server request
         jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)->fromGlobals()->withQueryParams([
-                'jxncls' => 'Dialog',
-                'jxnmthd' => 'showWith',
-                'jxnargs' => [],
-            ]);
+            return $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withQueryParams([
+                    'jxncall' => json_encode([
+                        'type' => 'class',
+                        'name' => 'Dialog',
+                        'method' => 'showWith',
+                        'args' => [],
+                    ]),
+                ]);
         });
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
@@ -411,11 +466,16 @@ class DialogTest extends TestCase
         jaxon()->setOption('dialogs.default.question', 'bootstrap');
         // The server request
         jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)->fromGlobals()->withQueryParams([
-                'jxncls' => 'Dialog',
-                'jxnmthd' => 'hide',
-                'jxnargs' => [],
-            ]);
+            return $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withQueryParams([
+                    'jxncall' => json_encode([
+                        'type' => 'class',
+                        'name' => 'Dialog',
+                        'method' => 'hide',
+                        'args' => [],
+                    ]),
+                ]);
         });
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());

@@ -28,7 +28,6 @@ use Jaxon\Di\Container;
 use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\AbstractRequestPlugin;
-use Jaxon\Request\Handler\ParameterReader;
 use Jaxon\Request\Target;
 use Jaxon\Request\Validator;
 use Jaxon\Response\AbstractResponse;
@@ -55,16 +54,15 @@ class CallableClassPlugin extends AbstractRequestPlugin
      * @param string  $sPrefix
      * @param Container $di
      * @param ClassContainer $cls
-     * @param ParameterReader $xParameterReader
      * @param CallableRegistry $xRegistry
      * @param TemplateEngine $xTemplateEngine
      * @param Translator $xTranslator
      * @param Validator $xValidator
      */
     public function __construct(protected string $sPrefix, protected Container $di,
-        protected ClassContainer $cls, protected ParameterReader $xParameterReader,
-        protected CallableRegistry $xRegistry, protected TemplateEngine $xTemplateEngine,
-        protected Translator $xTranslator, protected Validator $xValidator)
+        protected ClassContainer $cls, protected CallableRegistry $xRegistry,
+        protected TemplateEngine $xTemplateEngine, protected Translator $xTranslator,
+        protected Validator $xValidator)
     {}
 
     /**
@@ -199,28 +197,19 @@ class CallableClassPlugin extends AbstractRequestPlugin
      */
     public static function canProcessRequest(ServerRequestInterface $xRequest): bool
     {
-        $aBody = $xRequest->getParsedBody();
-        if(is_array($aBody))
-        {
-            return isset($aBody['jxncls']) && isset($aBody['jxnmthd']);
-        }
-        $aParams = $xRequest->getQueryParams();
-        return isset($aParams['jxncls']) && isset($aParams['jxnmthd']);
+        $aCall = $xRequest->getAttribute('jxncall');
+        return $aCall !== null && ($aCall['type'] ?? '') === 'class' &&
+            isset($aCall['name']) && isset($aCall['method']);
     }
 
     /**
      * @inheritDoc
      */
-    public function setTarget(ServerRequestInterface $xRequest)
+    public function setTarget(ServerRequestInterface $xRequest): Target
     {
-        $aBody = $xRequest->getParsedBody();
-        if(is_array($aBody))
-        {
-            $this->xTarget = Target::makeClass(trim($aBody['jxncls']), trim($aBody['jxnmthd']));
-            return;
-        }
-        $aParams = $xRequest->getQueryParams();
-        $this->xTarget = Target::makeClass(trim($aParams['jxncls']), trim($aParams['jxnmthd']));
+        $aCall = $xRequest->getAttribute('jxncall');
+        $this->xTarget = Target::makeClass(trim($aCall['name']), trim($aCall['method']));
+        return $this->xTarget;
     }
 
     /**
@@ -231,9 +220,9 @@ class CallableClassPlugin extends AbstractRequestPlugin
     {
         $sClassName = $this->xTarget->getClassName();
         $sMethodName = $this->xTarget->getMethodName();
-        $this->xTarget->setMethodArgs($this->xParameterReader->args());
 
-        if(!$this->xValidator->validateClass($sClassName) || !$this->xValidator->validateMethod($sMethodName))
+        if(!$this->xValidator->validateClass($sClassName) ||
+            !$this->xValidator->validateMethod($sMethodName))
         {
             // Unable to find the requested object or method
             throw new RequestException($this->xTranslator->trans('errors.objects.invalid',

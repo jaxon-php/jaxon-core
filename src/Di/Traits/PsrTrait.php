@@ -5,6 +5,7 @@ namespace Jaxon\Di\Traits;
 use Jaxon\App\I18n\Translator;
 use Jaxon\Di\Container;
 use Jaxon\Plugin\Response\Psr\PsrPlugin;
+use Jaxon\Request\Handler\ParameterReader;
 use Jaxon\Request\Handler\Psr\PsrAjaxMiddleware;
 use Jaxon\Request\Handler\Psr\PsrConfigMiddleware;
 use Jaxon\Request\Handler\Psr\PsrFactory;
@@ -14,6 +15,9 @@ use Jaxon\Response\ResponseManager;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7Server\ServerRequestCreator;
 use Psr\Http\Message\ServerRequestInterface;
+
+use function is_array;
+use function json_decode;
 
 trait PsrTrait
 {
@@ -72,11 +76,36 @@ trait PsrTrait
     /**
      * Get the request
      *
+     * @return array
+     */
+    public function getServerParams(): array
+    {
+        /** @var ServerRequestInterface */
+        $xRequest = $this->g(ServerRequestInterface::class);
+        return $xRequest->getServerParams();
+    }
+
+    /**
+     * Get the request
+     *
      * @return ServerRequestInterface
      */
     public function getRequest(): ServerRequestInterface
     {
-        return $this->g(ServerRequestInterface::class);
+        /** @var ServerRequestInterface */
+        $xRequest = $this->g(ServerRequestInterface::class);
+        // Check if Jaxon call parameters are present.
+        $aBody = $xRequest->getParsedBody();
+        $aParams = is_array($aBody) ? $aBody : $xRequest->getQueryParams();
+        if(!isset($aParams['jxncall']))
+        {
+            return $xRequest;
+        }
+
+        /** @var ParameterReader */
+        $xParameterReader = $this->g(ParameterReader::class);
+        $sJxnCall = $xParameterReader->decodeRequestParameter($aParams['jxncall']);
+        return $xRequest->withAttribute('jxncall', json_decode($sJxnCall, true));
     }
 
     /**

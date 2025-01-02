@@ -18,9 +18,9 @@ interface RequestHandlerInterface
     /**
      * @param ServerRequestInterface $xRequest
      *
-     * @return void
+     * @return Target
      */
-    public function setTarget(ServerRequestInterface $xRequest);
+    public function setTarget(ServerRequestInterface $xRequest): Target;
 
     /**
      * Check if this plugin can process the current request

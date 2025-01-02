@@ -119,8 +119,8 @@ final class FunctionTest extends TestCase
     {
         // $this->assertEquals('34608e208fda374f8761041969acf96e', $this->xPlugin->getHash());
         $this->assertEquals(32, strlen($this->xPlugin->getHash()));
-        // $this->assertEquals(file_get_contents(__DIR__ . '/../src/js/function.js'), $this->xPlugin->getScript());
-        $this->assertEquals(403, strlen($this->xPlugin->getScript()));
+        // file_put_contents(__DIR__ . '/../src/js/function.js', $this->xPlugin->getScript());
+        $this->assertEquals(file_get_contents(__DIR__ . '/../src/js/function.js'), $this->xPlugin->getScript());
     }
 
     /**
@@ -133,8 +133,7 @@ final class FunctionTest extends TestCase
 
         $sJsCode = jaxon()->getScript(true, true);
         // file_put_contents(__DIR__ . '/../src/js/lib.js', $sJsCode);
-        // $this->assertEquals(file_get_contents(__DIR__ . '/../src/js/lib.js'), $sJsCode);
-        $this->assertEquals(1186, strlen(trim($sJsCode)));
+        $this->assertEquals(file_get_contents(__DIR__ . '/../src/js/lib.js'), $sJsCode);
         $this->assertEquals(32, strlen(jaxon()->di()->getCodeGenerator()->getHash()));
 
         unset($_SERVER['REQUEST_URI']);
