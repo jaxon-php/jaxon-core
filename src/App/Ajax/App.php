@@ -18,8 +18,6 @@ use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;
 
 use function file_exists;
-use function http_response_code;
-use function intval;
 use function is_array;
 
 class App extends AbstractApp
@@ -65,10 +63,7 @@ class App extends AbstractApp
      */
     public function httpResponse(string $sCode = '200')
     {
-        // Set the HTTP response code
-        http_response_code(intval($sCode));
-
         // Send the response
-        $this->sendResponse();
+        $this->sendResponse($sCode);
     }
 }

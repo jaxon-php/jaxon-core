@@ -22,6 +22,8 @@ use Jaxon\Exception\RequestException;
 use function gmdate;
 use function header;
 use function headers_sent;
+use function http_response_code;
+use function intval;
 
 trait SendTrait
 {
@@ -31,7 +33,7 @@ trait SendTrait
      * @return void
      * @throws RequestException
      */
-    public function sendResponse()
+    public function sendResponse(string $sCode = '200')
     {
         if(!$this->xConfigManager->getOption('core.response.send', false))
         {
@@ -49,6 +51,9 @@ trait SendTrait
         {
             return;
         }
+
+        // Set the HTTP response code
+        http_response_code(intval($sCode));
 
         if($this->di()->getRequest()->getMethod() === 'GET')
         {
