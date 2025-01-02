@@ -37,13 +37,6 @@ interface UploadHandlerInterface
     public function files(): array;
 
     /**
-     * Check if this is an HTTP (and not Ajax) upload
-     *
-     * @return void
-     */
-    public function isHttpUpload();
-
-    /**
      * Check if the current request contains uploaded files
      *
      * @param ServerRequestInterface $xRequest

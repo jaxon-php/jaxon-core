@@ -96,17 +96,7 @@ class RequestHandler
             }
         }
 
-        // Check if the upload plugin is enabled
-        $xUploadHandler = $this->getUploadHandler();
-        if($xUploadHandler === null)
-        {
-            return false;
-        }
-
-        // If no other plugin than the upload plugin can process the request,
-        // then it is an HTTP (not ajax) upload request
-        $xUploadHandler->isHttpUpload();
-        return $xUploadHandler->canProcessRequest($xRequest);
+        return false;
     }
 
     /**

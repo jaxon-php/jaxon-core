@@ -109,10 +109,13 @@ final class MiscTest extends TestCase
         jaxon()->setOption('core.upload.enabled', false);
         // Send a request to the registered class
         jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)->fromGlobals()->withUploadedFiles([
-                'image' => new UploadedFile($this->sPathWhite, $this->sSizeWhite,
-                    UPLOAD_ERR_OK, $this->sNameWhite, 'png'),
-            ])->withMethod('POST');
+            return $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withUploadedFiles([
+                    'image' => new UploadedFile($this->sPathWhite, $this->sSizeWhite,
+                        UPLOAD_ERR_OK, $this->sNameWhite, 'png'),
+                ])
+                ->withMethod('POST');
         });
 
         $this->assertFalse(jaxon()->di()->getRequestHandler()->canProcessRequest());
