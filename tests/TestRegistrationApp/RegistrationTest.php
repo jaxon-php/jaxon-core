@@ -129,7 +129,6 @@ class RegistrationTest extends TestCase
      */
     public function testJaxonClassAnnotations()
     {
-        jaxon()->setOption('core.annotations.on', true);
         // The server request
         jaxon()->di()->set(ServerRequestInterface::class, function($c) {
             return $c->g(ServerRequestCreator::class)

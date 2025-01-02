@@ -12,6 +12,7 @@ require_once "$defsDir/packages.php";
 
 return [
     'app' => [
+        'metadata' => 'annotations',
         'functions' => [
             'my_first_function' => "$defsDir/first.php",
             'my_second_function' => [
