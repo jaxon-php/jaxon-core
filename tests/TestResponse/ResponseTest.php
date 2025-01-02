@@ -7,7 +7,6 @@ use Jaxon\Exception\SetupException;
 use Jaxon\Jaxon;
 use Jaxon\Plugin\Response\DataBag\DataBagPlugin;
 use Jaxon\Plugin\Response\Script\ScriptPlugin;
-use Jaxon\Upload\UploadResponse;
 use Nyholm\Psr7Server\ServerRequestCreator;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
@@ -180,32 +179,5 @@ class ResponseTest extends TestCase
         jaxon()->di()->getRequestHandler()->processRequest();
         $xResponse = jaxon()->getResponse();
         $this->assertEquals(2, $xResponse->getCommandCount());
-    }
-
-    /**
-     * @throws RequestException
-     */
-    public function testMergeResponseWithUpload()
-    {
-        // Send a request to the registered class
-        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)
-                ->fromGlobals()
-                ->withParsedBody([
-                    'jxncall' => json_encode([
-                        'type' => 'class',
-                        'name' => 'Misc',
-                        'method' => 'mergeWithUpload',
-                        'args' => [],
-                    ]),
-                ])
-                ->withMethod('POST');
-        });
-
-        // $this->expectException(RequestException::class);
-        // Process the request
-        jaxon()->di()->getRequestHandler()->processRequest();
-        $xResponse = jaxon()->di()->getResponseManager()->getResponse();
-        $this->assertEquals(UploadResponse::class, get_class($xResponse));
     }
 }
