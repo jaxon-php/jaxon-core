@@ -262,7 +262,7 @@ class CallableClassPlugin extends AbstractRequestPlugin
         }
         catch(ReflectionException|SetupException $e)
         {
-            // Unable to find the requested class or method
+            // Unable to execute the requested class or method
             $this->throwException($e, $this->xTranslator->trans('errors.objects.call',
                 ['class' => $sClassName, 'method' => $sMethodName]));
         }

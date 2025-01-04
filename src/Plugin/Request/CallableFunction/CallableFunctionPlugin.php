@@ -240,7 +240,7 @@ class CallableFunctionPlugin extends AbstractRequestPlugin
         }
         catch(Exception $e)
         {
-            // Unable to find the requested class or method
+            // Unable to find the requested function
             $this->throwException($e, $this->xTranslator->trans('errors.functions.invalid',
                 ['name' => $sRequestedFunction]));
         }
@@ -250,7 +250,7 @@ class CallableFunctionPlugin extends AbstractRequestPlugin
         }
         catch(Exception $e)
         {
-            // Unable to find the requested class or method
+            // Unable to execute the requested function
             $this->throwException($e, $this->xTranslator->trans('errors.functions.call',
                 ['name' => $sRequestedFunction]));
         }
