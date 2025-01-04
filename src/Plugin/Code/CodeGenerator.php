@@ -14,6 +14,7 @@
 
 namespace Jaxon\Plugin\Code;
 
+use Jaxon\App\I18n\Translator;
 use Jaxon\Di\Container;
 use Jaxon\Plugin\AbstractPlugin;
 use Jaxon\Utils\Http\UriException;
@@ -27,23 +28,6 @@ use function trim;
 
 class CodeGenerator
 {
-    /**
-     * @var string
-     */
-    private $sVersion;
-
-    /**
-     * @var Container
-     */
-    private $di;
-
-    /**
-     * The Jaxon template engine
-     *
-     * @var TemplateEngine
-     */
-    protected $xTemplateEngine;
-
     /**
      * @var AssetManager
      */
@@ -96,14 +80,12 @@ class CodeGenerator
      *
      * @param string $sVersion
      * @param Container $di
+     * @param Translator $xTranslator
      * @param TemplateEngine $xTemplateEngine
      */
-    public function __construct(string $sVersion, Container $di, TemplateEngine $xTemplateEngine)
-    {
-        $this->sVersion = $sVersion;
-        $this->di = $di;
-        $this->xTemplateEngine = $xTemplateEngine;
-    }
+    public function __construct(private string $sVersion, private Container $di,
+        private Translator $xTranslator, private TemplateEngine $xTemplateEngine)
+    {}
 
     /**
      * Add a code generator to the list
@@ -129,9 +111,10 @@ class CodeGenerator
      */
     public function getHash(): string
     {
-        return md5(array_reduce($this->aCodeGenerators, function($sHash, $sClassName) {
-            return $sHash . $this->di->g($sClassName)->getHash();
-        }, $this->sVersion));
+        return md5(array_reduce($this->aCodeGenerators,
+            function($sHash, $sClassName) {
+                return $sHash . $this->di->g($sClassName)->getHash();
+            }, $this->sVersion));
     }
 
     /**
@@ -158,7 +141,8 @@ class CodeGenerator
     private function generatePluginCodes(string $sClassName)
     {
         $xGenerator = $this->di->g($sClassName);
-        if(!is_subclass_of($xGenerator, AbstractPlugin::class) || $this->xAssetManager->shallIncludeAssets($xGenerator))
+        if(!is_subclass_of($xGenerator, AbstractPlugin::class) ||
+            $this->xAssetManager->shallIncludeAssets($xGenerator))
         {
             // HTML tags for CSS
             $this->sCss = trim($this->sCss) . "\n" . trim($xGenerator->getCss(), " \n");
@@ -170,8 +154,20 @@ class CodeGenerator
         if($xGenerator->readyEnabled())
         {
             $sScriptAttr = $xGenerator->readyInlined() ? 'sJsInlineScript' : 'sJsReadyScript';
-            $this->$sScriptAttr = trim($this->$sScriptAttr) . "\n\n" . trim($xGenerator->getReadyScript(), " \n");
+            $this->$sScriptAttr = trim($this->$sScriptAttr) . "\n\n" .
+                trim($xGenerator->getReadyScript(), " \n");
         }
+    }
+
+    /**
+     * @return string
+     */
+    private function getJsInit(): string
+    {
+        return '
+    jaxon.processCustomAttrs();
+    jaxon.labels && jaxon.labels(' . json_encode($this->xTranslator->translations('labels')) . ');
+';
     }
 
     /**
@@ -185,16 +181,20 @@ class CodeGenerator
         $this->sJs = trim($this->sJs, " \n");
         $this->sJsScript = trim($this->sJsScript, " \n");
         $this->sJsReadyScript = $this->render('ready.js', [
-            'sScript' => trim($this->sJsReadyScript, " \n") . "\n\tjaxon.processCustomAttrs();\n",
+            'sScript' => $this->getJsInit() . trim($this->sJsReadyScript, " \n"),
         ]);
         $this->sJsInlineScript = trim($this->sJsInlineScript, " \n");
         if(($this->sJsInlineScript))
         {
-            $this->sJsInlineScript = $this->render('ready.js', ['sScript' => $this->sJsInlineScript . "\n"]);
+            $this->sJsInlineScript = $this->render('ready.js', [
+                'sScript' => $this->sJsInlineScript . "\n",
+            ]);
         }
         // Prepend Jaxon javascript files to HTML tags for Js
         $aJsFiles = $this->xAssetManager->getJsLibFiles();
-        $this->sJs = trim($this->render('includes.js', ['aUrls' => $aJsFiles])) . "\n\n" . $this->sJs;
+        $this->sJs = trim($this->render('includes.js', [
+            'aUrls' => $aJsFiles,
+        ])) . "\n\n" . $this->sJs;
     }
 
     /**
@@ -288,10 +288,18 @@ class CodeGenerator
 
         if(!($sUrl = $this->xAssetManager->createJsFiles($this)))
         {
-            return trim($sScript) . "\n\n" . $this->render('wrapper.js',
-                ['sScript' => trim($this->sJsScript) . "\n\n" . trim($this->sJsInlineScript)]);
+            return trim($sScript) . "\n\n" .
+                $this->render('wrapper.js', [
+                    'sScript' => trim($this->sJsScript) . "\n\n" .
+                        trim($this->sJsInlineScript),
+                ]);
         }
-        return trim($sScript) . "\n\n" . trim($this->render('include.js', ['sUrl' => $sUrl])) .
-            "\n\n" . $this->render('wrapper.js', ['sScript' => $this->sJsInlineScript]);
+        return trim($sScript) . "\n\n" .
+            trim($this->render('include.js', [
+                'sUrl' => $sUrl,
+            ])) . "\n\n" .
+            trim($this->render('wrapper.js', [
+                'sScript' => $this->sJsInlineScript,
+            ]));
     }
 }

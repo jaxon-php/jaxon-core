@@ -32,6 +32,10 @@ trait UtilTrait
             $xTranslator->loadTranslations($sResourceDir . '/en/config.php', 'en');
             $xTranslator->loadTranslations($sResourceDir . '/fr/config.php', 'fr');
             $xTranslator->loadTranslations($sResourceDir . '/es/config.php', 'es');
+            // Load the labels translations
+            $xTranslator->loadTranslations($sResourceDir . '/en/labels.php', 'en');
+            $xTranslator->loadTranslations($sResourceDir . '/fr/labels.php', 'fr');
+            $xTranslator->loadTranslations($sResourceDir . '/es/labels.php', 'es');
             return $xTranslator;
         });
 
