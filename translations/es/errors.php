@@ -34,14 +34,13 @@ return [
             'entities' => "No se puede mezclar entidades de salida (verdadero / falso) en una sola respuesta: :entities",
             'types' => "No se puede mezclar tipos de respuesta al procesar una sola petición: :class",
         ],
-        'events' => [
-            'invalid' => "Solicitud de evento invalida recibida; No hay eventos registrados con el nombre :name.",
-        ],
         'functions' => [
+            'call' => "An error occured during the call of function :name.",
             'invalid' => "Solicitud de función invalida recibida; no hay procesador de peticiones con el nombre :name.",
             'invalid-declaration' => "Declaración de funcion invalida.",
         ],
         'objects' => [
+            'call' => "An error occured during the call of method :method in of class :class",
             'invalid' => "Solicitud de objeto invalida recibida; Sin objeto :class o metodo :method encontrado.",
             'instance' => "Para registrar un objeto, por favor de proveer una instancia de la clase deseada.",
             'invalid-declaration' => "Declaración de objeto invalida.",

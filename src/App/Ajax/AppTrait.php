@@ -37,6 +37,7 @@ trait AppTrait
     private function initApp()
     {
         $this->xContainer = Lib::getInstance()->di();
+        $this->xClassContainer = Lib::getInstance()->cls();
         // Set the attributes from the container
         $this->xConfigManager = $this->xContainer->g(ConfigManager::class);
         $this->xResponseManager = $this->xContainer->g(ResponseManager::class);

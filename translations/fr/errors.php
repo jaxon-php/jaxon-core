@@ -34,14 +34,13 @@ return [
             'entities' => "Il ne peut y avoir des output entities (vrai/faux) différents dans une seule réponse: :entities",
             'types' => "Il ne peut y avoir des types de réponse différents dans le traitement d'une requête : :class",
         ],
-        'events' => [
-            'invalid' => "La requête indique un évènement invalide; il n'existe pas d'évènement :name.",
-        ],
         'functions' => [
+            'call' => "Une erreur s'est produite à l'appel de la fonction :name.",
             'invalid' => "La requête indique une fonction invalide; il n'existe pas de fonction :name.",
             'invalid-declaration' => "La déclaration de fonction est invalide.",
         ],
         'objects' => [
+            'call' => "Une erreur s'est produite à l'appel de la méthode :method de la classe :class.",
             'invalid' => "La requête indique un objet invalide; il n'existe pas de classe :class ou de méthode :method.",
             'instance' => "Pour enregistrer un objet, vous devez fournir une instance de la classe correspondante.",
             'invalid-declaration' => "La déclaration d'objet est invalide.",

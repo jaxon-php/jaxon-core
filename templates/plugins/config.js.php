@@ -11,6 +11,7 @@ jaxon.config.responseQueueSize = <?php echo $this->nResponseQueueSize ?>;
 <?php endif ?>
 
 <?php if(($this->bDebug)): ?>
+jaxon.debug.active = true;
 <?php if(($this->sDebugOutputID)): ?>
 jaxon.debug.outputID = "<?php echo $this->sDebugOutputID ?>";
 <?php endif ?>

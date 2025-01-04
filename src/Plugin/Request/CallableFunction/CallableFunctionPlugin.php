@@ -32,6 +32,7 @@ use Jaxon\Request\Validator;
 use Jaxon\Response\AbstractResponse;
 use Jaxon\Utils\Template\TemplateEngine;
 use Psr\Http\Message\ServerRequestInterface;
+use Exception;
 
 use function array_keys;
 use function implode;
@@ -60,14 +61,15 @@ class CallableFunctionPlugin extends AbstractRequestPlugin
      * The constructor
      *
      * @param string $sPrefix
+     * @param bool $bDebug
      * @param Container $di
      * @param TemplateEngine $xTemplateEngine
      * @param Translator $xTranslator
      * @param Validator $xValidator
      */
-    public function __construct(private string $sPrefix, private Container $di,
-        private TemplateEngine $xTemplateEngine, private Translator $xTranslator,
-        private Validator $xValidator)
+    public function __construct(private string $sPrefix, private bool $bDebug,
+        private Container $di, private TemplateEngine $xTemplateEngine,
+        private Translator $xTranslator, private Validator $xValidator)
     {}
 
     /**
@@ -201,6 +203,20 @@ class CallableFunctionPlugin extends AbstractRequestPlugin
     }
 
     /**
+     * @param Exception $xException
+     * @param string $sErrorMessage
+     *
+     * @throws RequestException
+     * @return void
+     */
+    private function throwException(Exception $xException, string $sErrorMessage): void
+    {
+        $this->di->getLogger()->error($xException->getMessage());
+        throw new RequestException($sErrorMessage . (!$this->bDebug ? '' :
+            "\n" . $xException->getMessage()));
+    }
+
+    /**
      * @inheritDoc
      * @throws RequestException
      */
@@ -217,7 +233,26 @@ class CallableFunctionPlugin extends AbstractRequestPlugin
                 ['name' => $sRequestedFunction]));
         }
 
-        $xFunction = $this->getCallable($sRequestedFunction);
-        return $xFunction->call($this->xTarget->args());
+        try
+        {
+            /** @var CallableFunction */
+            $xFunction = $this->getCallable($sRequestedFunction);
+        }
+        catch(Exception $e)
+        {
+            // Unable to find the requested class or method
+            $this->throwException($e, $this->xTranslator->trans('errors.functions.invalid',
+                ['name' => $sRequestedFunction]));
+        }
+        try
+        {
+            return $xFunction->call($this->xTarget->args());
+        }
+        catch(Exception $e)
+        {
+            // Unable to find the requested class or method
+            $this->throwException($e, $this->xTranslator->trans('errors.functions.call',
+                ['name' => $sRequestedFunction]));
+        }
     }
 }

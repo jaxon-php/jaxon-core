@@ -3,8 +3,7 @@
 /**
  * CallableClassPlugin.php - Jaxon callable class plugin
  *
- * This class registers user defined callable classes, generates client side javascript code,
- * and calls their methods on user request
+ * This class registers user defined callable classes, and calls their methods on user request.
  *
  * @package jaxon-core
  * @author Jared White
@@ -33,6 +32,7 @@ use Jaxon\Request\Validator;
 use Jaxon\Response\AbstractResponse;
 use Jaxon\Utils\Template\TemplateEngine;
 use Psr\Http\Message\ServerRequestInterface;
+use Exception;
 use ReflectionException;
 
 use function array_reduce;
@@ -51,7 +51,8 @@ class CallableClassPlugin extends AbstractRequestPlugin
     /**
      * The class constructor
      *
-     * @param string  $sPrefix
+     * @param string $sPrefix
+     * @param bool $bDebug
      * @param Container $di
      * @param ClassContainer $cls
      * @param CallableRegistry $xRegistry
@@ -59,10 +60,10 @@ class CallableClassPlugin extends AbstractRequestPlugin
      * @param Translator $xTranslator
      * @param Validator $xValidator
      */
-    public function __construct(protected string $sPrefix, protected Container $di,
-        protected ClassContainer $cls, protected CallableRegistry $xRegistry,
-        protected TemplateEngine $xTemplateEngine, protected Translator $xTranslator,
-        protected Validator $xValidator)
+    public function __construct(private string $sPrefix, private bool $bDebug,
+        private Container $di, private ClassContainer $cls,
+        private CallableRegistry $xRegistry, private TemplateEngine $xTemplateEngine,
+        private Translator $xTranslator, private Validator $xValidator)
     {}
 
     /**
@@ -213,6 +214,20 @@ class CallableClassPlugin extends AbstractRequestPlugin
     }
 
     /**
+     * @param Exception $xException
+     * @param string $sErrorMessage
+     *
+     * @throws RequestException
+     * @return void
+     */
+    private function throwException(Exception $xException, string $sErrorMessage): void
+    {
+        $this->di->getLogger()->error($xException->getMessage());
+        throw new RequestException($sErrorMessage . (!$this->bDebug ? '' :
+            "\n" . $xException->getMessage()));
+    }
+
+    /**
      * @inheritDoc
      * @throws RequestException
      */
@@ -232,13 +247,23 @@ class CallableClassPlugin extends AbstractRequestPlugin
         // Call the requested method
         try
         {
-            return $this->getCallable($sClassName)->call($this->xTarget);
+            /** @var CallableObject */
+            $xCallableObject = $this->getCallable($sClassName);
         }
         catch(ReflectionException|SetupException $e)
         {
             // Unable to find the requested class or method
-            $this->di->getLogger()->error($e->getMessage());
-            throw new RequestException($this->xTranslator->trans('errors.objects.invalid',
+            $this->throwException($e, $this->xTranslator->trans('errors.objects.invalid',
+                ['class' => $sClassName, 'method' => $sMethodName]));
+        }
+        try
+        {
+            return $xCallableObject->call($this->xTarget);
+        }
+        catch(ReflectionException|SetupException $e)
+        {
+            // Unable to find the requested class or method
+            $this->throwException($e, $this->xTranslator->trans('errors.objects.call',
                 ['class' => $sClassName, 'method' => $sMethodName]));
         }
     }
