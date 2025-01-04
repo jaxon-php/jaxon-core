@@ -84,21 +84,6 @@ trait AppTrait
      */
     private function registerApp()
     {
-        // Translator
-        $this->set(Translator::class, function($di) {
-            $xTranslator = new Translator();
-            $sResourceDir = rtrim(trim($di->g('jaxon.core.dir.translation')), '/\\');
-            // Load the Jaxon package translations
-            $xTranslator->loadTranslations($sResourceDir . '/en/errors.php', 'en');
-            $xTranslator->loadTranslations($sResourceDir . '/fr/errors.php', 'fr');
-            $xTranslator->loadTranslations($sResourceDir . '/es/errors.php', 'es');
-            // Load the config translations
-            $xTranslator->loadTranslations($sResourceDir . '/en/config.php', 'en');
-            $xTranslator->loadTranslations($sResourceDir . '/fr/config.php', 'fr');
-            $xTranslator->loadTranslations($sResourceDir . '/es/config.php', 'es');
-            return $xTranslator;
-        });
-
         // Config Manager
         $this->set(ConfigEventManager::class, function($di) {
             return new ConfigEventManager($di->g(Container::class));

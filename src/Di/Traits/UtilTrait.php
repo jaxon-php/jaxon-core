@@ -3,6 +3,7 @@
 namespace Jaxon\Di\Traits;
 
 use Jaxon\App\Stash\Stash;
+use Jaxon\App\I18n\Translator;
 use Jaxon\Utils\Config\ConfigReader;
 use Jaxon\Utils\Http\UriDetector;
 use Jaxon\Utils\Template\TemplateEngine;
@@ -19,6 +20,21 @@ trait UtilTrait
      */
     private function registerUtils()
     {
+        // Translator
+        $this->set(Translator::class, function($di) {
+            $xTranslator = new Translator();
+            $sResourceDir = rtrim(trim($di->g('jaxon.core.dir.translation')), '/\\');
+            // Load the debug translations
+            $xTranslator->loadTranslations($sResourceDir . '/en/errors.php', 'en');
+            $xTranslator->loadTranslations($sResourceDir . '/fr/errors.php', 'fr');
+            $xTranslator->loadTranslations($sResourceDir . '/es/errors.php', 'es');
+            // Load the config translations
+            $xTranslator->loadTranslations($sResourceDir . '/en/config.php', 'en');
+            $xTranslator->loadTranslations($sResourceDir . '/fr/config.php', 'fr');
+            $xTranslator->loadTranslations($sResourceDir . '/es/config.php', 'es');
+            return $xTranslator;
+        });
+
         // Config reader
         $this->set(ConfigReader::class, function() {
             return new ConfigReader();
