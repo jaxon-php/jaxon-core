@@ -17,7 +17,6 @@ use Nyholm\Psr7Server\ServerRequestCreator;
 use Psr\Http\Message\ServerRequestInterface;
 
 use function is_array;
-use function json_decode;
 
 trait PsrTrait
 {
@@ -25,6 +24,11 @@ trait PsrTrait
      * @var string
      */
     private $sPsrConfig = 'jaxon.psr.config.file';
+
+    /**
+     * @var string
+     */
+    private $sPsrServerRequest = 'jaxon.psr.server.request';
 
     /**
      * Register the values into the container
@@ -48,6 +52,16 @@ trait PsrTrait
         });
         $this->set(ServerRequestInterface::class, function($di) {
             return $di->g(ServerRequestCreator::class)->fromGlobals();
+        });
+        // Server request with the Jaxon request parameter as attribute
+        $this->set($this->sPsrServerRequest, function($di) {
+            /** @var ParameterReader */
+            $xParameterReader = $di->g(ParameterReader::class);
+            /** @var ServerRequestInterface */
+            $xRequest = $di->g(ServerRequestInterface::class);
+            $aRequestParameter = $xParameterReader->getRequestParameter($xRequest);
+            return !is_array($aRequestParameter) ? $xRequest :
+                $xRequest->withAttribute('jxncall', $aRequestParameter);
         });
         // PSR factory
         $this->set(PsrFactory::class, function($di) {
@@ -86,26 +100,23 @@ trait PsrTrait
     }
 
     /**
-     * Get the request
+     * Get the request with Jaxon parameter as attribute
      *
      * @return ServerRequestInterface
      */
     public function getRequest(): ServerRequestInterface
     {
-        /** @var ServerRequestInterface */
-        $xRequest = $this->g(ServerRequestInterface::class);
-        // Check if Jaxon call parameters are present.
-        $aBody = $xRequest->getParsedBody();
-        $aParams = is_array($aBody) ? $aBody : $xRequest->getQueryParams();
-        if(!isset($aParams['jxncall']))
-        {
-            return $xRequest;
-        }
+        return $this->g($this->sPsrServerRequest);
+    }
 
-        /** @var ParameterReader */
-        $xParameterReader = $this->g(ParameterReader::class);
-        $sJxnCall = $xParameterReader->decodeRequestParameter($aParams['jxncall']);
-        return $xRequest->withAttribute('jxncall', json_decode($sJxnCall, true));
+    /**
+     * Return the array of arguments from the GET or POST data
+     *
+     * @return array
+     */
+    public function getRequestArguments(): array
+    {
+        return $this->getRequest()->getAttribute('jxncall')['args'] ?? [];
     }
 
     /**
@@ -147,7 +158,7 @@ trait PsrTrait
      */
     public function getPsrConfigMiddleware(string $sConfigFile): PsrConfigMiddleware
     {
-        $this->val($this->sPsrConfig, $sConfigFile);
+        !$this->h($this->sPsrConfig) && $this->val($this->sPsrConfig, $sConfigFile);
         return $this->g(PsrConfigMiddleware::class);
     }
 

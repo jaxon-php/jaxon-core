@@ -44,7 +44,7 @@ trait RequestTrait
         $this->set(RequestHandler::class, function($di) {
             return new RequestHandler($di->g(Container::class), $di->g(PluginManager::class),
                 $di->g(ResponseManager::class), $di->g(CallbackManager::class),
-                $di->g(DataBagPlugin::class), $di->g(ParameterReader::class));
+                $di->g(DataBagPlugin::class));
         });
         // Requests and calls Factory
         $this->set(CallFactory::class, function($di) {

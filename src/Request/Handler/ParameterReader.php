@@ -26,9 +26,13 @@ use Jaxon\Di\Container;
 use Jaxon\Exception\RequestException;
 use Jaxon\Utils\Http\UriDetector;
 use Jaxon\Utils\Http\UriException;
+use Psr\Http\Message\ServerRequestInterface;
 
 use function function_exists;
 use function iconv;
+use function is_array;
+use function is_string;
+use function json_decode;
 use function mb_convert_encoding;
 use function strlen;
 use function strncmp;
@@ -96,7 +100,7 @@ class ParameterReader
      *
      * @return string
      */
-    public function decodeRequestParameter(string $sParam): string
+    private function decodeRequestParameter(string $sParam): string
     {
         $sParam = $this->decodeStr($sParam);
         if(!$this->xConfigManager->getOption('core.decode_utf8'))
@@ -108,14 +112,17 @@ class ParameterReader
     }
 
     /**
-     * Return the array of arguments from the GET or POST data
+     * @param ServerRequestInterface $xRequest
      *
-     * @return array
-     * @throws RequestException
+     * @return array|null
      */
-    public function args(): array
+    public function getRequestParameter(ServerRequestInterface $xRequest): ?array
     {
-        return $this->di->getRequest()->getAttribute('jxncall')['args'] ?? [];
+        $aBody = $xRequest->getParsedBody();
+        $aParams = is_array($aBody) ? $aBody : $xRequest->getQueryParams();
+        // Check if Jaxon call parameters are present.
+        return !isset($aParams['jxncall']) || !is_string($aParams['jxncall']) ? null :
+            json_decode($this->decodeRequestParameter($aParams['jxncall']), true);
     }
 
     /**
