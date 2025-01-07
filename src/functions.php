@@ -11,7 +11,7 @@ use Jaxon\Script\JsCall;
 use Jaxon\Script\JxnCall;
 
 /**
- * start.php
+ * functions.php
  *
  * This file is automatically loaded by the Composer autoloader
  *
