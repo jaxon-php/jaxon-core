@@ -10,7 +10,6 @@ use Jaxon\App\Config\ConfigManager;
 use Jaxon\App\I18n\Translator;
 use Jaxon\App\View\ViewRenderer;
 use Jaxon\Di\Container;
-use Jaxon\Jaxon;
 use Jaxon\Request\Handler\CallbackManager;
 use Jaxon\Plugin\Manager\PackageManager;
 use Jaxon\Plugin\Response\Dialog\DialogManager;
@@ -22,60 +21,6 @@ trait AppTrait
      * @var string
      */
     private $sJsLibVersion = 'jaxon_javascript_library_version';
-
-    /**
-     * The default config options
-     *
-     * @var array
-     */
-    protected $aConfig =  [
-        'core' => [
-            'version'               => Jaxon::VERSION,
-            'language'              => 'en',
-            'encoding'              => 'utf-8',
-            'decode_utf8'           => false,
-            'prefix' => [
-                'function'          => 'jaxon_',
-                'class'             => 'Jaxon',
-            ],
-            'request' => [
-                // 'uri'            => '',
-                'mode'              => 'asynchronous',
-                'method'            => 'POST', // W3C: Method is case-sensitive
-            ],
-            'response' => [
-                'send'              => true,
-            ],
-            'debug' => [
-                'on'                => false,
-                'verbose'           => false,
-            ],
-            'process' => [
-                'exit'              => true,
-                'timeout'           => 6000,
-            ],
-            'error' => [
-                'handle'            => false,
-                'log_file'          => '',
-            ],
-            'jquery' => [
-                'no_conflict'       => false,
-            ],
-        ],
-        'js' => [
-            'lib' => [
-                'output_id'         => 0,
-                'queue_size'        => 0,
-                'load_timeout'      => 2000,
-                'show_status'       => false,
-                'show_cursor'       => true,
-            ],
-            'app' => [
-                'dir'               => '',
-                'options'           => '',
-            ],
-        ],
-    ];
 
     /**
      * Register the values into the container
@@ -91,7 +36,7 @@ trait AppTrait
         $this->set(ConfigManager::class, function($di) {
             $xEventManager = $di->g(ConfigEventManager::class);
             $xConfigManager = new ConfigManager($di->g(ConfigReader::class), $xEventManager, $di->g(Translator::class));
-            $xConfigManager->setOptions($this->aConfig);
+            $xConfigManager->setOptions(require(__DIR__ . '/../../../config/lib.php'));
             // It's important to call this after the $xConfigManager->setOptions(),
             // because we don't want to trigger the events since the listeners cannot yet be instantiated.
             $xEventManager->addListener(Translator::class);
