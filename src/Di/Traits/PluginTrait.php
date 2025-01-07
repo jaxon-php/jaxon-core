@@ -39,8 +39,11 @@ trait PluginTrait
     {
         // Plugin manager
         $this->set(PluginManager::class, function($di) {
-            return new PluginManager($di->g(Container::class),
+            $xPluginManager = new PluginManager($di->g(Container::class),
                 $di->g(CodeGenerator::class), $di->g(Translator::class));
+            // Register the Jaxon request and response plugins
+            $xPluginManager->registerPlugins();
+            return $xPluginManager;
         });
         // Package manager
         $this->set(PackageManager::class, function($di) {

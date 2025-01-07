@@ -295,7 +295,5 @@ final class Lib
     public function reset()
     {
         self::$xInstance = null;
-        // Need to register the default plugins.
-        self::getInstance()->di()->getPluginManager()->registerPlugins();
     }
 }

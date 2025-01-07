@@ -113,6 +113,3 @@ function attr(): AttrHelper
 {
     return jaxon()->di()->getCustomAttrHelper();
 }
-
-// Register the Jaxon request and response plugins
-jaxon()->di()->getPluginManager()->registerPlugins();
