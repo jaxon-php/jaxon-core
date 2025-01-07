@@ -82,6 +82,7 @@ class RequestHandler
 
         // The HTTP request
         $xRequest = $this->di->getRequest();
+
         // Find a plugin to process the request
         foreach($this->xPluginManager->getRequestHandlers() as $sClassName)
         {
@@ -93,7 +94,6 @@ class RequestHandler
                 return true;
             }
         }
-
         return false;
     }
 
@@ -107,20 +107,18 @@ class RequestHandler
     {
         // The HTTP request
         $xRequest = $this->di->getRequest();
+
         // Process uploaded files, if the upload plugin is enabled
         $xUploadHandler = $this->getUploadHandler();
         if($xUploadHandler !== null && $xUploadHandler->canProcessRequest($xRequest))
         {
             $xUploadHandler->processRequest($xRequest);
         }
+
         // Process the request
         if(($this->xRequestPlugin))
         {
-            $xResponse = $this->xRequestPlugin->processRequest();
-            if(($xResponse))
-            {
-                $this->xResponseManager->setResponse($xResponse);
-            }
+            $this->xRequestPlugin->processRequest();
             // Process the databag
             $this->xDataBagPlugin->writeCommand();
         }
@@ -128,9 +126,6 @@ class RequestHandler
 
     /**
      * Process the current request.
-     *
-     * Calls each of the request plugins to request that they process the current request.
-     * If any plugin processes the request, it will return true.
      *
      * @return void
      * @throws RequestException

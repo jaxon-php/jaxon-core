@@ -291,18 +291,6 @@ class ResponseManager
     }
 
     /**
-     * Set the response to the Jaxon request
-     *
-     * @param AbstractResponse $xResponse
-     *
-     * @return void
-     */
-    public function setResponse(AbstractResponse $xResponse)
-    {
-        $this->xResponse = $xResponse;
-    }
-
-    /**
      * Get the response to the Jaxon request
      *
      * @return AbstractResponse
