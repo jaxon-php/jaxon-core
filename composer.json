@@ -42,7 +42,7 @@
             "Jaxon\\": "src/"
         },
         "files": [
-            "src/start.php"
+            "src/functions.php"
         ]
     },
     "autoload-dev": {
