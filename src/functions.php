@@ -3,7 +3,7 @@
 namespace Jaxon;
 
 use Jaxon\App\Ajax\Lib;
-use Jaxon\App\View\AttrHelper;
+use Jaxon\App\View\HtmlAttrHelper;
 use Jaxon\Exception\SetupException;
 use Jaxon\Script\Factory\ParameterFactory;
 use Jaxon\Script\JqCall;
@@ -107,9 +107,9 @@ function jq(string $sPath = '', $xContext = null): JqCall
 /**
  * Get the custom attributes helper
  *
- * @return AttrHelper
+ * @return HtmlAttrHelper
  */
-function attr(): AttrHelper
+function attr(): HtmlAttrHelper
 {
-    return jaxon()->di()->getCustomAttrHelper();
+    return jaxon()->di()->getHtmlAttrHelper();
 }

@@ -3,7 +3,7 @@
 namespace Jaxon\App\View;
 
 /**
- * AttrHelper.php
+ * HtmlAttrHelper.php
  *
  * Formatter for Jaxon custom HTML attributes.
  *
@@ -29,7 +29,7 @@ use function Jaxon\rq;
 use function json_encode;
 use function trim;
 
-class AttrHelper
+class HtmlAttrHelper
 {
     /**
      * @var string
