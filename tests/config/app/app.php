@@ -1,6 +1,6 @@
 <?php
 
-use Jaxon\Dialogs\Bootbox\BootboxLibrary;
+use Jaxon\Dialogs\Library\Bootbox;
 use Jaxon\Tests\Ns\Lib\Service;
 use Jaxon\Tests\Ns\Lib\ServiceAuto;
 use Jaxon\Tests\Ns\Lib\ServiceInterface;
@@ -93,9 +93,9 @@ return [
         ],
         'dialogs' => [
             'default' => [
-                'modal' => BootboxLibrary::NAME,
-                'message' => BootboxLibrary::NAME,
-                'question' => BootboxLibrary::NAME,
+                'modal' => Bootbox::NAME,
+                'message' => Bootbox::NAME,
+                'question' => Bootbox::NAME,
             ],
             'assets' => [
                 'include' => [

@@ -5,10 +5,10 @@ namespace Jaxon\Tests\TestUi;
 require_once __DIR__ . '/../src/dialog.php';
 
 use Jaxon\Jaxon;
-use Jaxon\Plugin\Response\Dialog\Library\AlertLibrary;
-use Jaxon\Dialogs\Bootbox\BootboxLibrary;
-use Jaxon\Dialogs\Bootstrap\BootstrapLibrary;
-use Jaxon\Dialogs\CuteAlert\CuteAlertLibrary;
+use Jaxon\Plugin\Response\Dialog\Library\AlertLibrary as Alert;
+use Jaxon\Dialogs\Library\Bootbox;
+use Jaxon\Dialogs\Library\Bootstrap;
+use Jaxon\Dialogs\Library\CuteAlert;
 use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;
 use Jaxon\Utils\Http\UriException;
@@ -52,23 +52,23 @@ class DialogTest extends TestCase
     {
         $xDialogManager = jaxon()->di()->getDialogManager();
         $this->assertEquals('', $xDialogManager->getQuestionLibrary()->getName());
-        $this->assertEquals(AlertLibrary::class, get_class($xDialogManager->getQuestionLibrary()));
-        $this->assertEquals(AlertLibrary::class, get_class($xDialogManager->getMessageLibrary()));
+        $this->assertEquals(Alert::class, get_class($xDialogManager->getQuestionLibrary()));
+        $this->assertEquals(Alert::class, get_class($xDialogManager->getMessageLibrary()));
         $this->assertEquals(null, $xDialogManager->getModalLibrary());
 
         jaxon()->setOption('dialogs.default.modal', 'bootstrap');
         jaxon()->setOption('dialogs.default.message', 'bootstrap');
         jaxon()->setOption('dialogs.default.question', 'bootstrap');
-        $this->assertEquals(BootstrapLibrary::class, get_class($xDialogManager->getQuestionLibrary()));
-        $this->assertEquals(BootstrapLibrary::class, get_class($xDialogManager->getMessageLibrary()));
-        $this->assertEquals(BootstrapLibrary::class, get_class($xDialogManager->getModalLibrary()));
+        $this->assertEquals(Bootstrap::class, get_class($xDialogManager->getQuestionLibrary()));
+        $this->assertEquals(Bootstrap::class, get_class($xDialogManager->getMessageLibrary()));
+        $this->assertEquals(Bootstrap::class, get_class($xDialogManager->getModalLibrary()));
 
         jaxon()->setOption('dialogs.default.modal', 'bootbox');
         jaxon()->setOption('dialogs.default.message', 'bootbox');
         jaxon()->setOption('dialogs.default.question', 'bootbox');
-        $this->assertEquals(BootboxLibrary::class, get_class($xDialogManager->getQuestionLibrary()));
-        $this->assertEquals(BootboxLibrary::class, get_class($xDialogManager->getMessageLibrary()));
-        $this->assertEquals(BootboxLibrary::class, get_class($xDialogManager->getModalLibrary()));
+        $this->assertEquals(Bootbox::class, get_class($xDialogManager->getQuestionLibrary()));
+        $this->assertEquals(Bootbox::class, get_class($xDialogManager->getMessageLibrary()));
+        $this->assertEquals(Bootbox::class, get_class($xDialogManager->getModalLibrary()));
     }
 
     public function testDialogOptions()
@@ -76,7 +76,7 @@ class DialogTest extends TestCase
         $xDialogManager = jaxon()->di()->getDialogManager();
         jaxon()->setOption('dialogs.default.message', 'cute');
         $xMessageLibrary = $xDialogManager->getMessageLibrary();
-        $this->assertEquals(CuteAlertLibrary::class, get_class($xMessageLibrary));
+        $this->assertEquals(CuteAlert::class, get_class($xMessageLibrary));
     }
 
     public function testDialogDefaultMethods()
