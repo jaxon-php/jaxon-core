@@ -23,7 +23,7 @@ use function get_class;
 use function Jaxon\jaxon;
 use function Jaxon\rq;
 use function Jaxon\pm;
-use function Jaxon\Dialogs\registerDialogLibraries;
+use function Jaxon\Dialogs\register;
 
 class DialogTest extends TestCase
 {
@@ -32,7 +32,7 @@ class DialogTest extends TestCase
      */
     public function setUp(): void
     {
-        registerDialogLibraries();
+        register();
         jaxon()->setOption('core.prefix.class', '');
         jaxon()->setOption('core.request.uri', 'http://example.test/path');
         jaxon()->register(Jaxon::CALLABLE_CLASS, Dialog::class);

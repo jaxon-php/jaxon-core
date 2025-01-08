@@ -14,7 +14,7 @@ use Annotated;
 use Excluded;
 
 use function Jaxon\jaxon;
-use function Jaxon\Annotations\registerAnnotations;
+use function Jaxon\Annotations\register;
 
 class AnnotationTestDisabled extends TestCase
 {
@@ -23,7 +23,7 @@ class AnnotationTestDisabled extends TestCase
      */
     public function setUp(): void
     {
-        registerAnnotations();
+        register();
 
         jaxon()->config(__DIR__ . '/../config/annotations.php');
 

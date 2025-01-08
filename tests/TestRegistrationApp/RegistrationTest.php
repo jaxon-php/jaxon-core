@@ -13,7 +13,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use PHPUnit\Framework\TestCase;
 
 use function Jaxon\jaxon;
-use function Jaxon\Dialogs\registerDialogLibraries;
+use function Jaxon\Dialogs\register;
 
 class RegistrationTest extends TestCase
 {
@@ -22,7 +22,7 @@ class RegistrationTest extends TestCase
     public function setUp(): void
     {
         $this->jsDir = realpath(__DIR__ . '/../src/js');
-        registerDialogLibraries();
+        register();
         jaxon()->app()->setup(__DIR__ . '/../config/app/app.php');
         jaxon()->app()->asset(true, true, 'http://example.test/js', $this->jsDir);
     }
