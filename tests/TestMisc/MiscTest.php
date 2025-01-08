@@ -16,35 +16,10 @@ use function Jaxon\jaxon;
 final class MiscTest extends TestCase
 {
     /**
-     * @var string
-     */
-    protected $sNameWhite;
-
-    /**
-     * @var string
-     */
-    protected $sPathWhite;
-
-    /**
-     * @var int
-     */
-    protected $sSizeWhite;
-
-    /**
      * @throws SetupException
      */
     protected function setUp(): void
     {
-        $tmpDir = __DIR__ . '/../upload/tmp';
-        @mkdir($tmpDir);
-
-        $sSrcWhite = __DIR__ . '/../upload/src/white.png';
-        $this->sNameWhite = 'white.png';
-        $this->sPathWhite = "$tmpDir/{$this->sNameWhite}";
-        $this->sSizeWhite = filesize($sSrcWhite);
-        // Copy the file to the temp dir.
-        @copy($sSrcWhite, $this->sPathWhite);
-
         jaxon()->config()->setOptions(['core' => ['language' => 'en']]);
     }
 

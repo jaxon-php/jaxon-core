@@ -6,5 +6,3 @@ composer.lock
 .idea
 /build/
 .phpunit.result.cache
-tests/upload/tmp
-tests/upload/dst

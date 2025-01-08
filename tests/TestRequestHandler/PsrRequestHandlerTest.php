@@ -27,31 +27,6 @@ class PsrRequestHandlerTest extends TestCase
 
     private $xEmptyRequestHandler;
 
-    /**
-     * @var string
-     */
-    protected $sNameWhite;
-
-    /**
-     * @var string
-     */
-    protected $tmpDir;
-
-    /**
-     * @var string
-     */
-    protected $sSrcWhite;
-
-    /**
-     * @var string
-     */
-    protected $sPathWhite;
-
-    /**
-     * @var int
-     */
-    protected $sSizeWhite;
-
     public function setUp(): void
     {
         jaxon()->psr()
@@ -79,12 +54,6 @@ class PsrRequestHandlerTest extends TestCase
                 return $this->xPsr17Factory->createResponse();
             }
         };
-
-        $this->tmpDir = realpath(__DIR__ . '/../upload/tmp');
-        $this->sSrcWhite = __DIR__ . '/../upload/src/white.png';
-        $this->sNameWhite = 'white.png';
-        $this->sPathWhite = "{$this->tmpDir}/{$this->sNameWhite}";
-        $this->sSizeWhite = filesize($this->sSrcWhite);
     }
 
     /**
