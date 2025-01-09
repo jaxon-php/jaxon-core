@@ -35,12 +35,9 @@ use Jaxon\App\View\ViewRenderer;
 use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\Manager\PluginManager;
-use Jaxon\Plugin\Request\CallableClass\CallableRegistry;
-use Jaxon\Plugin\Response\Dialog\DialogManager;
 use Jaxon\Request\Handler\Psr\PsrFactory;
 use Jaxon\Request\Upload\UploadHandlerInterface;
 use Jaxon\Response\Response;
-use Jaxon\Response\ResponseManager;
 use Jaxon\Utils\Template\TemplateEngine;
 
 use function trim;
@@ -72,11 +69,6 @@ final class Lib
         $this->xClassContainer = $xClassContainer;
         // Set the attributes from the container
         $this->xBootstrap = $xContainer->g(Bootstrap::class);
-        $this->xTranslator = $xContainer->g(Translator::class);
-        $this->xConfigManager = $xContainer->g(ConfigManager::class);
-        $this->xPluginManager = $xContainer->g(PluginManager::class);
-        $this->xResponseManager = $xContainer->g(ResponseManager::class);
-        $this->xCallableRegistry = $xContainer->g(CallableRegistry::class);
     }
 
     /**
@@ -128,9 +120,9 @@ final class Lib
     {
         if(!empty(($sConfigFile = trim($sConfigFile))))
         {
-            $this->xConfigManager->load($sConfigFile, trim($sConfigSection));
+            $this->getConfigManager()->load($sConfigFile, trim($sConfigSection));
         }
-        return $this->xConfigManager;
+        return $this->getConfigManager();
     }
 
     /**
@@ -140,7 +132,7 @@ final class Lib
      */
     public function getResponse(): Response
     {
-        return $this->xResponseManager->getResponse();
+        return $this->getResponseManager()->getResponse();
     }
 
     /**
@@ -150,7 +142,7 @@ final class Lib
      */
     public function newResponse(): Response
     {
-        return $this->xResponseManager->newResponse();
+        return $this->getResponseManager()->newResponse();
     }
 
     /**
@@ -170,7 +162,7 @@ final class Lib
      */
     public function registerPlugin(string $sClassName, string $sPluginName, int $nPriority = 1000)
     {
-        $this->xPluginManager->registerPlugin($sClassName, $sPluginName, $nPriority);
+        $this->getPluginManager()->registerPlugin($sClassName, $sPluginName, $nPriority);
     }
 
     /**
@@ -214,7 +206,7 @@ final class Lib
      */
     public function register(string $sType, string $sName, $xOptions = [])
     {
-        $this->xPluginManager->registerCallable($sType, $sName, $xOptions);
+        $this->getPluginManager()->registerCallable($sType, $sName, $xOptions);
     }
 
     /**
@@ -270,14 +262,6 @@ final class Lib
     public function view(): ViewRenderer
     {
         return $this->di()->getViewRenderer();
-    }
-
-    /**
-     * @return DialogManager
-     */
-    public function dialog(): DialogManager
-    {
-        return $this->di()->getDialogManager();
     }
 
     /**

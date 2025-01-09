@@ -1,7 +1,7 @@
 <?php
 
 /**
- * QuestionInterface.php - A confirmation question for a Jaxon request
+ * ConfirmInterface.php - A confirmation question for a Jaxon request
  *
  * Interface for adding a confirmation question which is asked before calling a Jaxon function.
  *
@@ -11,8 +11,8 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Plugin\Response\Dialog\Library;
+namespace Jaxon\App\Dialog\Library;
 
-interface QuestionInterface extends LibraryInterface
+interface ConfirmInterface extends LibraryInterface
 {
 }

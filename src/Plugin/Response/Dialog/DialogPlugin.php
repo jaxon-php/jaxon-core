@@ -1,10 +1,10 @@
 <?php
 
 /**
- * DialogPlugin.php - ModalInterface, message and question dialogs for Jaxon.
+ * DialogPlugin.php - Modal, alert and confirm dialogs for Jaxon.
  *
- * Show modal, message and question dialogs with various javascript libraries
- * based on user settings.
+ * Show modal, alert and confirm dialogs with various javascript libraries.
+ * This class implements the dialog commands.
  *
  * @package jaxon-core
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
@@ -16,46 +16,28 @@
 namespace Jaxon\Plugin\Response\Dialog;
 
 use Jaxon\App\Dialog\AlertInterface;
+use Jaxon\App\Dialog\Manager\DialogCommand;
 use Jaxon\App\Dialog\ModalInterface;
-use Jaxon\Exception\SetupException;
-use Jaxon\Plugin\AbstractResponsePlugin;
+use Jaxon\Plugin\PluginInterface;
+use Jaxon\Plugin\ResponsePluginInterface;
+use Jaxon\Plugin\ResponsePluginTrait;
 
-use function array_reduce;
-use function trim;
-
-class DialogPlugin extends AbstractResponsePlugin implements ModalInterface, AlertInterface
+class DialogPlugin implements PluginInterface, ResponsePluginInterface, ModalInterface, AlertInterface
 {
+    use ResponsePluginTrait;
+
     /**
      * @const The plugin name
      */
     const NAME = 'dialog';
 
     /**
-     * @var DialogCommand
-     */
-    protected $xDialogCommand;
-
-    /**
-     * @var DialogManager
-     */
-    protected $xDialogManager;
-
-    /**
-     * @var array
-     */
-    protected $aLibraries = null;
-
-    /**
      * The constructor
      *
      * @param DialogCommand $xDialogCommand
-     * @param DialogManager $xDialogManager
      */
-    public function __construct(DialogCommand $xDialogCommand, DialogManager $xDialogManager)
-    {
-        $this->xDialogCommand = $xDialogCommand;
-        $this->xDialogManager = $xDialogManager;
-    }
+    public function __construct(private DialogCommand $xDialogCommand)
+    {}
 
     /**
      * @inheritDoc
@@ -66,26 +48,12 @@ class DialogPlugin extends AbstractResponsePlugin implements ModalInterface, Ale
     }
 
     /**
-     * @inheritDoc
-     */
-    public function getHash(): string
-    {
-        // The version number is used as hash
-        return '4.0.0';
-    }
-
-    public function getUri(): string
-    {
-        return '';
-    }
-
-    /**
-     * @inheritDoc
+     * Initialize the plugin
+     *
+     * @return void
      */
     protected function init()
-    {
-        $this->xDialogManager->setNextLibrary('');
-    }
+    {}
 
     /**
      * Set the library to use for the next call.
@@ -96,61 +64,8 @@ class DialogPlugin extends AbstractResponsePlugin implements ModalInterface, Ale
      */
     public function with(string $sLibrary): DialogPlugin
     {
-        $this->xDialogManager->setNextLibrary($sLibrary);
+        $this->xDialogCommand->library($sLibrary);
         return $this;
-    }
-
-    /**
-     * @return array
-     */
-    private function getLibraries(): array
-    {
-        if($this->aLibraries === null)
-        {
-            $this->aLibraries = $this->xDialogManager->getLibraries();
-        }
-        return $this->aLibraries;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getJs(): string
-    {
-        return array_reduce($this->getLibraries(), function($sCode, $xLibrary) {
-            return $sCode . $xLibrary->getJs() . "\n\n";
-        }, '');
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getCss(): string
-    {
-        return array_reduce($this->getLibraries(), function($sCode, $xLibrary) {
-            return $sCode . trim($xLibrary->getCss()) . "\n\n";
-        }, '');
-    }
-
-    /**
-     * @inheritDoc
-     * @throws SetupException
-     */
-    public function getScript(): string
-    {
-        return array_reduce($this->getLibraries(), function($sCode, $xLibrary) {
-            return $sCode . trim($xLibrary->getScript()) . "\n\n";
-        }, '');
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getReadyScript(): string
-    {
-        return array_reduce($this->getLibraries(), function($sCode, $xLibrary) {
-            return $sCode . trim($xLibrary->getReadyScript()) . "\n\n";
-        }, '');
     }
 
     /**

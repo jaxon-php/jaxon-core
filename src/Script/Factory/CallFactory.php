@@ -14,7 +14,7 @@ namespace Jaxon\Script\Factory;
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-use Jaxon\Plugin\Response\Dialog\DialogCommand;
+use Jaxon\App\Dialog\Manager\DialogCommand;
 use Jaxon\Di\ClassContainer;
 use Jaxon\Exception\SetupException;
 use Jaxon\Script\JqCall;

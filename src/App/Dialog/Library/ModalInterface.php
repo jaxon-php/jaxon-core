@@ -10,7 +10,7 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Plugin\Response\Dialog\Library;
+namespace Jaxon\App\Dialog\Library;
 
 interface ModalInterface extends LibraryInterface
 {

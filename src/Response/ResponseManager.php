@@ -21,10 +21,10 @@
 
 namespace Jaxon\Response;
 
+use Jaxon\App\Dialog\Manager\DialogCommand;
 use Jaxon\App\I18n\Translator;
 use Jaxon\Exception\AppException;
 use Jaxon\Di\Container;
-use Jaxon\Plugin\Response\Dialog\DialogCommand;
 use Jaxon\Script\JxnCall;
 use Closure;
 use JsonSerializable;
@@ -102,15 +102,12 @@ class ResponseManager
     /**
      * @param Container $di
      * @param Translator $xTranslator
-     * @param DialogCommand $xDialog
      * @param string $sCharacterEncoding
      */
-    public function __construct(Container $di, Translator $xTranslator,
-        DialogCommand $xDialog, string $sCharacterEncoding)
+    public function __construct(Container $di, Translator $xTranslator, string $sCharacterEncoding)
     {
         $this->di = $di;
         $this->xTranslator = $xTranslator;
-        $this->xDialog = $xDialog;
         $this->sCharacterEncoding = $sCharacterEncoding;
     }
 
@@ -265,7 +262,7 @@ class ResponseManager
             // The confirm command must be inserted before the commands to be confirmed.
             $this->addCommand($sName, [
                 'count' => $nCommandCount,
-                'question' => $this->xDialog->confirm($this->str($sQuestion), $aArgs),
+                'question' => $this->di->getDialogCommand()->confirm($this->str($sQuestion), $aArgs),
             ]);
             $this->aCommands = array_merge($this->aCommands, $this->aConfirmCommands);
             $this->aConfirmCommands = [];
@@ -286,7 +283,7 @@ class ResponseManager
      */
     public function addAlertCommand(string $sName, string $sMessage, array $aArgs = []): self
     {
-        $this->addCommand($sName, $this->xDialog->info($this->str($sMessage), $aArgs));
+        $this->addCommand($sName, $this->di->getDialogCommand()->info($this->str($sMessage), $aArgs));
         return $this;
     }
 

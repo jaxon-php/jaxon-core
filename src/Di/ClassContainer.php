@@ -16,13 +16,13 @@ namespace Jaxon\Di;
 
 use Jaxon\App\AbstractCallable;
 use Jaxon\App\Config\ConfigManager;
+use Jaxon\App\Dialog\Manager\DialogCommand;
 use Jaxon\App\I18n\Translator;
 use Jaxon\App\Pagination;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\Request\CallableClass\CallableClassHelper;
 use Jaxon\Plugin\Request\CallableClass\CallableObject;
 use Jaxon\Plugin\Request\CallableClass\CallableRegistry;
-use Jaxon\Plugin\Response\Dialog\DialogCommand;
 use Jaxon\Request\Handler\CallbackManager;
 use Jaxon\Script\JxnCall;
 use Jaxon\Script\JxnClass;

@@ -37,33 +37,18 @@ class ConfigManager
     protected $xAppConfig = null;
 
     /**
-     * @var ConfigReader
-     */
-    protected $xConfigReader;
-
-    /**
-     * @var ConfigEventManager
-     */
-    protected $xEventManager;
-
-    /**
-     * @var Translator
-     */
-    protected $xTranslator;
-
-    /**
      * The constructor
      *
+     * @param array $aDefaultOptions
      * @param ConfigReader $xConfigReader
      * @param ConfigEventManager $xEventManager
      * @param Translator $xTranslator
      */
-    public function __construct(ConfigReader $xConfigReader, ConfigEventManager $xEventManager, Translator $xTranslator)
+    public function __construct(array $aDefaultOptions, private ConfigReader $xConfigReader,
+        private ConfigEventManager $xEventManager, private Translator $xTranslator)
     {
-        $this->xConfigReader = $xConfigReader;
-        $this->xEventManager = $xEventManager;
-        $this->xTranslator = $xTranslator;
         $this->xLibConfig = new Config();
+        $this->xLibConfig->setOptions($aDefaultOptions);
     }
 
     /**

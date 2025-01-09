@@ -12,4 +12,11 @@ interface ResponsePluginInterface
      * @return AbstractResponse|null
      */
     public function response(): ?AbstractResponse;
+
+    /**
+     * @param AbstractResponse $xResponse   The response
+     *
+     * @return ResponsePluginInterface
+     */
+    public function _init(AbstractResponse $xResponse): ResponsePluginInterface;
 }

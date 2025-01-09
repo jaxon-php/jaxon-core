@@ -83,6 +83,7 @@ class Container
         $this->val('jaxon.core.dir.translation', $sTranslationDir);
 
         $this->registerAll();
+        $this->setEventHandlers();
     }
 
     /**

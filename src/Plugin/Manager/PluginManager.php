@@ -36,7 +36,6 @@ use Jaxon\Plugin\Response\Dialog\DialogPlugin;
 use Jaxon\Plugin\Response\Script\ScriptPlugin;
 use Jaxon\Plugin\Response\Pagination\PaginatorPlugin;
 use Jaxon\Plugin\Response\Psr\PsrPlugin;
-use Jaxon\Plugin\AbstractResponsePlugin;
 use Jaxon\Plugin\ResponsePluginInterface;
 use Jaxon\Request\Handler\ParameterReader;
 
@@ -164,9 +163,9 @@ class PluginManager
      *
      * @param string $sName    The name of the plugin
      *
-     * @return AbstractResponsePlugin|null
+     * @return ResponsePluginInterface|null
      */
-    public function getResponsePlugin(string $sName): ?AbstractResponsePlugin
+    public function getResponsePlugin(string $sName): ?ResponsePluginInterface
     {
         return !isset($this->aResponsePlugins[$sName]) ? null :
             $this->di->g($this->aResponsePlugins[$sName]);

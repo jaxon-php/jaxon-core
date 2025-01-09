@@ -27,9 +27,6 @@ namespace Jaxon\Plugin;
 
 use Jaxon\Script\JqCall;
 use Jaxon\Plugin\Response\DataBag\DataBagContext;
-use Jaxon\Response\AbstractResponse;
-use Jaxon\Response\Command;
-use JsonSerializable;
 
 /**
  * @method JqCall jq(string $sPath = '', $xContext = null)
@@ -37,12 +34,7 @@ use JsonSerializable;
  */
 abstract class AbstractResponsePlugin extends AbstractPlugin implements ResponsePluginInterface
 {
-    /**
-     * The object used to build the response that will be sent to the client browser
-     *
-     * @var AbstractResponse
-     */
-    private $xResponse = null;
+    use ResponsePluginTrait;
 
     /**
      * Initialize the plugin
@@ -51,39 +43,4 @@ abstract class AbstractResponsePlugin extends AbstractPlugin implements Response
      */
     protected function init()
     {}
-
-    /**
-     * @param AbstractResponse $xResponse   The response
-     *
-     * @return self
-     */
-    public function _init(AbstractResponse $xResponse): self
-    {
-        $this->xResponse = $xResponse;
-        $this->init();
-        return $this;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function response(): ?AbstractResponse
-    {
-        return $this->xResponse;
-    }
-
-    /**
-     * Add a plugin command to the response
-     *
-     * @param string $sName    The command name
-     * @param array|JsonSerializable $aOptions    The command options
-     *
-     * @return Command
-     */
-    public function addCommand(string $sName, array|JsonSerializable $aOptions): Command
-    {
-        return $this->xResponse
-            ->addCommand($sName, $aOptions)
-            ->setOption('plugin', $this->getName());
-    }
 }

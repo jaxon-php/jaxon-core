@@ -15,7 +15,7 @@
 namespace Jaxon\App\Ajax;
 
 use Jaxon\Plugin\AbstractPackage;
-use Jaxon\Plugin\AbstractResponsePlugin;
+use Jaxon\Plugin\ResponsePluginInterface;
 use Jaxon\Request\Handler\CallbackManager;
 use Jaxon\Response\AjaxResponse;
 use Jaxon\Utils\Http\UriException;
@@ -183,9 +183,9 @@ interface AppInterface
      *
      * @param string $sName    The name of the plugin
      *
-     * @return AbstractResponsePlugin|null
+     * @return ResponsePluginInterface|null
      */
-    public function plugin(string $sName): ?AbstractResponsePlugin;
+    public function plugin(string $sName): ?ResponsePluginInterface;
 
     /**
      * Get a package instance

@@ -32,17 +32,17 @@ class App extends AbstractApp
     {
         if(!file_exists($sConfigFile))
         {
-            $sMessage = $this->xTranslator->trans('errors.file.access', ['path' => $sConfigFile]);
+            $sMessage = $this->translator()->trans('errors.file.access', ['path' => $sConfigFile]);
             throw new SetupException($sMessage);
         }
 
         // Read the config options.
-        $aOptions = $this->xConfigManager->read($sConfigFile);
+        $aOptions = $this->getConfigManager()->read($sConfigFile);
         $aLibOptions = $aOptions['lib'] ?? [];
         $aAppOptions = $aOptions['app'] ?? [];
         if(!is_array($aLibOptions) || !is_array($aAppOptions))
         {
-            $sMessage = $this->xTranslator->trans('errors.file.content', ['path' => $sConfigFile]);
+            $sMessage = $this->translator()->trans('errors.file.content', ['path' => $sConfigFile]);
             throw new SetupException($sMessage);
         }
         // The bootstrap set this to false. It needs to be changed.

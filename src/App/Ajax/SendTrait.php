@@ -35,7 +35,7 @@ trait SendTrait
      */
     public function sendResponse(string $sCode = '200')
     {
-        if(!$this->xConfigManager->getOption('core.response.send', false))
+        if(!$this->getConfigManager()->getOption('core.response.send', false))
         {
             return;
         }
@@ -43,11 +43,11 @@ trait SendTrait
         // Check to see if headers have already been sent out, in which case we can't do our job
         if(headers_sent($sFilename, $nLineNumber))
         {
-            throw new RequestException($this->xTranslator->trans('errors.output.already-sent',
+            throw new RequestException($this->translator()->trans('errors.output.already-sent',
                     ['location' => $sFilename . ':' . $nLineNumber]) . "\n" .
-                $this->xTranslator->trans('errors.output.advice'));
+                $this->translator()->trans('errors.output.advice'));
         }
-        if(empty($sContent = $this->xResponseManager->getOutput()))
+        if(empty($sContent = $this->getResponseManager()->getOutput()))
         {
             return;
         }
@@ -62,11 +62,11 @@ trait SendTrait
             header("Cache-Control: no-cache, must-revalidate");
             header("Pragma: no-cache");
         }
-        header('Content-Type: ' . $this->xResponseManager->getContentType());
+        header('Content-Type: ' . $this->getResponseManager()->getContentType());
 
         print $sContent;
 
-        if($this->xConfigManager->getOption('core.process.exit', false))
+        if($this->getConfigManager()->getOption('core.process.exit', false))
         {
             exit();
         }

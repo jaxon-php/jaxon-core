@@ -14,7 +14,7 @@
 
 namespace Jaxon\Script;
 
-use Jaxon\Plugin\Response\Dialog\DialogCommand;
+use Jaxon\App\Dialog\Manager\DialogCommand;
 use Jaxon\Script\Call\Attr;
 use Jaxon\Script\Call\Event;
 use Jaxon\Script\Call\Func;

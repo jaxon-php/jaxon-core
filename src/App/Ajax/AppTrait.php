@@ -17,12 +17,8 @@ namespace Jaxon\App\Ajax;
 use Jaxon\App\Ajax\Bootstrap;
 use Jaxon\App\Ajax\Lib;
 use Jaxon\App\Config\ConfigManager;
-use Jaxon\App\I18n\Translator;
 use Jaxon\Exception\RequestException;
-use Jaxon\Plugin\Manager\PluginManager;
-use Jaxon\Plugin\Request\CallableClass\CallableRegistry;
 use Jaxon\Response\AjaxResponse;
-use Jaxon\Response\ResponseManager;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use Closure;
@@ -38,12 +34,6 @@ trait AppTrait
     {
         $this->xContainer = Lib::getInstance()->di();
         $this->xClassContainer = Lib::getInstance()->cls();
-        // Set the attributes from the container
-        $this->xConfigManager = $this->xContainer->g(ConfigManager::class);
-        $this->xResponseManager = $this->xContainer->g(ResponseManager::class);
-        $this->xPluginManager = $this->xContainer->g(PluginManager::class);
-        $this->xCallableRegistry = $this->xContainer->g(CallableRegistry::class);
-        $this->xTranslator = $this->xContainer->g(Translator::class);
     }
 
     /**
@@ -93,7 +83,7 @@ trait AppTrait
      */
     public function config(string $sConfigFile = '', string $sConfigSection = ''): ConfigManager
     {
-        return $this->xConfigManager;
+        return $this->getConfigManager();
     }
 
     /**
@@ -106,7 +96,7 @@ trait AppTrait
      */
     public function getAppOption(string $sName, $xDefault = null)
     {
-        return $this->xConfigManager->getAppOption($sName, $xDefault);
+        return $this->getConfigManager()->getAppOption($sName, $xDefault);
     }
 
     /**
@@ -118,7 +108,7 @@ trait AppTrait
      */
     public function hasAppOption(string $sName): bool
     {
-        return $this->xConfigManager->hasAppOption($sName);
+        return $this->getConfigManager()->hasAppOption($sName);
     }
 
     /**
@@ -137,7 +127,7 @@ trait AppTrait
      */
     public function ajaxResponse(): AjaxResponse
     {
-        return $this->xResponseManager->getResponse();
+        return $this->getResponseManager()->getResponse();
     }
 
     /**

@@ -11,7 +11,7 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Plugin\Response\Dialog;
+namespace Jaxon\App\Dialog\Manager;
 
 use Jaxon\Script\Call\Parameter;
 
@@ -20,9 +20,11 @@ use function array_map;
 class DialogCommand
 {
     /**
-     * @var DialogManager
+     * The next message library
+     *
+     * @var string
      */
-    protected $xDialogManager;
+    private $sLibrary = '';
 
     /**
      * The next message title
@@ -34,11 +36,33 @@ class DialogCommand
     /**
      * The constructor
      *
-     * @param DialogManager $xDialogManager
+     * @param LibraryRegistryInterface|null $xRegistry
      */
-    public function __construct(DialogManager $xDialogManager)
+    public function __construct(private ?LibraryRegistryInterface $xRegistry)
+    {}
+
+    /**
+     * Set the library for the next message.
+     *
+     * @param string $sLibrary     The name of the library
+     *
+     * @return void
+     */
+    public function library(string $sLibrary)
     {
-        $this->xDialogManager = $xDialogManager;
+        $this->sLibrary = $sLibrary;
+    }
+
+    /**
+     * Set the title of the next message.
+     *
+     * @param string $sTitle     The title of the message
+     *
+     * @return void
+     */
+    public function title(string $sTitle)
+    {
+        $this->sTitle = $sTitle;
     }
 
     /**
@@ -58,16 +82,23 @@ class DialogCommand
     }
 
     /**
-     * Set the title of the next message.
-     *
-     * @param string $sTitle     The title of the message
-     *
-     * @return self
+     * @return string
      */
-    public function title(string $sTitle)
+    private function getLibrary(): string
     {
-        $this->sTitle = $sTitle;
-        return $this;
+        $sLibrary = $this->sLibrary;
+        $this->sLibrary = '';
+        return $sLibrary;
+    }
+
+    /**
+     * @return string
+     */
+    private function getTitle(): string
+    {
+        $sTitle = $this->sTitle;
+        $this->sTitle = '';
+        return $sTitle;
     }
 
     /**
@@ -81,12 +112,11 @@ class DialogCommand
      */
     private function alert(string $sType, string $sMessage, array $aArgs): array
     {
-        $sTitle = $this->sTitle;
-        $this->sTitle = '';
         return [
-            'lib' => $this->xDialogManager->getMessageLibrary()->getName(),
+            'lib' => $this->getLibrary() ?:
+                ($this->xRegistry?->getAlertLibrary()->getName() ?? ''),
             'type' => $sType,
-            'title' => $sTitle,
+            'title' => $this->getTitle(),
             'phrase' => $this->phrase($sMessage, $aArgs),
         ];
     }
@@ -165,7 +195,8 @@ class DialogCommand
     public function show(string $sTitle, string $sContent, array $aButtons, array $aOptions = []): array
     {
         return [
-            'lib' => $this->xDialogManager->getModalLibrary()->getName(),
+            'lib' => $this->getLibrary() ?:
+                ($this->xRegistry?->getModalLibrary()->getName() ?? ''),
             'dialog' => [
                 'title' => $sTitle,
                 'content' => $sContent,
@@ -183,7 +214,8 @@ class DialogCommand
     public function hide(): array
     {
         return [
-            'lib' => $this->xDialogManager->getModalLibrary()->getName(),
+            'lib' => $this->getLibrary() ?:
+                ($this->xRegistry?->getModalLibrary()->getName() ?? ''),
         ];
     }
 
@@ -197,11 +229,10 @@ class DialogCommand
      */
     public function confirm(string $sQuestion, array $aArgs = []): array
     {
-        $sTitle = $this->sTitle;
-        $this->sTitle = '';
         return [
-            'lib' => $this->xDialogManager->getQuestionLibrary()->getName(),
-            'title' => $sTitle,
+            'lib' => $this->getLibrary() ?:
+                ($this->xRegistry?->getConfirmLibrary()->getName() ?? ''),
+            'title' => $this->getTitle(),
             'phrase' => $this->phrase($sQuestion, $aArgs),
         ];
     }

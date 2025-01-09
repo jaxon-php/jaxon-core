@@ -21,8 +21,7 @@ use Jaxon\Di\Container;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Plugin\AbstractPackage;
-use Jaxon\Plugin\AbstractResponsePlugin;
-use Jaxon\Plugin\Request\CallableClass\CallableRegistry;
+use Jaxon\Plugin\ResponsePluginInterface;
 use Jaxon\Request\Handler\CallbackManager;
 use Jaxon\Response\ResponseManager;
 use Jaxon\Utils\Http\UriException;
@@ -45,27 +44,22 @@ trait LibTrait
     /**
      * @var ConfigManager
      */
-    protected $xConfigManager;
+    protected $xConfigManager = null;
 
     /**
      * @var ResponseManager
      */
-    protected $xResponseManager;
+    protected $xResponseManager = null;
 
     /**
      * @var PluginManager
      */
-    protected $xPluginManager;
-
-    /**
-     * @var CallableRegistry
-     */
-    protected $xCallableRegistry;
+    protected $xPluginManager = null;
 
     /**
      * @var Translator
      */
-    protected $xTranslator;
+    protected $xTranslator = null;
 
     /**
      * @return Container
@@ -96,7 +90,34 @@ trait LibTrait
      */
     public function translator(): Translator
     {
-        return $this->xTranslator;
+        return $this->xTranslator ?: $this->xTranslator = $this->di()->g(Translator::class);
+    }
+
+    /**
+     * @return ConfigManager
+     */
+    protected function getConfigManager(): ConfigManager
+    {
+        return $this->xConfigManager ?:
+            $this->xConfigManager = $this->xContainer->g(ConfigManager::class);
+    }
+
+    /**
+     * @return ResponseManager
+     */
+    protected function getResponseManager(): ResponseManager
+    {
+        return $this->xResponseManager ?:
+            $this->xResponseManager = $this->xContainer->g(ResponseManager::class);
+    }
+
+    /**
+     * @return PluginManager
+     */
+    protected function getPluginManager(): PluginManager
+    {
+        return $this->xPluginManager ?:
+            $this->xPluginManager = $this->xContainer->g(PluginManager::class);
     }
 
     /**
@@ -109,7 +130,7 @@ trait LibTrait
      */
     public function setOption(string $sName, $sValue)
     {
-        $this->xConfigManager->setOption($sName, $sValue);
+        $this->getConfigManager()->setOption($sName, $sValue);
     }
 
     /**
@@ -122,7 +143,7 @@ trait LibTrait
      */
     public function getOption(string $sName, $xDefault = null)
     {
-        return $this->xConfigManager->getOption($sName, $xDefault);
+        return $this->getConfigManager()->getOption($sName, $xDefault);
     }
 
     /**
@@ -134,7 +155,7 @@ trait LibTrait
      */
     public function hasOption(string $sName): bool
     {
-        return $this->xConfigManager->hasOption($sName);
+        return $this->getConfigManager()->hasOption($sName);
     }
 
     /**
@@ -154,7 +175,7 @@ trait LibTrait
      */
     public function getContentType(): string
     {
-        return $this->xResponseManager->getContentType();
+        return $this->getResponseManager()->getContentType();
     }
 
     /**
@@ -256,11 +277,11 @@ trait LibTrait
      *
      * @param string $sName    The name of the plugin
      *
-     * @return AbstractResponsePlugin|null
+     * @return ResponsePluginInterface|null
      */
-    public function plugin(string $sName): ?AbstractResponsePlugin
+    public function plugin(string $sName): ?ResponsePluginInterface
     {
-        return $this->xPluginManager->getResponsePlugin($sName);
+        return $this->getPluginManager()->getResponsePlugin($sName);
     }
 
     /**

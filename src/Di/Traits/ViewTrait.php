@@ -2,16 +2,8 @@
 
 namespace Jaxon\Di\Traits;
 
-use Jaxon\App\Config\ConfigManager;
-use Jaxon\Plugin\Response\Dialog\DialogCommand;
-use Jaxon\Plugin\Response\Dialog\Library\AlertLibrary;
-use Jaxon\Plugin\Response\Dialog\Library\DialogLibraryHelper;
-use Jaxon\Plugin\Response\Dialog\DialogManager;
-use Jaxon\Plugin\Response\Dialog\Library\LibraryInterface;
-use Jaxon\Plugin\Response\Dialog\Library\MessageInterface;
-use Jaxon\Plugin\Response\Dialog\Library\ModalInterface;
-use Jaxon\Plugin\Response\Dialog\Library\QuestionInterface;
-use Jaxon\App\I18n\Translator;
+use Jaxon\App\Dialog\Manager\DialogCommand;
+use Jaxon\App\Dialog\Manager\LibraryRegistryInterface;
 use Jaxon\App\View\HtmlAttrHelper;
 use Jaxon\App\View\TemplateView;
 use Jaxon\App\View\ViewRenderer;
@@ -50,123 +42,19 @@ trait ViewTrait
             return $xViewRenderer;
         });
 
-        // Dialog library manager
-        $this->set(DialogManager::class, function($di) {
-            return new DialogManager($di->g(Container::class), $di->g(ConfigManager::class), $di->g(Translator::class));
+        // By default there is no dialog library registry.
+        $this->set(LibraryRegistryInterface::class, function($di) {
+            return null;
         });
+        // Dialog command
         $this->set(DialogCommand::class, function($di) {
-            return new DialogCommand($di->g(DialogManager::class));
+            return new DialogCommand($di->g(LibraryRegistryInterface::class));
         });
-        $this->val(AlertLibrary::class, new AlertLibrary());
 
         // Helpers for HTML custom attributes formatting
         $this->set(HtmlAttrHelper::class, function($di) {
             return new HtmlAttrHelper($di->g(ClassContainer::class));
         });
-    }
-
-    /**
-     * Register a javascript dialog library adapter.
-     *
-     * @param string $sClass
-     * @param string $sLibraryName
-     *
-     * @return void
-     */
-    public function registerDialogLibrary(string $sClass, string $sLibraryName)
-    {
-        $this->set($sClass, function($di) use($sClass) {
-            return $di->make($sClass);
-        });
-        $this->set("dialog_library_helper_$sLibraryName", function($di) use($sClass) {
-            return new DialogLibraryHelper($di->g($sClass),
-                $di->g(ConfigManager::class), $di->g(TemplateEngine::class));
-        });
-        // Set the alias, so the libraries can be found by their names.
-        $this->alias("dialog_library_$sLibraryName", $sClass);
-    }
-
-    /**
-     * Get the dialog library helper
-     *
-     * @param string $sLibraryName
-     *
-     * @return DialogLibraryHelper
-     */
-    public function getDialogLibraryHelper(string $sLibraryName): DialogLibraryHelper
-    {
-        return $this->g("dialog_library_helper_$sLibraryName");
-    }
-
-    /**
-     * Get a dialog library
-     *
-     * @param string $sLibraryName
-     *
-     * @return LibraryInterface
-     */
-    public function getDialogLibrary(string $sLibraryName): LibraryInterface
-    {
-        return $this->g("dialog_library_$sLibraryName");
-    }
-
-    /**
-     * Get the QuestionInterface library
-     *
-     * @param string $sLibraryName
-     *
-     * @return QuestionInterface
-     */
-    public function getQuestionLibrary(string $sLibraryName): QuestionInterface
-    {
-        $sKey = "dialog_library_$sLibraryName";
-        return $this->h($sKey) ? $this->g($sKey) : $this->g(AlertLibrary::class);
-    }
-
-    /**
-     * Get the MessageInterface library
-     *
-     * @param string $sLibraryName
-     *
-     * @return MessageInterface
-     */
-    public function getMessageLibrary(string $sLibraryName): MessageInterface
-    {
-        $sKey = "dialog_library_$sLibraryName";
-        return $this->h($sKey) ? $this->g($sKey) : $this->g(AlertLibrary::class);
-    }
-
-    /**
-     * Get the ModalInterface library
-     *
-     * @param string $sLibraryName
-     *
-     * @return ModalInterface|null
-     */
-    public function getModalLibrary(string $sLibraryName): ?ModalInterface
-    {
-        $sKey = "dialog_library_$sLibraryName";
-        return $this->h($sKey) ? $this->g($sKey) : null;
-    }
-
-    /**
-     * Get the dialog library manager
-     *
-     * @return DialogManager
-     */
-    public function getDialogManager(): DialogManager
-    {
-        return $this->g(DialogManager::class);
-    }
-
-    /**
-     * Get the dialog manager
-     *
-     * @return DialogCommand
-     */
-    public function getDialogCommand(): DialogCommand
-    {
-        return $this->g(DialogCommand::class);
     }
 
     /**
@@ -187,5 +75,15 @@ trait ViewTrait
     public function getHtmlAttrHelper(): HtmlAttrHelper
     {
         return $this->g(HtmlAttrHelper::class);
+    }
+
+    /**
+     * Get the dialog command
+     *
+     * @return DialogCommand
+     */
+    public function getDialogCommand(): DialogCommand
+    {
+        return $this->g(DialogCommand::class);
     }
 }

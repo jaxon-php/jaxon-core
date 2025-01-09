@@ -14,7 +14,7 @@ namespace Jaxon\Script;
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-use Jaxon\Plugin\Response\Dialog\DialogCommand;
+use Jaxon\App\Dialog\Manager\DialogCommand;
 use Closure;
 
 abstract class AbstractJsCall extends AbstractCall

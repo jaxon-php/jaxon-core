@@ -32,8 +32,8 @@ class PluginTest extends TestCase
         $this->assertNotNull(jaxon()->plugin('dialog'));
         $this->assertEquals(DialogPlugin::class, get_class(jaxon()->getResponse()->dialog));
         $this->assertEquals(DialogPlugin::class, get_class(jaxon()->plugin('dialog')));
-        $this->assertEquals(DialogPlugin::NAME, jaxon()->getResponse()->dialog->getname());
-        $this->assertEquals(DialogPlugin::NAME, jaxon()->plugin('dialog')->getname());
+        $this->assertEquals(DialogPlugin::NAME, jaxon()->getResponse()->dialog->getName());
+        $this->assertEquals(DialogPlugin::NAME, jaxon()->plugin('dialog')->getName());
     }
 
     public function testRegisterInvalidPlugin()

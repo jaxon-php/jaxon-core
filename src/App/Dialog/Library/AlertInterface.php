@@ -1,7 +1,7 @@
 <?php
 
 /**
- * MessageInterface.php - Interface for alert messages.
+ * AlertInterface.php - Interface for alert messages.
  *
  * @package jaxon-core
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
@@ -10,8 +10,8 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Plugin\Response\Dialog\Library;
+namespace Jaxon\App\Dialog\Library;
 
-interface MessageInterface extends LibraryInterface
+interface AlertInterface extends LibraryInterface
 {
 }

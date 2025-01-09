@@ -19,7 +19,6 @@ use Jaxon\App\View\ViewRenderer;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\Manager\PackageManager;
 use Jaxon\Request\Handler\CallbackManager;
-use Jaxon\Utils\Config\Config;
 
 use function call_user_func;
 

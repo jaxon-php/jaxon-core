@@ -12,7 +12,6 @@ use Jaxon\App\View\ViewRenderer;
 use Jaxon\Di\Container;
 use Jaxon\Request\Handler\CallbackManager;
 use Jaxon\Plugin\Manager\PackageManager;
-use Jaxon\Plugin\Response\Dialog\DialogManager;
 use Jaxon\Utils\Config\ConfigReader;
 
 trait AppTrait
@@ -34,14 +33,9 @@ trait AppTrait
             return new ConfigEventManager($di->g(Container::class));
         });
         $this->set(ConfigManager::class, function($di) {
-            $xEventManager = $di->g(ConfigEventManager::class);
-            $xConfigManager = new ConfigManager($di->g(ConfigReader::class), $xEventManager, $di->g(Translator::class));
-            $xConfigManager->setOptions(require(__DIR__ . '/../../../config/lib.php'));
-            // It's important to call this after the $xConfigManager->setOptions(),
-            // because we don't want to trigger the events since the listeners cannot yet be instantiated.
-            $xEventManager->addListener(Translator::class);
-            $xEventManager->addListener(DialogManager::class);
-            return $xConfigManager;
+            $aDefaultOptions = require(__DIR__ . '/../../../config/lib.php');
+            return new ConfigManager($aDefaultOptions, $di->g(ConfigReader::class),
+                $di->g(ConfigEventManager::class), $di->g(Translator::class));
         });
 
         // Jaxon App
@@ -60,6 +54,17 @@ trait AppTrait
                 $xRequest->getParsedBody() : $xRequest->getQueryParams();
             return $aParams['jxnv'] ?? '3.3.0';
         });
+    }
+
+    /**
+     * Register the event handlers
+     *
+     * @return void
+     */
+    private function setEventHandlers(): void
+    {
+        $xEventManager = $this->g(ConfigEventManager::class);
+        $xEventManager->addListener(Translator::class);
     }
 
     /**
