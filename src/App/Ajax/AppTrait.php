@@ -16,7 +16,6 @@ namespace Jaxon\App\Ajax;
 
 use Jaxon\App\Ajax\Bootstrap;
 use Jaxon\App\Ajax\Lib;
-use Jaxon\App\Config\ConfigManager;
 use Jaxon\Exception\RequestException;
 use Jaxon\Response\AjaxResponse;
 use Psr\Container\ContainerInterface;
@@ -26,6 +25,7 @@ use Closure;
 trait AppTrait
 {
     use LibTrait;
+    use AppConfigTrait;
 
     /**
      * @return void
@@ -71,44 +71,6 @@ trait AppTrait
     public function asset(bool $bExport, bool $bMinify, string $sUri = '', string $sDir = '')
     {
         $this->bootstrap()->asset($bExport, $bMinify, $sUri, $sDir);
-    }
-
-    /**
-     * Read the options from the file, if provided, and return the config
-     *
-     * @param string $sConfigFile The full path to the config file
-     * @param string $sConfigSection The section of the config file to be loaded
-     *
-     * @return ConfigManager
-     */
-    public function config(string $sConfigFile = '', string $sConfigSection = ''): ConfigManager
-    {
-        return $this->getConfigManager();
-    }
-
-    /**
-     * Get the value of an application config option
-     *
-     * @param string $sName The option name
-     * @param mixed $xDefault The default value, to be returned if the option is not defined
-     *
-     * @return mixed
-     */
-    public function getAppOption(string $sName, $xDefault = null)
-    {
-        return $this->getConfigManager()->getAppOption($sName, $xDefault);
-    }
-
-    /**
-     * Check the presence of an application config option
-     *
-     * @param string $sName The option name
-     *
-     * @return bool
-     */
-    public function hasAppOption(string $sName): bool
-    {
-        return $this->getConfigManager()->hasAppOption($sName);
     }
 
     /**

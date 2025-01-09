@@ -34,7 +34,7 @@ class ConfigManager
     /**
      * @var Config
      */
-    protected $xAppConfig = null;
+    protected $xAppConfig;
 
     /**
      * The constructor
@@ -49,6 +49,7 @@ class ConfigManager
     {
         $this->xLibConfig = new Config();
         $this->xLibConfig->setOptions($aDefaultOptions);
+        $this->xAppConfig = new Config();
     }
 
     /**
@@ -195,15 +196,47 @@ class ConfigManager
     }
 
     /**
-     * Set the application config
+     * Set the value of a config option
      *
-     * @param Config $xConfig
+     * @param string $sName The option name
+     * @param mixed $xValue The option value
      *
      * @return void
      */
-    public function setAppConfig(Config $xConfig)
+    public function setAppOption(string $sName, $xValue)
     {
-        $this->xAppConfig = $xConfig;
+        $this->xAppConfig->setOption($sName, $xValue);
+    }
+
+    /**
+     * Get the application config
+     *
+     * @return Config
+     */
+    public function getAppConfig(): Config
+    {
+        return $this->xAppConfig;
+    }
+
+    /**
+     * Set the application config options
+     *
+     * @param array $aAppOptions
+     *
+     * @return void
+     */
+    public function setAppOptions(array $aAppOptions)
+    {
+        try
+        {
+            $this->xAppConfig->setOptions($aAppOptions);
+        }
+        catch(DataDepth $e)
+        {
+            $sMessage = $this->xTranslator->trans('errors.data.depth',
+                ['key' => $e->sPrefix, 'depth' => $e->nDepth]);
+            throw new SetupException($sMessage);
+        }
     }
 
     /**

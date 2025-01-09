@@ -121,44 +121,6 @@ trait LibTrait
     }
 
     /**
-     * Set the value of a config option
-     *
-     * @param string $sName    The option name
-     * @param mixed $sValue    The option value
-     *
-     * @return void
-     */
-    public function setOption(string $sName, $sValue)
-    {
-        $this->getConfigManager()->setOption($sName, $sValue);
-    }
-
-    /**
-     * Get the value of a config option
-     *
-     * @param string $sName    The option name
-     * @param mixed $xDefault    The default value, to be returned if the option is not defined
-     *
-     * @return mixed
-     */
-    public function getOption(string $sName, $xDefault = null)
-    {
-        return $this->getConfigManager()->getOption($sName, $xDefault);
-    }
-
-    /**
-     * Check the presence of a config option
-     *
-     * @param string $sName    The option name
-     *
-     * @return bool
-     */
-    public function hasOption(string $sName): bool
-    {
-        return $this->getConfigManager()->hasOption($sName);
-    }
-
-    /**
      * Get the configured character encoding
      *
      * @return string

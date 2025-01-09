@@ -64,25 +64,6 @@ interface AppInterface
     public function hasOption(string $sName): bool;
 
     /**
-     * Get the value of an application config option
-     *
-     * @param string $sName The option name
-     * @param mixed $xDefault The default value, to be returned if the option is not defined
-     *
-     * @return mixed
-     */
-    public function getAppOption(string $sName, $xDefault = null);
-
-    /**
-     * Check the presence of an application config option
-     *
-     * @param string $sName The option name
-     *
-     * @return bool
-     */
-    public function hasAppOption(string $sName): bool;
-
-    /**
      * Get the configured character encoding
      *
      * @return string

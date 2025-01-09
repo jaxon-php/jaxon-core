@@ -135,12 +135,10 @@ class Bootstrap
      */
     private function setupApp()
     {
-        // Get the app config options.
-        $xAppConfig = $this->xConfigManager->newConfig($this->aAppOptions);
         // Save the app config.
-        $this->xConfigManager->setAppConfig($xAppConfig);
+        $this->xConfigManager->setAppOptions($this->aAppOptions);
         // Register user functions and classes
-        $this->xPackageManager->registerFromConfig($xAppConfig);
+        $this->xPackageManager->registerFromConfig($this->xConfigManager->getAppConfig());
     }
 
     /**
