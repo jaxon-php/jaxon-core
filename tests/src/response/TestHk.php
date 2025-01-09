@@ -1,7 +1,6 @@
 <?php
 
 use Jaxon\App\CallableClass;
-use Jaxon\Response\Response;
 
 class TestHk extends CallableClass
 {
@@ -31,35 +30,30 @@ class TestHk extends CallableClass
         $this->response->alert("This is the after1 hook, with params $param1 and $param2!");
     }
 
-    public function all(): Response
+    public function all()
     {
         $this->response->alert('This is the all method!');
-        return $this->response;
     }
 
-    public function one(): Response
+    public function one()
     {
         $this->response->alert('This is the one method!');
-        return $this->response;
     }
 
-    public function two(): Response
+    public function two()
     {
         $this->response->html('div-id', 'This is the two method!');
         $this->response->alert('This is the two method!');
-        return $this->response;
     }
 
-    public function three(): Response
+    public function three()
     {
         $this->response->html('div-id', 'This is the three method!');
-        return $this->response;
     }
 
-    public function four(): Response
+    public function four()
     {
         $this->response->html('div-id', 'This is the four method!');
-        return $this->response;
     }
 
     protected $method;
@@ -71,12 +65,11 @@ class TestHk extends CallableClass
         $this->args = $this->target()->args();
     }
 
-    public function param($param): Response
+    public function param($param)
     {
         if($this->method === 'param' && $this->args[0] === $param)
         {
             $this->response->html('div-id', 'This is the method with params!');
         }
-        return $this->response;
     }
 }

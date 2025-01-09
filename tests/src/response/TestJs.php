@@ -1,73 +1,62 @@
 <?php
 
 use Jaxon\App\CallableClass;
-use Jaxon\Response\Response;
 
 use function Jaxon\js;
 
 class TestJs extends CallableClass
 {
-    public function redirect(): Response
+    public function redirect()
     {
         $this->response->redirect('http://example.test/path', 50);
         $this->response->redirect('http://example.test/path');
-        return $this->response;
     }
 
-    public function confirm(): Response
+    public function confirm()
     {
         $this->response->confirm(function($resp) {
             $resp->debug('This is the first debug message!!');
             $resp->debug('This is the second debug message!!');
         }, 'Confirm?');
-        return $this->response;
     }
 
-    public function alert(): Response
+    public function alert()
     {
         $this->response->alert('This is an alert!!');
-        return $this->response;
     }
 
-    public function debug(): Response
+    public function debug()
     {
         $this->response->debug('This is a debug message!!');
-        return $this->response;
     }
 
-    public function call(): Response
+    public function call()
     {
         $this->response->call('console.debug', 'A debug message');
-        return $this->response;
     }
 
-    public function setEvent(): Response
+    public function setEvent()
     {
         $this->response->setEventHandler('div', 'click', js('console')->debug("A debug message"));
-        return $this->response;
     }
 
-    public function onClick(): Response
+    public function onClick()
     {
         $this->response->onClick('div', js('console')->debug("A debug message"));
-        return $this->response;
     }
 
-    public function addHandler(): Response
+    public function addHandler()
     {
         $this->response->addHandler('div', 'click', 'jsFunc');
-        return $this->response;
     }
 
-    public function removeHandler(): Response
+    public function removeHandler()
     {
         $this->response->removeHandler('div', 'click', 'jsFunc');
-        return $this->response;
     }
 
-    public function sleep(): Response
+    public function sleep()
     {
         $this->response->sleep(100);
-        return $this->response;
     }
 }

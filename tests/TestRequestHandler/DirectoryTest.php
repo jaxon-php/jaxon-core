@@ -65,7 +65,7 @@ class DirectoryTest extends TestCase
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
         $this->assertTrue(jaxon()->di()->getCallableClassPlugin()->canProcessRequest(jaxon()->di()->getRequest()));
-        $this->assertNotNull(jaxon()->di()->getCallableClassPlugin()->processRequest());
+        jaxon()->di()->getCallableClassPlugin()->processRequest();
     }
 
     /**
@@ -89,7 +89,7 @@ class DirectoryTest extends TestCase
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
         $this->assertTrue(jaxon()->di()->getCallableClassPlugin()->canProcessRequest(jaxon()->di()->getRequest()));
-        $this->assertNotNull(jaxon()->di()->getCallableClassPlugin()->processRequest());
+        jaxon()->di()->getCallableClassPlugin()->processRequest();
     }
 
     /**

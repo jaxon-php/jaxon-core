@@ -1,20 +1,18 @@
 <?php
 
 use Jaxon\App\CallableClass;
-use Jaxon\Response\Response;
 
 class TestCb extends CallableClass
 {
-    public function simple(): Response
+    public function simple()
     {
         $this->response->alert('This is the global response!');
-        return $this->response;
     }
 
     /**
      * @throws Exception
      */
-    public function error(): Response
+    public function error()
     {
         throw new Exception('This method throws an exception!');
     }

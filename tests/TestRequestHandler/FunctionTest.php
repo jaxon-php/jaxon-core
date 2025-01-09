@@ -62,7 +62,7 @@ class FunctionTest extends TestCase
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
         $this->assertTrue(jaxon()->di()->getCallableFunctionPlugin()->canProcessRequest(jaxon()->di()->getRequest()));
         $this->assertFalse(jaxon()->di()->getCallableClassPlugin()->canProcessRequest(jaxon()->di()->getRequest()));
-        $this->assertNotNull(jaxon()->di()->getCallableFunctionPlugin()->processRequest());
+        jaxon()->di()->getCallableFunctionPlugin()->processRequest();
         $this->assertCount(1, jaxon()->getResponse()->getCommands());
     }
 
@@ -88,7 +88,7 @@ class FunctionTest extends TestCase
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
         $this->assertTrue(jaxon()->di()->getCallableFunctionPlugin()->canProcessRequest(jaxon()->di()->getRequest()));
         $this->assertFalse(jaxon()->di()->getCallableClassPlugin()->canProcessRequest(jaxon()->di()->getRequest()));
-        $this->assertNotNull(jaxon()->di()->getCallableFunctionPlugin()->processRequest());
+        jaxon()->di()->getCallableFunctionPlugin()->processRequest();
         $this->assertCount(1, jaxon()->getResponse()->getCommands());
     }
 
@@ -138,7 +138,7 @@ class FunctionTest extends TestCase
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
         $this->assertTrue(jaxon()->di()->getCallableFunctionPlugin()->canProcessRequest(jaxon()->di()->getRequest()));
-        $this->assertNotNull(jaxon()->di()->getCallableFunctionPlugin()->processRequest());
+        jaxon()->di()->getCallableFunctionPlugin()->processRequest();
 
         $xTarget = jaxon()->di()->getCallableFunctionPlugin()->getTarget();
         $this->assertNotNull($xTarget);
@@ -170,7 +170,7 @@ class FunctionTest extends TestCase
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
         $this->assertTrue(jaxon()->di()->getCallableFunctionPlugin()->canProcessRequest(jaxon()->di()->getRequest()));
-        $this->assertNotNull(jaxon()->di()->getCallableFunctionPlugin()->processRequest());
+        jaxon()->di()->getCallableFunctionPlugin()->processRequest();
     }
 
     /**

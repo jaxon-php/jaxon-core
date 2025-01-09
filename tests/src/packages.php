@@ -2,14 +2,12 @@
 
 use Jaxon\App\CallableClass;
 use Jaxon\Plugin\AbstractPackage;
-use Jaxon\Response\Response;
 
 class SamplePackageClass extends CallableClass
 {
-    public function home(): Response
+    public function home()
     {
         $this->response->debug('This class is registered by a package!!');
-        return $this->response;
     }
 }
 

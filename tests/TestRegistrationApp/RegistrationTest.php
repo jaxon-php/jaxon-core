@@ -145,7 +145,7 @@ class RegistrationTest extends TestCase
         });
 
         $this->assertTrue(jaxon()->app()->canProcessRequest());
-        $this->assertNotNull(jaxon()->di()->getCallableClassPlugin()->processRequest());
+        jaxon()->di()->getCallableClassPlugin()->processRequest();
     }
 
     /**
