@@ -29,20 +29,6 @@ interface LibraryInterface
     public function getUri(): string;
 
     /**
-     * Get the library subdir for the URI
-     *
-     * @return string
-     */
-    public function getSubdir(): string;
-
-    /**
-     * Get the library version for the URI
-     *
-     * @return string
-     */
-    public function getVersion(): string;
-
-    /**
      * Get the CSS header code and file includes
      *
      * @return string

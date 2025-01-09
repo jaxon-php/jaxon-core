@@ -14,10 +14,9 @@
 
 namespace Jaxon\Plugin\Response\Dialog\Library;
 
-class AlertLibrary implements LibraryInterface, MessageInterface, QuestionInterface
+class AlertLibrary extends AbstractDialogLibrary
+    implements LibraryInterface, MessageInterface, QuestionInterface
 {
-    use DialogLibraryTrait;
-
     /**
      * Get the library name
      *

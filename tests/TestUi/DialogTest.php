@@ -85,16 +85,12 @@ class DialogTest extends TestCase
         jaxon()->setOption('dialogs.default.question', TestDialogLibrary::NAME);
         $xQuestionLibrary = $xDialogManager->getQuestionLibrary();
         $this->assertEquals('', $xQuestionLibrary->getUri());
-        $this->assertEquals('', $xQuestionLibrary->getSubdir());
-        $this->assertEquals('', $xQuestionLibrary->getVersion());
         $this->assertEquals('', $xQuestionLibrary->getJs());
         $this->assertEquals('', $xQuestionLibrary->getScript());
         $this->assertEquals('', $xQuestionLibrary->getReadyScript());
 
         $xDialogPlugin = jaxon()->di()->getDialogPlugin();
         $this->assertEquals('', $xDialogPlugin->getUri());
-        $this->assertEquals('', $xDialogPlugin->getSubdir());
-        $this->assertEquals('', $xDialogPlugin->getVersion());
     }
 
     public function testDialogJsCode()

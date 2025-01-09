@@ -79,16 +79,6 @@ class DialogPlugin extends AbstractResponsePlugin implements ModalInterface, Ale
         return '';
     }
 
-    public function getSubdir(): string
-    {
-        return '';
-    }
-
-    public function getVersion(): string
-    {
-        return '';
-    }
-
     /**
      * @inheritDoc
      */

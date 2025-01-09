@@ -18,10 +18,10 @@ use Jaxon\App\Config\ConfigManager;
 use Jaxon\App\I18n\Translator;
 use Jaxon\Di\Container;
 use Jaxon\Exception\SetupException;
-use Jaxon\Plugin\Response\Dialog\Library\QuestionInterface;
 use Jaxon\Plugin\Response\Dialog\Library\LibraryInterface;
 use Jaxon\Plugin\Response\Dialog\Library\MessageInterface;
 use Jaxon\Plugin\Response\Dialog\Library\ModalInterface;
+use Jaxon\Plugin\Response\Dialog\Library\QuestionInterface;
 use Jaxon\Utils\Config\Config;
 
 use function array_map;

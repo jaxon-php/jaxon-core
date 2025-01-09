@@ -1,9 +1,9 @@
 <?php
 
 /**
- * DialogLibraryTrait.php
+ * AbstractDialogLibrary.php
  *
- * Common functions for javascript dialog libraries.
+ * Base class for javascript dialog libraries.
  *
  * @package jaxon-core
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
@@ -14,14 +14,16 @@
 
 namespace Jaxon\Plugin\Response\Dialog\Library;
 
-trait DialogLibraryTrait
+use function Jaxon\jaxon;
+
+abstract class AbstractDialogLibrary
 {
     /**
      * The dialog library helper
      *
      * @var DialogLibraryHelper
      */
-    protected $xHelper;
+    private $xHelper = null;
 
     /**
      * Get the library name
@@ -37,7 +39,8 @@ trait DialogLibraryTrait
      */
     public function helper(): DialogLibraryHelper
     {
-        return $this->xHelper;
+        return $this->xHelper ?:
+            $this->xHelper = jaxon()->di()->getDialogLibraryHelper($this->getName());
     }
 
     /**
@@ -46,26 +49,6 @@ trait DialogLibraryTrait
      * @return string
      */
     public function getUri(): string
-    {
-        return '';
-    }
-
-    /**
-     * Get the library subdir for the URI
-     *
-     * @return string
-     */
-    public function getSubdir(): string
-    {
-        return '';
-    }
-
-    /**
-     * Get the library version for the URI
-     *
-     * @return string
-     */
-    public function getVersion(): string
     {
         return '';
     }

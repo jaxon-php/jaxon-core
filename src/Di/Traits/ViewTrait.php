@@ -19,7 +19,6 @@ use Jaxon\Di\ClassContainer;
 use Jaxon\Di\Container;
 use Jaxon\Utils\Template\TemplateEngine;
 
-use function call_user_func;
 use function rtrim;
 use function trim;
 
@@ -77,18 +76,26 @@ trait ViewTrait
     public function registerDialogLibrary(string $sClass, string $sLibraryName)
     {
         $this->set($sClass, function($di) use($sClass) {
-            // Set the protected attributes of the library
-            $cSetter = function() use($di) {
-                $this->xHelper = new DialogLibraryHelper($this,
-                    $di->g(ConfigManager::class), $di->g(TemplateEngine::class));
-            };
-            // Can now access protected attributes
-            $xLibrary = $di->make($sClass);
-            call_user_func($cSetter->bindTo($xLibrary, $xLibrary));
-            return $xLibrary;
+            return $di->make($sClass);
+        });
+        $this->set("dialog_library_helper_$sLibraryName", function($di) use($sClass) {
+            return new DialogLibraryHelper($di->g($sClass),
+                $di->g(ConfigManager::class), $di->g(TemplateEngine::class));
         });
         // Set the alias, so the libraries can be found by their names.
         $this->alias("dialog_library_$sLibraryName", $sClass);
+    }
+
+    /**
+     * Get the dialog library helper
+     *
+     * @param string $sLibraryName
+     *
+     * @return DialogLibraryHelper
+     */
+    public function getDialogLibraryHelper(string $sLibraryName): DialogLibraryHelper
+    {
+        return $this->g("dialog_library_helper_$sLibraryName");
     }
 
     /**

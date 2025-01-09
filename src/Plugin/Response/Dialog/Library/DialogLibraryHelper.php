@@ -6,7 +6,6 @@ use Jaxon\App\Config\ConfigManager;
 use Jaxon\Plugin\Response\Dialog\Library\LibraryInterface;
 use Jaxon\Utils\Template\TemplateEngine;
 
-use function array_merge;
 use function is_bool;
 use function is_numeric;
 use function is_string;
@@ -17,18 +16,6 @@ use function trim;
 
 class DialogLibraryHelper
 {
-    /**
-     * @var ConfigManager
-     */
-    protected $xConfigManager;
-
-    /**
-     * The Jaxon template engine
-     *
-     * @var TemplateEngine
-     */
-    protected $xTemplateEngine;
-
     /**
      * The name of the library
      *
@@ -44,20 +31,6 @@ class DialogLibraryHelper
     protected $sUri = '';
 
     /**
-     * The subdir of the JS and CSS files in the CDN
-     *
-     * @var string
-     */
-    protected $sSubDir = '';
-
-    /**
-     * The default version of the plugin library
-     *
-     * @var string
-     */
-    protected $sVersion = '';
-
-    /**
      * The constructor
      *
      * @param LibraryInterface $xDialogLibrary
@@ -65,21 +38,14 @@ class DialogLibraryHelper
      * @param TemplateEngine $xTemplateEngine
      */
     public function __construct(LibraryInterface $xDialogLibrary,
-        ConfigManager $xConfigManager, TemplateEngine $xTemplateEngine)
+        private ConfigManager $xConfigManager, private TemplateEngine $xTemplateEngine)
     {
-        $this->xConfigManager = $xConfigManager;
-        $this->xTemplateEngine = $xTemplateEngine;
-
         // Set the library name
         $this->sName = $xDialogLibrary->getName();
         // Set the default URI.
         $sDefaultUri = $xConfigManager->getOption('dialogs.lib.uri', $xDialogLibrary->getUri());
         // Set the library URI.
         $this->sUri = rtrim($this->getOption('uri', $sDefaultUri), '/');
-        // Set the subdir
-        $this->sSubDir = trim($this->getOption('subdir', $xDialogLibrary->getSubDir()), '/');
-        // Set the version number
-        $this->sVersion = trim($this->getOption('version', $xDialogLibrary->getVersion()), '/');
     }
 
     /**
@@ -167,6 +133,18 @@ class DialogLibraryHelper
     }
 
     /**
+     * @param string $sOption The assets option name
+     * @param string $sFile The javascript file name
+     *
+     * @return string|null
+     */
+    private function getAssetUri(string $sOption, string $sFile): ?string
+    {
+        return !$this->hasOption($sOption) ? "{$this->sUri}/$sFile" :
+            (trim($this->getOption($sOption)) ?: null);
+    }
+
+    /**
      * Get the javascript HTML header code
      *
      * @param string $sFile The javascript file name
@@ -175,20 +153,9 @@ class DialogLibraryHelper
      */
     public function getJsCode(string $sFile): string
     {
-        if($this->hasOption('assets.js'))
-        {
-            // If this expression evaluates to false, then the asset is not displayed.
-            if(!($sUri = $this->getOption('assets.js')))
-            {
-                return '';
-            }
-        }
-        else
-        {
-            $sUri = $this->sUri . '/' . ($this->sSubDir ? $this->sSubDir . '/' : '') .
-                ($this->sVersion ? $this->sVersion . '/' : '') . $sFile;
-        }
-        return '<script type="text/javascript" src="' . $sUri . '"></script>';
+        // If this 'assets.js' option is defined and evaluates to false, then the asset is not displayed.
+        $sUri = $this->getAssetUri('assets.js', $sFile);
+        return !$sUri ? '' : '<script type="text/javascript" src="' . $sUri . '"></script>';
     }
 
     /**
@@ -200,20 +167,9 @@ class DialogLibraryHelper
      */
     public function getCssCode(string $sFile): string
     {
-        if($this->hasOption('assets.css'))
-        {
-            // If this expression evaluates to false, then the asset is not displayed.
-            if(!($sUri = $this->getOption('assets.css')))
-            {
-                return '';
-            }
-        }
-        else
-        {
-            $sUri = $this->sUri . '/' . ($this->sSubDir ? $this->sSubDir . '/' : '') .
-                ($this->sVersion ? $this->sVersion . '/' : '') . $sFile;
-        }
-        return '<link rel="stylesheet" href="' . $sUri . '" />';
+        // If this 'assets.css' option is defined and evaluates to false, then the asset is not displayed.
+        $sUri = $this->getAssetUri('assets.css', $sFile);
+        return !$sUri ? '' : '<link rel="stylesheet" href="' . $sUri . '" />';
     }
 
     /**
@@ -226,16 +182,6 @@ class DialogLibraryHelper
      */
     public function render(string $sTemplate, array $aVars = []): string
     {
-        // Is the library the default for alert messages?
-        $isDefaultForMessage = ($this->sName == $this->xConfigManager->getOption('dialogs.default.message'));
-        // Is the library the default for confirm questions?
-        $isDefaultForQuestion = ($this->sName == $this->xConfigManager->getOption('dialogs.default.question'));
-        $aLocalVars = [
-            'yes' => $this->xConfigManager->getOption('dialogs.question.yes', 'Yes'),
-            'no' =>  $this->xConfigManager->getOption('dialogs.question.no', 'No'),
-            'defaultForMessage' => $isDefaultForMessage,
-            'defaultForQuestion' => $isDefaultForQuestion
-        ];
-        return $this->xTemplateEngine->render('jaxon::dialogs::' . $sTemplate, array_merge($aLocalVars, $aVars));
+        return $this->xTemplateEngine->render('jaxon::dialogs::' . $sTemplate, $aVars);
     }
 }
