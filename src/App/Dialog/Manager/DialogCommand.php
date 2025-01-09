@@ -20,14 +20,14 @@ use function array_map;
 class DialogCommand
 {
     /**
-     * The next message library
+     * The next alert library
      *
      * @var string
      */
     private $sLibrary = '';
 
     /**
-     * The next message title
+     * The next alert title
      *
      * @var string
      */
@@ -42,7 +42,7 @@ class DialogCommand
     {}
 
     /**
-     * Set the library for the next message.
+     * Set the library for the next alert.
      *
      * @param string $sLibrary     The name of the library
      *
@@ -54,9 +54,9 @@ class DialogCommand
     }
 
     /**
-     * Set the title of the next message.
+     * Set the title of the next alert.
      *
-     * @param string $sTitle     The title of the message
+     * @param string $sTitle     The title of the alert
      *
      * @return void
      */

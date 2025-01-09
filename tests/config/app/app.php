@@ -94,8 +94,8 @@ return [
         'dialogs' => [
             'default' => [
                 'modal' => Bootbox::NAME,
-                'message' => Bootbox::NAME,
-                'question' => Bootbox::NAME,
+                'alert' => Bootbox::NAME,
+                'confirm' => Bootbox::NAME,
             ],
             'assets' => [
                 'include' => [
