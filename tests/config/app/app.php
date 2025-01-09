@@ -1,6 +1,5 @@
 <?php
 
-use Jaxon\Dialogs\Dialog\Library\Bootbox;
 use Jaxon\Tests\Ns\Lib\Service;
 use Jaxon\Tests\Ns\Lib\ServiceAuto;
 use Jaxon\Tests\Ns\Lib\ServiceInterface;
@@ -89,18 +88,6 @@ return [
             'prefix' => [
                 'function' => 'jxn_',
                 'class' => 'Jxn',
-            ],
-        ],
-        'dialogs' => [
-            'default' => [
-                'modal' => Bootbox::NAME,
-                'alert' => Bootbox::NAME,
-                'confirm' => Bootbox::NAME,
-            ],
-            'assets' => [
-                'include' => [
-                    'all' => true,
-                ],
             ],
         ],
         'js' => [
