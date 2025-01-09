@@ -104,7 +104,7 @@ class ConfigManager
             // Read the options and save in the config.
             $this->xLibConfig->setOptions($this->read($sConfigFile), $sConfigSection);
             // Call the config change listeners.
-            $this->xEventManager->onChange($this->xLibConfig, '');
+            $this->xEventManager->libConfigChanged($this->xLibConfig, '');
         }
         catch(DataDepth $e)
         {
@@ -132,7 +132,7 @@ class ConfigManager
                 return false;
             }
             // Call the config change listeners.
-            $this->xEventManager->onChange($this->xLibConfig, '');
+            $this->xEventManager->libConfigChanged($this->xLibConfig, '');
             return true;
         }
         catch(DataDepth $e)
@@ -155,7 +155,7 @@ class ConfigManager
     {
         $this->xLibConfig->setOption($sName, $xValue);
         // Call the config change listeners.
-        $this->xEventManager->onChange($this->xLibConfig, $sName);
+        $this->xEventManager->libConfigChanged($this->xLibConfig, $sName);
     }
 
     /**
@@ -206,6 +206,8 @@ class ConfigManager
     public function setAppOption(string $sName, $xValue)
     {
         $this->xAppConfig->setOption($sName, $xValue);
+        // Call the config change listeners.
+        $this->xEventManager->appConfigChanged($this->xAppConfig, $sName);
     }
 
     /**
@@ -230,6 +232,8 @@ class ConfigManager
         try
         {
             $this->xAppConfig->setOptions($aAppOptions);
+            // Call the config change listeners.
+            $this->xEventManager->appConfigChanged($this->xAppConfig, '');
         }
         catch(DataDepth $e)
         {
@@ -285,5 +289,25 @@ class ConfigManager
                 ['key' => $e->sPrefix, 'depth' => $e->nDepth]);
             throw new SetupException($sMessage);
         }
+    }
+
+    /**
+     * @param string $sClassName
+     *
+     * @return void
+     */
+    public function addLibEventListener(string $sClassName)
+    {
+        $this->xEventManager->addLibConfigListener($sClassName);
+    }
+
+    /**
+     * @param string $sClassName
+     *
+     * @return void
+     */
+    public function addAppEventListener(string $sClassName)
+    {
+        $this->xEventManager->addAppConfigListener($sClassName);
     }
 }

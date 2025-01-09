@@ -63,8 +63,9 @@ trait AppTrait
      */
     private function setEventHandlers(): void
     {
+        /** @var ConfigEventManager */
         $xEventManager = $this->g(ConfigEventManager::class);
-        $xEventManager->addListener(Translator::class);
+        $xEventManager->addLibConfigListener(Translator::class);
     }
 
     /**
