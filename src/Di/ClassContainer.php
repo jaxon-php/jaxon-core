@@ -496,6 +496,8 @@ class ClassContainer
      */
     public function getRequestFactory(string $sClassName = ''): ?JxnCall
     {
+        // If a class name is provided, get the factory for a registered class.
+        // Otherwise, get the unique factory for registered functions.
         $sClassName = trim($sClassName, " \t") ?: JxnCall::class;
         $sFactoryKey = $this->getRequestFactoryKey($sClassName);
         if(!$this->has($sFactoryKey))

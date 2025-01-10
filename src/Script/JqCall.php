@@ -21,20 +21,6 @@ use Closure;
 class JqCall extends AbstractJsCall
 {
     /**
-     * The selector path
-     *
-     * @var string
-     */
-    protected $sSelector;
-
-    /**
-     * The selector context
-     *
-     * @var mixed
-     */
-    protected $xContext;
-
-    /**
      * The constructor.
      *
      * @param DialogCommand $xDialog
@@ -43,11 +29,9 @@ class JqCall extends AbstractJsCall
      * @param mixed $xContext    A context associated to the selector
      */
     public function __construct(DialogCommand $xDialog, ?Closure $xExprCb,
-        string $sSelector, $xContext = null)
+        protected string $sSelector, protected $xContext = null)
     {
         parent::__construct($xDialog, $xExprCb);
-        $this->sSelector = $sSelector;
-        $this->xContext = $xContext;
     }
 
     /**

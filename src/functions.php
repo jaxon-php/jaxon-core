@@ -2,7 +2,7 @@
 
 namespace Jaxon;
 
-use Jaxon\App\Ajax\Lib;
+use Jaxon\App\Ajax\Lib as Jaxon;
 use Jaxon\App\View\HtmlAttrHelper;
 use Jaxon\Exception\SetupException;
 use Jaxon\Script\Factory\ParameterFactory;
@@ -14,8 +14,7 @@ use Jaxon\Script\JxnCall;
  * functions.php
  *
  * This file is automatically loaded by the Composer autoloader
- *
- * The Jaxon global functions are defined here, and the library is initialised.
+ * The Jaxon global functions are defined here.
  *
  * @package jaxon-core
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
@@ -27,11 +26,11 @@ use Jaxon\Script\JxnCall;
 /**
  * Return the single instance of the Lib class
  *
- * @return Lib
+ * @return Jaxon
  */
-function jaxon(): Lib
+function jaxon(): Jaxon
 {
-    return Lib::getInstance();
+    return Jaxon::getInstance();
 }
 
 /**
@@ -72,13 +71,13 @@ function js(string $sJsObject = ''): JsCall
 }
 
 /**
- * Shortcut to get the factory for calls to a global js object or function.
+ * Shortcut to get the factory for calls to the js "window" object.
  *
  * @return JsCall
  */
 function jw(): JsCall
 {
-    return js('w');
+    return js('.');
 }
 
 /**
@@ -105,7 +104,7 @@ function jq(string $sPath = '', $xContext = null): JqCall
 }
 
 /**
- * Get the custom attributes helper
+ * Get the HTML attributes helper
  *
  * @return HtmlAttrHelper
  */
