@@ -101,7 +101,7 @@ abstract class AjaxResponse extends AbstractResponse
      */
     public function confirm(Closure $fConfirm, string $sQuestion, array $aArgs = []): self
     {
-        $this->xManager->addConfirmCommand('script.confirm',
+        $this->xManager->addConfirmCommand('dialog.confirm',
             fn() => $fConfirm($this), $sQuestion, $aArgs);
         return $this;
     }
