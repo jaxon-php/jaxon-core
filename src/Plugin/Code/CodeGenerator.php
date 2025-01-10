@@ -22,6 +22,7 @@ use Jaxon\Utils\Template\TemplateEngine;
 
 use function array_reduce;
 use function is_subclass_of;
+use function json_encode;
 use function ksort;
 use function md5;
 use function trim;
@@ -181,7 +182,7 @@ class CodeGenerator
         $this->sJs = trim($this->sJs, " \n");
         $this->sJsScript = trim($this->sJsScript, " \n");
         $this->sJsReadyScript = $this->render('ready.js', [
-            'sScript' => $this->getJsInit() . trim($this->sJsReadyScript, " \n"),
+            'sScript' => $this->getJsInit() . "\n" . trim($this->sJsReadyScript, " \n"),
         ]);
         $this->sJsInlineScript = trim($this->sJsInlineScript, " \n");
         if(($this->sJsInlineScript))
