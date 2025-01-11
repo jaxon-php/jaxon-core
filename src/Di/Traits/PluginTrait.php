@@ -62,7 +62,7 @@ trait PluginTrait
         });
         $this->set(CodeGenerator::class, function($di) {
             return new CodeGenerator(Jaxon::VERSION, $di->g(Container::class),
-            $di->g(Translator::class), $di->g(TemplateEngine::class));
+                $di->g(TemplateEngine::class));
         });
 
         // Script response plugin

@@ -14,7 +14,6 @@
 
 namespace Jaxon\Plugin\Code;
 
-use Jaxon\App\I18n\Translator;
 use Jaxon\Di\Container;
 use Jaxon\Plugin\AbstractPlugin;
 use Jaxon\Utils\Http\UriException;
@@ -22,7 +21,6 @@ use Jaxon\Utils\Template\TemplateEngine;
 
 use function array_reduce;
 use function is_subclass_of;
-use function json_encode;
 use function ksort;
 use function md5;
 use function trim;
@@ -81,11 +79,10 @@ class CodeGenerator
      *
      * @param string $sVersion
      * @param Container $di
-     * @param Translator $xTranslator
      * @param TemplateEngine $xTemplateEngine
      */
     public function __construct(private string $sVersion, private Container $di,
-        private Translator $xTranslator, private TemplateEngine $xTemplateEngine)
+        private TemplateEngine $xTemplateEngine)
     {}
 
     /**
@@ -167,7 +164,6 @@ class CodeGenerator
     {
         return '
     jaxon.processCustomAttrs();
-    jaxon.labels && jaxon.labels(' . json_encode($this->xTranslator->translations('labels')) . ');
 ';
     }
 
