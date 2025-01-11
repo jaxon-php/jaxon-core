@@ -18,6 +18,7 @@ use Jaxon\App\I18n\Translator;
 use Jaxon\Exception\SetupException;
 use Jaxon\Utils\Config\Config;
 use Jaxon\Utils\Config\ConfigReader;
+use Jaxon\Utils\Config\ConfigSetter;
 use Jaxon\Utils\Config\Exception\DataDepth;
 use Jaxon\Utils\Config\Exception\FileAccess;
 use Jaxon\Utils\Config\Exception\FileContent;
@@ -40,16 +41,17 @@ class ConfigManager
      * The constructor
      *
      * @param array $aDefaultOptions
-     * @param ConfigReader $xConfigReader
-     * @param ConfigEventManager $xEventManager
      * @param Translator $xTranslator
+     * @param ConfigReader $xConfigReader
+     * @param ConfigSetter $xConfigSetter
+     * @param ConfigEventManager $xEventManager
      */
-    public function __construct(array $aDefaultOptions, private ConfigReader $xConfigReader,
-        private ConfigEventManager $xEventManager, private Translator $xTranslator)
+    public function __construct(array $aDefaultOptions, private Translator $xTranslator,
+        private ConfigReader $xConfigReader, private ConfigSetter $xConfigSetter,
+        private ConfigEventManager $xEventManager)
     {
-        $this->xLibConfig = new Config();
-        $this->xLibConfig->setOptions($aDefaultOptions);
-        $this->xAppConfig = new Config();
+        $this->xLibConfig = $xConfigSetter->newConfig($aDefaultOptions);
+        $this->xAppConfig = $xConfigSetter->newConfig();
     }
 
     /**
@@ -102,7 +104,7 @@ class ConfigManager
         try
         {
             // Read the options and save in the config.
-            $this->xLibConfig->setOptions($this->read($sConfigFile), $sConfigSection);
+            $this->xConfigSetter->setOptions($this->xLibConfig, $this->read($sConfigFile), $sConfigSection);
             // Call the config change listeners.
             $this->xEventManager->libConfigChanged($this->xLibConfig, '');
         }
@@ -127,7 +129,7 @@ class ConfigManager
     {
         try
         {
-            if(!$this->xLibConfig->setOptions($aOptions, $sKeys))
+            if(!$this->xConfigSetter->setOptions($this->xLibConfig, $aOptions, $sKeys))
             {
                 return false;
             }
@@ -153,7 +155,7 @@ class ConfigManager
      */
     public function setOption(string $sName, $xValue)
     {
-        $this->xLibConfig->setOption($sName, $xValue);
+        $this->xConfigSetter->setOption($this->xLibConfig, $sName, $xValue);
         // Call the config change listeners.
         $this->xEventManager->libConfigChanged($this->xLibConfig, $sName);
     }
@@ -205,7 +207,7 @@ class ConfigManager
      */
     public function setAppOption(string $sName, $xValue)
     {
-        $this->xAppConfig->setOption($sName, $xValue);
+        $this->xConfigSetter->setOption($this->xAppConfig, $sName, $xValue);
         // Call the config change listeners.
         $this->xEventManager->appConfigChanged($this->xAppConfig, $sName);
     }
@@ -231,7 +233,7 @@ class ConfigManager
     {
         try
         {
-            $this->xAppConfig->setOptions($aAppOptions);
+            $this->xConfigSetter->setOptions($this->xAppConfig, $aAppOptions);
             // Call the config change listeners.
             $this->xEventManager->appConfigChanged($this->xAppConfig, '');
         }

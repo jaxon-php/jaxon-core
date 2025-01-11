@@ -5,6 +5,7 @@ namespace Jaxon\Di\Traits;
 use Jaxon\App\Stash\Stash;
 use Jaxon\App\I18n\Translator;
 use Jaxon\Utils\Config\ConfigReader;
+use Jaxon\Utils\Config\ConfigSetter;
 use Jaxon\Utils\Http\UriDetector;
 use Jaxon\Utils\Template\TemplateEngine;
 
@@ -42,6 +43,10 @@ trait UtilTrait
         // Config reader
         $this->set(ConfigReader::class, function() {
             return new ConfigReader();
+        });
+        // Config setter
+        $this->set(ConfigSetter::class, function() {
+            return new ConfigSetter();
         });
         // Template engine
         $this->set(TemplateEngine::class, function($di) {

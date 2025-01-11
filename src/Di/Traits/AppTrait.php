@@ -13,6 +13,7 @@ use Jaxon\Di\Container;
 use Jaxon\Request\Handler\CallbackManager;
 use Jaxon\Plugin\Manager\PackageManager;
 use Jaxon\Utils\Config\ConfigReader;
+use Jaxon\Utils\Config\ConfigSetter;
 
 trait AppTrait
 {
@@ -34,8 +35,9 @@ trait AppTrait
         });
         $this->set(ConfigManager::class, function($di) {
             $aDefaultOptions = require(__DIR__ . '/../../../config/lib.php');
-            return new ConfigManager($aDefaultOptions, $di->g(ConfigReader::class),
-                $di->g(ConfigEventManager::class), $di->g(Translator::class));
+            return new ConfigManager($aDefaultOptions, $di->g(Translator::class),
+                $di->g(ConfigReader::class), $di->g(ConfigSetter::class),
+                $di->g(ConfigEventManager::class));
         });
 
         // Jaxon App
