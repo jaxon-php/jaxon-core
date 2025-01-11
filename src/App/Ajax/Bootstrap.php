@@ -138,7 +138,7 @@ class Bootstrap
         // Save the app config.
         $this->xConfigManager->setAppOptions($this->aAppOptions);
         // Register user functions and classes
-        $this->xPackageManager->registerFromConfig($this->xConfigManager->getAppConfig());
+        $this->xPackageManager->registerFromConfig();
     }
 
     /**

@@ -255,13 +255,12 @@ class PackageManager
     /**
      * Read and set Jaxon options from the config
      *
-     * @param Config $xAppConfig    The config options
-     *
      * @return void
      * @throws SetupException
      */
-    public function registerFromConfig(Config $xAppConfig)
+    public function registerFromConfig()
     {
+        $xAppConfig = $this->xConfigManager->getAppConfig();
         $this->registerItemsFromConfig($xAppConfig);
 
         // Register packages

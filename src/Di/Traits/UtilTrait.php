@@ -41,8 +41,8 @@ trait UtilTrait
         });
 
         // Config reader
-        $this->set(ConfigReader::class, function() {
-            return new ConfigReader();
+        $this->set(ConfigReader::class, function($di) {
+            return new ConfigReader($di->g(ConfigSetter::class));
         });
         // Config setter
         $this->set(ConfigSetter::class, function() {

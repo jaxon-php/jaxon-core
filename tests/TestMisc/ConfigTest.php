@@ -99,7 +99,7 @@ final class ConfigTest extends TestCase
         $aOption = jaxon()->getOption('core.array');
         $this->assertIsArray($aOption);
         $this->assertCount(4, $aOption);
-        $this->assertEmpty(jaxon()->config()->getOptionNames('jaxon.array'));
+        $this->assertEmpty(jaxon()->config()->getOptionNames('core.array'));
     }
 
     /**

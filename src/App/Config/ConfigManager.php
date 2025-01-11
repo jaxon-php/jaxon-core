@@ -104,7 +104,8 @@ class ConfigManager
         try
         {
             // Read the options and save in the config.
-            $this->xConfigSetter->setOptions($this->xLibConfig, $this->read($sConfigFile), $sConfigSection);
+            $this->xLibConfig = $this->xConfigSetter
+                ->setOptions($this->xLibConfig, $this->read($sConfigFile), $sConfigSection);
             // Call the config change listeners.
             $this->xEventManager->libConfigChanged($this->xLibConfig, '');
         }
@@ -129,13 +130,11 @@ class ConfigManager
     {
         try
         {
-            if(!$this->xConfigSetter->setOptions($this->xLibConfig, $aOptions, $sKeys))
-            {
-                return false;
-            }
+            $this->xLibConfig = $this->xConfigSetter
+                ->setOptions($this->xLibConfig, $aOptions, $sKeys);
             // Call the config change listeners.
             $this->xEventManager->libConfigChanged($this->xLibConfig, '');
-            return true;
+            return $this->xLibConfig->changed();
         }
         catch(DataDepth $e)
         {
@@ -155,7 +154,8 @@ class ConfigManager
      */
     public function setOption(string $sName, $xValue)
     {
-        $this->xConfigSetter->setOption($this->xLibConfig, $sName, $xValue);
+        $this->xLibConfig = $this->xConfigSetter
+            ->setOption($this->xLibConfig, $sName, $xValue);
         // Call the config change listeners.
         $this->xEventManager->libConfigChanged($this->xLibConfig, $sName);
     }
@@ -207,7 +207,8 @@ class ConfigManager
      */
     public function setAppOption(string $sName, $xValue)
     {
-        $this->xConfigSetter->setOption($this->xAppConfig, $sName, $xValue);
+        $this->xAppConfig = $this->xConfigSetter
+            ->setOption($this->xAppConfig, $sName, $xValue);
         // Call the config change listeners.
         $this->xEventManager->appConfigChanged($this->xAppConfig, $sName);
     }
@@ -233,7 +234,8 @@ class ConfigManager
     {
         try
         {
-            $this->xConfigSetter->setOptions($this->xAppConfig, $aAppOptions);
+            $this->xAppConfig = $this->xConfigSetter
+                ->setOptions($this->xAppConfig, $aAppOptions);
             // Call the config change listeners.
             $this->xEventManager->appConfigChanged($this->xAppConfig, '');
         }
@@ -283,7 +285,7 @@ class ConfigManager
     {
         try
         {
-            return new Config($aOptions, $sKeys);
+            return $this->xConfigSetter->newConfig($aOptions, $sKeys);
         }
         catch(DataDepth $e)
         {
