@@ -259,11 +259,10 @@ class ResponseManager
         $this->bOnConfirm = false;
         if(($nCommandCount = count($this->aConfirmCommands)) > 0)
         {
+            $aCommand = $this->di->getDialogCommand()->confirm($this->str($sQuestion), $aArgs);
+            $aCommand['count'] = $nCommandCount;
             // The confirm command must be inserted before the commands to be confirmed.
-            $this->addCommand($sName, [
-                'count' => $nCommandCount,
-                'question' => $this->di->getDialogCommand()->confirm($this->str($sQuestion), $aArgs),
-            ]);
+            $this->addCommand($sName, $aCommand);
             $this->aCommands = array_merge($this->aCommands, $this->aConfirmCommands);
             $this->aConfirmCommands = [];
         }
@@ -283,7 +282,8 @@ class ResponseManager
      */
     public function addAlertCommand(string $sName, string $sMessage, array $aArgs = []): self
     {
-        $this->addCommand($sName, $this->di->getDialogCommand()->info($this->str($sMessage), $aArgs));
+        $aCommand = $this->di->getDialogCommand()->info($this->str($sMessage), $aArgs);
+        $this->addCommand($sName, $aCommand);
         return $this;
     }
 

@@ -52,7 +52,7 @@ class JsExpr implements ParameterInterface
      *
      * @var array
      */
-    protected $aMessage = [];
+    protected $aAlert = [];
 
     /**
      * A condition to check before making the call
@@ -194,7 +194,7 @@ class JsExpr implements ParameterInterface
      */
     public function elseShow(string $sMessage): self
     {
-        $this->aMessage = $this->xDialog->warning($sMessage, $this->getArgs(func_get_args()));
+        $this->aAlert = $this->xDialog->warning($sMessage, $this->getArgs(func_get_args()));
         return $this;
     }
 
@@ -207,7 +207,7 @@ class JsExpr implements ParameterInterface
      */
     public function elseInfo(string $sMessage): self
     {
-        $this->aMessage = $this->xDialog->info($sMessage, $this->getArgs(func_get_args()));
+        $this->aAlert = $this->xDialog->info($sMessage, $this->getArgs(func_get_args()));
         return $this;
     }
 
@@ -220,7 +220,7 @@ class JsExpr implements ParameterInterface
      */
     public function elseSuccess(string $sMessage): self
     {
-        $this->aMessage = $this->xDialog->success($sMessage, $this->getArgs(func_get_args()));
+        $this->aAlert = $this->xDialog->success($sMessage, $this->getArgs(func_get_args()));
         return $this;
     }
 
@@ -233,7 +233,7 @@ class JsExpr implements ParameterInterface
      */
     public function elseWarning(string $sMessage): self
     {
-        $this->aMessage = $this->xDialog->warning($sMessage, $this->getArgs(func_get_args()));
+        $this->aAlert = $this->xDialog->warning($sMessage, $this->getArgs(func_get_args()));
         return $this;
     }
 
@@ -246,7 +246,7 @@ class JsExpr implements ParameterInterface
      */
     public function elseError(string $sMessage): self
     {
-        $this->aMessage = $this->xDialog->error($sMessage, $this->getArgs(func_get_args()));
+        $this->aAlert = $this->xDialog->error($sMessage, $this->getArgs(func_get_args()));
         return $this;
     }
 
@@ -450,15 +450,15 @@ class JsExpr implements ParameterInterface
         $aJsExpr = ['_type' => $this->getType(), 'calls' => $aCalls];
         if(($this->aConfirm))
         {
-            $aJsExpr['question'] = $this->aConfirm;
+            $aJsExpr['confirm'] = $this->aConfirm;
         }
         if(($this->aCondition))
         {
             $aJsExpr['condition'] = $this->aCondition;
         }
-        if(($this->aMessage))
+        if(($this->aAlert))
         {
-            $aJsExpr['message'] = $this->aMessage;
+            $aJsExpr['alert'] = $this->aAlert;
         }
         return $aJsExpr;
     }

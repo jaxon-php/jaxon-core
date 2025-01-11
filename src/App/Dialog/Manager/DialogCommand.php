@@ -115,9 +115,11 @@ class DialogCommand
         return [
             'lib' => $this->getLibrary() ?:
                 ($this->xRegistry?->getAlertLibrary()->getName() ?? ''),
-            'type' => $sType,
-            'title' => $this->getTitle(),
-            'phrase' => $this->phrase($sMessage, $aArgs),
+            'message' => [
+                'type' => $sType,
+                'title' => $this->getTitle(),
+                'phrase' => $this->phrase($sMessage, $aArgs),
+            ],
         ];
     }
 
@@ -232,8 +234,10 @@ class DialogCommand
         return [
             'lib' => $this->getLibrary() ?:
                 ($this->xRegistry?->getConfirmLibrary()->getName() ?? ''),
-            'title' => $this->getTitle(),
-            'phrase' => $this->phrase($sQuestion, $aArgs),
+            'question' => [
+                'title' => $this->getTitle(),
+                'phrase' => $this->phrase($sQuestion, $aArgs),
+            ],
         ];
     }
 }
