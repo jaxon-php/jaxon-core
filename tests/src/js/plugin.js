@@ -34,7 +34,6 @@ jxn_my_third_function = function() {
 jaxon.dom.ready(function() {
 
     jaxon.processCustomAttrs();
-    jaxon.labels && jaxon.labels({"confirm":{"yes":"Yes","no":"No"}});
 
 });
 
