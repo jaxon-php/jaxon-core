@@ -3,14 +3,13 @@
 namespace Jaxon\App;
 
 use Jaxon\Plugin\Response\Pagination\Paginator;
-use Jaxon\Response\AjaxResponse;
 
 class Pagination extends AbstractComponent
 {
     /**
      * Create a paginator.
      *
-     * @param int $nPageNumber     The current page number
+     * @param int $nPageNumber      The current page number
      * @param int $nItemsPerPage    The number of items per page
      * @param int $nTotalItems      The total number of items
      *
@@ -24,8 +23,6 @@ class Pagination extends AbstractComponent
     /**
      * @inheritDoc
      */
-    final public function render(): AjaxResponse
-    {
-        return $this->_response();
-    }
+    final public function render()
+    {}
 }

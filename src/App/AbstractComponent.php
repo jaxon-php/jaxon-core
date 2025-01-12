@@ -26,7 +26,7 @@ abstract class AbstractComponent extends AbstractCallable
     {
         $this->xHelper = $xHelper;
         // Each component must have its own reponse object.
-        // A component can overrides another one. In this case,
+        // A component can override another one. In this case,
         // its response is attached to the overriden component DOM node.
         $this->nodeResponse = $di->newComponentResponse($this->rq($this->overrides ?: ''));
     }
@@ -52,9 +52,9 @@ abstract class AbstractComponent extends AbstractCallable
     /**
      * Set the attached DOM node content with the component HTML code.
      *
-     * @return AjaxResponse
+     * @return void
      */
-    abstract public function render(): AjaxResponse;
+    abstract public function render();
 
     /**
      * Set the component item.

@@ -48,38 +48,32 @@ abstract class Component extends AbstractComponent
     /**
      * Set the attached DOM node content with the component HTML code.
      *
-     * @return AjaxResponse
+     * @return void
      */
-    final public function render(): AjaxResponse
+    final public function render()
     {
         $this->before();
         $this->node()->html((string)$this->html());
         $this->after();
-
-        return $this->response;
     }
 
     /**
      * Clear the attached DOM node content.
      *
-     * @return AjaxResponse
+     * @return void
      */
-    final public function clear(): AjaxResponse
+    final public function clear()
     {
         $this->node()->clear();
-
-        return $this->response;
     }
 
     /**
      * Show/hide the attached DOM node.
      *
-     * @return AjaxResponse
+     * @return void
      */
-    final public function visible(bool $bVisible): AjaxResponse
+    final public function visible(bool $bVisible)
     {
         $bVisible ? $this->node()->jq()->show() : $this->node()->jq()->hide();
-
-        return $this->response;
     }
 }
