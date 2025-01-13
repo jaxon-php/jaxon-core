@@ -130,6 +130,44 @@ class PackageManager
     }
 
     /**
+     * Get a callable list from config
+     *
+     * @param Config $xConfig
+     * @param string $sOptionName
+     * @param string $sOptionKey
+     * @param string $sCallableType
+     *
+     * @return void
+     */
+    private function registerCallablesFromConfig(Config $xConfig,
+        string $sOptionName, string $sOptionKey, string $sCallableType)
+    {
+        // The callable (directory path, class or function name) can be used as the key
+        // of the array item, or set with the key $sOptionKey in an entry without a key.
+        $aDirectories = [];
+        foreach($xConfig->getOption($sOptionName, []) as $xKey => $xValue)
+        {
+            if(is_string($xKey))
+            {
+                $aDirectories[$xKey] = $xValue;
+                continue;
+            }
+            if(is_string($xValue))
+            {
+                $aDirectories[] = $xValue;
+                continue;
+            }
+            if(is_array($xValue) && isset($xValue[$sOptionKey]))
+            {
+                $aDirectories[$xValue[$sOptionKey]] = $xValue;
+                continue;
+            }
+            // Invalid values are ignored.
+        }
+        $this->registerCallables($aDirectories, $sCallableType);
+    }
+
+    /**
      * Read and set Jaxon options from a JSON config file
      *
      * @param Config $xConfig The config options
@@ -144,9 +182,12 @@ class PackageManager
         $this->xRegistry->setCurrentConfig($xConfig);
 
         // Register functions, classes and directories
-        $this->registerCallables($xConfig->getOption('functions', []), Jaxon::CALLABLE_FUNCTION);
-        $this->registerCallables($xConfig->getOption('classes', []), Jaxon::CALLABLE_CLASS);
-        $this->registerCallables($xConfig->getOption('directories', []), Jaxon::CALLABLE_DIR);
+        $this->registerCallablesFromConfig($xConfig,
+            'functions', 'name', Jaxon::CALLABLE_FUNCTION);
+        $this->registerCallablesFromConfig($xConfig,
+            'classes', 'name', Jaxon::CALLABLE_CLASS);
+        $this->registerCallablesFromConfig($xConfig,
+            'directories', 'path', Jaxon::CALLABLE_DIR);
 
         // Unset the current config.
         $this->xRegistry->setCurrentConfig();
