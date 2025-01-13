@@ -231,17 +231,19 @@ class ConfigManager
      * Set the application config options
      *
      * @param array $aAppOptions
+     * @param string $sNamePrefix A prefix for the config option names
      *
-     * @return void
+     * @return bool
      */
-    public function setAppOptions(array $aAppOptions)
+    public function setAppOptions(array $aAppOptions, string $sNamePrefix = ''): bool
     {
         try
         {
             $this->xAppConfig = $this->xConfigSetter
-                ->setOptions($this->xAppConfig, $aAppOptions);
+                ->setOptions($this->xAppConfig, $aAppOptions, $sNamePrefix);
             // Call the config change listeners.
             $this->xEventManager->appConfigChanged($this->xAppConfig, '');
+            return $this->xAppConfig->changed();
         }
         catch(DataDepth $e)
         {

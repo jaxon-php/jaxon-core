@@ -102,6 +102,7 @@ class ViewRenderer
         {
             return;
         }
+
         $sPackage = $xAppConfig->getOption('package', '');
         foreach($aNamespaces as $sNamespace => $sOption)
         {
@@ -115,14 +116,14 @@ class ViewRenderer
 
             // If the lib config has defined a template option, then its value must be
             // read from the app config.
-            if($xUserConfig !== null && isset($aNamespace['template']) && is_array($aNamespace['template']))
+            if($xUserConfig !== null && isset($aNamespace['template']) &
+                is_array($aNamespace['template']))
             {
                 $sTemplateOption = $xAppConfig->getOption($sOption . '.template.option');
                 $sTemplateDefault = $xAppConfig->getOption($sOption . '.template.default');
                 $sTemplate = $xUserConfig->getOption($sTemplateOption, $sTemplateDefault);
                 $aNamespace['directory'] = rtrim($aNamespace['directory'], '/') . '/' . $sTemplate;
             }
-
             $this->aNamespaces[$sNamespace] = $aNamespace;
         }
     }

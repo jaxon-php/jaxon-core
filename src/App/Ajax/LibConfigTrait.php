@@ -24,6 +24,19 @@ trait LibConfigTrait
     abstract protected function getConfigManager(): ConfigManager;
 
     /**
+     * Set the values of an array of config options
+     *
+     * @param array $aOptions The options values to be set
+     * @param string $sNamePrefix A prefix for the config option names
+     *
+     * @return bool
+     */
+    public function setOptions(array $aOptions, string $sNamePrefix = ''): bool
+    {
+        return $this->getConfigManager()->setOptions($aOptions, $sNamePrefix);
+    }
+
+    /**
      * Set the value of a config option
      *
      * @param string $sName    The option name
