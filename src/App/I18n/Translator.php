@@ -15,7 +15,7 @@ namespace Jaxon\App\I18n;
  */
 
 use Jaxon\App\Config\ConfigListenerInterface;
-use Jaxon\Utils\Config\Config;
+use Jaxon\Config\Config;
 use Jaxon\Utils\Translation\Translator as BaseTranslator;
 
 class Translator extends BaseTranslator implements ConfigListenerInterface

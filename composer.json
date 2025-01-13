@@ -27,6 +27,7 @@
         "pimple/pimple": "^3.0",
         "nyholm/psr7": "^1.8",
         "nyholm/psr7-server": "^1.1",
+        "jaxon-php/jaxon-config": "dev-main",
         "jaxon-php/jaxon-utils": "dev-main"
     },
     "require-dev": {

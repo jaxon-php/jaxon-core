@@ -17,8 +17,8 @@ namespace Jaxon\Plugin\Request\CallableClass;
 use Composer\Autoload\ClassLoader;
 use Jaxon\App\AbstractCallable;
 use Jaxon\App\Component;
+use Jaxon\Config\Config;
 use Jaxon\Di\ClassContainer;
-use Jaxon\Utils\Config\Config;
 use ReflectionClass;
 use ReflectionMethod;
 

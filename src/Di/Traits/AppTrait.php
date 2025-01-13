@@ -8,12 +8,11 @@ use Jaxon\App\Ajax\Bootstrap;
 use Jaxon\App\Config\ConfigEventManager;
 use Jaxon\App\Config\ConfigManager;
 use Jaxon\App\I18n\Translator;
-use Jaxon\App\View\ViewRenderer;
+use Jaxon\Config\ConfigReader;
+use Jaxon\Config\ConfigSetter;
 use Jaxon\Di\Container;
 use Jaxon\Request\Handler\CallbackManager;
 use Jaxon\Plugin\Manager\PackageManager;
-use Jaxon\Utils\Config\ConfigReader;
-use Jaxon\Utils\Config\ConfigSetter;
 
 trait AppTrait
 {

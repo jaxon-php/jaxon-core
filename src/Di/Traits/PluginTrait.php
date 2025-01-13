@@ -7,6 +7,7 @@ use Jaxon\App\Config\ConfigManager;
 use Jaxon\App\Dialog\Manager\DialogCommand;
 use Jaxon\App\I18n\Translator;
 use Jaxon\App\View\ViewRenderer;
+use Jaxon\Config\Config;
 use Jaxon\Di\Container;
 use Jaxon\Exception\SetupException;
 use Jaxon\Script\Factory\CallFactory;
@@ -21,7 +22,6 @@ use Jaxon\Plugin\Response\Dialog\DialogPlugin;
 use Jaxon\Plugin\Response\Script\ScriptPlugin;
 use Jaxon\Request\Handler\CallbackManager;
 use Jaxon\Request\Handler\ParameterReader;
-use Jaxon\Utils\Config\Config;
 use Jaxon\Utils\File\FileMinifier;
 use Jaxon\Utils\Template\TemplateEngine;
 

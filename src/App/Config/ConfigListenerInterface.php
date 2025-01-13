@@ -14,7 +14,7 @@
 
 namespace Jaxon\App\Config;
 
-use Jaxon\Utils\Config\Config;
+use Jaxon\Config\Config;
 
 interface ConfigListenerInterface
 {

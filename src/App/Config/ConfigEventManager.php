@@ -15,7 +15,7 @@ namespace Jaxon\App\Config;
  */
 
 use Jaxon\Di\Container;
-use Jaxon\Utils\Config\Config;
+use Jaxon\Config\Config;
 
 class ConfigEventManager
 {

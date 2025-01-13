@@ -18,13 +18,13 @@ use Jaxon\Jaxon;
 use Jaxon\App\Config\ConfigManager;
 use Jaxon\App\I18n\Translator;
 use Jaxon\App\View\ViewRenderer;
+use Jaxon\Config\Config;
 use Jaxon\Di\Container;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\AbstractPackage;
 use Jaxon\Plugin\Code\CodeGenerator;
 use Jaxon\Plugin\Request\CallableClass\CallableRegistry;
 use Jaxon\Request\Handler\CallbackManager;
-use Jaxon\Utils\Config\Config;
 
 use function is_array;
 use function is_callable;

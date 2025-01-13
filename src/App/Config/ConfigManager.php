@@ -15,15 +15,15 @@
 namespace Jaxon\App\Config;
 
 use Jaxon\App\I18n\Translator;
+use Jaxon\Config\Config;
+use Jaxon\Config\ConfigReader;
+use Jaxon\Config\ConfigSetter;
+use Jaxon\Config\Exception\DataDepth;
+use Jaxon\Config\Exception\FileAccess;
+use Jaxon\Config\Exception\FileContent;
+use Jaxon\Config\Exception\FileExtension;
+use Jaxon\Config\Exception\YamlExtension;
 use Jaxon\Exception\SetupException;
-use Jaxon\Utils\Config\Config;
-use Jaxon\Utils\Config\ConfigReader;
-use Jaxon\Utils\Config\ConfigSetter;
-use Jaxon\Utils\Config\Exception\DataDepth;
-use Jaxon\Utils\Config\Exception\FileAccess;
-use Jaxon\Utils\Config\Exception\FileContent;
-use Jaxon\Utils\Config\Exception\FileExtension;
-use Jaxon\Utils\Config\Exception\YamlExtension;
 
 class ConfigManager
 {

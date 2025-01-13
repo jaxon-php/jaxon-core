@@ -4,8 +4,8 @@ namespace Jaxon\Di\Traits;
 
 use Jaxon\App\Stash\Stash;
 use Jaxon\App\I18n\Translator;
-use Jaxon\Utils\Config\ConfigReader;
-use Jaxon\Utils\Config\ConfigSetter;
+use Jaxon\Config\ConfigReader;
+use Jaxon\Config\ConfigSetter;
 use Jaxon\Utils\Http\UriDetector;
 use Jaxon\Utils\Template\TemplateEngine;
 

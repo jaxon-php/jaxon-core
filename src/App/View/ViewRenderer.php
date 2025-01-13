@@ -2,8 +2,8 @@
 
 namespace Jaxon\App\View;
 
+use Jaxon\Config\Config;
 use Jaxon\Di\Container;
-use Jaxon\Utils\Config\Config;
 
 use Closure;
 
@@ -11,7 +11,6 @@ use function array_filter;
 use function array_merge;
 use function is_array;
 use function rtrim;
-use function strlen;
 use function strrpos;
 use function substr;
 
