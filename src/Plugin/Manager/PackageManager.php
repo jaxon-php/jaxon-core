@@ -142,29 +142,29 @@ class PackageManager
     private function registerCallablesFromConfig(Config $xConfig,
         string $sOptionName, string $sOptionKey, string $sCallableType)
     {
-        // The callable (directory path, class or function name) can be used as the key
-        // of the array item, or set with the key $sOptionKey in an entry without a key.
-        $aDirectories = [];
+        // The callable (directory path, class or function name) can be used as the
+        // key of the array item, a string as the value of an entry without a key,
+        // or set with the key $sOptionKey in an array entry without a key.
+        $aCallables = [];
         foreach($xConfig->getOption($sOptionName, []) as $xKey => $xValue)
         {
             if(is_string($xKey))
             {
-                $aDirectories[$xKey] = $xValue;
+                $aCallables[$xKey] = $xValue;
                 continue;
             }
             if(is_string($xValue))
             {
-                $aDirectories[] = $xValue;
+                $aCallables[] = $xValue;
                 continue;
             }
             if(is_array($xValue) && isset($xValue[$sOptionKey]))
             {
-                $aDirectories[$xValue[$sOptionKey]] = $xValue;
-                continue;
+                $aCallables[$xValue[$sOptionKey]] = $xValue;
             }
             // Invalid values are ignored.
         }
-        $this->registerCallables($aDirectories, $sCallableType);
+        $this->registerCallables($aCallables, $sCallableType);
     }
 
     /**
