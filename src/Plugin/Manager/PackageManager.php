@@ -105,8 +105,9 @@ class PackageManager
             {
                 // Register a function without options
                 $this->xPluginManager->registerCallable($sCallableType, $xValue);
+                continue;
             }
-            elseif(is_string($xKey) && (is_array($xValue) || is_string($xValue)))
+            if(is_string($xKey) && (is_array($xValue) || is_string($xValue)))
             {
                 // Register a function with options
                 $this->xPluginManager->registerCallable($sCallableType, $xKey, $xValue);

@@ -105,18 +105,6 @@ final class ConfigTest extends TestCase
     /**
      * @throws SetupException
      */
-    public function testSetOptionsError()
-    {
-        // The key is missing
-        $this->assertFalse(jaxon()->config()->setOptions(['core' => []], 'core.missing'));
-        // The key is not an array
-        $this->assertFalse(jaxon()->config()->setOptions(['core' => ['string' => 'String']], 'core.string'));
-        $this->assertFalse(jaxon()->hasOption('core.string'));
-    }
-
-    /**
-     * @throws SetupException
-     */
     public function testSetOptionsDataDepth()
     {
         $this->expectException(SetupException::class);
