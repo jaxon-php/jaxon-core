@@ -111,8 +111,10 @@ class ConfigManager
         }
         catch(DataDepth $e)
         {
-            $sMessage = $this->xTranslator->trans('errors.data.depth',
-                ['key' => $e->sPrefix, 'depth' => $e->nDepth]);
+            $sMessage = $this->xTranslator->trans('errors.data.depth', [
+                'key' => $e->sPrefix,
+                'depth' => $e->nDepth,
+            ]);
             throw new SetupException($sMessage);
         }
     }
@@ -121,25 +123,27 @@ class ConfigManager
      * Set the config options of the library
      *
      * @param array $aOptions
-     * @param string $sKeys
+     * @param string $sNamePrefix A prefix for the config option names
      *
      * @return bool
      * @throws SetupException
      */
-    public function setOptions(array $aOptions, string $sKeys = ''): bool
+    public function setOptions(array $aOptions, string $sNamePrefix = ''): bool
     {
         try
         {
             $this->xLibConfig = $this->xConfigSetter
-                ->setOptions($this->xLibConfig, $aOptions, $sKeys);
+                ->setOptions($this->xLibConfig, $aOptions, $sNamePrefix);
             // Call the config change listeners.
             $this->xEventManager->libConfigChanged($this->xLibConfig, '');
             return $this->xLibConfig->changed();
         }
         catch(DataDepth $e)
         {
-            $sMessage = $this->xTranslator->trans('errors.data.depth',
-                ['key' => $e->sPrefix, 'depth' => $e->nDepth]);
+            $sMessage = $this->xTranslator->trans('errors.data.depth', [
+                'key' => $e->sPrefix,
+                'depth' => $e->nDepth,
+            ]);
             throw new SetupException($sMessage);
         }
     }
@@ -241,8 +245,10 @@ class ConfigManager
         }
         catch(DataDepth $e)
         {
-            $sMessage = $this->xTranslator->trans('errors.data.depth',
-                ['key' => $e->sPrefix, 'depth' => $e->nDepth]);
+            $sMessage = $this->xTranslator->trans('errors.data.depth', [
+                'key' => $e->sPrefix,
+                'depth' => $e->nDepth,
+            ]);
             throw new SetupException($sMessage);
         }
     }
@@ -275,22 +281,24 @@ class ConfigManager
     /**
      * Create a new the config object
      *
-     * @param array $aOptions    The options array
-     * @param string $sKeys    The prefix of key of the config options
+     * @param array $aOptions     The options array
+     * @param string $sNamePrefix A prefix for the config option names
      *
      * @return Config
      * @throws SetupException
      */
-    public function newConfig(array $aOptions = [], string $sKeys = ''): Config
+    public function newConfig(array $aOptions = [], string $sNamePrefix = ''): Config
     {
         try
         {
-            return $this->xConfigSetter->newConfig($aOptions, $sKeys);
+            return $this->xConfigSetter->newConfig($aOptions, $sNamePrefix);
         }
         catch(DataDepth $e)
         {
-            $sMessage = $this->xTranslator->trans('errors.data.depth',
-                ['key' => $e->sPrefix, 'depth' => $e->nDepth]);
+            $sMessage = $this->xTranslator->trans('errors.data.depth', [
+                'key' => $e->sPrefix,
+                'depth' => $e->nDepth,
+            ]);
             throw new SetupException($sMessage);
         }
     }

@@ -46,8 +46,8 @@ trait AppTrait
         });
         // Jaxon App bootstrap
         $this->set(Bootstrap::class, function($di) {
-            return new Bootstrap($di->g(ConfigManager::class), $di->g(PackageManager::class),
-                $di->g(CallbackManager::class), $di->g(ViewRenderer::class));
+            return new Bootstrap($di->g(ConfigManager::class),
+                $di->g(PackageManager::class), $di->g(CallbackManager::class));
         });
         // The javascript library version
         $this->set($this->sJsLibVersion, function($di) {
