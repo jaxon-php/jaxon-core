@@ -72,7 +72,7 @@ class PsrPlugin extends AbstractResponsePlugin
      *
      * @return ResponseInterface
      */
-    public function ajax(): ResponseInterface
+    public function ajaxResponse(): ResponseInterface
     {
         $xPsrResponse = $this->xPsr17Factory->createResponse(200);
         if($this->xRequest->getMethod() === 'GET')
@@ -84,20 +84,6 @@ class PsrPlugin extends AbstractResponsePlugin
                 ->withHeader('Pragma', 'no-cache');
         }
         return $xPsrResponse
-            ->withHeader('content-type', $this->response()->getContentType())
-            ->withBody(Stream::create($this->response()->getOutput()));
-    }
-
-    /**
-     * Convert an upload response to a PSR7 response object
-     *
-     * @param int $nHttpCode The response HTTP code
-     *
-     * @return ResponseInterface
-     */
-    public function upload(int $nHttpCode): ResponseInterface
-    {
-        return $this->xPsr17Factory->createResponse($nHttpCode)
             ->withHeader('content-type', $this->response()->getContentType())
             ->withBody(Stream::create($this->response()->getOutput()));
     }

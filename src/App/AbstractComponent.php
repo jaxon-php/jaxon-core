@@ -34,7 +34,7 @@ abstract class AbstractComponent extends AbstractCallable
     /**
      * @inheritDoc
      */
-    final protected function _response(): AjaxResponse
+    final protected function ajaxResponse(): AjaxResponse
     {
         return $this->nodeResponse;
     }

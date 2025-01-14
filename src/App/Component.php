@@ -4,13 +4,13 @@ namespace Jaxon\App;
 
 use Jaxon\Di\Container;
 use Jaxon\Plugin\Request\CallableClass\CallableClassHelper;
-use Jaxon\Response\AjaxResponse;
+use Jaxon\Response\Response;
 use Stringable;
 
 abstract class Component extends AbstractComponent
 {
     /**
-     * @var AjaxResponse
+     * @var Response
      */
     protected $response = null;
 

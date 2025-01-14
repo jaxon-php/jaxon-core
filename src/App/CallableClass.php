@@ -27,7 +27,7 @@ class CallableClass extends AbstractCallable
     /**
      * @inheritDoc
      */
-    final protected function _response(): AjaxResponse
+    final protected function ajaxResponse(): AjaxResponse
     {
         return $this->response;
     }
@@ -43,6 +43,6 @@ class CallableClass extends AbstractCallable
      */
     final public function paginator(int $nPageNumber, int $nItemsPerPage, int $nTotalItems): Paginator
     {
-        return $this->_response()->paginator($nPageNumber, $nItemsPerPage, $nTotalItems);
+        return $this->ajaxResponse()->paginator($nPageNumber, $nItemsPerPage, $nTotalItems);
     }
 }

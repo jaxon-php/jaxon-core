@@ -244,6 +244,6 @@ abstract class AjaxResponse extends AbstractResponse
     {
         /** @var PsrPlugin */
         $xPlugin = $this->plugin('psr');
-        return $xPlugin->ajax();
+        return $xPlugin->ajaxResponse();
     }
 }

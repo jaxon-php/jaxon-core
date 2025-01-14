@@ -17,7 +17,7 @@ class Pagination extends AbstractComponent
      */
     final public function paginator(int $nPageNumber, int $nItemsPerPage, int $nTotalItems): Paginator
     {
-        return $this->_response()->paginator($nPageNumber, $nItemsPerPage, $nTotalItems);
+        return $this->ajaxResponse()->paginator($nPageNumber, $nItemsPerPage, $nTotalItems);
     }
 
     /**

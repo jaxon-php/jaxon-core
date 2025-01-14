@@ -36,7 +36,7 @@ abstract class AbstractCallable
      *
      * @return AjaxResponse
      */
-    abstract protected function _response(): AjaxResponse;
+    abstract protected function ajaxResponse(): AjaxResponse;
 
     /**
      * Get the Jaxon request target
@@ -132,6 +132,6 @@ abstract class AbstractCallable
      */
     public function bag(string $sBagName): DataBagContext
     {
-        return $this->_response()->bag($sBagName);
+        return $this->ajaxResponse()->bag($sBagName);
     }
 }
