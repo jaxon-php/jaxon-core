@@ -77,7 +77,8 @@ class ViewRenderer
      *
      * @return void
      */
-    public function addNamespace(string $sNamespace, string $sDirectory, string $sExtension, string $sRenderer)
+    public function addNamespace(string $sNamespace, string $sDirectory,
+        string $sExtension, string $sRenderer)
     {
         $aNamespace = [
             'directory' => $sDirectory,
@@ -115,11 +116,11 @@ class ViewRenderer
 
             // If the lib config has defined a template option, then its value must be
             // read from the app config.
-            if($xUserConfig !== null && isset($aNamespace['template']) &
+            if($xUserConfig !== null && isset($aNamespace['template']) &&
                 is_array($aNamespace['template']))
             {
-                $sTemplateOption = $xAppConfig->getOption($sOption . '.template.option');
-                $sTemplateDefault = $xAppConfig->getOption($sOption . '.template.default');
+                $sTemplateOption = $xAppConfig->getOption("$sOption.template.option");
+                $sTemplateDefault = $xAppConfig->getOption("$sOption.template.default");
                 $sTemplate = $xUserConfig->getOption($sTemplateOption, $sTemplateDefault);
                 $aNamespace['directory'] = rtrim($aNamespace['directory'], '/') . '/' . $sTemplate;
             }
@@ -137,7 +138,7 @@ class ViewRenderer
     public function getRenderer(string $sId): ViewInterface
     {
         // Return the view renderer with the given id
-        return $this->di->g('jaxon.app.view.' . $sId);
+        return $this->di->g("jaxon.app.view.$sId");
     }
 
     /**
@@ -151,16 +152,16 @@ class ViewRenderer
     public function addRenderer(string $sId, Closure $xClosure)
     {
         // Return the initialized view renderer
-        $this->di->set('jaxon.app.view.' . $sId, function($di) use($sId, $xClosure) {
+        $this->di->set("jaxon.app.view.$sId", function($di) use($sId, $xClosure) {
             // Get the defined renderer
             $xRenderer = $xClosure($di);
             // Init the renderer with the template namespaces
-            $aNamespaces = array_filter($this->aNamespaces, function($aNamespace) use($sId) {
-                return $aNamespace['renderer'] === $sId;
+            $aNamespaces = array_filter($this->aNamespaces, function($aOptions) use($sId) {
+                return $aOptions['renderer'] === $sId;
             });
-            foreach($aNamespaces as $sNamespace => $aNamespace)
+            foreach($aNamespaces as $sName => $aOptions)
             {
-                $xRenderer->addNamespace($sNamespace, $aNamespace['directory'], $aNamespace['extension']);
+                $xRenderer->addNamespace($sName, $aOptions['directory'], $aOptions['extension']);
             }
             return $xRenderer;
         });
