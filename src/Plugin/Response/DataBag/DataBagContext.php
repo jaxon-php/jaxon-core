@@ -41,6 +41,17 @@ class DataBagContext
      * @param string $sKey
      * @param mixed $xValue
      *
+     * @return void
+     */
+    public function new(string $sKey, $xValue)
+    {
+        $this->xDataBag->new($this->sName, $sKey, $xValue);
+    }
+
+    /**
+     * @param string $sKey
+     * @param mixed $xValue
+     *
      * @return mixed
      */
     public function get(string $sKey, $xValue = null)

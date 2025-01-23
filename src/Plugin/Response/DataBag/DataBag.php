@@ -6,6 +6,7 @@ use JsonSerializable;
 
 use function array_map;
 use function is_array;
+use function key_exists;
 
 class DataBag implements JsonSerializable
 {
@@ -76,6 +77,22 @@ class DataBag implements JsonSerializable
     {
         $this->bTouched = true;
         $this->aData[$sBag][$sKey] = $xValue;
+    }
+
+    /**
+     * @param string $sBag
+     * @param string $sKey
+     * @param mixed $xValue
+     *
+     * @return void
+     */
+    public function new(string $sBag, string $sKey, $xValue)
+    {
+        // Set the value only if it doesn't already exist.
+        if(!isset($this->aData[$sBag]) || !key_exists($sKey, $this->aData[$sBag]))
+        {
+            $this->set($sBag, $sKey, $xValue);
+        }
     }
 
     /**
