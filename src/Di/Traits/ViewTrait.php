@@ -4,6 +4,8 @@ namespace Jaxon\Di\Traits;
 
 use Jaxon\App\Dialog\Manager\DialogCommand;
 use Jaxon\App\Dialog\Manager\LibraryRegistryInterface;
+use Jaxon\App\Pagination\Renderer;
+use Jaxon\App\Pagination\RendererInterface;
 use Jaxon\App\View\HtmlAttrHelper;
 use Jaxon\App\View\TemplateView;
 use Jaxon\App\View\ViewRenderer;
@@ -49,6 +51,10 @@ trait ViewTrait
         // Dialog command
         $this->set(DialogCommand::class, function($di) {
             return new DialogCommand($di->g(LibraryRegistryInterface::class));
+        });
+        // Pagination renderer
+        $this->set(RendererInterface::class, function($di) {
+            return new Renderer($di->g(ViewRenderer::class));
         });
 
         // Helpers for HTML custom attributes formatting

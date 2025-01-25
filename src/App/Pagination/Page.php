@@ -9,7 +9,7 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Plugin\Response\Pagination;
+namespace Jaxon\App\Pagination;
 
 class Page
 {

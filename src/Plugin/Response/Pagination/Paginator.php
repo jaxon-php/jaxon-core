@@ -40,15 +40,15 @@ SOFTWARE.
 
 namespace Jaxon\Plugin\Response\Pagination;
 
-use Closure;
+use Jaxon\App\Pagination\Page;
 use Jaxon\Response\Response;
 use Jaxon\Response\ComponentResponse;
 use Jaxon\Script\JsExpr;
+use Closure;
 
-use function array_walk;
-use function array_map;
 use function array_pop;
 use function array_shift;
+use function array_walk;
 use function ceil;
 use function count;
 use function floor;
@@ -326,57 +326,38 @@ class Paginator
     }
 
     /**
-     * @param JsExpr $xCall
-     * @param string $sWrapperId
+     * Show the pagination links
      *
-     * @return void
+     * @return string|null
      */
-    public function render(JsExpr $xCall, string $sWrapperId = '')
+    private function renderLinks(): ?string
     {
-        if(($xFunc = $xCall->func()) === null)
+        $aPages = $this->pages();
+        if(count($aPages) === 0)
         {
-            return;
+            return null;
         }
 
-        $sHtml = '';
-        $aPages = $this->pages();
-        if(count($aPages) > 0)
-        {
-            $xRenderer = $this->xPlugin->renderer();
-            $aPages = array_map(function($xPage) use($xRenderer) {
-                return $xRenderer->render('pagination::links/' . $xPage->sType, [
-                    'page' => $xPage->nNumber,
-                    'text' => $xPage->sText,
-                ]);
-            }, $aPages);
-            $aPrevPage = array_shift($aPages); // The first entry in the array
-            $aNextPage = array_pop($aPages); // The last entry in the array
-            $sHtml = trim($xRenderer->render('pagination::wrapper', [
-                'links' => $aPages,
-                'prev' => $aPrevPage,
-                'next' => $aNextPage,
-            ])->__toString());
-        }
-        // The HTML code must always be displayed, even if it is empty.
-        $aParams = $this->showLinks($sHtml, trim($sWrapperId));
-        if($sHtml !== '')
-        {
-            // Set click handlers on the pagination links
-            $aParams['func'] = $xFunc->withPage()->jsonSerialize();
-            $this->xPlugin->addCommand('pg.paginate', $aParams);
-        }
+        $xPrevPage = array_shift($aPages); // The first entry in the array
+        $xNextPage = array_pop($aPages); // The last entry in the array
+        return $this->xPlugin->renderer()->render($aPages, $xPrevPage, $xNextPage);
     }
 
     /**
      * Show the pagination links
      *
-     * @param string $sHtml
      * @param string $sWrapperId
      *
-     * @return array
+     * @return array|null
      */
-    private function showLinks(string $sHtml, string $sWrapperId): array
+    private function showLinks(string $sWrapperId): ?array
     {
+        $sHtml = $this->renderLinks();
+        if(!$sHtml)
+        {
+            return null;
+        }
+
         if(is_a($this->xPlugin->response(), Response::class))
         {
             /** @var Response */
@@ -390,5 +371,28 @@ class Paginator
         $xResponse = $this->xPlugin->response();
         $xResponse->html($sHtml);
         return [];
+    }
+
+    /**
+     * @param JsExpr $xCall
+     * @param string $sWrapperId
+     *
+     * @return void
+     */
+    public function render(JsExpr $xCall, string $sWrapperId = '')
+    {
+        if(($xFunc = $xCall->func()) === null)
+        {
+            return;
+        }
+
+        // The HTML code must always be displayed, even if it is empty.
+        $aParams = $this->showLinks(trim($sWrapperId));
+        if($aParams !== null)
+        {
+            // Set click handlers on the pagination links
+            $aParams['func'] = $xFunc->withPage()->jsonSerialize();
+            $this->xPlugin->addCommand('pg.paginate', $aParams);
+        }
     }
 }

@@ -11,7 +11,7 @@
 
 namespace Jaxon\Plugin\Response\Pagination;
 
-use Jaxon\App\View\ViewRenderer;
+use Jaxon\App\Pagination\RendererInterface;
 use Jaxon\Plugin\AbstractResponsePlugin;
 
 /**
@@ -48,16 +48,16 @@ class PaginatorPlugin extends AbstractResponsePlugin
     const NAME = 'pg';
 
     /**
-     * @var ViewRenderer
+     * @var RendererInterface
      */
     protected $xRenderer;
 
     /**
      * The constructor.
      *
-     * @param ViewRenderer $xRenderer
+     * @param RendererInterface $xRenderer
      */
-    public function __construct(ViewRenderer $xRenderer)
+    public function __construct(RendererInterface $xRenderer)
     {
         $this->xRenderer = $xRenderer;
     }
@@ -96,9 +96,9 @@ class PaginatorPlugin extends AbstractResponsePlugin
     /**
      * Get the view renderer
      *
-     * @return ViewRenderer
+     * @return RendererInterface
      */
-    public function renderer(): ViewRenderer
+    public function renderer(): RendererInterface
     {
         return $this->xRenderer;
     }
