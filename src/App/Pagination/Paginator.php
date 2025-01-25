@@ -329,14 +329,14 @@ class Paginator
     /**
      * Show the pagination links
      *
-     * @return string|null
+     * @return string
      */
-    private function renderLinks(): ?string
+    private function renderLinks(): string
     {
         $aPages = $this->pages();
         if(count($aPages) === 0)
         {
-            return null;
+            return '';
         }
 
         $xPrevPage = array_shift($aPages); // The first entry in the array
@@ -354,24 +354,20 @@ class Paginator
     private function showLinks(string $sWrapperId): ?array
     {
         $sHtml = $this->renderLinks();
-        if(!$sHtml)
-        {
-            return null;
-        }
-
+        // The HTML code must always be displayed, even if it is empty.
         if(is_a($this->xPlugin->response(), Response::class))
         {
             /** @var Response */
             $xResponse = $this->xPlugin->response();
             $xResponse->html($sWrapperId, $sHtml);
-            return ['id' => $sWrapperId];
+            return !$sHtml ? null : ['id' => $sWrapperId];
         }
 
         // The wrapper id is not needed for the ComponentResponse
         /** @var ComponentResponse */
         $xResponse = $this->xPlugin->response();
         $xResponse->html($sHtml);
-        return [];
+        return !$sHtml ? null : [];
     }
 
     /**
@@ -387,7 +383,6 @@ class Paginator
             return;
         }
 
-        // The HTML code must always be displayed, even if it is empty.
         $aParams = $this->showLinks(trim($sWrapperId));
         if($aParams !== null)
         {
