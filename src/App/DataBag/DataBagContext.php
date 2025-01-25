@@ -1,6 +1,6 @@
 <?php
 
-namespace Jaxon\Plugin\Response\DataBag;
+namespace Jaxon\App\DataBag;
 
 class DataBagContext
 {

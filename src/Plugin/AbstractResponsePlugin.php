@@ -25,8 +25,8 @@
 
 namespace Jaxon\Plugin;
 
+use Jaxon\App\DataBag\DataBagContext;
 use Jaxon\Script\JqCall;
-use Jaxon\Plugin\Response\DataBag\DataBagContext;
 
 /**
  * @method JqCall jq(string $sPath = '', $xContext = null)

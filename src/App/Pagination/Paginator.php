@@ -38,11 +38,12 @@ SOFTWARE.
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Plugin\Response\Pagination;
+namespace Jaxon\App\Pagination;
 
 use Jaxon\App\Pagination\Page;
-use Jaxon\Response\Response;
 use Jaxon\Response\ComponentResponse;
+use Jaxon\Response\Response;
+use Jaxon\Plugin\Response\Pagination\PaginatorPlugin;
 use Jaxon\Script\JsExpr;
 use Closure;
 

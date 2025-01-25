@@ -3,13 +3,13 @@
 namespace Jaxon\App;
 
 use Jaxon\Di\Container;
+use Jaxon\App\DataBag\DataBagContext;
 use Jaxon\App\Session\SessionInterface;
 use Jaxon\App\Stash\Stash;
 use Jaxon\App\View\ViewRenderer;
 use Jaxon\Exception\SetupException;
 use Jaxon\Script\JxnCall;
 use Jaxon\Plugin\Request\CallableClass\CallableClassHelper;
-use Jaxon\Plugin\Response\DataBag\DataBagContext;
 use Jaxon\Request\TargetInterface;
 use Jaxon\Response\AjaxResponse;
 use Psr\Log\LoggerInterface;

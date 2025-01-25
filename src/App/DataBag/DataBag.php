@@ -1,7 +1,8 @@
 <?php
 
-namespace Jaxon\Plugin\Response\DataBag;
+namespace Jaxon\App\DataBag;
 
+use Jaxon\Plugin\Response\DataBag\DataBagPlugin;
 use JsonSerializable;
 
 use function array_map;

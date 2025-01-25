@@ -2,9 +2,9 @@
 
 namespace Jaxon\App;
 
+use Jaxon\App\Pagination\Paginator;
 use Jaxon\Di\Container;
 use Jaxon\Plugin\Request\CallableClass\CallableClassHelper;
-use Jaxon\Plugin\Response\Pagination\Paginator;
 use Jaxon\Response\AjaxResponse;
 use Jaxon\Response\Response;
 

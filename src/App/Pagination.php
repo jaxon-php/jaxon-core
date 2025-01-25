@@ -2,7 +2,7 @@
 
 namespace Jaxon\App;
 
-use Jaxon\Plugin\Response\Pagination\Paginator;
+use Jaxon\App\Pagination\Paginator;
 
 class Pagination extends AbstractComponent
 {

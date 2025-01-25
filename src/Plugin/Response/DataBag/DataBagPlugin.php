@@ -2,6 +2,8 @@
 
 namespace Jaxon\Plugin\Response\DataBag;
 
+use Jaxon\App\DataBag\DataBag;
+use Jaxon\App\DataBag\DataBagContext;
 use Jaxon\Di\Container;
 use Jaxon\Plugin\AbstractResponsePlugin;
 

@@ -11,6 +11,7 @@
 
 namespace Jaxon\Plugin\Response\Pagination;
 
+use Jaxon\App\Pagination\Paginator;
 use Jaxon\App\Pagination\RendererInterface;
 use Jaxon\Plugin\AbstractResponsePlugin;
 
@@ -75,8 +76,7 @@ class PaginatorPlugin extends AbstractResponsePlugin
      */
     public function getHash(): string
     {
-        // Use the version number as hash
-        return '5.0.0';
+        return '5.0.0'; // Use the version number as hash
     }
 
     /**
