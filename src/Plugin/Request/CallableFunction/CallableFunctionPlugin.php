@@ -29,7 +29,6 @@ use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\AbstractRequestPlugin;
 use Jaxon\Request\Target;
 use Jaxon\Request\Validator;
-use Jaxon\Response\AbstractResponse;
 use Jaxon\Utils\Template\TemplateEngine;
 use Psr\Http\Message\ServerRequestInterface;
 use Exception;
@@ -220,7 +219,7 @@ class CallableFunctionPlugin extends AbstractRequestPlugin
      * @inheritDoc
      * @throws RequestException
      */
-    public function processRequest(): ?AbstractResponse
+    public function processRequest()
     {
         $sRequestedFunction = $this->xTarget->getFunctionName();
 
@@ -246,7 +245,7 @@ class CallableFunctionPlugin extends AbstractRequestPlugin
         }
         try
         {
-            return $xFunction->call($this->xTarget->args());
+            $xFunction->call($this->xTarget->args());
         }
         catch(Exception $e)
         {

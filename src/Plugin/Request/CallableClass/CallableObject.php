@@ -35,7 +35,6 @@ use Jaxon\Di\ClassContainer;
 use Jaxon\Di\Container;
 use Jaxon\Exception\SetupException;
 use Jaxon\Request\Target;
-use Jaxon\Response\AbstractResponse;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionMethod;
@@ -255,14 +254,14 @@ class CallableObject
      * @param array $aArgs    The method arguments
      * @param bool $bAccessible    If false, only calls to public method are allowed
      *
-     * @return mixed
+     * @return void
      * @throws ReflectionException
      */
     private function callMethod(string $sMethod, array $aArgs, bool $bAccessible)
     {
         $reflectionMethod = $this->xReflectionClass->getMethod($sMethod);
         $reflectionMethod->setAccessible($bAccessible); // Make it possible to call protected methods
-        return $reflectionMethod->invokeArgs($this->xRegisteredObject, $aArgs);
+        $reflectionMethod->invokeArgs($this->xRegisteredObject, $aArgs);
     }
 
     /**
@@ -373,11 +372,11 @@ class CallableObject
      *
      * @param Target $xTarget The target of the Jaxon call
      *
-     * @return null|AbstractResponse
+     * @return void
      * @throws ReflectionException
      * @throws SetupException
      */
-    public function call(Target $xTarget): ?AbstractResponse
+    public function call(Target $xTarget)
     {
         $this->xTarget = $xTarget;
         $this->xRegisteredObject = $this->getRegisteredObject($xTarget);
@@ -386,11 +385,9 @@ class CallableObject
         $this->callHookMethods($this->xOptions->beforeMethods());
 
         // Call the request method
-        $sMethod = $xTarget->getMethodName();
-        $xResponse = $this->callMethod($sMethod, $this->xTarget->args(), false);
+        $this->callMethod($xTarget->getMethodName(), $this->xTarget->args(), false);
 
         // Methods to call after processing the request
         $this->callHookMethods($this->xOptions->afterMethods());
-        return $xResponse;
     }
 }

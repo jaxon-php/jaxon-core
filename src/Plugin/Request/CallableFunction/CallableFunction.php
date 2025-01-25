@@ -143,7 +143,7 @@ class CallableFunction
      *
      * @param array $aArgs    The function arguments
      *
-     * @return mixed
+     * @return void
      */
     public function call(array $aArgs = [])
     {
@@ -158,6 +158,6 @@ class CallableFunction
             $this->xPhpFunction[0] = $this->di->h($sClassName) ?
                 $this->di->g($sClassName) : $this->di->make($sClassName);
         }
-        return call_user_func_array($this->xPhpFunction, $aArgs);
+        call_user_func_array($this->xPhpFunction, $aArgs);
     }
 }

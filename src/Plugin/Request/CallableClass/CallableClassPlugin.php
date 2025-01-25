@@ -29,7 +29,6 @@ use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\AbstractRequestPlugin;
 use Jaxon\Request\Target;
 use Jaxon\Request\Validator;
-use Jaxon\Response\AbstractResponse;
 use Jaxon\Utils\Template\TemplateEngine;
 use Psr\Http\Message\ServerRequestInterface;
 use Exception;
@@ -214,34 +213,39 @@ class CallableClassPlugin extends AbstractRequestPlugin
     }
 
     /**
-     * @param Exception $xException
-     * @param string $sErrorMessage
+     * @param string $sExceptionMessage
+     * @param string $sErrorCode
+     * @param array $aErrorParams
      *
      * @throws RequestException
      * @return void
      */
-    private function throwException(Exception $xException, string $sErrorMessage): void
+    private function throwException(string $sExceptionMessage,
+        string $sErrorCode, array $aErrorParams = []): void
     {
-        $this->di->getLogger()->error($xException->getMessage());
-        throw new RequestException($sErrorMessage . (!$this->bDebug ? '' :
-            "\n" . $xException->getMessage()));
+        $sMessage = $this->xTranslator->trans($sErrorCode, $aErrorParams) .
+            (!$sExceptionMessage ? '' : "\n$sExceptionMessage");
+        $this->di->getLogger()->error($sMessage);
+        throw new RequestException($sMessage);
     }
 
     /**
      * @inheritDoc
      * @throws RequestException
      */
-    public function processRequest(): ?AbstractResponse
+    public function processRequest()
     {
         $sClassName = $this->xTarget->getClassName();
         $sMethodName = $this->xTarget->getMethodName();
+        // Will be used to print a translated error message.
+        $sError = 'errors.objects.invalid';
+        $aErrorParams = ['class' => $sClassName, 'method' => $sMethodName];
 
         if(!$this->xValidator->validateClass($sClassName) ||
             !$this->xValidator->validateMethod($sMethodName))
         {
             // Unable to find the requested object or method
-            throw new RequestException($this->xTranslator->trans('errors.objects.invalid',
-                ['class' => $sClassName, 'method' => $sMethodName]));
+            $this->throwException('', $sError, $aErrorParams);
         }
 
         // Call the requested method
@@ -249,22 +253,14 @@ class CallableClassPlugin extends AbstractRequestPlugin
         {
             /** @var CallableObject */
             $xCallableObject = $this->getCallable($sClassName);
-        }
-        catch(ReflectionException|SetupException $e)
-        {
-            // Unable to find the requested class or method
-            $this->throwException($e, $this->xTranslator->trans('errors.objects.invalid',
-                ['class' => $sClassName, 'method' => $sMethodName]));
-        }
-        try
-        {
-            return $xCallableObject->call($this->xTarget);
+
+            $sError = 'errors.objects.call';
+            $xCallableObject->call($this->xTarget);
         }
         catch(ReflectionException|SetupException $e)
         {
             // Unable to execute the requested class or method
-            $this->throwException($e, $this->xTranslator->trans('errors.objects.call',
-                ['class' => $sClassName, 'method' => $sMethodName]));
+            $this->throwException($e->getMessage(), $sError, $aErrorParams);
         }
     }
 }
