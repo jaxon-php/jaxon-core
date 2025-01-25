@@ -42,6 +42,7 @@ return [
         'objects' => [
             'call' => "Une erreur s'est produite à l'appel de la méthode :method de la classe :class.",
             'invalid' => "La requête indique un objet invalide; il n'existe pas de classe :class ou de méthode :method.",
+            'excluded' => "La requête a essayé d'appeler la méthode :method de la classe :class, qui est exclue.",
             'instance' => "Pour enregistrer un objet, vous devez fournir une instance de la classe correspondante.",
             'invalid-declaration' => "La déclaration d'objet est invalide.",
         ],

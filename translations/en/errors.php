@@ -42,6 +42,7 @@ return [
         'objects' => [
             'call' => "An error occured during the call of method :method in of class :class.",
             'invalid' => "Invalid object request received; no object :class or method :method found.",
+            'excluded' => "Trying to call the excluded method :method of class :class.",
             'instance' => "To register a callable object, please provide an instance of the desired class.",
             'invalid-declaration' => "Invalid object declaration.",
         ],

@@ -175,10 +175,16 @@ class CallableObject
     }
 
     /**
+     * @param string|null $sMethod
+     *
      * @return bool
      */
-    public function excluded(): bool
+    public function excluded(?string $sMethod = null): bool
     {
+        if($sMethod !== null && $this->isProtectedMethod($sMethod, false))
+        {
+            return true;
+        }
         return $this->xOptions->excluded();
     }
 

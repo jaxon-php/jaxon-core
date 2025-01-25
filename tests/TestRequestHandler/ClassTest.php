@@ -218,4 +218,72 @@ class ClassTest extends TestCase
         $this->expectException(RequestException::class);
         jaxon()->processRequest();
     }
+
+    /**
+     * @throws SetupException
+     * @throws RequestException
+     */
+    public function testRequestToExcludedClass()
+    {
+        jaxon()->app()->setOption('', true);
+        jaxon()->register(Jaxon::CALLABLE_CLASS, 'Excluded', [
+            'include' => __DIR__ . '/../src/excluded.php',
+            'functions' => [
+                '*' => [
+                    'excluded' => true,
+                ],
+            ],
+        ]);
+        // The server request
+        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
+            return $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withParsedBody([
+                    'jxncall' => json_encode([
+                        'type' => 'class',
+                        'name' => 'Excluded',
+                        'method' => 'action',
+                        'args' => [],
+                    ]),
+                ]);
+        });
+
+        $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
+        $this->expectException(RequestException::class);
+        jaxon()->processRequest();
+    }
+
+    /**
+     * @throws SetupException
+     * @throws RequestException
+     */
+    public function testRequestToExcludedMethod()
+    {
+        jaxon()->app()->setOption('', true);
+        jaxon()->register(Jaxon::CALLABLE_CLASS, 'Excluded', [
+            'include' => __DIR__ . '/../src/excluded.php',
+            'functions' => [
+                'action' => [
+                    'excluded' => true,
+                ],
+            ],
+        ]);
+        // The server request
+        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
+            return $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withParsedBody([
+                    'jxncall' => json_encode([
+                        'type' => 'class',
+                        'name' => 'Excluded',
+                        'method' => 'action',
+                        'args' => [],
+                    ]),
+                ]);
+        });
+
+        $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
+        $this->expectException(RequestException::class);
+        jaxon()->processRequest();
+    }
 }
