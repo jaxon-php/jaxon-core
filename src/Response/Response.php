@@ -22,6 +22,7 @@
 namespace Jaxon\Response;
 
 use Jaxon\Script\JsExpr;
+use Jaxon\Script\JxnCall;
 
 class Response extends AjaxResponse
 {
@@ -224,6 +225,29 @@ class Response extends AjaxResponse
             'tag' => [
                 'name' => $this->str($sTag),
                 'id' => $this->str($sId),
+            ],
+        ]);
+        return $this;
+    }
+
+    /**
+     * Add a command to bind an element to a component
+     *
+     * @param string $sTarget   The id of the element
+     * @param JxnCall $xCall    A call to the component
+     * @param string $sItem     The component item
+     *
+     * @return self
+     */
+    public function bind(string $sTarget, JxnCall $xCall, string $sItem = ''): self
+    {
+        $this->xManager->addCommand('node.bind', [
+            'id' => $this->str($sTarget),
+            'component' => !$sItem ? [
+                'name' => $xCall->_class(),
+            ] : [
+                'name' => $xCall->_class(),
+                'item' => $this->str($sItem),
             ],
         ]);
         return $this;
