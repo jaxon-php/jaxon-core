@@ -40,9 +40,10 @@ return [
             'invalid-declaration' => "Declaración de funcion invalida.",
         ],
         'objects' => [
-            'call' => "An error occured during the call of method :method in of class :class",
-            'invalid' => "Solicitud de objeto invalida recibida; Sin objeto :class o metodo :method encontrado.",
+            'invalid' => "Solicitud de objeto invalida recibida; objeto :class o metodo :method.",
+            'missing' => "An error occured during the call; Sin objeto :class o metodo :method encontrado.",
             'excluded' => "Trying to call the excluded method :method of class :class.",
+            'call' => "An error occured during the call of method :method in of class :class",
             'instance' => "Para registrar un objeto, por favor de proveer una instancia de la clase deseada.",
             'invalid-declaration' => "Declaración de objeto invalida.",
         ],

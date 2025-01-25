@@ -238,19 +238,19 @@ class CallableClassPlugin extends AbstractRequestPlugin
         $sClassName = $this->xTarget->getClassName();
         $sMethodName = $this->xTarget->getMethodName();
         // Will be used to print a translated error message.
-        $sError = 'errors.objects.invalid';
         $aErrorParams = ['class' => $sClassName, 'method' => $sMethodName];
 
         if(!$this->xValidator->validateClass($sClassName) ||
             !$this->xValidator->validateMethod($sMethodName))
         {
             // Unable to find the requested object or method
-            $this->throwException('', $sError, $aErrorParams);
+            $this->throwException('', 'errors.objects.invalid', $aErrorParams);
         }
 
         // Call the requested method
         try
         {
+            $sError = 'errors.objects.find';
             /** @var CallableObject */
             $xCallableObject = $this->getCallable($sClassName);
 
