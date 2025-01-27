@@ -12,6 +12,8 @@
 
 namespace Jaxon\App\Dialog\Library;
 
+use Jaxon\Plugin\Code\Scripts;
+
 interface LibraryInterface
 {
     /**
@@ -50,9 +52,9 @@ interface LibraryInterface
     public function getScript(): string;
 
     /**
-     * Get the javascript code to be executed on page load
+     * Get the javascript codes to include into the page
      *
-     * @return string
+     * @return Scripts|null
      */
-    public function getReadyScript(): string;
+    public function getScripts(): ?Scripts;
 }

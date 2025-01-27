@@ -3,7 +3,7 @@
 /**
  * ConfigManager.php - Jaxon config reader
  *
- * Extends the config reader in the jaxon-utils package, and provides exception handlers.
+ * Extends the config reader in the jaxon-config package, and provides exception handlers.
  *
  * @package jaxon-core
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>

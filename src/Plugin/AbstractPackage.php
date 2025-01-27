@@ -16,6 +16,8 @@ namespace Jaxon\Plugin;
 use Jaxon\App\View\ViewRenderer;
 use Jaxon\Config\Config;
 
+use Jaxon\Plugin\Code\Scripts;
+
 abstract class AbstractPackage implements CodeGeneratorInterface
 {
     /**
@@ -31,13 +33,6 @@ abstract class AbstractPackage implements CodeGeneratorInterface
      * @var ViewRenderer
      */
     protected $xRenderer;
-
-    /**
-     * Whether to include the getReadyScript() in the generated code.
-     *
-     * @var bool
-     */
-    protected $bReadyEnabled = false;
 
     /**
      * Get the path to the config file, or the config options in an array.
@@ -88,33 +83,6 @@ abstract class AbstractPackage implements CodeGeneratorInterface
     }
 
     /**
-     * Include the getReadyScript() in the generated code.
-     *
-     * @return void
-     */
-    public function ready()
-    {
-        $this->bReadyEnabled = true;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function readyEnabled(): bool
-    {
-        return $this->bReadyEnabled;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public final function readyInlined(): bool
-    {
-        // For packages, the getReadyScript() is never exported to external files.
-        return true;
-    }
-
-    /**
      * @inheritDoc
      */
     public final function getHash(): string
@@ -150,9 +118,9 @@ abstract class AbstractPackage implements CodeGeneratorInterface
     /**
      * @inheritDoc
      */
-    public function getReadyScript(): string
+    public function getScripts(): ?Scripts
     {
-        return '';
+        return null;
     }
 
     /**

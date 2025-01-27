@@ -20,26 +20,10 @@
 
 namespace Jaxon\Plugin;
 
+use Jaxon\Plugin\Code\Scripts;
+
 abstract class AbstractPlugin implements PluginInterface, CodeGeneratorInterface
 {
-    /**
-     * @inheritDoc
-     */
-    public final function readyEnabled(): bool
-    {
-        // For plugins, the getReadyScript() is always included in the generated code.
-        return true;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function readyInlined(): bool
-    {
-        // For plugins, the getReadyScript() can be exported to external files.
-        return false;
-    }
-
     /**
      * @inheritDoc
      */
@@ -75,8 +59,8 @@ abstract class AbstractPlugin implements PluginInterface, CodeGeneratorInterface
     /**
      * @inheritDoc
      */
-    public function getReadyScript(): string
+    public function getScripts(): ?Scripts
     {
-        return '';
+        return null;
     }
 }
