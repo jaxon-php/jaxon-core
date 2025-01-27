@@ -12,7 +12,7 @@
 
 namespace Jaxon\App\Dialog\Library;
 
-use Jaxon\Plugin\Code\Scripts;
+use Jaxon\Plugin\Code\JsCode;
 
 interface LibraryInterface
 {
@@ -54,7 +54,7 @@ interface LibraryInterface
     /**
      * Get the javascript codes to include into the page
      *
-     * @return Scripts|null
+     * @return JsCode|null
      */
-    public function getScripts(): ?Scripts;
+    public function getJsCode(): ?JsCode;
 }

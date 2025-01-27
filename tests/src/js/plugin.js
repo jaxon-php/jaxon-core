@@ -3,6 +3,7 @@
     cursor: pointer;
   }
 </style>
+
 <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/jaxon-php/jaxon-js@5.0.0-beta.21/dist/libs/chibi/chibi.js"  charset="UTF-8"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/jaxon-php/jaxon-js@5.0.0-beta.21/dist/jaxon.core.js"  charset="UTF-8"></script>
 
@@ -31,11 +32,7 @@ jxn_my_third_function = function() {
     return jaxon.request({ type: 'func', name: 'my_third_function' }, { parameters: arguments });
 };
 
-jaxon.dom.ready(function() {
-
-    jaxon.processCustomAttrs();
-
-});
+jaxon.dom.ready(() => jaxon.processCustomAttrs());
 
 /* ]]> */
 </script>

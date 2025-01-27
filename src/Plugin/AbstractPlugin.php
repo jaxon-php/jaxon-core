@@ -20,7 +20,7 @@
 
 namespace Jaxon\Plugin;
 
-use Jaxon\Plugin\Code\Scripts;
+use Jaxon\Plugin\Code\JsCode;
 
 abstract class AbstractPlugin implements PluginInterface, CodeGeneratorInterface
 {
@@ -59,7 +59,7 @@ abstract class AbstractPlugin implements PluginInterface, CodeGeneratorInterface
     /**
      * @inheritDoc
      */
-    public function getScripts(): ?Scripts
+    public function getJsCode(): ?JsCode
     {
         return null;
     }

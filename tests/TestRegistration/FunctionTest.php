@@ -158,7 +158,7 @@ final class FunctionTest extends TestCase
         $this->assertEquals(file_get_contents(__DIR__ . '/../src/js/plugin.js'), $sJsCode);
         $this->assertEquals(32, strlen(jaxon()->di()->getCodeGenerator()->getHash()));
 
-        $sJsCode = trim(jaxon()->getCss() . "\n" . jaxon()->getJs()) . jaxon()->getScript();
+        $sJsCode = jaxon()->getCss() . "\n\n" . jaxon()->getJs() . "\n\n" . jaxon()->getScript();
         $this->assertEquals(file_get_contents(__DIR__ . '/../src/js/plugin.js'), $sJsCode);
 
         unset($_SERVER['REQUEST_URI']);

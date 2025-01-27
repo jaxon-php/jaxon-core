@@ -16,7 +16,7 @@ namespace Jaxon\Plugin;
 use Jaxon\App\View\ViewRenderer;
 use Jaxon\Config\Config;
 
-use Jaxon\Plugin\Code\Scripts;
+use Jaxon\Plugin\Code\JsCode;
 
 abstract class AbstractPackage implements CodeGeneratorInterface
 {
@@ -118,7 +118,7 @@ abstract class AbstractPackage implements CodeGeneratorInterface
     /**
      * @inheritDoc
      */
-    public function getScripts(): ?Scripts
+    public function getJsCode(): ?JsCode
     {
         return null;
     }
