@@ -70,6 +70,8 @@ class ResponseTest extends TestCase
         $this->assertIsString($sContent);
         $this->assertEquals('application/json; charset="utf-8"', jaxon()->getContentType());
         $this->assertEquals('utf-8', jaxon()->getCharacterEncoding());
+
+        $this->assertEquals('', $xResponse->getErrorMessage());
     }
 
     /**
@@ -99,7 +101,8 @@ class ResponseTest extends TestCase
         $aCommands = $xResponse->getCommands();
         $this->assertCount(1, $aCommands);
         // Set an option on the response
-        $this->assertEquals('value', $aCommands[0]['options']['name']);
+        $this->assertEquals('value1', $aCommands[0]['options']['name1']);
+        $this->assertEquals('value2', $aCommands[0]['options']['name2']);
     }
 
     /**
@@ -179,5 +182,91 @@ class ResponseTest extends TestCase
         jaxon()->di()->getRequestHandler()->processRequest();
         $xResponse = jaxon()->getResponse();
         $this->assertEquals(2, $xResponse->getCommandCount());
+    }
+
+    public function testResponseCommands()
+    {
+        // Send a request to the registered class
+        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
+            return $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withParsedBody([
+                    'jxncall' => json_encode([
+                        'type' => 'class',
+                        'name' => 'Misc',
+                        'method' => 'commands',
+                        'args' => [],
+                    ]),
+                ])
+                ->withMethod('POST');
+        });
+
+        // Process the request and get the response
+        jaxon()->di()->getRequestHandler()->processRequest();
+        $xResponse = jaxon()->getResponse();
+        $this->assertEquals(6, $xResponse->getCommandCount());
+
+        $aCommands = $xResponse->getCommands();
+        $this->assertEquals('node.create', $aCommands[0]['name']);
+        $this->assertEquals('node.insert.before', $aCommands[1]['name']);
+        $this->assertEquals('node.insert.after', $aCommands[2]['name']);
+        $this->assertEquals('handler.event.add', $aCommands[3]['name']);
+        $this->assertEquals('node.bind', $aCommands[4]['name']);
+        $this->assertEquals('node.bind', $aCommands[5]['name']);
+    }
+
+    public function testResponseJsCommands()
+    {
+        // Send a request to the registered class
+        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
+            return $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withParsedBody([
+                    'jxncall' => json_encode([
+                        'type' => 'class',
+                        'name' => 'Misc',
+                        'method' => 'jsCommands',
+                        'args' => [],
+                    ]),
+                ])
+                ->withMethod('POST');
+        });
+
+        // Process the request and get the response
+        jaxon()->di()->getRequestHandler()->processRequest();
+        $xResponse = jaxon()->getResponse();
+        $this->assertEquals(3, $xResponse->getCommandCount());
+
+        $aCommands = $xResponse->getCommands();
+        $this->assertEquals('script.exec.expr', $aCommands[0]['name']);
+        $this->assertEquals('script.exec.expr', $aCommands[1]['name']);
+        $this->assertEquals('script.exec.expr', $aCommands[2]['name']);
+    }
+
+    public function testResponsePaginator()
+    {
+        // Send a request to the registered class
+        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
+            return $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withParsedBody([
+                    'jxncall' => json_encode([
+                        'type' => 'class',
+                        'name' => 'Misc',
+                        'method' => 'paginate',
+                        'args' => [2],
+                    ]),
+                ])
+                ->withMethod('POST');
+        });
+
+        // Process the request and get the response
+        jaxon()->di()->getRequestHandler()->processRequest();
+        $xResponse = jaxon()->getResponse();
+        $this->assertEquals(2, $xResponse->getCommandCount());
+
+        $aCommands = $xResponse->getCommands();
+        $this->assertEquals('node.assign', $aCommands[0]['name']);
+        $this->assertEquals('pg.paginate', $aCommands[1]['name']);
     }
 }
