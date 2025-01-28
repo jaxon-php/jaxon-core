@@ -20,47 +20,6 @@
 
 namespace Jaxon\Plugin;
 
-use Jaxon\Plugin\Code\JsCode;
-
-abstract class AbstractPlugin implements PluginInterface, CodeGeneratorInterface
+abstract class AbstractPlugin extends AbstractCodeGenerator implements PluginInterface
 {
-    /**
-     * @inheritDoc
-     */
-    public function getHash(): string
-    {
-        return '';
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getCss(): string
-    {
-        return '';
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getJs(): string
-    {
-        return '';
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getScript(): string
-    {
-        return '';
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getJsCode(): ?JsCode
-    {
-        return null;
-    }
 }

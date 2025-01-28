@@ -33,6 +33,5 @@ jxn_my_third_function = function() {
 };
 
 jaxon.dom.ready(() => jaxon.processCustomAttrs());
-
 /* ]]> */
 </script>

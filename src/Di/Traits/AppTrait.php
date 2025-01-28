@@ -98,4 +98,16 @@ trait AppTrait
     {
         return $this->g($this->sJsLibVersion);
     }
+
+    /**
+     * Get the default request URI
+     *
+     * @return string
+     */
+    public function getRequestUri(): string
+    {
+        /** @var ConfigManager */
+        $xConfigManager = $this->g(ConfigManager::class);
+        return $xConfigManager->getOption('core.request.uri', $this->getParameterReader()->uri());
+    }
 }

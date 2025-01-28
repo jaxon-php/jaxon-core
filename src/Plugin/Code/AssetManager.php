@@ -17,8 +17,6 @@ namespace Jaxon\Plugin\Code;
 use Jaxon\App\Config\ConfigManager;
 use Jaxon\App\Config\ConfigTrait;
 use Jaxon\Plugin\AbstractPlugin;
-use Jaxon\Request\Handler\ParameterReader;
-use Jaxon\Utils\Http\UriException;
 
 use function file_put_contents;
 use function is_dir;
@@ -41,16 +39,11 @@ class AssetManager
      * The constructor
      *
      * @param ConfigManager $xConfigManager
-     * @param ParameterReader $xParameterReader
      * @param MinifierInterface $xMinifier
      */
     public function __construct(private ConfigManager $xConfigManager,
-        private ParameterReader $xParameterReader, private MinifierInterface $xMinifier)
-    {
-        $this->xConfigManager = $xConfigManager;
-        $this->xParameterReader = $xParameterReader;
-        $this->xMinifier = $xMinifier;
-    }
+        private MinifierInterface $xMinifier)
+    {}
 
     /**
      * @return ConfigManager
@@ -115,37 +108,6 @@ class AssetManager
     }
 
     /**
-     * Get the mappings between previous and current config options
-     *
-     * @return array
-     * @throws UriException
-     */
-    public function getOptionVars(): array
-    {
-        if(!$this->hasLibOption('core.request.uri'))
-        {
-            $this->setLibOption('core.request.uri', $this->xParameterReader->uri());
-        }
-        return [
-            'sResponseType'         => 'JSON',
-            'sVersion'              => $this->getLibOption('core.version'),
-            'sLanguage'             => $this->getLibOption('core.language'),
-            'bLanguage'             => $this->hasLibOption('core.language'),
-            'sRequestURI'           => $this->getLibOption('core.request.uri'),
-            'sDefaultMode'          => $this->getLibOption('core.request.mode'),
-            'sDefaultMethod'        => $this->getLibOption('core.request.method'),
-            'sCsrfMetaName'         => $this->getLibOption('core.request.csrf_meta'),
-            'bDebug'                => $this->getLibOption('core.debug.on'),
-            'bVerboseDebug'         => $this->getLibOption('core.debug.verbose'),
-            'sDebugOutputID'        => $this->getLibOption('core.debug.output_id'),
-            'nResponseQueueSize'    => $this->getLibOption('js.lib.queue_size'),
-            'sStatusMessages'       => $this->getLibOption('js.lib.show_status') ? 'true' : 'false',
-            'sWaitCursor'           => $this->getLibOption('js.lib.show_cursor') ? 'true' : 'false',
-            'sDefer'                => $this->getLibOption('js.app.options', ''),
-        ];
-    }
-
-    /**
      * Get the javascript file name
      *
      * @return bool
@@ -167,11 +129,10 @@ class AssetManager
      * Write javascript files and return the corresponding URI
      *
      * @param CodeGenerator $codeGenerator
-     * @param string $sJsScript
      *
      * @return string
      */
-    public function createJsFiles(CodeGenerator $xCodeGenerator, string $sJsScript): string
+    public function createJsFiles(CodeGenerator $xCodeGenerator): string
     {
         // Check dir access
         $sJsFileName = $this->getLibOption('js.app.file') ?: $xCodeGenerator->getHash();
@@ -187,7 +148,7 @@ class AssetManager
         $sJsFileUri = rtrim($this->getLibOption('js.app.uri'), '/') . "/$sJsFileName";
 
         if(!is_file($sJsFilePath) &&
-            !@file_put_contents($sJsFilePath, $sJsScript))
+            !@file_put_contents($sJsFilePath, $xCodeGenerator->getJsScript()))
         {
             return '';
         }

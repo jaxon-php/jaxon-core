@@ -14,7 +14,9 @@ use Jaxon\Exception\SetupException;
 use Jaxon\Script\Factory\CallFactory;
 use Jaxon\Plugin\Code\AssetManager;
 use Jaxon\Plugin\Code\CodeGenerator;
+use Jaxon\Plugin\Code\ConfigScriptGenerator;
 use Jaxon\Plugin\Code\MinifierInterface;
+use Jaxon\Plugin\Code\ReadyScriptGenerator;
 use Jaxon\Plugin\Manager\PackageManager;
 use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Plugin\Request\CallableClass\CallableRegistry;
@@ -59,12 +61,19 @@ trait PluginTrait
             {};
         });
         $this->set(AssetManager::class, function($di) {
-            return new AssetManager($di->g(ConfigManager::class), $di->g(ParameterReader::class),
+            return new AssetManager($di->g(ConfigManager::class),
                 $di->g(MinifierInterface::class));
         });
         $this->set(CodeGenerator::class, function($di) {
             return new CodeGenerator(Jaxon::VERSION, $di->g(Container::class),
                 $di->g(TemplateEngine::class));
+        });
+        $this->set(ConfigScriptGenerator::class, function($di) {
+            return new ConfigScriptGenerator($di->g(ParameterReader::class),
+                $di->g(TemplateEngine::class), $di->g(ConfigManager::class));
+        });
+        $this->set(ReadyScriptGenerator::class, function($di) {
+            return new ReadyScriptGenerator();
         });
 
         // Script response plugin
