@@ -102,4 +102,12 @@ final class FunctionTest extends TestCase
             rq()->testFunction('string', 2, true, pm()->form('elt_id'), pm()->input('elt_id'))->raw()
         );
     }
+
+    /**
+     * @throws SetupException
+     */
+    public function testClassNameIsEmpty()
+    {
+        $this->assertEquals('', rq()->_class());
+    }
 }

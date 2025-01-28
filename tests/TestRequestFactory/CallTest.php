@@ -97,27 +97,11 @@ class CallTest extends TestCase
      */
     public function testRequestWithJQueryParam()
     {
-        // $this->assertEquals(
-        //     "Sample.method(jaxon.jq('#div').val)",
-        //     rq('Sample')->method(jq('#div')->val)->raw()
-        // );
         $this->assertEquals(
             'Sample.method(jaxon.exec({"_type":"expr","calls":[{"_type":"select","_name":"#div","mode":"jq"}' .
                 ',{"_type":"attr","_name":"val"}]}))',
             rq('Sample')->method(jq('#div')->val)->raw()
         );
-        // $this->assertEquals(
-        //     "Sample.method(jaxon.jq('#div').val, jaxon.jq('#div').val)",
-        //     rq('Sample')->method(jq('#div')->val, jq('#div')->val)->raw()
-        // );
-        // $this->assertEquals(
-        //     "Sample.method(jaxon.jq('#div1').val, jaxon.jq('#div2').val, jaxon.jq('#div1').val)",
-        //     rq('Sample')->method(jq('#div1')->val, jq('#div2')->val, jq('#div1')->val)->raw()
-        // );
-        // $this->assertEquals(
-        //     "Sample.method(jaxon.jq('#div1').val, jaxon.jq('#div2').val)",
-        //     rq('Sample')->method(jq('#div1')->val, jq('#div2')->val)->raw()
-        // );
     }
 
     /**
@@ -125,10 +109,6 @@ class CallTest extends TestCase
      */
     public function testRequestWithJsEvent()
     {
-        // $this->assertEquals(
-        //     "jaxon.jq('.div').click((e) => {Sample.method(jaxon.jq('#div').val);})",
-        //     jq('.div')->click(rq('Sample')->method(jq('#div')->val))->raw()
-        // );
         $this->assertEquals(
             'jaxon.jq(\'.div\').on(\'click\', () => ' .
                 '{ jaxon.exec({"_type":"expr","calls":[{"_type":"func","_name":"Sample.method",' .
@@ -137,9 +117,5 @@ class CallTest extends TestCase
                 '{"_type":"method","_name":"toInt","args":[]}]}]}]}); })',
             jq('.div')->click(rq('Sample')->method(jq()->attr('param')->toInt()))->raw()
         );
-        // $this->assertEquals(
-        //     "jaxon.jq('.div').click((e) => {Sample.method(parseInt(jaxon.jq(e.currentTarget).attr('param')));})",
-        //     jq('.div')->click(rq('Sample')->method(jq()->attr('param')->toInt()))->raw()
-        // );
     }
 }

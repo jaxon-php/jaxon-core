@@ -35,6 +35,7 @@ class Misc extends CallableClass
         // Create a DOM node
         $this->response->create('parent', 'div', 'child');
         // Insert a DOM node before an other
+        $this->response->insert('sibling', 'div', 'new');
         $this->response->insertBefore('sibling', 'div', 'new');
         // Insert a DOM node after an other
         $this->response->insertAfter('sibling', 'div', 'new');
@@ -49,6 +50,7 @@ class Misc extends CallableClass
     public function jsCommands()
     {
         $this->response->js('console')->log('Debug message');
+        $this->response->jw()->console->log('Debug message');
         $this->response->exec(js('console')->log('Debug message'));
         $this->response->exec(jw()->console->log('Debug message'));
     }
