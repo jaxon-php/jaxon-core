@@ -20,8 +20,8 @@ use Jaxon\Plugin\CodeGeneratorInterface;
 use Jaxon\Utils\Http\UriException;
 use Jaxon\Utils\Template\TemplateEngine;
 
+use function array_map;
 use function array_merge;
-use function array_reduce;
 use function count;
 use function implode;
 use function is_subclass_of;
@@ -133,10 +133,11 @@ class CodeGenerator
      */
     public function getHash(): string
     {
-        return md5(array_reduce($this->aCodeGenerators,
-            function($sHash, $sClassName) {
-                return $sHash . $this->di->g($sClassName)->getHash();
-            }, $this->sVersion));
+        $aHashes = array_map(function($sClassName) {
+            return $this->getCodeGenerator($sClassName)->getHash();
+        }, $this->aCodeGenerators);
+        $aHashes[] = $this->sVersion;
+        return md5(implode('', $aHashes));
     }
 
     /**
@@ -262,8 +263,7 @@ class CodeGenerator
     {
         foreach($this->aCodeGenerators as $sClassName)
         {
-            /** @var CodeGeneratorInterface */
-            $xGenerator = $this->di->g($sClassName);
+            $xGenerator = $this->getCodeGenerator($sClassName);
             // Javascript code
             if(($sJsScript = trim($xGenerator->getScript(), " \n")) !== '')
             {
