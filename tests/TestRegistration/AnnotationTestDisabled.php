@@ -2,8 +2,8 @@
 
 namespace Jaxon\Tests\TestRegistration;
 
-require __DIR__ . '/../src/annotated.php';
-require __DIR__ . '/../src/excluded.php';
+require dirname(__DIR__, 1) . '/src/annotated.php';
+require dirname(__DIR__, 1) . '/src/excluded.php';
 
 use Jaxon\Jaxon;
 use Jaxon\Exception\SetupException;

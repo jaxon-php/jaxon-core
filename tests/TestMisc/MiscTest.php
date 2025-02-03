@@ -2,7 +2,7 @@
 
 namespace Jaxon\Tests\TestMisc;
 
-require __DIR__ . '/../src/session.php';
+require dirname(__DIR__, 1) . '/src/session.php';
 
 use Jaxon\Jaxon;
 use Jaxon\Exception\SetupException;
