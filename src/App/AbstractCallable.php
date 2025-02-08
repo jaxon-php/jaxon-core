@@ -61,12 +61,13 @@ abstract class AbstractCallable
     /**
      * Get an instance of a Jaxon class by name
      *
-     * @param string $sClassName the class name
+     * @template T of AbstractCallable
+     * @param class-string<T> $sClassName the class name
      *
-     * @return mixed
+     * @return T|null
      * @throws SetupException
      */
-    public function cl(string $sClassName)
+    public function cl(string $sClassName): mixed
     {
         return $this->xHelper->cl($sClassName);
     }

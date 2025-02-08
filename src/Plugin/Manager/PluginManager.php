@@ -97,7 +97,7 @@ class PluginManager
     /**
      * Get the request plugins
      *
-     * @return array<string>
+     * @return array<class-string>
      */
     public function getRequestHandlers(): array
     {
@@ -112,7 +112,7 @@ class PluginManager
      * - 1000 to 8999: User created plugins, typically, these plugins don't care about order
      * - 9000 to 9999: Plugins that generally need to be last or near the end of the plugin list
      *
-     * @param string $sClassName    The plugin class
+     * @param class-string $sClassName    The plugin class
      * @param string $sPluginName    The plugin name
      * @param integer $nPriority    The plugin priority, used to order the plugins
      *

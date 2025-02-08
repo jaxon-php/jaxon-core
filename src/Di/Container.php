@@ -169,11 +169,12 @@ class Container
     /**
      * Get a class instance
      *
-     * @param string $sClass    The full class name
+     * @template T
+     * @param string|class-string<T> $sClass The full class name
      *
-     * @return mixed
+     * @return ($sClass is class-string ? T : mixed)
      */
-    public function g(string $sClass)
+    public function g(string $sClass): mixed
     {
         return $this->xLibContainer->offsetGet($sClass);
     }
@@ -181,12 +182,13 @@ class Container
     /**
      * Get a class instance
      *
-     * @param string $sClass The full class name
+     * @template T
+     * @param string|class-string<T> $sClass The full class name
      *
-     * @return mixed
+     * @return ($sClass is class-string ? T : mixed)
      * @throws SetupException
      */
-    public function get(string $sClass)
+    public function get(string $sClass): mixed
     {
         try
         {
@@ -209,7 +211,7 @@ class Container
     /**
      * Save a closure in the container
      *
-     * @param string $sClass    The full class name
+     * @param string|class-string $sClass    The full class name
      * @param Closure $xClosure    The closure
      * @param bool $bIsSingleton
      *
@@ -228,7 +230,7 @@ class Container
     /**
      * Save a value in the container
      *
-     * @param string $sKey    The key
+     * @param string|class-string $sKey    The key
      * @param mixed $xValue    The value
      *
      * @return void
@@ -241,8 +243,8 @@ class Container
     /**
      * Set an alias in the container
      *
-     * @param string $sAlias    The alias name
-     * @param string $sClass    The class name
+     * @param string|class-string $sAlias    The alias name
+     * @param string|class-string $sClass    The class name
      *
      * @return void
      */
@@ -315,7 +317,7 @@ class Container
     /**
      * Create an instance of a class by automatically fetching the dependencies in the constructor.
      *
-     * @param string $sClass    The class name
+     * @param class-string $sClass    The class name
      *
      * @return void
      */

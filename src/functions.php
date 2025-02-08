@@ -2,6 +2,7 @@
 
 namespace Jaxon;
 
+use Jaxon\App\AbstractCallable;
 use Jaxon\App\Ajax\Lib as Jaxon;
 use Jaxon\App\View\HtmlAttrHelper;
 use Jaxon\Exception\SetupException;
@@ -36,9 +37,10 @@ function jaxon(): Jaxon
 /**
  * Get an instance of a registered PHP class.
  *
- * @param string $sClassName
+ * @template T of AbstractCallable
+ * @param class-string<T> $sClassName the class name
  *
- * @return mixed
+ * @return T|null
  * @throws SetupException
  */
 function cl(string $sClassName)

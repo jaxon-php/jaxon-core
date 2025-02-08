@@ -91,7 +91,7 @@ class ClassContainer
     /**
      * Check if a class is defined in the container
      *
-     * @param string $sClass    The full class name
+     * @param class-string $sClass    The full class name
      *
      * @return bool
      */
@@ -103,9 +103,10 @@ class ClassContainer
     /**
      * Get a class instance
      *
-     * @param string $sClass    The full class name
+     * @template T
+     * @param class-string<T> $sClass The full class name
      *
-     * @return mixed
+     * @return T
      */
     public function get(string $sClass)
     {
@@ -115,7 +116,7 @@ class ClassContainer
     /**
      * Save a closure in the container
      *
-     * @param string $sClass    The full class name
+     * @param class-string $sClass    The full class name
      * @param Closure $xClosure    The closure
      *
      * @return void
@@ -130,7 +131,7 @@ class ClassContainer
     /**
      * Save a value in the container
      *
-     * @param string $sKey    The key
+     * @param string|class-string $sKey    The key
      * @param mixed $xValue    The value
      *
      * @return void
@@ -142,7 +143,7 @@ class ClassContainer
 
     /**
      *
-     * @param string $sClassName    The class name
+     * @param class-string $sClassName    The class name
      * @param array $aOptions    The class options
      *
      * @return void
@@ -172,7 +173,7 @@ class ClassContainer
     /**
      * Find the options associated with a registered class name
      *
-     * @param string $sClassName The class name
+     * @param class-string $sClassName The class name
      *
      * @return void
      * @throws SetupException
@@ -247,7 +248,7 @@ class ClassContainer
     /**
      * Create an instance of a class, getting the constructor parameters from the DI container
      *
-     * @param string|ReflectionClass $xClass The class name or the reflection class
+     * @param class-string|ReflectionClass $xClass The class name or the reflection class
      *
      * @return object|null
      * @throws ReflectionException
@@ -278,7 +279,7 @@ class ClassContainer
     /**
      * Create an instance of a class by automatically fetching the dependencies in the constructor.
      *
-     * @param string $sClass    The class name
+     * @param class-string $sClass    The class name
      *
      * @return void
      */
@@ -290,7 +291,7 @@ class ClassContainer
     }
 
     /**
-     * @param string $sClassName The callable class name
+     * @param class-string $sClassName The callable class name
      *
      * @return string
      */
@@ -300,7 +301,7 @@ class ClassContainer
     }
 
     /**
-     * @param string $sClassName The callable class name
+     * @param class-string $sClassName The callable class name
      *
      * @return string
      */
@@ -310,7 +311,7 @@ class ClassContainer
     }
 
     /**
-     * @param string $sClassName The callable class name
+     * @param class-string $sClassName The callable class name
      *
      * @return string
      */
@@ -322,7 +323,7 @@ class ClassContainer
     /**
      * Register a callable class
      *
-     * @param string $sClassName The callable class name
+     * @param class-string $sClassName The callable class name
      *
      * @return void
      * @throws SetupException
@@ -388,7 +389,7 @@ class ClassContainer
     /**
      * Get the callable object for a given class
      *
-     * @param string $sClassName
+     * @param class-string $sClassName
      *
      * @return CallableObject
      */
@@ -400,9 +401,9 @@ class ClassContainer
     /**
      * Check if a callable object is already in the DI, and register if not
      *
-     * @param string $sClassName The class name of the callable object
+     * @param class-string $sClassName The class name of the callable object
      *
-     * @return string
+     * @return class-string
      * @throws SetupException
      */
     private function checkCallableObject(string $sClassName): string
@@ -424,7 +425,7 @@ class ClassContainer
      * Get the callable object for a given class
      * The callable object is registered if it is not already in the DI.
      *
-     * @param string $sClassName The class name of the callable object
+     * @param class-string $sClassName The class name of the callable object
      *
      * @return CallableObject|null
      * @throws SetupException
@@ -437,12 +438,13 @@ class ClassContainer
     /**
      * Get an instance of a Jaxon class by name
      *
-     * @param string $sClassName the class name
+     * @template T of AbstractCallable
+     * @param class-string<T> $sClassName the class name
      *
-     * @return mixed
+     * @return T|null
      * @throws SetupException
      */
-    public function makeRegisteredObject(string $sClassName)
+    public function makeRegisteredObject(string $sClassName): mixed
     {
         $xCallableObject = $this->makeCallableObject($sClassName);
         return !$xCallableObject ? null : $xCallableObject->getRegisteredObject();
@@ -459,7 +461,7 @@ class ClassContainer
     }
 
     /**
-     * @param string $sClassName The callable class name
+     * @param class-string $sClassName The callable class name
      *
      * @return string
      */
@@ -469,7 +471,7 @@ class ClassContainer
     }
 
     /**
-     * @param string $sClassName
+     * @param class-string $sClassName
      * @param string $sFactoryKey
      *
      * @return void
@@ -490,7 +492,7 @@ class ClassContainer
     /**
      * Get a factory for a js function call.
      *
-     * @param string $sClassName
+     * @param class-string $sClassName
      *
      * @return JxnCall|null
      */

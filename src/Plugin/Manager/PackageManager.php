@@ -206,7 +206,7 @@ class PackageManager
     /**
      * Get the options provided by the package library
      *
-     * @param string $sClassName    The package class
+     * @param class-string $sClassName    The package class
      *
      * @return Config
      * @throws SetupException
@@ -253,7 +253,7 @@ class PackageManager
     /**
      * Register a package
      *
-     * @param string $sClassName    The package class
+     * @param class-string $sClassName    The package class
      * @param array $aUserOptions    The user provided package options
      *
      * @return void
@@ -284,9 +284,10 @@ class PackageManager
     /**
      * Get a package instance
      *
-     * @param string $sClassName    The package class name
+     * @template T of AbstractPackage
+     * @param class-string<T> $sClassName    The package class name
      *
-     * @return AbstractPackage|null
+     * @return T|null
      */
     public function getPackage(string $sClassName): ?AbstractPackage
     {

@@ -35,6 +35,7 @@ use Jaxon\Di\ClassContainer;
 use Jaxon\Di\Container;
 use Jaxon\Exception\SetupException;
 use Jaxon\Request\Target;
+use Closure;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionMethod;
@@ -191,7 +192,7 @@ class CallableObject
     /**
      * Get the name of the registered PHP class
      *
-     * @return string
+     * @return class-string
      */
     public function getClassName(): string
     {
@@ -297,6 +298,21 @@ class CallableObject
     }
 
     /**
+     * @param object $xRegisteredObject
+     * @param string $sAttr
+     * @param object $xDiValue
+     * @param-closure-this object $cSetter
+     *
+     * @return void
+     */
+    private function setDiAttribute($xRegisteredObject, string $sAttr, $xDiValue, Closure $cSetter): void
+    {
+        // Allow the setter to access protected attributes.
+        $cSetter = $cSetter->bindTo($xRegisteredObject, $xRegisteredObject);
+        call_user_func($cSetter, $sAttr, $xDiValue);
+    }
+
+    /**
      * @param mixed $xRegisteredObject
      * @param array $aDiOptions
      *
@@ -305,15 +321,15 @@ class CallableObject
     private function setDiAttributes($xRegisteredObject, array $aDiOptions)
     {
         // Set the protected attributes of the object
-        $cSetter = function($sName, $xInjectedObject) {
+        $cSetter = function($sAttr, $xDiValue) {
+            // $this here is related to the registered object instance.
             // Warning: dynamic properties will be deprecated in PHP8.2.
-            $this->$sName = $xInjectedObject;
+            $this->$sAttr = $xDiValue;
         };
-        foreach($aDiOptions as $sName => $sClass)
+        foreach($aDiOptions as $sAttr => $sClass)
         {
-            // The setter has access to protected attributes
-            $_cSetter = $cSetter->bindTo($xRegisteredObject, $xRegisteredObject);
-            call_user_func($_cSetter, $sName, $this->di->get($sClass));
+            $this->setDiAttribute($xRegisteredObject, $sAttr,
+                $this->di->get($sClass), $cSetter);
         }
     }
 
@@ -341,6 +357,18 @@ class CallableObject
     }
 
     /**
+     * @param AbstractCallable $xRegisteredObject
+     * @param-closure-this AbstractCallable $cSetter
+     *
+     * @return void
+     */
+    private function setCallableHelper(AbstractCallable $xRegisteredObject, Closure $cSetter): void
+    {
+        // Allow the setter to access protected attributes.
+        call_user_func($cSetter->bindTo($xRegisteredObject, $xRegisteredObject));
+    }
+
+    /**
      * Get a callable object when one of its method needs to be called
      *
      * @param Target|null $xTarget
@@ -362,13 +390,10 @@ class CallableObject
         // Set the Jaxon request target in the helper
         if($xRegisteredObject instanceof AbstractCallable)
         {
-            // Set the protected attributes of the object
-            $sAttr = 'xHelper';
-            $cSetter = function() use($xTarget, $sAttr) {
-                $this->$sAttr->xTarget = $xTarget;
-            };
-            // Can now access protected attributes
-            call_user_func($cSetter->bindTo($xRegisteredObject, $xRegisteredObject));
+            $this->setCallableHelper($xRegisteredObject, function() use($xTarget) {
+                // $this here is related to the AbstractCallable instance.
+                $this->xHelper->xTarget = $xTarget;
+            });
         }
         return $xRegisteredObject;
     }

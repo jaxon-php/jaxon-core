@@ -28,6 +28,7 @@ use Jaxon\Request\Handler\CallbackManager;
 use Jaxon\Request\Handler\ParameterReader;
 use Jaxon\Utils\File\FileMinifier;
 use Jaxon\Utils\Template\TemplateEngine;
+use Closure;
 
 use function call_user_func;
 
@@ -155,7 +156,7 @@ trait PluginTrait
     }
 
     /**
-     * @param string $sClassName    The package class name
+     * @param class-string $sClassName    The package class name
      *
      * @return string
      */
@@ -165,9 +166,25 @@ trait PluginTrait
     }
 
     /**
+     * @param class-string $sClassName    The package class name
+     * @param-closure-this Package $cSetter
+     *
+     * @return void
+     */
+    private function extendPackage(string $sClassName, Closure $cSetter): void
+    {
+        // Initialize the package instance.
+        $this->xLibContainer->extend($sClassName, function($xPackage) use($cSetter) {
+            // Allow the setter to access protected attributes.
+            call_user_func($cSetter->bindTo($xPackage, $xPackage));
+            return $xPackage;
+        });
+    }
+
+    /**
      * Register a package
      *
-     * @param string $sClassName    The package class name
+     * @param class-string $sClassName    The package class name
      * @param Config $xPkgConfig    The user provided package options
      *
      * @return void
@@ -187,25 +204,20 @@ trait PluginTrait
         $this->val($this->getPackageConfigKey($sClassName), $xPkgConfig);
 
         // Initialize the package instance.
-        $this->xLibContainer->extend($sClassName, function($xPackage) use($sClassName) {
-            $xPkgConfig = $this->getPackageConfig($sClassName);
-            $xViewRenderer = $this->g(ViewRenderer::class);
-            $cSetter = function() use($xPkgConfig, $xViewRenderer) {
-                // Set the protected attributes of the Package instance.
-                $this->xPkgConfig = $xPkgConfig;
-                $this->xRenderer = $xViewRenderer;
-                $this->init();
-            };
-            // Can now access protected attributes
-            call_user_func($cSetter->bindTo($xPackage, $xPackage));
-            return $xPackage;
+        $xPkgConfig = $this->getPackageConfig($sClassName);
+        $xViewRenderer = $this->g(ViewRenderer::class);
+        $this->extendPackage($sClassName, function() use($xPkgConfig, $xViewRenderer) {
+            // $this here is related to the Package instance.
+            $this->xPkgConfig = $xPkgConfig;
+            $this->xRenderer = $xViewRenderer;
+            $this->init();
         });
     }
 
     /**
      * Get the config of a package
      *
-     * @param string $sClassName    The package class name
+     * @param class-string $sClassName    The package class name
      *
      * @return Config
      */
