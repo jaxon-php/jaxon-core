@@ -25,17 +25,11 @@ use Jaxon\Exception\RequestException;
 use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Plugin\RequestHandlerInterface;
 use Jaxon\Plugin\Response\DataBag\DataBagPlugin;
-use Jaxon\Request\Upload\UploadHandlerInterface;
 use Jaxon\Response\ResponseManager;
 use Exception;
 
 class RequestHandler
 {
-    /**
-     * @var UploadHandlerInterface
-     */
-    private $xUploadHandler;
-
     /**
      * The request plugin that is able to process the current request
      *
@@ -56,14 +50,6 @@ class RequestHandler
         private ResponseManager $xResponseManager, private CallbackManager $xCallbackManager,
         private DataBagPlugin $xDataBagPlugin)
     {}
-
-    /**
-     * @return UploadHandlerInterface|null
-     */
-    private function getUploadHandler(): ?UploadHandlerInterface
-    {
-        return $this->xUploadHandler ?: $this->xUploadHandler = $this->di->getUploadHandler();
-    }
 
     /**
      * Check if the current request can be processed
@@ -105,18 +91,8 @@ class RequestHandler
      */
     private function _processRequest()
     {
-        // The HTTP request
-        $xRequest = $this->di->getRequest();
-
-        // Process uploaded files, if the upload plugin is enabled
-        $xUploadHandler = $this->getUploadHandler();
-        if($xUploadHandler !== null && $xUploadHandler->canProcessRequest($xRequest))
-        {
-            $xUploadHandler->processRequest($xRequest);
-        }
-
         // Process the request
-        if(($this->xRequestPlugin))
+        if($this->xRequestPlugin !== null)
         {
             $this->xRequestPlugin->processRequest();
             // Process the databag
@@ -142,7 +118,7 @@ class RequestHandler
         {
             $bEndRequest = false;
             // Handle before processing event
-            if(($this->xRequestPlugin))
+            if($this->xRequestPlugin !== null)
             {
                 $this->xCallbackManager->onBefore($this->xRequestPlugin->getTarget(), $bEndRequest);
             }
@@ -154,7 +130,7 @@ class RequestHandler
             $this->_processRequest();
 
             // Handle after processing event
-            if(($this->xRequestPlugin))
+            if($this->xRequestPlugin !== null)
             {
                 $this->xCallbackManager->onAfter($this->xRequestPlugin->getTarget(), $bEndRequest);
             }
