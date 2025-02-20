@@ -61,7 +61,7 @@ abstract class AbstractCallable
     /**
      * Get an instance of a Jaxon class by name
      *
-     * @template T of AbstractCallable
+     * @template T
      * @param class-string<T> $sClassName the class name
      *
      * @return T|null

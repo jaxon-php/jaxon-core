@@ -171,9 +171,10 @@ interface AppInterface
     /**
      * Get a package instance
      *
-     * @param string $sClassName    The package class name
+     * @template P of AbstractPackage
+     * @param class-string<P> $sClassName The package class name
      *
-     * @return AbstractPackage|null
+     * @return P|null
      */
     public function package(string $sClassName): ?AbstractPackage;
 

@@ -57,13 +57,13 @@ class CallableClassHelper
     /**
      * Get an instance of a Jaxon class by name
      *
-     * @template T of AbstractCallable
+     * @template T
      * @param class-string<T> $sClassName the class name
      *
      * @return T|null
      * @throws SetupException
      */
-    public function cl(string $sClassName)
+    public function cl(string $sClassName): mixed
     {
         return $this->cls->makeRegisteredObject($sClassName);
     }

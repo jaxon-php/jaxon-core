@@ -143,12 +143,13 @@ trait LibTrait
     /**
      * Get an instance of a registered class
      *
-     * @param string $sClassName The class name
+     * @template T
+     * @param class-string<T> $sClassName the class name
      *
-     * @return mixed
+     * @return T|null
      * @throws SetupException
      */
-    public function cl(string $sClassName)
+    public function cl(string $sClassName): mixed
     {
         return $this->cls()->makeRegisteredObject($sClassName);
     }
@@ -235,11 +236,12 @@ trait LibTrait
     }
 
     /**
-     * Get a registered response plugin
+     * Find the specified response plugin by name or class name
      *
-     * @param string $sName    The name of the plugin
+     * @template R of ResponsePluginInterface
+     * @param string|class-string<R> $sName    The name of the plugin
      *
-     * @return ResponsePluginInterface|null
+     * @return ($sName is class-string ? R : ResponsePluginInterface)|null
      */
     public function plugin(string $sName): ?ResponsePluginInterface
     {
@@ -249,9 +251,10 @@ trait LibTrait
     /**
      * Get a package instance
      *
-     * @param string $sClassName    The package class name
+     * @template P of AbstractPackage
+     * @param class-string<P> $sClassName The package class name
      *
-     * @return AbstractPackage|null
+     * @return P|null
      */
     public function package(string $sClassName): ?AbstractPackage
     {

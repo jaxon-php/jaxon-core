@@ -254,7 +254,7 @@ class ClassContainer
      * @throws ReflectionException
      * @throws SetupException
      */
-    public function make($xClass)
+    public function make($xClass): mixed
     {
         if(is_string($xClass))
         {
@@ -438,7 +438,7 @@ class ClassContainer
     /**
      * Get an instance of a Jaxon class by name
      *
-     * @template T of AbstractCallable
+     * @template T
      * @param class-string<T> $sClassName the class name
      *
      * @return T|null

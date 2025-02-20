@@ -83,7 +83,7 @@ abstract class AbstractPackage extends AbstractCodeGenerator
     /**
      * @inheritDoc
      */
-    public final function getHash(): string
+    final public function getHash(): string
     {
         // Packages do not generate hash on their own. So we make this method final.
         return '';
