@@ -159,16 +159,18 @@ class PluginManager
     }
 
     /**
-     * Find the specified response plugin by name and return a reference to it if one exists
+     * Find the specified response plugin by name or class name
      *
-     * @param string $sName    The name of the plugin
+     * @template R of ResponsePluginInterface
+     * @param string|class-string<R> $sName    The name of the plugin
      *
-     * @return ResponsePluginInterface|null
+     * @return ($sName is class-string ? R : ResponsePluginInterface)|null
      */
     public function getResponsePlugin(string $sName): ?ResponsePluginInterface
     {
-        return !isset($this->aResponsePlugins[$sName]) ? null :
-            $this->di->g($this->aResponsePlugins[$sName]);
+        return $this->di->h($sName) ? $this->di->g($sName) :
+            (!isset($this->aResponsePlugins[$sName]) ? null :
+            $this->di->g($this->aResponsePlugins[$sName]));
     }
 
     /**
@@ -221,7 +223,7 @@ class PluginManager
      *
      * @return ParameterReader
      */
-    public function getParameterReader()
+    public function getParameterReader(): ParameterReader
     {
         return $this->di->g(ParameterReader::class);
     }

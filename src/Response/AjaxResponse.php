@@ -176,9 +176,7 @@ abstract class AjaxResponse extends AbstractResponse
      */
     public function jq(string $sPath = '', $xContext = null): JqCall
     {
-        /** @var ScriptPlugin */
-        $xPlugin = $this->plugin('script');
-        return $xPlugin->jq($sPath, $xContext);
+        return $this->plugin(ScriptPlugin::class)->jq($sPath, $xContext);
     }
 
     /**
@@ -190,9 +188,7 @@ abstract class AjaxResponse extends AbstractResponse
      */
     public function js(string $sObject = ''): JsCall
     {
-        /** @var ScriptPlugin */
-        $xPlugin = $this->plugin('script');
-        return $xPlugin->js($sObject);
+        return $this->plugin(ScriptPlugin::class)->js($sObject);
     }
 
     /**
@@ -214,9 +210,7 @@ abstract class AjaxResponse extends AbstractResponse
      */
     public function bag(string $sName): DataBagContext
     {
-        /** @var DataBagPlugin */
-        $xPlugin = $this->plugin('bags');
-        return $xPlugin->bag($sName);
+        return $this->plugin(DataBagPlugin::class)->bag($sName);
     }
 
     /**
@@ -230,9 +224,8 @@ abstract class AjaxResponse extends AbstractResponse
      */
     public function paginator(int $nPageNumber, int $nItemsPerPage, int $nTotalItems): Paginator
     {
-        /** @var PaginatorPlugin */
-        $xPlugin = $this->plugin('pg');
-        return $xPlugin->paginator($nPageNumber, $nItemsPerPage, $nTotalItems);
+        return $this->plugin(PaginatorPlugin::class)
+            ->paginator($nPageNumber, $nItemsPerPage, $nTotalItems);
     }
 
     /**
@@ -242,8 +235,6 @@ abstract class AjaxResponse extends AbstractResponse
      */
     public function toPsr(): PsrResponseInterface
     {
-        /** @var PsrPlugin */
-        $xPlugin = $this->plugin('psr');
-        return $xPlugin->ajaxResponse();
+        return $this->plugin(PsrPlugin::class)->ajaxResponse();
     }
 }

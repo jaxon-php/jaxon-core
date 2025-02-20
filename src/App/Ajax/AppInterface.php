@@ -160,11 +160,12 @@ interface AppInterface
     public function httpResponse(string $sCode = '200');
 
     /**
-     * Get a registered response plugin
+     * Find a response plugin by name or class name
      *
-     * @param string $sName    The name of the plugin
+     * @template R of ResponsePluginInterface
+     * @param string|class-string<R> $sName    The name of the plugin
      *
-     * @return ResponsePluginInterface|null
+     * @return ($sName is class-string ? R : ResponsePluginInterface)|null
      */
     public function plugin(string $sName): ?ResponsePluginInterface;
 

@@ -236,7 +236,7 @@ trait LibTrait
     }
 
     /**
-     * Find the specified response plugin by name or class name
+     * Find a response plugin by name or class name
      *
      * @template R of ResponsePluginInterface
      * @param string|class-string<R> $sName    The name of the plugin
