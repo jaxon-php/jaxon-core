@@ -174,7 +174,7 @@ class PluginManager
     }
 
     /**
-     * Register a function or callable class
+     * Register a callable function or class
      *
      * Call the request plugin with the $sType defined as name.
      *

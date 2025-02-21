@@ -3,7 +3,7 @@
 namespace Jaxon\App;
 
 use Jaxon\Di\Container;
-use Jaxon\Plugin\Request\CallableClass\CallableClassHelper;
+use Jaxon\Plugin\Request\CallableClass\ComponentHelper;
 use Jaxon\Response\AjaxResponse;
 use Jaxon\Response\ComponentResponse;
 
@@ -22,7 +22,7 @@ abstract class AbstractNodeComponent extends AbstractComponent
     /**
      * @inheritDoc
      */
-    public function _initComponent(Container $di, CallableClassHelper $xHelper)
+    public function _initComponent(Container $di, ComponentHelper $xHelper)
     {
         $this->xHelper = $xHelper;
         // Each component must have its own reponse object.

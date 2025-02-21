@@ -16,7 +16,7 @@ namespace Jaxon\App\Ajax;
 
 use Jaxon\App\Config\ConfigManager;
 use Jaxon\App\I18n\Translator;
-use Jaxon\Di\ClassContainer;
+use Jaxon\Di\ComponentContainer;
 use Jaxon\Di\Container;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\Manager\PluginManager;
@@ -37,9 +37,9 @@ trait LibTrait
     protected $xContainer = null;
 
     /**
-     * @var ClassContainer
+     * @var ComponentContainer
      */
-    protected $xClassContainer = null;
+    protected $xComponentContainer = null;
 
     /**
      * @var ConfigManager
@@ -70,11 +70,11 @@ trait LibTrait
     }
 
     /**
-     * @return ClassContainer
+     * @return ComponentContainer
      */
-    public function cls(): ?ClassContainer
+    public function cdi(): ?ComponentContainer
     {
-        return $this->xClassContainer;
+        return $this->xComponentContainer;
     }
 
     /**
@@ -151,7 +151,7 @@ trait LibTrait
      */
     public function cl(string $sClassName): mixed
     {
-        return $this->cls()->makeRegisteredObject($sClassName);
+        return $this->cdi()->makeComponent($sClassName);
     }
 
     /**

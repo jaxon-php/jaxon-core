@@ -117,7 +117,7 @@ class DirectoryTest extends TestCase
         $this->assertNotNull(jaxon()->getResponse());
         $this->assertEquals(1, jaxon()->getResponse()->getCommandCount());
         $xCallableObject = jaxon()->di()->getCallableClassPlugin()->getCallable('ClassC');
-        $this->assertEquals('ClassC', get_class($xCallableObject->getRegisteredObject()));
+        $this->assertEquals('ClassC', get_class($xCallableObject->getComponent()));
 
         $xTarget = jaxon()->di()->getCallableClassPlugin()->getTarget();
         $this->assertNotNull($xTarget);

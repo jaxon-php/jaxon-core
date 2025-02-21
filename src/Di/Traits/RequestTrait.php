@@ -5,7 +5,7 @@ namespace Jaxon\Di\Traits;
 use Jaxon\App\Config\ConfigManager;
 use Jaxon\App\Dialog\Manager\DialogCommand;
 use Jaxon\App\I18n\Translator;
-use Jaxon\Di\ClassContainer;
+use Jaxon\Di\ComponentContainer;
 use Jaxon\Di\Container;
 use Jaxon\Script\Factory\CallFactory;
 use Jaxon\Script\Factory\ParameterFactory;
@@ -48,7 +48,7 @@ trait RequestTrait
         });
         // Requests and calls Factory
         $this->set(CallFactory::class, function($di) {
-            return new CallFactory($di->g(ClassContainer::class), $di->g(DialogCommand::class));
+            return new CallFactory($di->g(ComponentContainer::class), $di->g(DialogCommand::class));
         });
         // Factory for function parameters
         $this->set(ParameterFactory::class, function() {

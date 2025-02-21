@@ -16,7 +16,7 @@ namespace Jaxon\App\View;
 
 use Jaxon\App\Component;
 use Jaxon\App\Pagination;
-use Jaxon\Di\ClassContainer;
+use Jaxon\Di\ComponentContainer;
 use Jaxon\Script\JsExpr;
 use Jaxon\Script\JxnCall;
 
@@ -39,9 +39,9 @@ class HtmlAttrHelper
     /**
      * The constructor
      *
-     * @param ClassContainer $cls
+     * @param ComponentContainer $cdi
      */
-    public function __construct(protected ClassContainer $cls)
+    public function __construct(protected ComponentContainer $cdi)
     {
         $this->sPaginationComponent = rq(Pagination::class)->_class();
     }
@@ -61,7 +61,7 @@ class HtmlAttrHelper
             return '';
         }
 
-        $xCallable = $this->cls->makeRegisteredObject($sClassName);
+        $xCallable = $this->cdi->makeComponent($sClassName);
         return is_a($xCallable, Component::class) ? (string)$xCallable->html() : '';
     }
 

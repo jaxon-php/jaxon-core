@@ -5,11 +5,8 @@
  *
  * Jaxon callable object
  *
- * This class stores a reference to an object whose methods can be called from
+ * This class stores a reference to a component whose methods can be called from
  * the client via a Jaxon request
- *
- * The Jaxon plugin manager will call <CallableObject->getClientScript> so that
- * stub functions can be generated and sent to the browser.
  *
  * @package jaxon-core
  * @author Jared White
@@ -31,7 +28,7 @@ use Jaxon\App\Metadata\InputData;
 use Jaxon\App\Metadata\MetadataInterface;
 use Jaxon\App\Metadata\MetadataReaderInterface;
 use Jaxon\Config\Config;
-use Jaxon\Di\ClassContainer;
+use Jaxon\Di\ComponentContainer;
 use Jaxon\Di\Container;
 use Jaxon\Exception\SetupException;
 use Jaxon\Request\Target;
@@ -55,11 +52,11 @@ use function substr;
 class CallableObject
 {
     /**
-     * The user registered callable object
+     * The user registered component
      *
      * @var mixed
      */
-    private $xRegisteredObject = null;
+    private $xComponent = null;
 
     /**
      * The target of the Jaxon call
@@ -69,9 +66,9 @@ class CallableObject
     private $xTarget;
 
     /**
-     * The options of this callable object
+     * The options of this component
      *
-     * @var CallableObjectOptions|null
+     * @var ComponentOptions|null
      */
     private $xOptions = null;
 
@@ -93,19 +90,19 @@ class CallableObject
     /**
      * The class constructor
      *
-     * @param ClassContainer $cls
+     * @param ComponentContainer $cdi
      * @param Container $di
      * @param ReflectionClass $xReflectionClass
      * @param array $aOptions
      * @param array $aProtectedMethods
      */
-    public function __construct(protected ClassContainer $cls, protected Container $di,
+    public function __construct(protected ComponentContainer $cdi, protected Container $di,
         private ReflectionClass $xReflectionClass, array $aOptions, array $aProtectedMethods)
     {
         $this->aProtectedMethods = array_fill_keys($aProtectedMethods, true);
 
         $xMetadata = $this->getAttributes($xReflectionClass, $aOptions);
-        $this->xOptions = new CallableObjectOptions($aOptions, $xMetadata);
+        $this->xOptions = new ComponentOptions($aOptions, $xMetadata);
     }
 
     /**
@@ -210,7 +207,7 @@ class CallableObject
     }
 
     /**
-     * Get the js options of the callable class
+     * Get the js options of the component
      *
      * @return array
      */
@@ -220,7 +217,7 @@ class CallableObject
     }
 
     /**
-     * Return a list of methods of the callable object to export to javascript
+     * Return a list of methods of the component to export to javascript
      *
      * @return array
      */
@@ -243,7 +240,7 @@ class CallableObject
     }
 
     /**
-     * Check if the specified method name is one of the methods of the registered callable object
+     * Check if the specified method name is one of the methods of the component
      *
      * @param string $sMethod    The name of the method to check
      *
@@ -255,7 +252,7 @@ class CallableObject
     }
 
     /**
-     * Call the specified method of the registered callable object using the specified array of arguments
+     * Call the specified method of the component using the specified array of arguments
      *
      * @param string $sMethod    The method name
      * @param array $aArgs    The method arguments
@@ -268,11 +265,11 @@ class CallableObject
     {
         $reflectionMethod = $this->xReflectionClass->getMethod($sMethod);
         $reflectionMethod->setAccessible($bAccessible); // Make it possible to call protected methods
-        $reflectionMethod->invokeArgs($this->xRegisteredObject, $aArgs);
+        $reflectionMethod->invokeArgs($this->xComponent, $aArgs);
     }
 
     /**
-     * Call the specified method of the registered callable object using the specified array of arguments
+     * Call the specified method of the component using the specified array of arguments
      *
      * @param array $aHookMethods    The method config options
      *
@@ -298,27 +295,27 @@ class CallableObject
     }
 
     /**
-     * @param object $xRegisteredObject
+     * @param object $xComponent
      * @param string $sAttr
      * @param object $xDiValue
      * @param-closure-this object $cSetter
      *
      * @return void
      */
-    private function setDiAttribute($xRegisteredObject, string $sAttr, $xDiValue, Closure $cSetter): void
+    private function setDiAttribute($xComponent, string $sAttr, $xDiValue, Closure $cSetter): void
     {
         // Allow the setter to access protected attributes.
-        $cSetter = $cSetter->bindTo($xRegisteredObject, $xRegisteredObject);
+        $cSetter = $cSetter->bindTo($xComponent, $xComponent);
         call_user_func($cSetter, $sAttr, $xDiValue);
     }
 
     /**
-     * @param mixed $xRegisteredObject
+     * @param mixed $xComponent
      * @param array $aDiOptions
      *
      * @return void
      */
-    private function setDiAttributes($xRegisteredObject, array $aDiOptions)
+    private function setDiAttributes($xComponent, array $aDiOptions)
     {
         // Set the protected attributes of the object
         $cSetter = function($sAttr, $xDiValue) {
@@ -328,78 +325,78 @@ class CallableObject
         };
         foreach($aDiOptions as $sAttr => $sClass)
         {
-            $this->setDiAttribute($xRegisteredObject, $sAttr,
+            $this->setDiAttribute($xComponent, $sAttr,
                 $this->di->get($sClass), $cSetter);
         }
     }
 
     /**
-     * @param mixed $xRegisteredObject
+     * @param mixed $xComponent
      *
      * @return void
      */
-    public function setDiClassAttributes($xRegisteredObject)
+    public function setDiClassAttributes($xComponent)
     {
         $aDiOptions = $this->xOptions->diOptions();
-        $this->setDiAttributes($xRegisteredObject, $aDiOptions['*'] ?? []);
+        $this->setDiAttributes($xComponent, $aDiOptions['*'] ?? []);
     }
 
     /**
-     * @param mixed $xRegisteredObject
+     * @param mixed $xComponent
      * @param string $sMethodName
      *
      * @return void
      */
-    private function setDiMethodAttributes($xRegisteredObject, string $sMethodName)
+    private function setDiMethodAttributes($xComponent, string $sMethodName)
     {
         $aDiOptions = $this->xOptions->diOptions();
-        $this->setDiAttributes($xRegisteredObject, $aDiOptions[$sMethodName] ?? []);
+        $this->setDiAttributes($xComponent, $aDiOptions[$sMethodName] ?? []);
     }
 
     /**
-     * @param AbstractComponent $xRegisteredObject
+     * @param AbstractComponent $xComponent
      * @param-closure-this AbstractComponent $cSetter
      *
      * @return void
      */
-    private function setCallableHelper(AbstractComponent $xRegisteredObject, Closure $cSetter): void
+    private function setHelper(AbstractComponent $xComponent, Closure $cSetter): void
     {
         // Allow the setter to access protected attributes.
-        call_user_func($cSetter->bindTo($xRegisteredObject, $xRegisteredObject));
+        call_user_func($cSetter->bindTo($xComponent, $xComponent));
     }
 
     /**
-     * Get a callable object when one of its method needs to be called
+     * Get a component when one of its method needs to be called
      *
      * @param Target|null $xTarget
      *
      * @return mixed
      */
-    public function getRegisteredObject(?Target $xTarget = null)
+    public function getComponent(?Target $xTarget = null)
     {
-        $xRegisteredObject = $this->cls->get($this->getClassName());
-        if(!$xRegisteredObject || !$xTarget)
+        $xComponent = $this->cdi->get($this->getClassName());
+        if(!$xComponent || !$xTarget)
         {
-            return $xRegisteredObject;
+            return $xComponent;
         }
 
         // Set attributes from the DI container.
         // The class level DI options were set when creating the object instance.
         // We now need to set the method level DI options.
-        $this->setDiMethodAttributes($xRegisteredObject, $xTarget->getMethodName());
+        $this->setDiMethodAttributes($xComponent, $xTarget->getMethodName());
         // Set the Jaxon request target in the helper
-        if($xRegisteredObject instanceof AbstractComponent)
+        if($xComponent instanceof AbstractComponent)
         {
-            $this->setCallableHelper($xRegisteredObject, function() use($xTarget) {
+            $this->setHelper($xComponent, function() use($xTarget) {
                 // $this here is related to the AbstractComponent instance.
                 $this->xHelper->xTarget = $xTarget;
             });
         }
-        return $xRegisteredObject;
+        return $xComponent;
     }
 
     /**
-     * Call the specified method of the registered callable object using the specified array of arguments
+     * Call the specified method of the component using the specified array of arguments
      *
      * @param Target $xTarget The target of the Jaxon call
      *
@@ -410,7 +407,7 @@ class CallableObject
     public function call(Target $xTarget)
     {
         $this->xTarget = $xTarget;
-        $this->xRegisteredObject = $this->getRegisteredObject($xTarget);
+        $this->xComponent = $this->getComponent($xTarget);
 
         // Methods to call before processing the request
         $this->callHookMethods($this->xOptions->beforeMethods());

@@ -15,7 +15,7 @@ namespace Jaxon\Script\Factory;
  */
 
 use Jaxon\App\Dialog\Manager\DialogCommand;
-use Jaxon\Di\ClassContainer;
+use Jaxon\Di\ComponentContainer;
 use Jaxon\Exception\SetupException;
 use Jaxon\Script\JqCall;
 use Jaxon\Script\JsCall;
@@ -29,10 +29,10 @@ class CallFactory
     /**
      * The constructor.
      *
-     * @param ClassContainer $cls
+     * @param ComponentContainer $cdi
      * @param DialogCommand $xDialog
      */
-    public function __construct(private ClassContainer $cls, private DialogCommand $xDialog)
+    public function __construct(private ComponentContainer $cdi, private DialogCommand $xDialog)
     {}
 
     /**
@@ -45,7 +45,7 @@ class CallFactory
      */
     public function rq(string $sClassName = ''): ?JxnCall
     {
-        return $this->cls->getRequestFactory($sClassName);
+        return $this->cdi->getRequestFactory($sClassName);
     }
 
     /**

@@ -9,7 +9,7 @@ use Jaxon\App\Stash\Stash;
 use Jaxon\App\View\ViewRenderer;
 use Jaxon\Exception\SetupException;
 use Jaxon\Script\JxnCall;
-use Jaxon\Plugin\Request\CallableClass\CallableClassHelper;
+use Jaxon\Plugin\Request\CallableClass\ComponentHelper;
 use Jaxon\Request\TargetInterface;
 use Jaxon\Response\AjaxResponse;
 use Psr\Log\LoggerInterface;
@@ -17,19 +17,19 @@ use Psr\Log\LoggerInterface;
 abstract class AbstractComponent
 {
     /**
-     * @var CallableClassHelper
+     * @var ComponentHelper
      */
     protected $xHelper = null;
 
     /**
-     * Initialize the callable class
+     * Initialize the component
      *
      * @param Container $di
-     * @param CallableClassHelper $xHelper
+     * @param ComponentHelper $xHelper
      *
      * @return void
      */
-    abstract public function _initComponent(Container $di, CallableClassHelper $xHelper);
+    abstract public function _initComponent(Container $di, ComponentHelper $xHelper);
 
     /**
      * Get the Ajax response

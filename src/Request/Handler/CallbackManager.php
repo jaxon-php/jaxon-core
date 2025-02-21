@@ -245,13 +245,13 @@ class CallbackManager
     /**
      * Execute the class initialisation callbacks.
      *
-     * @param mixed $xRegisteredObject
+     * @param mixed $xComponent
      *
      * @return void
      */
-    public function onInit($xRegisteredObject)
+    public function onInit($xComponent)
     {
-        $this->executeCallbacks($this->aInitCallbacks, [$xRegisteredObject]);
+        $this->executeCallbacks($this->aInitCallbacks, [$xComponent]);
     }
 
     /**

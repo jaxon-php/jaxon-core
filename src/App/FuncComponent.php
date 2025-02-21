@@ -4,7 +4,7 @@ namespace Jaxon\App;
 
 use Jaxon\App\Pagination\Paginator;
 use Jaxon\Di\Container;
-use Jaxon\Plugin\Request\CallableClass\CallableClassHelper;
+use Jaxon\Plugin\Request\CallableClass\ComponentHelper;
 use Jaxon\Response\AjaxResponse;
 use Jaxon\Response\Response;
 
@@ -18,7 +18,7 @@ class FuncComponent extends AbstractComponent
     /**
      * @inheritDoc
      */
-    public function _initComponent(Container $di, CallableClassHelper $xHelper)
+    public function _initComponent(Container $di, ComponentHelper $xHelper)
     {
         $this->xHelper = $xHelper;
         $this->response = $di->getResponse();

@@ -23,7 +23,7 @@ namespace Jaxon\Plugin\Request\CallableClass;
 
 use Jaxon\Jaxon;
 use Jaxon\App\I18n\Translator;
-use Jaxon\Di\ClassContainer;
+use Jaxon\Di\ComponentContainer;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\CallableRegistryInterface;
 use Jaxon\Plugin\PluginInterface;
@@ -41,12 +41,12 @@ class CallableDirPlugin implements PluginInterface, CallableRegistryInterface
     /**
      * The class constructor
      *
-     * @param ClassContainer $cls
-     * @param CallableRegistry $xRegistry
+     * @param ComponentContainer $cdi
+     * @param ComponentRegistry $xRegistry
      * @param Translator $xTranslator
      */
-    public function __construct(protected ClassContainer $cls,
-        protected CallableRegistry $xRegistry, protected Translator $xTranslator)
+    public function __construct(protected ComponentContainer $cdi,
+        protected ComponentRegistry $xRegistry, protected Translator $xTranslator)
     {}
 
     /**
@@ -128,6 +128,6 @@ class CallableDirPlugin implements PluginInterface, CallableRegistryInterface
      */
     public function getCallable(string $sCallable)
     {
-        return $this->cls->makeCallableObject($sCallable);
+        return $this->cdi->makeCallableObject($sCallable);
     }
 }

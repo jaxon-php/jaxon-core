@@ -1,7 +1,7 @@
 <?php
 
 /**
- * ClassContainer.php
+ * ComponentContainer.php
  *
  * Jaxon DI container. Provide container service for the registered classes.
  *
@@ -20,9 +20,9 @@ use Jaxon\App\Dialog\Manager\DialogCommand;
 use Jaxon\App\I18n\Translator;
 use Jaxon\App\Pagination;
 use Jaxon\Exception\SetupException;
-use Jaxon\Plugin\Request\CallableClass\CallableClassHelper;
 use Jaxon\Plugin\Request\CallableClass\CallableObject;
-use Jaxon\Plugin\Request\CallableClass\CallableRegistry;
+use Jaxon\Plugin\Request\CallableClass\ComponentHelper;
+use Jaxon\Plugin\Request\CallableClass\ComponentRegistry;
 use Jaxon\Request\Handler\CallbackManager;
 use Jaxon\Script\JxnCall;
 use Jaxon\Script\JxnClass;
@@ -37,7 +37,7 @@ use function array_map;
 use function str_replace;
 use function trim;
 
-class ClassContainer
+class ComponentContainer
 {
     /**
      * If the underscore is used as separator in js class names.
@@ -60,7 +60,7 @@ class ClassContainer
      *
      * @var array
      */
-    protected $aClasses = [];
+    protected $aComponents = [];
 
     /**
      * The class constructor
@@ -71,7 +71,7 @@ class ClassContainer
     public function __construct(private Container $di, private Translator $xTranslator)
     {
         $this->xContainer = new PimpleContainer();
-        $this->val(ClassContainer::class, $this);
+        $this->val(ComponentContainer::class, $this);
 
         // Register the call factory for registered functions
         $this->set($this->getRequestFactoryKey(JxnCall::class), function() {
@@ -148,7 +148,7 @@ class ClassContainer
      *
      * @return void
      */
-    public function registerClass(string $sClassName, array $aOptions = [])
+    public function registerComponent(string $sClassName, array $aOptions = [])
     {
         try
         {
@@ -159,7 +159,7 @@ class ClassContainer
             if($xReflectionClass->isInstantiable() &&
                 !$xReflectionClass->isSubclassOf(Pagination::class))
             {
-                $this->aClasses[$sClassName] = $aOptions;
+                $this->aComponents[$sClassName] = $aOptions;
                 $this->val($this->getReflectionClassKey($sClassName), $xReflectionClass);
             }
         }
@@ -178,22 +178,22 @@ class ClassContainer
      * @return void
      * @throws SetupException
      */
-    private function registerClassOptions(string $sClassName)
+    private function registerComponentOptions(string $sClassName)
     {
-        if(!isset($this->aClasses[$sClassName]))
+        if(!isset($this->aComponents[$sClassName]))
         {
             // Find options for a class registered with namespace.
-            /** @var CallableRegistry */
-            $xRegistry = $this->di->g(CallableRegistry::class);
+            /** @var ComponentRegistry */
+            $xRegistry = $this->di->g(ComponentRegistry::class);
             $xRegistry->registerClassFromNamespace($sClassName);
-            if(!isset($this->aClasses[$sClassName]))
+            if(!isset($this->aComponents[$sClassName]))
             {
                 // Find options for a class registered without namespace.
                 // We need to parse all the classes to be able to find one.
                 $xRegistry->parseDirectories();
             }
         }
-        if(!isset($this->aClasses[$sClassName]))
+        if(!isset($this->aComponents[$sClassName]))
         {
             throw new SetupException($this->xTranslator->trans('errors.class.invalid',
                 ['name' => $sClassName]));
@@ -209,9 +209,9 @@ class ClassContainer
     public function getCallableObjects(): array
     {
         $aCallableObjects = [];
-        foreach($this->aClasses as $sClassName => $_)
+        foreach($this->aComponents as $sClassName => $_)
         {
-            $this->registerCallableClass($sClassName);
+            $this->_registerComponent($sClassName);
             $aCallableObjects[$sClassName] = $this->getCallableObject($sClassName);
         }
         return $aCallableObjects;
@@ -291,7 +291,7 @@ class ClassContainer
     }
 
     /**
-     * @param class-string $sClassName The callable class name
+     * @param class-string $sClassName The component name
      *
      * @return string
      */
@@ -301,7 +301,7 @@ class ClassContainer
     }
 
     /**
-     * @param class-string $sClassName The callable class name
+     * @param class-string $sClassName The component name
      *
      * @return string
      */
@@ -311,7 +311,7 @@ class ClassContainer
     }
 
     /**
-     * @param class-string $sClassName The callable class name
+     * @param class-string $sClassName The component name
      *
      * @return string
      */
@@ -321,18 +321,18 @@ class ClassContainer
     }
 
     /**
-     * Register a callable class
+     * Register a component
      *
-     * @param class-string $sClassName The callable class name
+     * @param class-string $sClassName The component name
      *
      * @return void
      * @throws SetupException
      */
-    private function registerCallableClass(string $sClassName)
+    private function _registerComponent(string $sClassName)
     {
-        $sCallableObject = $this->getCallableObjectKey($sClassName);
+        $sComponentObject = $this->getCallableObjectKey($sClassName);
         // Prevent duplication. It's important not to use the class name here.
-        if($this->has($sCallableObject))
+        if($this->has($sComponentObject))
         {
             return;
         }
@@ -340,19 +340,19 @@ class ClassContainer
         // Register the helper class
         $this->set($this->getCallableHelperKey($sClassName), function() use($sClassName) {
             $xFactory = $this->di->getCallFactory();
-            return new CallableClassHelper($this, $xFactory->rq($sClassName),
+            return new ComponentHelper($this, $xFactory->rq($sClassName),
                 $xFactory, $this->di->getViewRenderer(),
                 $this->di->getLogger(), $this->di->getSessionManager(),
                 $this->di->getStash(), $this->di->getUploadHandler());
         });
 
-        $this->registerClassOptions($sClassName);
-        $aOptions = $this->aClasses[$sClassName];
+        $this->registerComponentOptions($sClassName);
+        $aOptions = $this->aComponents[$sClassName];
 
         // Register the callable object
-        $this->set($sCallableObject, function() use($sClassName, $aOptions) {
+        $this->set($sComponentObject, function() use($sClassName, $aOptions) {
             $xReflectionClass = $this->get($this->getReflectionClassKey($sClassName));
-            $xRegistry = $this->di->g(CallableRegistry::class);
+            $xRegistry = $this->di->g(ComponentRegistry::class);
             $aProtectedMethods = $xRegistry->getProtectedMethods($sClassName);
 
             return new CallableObject($this, $this->di, $xReflectionClass, $aOptions, $aProtectedMethods);
@@ -417,7 +417,7 @@ class ClassContainer
         }
 
         // Register the class.
-        $this->registerCallableClass($sClassName);
+        $this->_registerComponent($sClassName);
         return $sClassName;
     }
 
@@ -436,7 +436,7 @@ class ClassContainer
     }
 
     /**
-     * Get an instance of a Jaxon class by name
+     * Get an instance of a component by name
      *
      * @template T
      * @param class-string<T> $sClassName the class name
@@ -444,24 +444,24 @@ class ClassContainer
      * @return T|null
      * @throws SetupException
      */
-    public function makeRegisteredObject(string $sClassName): mixed
+    public function makeComponent(string $sClassName): mixed
     {
         $xCallableObject = $this->makeCallableObject($sClassName);
-        return !$xCallableObject ? null : $xCallableObject->getRegisteredObject();
+        return !$xCallableObject ? null : $xCallableObject->getComponent();
     }
 
     /**
-     * Get the callable registry
+     * Get the component registry
      *
-     * @return CallableRegistry
+     * @return ComponentRegistry
      */
-    public function getCallableRegistry(): CallableRegistry
+    public function getComponentRegistry(): ComponentRegistry
     {
-        return $this->di->g(CallableRegistry::class);
+        return $this->di->g(ComponentRegistry::class);
     }
 
     /**
-     * @param class-string $sClassName The callable class name
+     * @param class-string $sClassName The component name
      *
      * @return string
      */

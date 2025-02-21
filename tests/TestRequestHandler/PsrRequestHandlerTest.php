@@ -93,7 +93,7 @@ class PsrRequestHandlerTest extends TestCase
         $this->assertNotNull($xJaxonResponse);
         $this->assertEquals(1, $xJaxonResponse->getCommandCount());
         $xCallableObject = jaxon()->di()->getCallableClassPlugin()->getCallable('Sample');
-        $this->assertEquals('Sample', get_class($xCallableObject->getRegisteredObject()));
+        $this->assertEquals('Sample', get_class($xCallableObject->getComponent()));
 
         $xTarget = jaxon()->di()->getCallableClassPlugin()->getTarget();
         $this->assertNotNull($xTarget);
@@ -136,7 +136,7 @@ class PsrRequestHandlerTest extends TestCase
         $this->assertNotNull($xJaxonResponse);
         $this->assertEquals(1, $xJaxonResponse->getCommandCount());
         $xCallableObject = jaxon()->di()->getCallableClassPlugin()->getCallable('Sample');
-        $this->assertEquals('Sample', get_class($xCallableObject->getRegisteredObject()));
+        $this->assertEquals('Sample', get_class($xCallableObject->getComponent()));
 
         $xTarget = jaxon()->di()->getCallableClassPlugin()->getTarget();
         $this->assertNotNull($xTarget);

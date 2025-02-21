@@ -26,7 +26,7 @@
 namespace Jaxon\App\Ajax;
 
 use Jaxon\Jaxon;
-use Jaxon\Di\ClassContainer;
+use Jaxon\Di\ComponentContainer;
 use Jaxon\Di\Container;
 use Jaxon\App\Config\ConfigManager;
 use Jaxon\App\I18n\Translator;
@@ -59,14 +59,14 @@ final class Lib
 
     /**
      * @param Container $xContainer
-     * @param ClassContainer $xClassContainer
+     * @param ComponentContainer $xComponentContainer
      *
      * @return void
      */
-    private function init(Container $xContainer, ClassContainer $xClassContainer)
+    private function init(Container $xContainer, ComponentContainer $xComponentContainer)
     {
         $this->xContainer = $xContainer;
-        $this->xClassContainer = $xClassContainer;
+        $this->xComponentContainer = $xComponentContainer;
         // Set the attributes from the container
         $this->xBootstrap = $xContainer->g(Bootstrap::class);
     }
@@ -81,10 +81,10 @@ final class Lib
             // First call: create and initialize the instances.
             self::$xInstance = new Lib();
             $xContainer = new Container(self::$xInstance);
-            $xClassContainer = new ClassContainer($xContainer, $xContainer->g(Translator::class));
-            $xContainer->val(ClassContainer::class, $xClassContainer);
+            $xComponentContainer = new ComponentContainer($xContainer, $xContainer->g(Translator::class));
+            $xContainer->val(ComponentContainer::class, $xComponentContainer);
 
-            self::$xInstance->init($xContainer, $xClassContainer);
+            self::$xInstance->init($xContainer, $xComponentContainer);
             return self::$xInstance;
         }
 

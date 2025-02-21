@@ -1,7 +1,7 @@
 <?php
 
 /**
- * CallableRegistry.php - Jaxon callable class registry
+ * ComponentRegistry.php - Jaxon component registry
  *
  * This class is the entry point for class, directory and namespace registration.
  *
@@ -18,7 +18,7 @@ use Composer\Autoload\ClassLoader;
 use Jaxon\App\AbstractComponent;
 use Jaxon\App\Component;
 use Jaxon\Config\Config;
-use Jaxon\Di\ClassContainer;
+use Jaxon\Di\ComponentContainer;
 use ReflectionClass;
 use ReflectionMethod;
 
@@ -33,7 +33,7 @@ use function strncmp;
 use function substr;
 use function trim;
 
-class CallableRegistry
+class ComponentRegistry
 {
     /**
      * The namespace options
@@ -113,9 +113,9 @@ class CallableRegistry
     /**
      * The class constructor
      *
-     * @param ClassContainer $cls
+     * @param ComponentContainer $cdi
      */
-    public function __construct(protected ClassContainer $cls)
+    public function __construct(protected ComponentContainer $cdi)
     {
         // Set the composer autoloader
         if(file_exists(($sAutoloadFile = __DIR__ . '/../../../../../../autoload.php')) ||
@@ -233,11 +233,11 @@ class CallableRegistry
      *
      * @return void
      */
-    private function _registerClass(string $sClassName, array $aClassOptions,
+    private function _registerComponent(string $sClassName, array $aClassOptions,
         array $aDirectoryOptions = [], bool $bAddToHash = true)
     {
         $aOptions = $this->makeClassOptions($sClassName, $aClassOptions, $aDirectoryOptions);
-        $this->cls->registerClass($sClassName, $aOptions);
+        $this->cdi->registerComponent($sClassName, $aOptions);
         if($bAddToHash)
         {
             $this->sHash .= $sClassName . $aOptions['timestamp'];
@@ -251,13 +251,13 @@ class CallableRegistry
      *
      * @return void
      */
-    public function registerClass(string $sClassName, array $aClassOptions)
+    public function registerComponent(string $sClassName, array $aClassOptions)
     {
         if($this->xCurrentConfig !== null)
         {
             $aClassOptions['config'] = $this->xCurrentConfig;
         }
-        $this->_registerClass($sClassName, $aClassOptions);
+        $this->_registerComponent($sClassName, $aClassOptions);
     }
 
     /**
@@ -277,7 +277,7 @@ class CallableRegistry
             {
                 // Save the class options
                 $aClassOptions = ['namespace' => $sNamespace];
-                $this->_registerClass($sClassName, $aClassOptions, $aDirectoryOptions, false);
+                $this->_registerComponent($sClassName, $aClassOptions, $aDirectoryOptions, false);
                 return;
             }
         }
@@ -354,7 +354,7 @@ class CallableRegistry
         }
         if($aOptions['separator'] === '_')
         {
-            $this->cls->useUnderscore();
+            $this->cdi->useUnderscore();
         }
         // Set the autoload option default value
         if(!isset($aOptions['autoload']))
@@ -409,7 +409,7 @@ class CallableRegistry
                     // Set classmap autoloading. Must be done before registering the class.
                     $this->xAutoloader->addClassMap([$sClassName => $xFile->getPathname()]);
                 }
-                $this->_registerClass($sClassName, $aClassOptions, $aDirectoryOptions);
+                $this->_registerComponent($sClassName, $aClassOptions, $aDirectoryOptions);
             }
         }
     }
@@ -458,17 +458,17 @@ class CallableRegistry
 
                 $sClassName = $sClassPath . '\\' . $xFile->getBasename('.php');
                 $aClassOptions = ['namespace' => $sNamespace, 'timestamp' => $xFile->getMTime()];
-                $this->_registerClass($sClassName, $aClassOptions, $aDirectoryOptions);
+                $this->_registerComponent($sClassName, $aClassOptions, $aDirectoryOptions);
             }
         }
     }
 
     /**
-     * Register all the callable classes
+     * Register all the components
      *
      * @return void
      */
-    public function parseCallableClasses()
+    public function parseComponents()
     {
         $this->parseDirectories();
         $this->parseNamespaces();

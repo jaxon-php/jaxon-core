@@ -22,7 +22,7 @@ namespace Jaxon\Plugin\Request\CallableClass;
 
 use Jaxon\Jaxon;
 use Jaxon\App\I18n\Translator;
-use Jaxon\Di\ClassContainer;
+use Jaxon\Di\ComponentContainer;
 use Jaxon\Di\Container;
 use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;
@@ -53,15 +53,15 @@ class CallableClassPlugin extends AbstractRequestPlugin
      * @param string $sPrefix
      * @param bool $bDebug
      * @param Container $di
-     * @param ClassContainer $cls
-     * @param CallableRegistry $xRegistry
+     * @param ComponentContainer $cdi
+     * @param ComponentRegistry $xRegistry
      * @param TemplateEngine $xTemplateEngine
      * @param Translator $xTranslator
      * @param Validator $xValidator
      */
     public function __construct(private string $sPrefix, private bool $bDebug,
-        private Container $di, private ClassContainer $cls,
-        private CallableRegistry $xRegistry, private TemplateEngine $xTemplateEngine,
+        private Container $di, private ComponentContainer $cdi,
+        private ComponentRegistry $xRegistry, private TemplateEngine $xTemplateEngine,
         private Translator $xTranslator, private Validator $xValidator)
     {}
 
@@ -100,7 +100,7 @@ class CallableClassPlugin extends AbstractRequestPlugin
     public function register(string $sType, string $sCallable, array $aOptions): bool
     {
         $sClassName = trim($sCallable);
-        $this->xRegistry->registerClass($sClassName, $aOptions);
+        $this->xRegistry->registerComponent($sClassName, $aOptions);
         return true;
     }
 
@@ -110,7 +110,7 @@ class CallableClassPlugin extends AbstractRequestPlugin
      */
     public function getCallable(string $sCallable)
     {
-        return $this->cls->makeCallableObject($sCallable);
+        return $this->cdi->makeCallableObject($sCallable);
     }
 
     /**
@@ -118,7 +118,7 @@ class CallableClassPlugin extends AbstractRequestPlugin
      */
     public function getHash(): string
     {
-        $this->xRegistry->parseCallableClasses();
+        $this->xRegistry->parseComponents();
         return md5($this->xRegistry->getHash());
     }
 
@@ -180,8 +180,8 @@ class CallableClassPlugin extends AbstractRequestPlugin
      */
     public function getScript(): string
     {
-        $this->xRegistry->parseCallableClasses();
-        $aCallableObjects = $this->cls->getCallableObjects();
+        $this->xRegistry->parseComponents();
+        $aCallableObjects = $this->cdi->getCallableObjects();
         // Sort the options by key length asc
         uksort($aCallableObjects, function($name1, $name2) {
             return strlen($name1) - strlen($name2);

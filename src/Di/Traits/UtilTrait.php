@@ -63,7 +63,7 @@ trait UtilTrait
             return new UriDetector();
         });
 
-        // Temp cache for Jaxon callable classes
+        // Temp cache for Jaxon components
         $this->set(Stash::class, function() {
             return new Stash();
         });
@@ -80,7 +80,7 @@ trait UtilTrait
     }
 
     /**
-     * Get the temp cache for Jaxon callable classes
+     * Get the temp cache for Jaxon components
      *
      * @return Stash
      */

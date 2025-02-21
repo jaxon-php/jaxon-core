@@ -3,7 +3,7 @@
 /**
  * MetadataInterface.php
  *
- * Interface for callable class attributes.
+ * Interface for component attributes.
  *
  * @package jaxon-core
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>

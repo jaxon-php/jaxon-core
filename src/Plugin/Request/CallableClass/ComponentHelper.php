@@ -1,9 +1,9 @@
 <?php
 
 /**
- * CallableClassHelper.php
+ * ComponentHelper.php
  *
- * Provides properties to a callable class.
+ * Provides helper functions to components.
  *
  * @package jaxon-core
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
@@ -14,11 +14,10 @@
 
 namespace Jaxon\Plugin\Request\CallableClass;
 
-use Jaxon\App\AbstractComponent;
 use Jaxon\App\Session\SessionInterface;
 use Jaxon\App\Stash\Stash;
 use Jaxon\App\View\ViewRenderer;
-use Jaxon\Di\ClassContainer;
+use Jaxon\Di\ComponentContainer;
 use Jaxon\Exception\SetupException;
 use Jaxon\Script\Factory\CallFactory;
 use Jaxon\Script\JxnCall;
@@ -28,7 +27,7 @@ use Psr\Log\LoggerInterface;
 
 use function trim;
 
-class CallableClassHelper
+class ComponentHelper
 {
     /**
      * @var Target
@@ -38,7 +37,7 @@ class CallableClassHelper
     /**
      * The constructor
      *
-     * @param ClassContainer $cls
+     * @param ComponentContainer $cdi
      * @param JxnCall $xJxnCall
      * @param CallFactory $xFactory
      * @param ViewRenderer $xViewRenderer
@@ -48,7 +47,7 @@ class CallableClassHelper
      *
      * @throws SetupException
      */
-    public function __construct(public ClassContainer $cls, public JxnCall $xJxnCall,
+    public function __construct(public ComponentContainer $cdi, public JxnCall $xJxnCall,
         public CallFactory $xFactory, public ViewRenderer $xViewRenderer,
         public LoggerInterface $xLogger, public ?SessionInterface $xSessionManager,
         public Stash $xStash, public ?UploadHandlerInterface $xUploadHandler)
@@ -65,7 +64,7 @@ class CallableClassHelper
      */
     public function cl(string $sClassName): mixed
     {
-        return $this->cls->makeRegisteredObject($sClassName);
+        return $this->cdi->makeComponent($sClassName);
     }
 
     /**

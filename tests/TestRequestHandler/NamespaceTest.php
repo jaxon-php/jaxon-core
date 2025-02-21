@@ -110,7 +110,7 @@ class NamespaceTest extends TestCase
         $this->assertNotNull(jaxon()->getResponse());
         $this->assertEquals(2, jaxon()->getResponse()->getCommandCount());
         $xCallableObject = jaxon()->di()->getCallableClassPlugin()->getCallable(ClassC::class);
-        $this->assertEquals(ClassC::class, get_class($xCallableObject->getRegisteredObject()));
+        $this->assertEquals(ClassC::class, get_class($xCallableObject->getComponent()));
 
         $xTarget = jaxon()->di()->getCallableClassPlugin()->getTarget();
         $this->assertNotNull($xTarget);

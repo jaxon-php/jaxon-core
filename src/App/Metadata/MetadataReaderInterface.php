@@ -3,7 +3,7 @@
 /**
  * MetadataReaderInterface.php
  *
- * Read callable class metadata.
+ * Read component metadata.
  *
  * @package jaxon-core
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
@@ -17,7 +17,7 @@ namespace Jaxon\App\Metadata;
 interface MetadataReaderInterface
 {
     /**
-     * Get the callable class metadata
+     * Get the component metadata
      *
      * @param InputDataInterface $xInput
      *

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * CallableObjectOptions.php
+ * ComponentOptions.php
  *
  * Options of a callable object.
  *
@@ -25,7 +25,7 @@ use function is_string;
 use function substr;
 use function trim;
 
-class CallableObjectOptions
+class ComponentOptions
 {
     /**
      * Check if the js code for this object must be generated

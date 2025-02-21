@@ -33,7 +33,7 @@ trait AppTrait
     private function initApp()
     {
         $this->xContainer = Lib::getInstance()->di();
-        $this->xClassContainer = Lib::getInstance()->cls();
+        $this->xComponentContainer = Lib::getInstance()->cdi();
     }
 
     /**

@@ -9,7 +9,7 @@ use Jaxon\App\Pagination\RendererInterface;
 use Jaxon\App\View\HtmlAttrHelper;
 use Jaxon\App\View\TemplateView;
 use Jaxon\App\View\ViewRenderer;
-use Jaxon\Di\ClassContainer;
+use Jaxon\Di\ComponentContainer;
 use Jaxon\Di\Container;
 use Jaxon\Utils\Template\TemplateEngine;
 
@@ -59,7 +59,7 @@ trait ViewTrait
 
         // Helpers for HTML custom attributes formatting
         $this->set(HtmlAttrHelper::class, function($di) {
-            return new HtmlAttrHelper($di->g(ClassContainer::class));
+            return new HtmlAttrHelper($di->g(ComponentContainer::class));
         });
     }
 

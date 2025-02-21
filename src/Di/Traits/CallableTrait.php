@@ -5,11 +5,11 @@ namespace Jaxon\Di\Traits;
 use Jaxon\App\Config\ConfigManager;
 use Jaxon\App\I18n\Translator;
 use Jaxon\App\Pagination;
-use Jaxon\Di\ClassContainer;
+use Jaxon\Di\ComponentContainer;
 use Jaxon\Di\Container;
 use Jaxon\Plugin\Request\CallableClass\CallableClassPlugin;
 use Jaxon\Plugin\Request\CallableClass\CallableDirPlugin;
-use Jaxon\Plugin\Request\CallableClass\CallableRegistry;
+use Jaxon\Plugin\Request\CallableClass\ComponentRegistry;
 use Jaxon\Plugin\Request\CallableFunction\CallableFunctionPlugin;
 use Jaxon\Request\Validator;
 use Jaxon\Utils\Template\TemplateEngine;
@@ -28,10 +28,10 @@ trait CallableTrait
             return new Validator($di->g(ConfigManager::class), $di->g(Translator::class));
         });
         // Callable objects registry
-        $this->set(CallableRegistry::class, function($di) {
-            $xRegistry = new CallableRegistry($di->g(ClassContainer::class));
+        $this->set(ComponentRegistry::class, function($di) {
+            $xRegistry = new ComponentRegistry($di->g(ComponentContainer::class));
             // Register the pagination component, but do not export to js.
-            $xRegistry->registerClass(Pagination::class,
+            $xRegistry->registerComponent(Pagination::class,
                 ['excluded' => true, 'namespace' => 'Jaxon\App']);
             return $xRegistry;
         });
@@ -40,14 +40,14 @@ trait CallableTrait
             $sPrefix = $di->g(ConfigManager::class)->getOption('core.prefix.class');
             $bDebug = $di->g(ConfigManager::class)->getOption('core.debug.on', false);
             return new CallableClassPlugin($sPrefix, $bDebug,
-                $di->g(Container::class), $di->g(ClassContainer::class),
-                $di->g(CallableRegistry::class), $di->g(TemplateEngine::class),
+                $di->g(Container::class), $di->g(ComponentContainer::class),
+                $di->g(ComponentRegistry::class), $di->g(TemplateEngine::class),
                 $di->g(Translator::class), $di->g(Validator::class));
         });
         // Callable dir plugin
         $this->set(CallableDirPlugin::class, function($di) {
-            return new CallableDirPlugin($di->g(ClassContainer::class),
-                $di->g(CallableRegistry::class), $di->g(Translator::class));
+            return new CallableDirPlugin($di->g(ComponentContainer::class),
+                $di->g(ComponentRegistry::class), $di->g(Translator::class));
         });
         // Callable function plugin
         $this->set(CallableFunctionPlugin::class, function($di) {
@@ -62,11 +62,11 @@ trait CallableTrait
     /**
      * Get the callable registry
      *
-     * @return CallableRegistry
+     * @return ComponentRegistry
      */
-    public function getCallableRegistry(): CallableRegistry
+    public function getComponentRegistry(): ComponentRegistry
     {
-        return $this->g(CallableRegistry::class);
+        return $this->g(ComponentRegistry::class);
     }
 
     /**

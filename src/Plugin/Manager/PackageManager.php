@@ -23,7 +23,7 @@ use Jaxon\Di\Container;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\AbstractPackage;
 use Jaxon\Plugin\Code\CodeGenerator;
-use Jaxon\Plugin\Request\CallableClass\CallableRegistry;
+use Jaxon\Plugin\Request\CallableClass\ComponentRegistry;
 use Jaxon\Request\Handler\CallbackManager;
 
 use function is_array;
@@ -45,12 +45,12 @@ class PackageManager
      * @param CodeGenerator $xCodeGenerator
      * @param ViewRenderer $xViewRenderer
      * @param CallbackManager $xCallbackManager
-     * @param CallableRegistry $xRegistry
+     * @param ComponentRegistry $xRegistry
      */
     public function __construct(private Container $di, private Translator $xTranslator,
         private PluginManager $xPluginManager, private ConfigManager $xConfigManager,
         private CodeGenerator $xCodeGenerator, private ViewRenderer $xViewRenderer,
-        private CallbackManager $xCallbackManager, private CallableRegistry $xRegistry)
+        private CallbackManager $xCallbackManager, private ComponentRegistry $xRegistry)
     {}
 
     /**
