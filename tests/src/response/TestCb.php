@@ -1,8 +1,8 @@
 <?php
 
-use Jaxon\App\CallableClass;
+use Jaxon\App\FuncComponent;
 
-class TestCb extends CallableClass
+class TestCb extends FuncComponent
 {
     public function simple()
     {

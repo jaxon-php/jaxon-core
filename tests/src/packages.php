@@ -1,9 +1,9 @@
 <?php
 
-use Jaxon\App\CallableClass;
+use Jaxon\App\FuncComponent;
 use Jaxon\Plugin\AbstractPackage;
 
-class SamplePackageClass extends CallableClass
+class SamplePackageClass extends FuncComponent
 {
     public function home()
     {

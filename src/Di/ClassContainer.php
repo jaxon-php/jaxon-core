@@ -14,7 +14,7 @@
 
 namespace Jaxon\Di;
 
-use Jaxon\App\AbstractCallable;
+use Jaxon\App\AbstractComponent;
 use Jaxon\App\Config\ConfigManager;
 use Jaxon\App\Dialog\Manager\DialogCommand;
 use Jaxon\App\I18n\Translator;
@@ -367,9 +367,9 @@ class ClassContainer
         }
         // Initialize the user class instance
         $this->xContainer->extend($sClassName, function($xClassInstance) use($sClassName) {
-            if($xClassInstance instanceof AbstractCallable)
+            if($xClassInstance instanceof AbstractComponent)
             {
-                $xClassInstance->_initCallable($this->di, $this->get($this->getCallableHelperKey($sClassName)));
+                $xClassInstance->_initComponent($this->di, $this->get($this->getCallableHelperKey($sClassName)));
             }
 
             // Run the callbacks for class initialisation

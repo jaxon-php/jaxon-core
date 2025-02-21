@@ -1,8 +1,8 @@
 <?php
 
-use Jaxon\App\CallableClass;
+use Jaxon\App\FuncComponent;
 
-class TestHk extends CallableClass
+class TestHk extends FuncComponent
 {
     protected function before()
     {

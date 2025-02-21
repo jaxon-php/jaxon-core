@@ -4,7 +4,7 @@ namespace Jaxon\App;
 
 use Jaxon\App\Pagination\Paginator;
 
-class Pagination extends AbstractComponent
+class Pagination extends AbstractNodeComponent
 {
     /**
      * Create a paginator.

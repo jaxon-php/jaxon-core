@@ -3,69 +3,136 @@
 namespace Jaxon\App;
 
 use Jaxon\Di\Container;
+use Jaxon\App\DataBag\DataBagContext;
+use Jaxon\App\Session\SessionInterface;
+use Jaxon\App\Stash\Stash;
+use Jaxon\App\View\ViewRenderer;
+use Jaxon\Exception\SetupException;
+use Jaxon\Script\JxnCall;
 use Jaxon\Plugin\Request\CallableClass\CallableClassHelper;
+use Jaxon\Request\TargetInterface;
 use Jaxon\Response\AjaxResponse;
-use Jaxon\Response\ComponentResponse;
+use Psr\Log\LoggerInterface;
 
-abstract class AbstractComponent extends AbstractCallable
+abstract class AbstractComponent
 {
     /**
-     * @var ComponentResponse
+     * @var CallableClassHelper
      */
-    protected $nodeResponse = null;
+    protected $xHelper = null;
 
     /**
-     * @var string
-     */
-    protected $overrides = '';
-
-    /**
-     * @inheritDoc
-     */
-    public function _initCallable(Container $di, CallableClassHelper $xHelper)
-    {
-        $this->xHelper = $xHelper;
-        // Each component must have its own reponse object.
-        // A component can override another one. In this case,
-        // its response is attached to the overriden component DOM node.
-        $this->nodeResponse = $di->newComponentResponse($this->rq($this->overrides ?: ''));
-    }
-
-    /**
-     * @inheritDoc
-     */
-    final protected function ajaxResponse(): AjaxResponse
-    {
-        return $this->nodeResponse;
-    }
-
-    /**
-     * Get the component response
+     * Initialize the callable class
      *
-     * @return ComponentResponse
-     */
-    final protected function node(): ComponentResponse
-    {
-        return $this->nodeResponse;
-    }
-
-    /**
-     * Set the attached DOM node content with the component HTML code.
+     * @param Container $di
+     * @param CallableClassHelper $xHelper
      *
      * @return void
      */
-    abstract public function render();
+    abstract public function _initComponent(Container $di, CallableClassHelper $xHelper);
 
     /**
-     * Set the component item.
+     * Get the Ajax response
      *
-     * @param string $item
-     *
-     * @return self
+     * @return AjaxResponse
      */
-    final public function item(string $item): self
+    abstract protected function ajaxResponse(): AjaxResponse;
+
+    /**
+     * Get the Jaxon request target
+     *
+     * @return TargetInterface
+     */
+    protected function target(): TargetInterface
     {
-        $this->node()->item($item);
-        return $this;
+        return $this->xHelper->xTarget;
+    }
+
+    /**
+     * Get the temp cache
+     *
+     * @return Stash
+     */
+    protected function stash(): Stash
+    {
+        return $this->xHelper->xStash;
+    }
+
+    /**
+     * Get an instance of a Jaxon class by name
+     *
+     * @template T
+     * @param class-string<T> $sClassName the class name
+     *
+     * @return T|null
+     * @throws SetupException
+     */
+    public function cl(string $sClassName): mixed
+    {
+        return $this->xHelper->cl($sClassName);
+    }
+
+    /**
+     * Get the js call factory.
+     *
+     * @param string $sClassName
+     *
+     * @return JxnCall
+     */
+    public function rq(string $sClassName = ''): JxnCall
+    {
+        return $this->xHelper->rq($sClassName);
+    }
+
+    /**
+     * Get the logger
+     *
+     * @return LoggerInterface
+     */
+    public function logger(): LoggerInterface
+    {
+        return $this->xHelper->xLogger;
+    }
+
+    /**
+     * Get the view renderer
+     *
+     * @return ViewRenderer
+     */
+    public function view(): ViewRenderer
+    {
+        return $this->xHelper->xViewRenderer;
+    }
+
+    /**
+     * Get the session manager
+     *
+     * @return SessionInterface
+     */
+    public function session(): SessionInterface
+    {
+        return $this->xHelper->xSessionManager;
+    }
+
+    /**
+     * Get the uploaded files
+     *
+     * @return array
+     */
+    public function files(): array
+    {
+        return $this->xHelper->xUploadHandler->files();
+    }
+
+    /**
+     * Get a data bag.
+     *
+     * @param string  $sBagName
+     *
+     * @return DataBagContext
+     */
+    public function bag(string $sBagName): DataBagContext
+    {
+        return $this->ajaxResponse()->bag($sBagName);
     }
 }

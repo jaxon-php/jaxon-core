@@ -1,8 +1,8 @@
 <?php
 
-use Jaxon\App\CallableClass;
+use Jaxon\App\FuncComponent;
 
-class TestDataBag extends CallableClass
+class TestDataBag extends FuncComponent
 {
     public function getValue()
     {

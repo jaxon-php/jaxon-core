@@ -26,7 +26,7 @@
 
 namespace Jaxon\Plugin\Request\CallableClass;
 
-use Jaxon\App\AbstractCallable;
+use Jaxon\App\AbstractComponent;
 use Jaxon\App\Metadata\InputData;
 use Jaxon\App\Metadata\MetadataInterface;
 use Jaxon\App\Metadata\MetadataReaderInterface;
@@ -357,12 +357,12 @@ class CallableObject
     }
 
     /**
-     * @param AbstractCallable $xRegisteredObject
-     * @param-closure-this AbstractCallable $cSetter
+     * @param AbstractComponent $xRegisteredObject
+     * @param-closure-this AbstractComponent $cSetter
      *
      * @return void
      */
-    private function setCallableHelper(AbstractCallable $xRegisteredObject, Closure $cSetter): void
+    private function setCallableHelper(AbstractComponent $xRegisteredObject, Closure $cSetter): void
     {
         // Allow the setter to access protected attributes.
         call_user_func($cSetter->bindTo($xRegisteredObject, $xRegisteredObject));
@@ -388,10 +388,10 @@ class CallableObject
         // We now need to set the method level DI options.
         $this->setDiMethodAttributes($xRegisteredObject, $xTarget->getMethodName());
         // Set the Jaxon request target in the helper
-        if($xRegisteredObject instanceof AbstractCallable)
+        if($xRegisteredObject instanceof AbstractComponent)
         {
             $this->setCallableHelper($xRegisteredObject, function() use($xTarget) {
-                // $this here is related to the AbstractCallable instance.
+                // $this here is related to the AbstractComponent instance.
                 $this->xHelper->xTarget = $xTarget;
             });
         }

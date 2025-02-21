@@ -1,10 +1,10 @@
 <?php
 
-use Jaxon\App\CallableClass;
+use Jaxon\App\FuncComponent;
 
 use function Jaxon\js;
 
-class TestJs extends CallableClass
+class TestJs extends FuncComponent
 {
     public function redirect()
     {

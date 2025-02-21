@@ -1,11 +1,11 @@
 <?php
 
-use Jaxon\App\CallableClass;
+use Jaxon\App\FuncComponent;
 use function Jaxon\jaxon;
 use function Jaxon\js;
 use function Jaxon\jw;
 
-class Misc extends CallableClass
+class Misc extends FuncComponent
 {
     public function simple()
     {

@@ -15,7 +15,7 @@
 namespace Jaxon\Plugin\Request\CallableClass;
 
 use Composer\Autoload\ClassLoader;
-use Jaxon\App\AbstractCallable;
+use Jaxon\App\AbstractComponent;
 use Jaxon\App\Component;
 use Jaxon\Config\Config;
 use Jaxon\Di\ClassContainer;
@@ -125,9 +125,9 @@ class CallableRegistry
             $this->xAutoloader = require($sAutoloadFile);
         }
 
-        // The methods of the AbstractCallable class must not be exported
-        $xAbstractCallable = new ReflectionClass(AbstractCallable::class);
-        foreach($xAbstractCallable->getMethods(ReflectionMethod::IS_PUBLIC) as $xMethod)
+        // The methods of the AbstractComponent class must not be exported
+        $xAbstractComponent = new ReflectionClass(AbstractComponent::class);
+        foreach($xAbstractComponent->getMethods(ReflectionMethod::IS_PUBLIC) as $xMethod)
         {
             $this->aProtectedMethods[] = $xMethod->getName();
         }
@@ -295,7 +295,7 @@ class CallableRegistry
         // Don't export the item() and html() public methods for Component objects.
         return is_subclass_of($sClassName, Component::class) ?
             [...$this->aProtectedMethods, 'item', 'html'] :
-            (is_subclass_of($sClassName, AbstractCallable::class) ?
+            (is_subclass_of($sClassName, AbstractComponent::class) ?
                 $this->aProtectedMethods : []);
     }
 

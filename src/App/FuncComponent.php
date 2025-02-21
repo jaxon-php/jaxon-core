@@ -8,7 +8,7 @@ use Jaxon\Plugin\Request\CallableClass\CallableClassHelper;
 use Jaxon\Response\AjaxResponse;
 use Jaxon\Response\Response;
 
-class CallableClass extends AbstractCallable
+class FuncComponent extends AbstractComponent
 {
     /**
      * @var Response
@@ -18,7 +18,7 @@ class CallableClass extends AbstractCallable
     /**
      * @inheritDoc
      */
-    public function _initCallable(Container $di, CallableClassHelper $xHelper)
+    public function _initComponent(Container $di, CallableClassHelper $xHelper)
     {
         $this->xHelper = $xHelper;
         $this->response = $di->getResponse();

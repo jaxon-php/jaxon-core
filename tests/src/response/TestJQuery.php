@@ -1,9 +1,9 @@
 <?php
 
-use Jaxon\App\CallableClass;
+use Jaxon\App\FuncComponent;
 use function Jaxon\jq;
 
-class TestJQuery extends CallableClass
+class TestJQuery extends FuncComponent
 {
     public function html()
     {

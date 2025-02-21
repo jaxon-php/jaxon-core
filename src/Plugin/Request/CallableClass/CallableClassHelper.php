@@ -14,7 +14,7 @@
 
 namespace Jaxon\Plugin\Request\CallableClass;
 
-use Jaxon\App\AbstractCallable;
+use Jaxon\App\AbstractComponent;
 use Jaxon\App\Session\SessionInterface;
 use Jaxon\App\Stash\Stash;
 use Jaxon\App\View\ViewRenderer;

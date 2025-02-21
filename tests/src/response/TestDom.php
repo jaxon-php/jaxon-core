@@ -1,8 +1,8 @@
 <?php
 
-use Jaxon\App\CallableClass;
+use Jaxon\App\FuncComponent;
 
-class TestDom extends CallableClass
+class TestDom extends FuncComponent
 {
     public function assign()
     {

@@ -7,7 +7,7 @@ use Jaxon\Plugin\Request\CallableClass\CallableClassHelper;
 use Jaxon\Response\Response;
 use Stringable;
 
-abstract class Component extends AbstractComponent
+abstract class Component extends AbstractNodeComponent
 {
     /**
      * @var Response
@@ -17,9 +17,9 @@ abstract class Component extends AbstractComponent
     /**
      * @inheritDoc
      */
-    public function _initCallable(Container $di, CallableClassHelper $xHelper)
+    public function _initComponent(Container $di, CallableClassHelper $xHelper)
     {
-        parent::_initCallable($di, $xHelper);
+        parent::_initComponent($di, $xHelper);
 
         $this->response = $di->getResponse();
     }

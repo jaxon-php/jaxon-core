@@ -14,7 +14,7 @@
 
 namespace Jaxon\Plugin\Request\CallableClass;
 
-use Jaxon\App\AbstractCallable;
+use Jaxon\App\AbstractComponent;
 use Jaxon\App\Metadata\MetadataInterface;
 use ReflectionClass;
 
@@ -157,7 +157,7 @@ class CallableObjectOptions
     public function isProtectedMethod(ReflectionClass $xReflectionClass, string $sMethodName): bool
     {
         return isset($this->aProtectedMethods[$sMethodName]) || isset($this->aProtectedMethods['*']) ||
-            ($xReflectionClass->isSubclassOf(AbstractCallable::class) && $sMethodName === 'paginator');
+            ($xReflectionClass->isSubclassOf(AbstractComponent::class) && $sMethodName === 'paginator');
     }
 
     /**
