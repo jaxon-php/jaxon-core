@@ -11,7 +11,7 @@ use Jaxon\Request\Handler\Psr\PsrConfigMiddleware;
 use Jaxon\Request\Handler\Psr\PsrFactory;
 use Jaxon\Request\Handler\Psr\PsrRequestHandler;
 use Jaxon\Request\Handler\RequestHandler;
-use Jaxon\Response\ResponseManager;
+use Jaxon\Response\Manager\ResponseManager;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7Server\ServerRequestCreator;
 use Psr\Http\Message\ServerRequestInterface;

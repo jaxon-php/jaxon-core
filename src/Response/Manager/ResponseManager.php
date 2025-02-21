@@ -19,12 +19,15 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Response;
+namespace Jaxon\Response\Manager;
 
 use Jaxon\App\Dialog\Manager\DialogCommand;
 use Jaxon\App\I18n\Translator;
 use Jaxon\Exception\AppException;
 use Jaxon\Di\Container;
+use Jaxon\Response\AbstractResponse;
+use Jaxon\Response\ComponentResponse;
+use Jaxon\Response\Response;
 use Jaxon\Script\JxnCall;
 use Closure;
 use JsonSerializable;

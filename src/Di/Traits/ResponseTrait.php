@@ -8,7 +8,7 @@ use Jaxon\Di\Container;
 use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Response\Response;
 use Jaxon\Response\ComponentResponse;
-use Jaxon\Response\ResponseManager;
+use Jaxon\Response\Manager\ResponseManager;
 use Jaxon\Script\JxnCall;
 
 use function trim;

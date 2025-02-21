@@ -21,6 +21,8 @@
 namespace Jaxon\Response;
 
 use Jaxon\Plugin\Manager\PluginManager;
+use Jaxon\Response\Manager\Command;
+use Jaxon\Response\Manager\ResponseManager;
 use Jaxon\Script\JxnCall;
 use JsonSerializable;
 

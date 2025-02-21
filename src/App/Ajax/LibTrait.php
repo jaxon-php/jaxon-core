@@ -23,7 +23,7 @@ use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Plugin\AbstractPackage;
 use Jaxon\Plugin\ResponsePluginInterface;
 use Jaxon\Request\Handler\CallbackManager;
-use Jaxon\Response\ResponseManager;
+use Jaxon\Response\Manager\ResponseManager;
 use Jaxon\Utils\Http\UriException;
 use Psr\Log\LoggerInterface;
 

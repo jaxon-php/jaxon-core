@@ -12,7 +12,7 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Response;
+namespace Jaxon\Response\Manager;
 
 use ArrayAccess;
 use JsonSerializable;

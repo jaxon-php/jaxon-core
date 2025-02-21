@@ -23,6 +23,8 @@ namespace Jaxon\Response;
 
 use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Plugin\ResponsePluginInterface;
+use Jaxon\Response\Manager\Command;
+use Jaxon\Response\Manager\ResponseManager;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 use JsonSerializable;
 

@@ -17,7 +17,7 @@ namespace Jaxon\Request\Handler;
 use Exception;
 use Jaxon\Exception\RequestException;
 use Jaxon\Request\Target;
-use Jaxon\Response\ResponseManager;
+use Jaxon\Response\Manager\ResponseManager;
 
 use function array_merge;
 use function array_values;

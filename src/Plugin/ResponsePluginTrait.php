@@ -26,7 +26,7 @@
 namespace Jaxon\Plugin;
 
 use Jaxon\Response\AbstractResponse;
-use Jaxon\Response\Command;
+use Jaxon\Response\Manager\Command;
 use JsonSerializable;
 
 trait ResponsePluginTrait
