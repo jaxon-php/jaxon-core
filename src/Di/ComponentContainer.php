@@ -14,11 +14,11 @@
 
 namespace Jaxon\Di;
 
-use Jaxon\App\AbstractComponent;
+use Jaxon\App\Component\AbstractComponent;
+use Jaxon\App\Component\Pagination;
 use Jaxon\App\Config\ConfigManager;
 use Jaxon\App\Dialog\Manager\DialogCommand;
 use Jaxon\App\I18n\Translator;
-use Jaxon\App\Pagination;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\Request\CallableClass\CallableObject;
 use Jaxon\Plugin\Request\CallableClass\ComponentHelper;

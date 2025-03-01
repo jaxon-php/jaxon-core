@@ -1,7 +1,7 @@
 <?php
 
 /**
- * ComponentResponse.php
+ * NodeResponse.php
  *
  * This class is a special response class form Jaxon components.
  *
@@ -26,7 +26,7 @@ use Jaxon\Response\Manager\ResponseManager;
 use Jaxon\Script\JxnCall;
 use JsonSerializable;
 
-class ComponentResponse extends AjaxResponse
+class NodeResponse extends AjaxResponse
 {
     /**
      * @var array

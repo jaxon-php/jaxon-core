@@ -41,7 +41,7 @@ SOFTWARE.
 namespace Jaxon\App\Pagination;
 
 use Jaxon\App\Pagination\Page;
-use Jaxon\Response\ComponentResponse;
+use Jaxon\Response\NodeResponse;
 use Jaxon\Response\Response;
 use Jaxon\Plugin\Response\Pagination\PaginatorPlugin;
 use Jaxon\Script\JsExpr;
@@ -363,8 +363,8 @@ class Paginator
             return !$sHtml ? null : ['id' => $sWrapperId];
         }
 
-        // The wrapper id is not needed for the ComponentResponse
-        /** @var ComponentResponse */
+        // The wrapper id is not needed for the NodeResponse
+        /** @var NodeResponse */
         $xResponse = $this->xPlugin->response();
         $xResponse->html($sHtml);
         return !$sHtml ? null : [];

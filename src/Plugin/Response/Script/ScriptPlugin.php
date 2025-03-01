@@ -15,7 +15,7 @@ namespace Jaxon\Plugin\Response\Script;
 
 use Jaxon\Plugin\AbstractResponsePlugin;
 use Jaxon\Response\AjaxResponse;
-use Jaxon\Response\ComponentResponse;
+use Jaxon\Response\NodeResponse;
 use Jaxon\Script\Factory\CallFactory;
 use Jaxon\Script\JqCall;
 use Jaxon\Script\JsExpr;
@@ -52,7 +52,7 @@ class ScriptPlugin extends AbstractResponsePlugin
             ->addCommand('script.exec.expr', [
                 'expr' => $xJsExpr,
                 'context' => [
-                    'component' => is_a($xResponse, ComponentResponse::class),
+                    'component' => is_a($xResponse, NodeResponse::class),
                 ],
             ])
             ->setOption('plugin', $this->getName());

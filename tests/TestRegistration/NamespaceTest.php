@@ -2,9 +2,9 @@
 
 namespace Jaxon\Tests\TestRegistration;
 
-use Jaxon\App\Pagination;
-use Jaxon\Jaxon;
+use Jaxon\App\Component\Pagination;
 use Jaxon\Exception\SetupException;
+use Jaxon\Jaxon;
 use Jaxon\Plugin\Request\CallableClass\CallableClassPlugin;
 use Jaxon\Plugin\Request\CallableClass\CallableObject;
 use Jaxon\Plugin\Request\CallableDir\CallableDirPlugin;

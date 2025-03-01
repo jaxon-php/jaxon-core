@@ -15,8 +15,8 @@
 namespace Jaxon\Plugin\Request\CallableClass;
 
 use Composer\Autoload\ClassLoader;
-use Jaxon\App\AbstractComponent;
-use Jaxon\App\Component;
+use Jaxon\App\Component\AbstractComponent;
+use Jaxon\App\NodeComponent;
 use Jaxon\Config\Config;
 use Jaxon\Di\ComponentContainer;
 use ReflectionClass;
@@ -292,8 +292,8 @@ class ComponentRegistry
      */
     public function getProtectedMethods(string $sClassName): array
     {
-        // Don't export the item() and html() public methods for Component objects.
-        return is_subclass_of($sClassName, Component::class) ?
+        // Don't export the item() and html() public methods for NodeComponent objects.
+        return is_subclass_of($sClassName, NodeComponent::class) ?
             [...$this->aProtectedMethods, 'item', 'html'] :
             (is_subclass_of($sClassName, AbstractComponent::class) ?
                 $this->aProtectedMethods : []);

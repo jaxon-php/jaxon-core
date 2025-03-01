@@ -1,16 +1,15 @@
 <?php
 
-namespace Jaxon\App;
+namespace Jaxon\App\Component;
 
 use Jaxon\App\Pagination\Paginator;
 use Jaxon\Di\Container;
 use Jaxon\Plugin\Request\CallableClass\ComponentHelper;
 
-class FuncComponent extends Component\AbstractComponent
+class Pagination extends AbstractComponent
 {
-    use Component\HelperTrait;
-    use Component\AjaxResponseTrait;
-    use Component\ComponentTrait;
+    use HelperTrait;
+    use NodeResponseTrait;
 
     /**
      * @inheritDoc
@@ -18,13 +17,13 @@ class FuncComponent extends Component\AbstractComponent
     public function _initComponent(Container $di, ComponentHelper $xHelper)
     {
         $this->setHelper($xHelper);
-        $this->setAjaxResponse($di);
+        $this->setNodeResponse($di);
     }
 
     /**
      * Create a paginator.
      *
-     * @param int $nPageNumber     The current page number
+     * @param int $nPageNumber      The current page number
      * @param int $nItemsPerPage    The number of items per page
      * @param int $nTotalItems      The total number of items
      *
@@ -32,6 +31,6 @@ class FuncComponent extends Component\AbstractComponent
      */
     final public function paginator(int $nPageNumber, int $nItemsPerPage, int $nTotalItems): Paginator
     {
-        return $this->response->paginator($nPageNumber, $nItemsPerPage, $nTotalItems);
+        return $this->nodeResponse->paginator($nPageNumber, $nItemsPerPage, $nTotalItems);
     }
 }

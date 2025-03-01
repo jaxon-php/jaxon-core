@@ -4,7 +4,7 @@ namespace Jaxon\App;
 
 use Jaxon\App\Pagination\Paginator;
 
-abstract class PageComponent extends Component
+abstract class PageComponent extends NodeComponent
 {
     /**
      * The current page number.
@@ -36,7 +36,7 @@ abstract class PageComponent extends Component
      */
     protected function paginator(int $pageNumber): Paginator
     {
-        return $this->cl(Pagination::class)
+        return $this->cl(Component\Pagination::class)
             // Use the js class name as component item identifier.
             ->item($this->rq()->_class())
             ->paginator($pageNumber > 0 ? $pageNumber : 1, $this->limit(), $this->count())

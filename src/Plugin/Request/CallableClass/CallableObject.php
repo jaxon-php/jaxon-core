@@ -23,7 +23,7 @@
 
 namespace Jaxon\Plugin\Request\CallableClass;
 
-use Jaxon\App\AbstractComponent;
+use Jaxon\App\Component\AbstractComponent;
 use Jaxon\App\Metadata\InputData;
 use Jaxon\App\Metadata\MetadataInterface;
 use Jaxon\App\Metadata\MetadataReaderInterface;
@@ -359,7 +359,7 @@ class CallableObject
      *
      * @return void
      */
-    private function setHelper(AbstractComponent $xComponent, Closure $cSetter): void
+    private function setTarget(AbstractComponent $xComponent, Closure $cSetter): void
     {
         // Allow the setter to access protected attributes.
         call_user_func($cSetter->bindTo($xComponent, $xComponent));
@@ -387,9 +387,9 @@ class CallableObject
         // Set the Jaxon request target in the helper
         if($xComponent instanceof AbstractComponent)
         {
-            $this->setHelper($xComponent, function() use($xTarget) {
+            $this->setTarget($xComponent, function() use($xTarget) {
                 // $this here is related to the AbstractComponent instance.
-                $this->xHelper->xTarget = $xTarget;
+                $this->helper()->xTarget = $xTarget;
             });
         }
         return $xComponent;

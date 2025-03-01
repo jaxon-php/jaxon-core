@@ -14,7 +14,7 @@
 
 namespace Jaxon\Plugin\Request\CallableClass;
 
-use Jaxon\App\AbstractComponent;
+use Jaxon\App\Component\AbstractComponent;
 use Jaxon\App\Metadata\MetadataInterface;
 use ReflectionClass;
 

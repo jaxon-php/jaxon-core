@@ -64,7 +64,7 @@ trait PageDatabagTrait
      */
     protected function paginator(int $pageNumber): Paginator
     {
-        return $this->cl(Pagination::class)
+        return $this->cl(Component\Pagination::class)
             // Use the js class name as component item identifier.
             ->item($this->rq()->_class())
             ->paginator($this->getPageNumber($pageNumber), $this->limit(), $this->count())

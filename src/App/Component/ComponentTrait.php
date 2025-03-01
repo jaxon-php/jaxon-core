@@ -1,42 +1,32 @@
 <?php
 
-namespace Jaxon\App;
+namespace Jaxon\App\Component;
 
-use Jaxon\Di\Container;
 use Jaxon\App\DataBag\DataBagContext;
 use Jaxon\App\Session\SessionInterface;
 use Jaxon\App\Stash\Stash;
 use Jaxon\App\View\ViewRenderer;
 use Jaxon\Exception\SetupException;
-use Jaxon\Script\JxnCall;
 use Jaxon\Plugin\Request\CallableClass\ComponentHelper;
 use Jaxon\Request\TargetInterface;
 use Jaxon\Response\AjaxResponse;
 use Psr\Log\LoggerInterface;
 
-abstract class AbstractComponent
+trait ComponentTrait
 {
     /**
-     * @var ComponentHelper
-     */
-    protected $xHelper = null;
-
-    /**
-     * Initialize the component
+     * Get the component helper
      *
-     * @param Container $di
-     * @param ComponentHelper $xHelper
-     *
-     * @return void
+     * @return ComponentHelper
      */
-    abstract public function _initComponent(Container $di, ComponentHelper $xHelper);
+    abstract protected function helper(): ComponentHelper;
 
     /**
      * Get the Ajax response
      *
      * @return AjaxResponse
      */
-    abstract protected function ajaxResponse(): AjaxResponse;
+    abstract protected function response(): AjaxResponse;
 
     /**
      * Get the Jaxon request target
@@ -45,7 +35,7 @@ abstract class AbstractComponent
      */
     protected function target(): TargetInterface
     {
-        return $this->xHelper->xTarget;
+        return $this->helper()->xTarget;
     }
 
     /**
@@ -55,7 +45,7 @@ abstract class AbstractComponent
      */
     protected function stash(): Stash
     {
-        return $this->xHelper->xStash;
+        return $this->helper()->xStash;
     }
 
     /**
@@ -69,19 +59,7 @@ abstract class AbstractComponent
      */
     public function cl(string $sClassName): mixed
     {
-        return $this->xHelper->cl($sClassName);
-    }
-
-    /**
-     * Get the js call factory.
-     *
-     * @param string $sClassName
-     *
-     * @return JxnCall
-     */
-    public function rq(string $sClassName = ''): JxnCall
-    {
-        return $this->xHelper->rq($sClassName);
+        return $this->helper()->cl($sClassName);
     }
 
     /**
@@ -91,7 +69,7 @@ abstract class AbstractComponent
      */
     public function logger(): LoggerInterface
     {
-        return $this->xHelper->xLogger;
+        return $this->helper()->xLogger;
     }
 
     /**
@@ -101,7 +79,7 @@ abstract class AbstractComponent
      */
     public function view(): ViewRenderer
     {
-        return $this->xHelper->xViewRenderer;
+        return $this->helper()->xViewRenderer;
     }
 
     /**
@@ -111,7 +89,7 @@ abstract class AbstractComponent
      */
     public function session(): SessionInterface
     {
-        return $this->xHelper->xSessionManager;
+        return $this->helper()->xSessionManager;
     }
 
     /**
@@ -121,7 +99,7 @@ abstract class AbstractComponent
      */
     public function files(): array
     {
-        return $this->xHelper->xUploadHandler->files();
+        return $this->helper()->xUploadHandler->files();
     }
 
     /**
@@ -133,6 +111,6 @@ abstract class AbstractComponent
      */
     public function bag(string $sBagName): DataBagContext
     {
-        return $this->ajaxResponse()->bag($sBagName);
+        return $this->response()->bag($sBagName);
     }
 }

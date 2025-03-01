@@ -26,7 +26,7 @@ use Jaxon\App\I18n\Translator;
 use Jaxon\Exception\AppException;
 use Jaxon\Di\Container;
 use Jaxon\Response\AbstractResponse;
-use Jaxon\Response\ComponentResponse;
+use Jaxon\Response\NodeResponse;
 use Jaxon\Response\Response;
 use Jaxon\Script\JxnCall;
 use Closure;
@@ -315,11 +315,11 @@ class ResponseManager
      *
      * @param JxnCall $xJxnCall
      *
-     * @return ComponentResponse
+     * @return NodeResponse
      */
-    public function newComponentResponse(JxnCall $xJxnCall): ComponentResponse
+    public function newNodeResponse(JxnCall $xJxnCall): NodeResponse
     {
-        return $this->di->newComponentResponse($xJxnCall);
+        return $this->di->newNodeResponse($xJxnCall);
     }
 
     /**

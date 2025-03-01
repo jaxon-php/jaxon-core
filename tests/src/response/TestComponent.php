@@ -1,8 +1,8 @@
 <?php
 
-use Jaxon\App\Component;
+use Jaxon\App\NodeComponent;
 
-class TestComponent extends Component
+class TestComponent extends NodeComponent
 {
     public function html(): string
     {

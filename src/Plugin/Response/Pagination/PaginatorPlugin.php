@@ -37,7 +37,7 @@ use Jaxon\Plugin\AbstractResponsePlugin;
  * $this->paginator($pageNumber, $perPage, $total)
  *     ->render($this->rq()->page(), $wrapperId);
  *
- * // In a class that inherits from Component (no need for a wrapper id)
+ * // In a class that inherits from NodeComponent (no need for a wrapper id)
  * $this->paginator($pageNumber, $perPage, $total)
  *     ->render($this->rq()->page());
  */

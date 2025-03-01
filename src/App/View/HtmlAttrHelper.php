@@ -14,8 +14,8 @@ namespace Jaxon\App\View;
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-use Jaxon\App\Component;
-use Jaxon\App\Pagination;
+ use Jaxon\App\Component\Pagination;
+ use Jaxon\App\NodeComponent;
 use Jaxon\Di\ComponentContainer;
 use Jaxon\Script\JsExpr;
 use Jaxon\Script\JxnCall;
@@ -62,7 +62,7 @@ class HtmlAttrHelper
         }
 
         $xCallable = $this->cdi->makeComponent($sClassName);
-        return is_a($xCallable, Component::class) ? (string)$xCallable->html() : '';
+        return is_a($xCallable, NodeComponent::class) ? (string)$xCallable->html() : '';
     }
 
     /**

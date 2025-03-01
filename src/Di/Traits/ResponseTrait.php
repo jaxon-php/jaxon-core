@@ -7,7 +7,7 @@ use Jaxon\App\I18n\Translator;
 use Jaxon\Di\Container;
 use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Response\Response;
-use Jaxon\Response\ComponentResponse;
+use Jaxon\Response\NodeResponse;
 use Jaxon\Response\Manager\ResponseManager;
 use Jaxon\Script\JxnCall;
 
@@ -68,11 +68,11 @@ trait ResponseTrait
      *
      * @param JxnCall $xJxnCall
      *
-     * @return ComponentResponse
+     * @return NodeResponse
      */
-    public function newComponentResponse(JxnCall $xJxnCall): ComponentResponse
+    public function newNodeResponse(JxnCall $xJxnCall): NodeResponse
     {
-        return new ComponentResponse($this->g(ResponseManager::class),
+        return new NodeResponse($this->g(ResponseManager::class),
             $this->g(PluginManager::class), $xJxnCall);
     }
 }

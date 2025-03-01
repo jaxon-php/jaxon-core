@@ -9,14 +9,14 @@ trait DialogTrait
     /**
      * @return AjaxResponse
      */
-    abstract protected function ajaxResponse(): AjaxResponse;
+    abstract protected function response(): AjaxResponse;
 
     /**
      * @return AlertInterface
      */
     protected function alert(): AlertInterface
     {
-        return $this->ajaxResponse()->dialog;
+        return $this->response()->dialog;
     }
 
     /**
@@ -24,6 +24,6 @@ trait DialogTrait
      */
     protected function modal(): ModalInterface
     {
-        return $this->ajaxResponse()->dialog;
+        return $this->response()->dialog;
     }
 }
