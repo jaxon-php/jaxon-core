@@ -520,8 +520,9 @@ class ComponentContainer
             {
                 return null;
             }
-            $xConfigManager = $this->di->g(ConfigManager::class);
-            $sJsObject = $xConfigManager->getOption('core.prefix.class', '') . $xCallable->getJsName();
+
+            $sPrefix = $this->di->g(ConfigManager::class)->getOption('core.prefix.class', '');
+            $sJsObject = $sPrefix . $xCallable->getJsName();
             return new JxnClass($this->di->g(DialogCommand::class), $sJsObject);
         });
     }
