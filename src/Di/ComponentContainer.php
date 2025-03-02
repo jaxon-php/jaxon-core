@@ -24,6 +24,7 @@ use Jaxon\Plugin\Request\CallableClass\CallableObject;
 use Jaxon\Plugin\Request\CallableClass\ComponentHelper;
 use Jaxon\Plugin\Request\CallableClass\ComponentRegistry;
 use Jaxon\Request\Handler\CallbackManager;
+use Jaxon\Request\Target;
 use Jaxon\Script\JxnCall;
 use Jaxon\Script\JxnClass;
 use Pimple\Container as PimpleContainer;
@@ -61,6 +62,13 @@ class ComponentContainer
      * @var array
      */
     protected $aComponents = [];
+
+    /**
+     * This will be set only when getting the object targetted by the ajax request.
+     *
+     * @var Target
+     */
+    private $xTarget = null;
 
     /**
      * The class constructor
@@ -369,21 +377,47 @@ class ComponentContainer
         $this->xContainer->extend($sClassName, function($xClassInstance) use($sClassName) {
             if($xClassInstance instanceof AbstractComponent)
             {
-                $xClassInstance->_initComponent($this->di, $this->get($this->getCallableHelperKey($sClassName)));
+                $xHelper = $this->get($this->getCallableHelperKey($sClassName));
+                $xHelper->xTarget = $this->xTarget;
+                $xClassInstance->_initComponent($this->di, $xHelper);
             }
 
             // Run the callbacks for class initialisation
             $this->di->g(CallbackManager::class)->onInit($xClassInstance);
 
             // Set attributes from the DI container.
-            // The class level DI options are set when creating the object instance.
-            // The method level DI options are set only when calling the method in the ajax request.
+            // The class level DI options are set on any component.
+            // The method level DI options are set only on the targetted component.
             /** @var CallableObject */
             $xCallableObject = $this->get($this->getCallableObjectKey($sClassName));
             $xCallableObject->setDiClassAttributes($xClassInstance);
+            if($this->xTarget !== null)
+            {
+                $sMethodName = $this->xTarget->getMethodName();
+                $xCallableObject->setDiMethodAttributes($xClassInstance, $sMethodName);
+            }
 
             return $xClassInstance;
         });
+    }
+
+    /**
+     * Get a component when one of its method needs to be called
+     *
+     * @template T
+     * @param class-string<T> $sClassName the class name
+     * @param Target $xTarget
+     *
+     * @return T|null
+     */
+    public function getComponent(string $sClassName, Target $xTarget): mixed
+    {
+        // Set the target only when getting the object targetted by the ajax request.
+        $this->xTarget = $xTarget;
+        $xComponent = $this->get($sClassName);
+        $this->xTarget = null;
+
+        return $xComponent;
     }
 
     /**
@@ -446,8 +480,7 @@ class ComponentContainer
      */
     public function makeComponent(string $sClassName): mixed
     {
-        $xCallableObject = $this->makeCallableObject($sClassName);
-        return !$xCallableObject ? null : $xCallableObject->getComponent();
+        return $this->get($this->checkCallableObject($sClassName));
     }
 
     /**

@@ -108,7 +108,7 @@ class ClassTest extends TestCase
         $this->assertNotNull(jaxon()->getResponse());
         $this->assertEquals(1, jaxon()->getResponse()->getCommandCount());
         $xCallableObject = jaxon()->di()->getCallableClassPlugin()->getCallable('Sample');
-        $this->assertEquals('Sample', get_class($xCallableObject->getComponent()));
+        $this->assertEquals('Sample', $xCallableObject->getClassName());
 
         $xTarget = jaxon()->di()->getCallableClassPlugin()->getTarget();
         $this->assertNotNull($xTarget);

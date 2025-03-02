@@ -23,7 +23,6 @@
 
 namespace Jaxon\Plugin\Request\CallableClass;
 
-use Jaxon\App\Component\AbstractComponent;
 use Jaxon\App\Metadata\InputData;
 use Jaxon\App\Metadata\MetadataInterface;
 use Jaxon\App\Metadata\MetadataReaderInterface;
@@ -325,8 +324,7 @@ class CallableObject
         };
         foreach($aDiOptions as $sAttr => $sClass)
         {
-            $this->setDiAttribute($xComponent, $sAttr,
-                $this->di->get($sClass), $cSetter);
+            $this->setDiAttribute($xComponent, $sAttr, $this->di->get($sClass), $cSetter);
         }
     }
 
@@ -347,52 +345,10 @@ class CallableObject
      *
      * @return void
      */
-    private function setDiMethodAttributes($xComponent, string $sMethodName)
+    public function setDiMethodAttributes($xComponent, string $sMethodName)
     {
         $aDiOptions = $this->xOptions->diOptions();
         $this->setDiAttributes($xComponent, $aDiOptions[$sMethodName] ?? []);
-    }
-
-    /**
-     * @param AbstractComponent $xComponent
-     * @param-closure-this AbstractComponent $cSetter
-     *
-     * @return void
-     */
-    private function setTarget(AbstractComponent $xComponent, Closure $cSetter): void
-    {
-        // Allow the setter to access protected attributes.
-        call_user_func($cSetter->bindTo($xComponent, $xComponent));
-    }
-
-    /**
-     * Get a component when one of its method needs to be called
-     *
-     * @param Target|null $xTarget
-     *
-     * @return mixed
-     */
-    public function getComponent(?Target $xTarget = null)
-    {
-        $xComponent = $this->cdi->get($this->getClassName());
-        if(!$xComponent || !$xTarget)
-        {
-            return $xComponent;
-        }
-
-        // Set attributes from the DI container.
-        // The class level DI options were set when creating the object instance.
-        // We now need to set the method level DI options.
-        $this->setDiMethodAttributes($xComponent, $xTarget->getMethodName());
-        // Set the Jaxon request target in the helper
-        if($xComponent instanceof AbstractComponent)
-        {
-            $this->setTarget($xComponent, function() use($xTarget) {
-                // $this here is related to the AbstractComponent instance.
-                $this->helper()->xTarget = $xTarget;
-            });
-        }
-        return $xComponent;
     }
 
     /**
@@ -407,7 +363,7 @@ class CallableObject
     public function call(Target $xTarget)
     {
         $this->xTarget = $xTarget;
-        $this->xComponent = $this->getComponent($xTarget);
+        $this->xComponent = $this->cdi->getComponent($this->getClassName(), $xTarget);
 
         // Methods to call before processing the request
         $this->callHookMethods($this->xOptions->beforeMethods());
