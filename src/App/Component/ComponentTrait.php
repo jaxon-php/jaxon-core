@@ -57,7 +57,7 @@ trait ComponentTrait
      * @return T|null
      * @throws SetupException
      */
-    public function cl(string $sClassName): mixed
+    protected function cl(string $sClassName): mixed
     {
         return $this->helper()->cl($sClassName);
     }
@@ -67,7 +67,7 @@ trait ComponentTrait
      *
      * @return LoggerInterface
      */
-    public function logger(): LoggerInterface
+    protected function logger(): LoggerInterface
     {
         return $this->helper()->xLogger;
     }
@@ -77,7 +77,7 @@ trait ComponentTrait
      *
      * @return ViewRenderer
      */
-    public function view(): ViewRenderer
+    protected function view(): ViewRenderer
     {
         return $this->helper()->xViewRenderer;
     }
@@ -87,7 +87,7 @@ trait ComponentTrait
      *
      * @return SessionInterface
      */
-    public function session(): SessionInterface
+    protected function session(): SessionInterface
     {
         return $this->helper()->xSessionManager;
     }
@@ -97,7 +97,7 @@ trait ComponentTrait
      *
      * @return array
      */
-    public function files(): array
+    protected function files(): array
     {
         return $this->helper()->xUploadHandler->files();
     }
@@ -109,7 +109,7 @@ trait ComponentTrait
      *
      * @return DataBagContext
      */
-    public function bag(string $sBagName): DataBagContext
+    protected function bag(string $sBagName): DataBagContext
     {
         return $this->response()->bag($sBagName);
     }

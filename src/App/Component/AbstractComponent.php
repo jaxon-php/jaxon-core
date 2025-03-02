@@ -32,7 +32,7 @@ abstract class AbstractComponent
      *
      * @return JxnCall
      */
-    public function rq(string $sClassName = ''): JxnCall
+    protected function rq(string $sClassName = ''): JxnCall
     {
         return $this->helper()->rq($sClassName);
     }
