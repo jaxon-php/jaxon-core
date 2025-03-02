@@ -16,7 +16,7 @@ abstract class NodeComponent extends Component\AbstractComponent
     /**
      * @inheritDoc
      */
-    public function _initComponent(Container $di, ComponentHelper $xHelper)
+    protected function _init(Container $di, ComponentHelper $xHelper)
     {
         $this->setHelper($xHelper);
         $this->setNodeResponse($di);

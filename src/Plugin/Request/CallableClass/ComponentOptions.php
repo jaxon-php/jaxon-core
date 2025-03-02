@@ -14,6 +14,8 @@
 
 namespace Jaxon\Plugin\Request\CallableClass;
 
+use Jaxon\App\FuncComponent;
+use Jaxon\App\NodeComponent;
 use Jaxon\App\Metadata\MetadataInterface;
 use ReflectionClass;
 
@@ -40,13 +42,6 @@ class ComponentOptions
      * @var string
      */
     private $sSeparator = '.';
-
-    /**
-     * The public methods of the Component base classes
-     *
-     * @var array
-     */
-    private static $aComponentMethods = ['_initComponent', 'item', 'html'];
 
     /**
      * A list of methods of the user registered callable object the library must not export to javascript
@@ -167,7 +162,10 @@ class ComponentOptions
     public function isProtectedMethod(string $sMethodName, bool $bTakeAll): bool
     {
         // The public methods of the Component base classes are protected.
-        if(in_array($sMethodName, self::$aComponentMethods))
+        if(($this->xReflectionClass->isSubclassOf(NodeComponent::class) &&
+            in_array($sMethodName, ['item', 'html'])) ||
+            ($this->xReflectionClass->isSubclassOf(FuncComponent::class) &&
+            in_array($sMethodName, ['paginator'])))
         {
             return true;
         }

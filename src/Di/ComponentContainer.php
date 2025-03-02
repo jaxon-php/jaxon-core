@@ -35,6 +35,7 @@ use ReflectionNamedType;
 use ReflectionParameter;
 
 use function array_map;
+use function call_user_func;
 use function str_replace;
 use function trim;
 
@@ -376,7 +377,13 @@ class ComponentContainer
             {
                 $xHelper = $this->get($this->getCallableHelperKey($sClassName));
                 $xHelper->xTarget = $this->xTarget;
-                $xClassInstance->_initComponent($this->di, $xHelper);
+
+                // Call the protected "_init()" method.
+                $cSetter = function($di, $xHelper) {;
+                    $this->_init($di, $xHelper);
+                };
+                $cSetter = $cSetter->bindTo($xClassInstance, $xClassInstance);
+                call_user_func($cSetter, $this->di, $xHelper);
             }
 
             // Run the callbacks for class initialisation
