@@ -37,7 +37,6 @@ use ReflectionException;
 use ReflectionMethod;
 use ReflectionProperty;
 
-use function array_fill_keys;
 use function array_filter;
 use function array_map;
 use function array_merge;
@@ -82,26 +81,18 @@ class CallableObject
     private $nMethodsFilter = ReflectionMethod::IS_PUBLIC;
 
     /**
-     * @var array
-     */
-    private $aProtectedMethods;
-
-    /**
      * The class constructor
      *
      * @param ComponentContainer $cdi
      * @param Container $di
      * @param ReflectionClass $xReflectionClass
      * @param array $aOptions
-     * @param array $aProtectedMethods
      */
     public function __construct(protected ComponentContainer $cdi, protected Container $di,
-        private ReflectionClass $xReflectionClass, array $aOptions, array $aProtectedMethods)
+        private ReflectionClass $xReflectionClass, array $aOptions)
     {
-        $this->aProtectedMethods = array_fill_keys($aProtectedMethods, true);
-
         $xMetadata = $this->getAttributes($xReflectionClass, $aOptions);
-        $this->xOptions = new ComponentOptions($aOptions, $xMetadata);
+        $this->xOptions = new ComponentOptions($xReflectionClass, $aOptions, $xMetadata);
     }
 
     /**
@@ -147,10 +138,8 @@ class CallableObject
     {
         // Don't take magic __call, __construct, __destruct methods
         // Don't take protected methods
-        return substr($sMethodName, 0, 2) === '__' ||
-            isset($this->aProtectedMethods[$sMethodName]) ||
-            (!$bTakeAll && $this->xOptions !== null &&
-                $this->xOptions->isProtectedMethod($this->xReflectionClass, $sMethodName));
+        return substr($sMethodName, 0, 2) === '__' || ($this->xOptions !== null &&
+            $this->xOptions->isProtectedMethod($sMethodName, $bTakeAll));
     }
 
     /**

@@ -15,18 +15,13 @@
 namespace Jaxon\Plugin\Request\CallableClass;
 
 use Composer\Autoload\ClassLoader;
-use Jaxon\App\Component\AbstractComponent;
-use Jaxon\App\NodeComponent;
 use Jaxon\Config\Config;
 use Jaxon\Di\ComponentContainer;
-use ReflectionClass;
-use ReflectionMethod;
 
 use function array_merge;
 use function file_exists;
 use function in_array;
 use function is_string;
-use function is_subclass_of;
 use function str_replace;
 use function strlen;
 use function strncmp;
@@ -87,13 +82,6 @@ class ComponentRegistry
     ];
 
     /**
-     * The methods that must not be exported to js
-     *
-     * @var array
-     */
-    private $aProtectedMethods = [];
-
-    /**
      * @var bool
      */
     protected $bDirectoriesParsed = false;
@@ -123,13 +111,6 @@ class ComponentRegistry
             file_exists(($sAutoloadFile = __DIR__ . '/../../../../vendor/autoload.php')))
         {
             $this->xAutoloader = require($sAutoloadFile);
-        }
-
-        // The methods of the AbstractComponent class must not be exported
-        $xAbstractComponent = new ReflectionClass(AbstractComponent::class);
-        foreach($xAbstractComponent->getMethods(ReflectionMethod::IS_PUBLIC) as $xMethod)
-        {
-            $this->aProtectedMethods[] = $xMethod->getName();
         }
     }
 
@@ -281,22 +262,6 @@ class ComponentRegistry
                 return;
             }
         }
-    }
-
-    /**
-     * Find the options associated with a registered class name
-     *
-     * @param string $sClassName The class name
-     *
-     * @return array
-     */
-    public function getProtectedMethods(string $sClassName): array
-    {
-        // Don't export the item() and html() public methods for NodeComponent objects.
-        return is_subclass_of($sClassName, NodeComponent::class) ?
-            [...$this->aProtectedMethods, 'item', 'html'] :
-            (is_subclass_of($sClassName, AbstractComponent::class) ?
-                $this->aProtectedMethods : []);
     }
 
     /**

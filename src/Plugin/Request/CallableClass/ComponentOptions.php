@@ -14,12 +14,12 @@
 
 namespace Jaxon\Plugin\Request\CallableClass;
 
-use Jaxon\App\Component\AbstractComponent;
 use Jaxon\App\Metadata\MetadataInterface;
 use ReflectionClass;
 
 use function array_merge;
 use function array_unique;
+use function in_array;
 use function is_array;
 use function is_string;
 use function substr;
@@ -40,6 +40,13 @@ class ComponentOptions
      * @var string
      */
     private $sSeparator = '.';
+
+    /**
+     * The public methods of the Component base classes
+     *
+     * @var array
+     */
+    private static $aComponentMethods = ['_initComponent', 'item', 'html'];
 
     /**
      * A list of methods of the user registered callable object the library must not export to javascript
@@ -79,12 +86,15 @@ class ComponentOptions
     /**
      * The constructor
      *
+     * @param ReflectionClass $xReflectionClass
      * @param array $aOptions
      * @param MetadataInterface|null $xMetadata
      */
-    public function __construct(array $aOptions, ?MetadataInterface $xMetadata)
+    public function __construct(private ReflectionClass $xReflectionClass,
+        array $aOptions, ?MetadataInterface $xMetadata)
     {
-        $this->bExcluded = ($xMetadata?->isExcluded() ?? false) || (bool)($aOptions['excluded'] ?? false);
+        $this->bExcluded = ($xMetadata?->isExcluded() ?? false) ||
+            (bool)($aOptions['excluded'] ?? false);
         if($this->bExcluded)
         {
             return;
@@ -149,15 +159,20 @@ class ComponentOptions
     }
 
     /**
-     * @param ReflectionClass $xReflectionClass
      * @param string $sMethodName
+     * @param bool $bTakeAll
      *
      * @return bool
      */
-    public function isProtectedMethod(ReflectionClass $xReflectionClass, string $sMethodName): bool
+    public function isProtectedMethod(string $sMethodName, bool $bTakeAll): bool
     {
-        return isset($this->aProtectedMethods[$sMethodName]) || isset($this->aProtectedMethods['*']) ||
-            ($xReflectionClass->isSubclassOf(AbstractComponent::class) && $sMethodName === 'paginator');
+        // The public methods of the Component base classes are protected.
+        if(in_array($sMethodName, self::$aComponentMethods))
+        {
+            return true;
+        }
+        return !$bTakeAll && (isset($this->aProtectedMethods['*'])
+            || isset($this->aProtectedMethods[$sMethodName]));
     }
 
     /**

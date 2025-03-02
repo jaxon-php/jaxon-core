@@ -360,10 +360,7 @@ class ComponentContainer
         // Register the callable object
         $this->set($sComponentObject, function() use($sClassName, $aOptions) {
             $xReflectionClass = $this->get($this->getReflectionClassKey($sClassName));
-            $xRegistry = $this->di->g(ComponentRegistry::class);
-            $aProtectedMethods = $xRegistry->getProtectedMethods($sClassName);
-
-            return new CallableObject($this, $this->di, $xReflectionClass, $aOptions, $aProtectedMethods);
+            return new CallableObject($this, $this->di, $xReflectionClass, $aOptions);
         });
 
         // Register the user class, but only if the user didn't already.
