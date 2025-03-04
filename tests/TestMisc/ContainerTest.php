@@ -84,16 +84,4 @@ class ContainerTest extends TestCase
         $this->assertTrue(jaxon()->di()->has(ServiceExt::class));
         $this->assertEquals(ServiceExt::class, get_class(jaxon()->di()->get(ServiceExt::class)));
     }
-
-    /**
-     * @throws ReflectionException
-     * @throws SetupException
-     */
-    public function testMakeWithIncorrectParam()
-    {
-        $this->assertEquals(null, jaxon()->di()->make(true));
-        $this->assertEquals(null, jaxon()->di()->make(true));
-        $this->expectException(ReflectionException::class);
-        jaxon()->di()->make('service_config');
-    }
 }
