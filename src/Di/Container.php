@@ -22,16 +22,13 @@ use Pimple\Container as PimpleContainer;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
-
 use Closure;
 use Exception;
 use ReflectionClass;
-use ReflectionException;
 use ReflectionNamedType;
 use ReflectionParameter;
 use Throwable;
 
-use function array_map;
 use function realpath;
 
 class Container
@@ -45,6 +42,7 @@ class Container
     use Traits\ViewTrait;
     use Traits\UtilTrait;
     use Traits\MetadataTrait;
+    use Traits\DiAutoTrait;
 
     /**
      * The library Dependency Injection Container
@@ -84,6 +82,16 @@ class Container
 
         $this->registerAll();
         $this->setEventHandlers();
+    }
+
+    /**
+     * The container for parameters
+     *
+     * @return Container
+     */
+    protected function cn(): Container
+    {
+        return $this;
     }
 
     /**
@@ -159,11 +167,8 @@ class Container
      */
     public function has(string $sClass): bool
     {
-        if($this->xAppContainer != null && $this->xAppContainer->has($sClass))
-        {
-            return true;
-        }
-        return $this->xLibContainer->offsetExists($sClass);
+        return $this->xAppContainer != null && $this->xAppContainer->has($sClass) ?
+            true : $this->xLibContainer->offsetExists($sClass);
     }
 
     /**
@@ -192,11 +197,8 @@ class Container
     {
         try
         {
-            if($this->xAppContainer != null && $this->xAppContainer->has($sClass))
-            {
-                return $this->xAppContainer->get($sClass);
-            }
-            return $this->xLibContainer->offsetGet($sClass);
+            return $this->xAppContainer != null && $this->xAppContainer->has($sClass) ?
+                $this->xAppContainer->get($sClass) : $this->xLibContainer->offsetGet($sClass);
         }
         catch(Exception|Throwable $e)
         {
@@ -262,7 +264,7 @@ class Container
      * @return mixed
      * @throws SetupException
      */
-    protected function getParameter(ReflectionClass $xClass, ReflectionParameter $xParameter)
+    public function getParameter(ReflectionClass $xClass, ReflectionParameter $xParameter)
     {
         $xType = $xParameter->getType();
         // Check the parameter class first.
@@ -281,51 +283,6 @@ class Container
         }
         // Check the name only
         return $this->get('$' . $xParameter->getName());
-    }
-
-    /**
-     * Create an instance of a class, getting the constructor parameters from the DI container
-     *
-     * @param string|ReflectionClass $xClass The class name or the reflection class
-     *
-     * @return object|null
-     * @throws ReflectionException
-     * @throws SetupException
-     */
-    public function make($xClass)
-    {
-        if(is_string($xClass))
-        {
-            $xClass = new ReflectionClass($xClass); // Create the reflection class instance
-        }
-        if(!($xClass instanceof ReflectionClass))
-        {
-            return null;
-        }
-        // Use the Reflection class to get the parameters of the constructor
-        if(($constructor = $xClass->getConstructor()) === null)
-        {
-            return $xClass->newInstance();
-        }
-        $aParameterInstances = array_map(function($xParameter) use($xClass) {
-            return $this->getParameter($xClass, $xParameter);
-        }, $constructor->getParameters());
-
-        return $xClass->newInstanceArgs($aParameterInstances);
-    }
-
-    /**
-     * Create an instance of a class by automatically fetching the dependencies in the constructor.
-     *
-     * @param class-string $sClass    The class name
-     *
-     * @return void
-     */
-    public function auto(string $sClass)
-    {
-        $this->set($sClass, function() use ($sClass) {
-            return $this->make($sClass);
-        });
     }
 
     /**

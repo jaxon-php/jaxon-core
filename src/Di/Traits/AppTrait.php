@@ -64,7 +64,6 @@ trait AppTrait
      */
     private function setEventHandlers(): void
     {
-        /** @var ConfigEventManager */
         $xEventManager = $this->g(ConfigEventManager::class);
         $xEventManager->addLibConfigListener(Translator::class);
     }
@@ -106,7 +105,6 @@ trait AppTrait
      */
     public function getRequestUri(): string
     {
-        /** @var ConfigManager */
         $xConfigManager = $this->g(ConfigManager::class);
         return $xConfigManager->getOption('core.request.uri', $this->getParameterReader()->uri());
     }

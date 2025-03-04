@@ -31,16 +31,16 @@ use Pimple\Container as PimpleContainer;
 use Closure;
 use ReflectionClass;
 use ReflectionException;
-use ReflectionNamedType;
-use ReflectionParameter;
 
-use function array_map;
 use function call_user_func;
 use function str_replace;
 use function trim;
 
 class ComponentContainer
 {
+    use Traits\ComponentKeyTrait;
+    use Traits\DiAutoTrait;
+
     /**
      * If the underscore is used as separator in js class names.
      *
@@ -87,7 +87,24 @@ class ComponentContainer
             return new JxnCall($this->di->g(DialogCommand::class),
                 $this->di->g(ConfigManager::class)->getOption('core.prefix.function', ''));
         });
+
+        // Register the pagination component, but do not export to js.
+        $this->registerComponent(Pagination::class, [
+            'excluded' => true,
+            'namespace' => 'Jaxon\App\Component',
+        ]);
     }
+
+    /**
+     * The container for parameters
+     *
+     * @return Container
+     */
+    protected function cn(): Container
+    {
+        return $this->di;
+    }
+
 
     /**
      * @return void
@@ -107,19 +124,6 @@ class ComponentContainer
     public function has(string $sClass): bool
     {
         return $this->xContainer->offsetExists($sClass);
-    }
-
-    /**
-     * Get a class instance
-     *
-     * @template T
-     * @param class-string<T> $sClass The full class name
-     *
-     * @return T
-     */
-    public function get(string $sClass)
-    {
-        return $this->xContainer->offsetGet($sClass);
     }
 
     /**
@@ -151,6 +155,39 @@ class ComponentContainer
     }
 
     /**
+     * Get a class instance
+     *
+     * @template T
+     * @param class-string<T> $sClass The full class name
+     *
+     * @return T
+     */
+    public function get(string $sClass)
+    {
+        return $this->xContainer->offsetGet($sClass);
+    }
+
+    /**
+     * Get a component when one of its method needs to be called
+     *
+     * @template T
+     * @param class-string<T> $sClassName the class name
+     * @param Target $xTarget
+     *
+     * @return T|null
+     */
+    public function getTargetComponent(string $sClassName, Target $xTarget): mixed
+    {
+        // Set the target only when getting the object targetted by the ajax request.
+        $this->xTarget = $xTarget;
+        $xComponent = $this->get($sClassName);
+        $this->xTarget = null;
+
+        return $xComponent;
+    }
+
+    /**
+     * Save a component options
      *
      * @param class-string $sClassName    The class name
      * @param array $aOptions    The class options
@@ -162,14 +199,25 @@ class ComponentContainer
         try
         {
             // Make sure the registered class exists
-            isset($aOptions['include']) && require_once($aOptions['include']);
+            if(isset($aOptions['include']))
+            {
+                require_once $aOptions['include'];
+            }
             $xReflectionClass = new ReflectionClass($sClassName);
             // Check if the class is registrable
-            if($xReflectionClass->isInstantiable() &&
-                !$xReflectionClass->isSubclassOf(Pagination::class))
+            if(!$xReflectionClass->isInstantiable())
             {
-                $this->aComponents[$sClassName] = $aOptions;
-                $this->val($this->getReflectionClassKey($sClassName), $xReflectionClass);
+                return;
+            }
+
+            $this->aComponents[$sClassName] = $aOptions;
+            $this->val($this->getReflectionClassKey($sClassName), $xReflectionClass);
+            // Register the user class, but only if the user didn't already.
+            if(!$this->has($sClassName))
+            {
+                $this->set($sClassName, function() use($sClassName) {
+                    return $this->make($this->get($this->getReflectionClassKey($sClassName)));
+                });
             }
         }
         catch(ReflectionException $e)
@@ -180,32 +228,35 @@ class ComponentContainer
     }
 
     /**
-     * Find the options associated with a registered class name
+     * Find a component amongst the registered namespaces and directories.
      *
      * @param class-string $sClassName The class name
      *
      * @return void
      * @throws SetupException
      */
-    private function registerComponentOptions(string $sClassName)
+    private function discoverComponent(string $sClassName)
     {
         if(!isset($this->aComponents[$sClassName]))
         {
-            // Find options for a class registered with namespace.
-            /** @var ComponentRegistry */
             $xRegistry = $this->di->g(ComponentRegistry::class);
-            $xRegistry->registerClassFromNamespace($sClassName);
-            if(!isset($this->aComponents[$sClassName]))
+            $xRegistry->updateHash(false); // Disable hash calculation.
+            $aOptions = $xRegistry->getNamespaceComponentOptions($sClassName);
+            if($aOptions !== null)
             {
-                // Find options for a class registered without namespace.
-                // We need to parse all the classes to be able to find one.
-                $xRegistry->parseDirectories();
+                $this->registerComponent($sClassName, $aOptions);
+            }
+            else // if(!isset($this->aComponents[$sClassName]))
+            {
+                // The component was not found in a registered namespace. We need to parse all
+                // the directories to be able to find a component registered without a namespace.
+                $xRegistry->registerComponentsInDirectories();
             }
         }
         if(!isset($this->aComponents[$sClassName]))
         {
-            throw new SetupException($this->xTranslator->trans('errors.class.invalid',
-                ['name' => $sClassName]));
+            throw new SetupException($this->xTranslator
+                ->trans('errors.class.invalid', ['name' => $sClassName]));
         }
     }
 
@@ -220,113 +271,9 @@ class ComponentContainer
         $aCallableObjects = [];
         foreach($this->aComponents as $sClassName => $_)
         {
-            $this->_registerComponent($sClassName);
-            $aCallableObjects[$sClassName] = $this->getCallableObject($sClassName);
+            $aCallableObjects[$sClassName] = $this->makeCallableObject($sClassName);
         }
         return $aCallableObjects;
-    }
-
-    /**
-     * @param ReflectionClass $xClass
-     * @param ReflectionParameter $xParameter
-     *
-     * @return mixed
-     * @throws SetupException
-     */
-    protected function getParameter(ReflectionClass $xClass, ReflectionParameter $xParameter)
-    {
-        $xType = $xParameter->getType();
-        // Check the parameter class first.
-        if($xType instanceof ReflectionNamedType)
-        {
-            // Check the class + the name
-            if($this->di->has($xType->getName() . ' $' . $xParameter->getName()))
-            {
-                return $this->di->get($xType->getName() . ' $' . $xParameter->getName());
-            }
-            // Check the class only
-            if($this->di->has($xType->getName()))
-            {
-                return $this->di->get($xType->getName());
-            }
-        }
-        // Check the name only
-        return $this->di->get('$' . $xParameter->getName());
-    }
-
-    /**
-     * Create an instance of a class, getting the constructor parameters from the DI container
-     *
-     * @param class-string|ReflectionClass $xClass The class name or the reflection class
-     *
-     * @return object|null
-     * @throws ReflectionException
-     * @throws SetupException
-     */
-    public function make($xClass): mixed
-    {
-        if(is_string($xClass))
-        {
-            $xClass = new ReflectionClass($xClass); // Create the reflection class instance
-        }
-        if(!($xClass instanceof ReflectionClass))
-        {
-            return null;
-        }
-        // Use the Reflection class to get the parameters of the constructor
-        if(($constructor = $xClass->getConstructor()) === null)
-        {
-            return $xClass->newInstance();
-        }
-        $aParameterInstances = array_map(function($xParameter) use($xClass) {
-            return $this->getParameter($xClass, $xParameter);
-        }, $constructor->getParameters());
-
-        return $xClass->newInstanceArgs($aParameterInstances);
-    }
-
-    /**
-     * Create an instance of a class by automatically fetching the dependencies in the constructor.
-     *
-     * @param class-string $sClass    The class name
-     *
-     * @return void
-     */
-    public function auto(string $sClass)
-    {
-        $this->set($sClass, function() use ($sClass) {
-            return $this->make($sClass);
-        });
-    }
-
-    /**
-     * @param class-string $sClassName The component name
-     *
-     * @return string
-     */
-    private function getCallableObjectKey(string $sClassName): string
-    {
-        return $sClassName . '_CallableObject';
-    }
-
-    /**
-     * @param class-string $sClassName The component name
-     *
-     * @return string
-     */
-    private function getCallableHelperKey(string $sClassName): string
-    {
-        return $sClassName . '_CallableHelper';
-    }
-
-    /**
-     * @param class-string $sClassName The component name
-     *
-     * @return string
-     */
-    private function getReflectionClassKey(string $sClassName): string
-    {
-        return $sClassName . '_ReflectionClass';
     }
 
     /**
@@ -355,7 +302,7 @@ class ComponentContainer
                 $this->di->getStash(), $this->di->getUploadHandler());
         });
 
-        $this->registerComponentOptions($sClassName);
+        $this->discoverComponent($sClassName);
         $aOptions = $this->aComponents[$sClassName];
 
         // Register the callable object
@@ -364,13 +311,6 @@ class ComponentContainer
             return new CallableObject($this, $this->di, $xReflectionClass, $aOptions);
         });
 
-        // Register the user class, but only if the user didn't already.
-        if(!$this->has($sClassName))
-        {
-            $this->set($sClassName, function() use($sClassName) {
-                return $this->make($this->get($this->getReflectionClassKey($sClassName)));
-            });
-        }
         // Initialize the user class instance
         $this->xContainer->extend($sClassName, function($xClassInstance) use($sClassName) {
             if($xClassInstance instanceof AbstractComponent)
@@ -378,7 +318,7 @@ class ComponentContainer
                 $xHelper = $this->get($this->getCallableHelperKey($sClassName));
                 $xHelper->xTarget = $this->xTarget;
 
-                // Call the protected "_init()" method.
+                // Call the protected "_init()" method of the Component class.
                 $cSetter = function($di, $xHelper) {;
                     $this->_init($di, $xHelper);
                 };
@@ -406,25 +346,6 @@ class ComponentContainer
     }
 
     /**
-     * Get a component when one of its method needs to be called
-     *
-     * @template T
-     * @param class-string<T> $sClassName the class name
-     * @param Target $xTarget
-     *
-     * @return T|null
-     */
-    public function getComponent(string $sClassName, Target $xTarget): mixed
-    {
-        // Set the target only when getting the object targetted by the ajax request.
-        $this->xTarget = $xTarget;
-        $xComponent = $this->get($sClassName);
-        $this->xTarget = null;
-
-        return $xComponent;
-    }
-
-    /**
      * Get the callable object for a given class
      *
      * @param class-string $sClassName
@@ -433,30 +354,20 @@ class ComponentContainer
      */
     public function getCallableObject(string $sClassName): CallableObject
     {
-        return $this->get($sClassName . '_CallableObject');
+        return $this->get($this->getCallableObjectKey($sClassName));
     }
 
     /**
-     * Check if a callable object is already in the DI, and register if not
-     *
-     * @param class-string $sClassName The class name of the callable object
+     * @param string $sClassName A class name, but possibly with dot or underscore as separator
      *
      * @return class-string
      * @throws SetupException
      */
-    private function checkCallableObject(string $sClassName): string
+    private function getClassName(string $sClassName): string
     {
-        // Replace all separators ('.' and '_') with antislashes, and remove the antislashes
-        // at the beginning and the end of the class name.
-        $sClassName = trim(str_replace('.', '\\', $sClassName), '\\');
-        if($this->bUsingUnderscore)
-        {
-            $sClassName = trim(str_replace('_', '\\', $sClassName), '\\');
-        }
-
-        // Register the class.
-        $this->_registerComponent($sClassName);
-        return $sClassName;
+        // Replace all separators ('.' or '_') with antislashes, and trim the class name.
+        $sSeparator = !$this->bUsingUnderscore ? '.' : '_';
+        return trim(str_replace($sSeparator, '\\', $sClassName), '\\');
     }
 
     /**
@@ -470,7 +381,9 @@ class ComponentContainer
      */
     public function makeCallableObject(string $sClassName): ?CallableObject
     {
-        return $this->getCallableObject($this->checkCallableObject($sClassName));
+        $sClassName = $this->getClassName($sClassName);
+        $this->_registerComponent($sClassName);
+        return $this->getCallableObject($sClassName);
     }
 
     /**
@@ -484,27 +397,9 @@ class ComponentContainer
      */
     public function makeComponent(string $sClassName): mixed
     {
-        return $this->get($this->checkCallableObject($sClassName));
-    }
-
-    /**
-     * Get the component registry
-     *
-     * @return ComponentRegistry
-     */
-    public function getComponentRegistry(): ComponentRegistry
-    {
-        return $this->di->g(ComponentRegistry::class);
-    }
-
-    /**
-     * @param class-string $sClassName The component name
-     *
-     * @return string
-     */
-    private function getRequestFactoryKey(string $sClassName): string
-    {
-        return $sClassName . '_RequestFactory';
+        $sClassName = $this->getClassName($sClassName);
+        $this->_registerComponent($sClassName);
+        return $this->get($sClassName);
     }
 
     /**
@@ -522,8 +417,8 @@ class ComponentContainer
             }
 
             $sPrefix = $this->di->g(ConfigManager::class)->getOption('core.prefix.class', '');
-            $sJsObject = $sPrefix . $xCallable->getJsName();
-            return new JxnClass($this->di->g(DialogCommand::class), $sJsObject);
+            return new JxnClass($this->di->g(DialogCommand::class),
+                $sPrefix . $xCallable->getJsName());
         });
     }
 

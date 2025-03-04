@@ -55,9 +55,7 @@ trait PsrTrait
         });
         // Server request with the Jaxon request parameter as attribute
         $this->set($this->sPsrServerRequest, function($di) {
-            /** @var ParameterReader */
             $xParameterReader = $di->g(ParameterReader::class);
-            /** @var ServerRequestInterface */
             $xRequest = $di->g(ServerRequestInterface::class);
             $aRequestParameter = $xParameterReader->getRequestParameter($xRequest);
             return !is_array($aRequestParameter) ? $xRequest :
@@ -94,7 +92,6 @@ trait PsrTrait
      */
     public function getServerParams(): array
     {
-        /** @var ServerRequestInterface */
         $xRequest = $this->g(ServerRequestInterface::class);
         return $xRequest->getServerParams();
     }

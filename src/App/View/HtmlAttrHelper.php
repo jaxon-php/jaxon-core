@@ -61,8 +61,8 @@ class HtmlAttrHelper
             return '';
         }
 
-        $xCallable = $this->cdi->makeComponent($sClassName);
-        return is_a($xCallable, NodeComponent::class) ? (string)$xCallable->html() : '';
+        $xComponent = $this->cdi->makeComponent($sClassName);
+        return is_a($xComponent, NodeComponent::class) ? (string)$xComponent->html() : '';
     }
 
     /**

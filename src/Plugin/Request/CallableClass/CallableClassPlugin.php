@@ -118,7 +118,7 @@ class CallableClassPlugin extends AbstractRequestPlugin
      */
     public function getHash(): string
     {
-        $this->xRegistry->parseComponents();
+        $this->xRegistry->registerAllComponents();
         return md5($this->xRegistry->getHash());
     }
 
@@ -180,7 +180,7 @@ class CallableClassPlugin extends AbstractRequestPlugin
      */
     public function getScript(): string
     {
-        $this->xRegistry->parseComponents();
+        $this->xRegistry->registerAllComponents();
         $aCallableObjects = $this->cdi->getCallableObjects();
         // Sort the options by key length asc
         uksort($aCallableObjects, function($name1, $name2) {

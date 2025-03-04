@@ -180,7 +180,7 @@ class PackageManager
     private function registerItemsFromConfig(Config $xConfig, ?Config $xUserConfig = null)
     {
         // Set the config for the registered callables.
-        $this->xRegistry->setCurrentConfig($xConfig);
+        $this->xRegistry->setPackageConfig($xConfig);
 
         // Register functions, classes and directories
         $this->registerCallablesFromConfig($xConfig,
@@ -191,7 +191,7 @@ class PackageManager
             'directories', 'path', Jaxon::CALLABLE_DIR);
 
         // Unset the current config.
-        $this->xRegistry->setCurrentConfig();
+        $this->xRegistry->unsetPackageConfig();
 
         // Register the view namespaces
         // Note: the $xUserConfig can provide a "template" option, which is used to customize

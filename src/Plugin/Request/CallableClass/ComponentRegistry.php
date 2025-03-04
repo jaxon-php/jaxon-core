@@ -58,11 +58,11 @@ class ComponentRegistry
     protected $aNamespaces = [];
 
     /**
-     * The package providing the class or directory being registered.
+     * A config from the package providing the class or directory being registered.
      *
      * @var Config|null
      */
-    protected $xCurrentConfig = null;
+    protected $xPackageConfig = null;
 
     /**
      * The string that will be used to compute the js file hash
@@ -99,6 +99,11 @@ class ComponentRegistry
     private $xAutoloader = null;
 
     /**
+     * @var bool
+     */
+    private $bUpdateHash = true;
+
+    /**
      * The class constructor
      *
      * @param ComponentContainer $cdi
@@ -115,13 +120,21 @@ class ComponentRegistry
     }
 
     /**
-     * @param Config|null $xConfig
+     * @param Config $xConfig
      *
      * @return void
      */
-    public function setCurrentConfig(Config $xConfig = null)
+    public function setPackageConfig(Config $xConfig)
     {
-        $this->xCurrentConfig = $xConfig;
+        $this->xPackageConfig = $xConfig;
+    }
+
+    /**
+     * @return void
+     */
+    public function unsetPackageConfig()
+    {
+        $this->xPackageConfig = null;
     }
 
     /**
@@ -142,6 +155,18 @@ class ComponentRegistry
     public function getHash(): string
     {
         return $this->sHash;
+    }
+
+    /**
+     * Enable or disable hash calculation
+     *
+     * @param bool $bUpdateHash
+     *
+     * @return void
+     */
+    public function updateHash(bool $bUpdateHash)
+    {
+        $this->bUpdateHash = $bUpdateHash;
     }
 
     /**
@@ -206,26 +231,27 @@ class ComponentRegistry
     }
 
     /**
+     * Register a component
      *
      * @param string $sClassName        The class name
      * @param array $aClassOptions      The default class options
      * @param array $aDirectoryOptions  The directory options
-     * @param bool $bAddToHash          Add the class name to the hash value
      *
      * @return void
      */
     private function _registerComponent(string $sClassName, array $aClassOptions,
-        array $aDirectoryOptions = [], bool $bAddToHash = true)
+        array $aDirectoryOptions = [])
     {
         $aOptions = $this->makeClassOptions($sClassName, $aClassOptions, $aDirectoryOptions);
         $this->cdi->registerComponent($sClassName, $aOptions);
-        if($bAddToHash)
+        if($this->bUpdateHash)
         {
             $this->sHash .= $sClassName . $aOptions['timestamp'];
         }
     }
 
     /**
+     * Register a component
      *
      * @param string $sClassName    The class name
      * @param array $aClassOptions    The default class options
@@ -234,21 +260,21 @@ class ComponentRegistry
      */
     public function registerComponent(string $sClassName, array $aClassOptions)
     {
-        if($this->xCurrentConfig !== null)
+        if($this->xPackageConfig !== null)
         {
-            $aClassOptions['config'] = $this->xCurrentConfig;
+            $aClassOptions['config'] = $this->xPackageConfig;
         }
         $this->_registerComponent($sClassName, $aClassOptions);
     }
 
     /**
-     * Find options for a class which is registered with namespace
+     * Get the options of a component in a registered namespace
      *
      * @param string $sClassName    The class name
      *
-     * @return void
+     * @return array|null
      */
-    public function registerClassFromNamespace(string $sClassName)
+    public function getNamespaceComponentOptions(string $sClassName): ?array
     {
         // Find the corresponding namespace
         foreach($this->aNamespaceOptions as $sNamespace => $aDirectoryOptions)
@@ -258,13 +284,14 @@ class ComponentRegistry
             {
                 // Save the class options
                 $aClassOptions = ['namespace' => $sNamespace];
-                $this->_registerComponent($sClassName, $aClassOptions, $aDirectoryOptions, false);
-                return;
+                return $this->makeClassOptions($sClassName, $aClassOptions, $aDirectoryOptions);
             }
         }
+        return null;
     }
 
     /**
+     * Register a directory
      *
      * @param string $sDirectory    The directory being registered
      * @param array $aOptions    The associated options
@@ -278,14 +305,15 @@ class ComponentRegistry
         {
             $aOptions['autoload'] = true;
         }
-        if($this->xCurrentConfig !== null)
+        if($this->xPackageConfig !== null)
         {
-            $aOptions['config'] = $this->xCurrentConfig;
+            $aOptions['config'] = $this->xPackageConfig;
         }
         $this->aDirectoryOptions[$sDirectory] = $aOptions;
     }
 
     /**
+     * Add a namespace
      *
      * @param string $sNamespace    The namespace
      * @param array $aOptions    The associated options
@@ -299,6 +327,7 @@ class ComponentRegistry
     }
 
     /**
+     * Register a namespace
      *
      * @param string $sNamespace    The namespace of the directory being registered
      * @param array $aOptions    The associated options
@@ -326,9 +355,9 @@ class ComponentRegistry
         {
             $aOptions['autoload'] = true;
         }
-        if($this->xCurrentConfig !== null)
+        if($this->xPackageConfig !== null)
         {
-            $aOptions['config'] = $this->xCurrentConfig;
+            $aOptions['config'] = $this->xPackageConfig;
         }
         // Register the dir with PSR4 autoloading
         if(($aOptions['autoload']) && $this->xAutoloader != null)
@@ -344,7 +373,7 @@ class ComponentRegistry
      *
      * @return void
      */
-    public function parseDirectories()
+    public function registerComponentsInDirectories()
     {
         // This is to be done only once.
         if($this->bDirectoriesParsed)
@@ -354,7 +383,6 @@ class ComponentRegistry
         $this->bDirectoriesParsed = true;
 
         // Browse directories without namespaces and read all the files.
-        $aClassMap = [];
         foreach($this->aDirectoryOptions as $sDirectory => $aDirectoryOptions)
         {
             $itFile = new SortedFileIterator($sDirectory);
@@ -384,7 +412,7 @@ class ComponentRegistry
      *
      * @return void
      */
-    public function parseNamespaces()
+    public function registerComponentsInNamespaces()
     {
         // This is to be done only once.
         if($this->bNamespacesParsed)
@@ -433,9 +461,9 @@ class ComponentRegistry
      *
      * @return void
      */
-    public function parseComponents()
+    public function registerAllComponents(): void
     {
-        $this->parseDirectories();
-        $this->parseNamespaces();
+        $this->registerComponentsInDirectories();
+        $this->registerComponentsInNamespaces();
     }
 }

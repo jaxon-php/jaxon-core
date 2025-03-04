@@ -25,7 +25,6 @@ namespace Jaxon\Plugin\Request\CallableClass;
 
 use Jaxon\App\Metadata\InputData;
 use Jaxon\App\Metadata\MetadataInterface;
-use Jaxon\App\Metadata\MetadataReaderInterface;
 use Jaxon\Config\Config;
 use Jaxon\Di\ComponentContainer;
 use Jaxon\Di\Container;
@@ -110,7 +109,6 @@ class CallableObject
             return null;
         }
 
-        /** @var MetadataReaderInterface */
         $xMetadataReader = $this->di->getMetadataReader($xConfig->getOption('metadata', ''));
         return $xMetadataReader->getAttributes(new InputData($xReflectionClass,
             $this->getPublicMethods(true), $this->getProperties()));
@@ -352,7 +350,7 @@ class CallableObject
     public function call(Target $xTarget)
     {
         $this->xTarget = $xTarget;
-        $this->xComponent = $this->cdi->getComponent($this->getClassName(), $xTarget);
+        $this->xComponent = $this->cdi->getTargetComponent($this->getClassName(), $xTarget);
 
         // Methods to call before processing the request
         $this->callHookMethods($this->xOptions->beforeMethods());
