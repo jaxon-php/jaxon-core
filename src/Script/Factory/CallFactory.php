@@ -45,7 +45,8 @@ class CallFactory
      */
     public function rq(string $sClassName = ''): ?JxnCall
     {
-        return $this->cdi->getRequestFactory($sClassName);
+        return $sClassName === '' ? $this->cdi->getFunctionRequestFactory() :
+            $this->cdi->getComponentRequestFactory($sClassName);
     }
 
     /**

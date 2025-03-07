@@ -423,17 +423,30 @@ class ComponentContainer
     }
 
     /**
-     * Get a factory for a js function call.
+     * Get a factory for a call to a registered function.
+     *
+     * @return JxnCall
+     */
+    public function getFunctionRequestFactory(): JxnCall
+    {
+        return $this->get($this->getRequestFactoryKey(JxnCall::class));
+    }
+
+    /**
+     * Get a factory for a call to a registered component.
      *
      * @param class-string $sClassName
      *
      * @return JxnCall|null
      */
-    public function getRequestFactory(string $sClassName = ''): ?JxnCall
+    public function getComponentRequestFactory(string $sClassName): ?JxnCall
     {
-        // If a class name is provided, get the factory for a registered class.
-        // Otherwise, get the unique factory for registered functions.
-        $sClassName = trim($sClassName, " \t") ?: JxnCall::class;
+        $sClassName = trim($sClassName, " \t");
+        if($sClassName === '')
+        {
+            return null;
+        }
+
         $sFactoryKey = $this->getRequestFactoryKey($sClassName);
         if(!$this->has($sFactoryKey))
         {
