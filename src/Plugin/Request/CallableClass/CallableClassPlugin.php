@@ -31,7 +31,6 @@ use Jaxon\Request\Target;
 use Jaxon\Request\Validator;
 use Jaxon\Utils\Template\TemplateEngine;
 use Psr\Http\Message\ServerRequestInterface;
-use Exception;
 use ReflectionException;
 
 use function array_reduce;
@@ -240,7 +239,7 @@ class CallableClassPlugin extends AbstractRequestPlugin
         // Will be used to print a translated error message.
         $aErrorParams = ['class' => $sClassName, 'method' => $sMethodName];
 
-        if(!$this->xValidator->validateClass($sClassName) ||
+        if(!$this->xValidator->validateJsObject($sClassName) ||
             !$this->xValidator->validateMethod($sMethodName))
         {
             // Unable to find the requested object or method

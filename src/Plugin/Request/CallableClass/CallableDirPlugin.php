@@ -113,6 +113,7 @@ class CallableDirPlugin implements PluginInterface, CallableRegistryInterface
      */
     public function register(string $sType, string $sCallable, array $aOptions): bool
     {
+        // The $sCallable var is not used here because the checkOptions() method copied it into the $aOptions array.
         if(($aOptions['namespace']))
         {
             $this->xRegistry->registerNamespace($aOptions['namespace'], $aOptions);

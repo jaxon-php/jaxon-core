@@ -70,9 +70,21 @@ class Validator
      *
      * @return bool
      */
-    public function validateClass(string $sName): bool
+    public function validateJsObject(string $sName): bool
     {
         return (preg_match('/^([a-zA-Z][a-zA-Z0-9_]*)(\.[a-zA-Z][a-zA-Z0-9_]*)*$/', $sName) > 0);
+    }
+
+    /**
+     * Validate a class name
+     *
+     * @param string $sName    The class name
+     *
+     * @return bool
+     */
+    public function validateClass(string $sName): bool
+    {
+        return (preg_match('/^([a-zA-Z][a-zA-Z0-9_]*)(\\\\[a-zA-Z][a-zA-Z0-9_]*)*$/', $sName) > 0);
     }
 
     /**
