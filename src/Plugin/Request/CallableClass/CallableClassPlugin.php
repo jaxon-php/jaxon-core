@@ -286,7 +286,8 @@ class CallableClassPlugin extends RequestPlugin
         $sMethodName = $this->xTarget->getMethodName();
         $this->xTarget->setMethodArgs($this->xParameterReader->args());
 
-        if(!$this->xValidator->validateClass($sClassName) || !$this->xValidator->validateMethod($sMethodName))
+        if(!$this->xValidator->validateJsObject($sClassName) ||
+            !$this->xValidator->validateMethod($sMethodName))
         {
             // Unable to find the requested object or method
             throw new RequestException($this->xTranslator->trans('errors.objects.invalid',
