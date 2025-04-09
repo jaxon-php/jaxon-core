@@ -60,7 +60,7 @@ class Validator
      */
     public function validateFunction(string $sName): bool
     {
-        return (preg_match('/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/', $sName) > 0);
+        return preg_match('/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/', $sName) > 0;
     }
 
     /**
@@ -72,7 +72,7 @@ class Validator
      */
     public function validateJsObject(string $sName): bool
     {
-        return (preg_match('/^([a-zA-Z][a-zA-Z0-9_]*)(\.[a-zA-Z][a-zA-Z0-9_]*)*$/', $sName) > 0);
+        return preg_match('/^([a-zA-Z][a-zA-Z0-9_]*)(\.[a-zA-Z][a-zA-Z0-9_]*)*$/', $sName) > 0;
     }
 
     /**
@@ -84,7 +84,7 @@ class Validator
      */
     public function validateClass(string $sName): bool
     {
-        return (preg_match('/^([a-zA-Z][a-zA-Z0-9_]*)(\\\\[a-zA-Z][a-zA-Z0-9_]*)*$/', $sName) > 0);
+        return preg_match('/^([a-zA-Z][a-zA-Z0-9_]*)(\\\\[a-zA-Z][a-zA-Z0-9_]*)*$/', $sName) > 0;
     }
 
     /**
@@ -96,6 +96,6 @@ class Validator
      */
     public function validateMethod(string $sName): bool
     {
-        return (preg_match('/^[a-zA-Z][a-zA-Z0-9_]*$/', $sName) > 0);
+        return preg_match('/^[a-zA-Z][a-zA-Z0-9_]*$/', $sName) > 0;
     }
 }
