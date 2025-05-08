@@ -24,7 +24,9 @@ use function array_unique;
 use function in_array;
 use function is_array;
 use function is_string;
+use function json_encode;
 use function substr;
+use function str_replace;
 use function trim;
 
 class ComponentOptions
@@ -319,12 +321,12 @@ class ComponentOptions
                 $this->addProtectedMethods($sFunctionName);
             }
             break;
-        // For databags, all the value are merged in a single array.
+        // For databags and callbacks, all the value are merged in a single array.
         case 'bags':
+        case 'callback':
             $this->_addJsArrayOption($sFunctionName, $sOptionName, $xOptionValue);
             return;
-        // For all the other options, including callback, only the last value is kept.
-        case 'callback':
+        // For all the other options, only the last value is kept.
         default:
             $this->_setJsOption($sFunctionName, $sOptionName, $xOptionValue);
         }
@@ -361,10 +363,16 @@ class ComponentOptions
         $aMethodOptions = $this->aJsOptions[$sMethodName] ?? [];
         foreach($aMethodOptions as $sOptionName => $xOptionValue)
         {
-            // For databags, merge the values in a single array.
-            // For all the other options, including callback, keep the last value.
-            $aOptions[$sOptionName] = $sOptionName !== 'bags' ? $xOptionValue :
+            // For databags and callbacks, merge the values in a single array.
+            // For all the other options, keep the last value.
+            $aOptions[$sOptionName] = !in_array($sOptionName, ['bags', 'callback']) ?
+                $xOptionValue :
                 array_unique(array_merge($aOptions[$sOptionName] ?? [], $xOptionValue));
+        }
+        // Since callbacks are js object names, they need a special formatting.
+        if(isset($aOptions['callback']))
+        {
+            $aOptions['callback'] = str_replace('"', '', json_encode($aOptions['callback']));
         }
         return $aOptions;
     }
