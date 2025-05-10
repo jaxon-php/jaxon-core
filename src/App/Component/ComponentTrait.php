@@ -31,9 +31,9 @@ trait ComponentTrait
     /**
      * Get the Jaxon request target
      *
-     * @return TargetInterface
+     * @return TargetInterface|null
      */
-    protected function target(): TargetInterface
+    protected function target(): ?TargetInterface
     {
         return $this->helper()->xTarget;
     }
