@@ -15,7 +15,7 @@ class FuncComponent extends Component\AbstractComponent
     /**
      * @inheritDoc
      */
-    protected function _init(Container $di, ComponentHelper $xHelper)
+    final protected function _init(Container $di, ComponentHelper $xHelper)
     {
         $this->setHelper($xHelper);
         $this->setAjaxResponse($di);
