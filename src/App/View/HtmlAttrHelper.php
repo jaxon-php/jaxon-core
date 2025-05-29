@@ -14,8 +14,8 @@ namespace Jaxon\App\View;
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
- use Jaxon\App\Component\Pagination;
- use Jaxon\App\NodeComponent;
+use Jaxon\App\Component\Pagination;
+use Jaxon\App\NodeComponent;
 use Jaxon\Di\ComponentContainer;
 use Jaxon\Script\JsExpr;
 use Jaxon\Script\JxnCall;
