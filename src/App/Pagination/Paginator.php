@@ -277,6 +277,16 @@ class Paginator
     }
 
     /**
+     * Get the current page number.
+     *
+     * @return int
+     */
+    public function currentPage(): int
+    {
+        return $this->nPageNumber;
+    }
+
+    /**
      * Get the links (pages raw data).
      *
      * @return array<Page>
