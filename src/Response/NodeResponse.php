@@ -23,7 +23,7 @@ namespace Jaxon\Response;
 use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Response\Manager\Command;
 use Jaxon\Response\Manager\ResponseManager;
-use Jaxon\Script\JxnCall;
+use Jaxon\Script\Call\JxnCall;
 use JsonSerializable;
 
 class NodeResponse extends AjaxResponse

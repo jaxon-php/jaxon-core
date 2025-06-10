@@ -12,7 +12,7 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Script\Call;
+namespace Jaxon\Script\Action;
 
 class HtmlReader
 {

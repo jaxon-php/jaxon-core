@@ -1,6 +1,6 @@
 <?php
 
-namespace Jaxon\Script\Call;
+namespace Jaxon\Script\Action;
 
 class Attr implements ParameterInterface
 {

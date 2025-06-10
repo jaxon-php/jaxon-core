@@ -15,11 +15,11 @@
 namespace Jaxon\Script;
 
 use Jaxon\App\Dialog\Manager\DialogCommand;
-use Jaxon\Script\Call\Attr;
-use Jaxon\Script\Call\Event;
-use Jaxon\Script\Call\Func;
-use Jaxon\Script\Call\Parameter;
-use Jaxon\Script\Call\ParameterInterface;
+use Jaxon\Script\Action\Attr;
+use Jaxon\Script\Action\Event;
+use Jaxon\Script\Action\Func;
+use Jaxon\Script\Action\Parameter;
+use Jaxon\Script\Action\ParameterInterface;
 use JsonSerializable;
 use Stringable;
 

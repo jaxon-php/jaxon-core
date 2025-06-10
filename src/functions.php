@@ -5,11 +5,11 @@ namespace Jaxon;
 use Jaxon\App\Ajax\Lib as Jaxon;
 use Jaxon\App\View\Helper\HtmlAttrHelper;
 use Jaxon\Exception\SetupException;
-use Jaxon\Script\Factory\ParameterFactory;
-use Jaxon\Script\JqSelectorCall;
-use Jaxon\Script\JsObjectCall;
-use Jaxon\Script\JsSelectorCall;
-use Jaxon\Script\JxnCall;
+use Jaxon\Script\Call\JqSelectorCall;
+use Jaxon\Script\Call\JsObjectCall;
+use Jaxon\Script\Call\JsSelectorCall;
+use Jaxon\Script\Call\JxnCall;
+use Jaxon\Script\ParameterFactory;
 
 /**
  * functions.php

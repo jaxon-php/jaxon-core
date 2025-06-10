@@ -3,8 +3,8 @@
 namespace Jaxon\App\Component;
 
 use Jaxon\Di\Container;
-use Jaxon\Script\JxnCall;
 use Jaxon\Plugin\Request\CallableClass\ComponentHelper;
+use Jaxon\Script\Call\JxnCall;
 
 abstract class AbstractComponent
 {

@@ -13,7 +13,7 @@
 
 namespace Jaxon\App\Dialog\Manager;
 
-use Jaxon\Script\Call\Parameter;
+use Jaxon\Script\Action\Parameter;
 
 use function array_map;
 

@@ -28,7 +28,7 @@ use Jaxon\Di\Container;
 use Jaxon\Response\AbstractResponse;
 use Jaxon\Response\NodeResponse;
 use Jaxon\Response\Response;
-use Jaxon\Script\JxnCall;
+use Jaxon\Script\Call\JxnCall;
 use Closure;
 use JsonSerializable;
 

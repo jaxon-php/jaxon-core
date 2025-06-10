@@ -7,8 +7,6 @@ use Jaxon\App\Dialog\Manager\DialogCommand;
 use Jaxon\App\I18n\Translator;
 use Jaxon\Di\ComponentContainer;
 use Jaxon\Di\Container;
-use Jaxon\Script\Factory\CallFactory;
-use Jaxon\Script\Factory\ParameterFactory;
 use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Plugin\Response\DataBag\DataBagPlugin;
 use Jaxon\Request\Handler\CallbackManager;
@@ -16,6 +14,8 @@ use Jaxon\Request\Handler\ParameterReader;
 use Jaxon\Request\Handler\RequestHandler;
 use Jaxon\Request\Upload\UploadHandlerInterface;
 use Jaxon\Response\Manager\ResponseManager;
+use Jaxon\Script\CallFactory;
+use Jaxon\Script\ParameterFactory;
 use Jaxon\Utils\Http\UriDetector;
 
 trait RequestTrait

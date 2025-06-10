@@ -9,7 +9,7 @@ use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Response\Response;
 use Jaxon\Response\NodeResponse;
 use Jaxon\Response\Manager\ResponseManager;
-use Jaxon\Script\JxnCall;
+use Jaxon\Script\Call\JxnCall;
 
 use function trim;
 

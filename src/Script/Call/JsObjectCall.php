@@ -1,6 +1,6 @@
 <?php
 
-namespace Jaxon\Script;
+namespace Jaxon\Script\Call;
 
 /**
  * JsObjectCall.php
@@ -15,7 +15,8 @@ namespace Jaxon\Script;
  */
 
 use Jaxon\App\Dialog\Manager\DialogCommand;
-use Jaxon\Script\Call\Attr;
+use Jaxon\Script\Action\Attr;
+use Jaxon\Script\JsExpr;
 use Closure;
 
 class JsObjectCall extends AbstractJsCall

@@ -12,10 +12,11 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Script;
+namespace Jaxon\Script\Call;
 
 use Jaxon\App\Dialog\Manager\DialogCommand;
-use Jaxon\Script\Call\Selector;
+use Jaxon\Script\Action\Selector;
+use Jaxon\Script\JsExpr;
 use Closure;
 
 class JqSelectorCall extends AbstractJsCall

@@ -1,6 +1,6 @@
 <?php
 
-namespace Jaxon\Script;
+namespace Jaxon\Script\Call;
 
 /**
  * JxnCall.php
@@ -14,7 +14,8 @@ namespace Jaxon\Script;
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
- use Jaxon\App\Dialog\Manager\DialogCommand;
+use Jaxon\App\Dialog\Manager\DialogCommand;
+use Jaxon\Script\JsExpr;
 
 class JxnCall extends AbstractCall
 {

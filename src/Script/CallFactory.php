@@ -1,6 +1,6 @@
 <?php
 
-namespace Jaxon\Script\Factory;
+namespace Jaxon\Script;
 
 /**
  * CallFactory.php
@@ -17,10 +17,10 @@ namespace Jaxon\Script\Factory;
 use Jaxon\App\Dialog\Manager\DialogCommand;
 use Jaxon\Di\ComponentContainer;
 use Jaxon\Exception\SetupException;
-use Jaxon\Script\JsSelectorCall;
-use Jaxon\Script\JqSelectorCall;
-use Jaxon\Script\JsObjectCall;
-use Jaxon\Script\JxnCall;
+use Jaxon\Script\Call\JsSelectorCall;
+use Jaxon\Script\Call\JqSelectorCall;
+use Jaxon\Script\Call\JsObjectCall;
+use Jaxon\Script\Call\JxnCall;
 use Closure;
 
 use function trim;

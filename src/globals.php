@@ -3,11 +3,10 @@
 use Jaxon\App\Ajax\Lib as Jaxon;
 use Jaxon\App\View\Helper\HtmlAttrHelper;
 use Jaxon\Exception\SetupException;
-use Jaxon\Script\Factory\ParameterFactory;
-use Jaxon\Script\JqSelectorCall;
-use Jaxon\Script\JsObjectCall;
-use Jaxon\Script\JsSelectorCall;
-use Jaxon\Script\JxnCall;
+use Jaxon\Script\Call\JqSelectorCall;
+use Jaxon\Script\Call\JsObjectCall;
+use Jaxon\Script\Call\JsSelectorCall;
+use Jaxon\Script\Call\JxnCall;
 
 /**
  * globals.php
@@ -94,16 +93,6 @@ function jq(string $sPath = '', $xContext = null): JqSelectorCall
 function je(string $sElementId = ''): JsSelectorCall
 {
     return \Jaxon\je($sElementId);
-}
-
-/**
- * Get the single instance of the parameter factory
- *
- * @return ParameterFactory
- */
-function pm(): ParameterFactory
-{
-    return \Jaxon\pm();
 }
 
 /**

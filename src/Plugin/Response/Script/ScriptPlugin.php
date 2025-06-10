@@ -16,11 +16,11 @@ namespace Jaxon\Plugin\Response\Script;
 use Jaxon\Plugin\AbstractResponsePlugin;
 use Jaxon\Response\AjaxResponse;
 use Jaxon\Response\NodeResponse;
-use Jaxon\Script\Factory\CallFactory;
-use Jaxon\Script\JqSelectorCall;
+use Jaxon\Script\CallFactory;
+use Jaxon\Script\Call\JqSelectorCall;
+use Jaxon\Script\Call\JsObjectCall;
+use Jaxon\Script\Call\JsSelectorCall;
 use Jaxon\Script\JsExpr;
-use Jaxon\Script\JsObjectCall;
-use Jaxon\Script\JsSelectorCall;
 use Closure;
 
 use function is_a;

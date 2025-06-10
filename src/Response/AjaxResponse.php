@@ -28,10 +28,10 @@ use Jaxon\Plugin\Response\DataBag\DataBagPlugin;
 use Jaxon\Plugin\Response\Pagination\PaginatorPlugin;
 use Jaxon\Plugin\Response\Psr\PsrPlugin;
 use Jaxon\Plugin\Response\Script\ScriptPlugin;
-use Jaxon\Script\JqSelectorCall;
+use Jaxon\Script\Call\JqSelectorCall;
+use Jaxon\Script\Call\JsObjectCall;
+use Jaxon\Script\Call\JsSelectorCall;
 use Jaxon\Script\JsExpr;
-use Jaxon\Script\JsObjectCall;
-use Jaxon\Script\JsSelectorCall;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 use Closure;
 

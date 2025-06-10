@@ -1,6 +1,6 @@
 <?php
 
-namespace Jaxon\Script;
+namespace Jaxon\Script\Call;
 
 /**
  * JxnClassCall.php

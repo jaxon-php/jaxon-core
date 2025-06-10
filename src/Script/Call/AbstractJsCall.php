@@ -1,6 +1,6 @@
 <?php
 
-namespace Jaxon\Script;
+namespace Jaxon\Script\Call;
 
 /**
  * AbstractJsCall
@@ -15,6 +15,7 @@ namespace Jaxon\Script;
  */
 
 use Jaxon\App\Dialog\Manager\DialogCommand;
+use Jaxon\Script\JsExpr;
 use Closure;
 
 abstract class AbstractJsCall extends AbstractCall
