@@ -15,6 +15,7 @@
 namespace Jaxon\Script;
 
 use Jaxon\App\Dialog\Manager\DialogCommand;
+use Jaxon\Script\Call\HtmlReader;
 use Jaxon\Script\Call\Selector;
 use Closure;
 
@@ -35,6 +36,8 @@ class JsSelectorCall extends AbstractJsCall
 
     /**
      * Get the json expression
+     *
+     * @return JsExpr
      */
     protected function _expr(): JsExpr
     {
@@ -54,5 +57,13 @@ class JsSelectorCall extends AbstractJsCall
     public function click(JsExpr $xHandler): JsExpr
     {
         return $this->_expr()->addEventListener('click', $xHandler);
+    }
+
+    /**
+     * @return HtmlReader
+     */
+    public function rd(): HtmlReader
+    {
+        return new HtmlReader($this->sElementId);
     }
 }
