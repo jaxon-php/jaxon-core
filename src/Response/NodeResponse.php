@@ -110,6 +110,19 @@ class NodeResponse extends AjaxResponse
     }
 
     /**
+     * Add a command to assign the specified value to the given CSS attribute
+     *
+     * @param string $sCssAttribute    The CSS attribute to be assigned
+     * @param string $sValue    The value to be assigned to the attribute
+     *
+     * @return self
+     */
+    public function style(string $sCssAttribute, string $sValue): self
+    {
+        return $this->assign("style.$sCssAttribute", $sValue);
+    }
+
+    /**
      * Add a command to append the specified data to the given element's attribute
      *
      * @param string $sAttribute    The name of the attribute to be appended to

@@ -61,6 +61,20 @@ class Response extends AjaxResponse
     }
 
     /**
+     * Add a command to assign the specified value to the given CSS attribute
+     *
+     * @param string $sTarget    The id of the html element on the browser
+     * @param string $sCssAttribute    The CSS attribute to be assigned
+     * @param string $sValue    The value to be assigned to the attribute
+     *
+     * @return self
+     */
+    public function style(string $sTarget, string $sCssAttribute, string $sValue): self
+    {
+        return $this->assign($sTarget, "style.$sCssAttribute", $sValue);
+    }
+
+    /**
      * Add a command to append the specified data to the given element's attribute
      *
      * @param string $sTarget    The id of the element to be updated
@@ -308,7 +322,6 @@ class Response extends AjaxResponse
 
     /**
      * Add a command to install an event handler on the specified element
-     *
      * You can add more than one event handler to an element's event using this method.
      *
      * @param string $sTarget    The id of the element
