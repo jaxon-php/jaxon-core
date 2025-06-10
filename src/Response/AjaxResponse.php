@@ -24,13 +24,14 @@ namespace Jaxon\Response;
 use Jaxon\App\DataBag\DataBagContext;
 use Jaxon\App\Pagination\Paginator;
 use Jaxon\Exception\AppException;
-use Jaxon\Script\JqCall;
-use Jaxon\Script\JsExpr;
-use Jaxon\Script\JsCall;
 use Jaxon\Plugin\Response\DataBag\DataBagPlugin;
 use Jaxon\Plugin\Response\Pagination\PaginatorPlugin;
 use Jaxon\Plugin\Response\Psr\PsrPlugin;
 use Jaxon\Plugin\Response\Script\ScriptPlugin;
+use Jaxon\Script\JqSelectorCall;
+use Jaxon\Script\JsExpr;
+use Jaxon\Script\JsObjectCall;
+use Jaxon\Script\JsSelectorCall;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 use Closure;
 
@@ -172,33 +173,35 @@ abstract class AjaxResponse extends AbstractResponse
      * @param string $sPath    The jQuery selector path
      * @param mixed $xContext    A context associated to the selector
      *
-     * @return JqCall
+     * @return JqSelectorCall
      */
-    public function jq(string $sPath = '', $xContext = null): JqCall
+    public function jq(string $sPath = '', $xContext = null): JqSelectorCall
     {
         return $this->plugin(ScriptPlugin::class)->jq($sPath, $xContext);
     }
 
     /**
-     * Create a js expression, and link it to the current response.
+     * Create a Javascript object expression, and link it to the current response.
      *
      * @param string $sObject
      *
-     * @return JsCall
+     * @return JsObjectCall
      */
-    public function js(string $sObject = ''): JsCall
+    public function jo(string $sObject = ''): JsObjectCall
     {
-        return $this->plugin(ScriptPlugin::class)->js($sObject);
+        return $this->plugin(ScriptPlugin::class)->jo($sObject);
     }
 
     /**
-     * Shortcut to get the factory for calls to a global js object or function.
+     * Create a Javascript element selector expression, and link it to the current response.
      *
-     * @return JsCall
+     * @param string $sElementId
+     *
+     * @return JsSelectorCall
      */
-    public function jw(): JsCall
+    public function je(string $sElementId = ''): JsSelectorCall
     {
-        return $this->js('w');
+        return $this->plugin(ScriptPlugin::class)->je($sElementId);
     }
 
     /**

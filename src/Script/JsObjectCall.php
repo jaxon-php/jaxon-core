@@ -3,9 +3,9 @@
 namespace Jaxon\Script;
 
 /**
- * JsCall.php
+ * JsObjectCall.php
  *
- * Call to a js function.
+ * Factory for a Javascript object.
  *
  * @package jaxon-core
  * @author Thierry Feuzeu
@@ -16,10 +16,9 @@ namespace Jaxon\Script;
 
 use Jaxon\App\Dialog\Manager\DialogCommand;
 use Jaxon\Script\Call\Attr;
-use Jaxon\Script\Call\Selector;
 use Closure;
 
-class JsCall extends AbstractJsCall
+class JsObjectCall extends AbstractJsCall
 {
     /**
      * The class constructor
@@ -28,7 +27,8 @@ class JsCall extends AbstractJsCall
      * @param Closure|null $xExprCb
      * @param string $sJsObject
      */
-    public function __construct(DialogCommand $xDialog, ?Closure $xExprCb, protected string $sJsObject)
+    public function __construct(DialogCommand $xDialog, ?Closure $xExprCb,
+        protected string $sJsObject)
     {
         parent::__construct($xDialog, $xExprCb);
     }
@@ -40,14 +40,9 @@ class JsCall extends AbstractJsCall
      */
     protected function _expr(): JsExpr
     {
-        $xJsExpr = match($this->sJsObject) {
-            // An empty string returns the js "this" var.
-            '' => new JsExpr($this->xDialog, new Selector('js', 'this')),
-            // The '.' string returns the js "window" object. No selector needed.
-            '.' => new JsExpr($this->xDialog),
-            // Otherwise, the corresponding js object will be returned.
-            default => new JsExpr($this->xDialog, Attr::get($this->sJsObject, false)),
-        };
+        // If the value is '', return the js "window" object, otherwise, the corresponding js object.
+        $xJsExpr = new JsExpr($this->xDialog,
+            Attr::get($this->sJsObject ?: 'window'));
         return $this->_initExpr($xJsExpr);
     }
 }

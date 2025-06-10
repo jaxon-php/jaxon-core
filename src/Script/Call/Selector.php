@@ -31,7 +31,7 @@ class Selector implements JsonSerializable, Stringable
     {
         $sName = trim($sPath) ?: 'this';
         $this->aCall = ['_type' => 'select', '_name' => $sName, 'mode' => $sMode];
-        if(($sPath) && ($xContext))
+        if($sName !== 'this' && $xContext !== null)
         {
             $this->aCall['context'] = is_a($xContext, JsonSerializable::class) ?
                 $xContext->jsonSerialize() : $xContext;

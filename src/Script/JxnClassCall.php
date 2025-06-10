@@ -3,7 +3,7 @@
 namespace Jaxon\Script;
 
 /**
- * JxnClass.php
+ * JxnClassCall.php
  *
  * Call to a Jaxon registered class.
  *
@@ -16,7 +16,7 @@ namespace Jaxon\Script;
 
 use Jaxon\App\Dialog\Manager\DialogCommand;
  
-class JxnClass extends JxnCall
+class JxnClassCall extends JxnCall
 {
     /**
      * @var string

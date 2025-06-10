@@ -17,9 +17,10 @@ use Jaxon\Plugin\AbstractResponsePlugin;
 use Jaxon\Response\AjaxResponse;
 use Jaxon\Response\NodeResponse;
 use Jaxon\Script\Factory\CallFactory;
-use Jaxon\Script\JqCall;
+use Jaxon\Script\JqSelectorCall;
 use Jaxon\Script\JsExpr;
-use Jaxon\Script\JsCall;
+use Jaxon\Script\JsObjectCall;
+use Jaxon\Script\JsSelectorCall;
 use Closure;
 
 use function is_a;
@@ -93,22 +94,34 @@ class ScriptPlugin extends AbstractResponsePlugin
      * @param string $sPath    The jQuery selector path
      * @param mixed $xContext    A context associated to the selector
      *
-     * @return JqCall
+     * @return JqSelectorCall
      */
-    public function jq(string $sPath = '', $xContext = null): JqCall
+    public function jq(string $sPath = '', $xContext = null): JqSelectorCall
     {
         return $this->xFactory->jq($sPath, $xContext, $this->getCallback());
     }
 
     /**
-     * Create a js expression, and link it to the current response.
+     * Create a Javascript object expression, and link it to the current response.
      *
      * @param string $sObject
      *
-     * @return JsCall
+     * @return JsObjectCall
      */
-    public function js(string $sObject = ''): JsCall
+    public function jo(string $sObject = ''): JsObjectCall
     {
-        return $this->xFactory->js($sObject, $this->getCallback());
+        return $this->xFactory->jo($sObject, $this->getCallback());
+    }
+
+    /**
+     * Create a Javascript element selector expression, and link it to the current response.
+     *
+     * @param string $sElementId
+     *
+     * @return JsSelectorCall
+     */
+    public function je(string $sElementId = ''): JsSelectorCall
+    {
+        return $this->xFactory->je($sElementId, $this->getCallback());
     }
 }

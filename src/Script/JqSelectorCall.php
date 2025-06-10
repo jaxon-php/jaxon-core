@@ -1,9 +1,9 @@
 <?php
 
 /**
- * JqCall.php
+ * JqSelectorCall.php
  *
- * Call to a jquery selector.
+ * Factory for a JQuery selector.
  *
  * @package jaxon-core
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
@@ -18,7 +18,7 @@ use Jaxon\App\Dialog\Manager\DialogCommand;
 use Jaxon\Script\Call\Selector;
 use Closure;
 
-class JqCall extends AbstractJsCall
+class JqSelectorCall extends AbstractJsCall
 {
     /**
      * The constructor.

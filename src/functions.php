@@ -3,11 +3,12 @@
 namespace Jaxon;
 
 use Jaxon\App\Ajax\Lib as Jaxon;
-use Jaxon\App\View\HtmlAttrHelper;
+use Jaxon\App\View\Helper\HtmlAttrHelper;
 use Jaxon\Exception\SetupException;
 use Jaxon\Script\Factory\ParameterFactory;
-use Jaxon\Script\JqCall;
-use Jaxon\Script\JsCall;
+use Jaxon\Script\JqSelectorCall;
+use Jaxon\Script\JsObjectCall;
+use Jaxon\Script\JsSelectorCall;
 use Jaxon\Script\JxnCall;
 
 /**
@@ -48,7 +49,7 @@ function cl(string $sClassName): mixed
 }
 
 /**
- * Factory for ajax calls to a registered PHP class or function.
+ * Get a factory for a registered class.
  *
  * @param string $sClassName
  *
@@ -60,25 +61,40 @@ function rq(string $sClassName = ''): JxnCall
 }
 
 /**
- * Get the factory for calls to a js object or function.
+ * Get a factory for a Javascript object.
  *
  * @param string $sJsObject
  *
- * @return JsCall
+ * @return JsObjectCall
  */
-function js(string $sJsObject = ''): JsCall
+function jo(string $sJsObject = ''): JsObjectCall
 {
-    return jaxon()->di()->getCallFactory()->js($sJsObject);
+    return jaxon()->di()->getCallFactory()->jo($sJsObject);
 }
 
 /**
- * Shortcut to get the factory for calls to the js "window" object.
+ * Get a factory for a JQuery selector.
  *
- * @return JsCall
+ * @param string $sPath    The jQuery selector path
+ * @param mixed $xContext    A context associated to the selector
+ *
+ * @return JqSelectorCall
  */
-function jw(): JsCall
+function jq(string $sPath = '', $xContext = null): JqSelectorCall
 {
-    return js('.');
+    return jaxon()->di()->getCallFactory()->jq($sPath, $xContext);
+}
+
+/**
+ * Get a factory for a Javascript element selector.
+ *
+ * @param string $sElementId
+ *
+ * @return JsSelectorCall
+ */
+function je(string $sElementId = ''): JsSelectorCall
+{
+    return jaxon()->di()->getCallFactory()->je($sElementId);
 }
 
 /**
@@ -89,19 +105,6 @@ function jw(): JsCall
 function pm(): ParameterFactory
 {
     return jaxon()->di()->getParameterFactory();
-}
-
-/**
- * Create a JQuery selector with a given path
- *
- * @param string $sPath    The jQuery selector path
- * @param mixed $xContext    A context associated to the selector
- *
- * @return JqCall
- */
-function jq(string $sPath = '', $xContext = null): JqCall
-{
-    return jaxon()->di()->getCallFactory()->jq($sPath, $xContext);
 }
 
 /**

@@ -25,13 +25,6 @@
 
 namespace Jaxon\Plugin;
 
-use Jaxon\App\DataBag\DataBagContext;
-use Jaxon\Script\JqCall;
-
-/**
- * @method JqCall jq(string $sPath = '', $xContext = null)
- * @method DataBagContext bag(string $sName)
- */
 abstract class AbstractResponsePlugin extends AbstractPlugin implements ResponsePluginInterface
 {
     use ResponsePluginTrait;

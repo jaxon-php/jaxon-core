@@ -25,7 +25,6 @@ use Stringable;
 
 use function array_map;
 use function array_shift;
-use function count;
 use function func_get_args;
 use function implode;
 use function is_a;
@@ -111,9 +110,8 @@ class JsExpr implements ParameterInterface
      */
     public function __call(string $sMethod, array $aArguments): self
     {
-        $bHasParent = count($this->aCalls) > 0;
         // Append the action into the array
-        $this->aCalls[] = new Func($sMethod, $aArguments, $bHasParent);
+        $this->aCalls[] = new Func($sMethod, $aArguments);
         return $this;
     }
 
@@ -126,9 +124,8 @@ class JsExpr implements ParameterInterface
      */
     public function __get(string $sAttribute): self
     {
-        $bHasParent = count($this->aCalls) > 0;
         // Append the action into the array
-        $this->aCalls[] = Attr::get($sAttribute, $bHasParent);
+        $this->aCalls[] = Attr::get($sAttribute);
         return $this;
     }
 
@@ -142,9 +139,8 @@ class JsExpr implements ParameterInterface
      */
     public function __set(string $sAttribute, $xValue)
     {
-        $bHasParent = count($this->aCalls) > 0;
         // Append the action into the array
-        $this->aCalls[] = Attr::set($sAttribute, $xValue, $bHasParent);
+        $this->aCalls[] = Attr::set($sAttribute, $xValue);
         return $this;
     }
 

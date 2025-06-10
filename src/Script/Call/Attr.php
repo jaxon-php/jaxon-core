@@ -25,15 +25,14 @@ class Attr implements ParameterInterface
      * Create an abject to get the value of an attribute
      *
      * @param string $sAttrName    The attribute name
-     * @param bool $bHasParent
      *
      * @return Attr
      */
-    static public function get(string $sAttrName, bool $bHasParent): Attr
+    static public function get(string $sAttrName): Attr
     {
         $xAttr = new Attr();
         $xAttr->aValue = [
-            '_type' => $bHasParent ? 'attr' : 'gvar',
+            '_type' => 'attr',
             '_name' => $sAttrName,
         ];
         return $xAttr;
@@ -44,15 +43,14 @@ class Attr implements ParameterInterface
      *
      * @param string $sAttrName    The attribute name
      * @param mixed $xAttrValue    The attribute value
-     * @param bool $bHasParent
      *
      * @return Attr
      */
-    static public function set(string $sAttrName, $xAttrValue, bool $bHasParent)
+    static public function set(string $sAttrName, $xAttrValue)
     {
         $xAttr = new Attr();
         $xAttr->aValue = [
-            '_type' => $bHasParent ? 'attr' : 'gvar',
+            '_type' => 'attr',
             '_name' => $sAttrName,
             'value' => Parameter::make($xAttrValue),
         ];

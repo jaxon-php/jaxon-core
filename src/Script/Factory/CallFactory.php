@@ -17,8 +17,9 @@ namespace Jaxon\Script\Factory;
 use Jaxon\App\Dialog\Manager\DialogCommand;
 use Jaxon\Di\ComponentContainer;
 use Jaxon\Exception\SetupException;
-use Jaxon\Script\JqCall;
-use Jaxon\Script\JsCall;
+use Jaxon\Script\JsSelectorCall;
+use Jaxon\Script\JqSelectorCall;
+use Jaxon\Script\JsObjectCall;
 use Jaxon\Script\JxnCall;
 use Closure;
 
@@ -36,7 +37,7 @@ class CallFactory
     {}
 
     /**
-     * Get a factory for a js function call.
+     * Get a factory for a registered class.
      *
      * @param string $sClassName
      *
@@ -45,26 +46,27 @@ class CallFactory
      */
     public function rq(string $sClassName = ''): ?JxnCall
     {
+        $sClassName = trim($sClassName);
         return $sClassName === '' ? $this->cdi->getFunctionRequestFactory() :
             $this->cdi->getComponentRequestFactory($sClassName);
     }
 
     /**
-     * Get a factory for a js function call.
+     * Get a factory for a Javascript object.
      *
      * @param string $sObject
      * @param Closure|null $xExprCb
      *
-     * @return JsCall|null
+     * @return JsObjectCall|null
      */
-    public function js(string $sObject = '', ?Closure $xExprCb = null): ?JsCall
+    public function jo(string $sObject = '', ?Closure $xExprCb = null): ?JsObjectCall
     {
         /*
          * The provided closure will be called each time a js expression is created with this factory,
          * with the expression as the only parameter.
          * It is currently used to attach the expression to a Jaxon response.
          */
-        return new JsCall($this->xDialog, $xExprCb, trim($sObject, " \t"));
+        return new JsObjectCall($this->xDialog, $xExprCb, trim($sObject, " \t"));
     }
 
     /**
@@ -74,15 +76,33 @@ class CallFactory
      * @param mixed $xContext    A context associated to the selector
      * @param Closure|null $xExprCb
      *
-     * @return JqCall
+     * @return JqSelectorCall
      */
-    public function jq(string $sPath = '', $xContext = null, ?Closure $xExprCb = null): JqCall
+    public function jq(string $sPath = '', $xContext = null, ?Closure $xExprCb = null): JqSelectorCall
     {
         /*
          * The provided closure will be called each time a js expression is created with this factory,
          * with the expression as the only parameter.
          * It is currently used to attach the expression to a Jaxon response.
          */
-        return new JqCall($this->xDialog, $xExprCb, trim($sPath, " \t"), $xContext);
+        return new JqSelectorCall($this->xDialog, $xExprCb, trim($sPath, " \t"), $xContext);
+    }
+
+    /**
+     * Get a factory for a Javascript element selector.
+     *
+     * @param string $sElementId    The DOM element id
+     * @param Closure|null $xExprCb
+     *
+     * @return JsSelectorCall
+     */
+    public function je(string $sElementId = '', ?Closure $xExprCb = null): JsSelectorCall
+    {
+        /*
+         * The provided closure will be called each time a js expression is created with this factory,
+         * with the expression as the only parameter.
+         * It is currently used to attach the expression to a Jaxon response.
+         */
+        return new JsSelectorCall($this->xDialog, $xExprCb, trim($sElementId, " \t"));
     }
 }

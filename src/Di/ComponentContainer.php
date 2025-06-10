@@ -26,7 +26,7 @@ use Jaxon\Plugin\Request\CallableClass\ComponentRegistry;
 use Jaxon\Request\Handler\CallbackManager;
 use Jaxon\Request\Target;
 use Jaxon\Script\JxnCall;
-use Jaxon\Script\JxnClass;
+use Jaxon\Script\JxnClassCall;
 use Pimple\Container as PimpleContainer;
 use Closure;
 use ReflectionClass;
@@ -417,7 +417,7 @@ class ComponentContainer
             }
 
             $sPrefix = $this->di->g(ConfigManager::class)->getOption('core.prefix.class', '');
-            return new JxnClass($this->di->g(DialogCommand::class),
+            return new JxnClassCall($this->di->g(DialogCommand::class),
                 $sPrefix . $xCallable->getJsName());
         });
     }
