@@ -20,6 +20,7 @@ use Jaxon\Plugin\Manager\PackageManager;
 use Jaxon\Request\Handler\CallbackManager;
 
 use function call_user_func;
+use function dirname;
 
 class Bootstrap
 {
@@ -140,6 +141,12 @@ class Bootstrap
         // Setup the app.
         $this->setupApp();
         $this->onBoot();
+
+        // If required by config, make the helpers functions available in the global namespace.
+        if($this->xConfigManager->getAppOption('helpers.global', true))
+        {
+            require_once dirname(__DIR__, 2) . '/globals.php';
+        }
     }
 
     /**
