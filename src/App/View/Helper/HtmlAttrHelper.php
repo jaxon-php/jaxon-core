@@ -1,6 +1,6 @@
 <?php
 
-namespace Jaxon\App\View;
+namespace Jaxon\App\View\Helper;
 
 /**
  * HtmlAttrHelper.php
@@ -18,13 +18,10 @@ use Jaxon\App\Component\Pagination;
 use Jaxon\App\NodeComponent;
 use Jaxon\Di\ComponentContainer;
 use Jaxon\Script\JsExpr;
-use Jaxon\Script\JxnCall;
+use Jaxon\Script\Call\JxnCall;
 
-use function count;
 use function htmlentities;
 use function is_a;
-use function is_array;
-use function is_string;
 use function Jaxon\rq;
 use function json_encode;
 use function trim;
@@ -32,9 +29,9 @@ use function trim;
 class HtmlAttrHelper
 {
     /**
-     * @var string
+     * @var string|null
      */
-    private $sPaginationComponent;
+    private string|null $sPaginationComponent = null;
 
     /**
      * The constructor
@@ -42,9 +39,7 @@ class HtmlAttrHelper
      * @param ComponentContainer $cdi
      */
     public function __construct(protected ComponentContainer $cdi)
-    {
-        $this->sPaginationComponent = rq(Pagination::class)->_class();
-    }
+    {}
 
     /**
      * Get the component HTML code
@@ -62,7 +57,8 @@ class HtmlAttrHelper
         }
 
         $xComponent = $this->cdi->makeComponent($sClassName);
-        return is_a($xComponent, NodeComponent::class) ? (string)$xComponent->html() : '';
+        return is_a($xComponent, NodeComponent::class) ?
+            (string)$xComponent->html() : '';
     }
 
     /**
@@ -89,7 +85,10 @@ class HtmlAttrHelper
     public function pagination(JxnCall $xJsCall): string
     {
         // The pagination is always rendered with the same Pagination component.
-        return 'jxn-bind="' . $this->sPaginationComponent . '" jxn-item="' . $xJsCall->_class() . '"';
+        $sComponent = $this->sPaginationComponent ?:
+            ($this->sPaginationComponent = rq(Pagination::class)->_class());
+        $sItem = $xJsCall->_class();
+        return "jxn-bind=\"$sComponent\" jxn-item=\"$sItem\"";
     }
 
     /**
@@ -105,73 +104,30 @@ class HtmlAttrHelper
     }
 
     /**
-     * @param array $on
+     * Set a selector for the next event handler
      *
-     * @return bool
+     * @param string $sSelector
+     *
+     * @return EventAttr
      */
-    private function checkOn(array $on)
+    public function select(string $sSelector): EventAttr
     {
-        // Only accept arrays of 2 entries.
-        $count = count($on);
-        if($count !== 2)
-        {
-            return false;
-        }
-
-        // Only accept arrays with int index from 0, and string value.
-        for($i = 0; $i < $count; $i++)
-        {
-            if(!isset($on[$i]) || !is_string($on[$i]))
-            {
-                return false;
-            }
-        }
-
-        return true;
+        return new EventAttr($sSelector);
     }
 
     /**
-     * Get the event handler attributes
+     * Set an event handler
      *
-     * @param string $select
      * @param string $event
-     * @param string $attr
      * @param JsExpr $xJsExpr
      *
      * @return string
      */
-    private function eventAttr(string $select, string $event, string $attr, JsExpr $xJsExpr): string
+    public function on(string $event, JsExpr $xJsExpr): string
     {
+        $event = trim($event);
         $sCall = htmlentities(json_encode($xJsExpr->jsonSerialize()));
-
-        return "$attr=\"$event\" jxn-call=\"$sCall\"" .
-            ($select !== '' ? "jxn-select=\"$select\" " : '');
-    }
-
-    /**
-     * Set an event handler with the "on" keywork
-     *
-     * @param string|array $on
-     * @param JsExpr $xJsExpr
-     *
-     * @return string
-     */
-    public function on(string|array $on, JsExpr $xJsExpr): string
-    {
-        $select = '';
-        $event = $on;
-        if(is_array($on))
-        {
-            if(!$this->checkOn($on))
-            {
-                return '';
-            }
-
-            $select = $on[0];
-            $event = $on[1];
-        }
-
-        return $this->eventAttr(trim($select), trim($event), 'jxn-on', $xJsExpr);
+        return "jxn-on=\"$event\" jxn-call=\"$sCall\"";
     }
 
     /**
@@ -184,23 +140,5 @@ class HtmlAttrHelper
     public function click(JsExpr $xJsExpr): string
     {
         return $this->on('click', $xJsExpr);
-    }
-
-    /**
-     * Set an event handler with the "event" keywork
-     *
-     * @param array $on
-     * @param JsExpr $xJsExpr
-     *
-     * @return string
-     */
-    public function event(array $on, JsExpr $xJsExpr): string
-    {
-        if(!$this->checkOn($on))
-        {
-            return '';
-        }
-
-        return $this->eventAttr(trim($on[0]), trim($on[1]), 'jxn-event', $xJsExpr);
     }
 }

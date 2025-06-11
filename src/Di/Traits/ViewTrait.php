@@ -6,7 +6,7 @@ use Jaxon\App\Dialog\Manager\DialogCommand;
 use Jaxon\App\Dialog\Manager\LibraryRegistryInterface;
 use Jaxon\App\Pagination\Renderer;
 use Jaxon\App\Pagination\RendererInterface;
-use Jaxon\App\View\HtmlAttrHelper;
+use Jaxon\App\View\Helper\HtmlAttrHelper;
 use Jaxon\App\View\TemplateView;
 use Jaxon\App\View\ViewRenderer;
 use Jaxon\Di\ComponentContainer;
