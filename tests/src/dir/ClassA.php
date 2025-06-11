@@ -1,7 +1,5 @@
 <?php
 
-use function Jaxon\jaxon;
-
 class ClassA
 {
     public function methodAa()

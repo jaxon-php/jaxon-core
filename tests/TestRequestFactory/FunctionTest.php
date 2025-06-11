@@ -6,9 +6,6 @@ use Jaxon\Jaxon;
 use Jaxon\Exception\SetupException;
 use PHPUnit\Framework\TestCase;
 
-use function Jaxon\jaxon;
-use function Jaxon\rq;
-use function Jaxon\pm;
 
 final class FunctionTest extends TestCase
 {
@@ -43,8 +40,8 @@ final class FunctionTest extends TestCase
     public function testRequestToGlobalFunction()
     {
         $this->assertEquals(
-            "jxn_testFunction()",
-            rq()->testFunction()->raw()
+            'jaxon.exec({"_type":"expr","calls":[{"_type":"attr","_name":"window"},{"_type":"func","_name":"testFunction","args":[]}]})',
+            jo()->testFunction()->__toString()
         );
     }
 
@@ -54,19 +51,8 @@ final class FunctionTest extends TestCase
     public function testRequestToGlobalFunctionWithParameter()
     {
         $this->assertEquals(
-            "jxn_testFunction('string', 2, true)",
-            rq()->testFunction('string', 2, true)->raw()
-        );
-    }
-
-    /**
-     * @throws SetupException
-     */
-    public function testRequestToGlobalFunctionWithJaxonParameter()
-    {
-        $this->assertEquals(
-            "jxn_testFunction('string', 2, true, jaxon.getFormValues('elt_id'), jaxon.$('elt_id').value)",
-            rq()->testFunction('string', 2, true, pm()->form('elt_id'), pm()->input('elt_id'))->raw()
+            'jaxon.exec({"_type":"expr","calls":[{"_type":"attr","_name":"window"},{"_type":"func","_name":"testFunction","args":["string",2,true]}]})',
+            jo()->testFunction('string', 2, true)->__toString()
         );
     }
 
@@ -76,8 +62,8 @@ final class FunctionTest extends TestCase
     public function testRequestToJaxonFunction()
     {
         $this->assertEquals(
-            "jxn_testFunction()",
-            rq()->testFunction()->raw()
+            'jaxon.exec({"_type":"expr","calls":[{"_type":"func","_name":"jxn_testFunction","args":[]}]})',
+            rq()->testFunction()->__toString()
         );
     }
 
@@ -87,19 +73,8 @@ final class FunctionTest extends TestCase
     public function testRequestToJaxonFunctionWithParameter()
     {
         $this->assertEquals(
-            "jxn_testFunction('string', 2, true)",
-            rq()->testFunction('string', 2, true)->raw()
-        );
-    }
-
-    /**
-     * @throws SetupException
-     */
-    public function testRequestToJaxonFunctionWithJaxonParameter()
-    {
-        $this->assertEquals(
-            "jxn_testFunction('string', 2, true, jaxon.getFormValues('elt_id'), jaxon.$('elt_id').value)",
-            rq()->testFunction('string', 2, true, pm()->form('elt_id'), pm()->input('elt_id'))->raw()
+            'jaxon.exec({"_type":"expr","calls":[{"_type":"func","_name":"jxn_testFunction","args":["string",2,true]}]})',
+            rq()->testFunction('string', 2, true)->__toString()
         );
     }
 

@@ -4,7 +4,6 @@ namespace Jaxon\Tests\TestMisc;
 
 use Jaxon\Exception\SetupException;
 use PHPUnit\Framework\TestCase;
-use function Jaxon\jaxon;
 
 final class ConfigTest extends TestCase
 {

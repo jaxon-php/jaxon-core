@@ -1,7 +1,6 @@
 <?php
 
 use Jaxon\App\FuncComponent;
-use function Jaxon\jq;
 
 class TestJQuery extends FuncComponent
 {

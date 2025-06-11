@@ -39,9 +39,8 @@ class Func implements ParameterInterface
     {
         $this->sType = 'func';
         $this->sName = $sName;
-        $this->aArguments = array_map(function($xArgument) {
-            return Parameter::make($xArgument);
-        }, $aArguments);
+        $this->aArguments = array_map(fn($xArgument) =>
+            Parameter::make($xArgument), $aArguments);
     }
 
     /**
@@ -63,7 +62,9 @@ class Func implements ParameterInterface
     {
         foreach($this->aArguments as $xArgument)
         {
-            if($xArgument->getType() === Parameter::PAGE_NUMBER)
+            if($xArgument->getType() === Parameter::PAGE_NUMBER ||
+                ($xArgument->getType() === Parameter::JSON_VALUE &&
+                    $xArgument->getValue()['_type'] === 'page'))
             {
                 return true;
             }
@@ -95,9 +96,8 @@ class Func implements ParameterInterface
         return [
             '_type' => $this->getType(),
             '_name' => $this->sName,
-            'args' => array_map(function(JsonSerializable $xParam) {
-                return $xParam->jsonSerialize();
-            }, $this->aArguments),
+            'args' => array_map(fn(JsonSerializable $xParam) =>
+                $xParam->jsonSerialize(), $this->aArguments),
         ];
     }
 
@@ -108,9 +108,8 @@ class Func implements ParameterInterface
      */
     public function __toString(): string
     {
-        $aArguments = array_map(function(Stringable $xParam) {
-            return $xParam->__toString();
-        }, $this->aArguments);
+        $aArguments = array_map(fn(Stringable $xParam) =>
+            $xParam->__toString(), $this->aArguments);
         return $this->sName . '(' . implode(', ', $aArguments) . ')';
     }
 }

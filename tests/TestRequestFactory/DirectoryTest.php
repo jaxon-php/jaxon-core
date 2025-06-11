@@ -5,8 +5,6 @@ namespace Jaxon\Tests\TestRequestFactory;
 use Jaxon\Jaxon;
 use Jaxon\Exception\SetupException;
 use PHPUnit\Framework\TestCase;
-use function Jaxon\jaxon;
-use function Jaxon\rq;
 
 class DirectoryTest extends TestCase
 {
@@ -34,8 +32,8 @@ class DirectoryTest extends TestCase
     public function testRequestToClass()
     {
         $this->assertEquals(
-            "ClassA.methodAa()",
-            rq('ClassA')->methodAa()->raw()
+            'jaxon.exec({"_type":"expr","calls":[{"_type":"func","_name":"ClassA.methodAa","args":[]}]})',
+            rq('ClassA')->methodAa()->__toString()
         );
     }
 
@@ -45,8 +43,8 @@ class DirectoryTest extends TestCase
     public function testRequestToClassWithParameter()
     {
         $this->assertEquals(
-            "ClassB.methodBb('string', 2, true)",
-            rq('ClassB')->methodBb('string', 2, true)->raw()
+            'jaxon.exec({"_type":"expr","calls":[{"_type":"func","_name":"ClassB.methodBb","args":["string",2,true]}]})',
+            rq('ClassB')->methodBb('string', 2, true)->__toString()
         );
     }
 }

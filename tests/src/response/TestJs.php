@@ -2,8 +2,6 @@
 
 use Jaxon\App\FuncComponent;
 
-use function Jaxon\js;
-
 class TestJs extends FuncComponent
 {
     public function redirect()
@@ -37,12 +35,12 @@ class TestJs extends FuncComponent
 
     public function setEvent()
     {
-        $this->response->setEventHandler('div', 'click', js('console')->debug("A debug message"));
+        $this->response->setEventHandler('div', 'click', jo('console')->debug("A debug message"));
     }
 
     public function onClick()
     {
-        $this->response->onClick('div', js('console')->debug("A debug message"));
+        $this->response->onClick('div', jo('console')->debug("A debug message"));
     }
 
     public function addHandler()

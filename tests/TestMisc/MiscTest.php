@@ -11,7 +11,6 @@ use PHPUnit\Framework\TestCase;
 use SessionManager;
 
 use function get_class;
-use function Jaxon\jaxon;
 
 final class MiscTest extends TestCase
 {

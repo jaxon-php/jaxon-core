@@ -2,9 +2,6 @@
 
 namespace Jaxon\NsTests\DirB;
 
-use Jaxon\Tests\Ns\Lib\ServiceInterface;
-use function Jaxon\jaxon;
-
 class ClassB
 {
     /**

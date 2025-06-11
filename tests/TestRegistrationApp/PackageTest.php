@@ -8,7 +8,6 @@ use Jaxon\Exception\SetupException;
 use PHPUnit\Framework\TestCase;
 use SamplePackage;
 
-use function Jaxon\jaxon;
 
 class PackageTest extends TestCase
 {

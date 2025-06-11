@@ -11,7 +11,6 @@ use PHPUnit\Framework\TestCase;
 use Jaxon\NsTests\DirA\ClassA;
 use Jaxon\NsTests\DirB\ClassB;
 use Jaxon\NsTests\DirC\ClassC;
-use function Jaxon\jaxon;
 
 class NamespaceTest extends TestCase
 {

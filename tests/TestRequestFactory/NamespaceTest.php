@@ -7,8 +7,6 @@ use Jaxon\Exception\SetupException;
 use PHPUnit\Framework\TestCase;
 use Jaxon\NsTests\DirA\ClassA;
 use Jaxon\NsTests\DirB\ClassB;
-use function Jaxon\jaxon;
-use function Jaxon\rq;
 
 class NamespaceTest extends TestCase
 {
@@ -36,8 +34,8 @@ class NamespaceTest extends TestCase
     public function testRequestToClass()
     {
         $this->assertEquals(
-            "Jaxon.NsTests.DirA.ClassA.methodAa()",
-            rq(ClassA::class)->methodAa()->raw()
+            'jaxon.exec({"_type":"expr","calls":[{"_type":"func","_name":"Jaxon.NsTests.DirA.ClassA.methodAa","args":[]}]})',
+            rq(ClassA::class)->methodAa()->__toString()
         );
     }
 
@@ -47,8 +45,8 @@ class NamespaceTest extends TestCase
     public function testRequestToClassWithParameter()
     {
         $this->assertEquals(
-            "Jaxon.NsTests.DirB.ClassB.methodBb('string', 2, true)",
-            rq(ClassB::class)->methodBb('string', 2, true)->raw()
+            'jaxon.exec({"_type":"expr","calls":[{"_type":"func","_name":"Jaxon.NsTests.DirB.ClassB.methodBb","args":["string",2,true]}]})',
+            rq(ClassB::class)->methodBb('string', 2, true)->__toString()
         );
     }
 }

@@ -10,7 +10,6 @@ use Jaxon\Plugin\Response\Script\ScriptPlugin;
 use Nyholm\Psr7Server\ServerRequestCreator;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
-use function Jaxon\jaxon;
 
 class ResponseTest extends TestCase
 {

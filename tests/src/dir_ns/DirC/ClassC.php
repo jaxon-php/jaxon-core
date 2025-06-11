@@ -5,7 +5,6 @@ namespace Jaxon\NsTests\DirC;
 use Jaxon\App\FuncComponent;
 use Jaxon\Exception\SetupException;
 use Jaxon\NsTests\DirB\ClassB;
-use function Jaxon\jaxon;
 
 class ClassC extends FuncComponent
 {

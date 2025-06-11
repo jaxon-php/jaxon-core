@@ -13,7 +13,6 @@ use Psr\Http\Message\ServerRequestInterface;
 use Exception;
 
 use function get_class;
-use function Jaxon\jaxon;
 
 class CallbackTest extends TestCase
 {

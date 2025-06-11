@@ -13,7 +13,6 @@ use Jaxon\Tests\Ns\Ajax\ClassB;
 use Jaxon\Tests\Ns\Ajax\ClassC;
 use PHPUnit\Framework\TestCase;
 
-use function Jaxon\jaxon;
 use function strlen;
 
 class NamespaceTest extends TestCase

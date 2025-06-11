@@ -15,7 +15,6 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\NullLogger;
 use PHPUnit\Framework\TestCase;
 
-use function Jaxon\jaxon;
 
 class PsrRequestHandlerTest extends TestCase
 {

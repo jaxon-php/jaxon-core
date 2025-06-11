@@ -2,8 +2,6 @@
 
 namespace Jaxon\NsTests\DirA;
 
-use function Jaxon\jaxon;
-
 class ClassA
 {
     public function methodAa()

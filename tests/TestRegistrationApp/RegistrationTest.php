@@ -12,7 +12,6 @@ use Nyholm\Psr7Server\ServerRequestCreator;
 use Psr\Http\Message\ServerRequestInterface;
 use PHPUnit\Framework\TestCase;
 
-use function Jaxon\jaxon;
 use function Jaxon\Dialogs\_register;
 
 class RegistrationTest extends TestCase

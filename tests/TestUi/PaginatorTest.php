@@ -8,10 +8,6 @@ use Jaxon\Plugin\Response\Pagination\PaginatorPlugin;
 use Jaxon\Response\Response;
 use PHPUnit\Framework\TestCase;
 
-use function Jaxon\jaxon;
-use function Jaxon\rq;
-use function Jaxon\pm;
-use function Jaxon\jq;
 use function trim;
 
 class PaginatorTest extends TestCase
@@ -196,7 +192,7 @@ class PaginatorTest extends TestCase
             '<li class="enabled" data-page="3"><a role="link">3</a></li>' .
             '<li class="enabled" data-page="2"><a role="link">&raquo;</a></li>' .
             '</ul>';
-        $xPaginator->render(rq('Sample')->method('string', pm()->page(), 26, true), 'wrapper');
+        $xPaginator->render(rq('Sample')->method('string', je()->rd()->page(), 26, true), 'wrapper');
         $aCommands = $this->xResponse->getCommands();
 
         $this->assertCount(2, $aCommands);

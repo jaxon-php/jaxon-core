@@ -12,10 +12,8 @@ use Jaxon\Tests\Ns\Lib\ServiceInterface;
 use Pimple\Container as AppContainer;
 use Pimple\Psr11\Container as PsrContainer;
 use PHPUnit\Framework\TestCase;
-use ReflectionException;
 
 use function get_class;
-use function Jaxon\jaxon;
 
 class ContainerTest extends TestCase
 {

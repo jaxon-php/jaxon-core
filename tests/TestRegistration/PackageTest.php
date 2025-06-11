@@ -10,7 +10,6 @@ use Jaxon\Utils\Http\UriException;
 use PHPUnit\Framework\TestCase;
 use SamplePackage;
 
-use function Jaxon\jaxon;
 
 class PackageTest extends TestCase
 {

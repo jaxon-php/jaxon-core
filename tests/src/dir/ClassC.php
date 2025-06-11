@@ -1,8 +1,5 @@
 <?php
 
-use Jaxon\Response\Response;
-use function Jaxon\jaxon;
-
 class ClassC
 {
     public function methodCa()

@@ -9,7 +9,6 @@ use Nyholm\Psr7Server\ServerRequestCreator;
 use Psr\Http\Message\ServerRequestInterface;
 use PHPUnit\Framework\TestCase;
 
-use function Jaxon\jaxon;
 
 class PageDomTest extends TestCase
 {

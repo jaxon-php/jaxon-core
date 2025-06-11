@@ -9,7 +9,6 @@ use Jaxon\Jaxon;
 use Jaxon\Plugin\Request\CallableFunction\CallableFunction;
 use Jaxon\Plugin\Request\CallableFunction\CallableFunctionPlugin;
 use PHPUnit\Framework\TestCase;
-use function Jaxon\jaxon;
 use function strlen;
 
 final class FunctionTest extends TestCase
