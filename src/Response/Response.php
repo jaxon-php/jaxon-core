@@ -22,7 +22,7 @@
 namespace Jaxon\Response;
 
 use Jaxon\Script\JsExpr;
-use Jaxon\Script\JxnCall;
+use Jaxon\Script\Call\JxnCall;
 
 class Response extends AjaxResponse
 {
@@ -167,84 +167,6 @@ class Response extends AjaxResponse
     }
 
     /**
-     * Add a command to create a new element on the browser
-     *
-     * @param string $sParent    The id of the parent element
-     * @param string $sTag    The tag name to be used for the new element
-     * @param string $sId    The id to assign to the new element
-     *
-     * @return self
-     */
-    public function create(string $sParent, string $sTag, string $sId): self
-    {
-        $this->xManager->addCommand('node.create', [
-            'id' => $this->str($sParent),
-            'tag' => [
-                'name' => $this->str($sTag),
-                'id' => $this->str($sId),
-            ],
-        ]);
-        return $this;
-    }
-
-    /**
-     * Add a command to insert a new element just prior to the specified element
-     *
-     * @param string $sBefore    The id of the element used as a reference point for the insertion
-     * @param string $sTag    The tag name to be used for the new element
-     * @param string $sId    The id to assign to the new element
-     *
-     * @return self
-     */
-    public function insertBefore(string $sBefore, string $sTag, string $sId): self
-    {
-        $this->xManager->addCommand('node.insert.before', [
-            'id' => $this->str($sBefore),
-            'tag' => [
-                'name' => $this->str($sTag),
-                'id' => $this->str($sId),
-            ],
-        ]);
-        return $this;
-    }
-
-    /**
-     * Add a command to insert a new element just prior to the specified element
-     * This is an alias for insertBefore.
-     *
-     * @param string $sBefore    The id of the element used as a reference point for the insertion
-     * @param string $sTag    The tag name to be used for the new element
-     * @param string $sId    The id to assign to the new element
-     *
-     * @return self
-     */
-    public function insert(string $sBefore, string $sTag, string $sId): self
-    {
-        return $this->insertBefore($sBefore, $sTag, $sId);
-    }
-
-    /**
-     * Add a command to insert a new element after the specified
-     *
-     * @param string $sAfter    The id of the element used as a reference point for the insertion
-     * @param string $sTag    The tag name to be used for the new element
-     * @param string $sId    The id to assign to the new element
-     *
-     * @return self
-     */
-    public function insertAfter(string $sAfter, string $sTag, string $sId): self
-    {
-        $this->xManager->addCommand('node.insert.after', [
-            'id' => $this->str($sAfter),
-            'tag' => [
-                'name' => $this->str($sTag),
-                'id' => $this->str($sId),
-            ],
-        ]);
-        return $this;
-    }
-
-    /**
      * Add a command to bind an element to a component
      *
      * @param string $sTarget   The id of the element
@@ -268,8 +190,91 @@ class Response extends AjaxResponse
     }
 
     /**
+     * Add a command to create a new element on the browser
+     * @deprecated DOM element creation functions are deprecated
+     *
+     * @param string $sParent    The id of the parent element
+     * @param string $sTag    The tag name to be used for the new element
+     * @param string $sId    The id to assign to the new element
+     *
+     * @return self
+     */
+    public function create(string $sParent, string $sTag, string $sId): self
+    {
+        $this->xManager->addCommand('node.create', [
+            'id' => $this->str($sParent),
+            'tag' => [
+                'name' => $this->str($sTag),
+                'id' => $this->str($sId),
+            ],
+        ]);
+        return $this;
+    }
+
+    /**
+     * Add a command to insert a new element just prior to the specified element
+     * @deprecated DOM element creation functions are deprecated
+     *
+     * @param string $sBefore    The id of the element used as a reference point for the insertion
+     * @param string $sTag    The tag name to be used for the new element
+     * @param string $sId    The id to assign to the new element
+     *
+     * @return self
+     */
+    public function insertBefore(string $sBefore, string $sTag, string $sId): self
+    {
+        $this->xManager->addCommand('node.insert.before', [
+            'id' => $this->str($sBefore),
+            'tag' => [
+                'name' => $this->str($sTag),
+                'id' => $this->str($sId),
+            ],
+        ]);
+        return $this;
+    }
+
+    /**
+     * Add a command to insert a new element just prior to the specified element
+     * This is an alias for insertBefore.
+     * @deprecated DOM element creation functions are deprecated
+     *
+     * @param string $sBefore    The id of the element used as a reference point for the insertion
+     * @param string $sTag    The tag name to be used for the new element
+     * @param string $sId    The id to assign to the new element
+     *
+     * @return self
+     */
+    public function insert(string $sBefore, string $sTag, string $sId): self
+    {
+        return $this->insertBefore($sBefore, $sTag, $sId);
+    }
+
+    /**
+     * Add a command to insert a new element after the specified
+     * @deprecated DOM element creation functions are deprecated
+     *
+     * @param string $sAfter    The id of the element used as a reference point for the insertion
+     * @param string $sTag    The tag name to be used for the new element
+     * @param string $sId    The id to assign to the new element
+     *
+     * @return self
+     */
+    public function insertAfter(string $sAfter, string $sTag, string $sId): self
+    {
+        $this->xManager->addCommand('node.insert.after', [
+            'id' => $this->str($sAfter),
+            'tag' => [
+                'name' => $this->str($sTag),
+                'id' => $this->str($sId),
+            ],
+        ]);
+        return $this;
+    }
+
+    /**
      * Add a command to set an event handler on the specified element
      * This handler can take custom parameters, and is is executed in a specific context.
+     * @deprecated Event handler functions are deprecated
      *
      * @param string $sTarget    The id of the element
      * @param string $sEvent    The name of the event
@@ -289,6 +294,7 @@ class Response extends AjaxResponse
 
     /**
      * Add a command to set a click handler on the browser
+     * @deprecated Event handler functions are deprecated
      *
      * @param string $sTarget    The id of the element
      * @param JsExpr $xCall    The event handler
@@ -303,6 +309,7 @@ class Response extends AjaxResponse
     /**
      * Add a command to add an event handler on the specified element
      * This handler can take custom parameters, and is is executed in a specific context.
+     * @deprecated Event handler functions are deprecated
      *
      * @param string $sTarget    The id of the element
      * @param string $sEvent    The name of the event
@@ -323,6 +330,7 @@ class Response extends AjaxResponse
     /**
      * Add a command to install an event handler on the specified element
      * You can add more than one event handler to an element's event using this method.
+     * @deprecated Event handler functions are deprecated
      *
      * @param string $sTarget    The id of the element
      * @param string $sEvent    The name of the event
@@ -342,6 +350,7 @@ class Response extends AjaxResponse
 
     /**
      * Add a command to remove an event handler from an element
+     * @deprecated Event handler functions are deprecated
      *
      * @param string $sTarget    The id of the element
      * @param string $sEvent    The name of the event

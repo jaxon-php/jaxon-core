@@ -21,12 +21,10 @@ use Jaxon\Script\Action\Func;
 use Jaxon\Script\Action\Parameter;
 use Jaxon\Script\Action\ParameterInterface;
 use JsonSerializable;
-use Stringable;
 
 use function array_map;
 use function array_shift;
 use function func_get_args;
-use function implode;
 use function is_a;
 use function json_encode;
 
@@ -467,18 +465,5 @@ class JsExpr implements ParameterInterface
     public function __toString(): string
     {
         return 'jaxon.exec(' . json_encode($this->jsonSerialize()) . ')';
-    }
-
-    /**
-     * Returns the js code of the call
-     *
-     * @return string
-     */
-    public function raw(): string
-    {
-        $sScript = implode('.', array_map(function(Stringable $xParam) {
-            return $xParam->__toString();
-        }, $this->aCalls));
-        return $this->bToInt ? "parseInt($sScript)" : $sScript;
     }
 }
