@@ -36,12 +36,14 @@ class JqSelectorCall extends AbstractJsCall
     }
 
     /**
-     * Get the json expression
+     * Get the call to add to the expression
+     *
+     * @return Selector
      */
-    protected function _expr(): JsExpr
+    protected function _exprCall(): Selector
     {
-        return $this->_initExpr(new JsExpr($this->xDialog,
-            new Selector('jq', $this->sSelector, $this->xContext)));
+        // If the value is '', return the js "this" object, otherwise, the selected DOM element.
+        return new Selector('jq', $this->sSelector ?: 'this', $this->xContext);
     }
 
     /**
@@ -54,7 +56,7 @@ class JqSelectorCall extends AbstractJsCall
      */
     public function on(string $sName, JsExpr $xHandler): JsExpr
     {
-        return $this->_expr()->on($sName, $xHandler);
+        return $this->_expr()->event('jq', $sName, $xHandler);
     }
 
     /**
@@ -66,6 +68,6 @@ class JqSelectorCall extends AbstractJsCall
      */
     public function click(JsExpr $xHandler): JsExpr
     {
-        return $this->on('click', $xHandler);
+        return $this->_expr()->event('jq', 'click', $xHandler);
     }
 }

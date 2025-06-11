@@ -36,16 +36,27 @@ class JsSelectorCall extends AbstractJsCall
     }
 
     /**
-     * Get the json expression
+     * Get the call to add to the expression
+     *
+     * @return Selector
+     */
+    protected function _exprCall(): Selector
+    {
+        // If the value is '', return the js "this" object, otherwise, the selected DOM element.
+        return new Selector('js', $this->sElementId ?: 'this');
+    }
+
+    /**
+     * Set an event handler on the selected elements
+     *
+     * @param string $sName
+     * @param JsExpr $xHandler
      *
      * @return JsExpr
      */
-    protected function _expr(): JsExpr
+    public function addEventListener(string $sName, JsExpr $xHandler): JsExpr
     {
-        // If the value is '', return the js "this" object, otherwise, the selected DOM element.
-        $xJsExpr = new JsExpr($this->xDialog,
-            new Selector('js', $this->sElementId ?: 'this'));
-        return $this->_initExpr($xJsExpr);
+        return $this->_expr()->event('js', $sName, $xHandler);
     }
 
     /**
@@ -57,7 +68,7 @@ class JsSelectorCall extends AbstractJsCall
      */
     public function click(JsExpr $xHandler): JsExpr
     {
-        return $this->_expr()->addEventListener('click', $xHandler);
+        return $this->_expr()->event('js', 'click', $xHandler);
     }
 
     /**

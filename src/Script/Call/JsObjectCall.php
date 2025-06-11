@@ -35,15 +35,13 @@ class JsObjectCall extends AbstractJsCall
     }
 
     /**
-     * Create a js expression
+     * Get the call to add to the expression
      *
-     * @return JsExpr
+     * @return Attr
      */
-    protected function _expr(): JsExpr
+    protected function _exprCall(): Attr
     {
         // If the value is '', return the js "window" object, otherwise, the corresponding js object.
-        $xJsExpr = new JsExpr($this->xDialog,
-            Attr::get($this->sJsObject ?: 'window'));
-        return $this->_initExpr($xJsExpr);
+        return Attr::get($this->sJsObject ?: 'window');
     }
 }

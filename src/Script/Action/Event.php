@@ -9,26 +9,15 @@ use Stringable;
 class Event implements JsonSerializable, Stringable
 {
     /**
-     * @var string
-     */
-    private $sName;
-
-    /**
-     * @var JsExpr
-     */
-    private $xHandler;
-
-    /**
      * The constructor.
      *
+     * @param string $sMode    The event mode: 'jq' or 'js'
      * @param string $sName    The event name
      * @param JsExpr $xHandler   The event handler
      */
-    public function __construct(string $sName, JsExpr $xHandler)
-    {
-        $this->sName = $sName;
-        $this->xHandler = $xHandler;
-    }
+    public function __construct(private string $sMode,
+        private string $sName, private JsExpr $xHandler)
+    {}
 
     /**
      * Convert this call to array, when converting the response into json.
@@ -40,6 +29,7 @@ class Event implements JsonSerializable, Stringable
         return [
             '_type' => 'event',
             '_name' => $this->sName,
+            'mode' => $this->sMode,
             'func' => $this->xHandler->jsonSerialize(),
         ];
     }

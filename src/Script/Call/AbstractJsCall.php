@@ -15,39 +15,40 @@ namespace Jaxon\Script\Call;
  */
 
 use Jaxon\App\Dialog\Manager\DialogCommand;
+use Jaxon\Script\Action\Attr;
+use Jaxon\Script\Action\Selector;
 use Jaxon\Script\JsExpr;
 use Closure;
 
 abstract class AbstractJsCall extends AbstractCall
 {
     /**
-     * A function to call when the expression is created
-     *
-     * @var Closure
-     */
-    protected $xExprCb;
-
-    /**
      * The constructor.
      *
      * @param DialogCommand $xDialog
      * @param Closure|null $xExprCb
      */
-    protected function __construct(DialogCommand $xDialog, ?Closure $xExprCb)
+    protected function __construct(DialogCommand $xDialog, protected ?Closure $xExprCb)
     {
         $this->xDialog = $xDialog;
-        $this->xExprCb = $xExprCb;
     }
 
     /**
-     * Call the js expression callback
+     * Get the call to add to the expression
      *
-     * @param JsExpr $xJsExpr
+     * @return Attr|Selector
+     */
+    abstract protected function _exprCall(): Attr|Selector;
+
+    /**
+     * Get the json expression
      *
      * @return JsExpr
      */
-    protected function _initExpr(JsExpr $xJsExpr): JsExpr
+    protected function _expr(): JsExpr
     {
+        $xJsExpr = new JsExpr($this->xDialog, $this->_exprCall());
+        // Apply the callback, if one was defined.
         $this->xExprCb !== null && ($this->xExprCb)($xJsExpr);
         return $xJsExpr;
     }

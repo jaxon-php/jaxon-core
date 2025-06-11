@@ -145,27 +145,16 @@ class JsExpr implements ParameterInterface
     /**
      * Set an event handler on the selected elements
      *
+     * @param string $sMode    The event mode: 'jq' or 'js'
      * @param string $sName
      * @param JsExpr $xHandler
      *
      * @return self
      */
-    public function on(string $sName, JsExpr $xHandler): self
+    public function event(string $sMode, string $sName, JsExpr $xHandler): self
     {
-        $this->aCalls[] = new Event($sName, $xHandler);
+        $this->aCalls[] = new Event($sMode, $sName, $xHandler);
         return $this;
-    }
-
-    /**
-     * Set a "click" event handler on the selected elements
-     *
-     * @param JsExpr $xHandler
-     *
-     * @return self
-     */
-    public function click(JsExpr $xHandler): self
-    {
-        return $this->on('click', $xHandler);
     }
 
     /**
@@ -433,9 +422,8 @@ class JsExpr implements ParameterInterface
      */
     public function jsonSerialize(): array
     {
-        $aCalls = array_map(function(JsonSerializable $xCall) {
-            return $xCall->jsonSerialize();
-        }, $this->aCalls);
+        $aCalls = array_map(fn(JsonSerializable $xCall) =>
+            $xCall->jsonSerialize(), $this->aCalls);
         if($this->bToInt)
         {
             $aCalls[] = $this->toIntCall();
