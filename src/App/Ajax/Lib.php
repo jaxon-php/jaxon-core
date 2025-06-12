@@ -39,8 +39,6 @@ use Jaxon\Request\Upload\UploadHandlerInterface;
 use Jaxon\Response\Response;
 use Jaxon\Utils\Template\TemplateEngine;
 
-use function trim;
-
 final class Lib
 {
     use LibTrait;
@@ -108,20 +106,13 @@ final class Lib
     }
 
     /**
-     * Read the options from the file, if provided, and return the config
-     *
-     * @param string $sConfigFile The full path to the config file
-     * @param string $sConfigSection The section of the config file to be loaded
+     * Get the config manager
      *
      * @return ConfigManager
      * @throws SetupException
      */
-    public function config(string $sConfigFile = '', string $sConfigSection = ''): ConfigManager
+    public function config(): ConfigManager
     {
-        if(!empty(($sConfigFile = trim($sConfigFile))))
-        {
-            $this->getConfigManager()->load($sConfigFile, trim($sConfigSection));
-        }
         return $this->getConfigManager();
     }
 

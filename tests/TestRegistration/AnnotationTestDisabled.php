@@ -24,7 +24,7 @@ class AnnotationTestDisabled extends TestCase
     {
         _register();
 
-        jaxon()->config(__DIR__ . '/../config/annotations.php');
+        jaxon()->config()->load(__DIR__ . '/../config/annotations.php');
 
         jaxon()->register(Jaxon::CALLABLE_CLASS, Annotated::class);
         jaxon()->register(Jaxon::CALLABLE_CLASS, Excluded::class);
