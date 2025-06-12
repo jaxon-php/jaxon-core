@@ -99,7 +99,7 @@ class DialogPlugin implements PluginInterface, ResponsePluginInterface, ModalInt
     /**
      * @inheritDoc
      */
-    public function success(string $sMessage, array $aArgs = [])
+    public function success(string $sMessage, ...$aArgs)
     {
         $this->addCommand('dialog.alert.show', $this->xDialogCommand->success($sMessage, $aArgs));
     }
@@ -107,7 +107,7 @@ class DialogPlugin implements PluginInterface, ResponsePluginInterface, ModalInt
     /**
      * @inheritDoc
      */
-    public function info(string $sMessage, array $aArgs = [])
+    public function info(string $sMessage, ...$aArgs)
     {
         $this->addCommand('dialog.alert.show', $this->xDialogCommand->info($sMessage, $aArgs));
     }
@@ -115,7 +115,7 @@ class DialogPlugin implements PluginInterface, ResponsePluginInterface, ModalInt
     /**
      * @inheritDoc
      */
-    public function warning(string $sMessage, array $aArgs = [])
+    public function warning(string $sMessage, ...$aArgs)
     {
         $this->addCommand('dialog.alert.show', $this->xDialogCommand->warning($sMessage, $aArgs));
     }
@@ -123,7 +123,7 @@ class DialogPlugin implements PluginInterface, ResponsePluginInterface, ModalInt
     /**
      * @inheritDoc
      */
-    public function error(string $sMessage, array $aArgs = [])
+    public function error(string $sMessage, ...$aArgs)
     {
         $this->addCommand('dialog.alert.show', $this->xDialogCommand->error($sMessage, $aArgs));
     }

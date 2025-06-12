@@ -23,20 +23,11 @@ use Jaxon\Script\Action\ParameterInterface;
 use JsonSerializable;
 
 use function array_map;
-use function array_shift;
-use function func_get_args;
 use function is_a;
 use function json_encode;
 
 class JsExpr implements ParameterInterface
 {
-    /**
-     * Dialog for confirm questions and messages
-     *
-     * @var DialogCommand
-     */
-    protected $xDialog;
-
     /**
      * The actions to be applied on the selected element
      *
@@ -73,11 +64,10 @@ class JsExpr implements ParameterInterface
     protected $bToInt = false;
 
     /**
-     * @param DialogCommand $xDialog
+     * @param DialogCommand $xDialogCommand
      */
-    public function __construct(DialogCommand $xDialog, ...$aCalls)
+    public function __construct(protected DialogCommand $xDialogCommand, ...$aCalls)
     {
-        $this->xDialog = $xDialog;
         $this->aCalls = $aCalls;
     }
 
@@ -158,26 +148,16 @@ class JsExpr implements ParameterInterface
     }
 
     /**
-     * @param array $aArgs
-     *
-     * @return array
-     */
-    private function getArgs(array $aArgs): array
-    {
-        array_shift($aArgs);
-        return $aArgs;
-    }
-
-    /**
      * Show a message if the condition to the call is not met
      *
      * @param string $sMessage  The message to show
+     * @param array $aArgs      The message arguments
      *
      * @return self
      */
-    public function elseShow(string $sMessage): self
+    public function elseShow(string $sMessage, ...$aArgs): self
     {
-        $this->aAlert = $this->xDialog->warning($sMessage, $this->getArgs(func_get_args()));
+        $this->aAlert = $this->xDialogCommand->warning($sMessage, $aArgs);
         return $this;
     }
 
@@ -185,12 +165,13 @@ class JsExpr implements ParameterInterface
      * Show an information message if the condition to the call is not met
      *
      * @param string $sMessage  The message to show
+     * @param array $aArgs      The message arguments
      *
      * @return self
      */
-    public function elseInfo(string $sMessage): self
+    public function elseInfo(string $sMessage, ...$aArgs): self
     {
-        $this->aAlert = $this->xDialog->info($sMessage, $this->getArgs(func_get_args()));
+        $this->aAlert = $this->xDialogCommand->info($sMessage, $aArgs);
         return $this;
     }
 
@@ -198,12 +179,13 @@ class JsExpr implements ParameterInterface
      * Show a success message if the condition to the call is not met
      *
      * @param string $sMessage  The message to show
+     * @param array $aArgs      The message arguments
      *
      * @return self
      */
-    public function elseSuccess(string $sMessage): self
+    public function elseSuccess(string $sMessage, ...$aArgs): self
     {
-        $this->aAlert = $this->xDialog->success($sMessage, $this->getArgs(func_get_args()));
+        $this->aAlert = $this->xDialogCommand->success($sMessage, $aArgs);
         return $this;
     }
 
@@ -211,12 +193,13 @@ class JsExpr implements ParameterInterface
      * Show a warning message if the condition to the call is not met
      *
      * @param string $sMessage  The message to show
+     * @param array $aArgs      The message arguments
      *
      * @return self
      */
-    public function elseWarning(string $sMessage): self
+    public function elseWarning(string $sMessage, ...$aArgs): self
     {
-        $this->aAlert = $this->xDialog->warning($sMessage, $this->getArgs(func_get_args()));
+        $this->aAlert = $this->xDialogCommand->warning($sMessage, $aArgs);
         return $this;
     }
 
@@ -224,25 +207,27 @@ class JsExpr implements ParameterInterface
      * Show an error message if the condition to the call is not met
      *
      * @param string $sMessage  The message to show
+     * @param array $aArgs      The message arguments
      *
      * @return self
      */
-    public function elseError(string $sMessage): self
+    public function elseError(string $sMessage, ...$aArgs): self
     {
-        $this->aAlert = $this->xDialog->error($sMessage, $this->getArgs(func_get_args()));
+        $this->aAlert = $this->xDialogCommand->error($sMessage, $aArgs);
         return $this;
     }
 
     /**
      * Add a confirmation question to the request
      *
-     * @param string $sQuestion    The question to ask
+     * @param string $sQuestion The question to ask
+     * @param array $aArgs      The question arguments
      *
      * @return self
      */
-    public function confirm(string $sQuestion): self
+    public function confirm(string $sQuestion, ...$aArgs): self
     {
-        $this->aConfirm = $this->xDialog->confirm($sQuestion, $this->getArgs(func_get_args()));
+        $this->aConfirm = $this->xDialogCommand->confirm($sQuestion, $aArgs);
         return $this;
     }
 
