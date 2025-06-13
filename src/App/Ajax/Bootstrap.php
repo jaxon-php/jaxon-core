@@ -20,7 +20,6 @@ use Jaxon\Plugin\Manager\PackageManager;
 use Jaxon\Request\Handler\CallbackManager;
 
 use function call_user_func;
-use function dirname;
 
 class Bootstrap
 {
@@ -37,6 +36,11 @@ class Bootstrap
      * @var array
      */
     private $aAppOptions = [];
+
+    /**
+     * @var bool
+     */
+    private bool $bBootstrapped = false;
 
     /**
      * The class constructor
@@ -141,22 +145,21 @@ class Bootstrap
         // Setup the app.
         $this->setupApp();
         $this->onBoot();
-
-        // If required by config, make the helpers functions available in the global namespace.
-        if($this->xConfigManager->getAppOption('helpers.global', true))
-        {
-            require_once dirname(__DIR__, 2) . '/globals.php';
-        }
     }
 
     /**
-     * These callbacks are called right after the library is initialized.
+     * These callbacks are called once, after the library is initialized.
      *
      * @return void
      */
     public function onBoot()
     {
-        // Only call the callbacks that aren't called yet.
+        if($this->bBootstrapped)
+        {
+            return;
+        }
+
+        $this->bBootstrapped = true;
         $aBootCallbacks = $this->xCallbackManager->popBootCallbacks();
         foreach($aBootCallbacks as $aBootCallback)
         {

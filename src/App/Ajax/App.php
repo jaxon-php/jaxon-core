@@ -14,7 +14,6 @@
 
 namespace Jaxon\App\Ajax;
 
-use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;
 
 use function file_exists;
@@ -22,29 +21,30 @@ use function is_array;
 
 class App extends AbstractApp
 {
-    use SendTrait;
+    use Traits\SendResponseTrait;
 
     /**
      * @inheritDoc
      * @throws SetupException
      */
-    public function setup(string $sConfigFile = '')
+    public function setup(string $sConfigFile = ''): void
     {
         if(!file_exists($sConfigFile))
         {
-            $sMessage = $this->translator()->trans('errors.file.access', ['path' => $sConfigFile]);
-            throw new SetupException($sMessage);
+            throw new SetupException($this->translator()
+                ->trans('errors.file.access', ['path' => $sConfigFile]));
         }
 
         // Read the config options.
-        $aOptions = $this->getConfigManager()->read($sConfigFile);
+        $aOptions = $this->config()->read($sConfigFile);
         $aLibOptions = $aOptions['lib'] ?? [];
         $aAppOptions = $aOptions['app'] ?? [];
         if(!is_array($aLibOptions) || !is_array($aAppOptions))
         {
-            $sMessage = $this->translator()->trans('errors.file.content', ['path' => $sConfigFile]);
-            throw new SetupException($sMessage);
+            throw new SetupException($sMessage = $this->translator()
+                ->trans('errors.file.content', ['path' => $sConfigFile]));
         }
+
         // The bootstrap set this to false. It needs to be changed.
         if(!isset($aLibOptions['core']['response']['send']))
         {
@@ -55,15 +55,5 @@ class App extends AbstractApp
             ->lib($aLibOptions)
             ->app($aAppOptions)
             ->setup();
-    }
-
-    /**
-     * @inheritDoc
-     * @throws RequestException
-     */
-    public function httpResponse(string $sCode = '200')
-    {
-        // Send the response
-        $this->sendResponse($sCode);
     }
 }

@@ -40,9 +40,7 @@ trait AppTrait
         });
 
         // Jaxon App
-        $this->set(AppInterface::class, function() {
-            return new App();
-        });
+        $this->set(AppInterface::class, fn() => new App());
         // Jaxon App bootstrap
         $this->set(Bootstrap::class, function($di) {
             return new Bootstrap($di->g(ConfigManager::class),

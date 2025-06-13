@@ -224,7 +224,7 @@ class ClassTest extends TestCase
      */
     public function testRequestToExcludedClass()
     {
-        jaxon()->app()->setOption('', true);
+        jaxon()->setAppOption('', true);
         jaxon()->register(Jaxon::CALLABLE_CLASS, 'Excluded', [
             'include' => __DIR__ . '/../src/excluded.php',
             'functions' => [
@@ -258,7 +258,7 @@ class ClassTest extends TestCase
      */
     public function testRequestToExcludedMethod()
     {
-        jaxon()->app()->setOption('', true);
+        jaxon()->setAppOption('', true);
         jaxon()->register(Jaxon::CALLABLE_CLASS, 'Excluded', [
             'include' => __DIR__ . '/../src/excluded.php',
             'functions' => [

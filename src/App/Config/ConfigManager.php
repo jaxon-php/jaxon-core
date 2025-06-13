@@ -25,6 +25,8 @@ use Jaxon\Config\Exception\FileExtension;
 use Jaxon\Config\Exception\YamlExtension;
 use Jaxon\Exception\SetupException;
 
+use function dirname;
+
 class ConfigManager
 {
     /**
@@ -323,5 +325,20 @@ class ConfigManager
     public function addAppEventListener(string $sClassName)
     {
         $this->xEventManager->addAppConfigListener($sClassName);
+    }
+
+    /**
+     * Make the helpers functions available in the global namespace.
+     *
+     * @param bool $bForce
+     *
+     * @return void
+     */
+    public function globals(bool $bForce = false)
+    {
+        if($bForce || $this->getAppOption('helpers.global', true))
+        {
+            require_once dirname(__DIR__, 2) . '/globals.php';
+        }
     }
 }

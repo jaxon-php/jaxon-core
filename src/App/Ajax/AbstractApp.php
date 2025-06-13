@@ -14,15 +14,67 @@
 
 namespace Jaxon\App\Ajax;
 
+use Jaxon\App\Ajax\Bootstrap;
+use Jaxon\App\Ajax\Jaxon;
+use Psr\Container\ContainerInterface;
+
 abstract class AbstractApp implements AppInterface
 {
-    use AppTrait;
+    use Traits\ServicesTrait;
+    use Traits\PluginTrait;
+    use Traits\RequestTrait;
+    use Traits\ResponseTrait;
 
     /**
      * The class constructor
      */
     public function __construct()
     {
-        $this->initApp();
+        // Declared in DiTrait.
+        $this->xContainer = Jaxon::getInstance()->di();
+        $this->xComponentContainer = Jaxon::getInstance()->cdi();
     }
+
+    /**
+     * Get the Jaxon application bootstrapper.
+     *
+     * @return Bootstrap
+     */
+    protected function bootstrap(): Bootstrap
+    {
+        return $this->xContainer->getBootstrap();
+    }
+
+    /**
+     * Set the javascript asset
+     *
+     * @param bool $bExport    Whether to export the js code in a file
+     * @param bool $bMinify    Whether to minify the exported js file
+     * @param string $sUri    The URI to access the js file
+     * @param string $sDir    The directory where to create the js file
+     *
+     * @return void
+     */
+    public function asset(bool $bExport, bool $bMinify, string $sUri = '', string $sDir = ''): void
+    {
+        $this->bootstrap()->asset($bExport, $bMinify, $sUri, $sDir);
+    }
+
+    /**
+     * Set the container provided by the integrated framework
+     *
+     * @param ContainerInterface $xContainer    The container implementation
+     *
+     * @return void
+     */
+    public function setContainer(ContainerInterface $xContainer): void
+    {
+        $this->di()->setContainer($xContainer);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setup(string $sConfigFile = ''): void
+    {}
 }

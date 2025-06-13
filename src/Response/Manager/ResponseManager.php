@@ -21,11 +21,11 @@
 
 namespace Jaxon\Response\Manager;
 
-use Jaxon\App\Dialog\Manager\DialogCommand;
 use Jaxon\App\I18n\Translator;
 use Jaxon\Exception\AppException;
 use Jaxon\Di\Container;
 use Jaxon\Response\AbstractResponse;
+use Jaxon\Response\AjaxResponse;
 use Jaxon\Response\NodeResponse;
 use Jaxon\Response\Response;
 use Jaxon\Script\Call\JxnCall;
@@ -39,26 +39,6 @@ use function trim;
 
 class ResponseManager
 {
-    /**
-     * @var Container
-     */
-    private $di;
-
-    /**
-     * @var DialogCommand
-     */
-    protected $xDialog;
-
-    /**
-     * @var Translator
-     */
-    protected $xTranslator;
-
-    /**
-     * @var string
-     */
-    private $sCharacterEncoding;
-
     /**
      * The current response object that will be sent back to the browser
      * once the request processing phase is complete
@@ -107,11 +87,18 @@ class ResponseManager
      * @param Translator $xTranslator
      * @param string $sCharacterEncoding
      */
-    public function __construct(Container $di, Translator $xTranslator, string $sCharacterEncoding)
+    public function __construct(private Container $di,
+        private Translator $xTranslator, private string $sCharacterEncoding)
+    {}
+
+    /**
+     * Get the configured character encoding
+     *
+     * @return string
+     */
+    public function getCharacterEncoding(): string
     {
-        $this->di = $di;
-        $this->xTranslator = $xTranslator;
-        $this->sCharacterEncoding = $sCharacterEncoding;
+        return $this->sCharacterEncoding;
     }
 
     /**
@@ -293,11 +280,11 @@ class ResponseManager
     /**
      * Get the response to the Jaxon request
      *
-     * @return AbstractResponse
+     * @return Response
      */
     public function getResponse()
     {
-        return $this->xResponse ?: $this->di->getResponse();
+        return $this->di->getResponse();
     }
 
     /**
@@ -307,7 +294,17 @@ class ResponseManager
      */
     public function newResponse(): Response
     {
-        return $this->di->newResponse();
+        return $this->xResponse = $this->di->newResponse();
+    }
+
+    /**
+     * Get the Jaxon ajax response returned 
+     *
+     * @return AjaxResponse
+     */
+    public function ajaxResponse(): AjaxResponse
+    {
+        return $this->xResponse ?: $this->di->getResponse();
     }
 
     /**

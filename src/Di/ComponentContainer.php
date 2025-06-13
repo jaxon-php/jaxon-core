@@ -75,9 +75,8 @@ class ComponentContainer
      * The class constructor
      *
      * @param Container $di
-     * @param Translator $xTranslator
      */
-    public function __construct(private Container $di, private Translator $xTranslator)
+    public function __construct(private Container $di)
     {
         $this->xContainer = new PimpleContainer();
         $this->val(ComponentContainer::class, $this);
@@ -222,8 +221,8 @@ class ComponentContainer
         }
         catch(ReflectionException $e)
         {
-            throw new SetupException($this->xTranslator->trans('errors.class.invalid',
-                ['name' => $sClassName]));
+            throw new SetupException($this->di->g(Translator::class)
+                ->trans('errors.class.invalid', ['name' => $sClassName]));
         }
     }
 
@@ -255,7 +254,7 @@ class ComponentContainer
         }
         if(!isset($this->aComponents[$sClassName]))
         {
-            throw new SetupException($this->xTranslator
+            throw new SetupException($this->di->g(Translator::class)
                 ->trans('errors.class.invalid', ['name' => $sClassName]));
         }
     }

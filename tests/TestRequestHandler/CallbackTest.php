@@ -71,17 +71,21 @@ class CallbackTest extends TestCase
         $this->assertEquals(0, $this->nBootCount);
         // The on boot callbacks are called by the jaxon() function.
         jaxon()->setOption('core.prefix.class', '');
-        $this->assertEquals(1, $this->nBootCount);
+        $this->assertEquals(0, $this->nBootCount);
         // But each of them must be called only once.
         jaxon()->setOption('core.prefix.class', '');
-        $this->assertEquals(1, $this->nBootCount);
+        $this->assertEquals(0, $this->nBootCount);
 
         // A second callback
         jaxon()->callback()->boot(function() {
             $this->nBootCount += 2;
         });
-        // Process the request and get the response
-        $this->assertEquals(1, $this->nBootCount);
+
+        // Process the request and get the response.
+        jaxon()->processRequest();
+
+        // The callbacks has run now.
+        $this->assertEquals(3, $this->nBootCount);
         // The on boot callbacks are called by the jaxon() function.
         jaxon()->setOption('core.prefix.class', '');
         $this->assertEquals(3, $this->nBootCount);

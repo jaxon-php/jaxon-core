@@ -19,7 +19,7 @@ final class MiscTest extends TestCase
      */
     protected function setUp(): void
     {
-        jaxon()->config()->setOptions(['core' => ['language' => 'en']]);
+        jaxon()->setOptions(['core' => ['language' => 'en']]);
     }
 
     /**

@@ -14,7 +14,6 @@
 
 namespace Jaxon\Di;
 
-use Jaxon\App\Ajax\Lib;
 use Jaxon\App\I18n\Translator;
 use Jaxon\App\Session\SessionInterface;
 use Jaxon\Exception\SetupException;
@@ -61,12 +60,10 @@ class Container
     /**
      * The class constructor
      */
-    public function __construct(Lib $jaxon)
+    public function __construct()
     {
         $this->xLibContainer = new PimpleContainer();
 
-        // Save the Lib and Container instances
-        $this->val(Lib::class, $jaxon);
         $this->val(Container::class, $this);
 
         // Register the null logger by default
@@ -222,11 +219,9 @@ class Container
     public function set(string $sClass, Closure $xClosure, bool $bIsSingleton = true)
     {
         // Wrap the user closure into a new closure, so it can take this container as a parameter.
-        $xClosure = function() use($xClosure) {
-            return $xClosure($this);
-        };
-        $this->xLibContainer->offsetSet($sClass,
-            $bIsSingleton ? $xClosure : $this->xLibContainer->factory($xClosure));
+        $xClosure = fn() => $xClosure($this);
+        $this->xLibContainer->offsetSet($sClass, $bIsSingleton ?
+            $xClosure : $this->xLibContainer->factory($xClosure));
     }
 
     /**

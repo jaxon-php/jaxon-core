@@ -143,7 +143,7 @@ class RegistrationTest extends TestCase
                 ->withMethod('POST');
         });
 
-        $this->assertTrue(jaxon()->app()->canProcessRequest());
+        $this->assertTrue(jaxon()->canProcessRequest());
         jaxon()->di()->getCallableClassPlugin()->processRequest();
     }
 
@@ -167,9 +167,11 @@ class RegistrationTest extends TestCase
                 ->withMethod('POST');
         });
 
-        $this->assertTrue(jaxon()->app()->canProcessRequest());
-        jaxon()->app()->processRequest();
+        $this->assertTrue(jaxon()->canProcessRequest());
+        // The processRequest() method now calls httpResponse().
         $this->expectException(RequestException::class);
-        jaxon()->app()->httpResponse();
+        jaxon()->processRequest();
+        // $this->expectException(RequestException::class);
+        // jaxon()->httpResponse();
     }
 }

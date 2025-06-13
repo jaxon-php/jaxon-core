@@ -14,9 +14,6 @@
 
 namespace Jaxon\App\Ajax;
 
-use Jaxon\Plugin\AbstractPackage;
-use Jaxon\Plugin\ResponsePluginInterface;
-use Jaxon\Request\Handler\CallbackManager;
 use Jaxon\Response\AjaxResponse;
 use Jaxon\Utils\Http\UriException;
 use Psr\Container\ContainerInterface;
@@ -33,35 +30,6 @@ interface AppInterface
      * @return void
      */
     public function setLogger(LoggerInterface $logger);
-
-    /**
-     * Set the value of a config option
-     *
-     * @param string $sName    The option name
-     * @param mixed $sValue    The option value
-     *
-     * @return void
-     */
-    public function setOption(string $sName, $sValue);
-
-    /**
-     * Get the value of a config option
-     *
-     * @param string $sName    The option name
-     * @param mixed|null $xDefault    The default value, to be returned if the option is not defined
-     *
-     * @return mixed
-     */
-    public function getOption(string $sName, $xDefault = null);
-
-    /**
-     * Check the presence of a config option
-     *
-     * @param string $sName    The option name
-     *
-     * @return bool
-     */
-    public function hasOption(string $sName): bool;
 
     /**
      * Get the configured character encoding
@@ -139,9 +107,9 @@ interface AppInterface
     /**
      * Process an incoming Jaxon request, and return the response.
      *
-     * @return void
+     * @return mixed
      */
-    public function processRequest();
+    public function processRequest(): mixed;
 
     /**
      * Get the Jaxon ajax response
@@ -149,40 +117,6 @@ interface AppInterface
      * @return AjaxResponse
      */
     public function ajaxResponse(): AjaxResponse;
-
-    /**
-     * Get the HTTP response
-     *
-     * @param string $sCode    The HTTP response code
-     *
-     * @return mixed
-     */
-    public function httpResponse(string $sCode = '200');
-
-    /**
-     * Find a response plugin by name or class name
-     *
-     * @template R of ResponsePluginInterface
-     * @param string|class-string<R> $sName    The name of the plugin
-     *
-     * @return ($sName is class-string ? R : ResponsePluginInterface)|null
-     */
-    public function plugin(string $sName): ?ResponsePluginInterface;
-
-    /**
-     * Get a package instance
-     *
-     * @template P of AbstractPackage
-     * @param class-string<P> $sClassName The package class name
-     *
-     * @return P|null
-     */
-    public function package(string $sClassName): ?AbstractPackage;
-
-    /**
-     * @return CallbackManager
-     */
-    public function callback(): CallbackManager;
 
     /**
      * @param Closure $xClosure    A closure to create the session manager instance
@@ -230,5 +164,5 @@ interface AppInterface
      *
      * @return void
      */
-    public function setup(string $sConfigFile = '');
+    public function setup(string $sConfigFile = ''): void;
 }

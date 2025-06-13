@@ -6,7 +6,7 @@ use Jaxon\Jaxon;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\Request\CallableClass\CallableClassPlugin;
 use Jaxon\Plugin\Request\CallableClass\CallableObject;
-use Jaxon\Plugin\Request\CallableDir\CallableDirPlugin;
+use Jaxon\Plugin\Request\CallableClass\CallableDirPlugin;
 use PHPUnit\Framework\TestCase;
 
 use function strlen;

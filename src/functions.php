@@ -2,7 +2,7 @@
 
 namespace Jaxon;
 
-use Jaxon\App\Ajax\Lib as Jaxon;
+use Jaxon\App\Ajax\Jaxon;
 use Jaxon\App\View\Helper\HtmlAttrHelper;
 use Jaxon\Exception\SetupException;
 use Jaxon\Script\Call\JqSelectorCall;
@@ -45,7 +45,7 @@ function jaxon(): Jaxon
  */
 function cl(string $sClassName): mixed
 {
-    return jaxon()->cl($sClassName);
+    return jaxon()->cdi()->makeComponent($sClassName);
 }
 
 /**

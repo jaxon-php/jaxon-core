@@ -41,7 +41,7 @@ final class ConfigTest extends TestCase
      */
     protected function setUp(): void
     {
-        jaxon()->config()->setOptions(['core' => ['language' => 'en']]);
+        jaxon()->setOptions(['core' => ['language' => 'en']]);
         jaxon()->setOption('core.prefix.function', 'jaxon_');
     }
 
@@ -107,7 +107,7 @@ final class ConfigTest extends TestCase
     public function testSetOptionsDataDepth()
     {
         $this->expectException(SetupException::class);
-        jaxon()->config()->setOptions($this->aMaxDataDepthOptions);
+        jaxon()->setOptions($this->aMaxDataDepthOptions);
     }
 
     /**
