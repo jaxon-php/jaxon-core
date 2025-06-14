@@ -4,9 +4,8 @@ namespace Jaxon\Script\Action;
 
 use Jaxon\Script\JsExpr;
 use JsonSerializable;
-use Stringable;
 
-class Event implements JsonSerializable, Stringable
+class Event implements JsonSerializable
 {
     /**
      * The constructor.
@@ -32,15 +31,5 @@ class Event implements JsonSerializable, Stringable
             'mode' => $this->sMode,
             'func' => $this->xHandler->jsonSerialize(),
         ];
-    }
-
-    /**
-     * Returns a string representation of this call
-     *
-     * @return string
-     */
-    public function __toString(): string
-    {
-        return "on('{$this->sName}', () => { " . $this->xHandler->__toString() . '; })';
     }
 }

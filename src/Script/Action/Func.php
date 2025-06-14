@@ -3,73 +3,25 @@
 namespace Jaxon\Script\Action;
 
 use JsonSerializable;
-use Stringable;
-
 use function array_map;
-use function implode;
 
-class Func implements ParameterInterface
+class Func extends TypedValue
 {
-    /**
-     * The name of the javascript function
-     *
-     * @var string
-     */
-    private $sName;
-
-    /**
-     * The name of the javascript function
-     *
-     * @var string
-     */
-    private $sType;
-
-    /**
-     * @var array<ParameterInterface>
-     */
-    private $aArguments = [];
-
     /**
      * The constructor.
      *
      * @param string $sName     The method name
      * @param array $aArguments The method arguments
      */
-    public function __construct(string $sName, array $aArguments)
-    {
-        $this->sType = 'func';
-        $this->sName = $sName;
-        $this->aArguments = array_map(fn($xArgument) =>
-            Parameter::make($xArgument), $aArguments);
-    }
+    public function __construct(private string $sName, private array $aArguments)
+    {}
 
     /**
-     * Get the type
-     *
-     * @return string
+     * @inheritDoc
      */
     public function getType(): string
     {
-        return $this->sType;
-    }
-
-    /**
-     * Check if the request has a parameter of type Parameter::PAGE_NUMBER
-     *
-     * @return bool
-     */
-    private function hasPageNumber():  bool
-    {
-        foreach($this->aArguments as $xArgument)
-        {
-            if($xArgument->getType() === Parameter::PAGE_NUMBER ||
-                ($xArgument->getType() === Parameter::JSON_VALUE &&
-                    $xArgument->getValue()['_type'] === 'page'))
-            {
-                return true;
-            }
-        }
-        return false;
+        return 'func';
     }
 
     /**
@@ -79,10 +31,14 @@ class Func implements ParameterInterface
      */
     public function withPage(): self
     {
-        if(!$this->hasPageNumber())
+        foreach($this->aArguments as $xArgument)
         {
-            $this->aArguments[] = new Parameter(Parameter::PAGE_NUMBER, 0);
+            if(TypedValue::isPage($xArgument))
+            {
+                return $this;
+            }
         }
+        $this->aArguments[] = TypedValue::page();
         return $this;
     }
 
@@ -96,20 +52,8 @@ class Func implements ParameterInterface
         return [
             '_type' => $this->getType(),
             '_name' => $this->sName,
-            'args' => array_map(fn(JsonSerializable $xParam) =>
-                $xParam->jsonSerialize(), $this->aArguments),
+            'args' => array_map(fn(mixed $xArgument) =>
+                TypedValue::make($xArgument)->jsonSerialize(), $this->aArguments),
         ];
-    }
-
-    /**
-     * Returns a string representation of this call
-     *
-     * @return string
-     */
-    public function __toString(): string
-    {
-        $aArguments = array_map(fn(Stringable $xParam) =>
-            $xParam->__toString(), $this->aArguments);
-        return $this->sName . '(' . implode(', ', $aArguments) . ')';
     }
 }

@@ -98,16 +98,6 @@ function je(string $sElementId = ''): JsSelectorCall
 }
 
 /**
- * Get the single instance of the parameter factory
- *
- * @return ParameterFactory
- */
-function pm(): ParameterFactory
-{
-    return jaxon()->di()->getParameterFactory();
-}
-
-/**
  * Get the HTML attributes helper
  *
  * @return HtmlAttrHelper
@@ -115,4 +105,15 @@ function pm(): ParameterFactory
 function attr(): HtmlAttrHelper
 {
     return jaxon()->di()->getHtmlAttrHelper();
+}
+
+/**
+ * Get the single instance of the parameter factory
+ *
+ * @return ParameterFactory
+ * @deprecated Use the call factory functions instead.
+ */
+function pm(): ParameterFactory
+{
+    return jaxon()->di()->getParameterFactory();
 }

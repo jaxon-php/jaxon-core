@@ -18,15 +18,16 @@ use Jaxon\App\Dialog\Manager\DialogCommand;
 use Jaxon\Script\Action\Attr;
 use Jaxon\Script\Action\Event;
 use Jaxon\Script\Action\Func;
-use Jaxon\Script\Action\Parameter;
-use Jaxon\Script\Action\ParameterInterface;
+use Jaxon\Script\Action\TypedValue;
 use JsonSerializable;
+use Stringable;
 
 use function array_map;
 use function is_a;
+use function is_array;
 use function json_encode;
 
-class JsExpr implements ParameterInterface
+class JsExpr extends TypedValue implements Stringable
 {
     /**
      * The actions to be applied on the selected element
@@ -55,20 +56,6 @@ class JsExpr implements ParameterInterface
      * @var array
      */
     protected $aConfirm = [];
-
-    /**
-     * Convert the expression value to int
-     *
-     * @var bool
-     */
-    protected $bToInt = false;
-
-    /**
-     * Trim the expression value
-     *
-     * @var bool
-     */
-    protected $bTrim = false;
 
     /**
      * @param DialogCommand
@@ -265,7 +252,7 @@ class JsExpr implements ParameterInterface
      */
     public function ifeq($xValue1, $xValue2): self
     {
-        $this->aCondition = ['eq', Parameter::make($xValue1), Parameter::make($xValue2)];
+        $this->aCondition = ['eq', TypedValue::make($xValue1), TypedValue::make($xValue2)];
         return $this;
     }
 
@@ -279,7 +266,7 @@ class JsExpr implements ParameterInterface
      */
     public function ifteq($xValue1, $xValue2): self
     {
-        $this->aCondition = ['teq', Parameter::make($xValue1), Parameter::make($xValue2)];
+        $this->aCondition = ['teq', TypedValue::make($xValue1), TypedValue::make($xValue2)];
         return $this;
     }
 
@@ -293,7 +280,7 @@ class JsExpr implements ParameterInterface
      */
     public function ifne($xValue1, $xValue2): self
     {
-        $this->aCondition = ['ne', Parameter::make($xValue1), Parameter::make($xValue2)];
+        $this->aCondition = ['ne', TypedValue::make($xValue1), TypedValue::make($xValue2)];
         return $this;
     }
 
@@ -307,7 +294,7 @@ class JsExpr implements ParameterInterface
      */
     public function ifnte($xValue1, $xValue2): self
     {
-        $this->aCondition = ['nte', Parameter::make($xValue1), Parameter::make($xValue2)];
+        $this->aCondition = ['nte', TypedValue::make($xValue1), TypedValue::make($xValue2)];
         return $this;
     }
 
@@ -321,7 +308,7 @@ class JsExpr implements ParameterInterface
      */
     public function ifgt($xValue1, $xValue2): self
     {
-        $this->aCondition = ['gt', Parameter::make($xValue1), Parameter::make($xValue2)];
+        $this->aCondition = ['gt', TypedValue::make($xValue1), TypedValue::make($xValue2)];
         return $this;
     }
 
@@ -335,7 +322,7 @@ class JsExpr implements ParameterInterface
      */
     public function ifge($xValue1, $xValue2): self
     {
-        $this->aCondition = ['ge', Parameter::make($xValue1), Parameter::make($xValue2)];
+        $this->aCondition = ['ge', TypedValue::make($xValue1), TypedValue::make($xValue2)];
         return $this;
     }
 
@@ -349,7 +336,7 @@ class JsExpr implements ParameterInterface
      */
     public function iflt($xValue1, $xValue2): self
     {
-        $this->aCondition = ['lt', Parameter::make($xValue1), Parameter::make($xValue2)];
+        $this->aCondition = ['lt', TypedValue::make($xValue1), TypedValue::make($xValue2)];
         return $this;
     }
 
@@ -363,7 +350,7 @@ class JsExpr implements ParameterInterface
      */
     public function ifle($xValue1, $xValue2): self
     {
-        $this->aCondition = ['le', Parameter::make($xValue1), Parameter::make($xValue2)];
+        $this->aCondition = ['le', TypedValue::make($xValue1), TypedValue::make($xValue2)];
         return $this;
     }
 
@@ -400,7 +387,10 @@ class JsExpr implements ParameterInterface
      */
     public function toInt(): self
     {
-        $this->bToInt = true;
+        $this->aCalls[] = [
+            '_type' => 'func',
+            '_name' => 'toInt',
+        ];
         return $this;
     }
 
@@ -409,7 +399,10 @@ class JsExpr implements ParameterInterface
      */
     public function trim(): self
     {
-        $this->bTrim = true;
+        $this->aCalls[] = [
+            '_type' => 'func',
+            '_name' => 'trim',
+        ];
         return $this;
     }
 
@@ -428,25 +421,11 @@ class JsExpr implements ParameterInterface
      */
     public function jsonSerialize(): array
     {
-        $aCalls = array_map(fn(JsonSerializable $xCall) =>
-            $xCall->jsonSerialize(), $this->aCalls);
-
-        if($this->bTrim)
-        {
-            $aCalls[] = [
-                '_type' => 'func',
-                '_name' => 'trim',
-            ];
-        }
-        if($this->bToInt)
-        {
-            $aCalls[] = [
-                '_type' => 'func',
-                '_name' => 'toInt',
-            ];
-        }
-
-        $aJsExpr = ['_type' => $this->getType(), 'calls' => $aCalls];
+        $aJsExpr = [
+            '_type' => $this->getType(),
+            'calls' => array_map(fn(JsonSerializable|array $xCall) =>
+                is_array($xCall) ? $xCall : $xCall->jsonSerialize(), $this->aCalls),
+        ];
         if(($this->aConfirm))
         {
             $aJsExpr['confirm'] = $this->aConfirm;
@@ -459,6 +438,7 @@ class JsExpr implements ParameterInterface
         {
             $aJsExpr['alert'] = $this->aAlert;
         }
+
         return $aJsExpr;
     }
 

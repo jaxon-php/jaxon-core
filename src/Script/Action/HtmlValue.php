@@ -14,9 +14,7 @@
 
 namespace Jaxon\Script\Action;
 
-use JsonSerializable;
-
-class HtmlValue implements JsonSerializable
+class HtmlValue extends TypedValue
 {
     /**
      * The class contructor
@@ -25,6 +23,14 @@ class HtmlValue implements JsonSerializable
      */
     public function __construct(protected array $aValue)
     {}
+
+    /**
+     * @inheritDoc
+     */
+    public function getType(): string
+    {
+        return $this->aValue['_type'] ?? '_';
+    }
 
     /**
      * Convert the js value to int
@@ -49,8 +55,6 @@ class HtmlValue implements JsonSerializable
     }
 
     /**
-     * Convert to array.
-     *
      * @return array
      */
     public function jsonSerialize(): array

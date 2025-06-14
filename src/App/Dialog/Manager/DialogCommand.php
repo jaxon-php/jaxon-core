@@ -13,7 +13,7 @@
 
 namespace Jaxon\App\Dialog\Manager;
 
-use Jaxon\Script\Action\Parameter;
+use Jaxon\Script\Action\TypedValue;
 
 use function array_map;
 
@@ -76,7 +76,7 @@ class DialogCommand
         return [
             'str' => $sStr,
             'args' => array_map(function($xArg) {
-                return Parameter::make($xArg);
+                return TypedValue::make($xArg);
             }, $aArgs),
         ];
     }

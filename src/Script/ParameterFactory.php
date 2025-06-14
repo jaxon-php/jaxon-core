@@ -14,138 +14,114 @@
 
 namespace Jaxon\Script;
 
-use Jaxon\Script\Action\Parameter;
+use Jaxon\Script\Action\HtmlReader;
+use Jaxon\Script\Action\TypedValue;
 
 class ParameterFactory
 {
     /**
-     * Make a parameter of type Parameter::FORM_VALUES
+     * Make a parameter of type form values
      *
      * @param string $sFormId    The id of the HTML form
      *
-     * @return Parameter
+     * @return array
      */
-    public function form(string $sFormId): Parameter
+    public function form(string $sFormId): array
     {
-        return new Parameter(Parameter::FORM_VALUES, $sFormId);
+        return (new HtmlReader($sFormId))->form();
     }
 
     /**
-     * Make a parameter of type Parameter::INPUT_VALUE
+     * Make a parameter of type input value
      *
      * @param string $sInputId    the id of the HTML input element
      *
-     * @return Parameter
+     * @return TypedValue
      */
-    public function input(string $sInputId): Parameter
+    public function input(string $sInputId): TypedValue
     {
-        return new Parameter(Parameter::INPUT_VALUE, $sInputId);
+        return (new HtmlReader($sInputId))->input();
     }
 
     /**
-     * Make a parameter of type Parameter::CHECKED_VALUE
+     * Make a parameter of type checked value
      *
      * @param string $sInputId    the name of the HTML form element
      *
-     * @return Parameter
+     * @return array
      */
-    public function checked(string $sInputId): Parameter
+    public function checked(string $sInputId): array
     {
-        return new Parameter(Parameter::CHECKED_VALUE, $sInputId);
+        return (new HtmlReader($sInputId))->checked();
     }
 
     /**
-     * Make a parameter of type Parameter::CHECKED_VALUE
+     * Make a parameter of type select
      *
      * @param string $sInputId    the name of the HTML form element
      *
-     * @return Parameter
+     * @return TypedValue
      */
-    public function select(string $sInputId): Parameter
+    public function select(string $sInputId): TypedValue
     {
         return $this->input($sInputId);
     }
 
     /**
-     * Make a parameter of type Parameter::ELEMENT_INNERHTML
+     * Make a parameter of type inner html
      *
      * @param string $sElementId    the id of the HTML element
      *
-     * @return Parameter
+     * @return TypedValue
      */
-    public function html(string $sElementId): Parameter
+    public function html(string $sElementId): TypedValue
     {
-        return new Parameter(Parameter::ELEMENT_INNERHTML, $sElementId);
+        return (new HtmlReader($sElementId))->html();
     }
 
     /**
-     * Make a parameter of type Parameter::QUOTED_VALUE
+     * Make a parameter of type quoted string
      *
      * @param string $sValue    the value of the parameter
      *
-     * @return Parameter
+     * @return TypedValue
      */
-    public function string(string $sValue): Parameter
+    public function string(string $sValue): TypedValue
     {
-        return new Parameter(Parameter::QUOTED_VALUE, $sValue);
+        return TypedValue::make($sValue);
     }
 
     /**
-     * Make a parameter of type Parameter::NUMERIC_VALUE
+     * Make a parameter of type numeric
      *
      * @param int $nValue    the value of the parameter
      *
-     * @return Parameter
+     * @return TypedValue
      */
-    public function numeric(int $nValue): Parameter
+    public function numeric(int $nValue): TypedValue
     {
-        return new Parameter(Parameter::NUMERIC_VALUE, intval($nValue));
+        return TypedValue::make(intval($nValue));
     }
 
     /**
-     * Make a parameter of type Parameter::NUMERIC_VALUE
+     * Make a parameter of type numeric
      *
      * @param numeric $nValue    the value of the parameter
      *
-     * @return Parameter
+     * @return TypedValue
      */
-    public function int(int $nValue): Parameter
+    public function int(int $nValue): TypedValue
     {
         return $this->numeric($nValue);
     }
 
     /**
-     * Make a parameter of type Parameter::JS_VALUE
+     * Make a parameter of type page number
      *
-     * @param string $sValue    the javascript code of the parameter
-     *
-     * @return Parameter
+     * @return TypedValue
      */
-    public function javascript(string $sValue): Parameter
+    public function page(): TypedValue
     {
-        return new Parameter(Parameter::JS_VALUE, $sValue);
-    }
-
-    /**
-     * Make a parameter of type Parameter::JS_VALUE
-     *
-     * @param string $sValue    the javascript code of the parameter
-     *
-     * @return Parameter
-     */
-    public function js(string $sValue): Parameter
-    {
-        return $this->javascript($sValue);
-    }
-
-    /**
-     * Make a parameter of type Parameter::PAGE_NUMBER
-     *
-     * @return Parameter
-     */
-    public function page(): Parameter
-    {
-        // By default, the value of a parameter of type Parameter::PAGE_NUMBER is 0.
-        return new Parameter(Parameter::PAGE_NUMBER, 0);
+        return TypedValue::page();
     }
 }

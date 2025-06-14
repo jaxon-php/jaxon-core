@@ -2,23 +2,22 @@
 
 namespace Jaxon\Script\Action;
 
-class Attr implements ParameterInterface
+class Attr extends TypedValue
 {
     /**
-     * The attribute value
+     * The constructor
      *
-     * @var array
+     * @param array $aValue
      */
-    private $aValue;
+    public function __construct(private array $aValue)
+    {}
 
     /**
-     * Get the parameter type
-     *
-     * @return string
+     * @inheritDoc
      */
     public function getType(): string
     {
-        return $this->aValue['_type'];
+        return $this->aValue['_type'] ?? '_';
     }
 
     /**
@@ -28,14 +27,12 @@ class Attr implements ParameterInterface
      *
      * @return Attr
      */
-    static public function get(string $sAttrName): Attr
+    public static function get(string $sAttrName): Attr
     {
-        $xAttr = new Attr();
-        $xAttr->aValue = [
+        return new Attr([
             '_type' => 'attr',
             '_name' => $sAttrName,
-        ];
-        return $xAttr;
+        ]);
     }
 
     /**
@@ -46,15 +43,13 @@ class Attr implements ParameterInterface
      *
      * @return Attr
      */
-    static public function set(string $sAttrName, $xAttrValue)
+    public static function set(string $sAttrName, $xAttrValue)
     {
-        $xAttr = new Attr();
-        $xAttr->aValue = [
+        return new Attr([
             '_type' => 'attr',
             '_name' => $sAttrName,
-            'value' => Parameter::make($xAttrValue),
-        ];
-        return $xAttr;
+            'value' => TypedValue::make($xAttrValue)->jsonSerialize(),
+        ]);
     }
 
     /**
@@ -64,21 +59,6 @@ class Attr implements ParameterInterface
      */
     public function jsonSerialize(): array
     {
-        if(isset($this->aValue['value']))
-        {
-            $this->aValue['value'] = $this->aValue['value']->jsonSerialize();
-        }
         return $this->aValue;
-    }
-
-    /**
-     * Returns a string representation of this call
-     *
-     * @return string
-     */
-    public function __toString(): string
-    {
-        return !isset($this->aValue['value']) ? $this->aValue['_name'] :
-            $this->aValue['_name'] . ' = ' . $this->aValue['value']->__toString();
     }
 }

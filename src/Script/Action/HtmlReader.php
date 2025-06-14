@@ -65,10 +65,10 @@ class HtmlReader
     }
 
     /**
-     * @return array
+     * @return PageValue
      */
-    public function page(): array
+    public function page(): PageValue
     {
-        return ['_type' => 'page', '_name' => ''];
+        return TypedValue::page();
     }
 }
