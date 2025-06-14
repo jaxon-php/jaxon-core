@@ -17,7 +17,6 @@ namespace Jaxon\Di;
 use Jaxon\App\Component\AbstractComponent;
 use Jaxon\App\Component\Pagination;
 use Jaxon\App\Config\ConfigManager;
-use Jaxon\App\Dialog\Manager\DialogCommand;
 use Jaxon\App\I18n\Translator;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\Request\CallableClass\CallableObject;
@@ -56,9 +55,7 @@ class ComponentContainer
     private $xContainer;
 
     /**
-     * The classes
-     *
-     * These are all the classes, both registered and found in registered directories.
+     * The classes, both registered and found in registered directories.
      *
      * @var array
      */
@@ -82,10 +79,9 @@ class ComponentContainer
         $this->val(ComponentContainer::class, $this);
 
         // Register the call factory for registered functions
-        $this->set($this->getRequestFactoryKey(JxnCall::class), function() {
-            return new JxnCall($this->di->g(DialogCommand::class),
-                $this->di->g(ConfigManager::class)->getOption('core.prefix.function', ''));
-        });
+        $this->set($this->getRequestFactoryKey(JxnCall::class), fn() =>
+            new JxnCall($this->di->g(ConfigManager::class)
+                ->getOption('core.prefix.function', '')));
 
         // Register the pagination component, but do not export to js.
         $this->registerComponent(Pagination::class, [
@@ -318,8 +314,8 @@ class ComponentContainer
                 $xHelper->xTarget = $this->xTarget;
 
                 // Call the protected "_init()" method of the Component class.
-                $cSetter = function($di, $xHelper) {;
-                    $this->_init($di, $xHelper);
+                $cSetter = function($di, $xHelper) {
+                    $this->_init($di, $xHelper);  // "$this" here refers to the Component class.
                 };
                 $cSetter = $cSetter->bindTo($xClassInstance, $xClassInstance);
                 call_user_func($cSetter, $this->di, $xHelper);
@@ -416,8 +412,7 @@ class ComponentContainer
             }
 
             $sPrefix = $this->di->g(ConfigManager::class)->getOption('core.prefix.class', '');
-            return new JxnClassCall($this->di->g(DialogCommand::class),
-                $sPrefix . $xCallable->getJsName());
+            return new JxnClassCall($sPrefix . $xCallable->getJsName());
         });
     }
 
@@ -426,7 +421,7 @@ class ComponentContainer
      *
      * @return JxnCall
      */
-    public function getFunctionRequestFactory(): JxnCall
+    private function getFunctionRequestFactory(): JxnCall
     {
         return $this->get($this->getRequestFactoryKey(JxnCall::class));
     }
@@ -438,7 +433,7 @@ class ComponentContainer
      *
      * @return JxnCall|null
      */
-    public function getComponentRequestFactory(string $sClassName): ?JxnCall
+    private function getComponentRequestFactory(string $sClassName): ?JxnCall
     {
         $sClassName = trim($sClassName, " \t");
         if($sClassName === '')
@@ -452,5 +447,18 @@ class ComponentContainer
             $this->registerRequestFactory($sClassName, $sFactoryKey);
         }
         return $this->get($sFactoryKey);
+    }
+
+    /**
+     * Get a factory.
+     *
+     * @param string|class-string $sClassName
+     *
+     * @return JxnCall|null
+     */
+    public function getRequestFactory(string $sClassName = ''): JxnCall
+    {
+        return $sClassName === '' ? $this->getFunctionRequestFactory() :
+            $this->getComponentRequestFactory($sClassName);
     }
 }

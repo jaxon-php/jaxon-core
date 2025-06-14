@@ -14,9 +14,7 @@ namespace Jaxon\Script\Call;
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-use Jaxon\App\Dialog\Manager\DialogCommand;
 use Jaxon\Script\Action\Attr;
-use Jaxon\Script\JsExpr;
 use Closure;
 
 class JsObjectCall extends AbstractJsCall
@@ -24,14 +22,12 @@ class JsObjectCall extends AbstractJsCall
     /**
      * The class constructor
      *
-     * @param DialogCommand $xDialog
      * @param Closure|null $xExprCb
      * @param string $sJsObject
      */
-    public function __construct(DialogCommand $xDialog, ?Closure $xExprCb,
-        protected string $sJsObject)
+    public function __construct(?Closure $xExprCb, protected string $sJsObject)
     {
-        parent::__construct($xDialog, $xExprCb);
+        parent::__construct($xExprCb);
     }
 
     /**

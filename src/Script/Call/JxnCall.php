@@ -5,7 +5,7 @@ namespace Jaxon\Script\Call;
 /**
  * JxnCall.php
  *
- * Call to a Jaxon registered function or class.
+ * Call to a registered function or class.
  *
  * @package jaxon-core
  * @author Thierry Feuzeu
@@ -14,29 +14,17 @@ namespace Jaxon\Script\Call;
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-use Jaxon\App\Dialog\Manager\DialogCommand;
 use Jaxon\Script\JsExpr;
 
 class JxnCall extends AbstractCall
 {
     /**
-     * The Jaxon function prefix
-     *
-     * @var string
-     */
-    protected $sPrefix;
-
-    /**
      * The constructor.
      *
-     * @param DialogCommand $xDialog
-     * @param string $sPrefix
+     * @param string $sPrefix The call prefix
      */
-    public function __construct(DialogCommand $xDialog, string $sPrefix)
-    {
-        $this->xDialog = $xDialog;
-        $this->sPrefix = $sPrefix;
-    }
+    public function __construct(protected string $sPrefix)
+    {}
 
     /**
      * Create a js expression
@@ -45,7 +33,7 @@ class JxnCall extends AbstractCall
      */
     protected function _expr(): JsExpr
     {
-        return new JsExpr($this->xDialog);
+        return new JsExpr();
     }
 
     /**

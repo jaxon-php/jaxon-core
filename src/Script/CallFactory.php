@@ -21,6 +21,7 @@ use Jaxon\Script\Call\JsSelectorCall;
 use Jaxon\Script\Call\JqSelectorCall;
 use Jaxon\Script\Call\JsObjectCall;
 use Jaxon\Script\Call\JxnCall;
+use Jaxon\Script\JsExpr;
 use Closure;
 
 use function trim;
@@ -31,10 +32,12 @@ class CallFactory
      * The constructor.
      *
      * @param ComponentContainer $cdi
-     * @param DialogCommand $xDialog
+     * @param DialogCommand $xDialogCommand
      */
-    public function __construct(private ComponentContainer $cdi, private DialogCommand $xDialog)
-    {}
+    public function __construct(private ComponentContainer $cdi, DialogCommand $xDialogCommand)
+    {
+        JsExpr::setDialogCommand($xDialogCommand);
+    }
 
     /**
      * Get a factory for a registered class.
@@ -46,9 +49,7 @@ class CallFactory
      */
     public function rq(string $sClassName = ''): ?JxnCall
     {
-        $sClassName = trim($sClassName);
-        return $sClassName === '' ? $this->cdi->getFunctionRequestFactory() :
-            $this->cdi->getComponentRequestFactory($sClassName);
+        return $this->cdi->getRequestFactory(trim($sClassName));
     }
 
     /**
@@ -66,7 +67,7 @@ class CallFactory
          * with the expression as the only parameter.
          * It is currently used to attach the expression to a Jaxon response.
          */
-        return new JsObjectCall($this->xDialog, $xExprCb, trim($sObject, " \t"));
+        return new JsObjectCall($xExprCb, trim($sObject, " \t"));
     }
 
     /**
@@ -85,7 +86,7 @@ class CallFactory
          * with the expression as the only parameter.
          * It is currently used to attach the expression to a Jaxon response.
          */
-        return new JqSelectorCall($this->xDialog, $xExprCb, trim($sPath, " \t"), $xContext);
+        return new JqSelectorCall($xExprCb, trim($sPath, " \t"), $xContext);
     }
 
     /**
@@ -103,6 +104,6 @@ class CallFactory
          * with the expression as the only parameter.
          * It is currently used to attach the expression to a Jaxon response.
          */
-        return new JsSelectorCall($this->xDialog, $xExprCb, trim($sElementId, " \t"));
+        return new JsSelectorCall($xExprCb, trim($sElementId, " \t"));
     }
 }

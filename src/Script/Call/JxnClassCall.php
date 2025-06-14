@@ -5,7 +5,7 @@ namespace Jaxon\Script\Call;
 /**
  * JxnClassCall.php
  *
- * Call to a Jaxon registered class.
+ * Call to a registered class.
  *
  * @package jaxon-core
  * @author Thierry Feuzeu
@@ -13,26 +13,17 @@ namespace Jaxon\Script\Call;
  * @license https://opensource.org/licenses/BSD-3-Clause BSD 3-Clause License
  * @link https://github.com/jaxon-php/jaxon-core
  */
-
-use Jaxon\App\Dialog\Manager\DialogCommand;
  
 class JxnClassCall extends JxnCall
 {
     /**
-     * @var string
-     */
-    protected $sJsObject;
-
-    /**
      * The class constructor
      *
-     * @param DialogCommand $xDialog
      * @param string $sJsObject
      */
-    public function __construct(DialogCommand $xDialog, string $sJsObject)
+    public function __construct(protected string $sJsObject)
     {
-        parent::__construct($xDialog, $sJsObject . '.');
-        $this->sJsObject = $sJsObject;
+        parent::__construct("$sJsObject.");
     }
 
     /**

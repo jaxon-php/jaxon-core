@@ -14,7 +14,6 @@
 
 namespace Jaxon\Script\Call;
 
-use Jaxon\App\Dialog\Manager\DialogCommand;
 use Jaxon\Script\Action\HtmlReader;
 use Jaxon\Script\Action\Selector;
 use Jaxon\Script\JsExpr;
@@ -25,14 +24,12 @@ class JsSelectorCall extends AbstractJsCall
     /**
      * The constructor.
      *
-     * @param DialogCommand $xDialog
      * @param Closure|null $xExprCb
      * @param string $sElementId    The DOM element id
      */
-    public function __construct(DialogCommand $xDialog, ?Closure $xExprCb,
-        protected string $sElementId)
+    public function __construct(?Closure $xExprCb, protected string $sElementId)
     {
-        parent::__construct($xDialog, $xExprCb);
+        parent::__construct($xExprCb);
     }
 
     /**

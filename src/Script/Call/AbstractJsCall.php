@@ -14,7 +14,6 @@ namespace Jaxon\Script\Call;
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-use Jaxon\App\Dialog\Manager\DialogCommand;
 use Jaxon\Script\Action\Attr;
 use Jaxon\Script\Action\Selector;
 use Jaxon\Script\JsExpr;
@@ -25,13 +24,10 @@ abstract class AbstractJsCall extends AbstractCall
     /**
      * The constructor.
      *
-     * @param DialogCommand $xDialog
      * @param Closure|null $xExprCb
      */
-    protected function __construct(DialogCommand $xDialog, protected ?Closure $xExprCb)
-    {
-        $this->xDialog = $xDialog;
-    }
+    protected function __construct(protected ?Closure $xExprCb)
+    {}
 
     /**
      * Get the call to add to the expression
@@ -47,7 +43,7 @@ abstract class AbstractJsCall extends AbstractCall
      */
     protected function _expr(): JsExpr
     {
-        $xJsExpr = new JsExpr($this->xDialog, $this->_exprCall());
+        $xJsExpr = new JsExpr($this->_exprCall());
         // Apply the callback, if one was defined.
         $this->xExprCb !== null && ($this->xExprCb)($xJsExpr);
         return $xJsExpr;

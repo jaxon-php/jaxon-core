@@ -14,16 +14,10 @@
 
 namespace Jaxon\Script\Call;
 
-use Jaxon\App\Dialog\Manager\DialogCommand;
 use Jaxon\Script\JsExpr;
 
 abstract class AbstractCall
 {
-    /**
-     * @var DialogCommand
-     */
-    protected $xDialog;
-
     /**
      * Create a js expression
      *

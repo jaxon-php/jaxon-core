@@ -64,11 +64,28 @@ class JsExpr implements ParameterInterface
     protected $bToInt = false;
 
     /**
-     * @param DialogCommand $xDialogCommand
+     * @param DialogCommand
      */
-    public function __construct(protected DialogCommand $xDialogCommand, ...$aCalls)
+    private static DialogCommand $xDialogCommand;
+
+    /**
+     * The constructor
+     */
+    public function __construct(...$aCalls)
     {
         $this->aCalls = $aCalls;
+    }
+
+    /**
+     * Set the dialog command
+     *
+     * @param DialogCommand $xDialogCommand
+     *
+     * @return void
+     */
+    public static function setDialogCommand(DialogCommand $xDialogCommand): void
+    {
+        self::$xDialogCommand = $xDialogCommand;
     }
 
     /**
@@ -157,7 +174,7 @@ class JsExpr implements ParameterInterface
      */
     public function elseShow(string $sMessage, ...$aArgs): self
     {
-        $this->aAlert = $this->xDialogCommand->warning($sMessage, $aArgs);
+        $this->aAlert = self::$xDialogCommand->warning($sMessage, $aArgs);
         return $this;
     }
 
@@ -171,7 +188,7 @@ class JsExpr implements ParameterInterface
      */
     public function elseInfo(string $sMessage, ...$aArgs): self
     {
-        $this->aAlert = $this->xDialogCommand->info($sMessage, $aArgs);
+        $this->aAlert = self::$xDialogCommand->info($sMessage, $aArgs);
         return $this;
     }
 
@@ -185,7 +202,7 @@ class JsExpr implements ParameterInterface
      */
     public function elseSuccess(string $sMessage, ...$aArgs): self
     {
-        $this->aAlert = $this->xDialogCommand->success($sMessage, $aArgs);
+        $this->aAlert = self::$xDialogCommand->success($sMessage, $aArgs);
         return $this;
     }
 
@@ -199,7 +216,7 @@ class JsExpr implements ParameterInterface
      */
     public function elseWarning(string $sMessage, ...$aArgs): self
     {
-        $this->aAlert = $this->xDialogCommand->warning($sMessage, $aArgs);
+        $this->aAlert = self::$xDialogCommand->warning($sMessage, $aArgs);
         return $this;
     }
 
@@ -213,7 +230,7 @@ class JsExpr implements ParameterInterface
      */
     public function elseError(string $sMessage, ...$aArgs): self
     {
-        $this->aAlert = $this->xDialogCommand->error($sMessage, $aArgs);
+        $this->aAlert = self::$xDialogCommand->error($sMessage, $aArgs);
         return $this;
     }
 
@@ -227,7 +244,7 @@ class JsExpr implements ParameterInterface
      */
     public function confirm(string $sQuestion, ...$aArgs): self
     {
-        $this->aConfirm = $this->xDialogCommand->confirm($sQuestion, $aArgs);
+        $this->aConfirm = self::$xDialogCommand->confirm($sQuestion, $aArgs);
         return $this;
     }
 
