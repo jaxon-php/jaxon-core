@@ -386,7 +386,7 @@ class JsExpr implements ParameterInterface
     protected function toIntCall(): array
     {
         return [
-            '_type' => 'method',
+            '_type' => 'func',
             '_name' => 'toInt',
             'args' => [],
         ];
