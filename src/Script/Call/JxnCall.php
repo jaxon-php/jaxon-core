@@ -46,13 +46,10 @@ class JxnCall extends AbstractCall
      */
     public function __call(string $sMethod, array $aArguments): JsExpr
     {
-        // Append the prefix to the method name
-        return parent::__call($this->sPrefix . $sMethod, $aArguments);
+        return parent::__call("{$this->sPrefix}{$sMethod}", $aArguments);
     }
 
     /**
-     * Get the js class name
-     *
      * @return string
      */
     public function _class(): string

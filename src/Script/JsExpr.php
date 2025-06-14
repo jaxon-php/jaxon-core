@@ -64,6 +64,13 @@ class JsExpr implements ParameterInterface
     protected $bToInt = false;
 
     /**
+     * Trim the expression value
+     *
+     * @var bool
+     */
+    protected $bTrim = false;
+
+    /**
      * @param DialogCommand
      */
     private static DialogCommand $xDialogCommand;
@@ -398,15 +405,12 @@ class JsExpr implements ParameterInterface
     }
 
     /**
-     * return array
+     * @return self
      */
-    protected function toIntCall(): array
+    public function trim(): self
     {
-        return [
-            '_type' => 'func',
-            '_name' => 'toInt',
-            'args' => [],
-        ];
+        $this->bTrim = true;
+        return $this;
     }
 
     /**
@@ -426,9 +430,20 @@ class JsExpr implements ParameterInterface
     {
         $aCalls = array_map(fn(JsonSerializable $xCall) =>
             $xCall->jsonSerialize(), $this->aCalls);
+
+        if($this->bTrim)
+        {
+            $aCalls[] = [
+                '_type' => 'func',
+                '_name' => 'trim',
+            ];
+        }
         if($this->bToInt)
         {
-            $aCalls[] = $this->toIntCall();
+            $aCalls[] = [
+                '_type' => 'func',
+                '_name' => 'toInt',
+            ];
         }
 
         $aJsExpr = ['_type' => $this->getType(), 'calls' => $aCalls];

@@ -16,7 +16,12 @@ namespace Jaxon\Script\Action;
 
 class HtmlReader
 {
-    public function __construct(private string $sElementId)
+    /**
+     * The class constructor
+     *
+     * @param string $sElementId
+     */
+    public function __construct(private string $sElementId = '')
     {}
 
     /**
@@ -30,33 +35,33 @@ class HtmlReader
     /**
      * @return array
      */
-    public function input(): array
-    {
-        return ['_type' => 'input', '_name' => $this->sElementId];
-    }
-
-    /**
-     * @return array
-     */
     public function checked(): array
     {
         return ['_type' => 'checked', '_name' => $this->sElementId];
     }
 
     /**
-     * @return array
+     * @return HtmlValue
      */
-    public function select(): array
+    public function input(): HtmlValue
+    {
+        return new HtmlValue(['_type' => 'input', '_name' => $this->sElementId]);
+    }
+
+    /**
+     * @return HtmlValue
+     */
+    public function select(): HtmlValue
     {
         return $this->input();
     }
 
     /**
-     * @return array
+     * @return HtmlValue
      */
-    public function html(): array
+    public function html(): HtmlValue
     {
-        return ['_type' => 'html', '_name' => $this->sElementId];
+        return new HtmlValue(['_type' => 'html', '_name' => $this->sElementId]);
     }
 
     /**
