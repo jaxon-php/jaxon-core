@@ -100,7 +100,7 @@ class ParameterFactory
      */
     public function numeric(int $nValue): TypedValue
     {
-        return TypedValue::make(intval($nValue));
+        return TypedValue::make($nValue);
     }
 
     /**

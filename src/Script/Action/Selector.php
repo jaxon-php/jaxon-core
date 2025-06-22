@@ -3,18 +3,12 @@
 namespace Jaxon\Script\Action;
 
 use JsonSerializable;
-use Stringable;
 
 use function is_a;
 use function trim;
 
-class Selector implements JsonSerializable, Stringable
+class Selector implements JsonSerializable
 {
-    /**
-     * @var string
-     */
-    private $sScript;
-
     /**
      * @var array
      */
@@ -36,29 +30,6 @@ class Selector implements JsonSerializable, Stringable
             $this->aCall['context'] = is_a($xContext, JsonSerializable::class) ?
                 $xContext->jsonSerialize() : $xContext;
         }
-
-        $this->sScript = $this->getPathAsStr($sName, $sMode, $xContext);
-    }
-
-    /**
-     * Get the selector js.
-     *
-     * @param string $sPath    The jQuery selector path
-     * @param string $sMode    The selector mode: 'jq' or 'js'
-     * @param mixed $xContext    A context associated to the selector
-     *
-     * @return string
-     */
-    private function getPathAsStr(string $sPath, string $sMode, $xContext)
-    {
-        if(!$xContext)
-        {
-            return $sMode === 'jq' ? "jaxon.jq('$sPath')" : $sPath;
-        }
-
-        $sContext = is_a($xContext, self::class) ?
-            $xContext->__toString() : "jaxon.jq('" . trim("{$xContext}") . "')";
-        return "jaxon.jq('{$sPath}', $sContext)";
     }
 
     /**
@@ -69,15 +40,5 @@ class Selector implements JsonSerializable, Stringable
     public function jsonSerialize(): array
     {
         return $this->aCall;
-    }
-
-    /**
-     * Returns a string representation of this call
-     *
-     * @return string
-     */
-    public function __toString(): string
-    {
-        return $this->sScript;
     }
 }
