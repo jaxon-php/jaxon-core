@@ -1,8 +1,20 @@
 <?php
 
+/**
+ * jaxon.php
+ *
+ * The Jaxon class and namespaced global functions.
+ *
+ * @package jaxon-core
+ * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
+ * @copyright 2022 Thierry Feuzeu <thierry.feuzeu@gmail.com>
+ * @license https://opensource.org/licenses/BSD-3-Clause BSD 3-Clause License
+ * @link https://github.com/jaxon-php/jaxon-core
+ */
+
 namespace Jaxon;
 
-use Jaxon\App\Ajax\Jaxon;
+use Jaxon\App\Ajax\Jaxon as JaxonLib;
 use Jaxon\App\View\Helper\HtmlAttrHelper;
 use Jaxon\Exception\SetupException;
 use Jaxon\Script\Call\JqSelectorCall;
@@ -12,26 +24,13 @@ use Jaxon\Script\Call\JxnCall;
 use Jaxon\Script\ParameterFactory;
 
 /**
- * functions.php
+ * Return the single instance of the Jaxon class
  *
- * This file is automatically loaded by the Composer autoloader
- * The Jaxon global functions are defined here.
- *
- * @package jaxon-core
- * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
- * @copyright 2016 Thierry Feuzeu <thierry.feuzeu@gmail.com>
- * @license https://opensource.org/licenses/BSD-3-Clause BSD 3-Clause License
- * @link https://github.com/jaxon-php/jaxon-core
+ * @return JaxonLib
  */
-
-/**
- * Return the single instance of the Lib class
- *
- * @return Jaxon
- */
-function jaxon(): Jaxon
+function jaxon(): JaxonLib
 {
-    return Jaxon::getInstance();
+    return JaxonLib::getInstance();
 }
 
 /**

@@ -1,6 +1,5 @@
 <?php
 
-use Jaxon\App\Ajax\Jaxon;
 use Jaxon\App\View\Helper\HtmlAttrHelper;
 use Jaxon\Exception\SetupException;
 use Jaxon\Script\Call\JqSelectorCall;
@@ -13,7 +12,7 @@ use Jaxon\Script\Call\JxnCall;
  *
  * This file moves the Jaxon global functions to the global namespace,
  * so they can be called without the namespace or the use instruction.
- * It must be disabled in case of function naming conflict.
+ * Loading this file can be disabled in case of function naming conflict.
  *
  * @package jaxon-core
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
@@ -21,16 +20,6 @@ use Jaxon\Script\Call\JxnCall;
  * @license https://opensource.org/licenses/BSD-3-Clause BSD 3-Clause License
  * @link https://github.com/jaxon-php/jaxon-core
  */
-
-/**
- * Return the single instance of the Lib class
- *
- * @return Jaxon
- */
-function jaxon(): Jaxon
-{
-    return \Jaxon\jaxon();
-}
 
 /**
  * Get an instance of a registered PHP class.
