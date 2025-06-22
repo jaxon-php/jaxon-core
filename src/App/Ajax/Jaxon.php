@@ -33,7 +33,6 @@ use Jaxon\Request\Handler\CallbackManager;
 
 final class Jaxon
 {
-    use Traits\DiTrait;
     use Traits\ConfigTrait;
     use Traits\ServicesTrait;
     use Traits\PluginTrait;
@@ -130,7 +129,7 @@ final class Jaxon
      */
     public function callback(): CallbackManager
     {
-        return $this->di()->getCallbackManager();
+        return $this->getCallbackManager();
     }
 
     /**

@@ -17,6 +17,7 @@
 
 namespace Jaxon\App\Ajax\Traits;
 
+use Jaxon\App\Ajax\Bootstrap;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\AbstractPackage;
 use Jaxon\Plugin\Code\CodeGenerator;
@@ -43,6 +44,11 @@ trait PluginTrait
     abstract public function getCodeGenerator(): CodeGenerator;
 
     /**
+     * @return Bootstrap
+     */
+    abstract protected function getBootstrap(): Bootstrap;
+
+    /**
      * Register request handlers, including functions, callable classes and directories.
      *
      * @param string $sType    The type of request handler being registered
@@ -61,6 +67,8 @@ trait PluginTrait
      */
     public function register(string $sType, string $sName, $xOptions = [])
     {
+        // We need the library to have been bootstrapped.
+        $this->getBootstrap()->onBoot();
         $this->getPluginManager()->registerCallable($sType, $sName, $xOptions);
     }
 
@@ -81,6 +89,8 @@ trait PluginTrait
      */
     public function registerPlugin(string $sClassName, string $sPluginName, int $nPriority = 1000)
     {
+        // We need the library to have been bootstrapped.
+        $this->getBootstrap()->onBoot();
         $this->getPluginManager()->registerPlugin($sClassName, $sPluginName, $nPriority);
     }
 
@@ -95,6 +105,8 @@ trait PluginTrait
      */
     public function registerPackage(string $sClassName, array $xPkgOptions = [])
     {
+        // We need the library to have been bootstrapped.
+        $this->getBootstrap()->onBoot();
         $this->getPackageManager()->registerPackage($sClassName, $xPkgOptions);
     }
 

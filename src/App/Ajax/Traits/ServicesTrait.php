@@ -13,6 +13,7 @@
 
 namespace Jaxon\App\Ajax\Traits;
 
+use Jaxon\App\Ajax\Bootstrap;
 use Jaxon\App\I18n\Translator;
 use Jaxon\App\Session\SessionInterface;
 use Jaxon\App\View\ViewRenderer;
@@ -49,6 +50,14 @@ trait ServicesTrait
     }
 
     /**
+     * @return Bootstrap
+     */
+    protected function getBootstrap(): Bootstrap
+    {
+        return $this->di()->getBootstrap();
+    }
+
+    /**
      * @return PluginManager
      */
     protected function getPluginManager(): PluginManager
@@ -69,8 +78,6 @@ trait ServicesTrait
      */
     protected function getRequestHandler(): RequestHandler
     {
-        // We need the library to have been bootstrapped.
-        $this->di()->getBootstrap()->onBoot();
         return $this->di()->getRequestHandler();
     }
 
@@ -95,8 +102,6 @@ trait ServicesTrait
      */
     protected function getCodeGenerator(): CodeGenerator
     {
-        // We need the library to have been bootstrapped.
-        $this->di()->getBootstrap()->onBoot();
         return $this->di()->getCodeGenerator();
     }
 
@@ -111,7 +116,7 @@ trait ServicesTrait
      */
     public function addViewRenderer(string $sRenderer, string $sExtension, Closure $xClosure)
     {
-        $this->di()->getViewRenderer()->setDefaultRenderer($sRenderer, $sExtension, $xClosure);
+        $this->view()->setDefaultRenderer($sRenderer, $sExtension, $xClosure);
     }
 
     /**

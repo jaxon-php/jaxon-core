@@ -38,11 +38,6 @@ class Bootstrap
     private $aAppOptions = [];
 
     /**
-     * @var bool
-     */
-    private bool $bBootstrapped = false;
-
-    /**
      * The class constructor
      *
      * @param ConfigManager $xConfigManager
@@ -154,12 +149,7 @@ class Bootstrap
      */
     public function onBoot()
     {
-        if($this->bBootstrapped)
-        {
-            return;
-        }
-
-        $this->bBootstrapped = true;
+        // Popping the callbacks makes each of them to be called once.
         $aBootCallbacks = $this->xCallbackManager->popBootCallbacks();
         foreach($aBootCallbacks as $aBootCallback)
         {
