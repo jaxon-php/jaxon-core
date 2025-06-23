@@ -120,13 +120,13 @@ trait ServicesTrait
     }
 
     /**
-     * @param LoggerInterface $logger
+     * @param LoggerInterface|Closure $xLogger
      *
      * @return void
      */
-    public function setLogger(LoggerInterface $logger)
+    public function setLogger(LoggerInterface|Closure $xLogger)
     {
-        $this->di()->setLogger($logger);
+        $this->di()->setLogger($xLogger);
     }
 
     /**

@@ -28,6 +28,7 @@ use ReflectionNamedType;
 use ReflectionParameter;
 use Throwable;
 
+use function is_a;
 use function realpath;
 
 class Container
@@ -112,13 +113,15 @@ class Container
     /**
      * Set the logger
      *
-     * @param LoggerInterface $xLogger
+     * @param LoggerInterface|Closure $xLogger
      *
      * @return void
      */
-    public function setLogger(LoggerInterface $xLogger)
+    public function setLogger(LoggerInterface|Closure $xLogger)
     {
-        $this->val(LoggerInterface::class, $xLogger);
+        is_a($xLogger, LoggerInterface::class) ?
+            $this->val(LoggerInterface::class, $xLogger) :
+            $this->set(LoggerInterface::class, $xLogger);
     }
 
     /**

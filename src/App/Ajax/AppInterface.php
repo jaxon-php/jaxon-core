@@ -25,11 +25,11 @@ interface AppInterface
     /**
      * Set the logger.
      *
-     * @param LoggerInterface $logger
+     * @param LoggerInterface|Closure $xLogger
      *
      * @return void
      */
-    public function setLogger(LoggerInterface $logger);
+    public function setLogger(LoggerInterface|Closure $xLogger);
 
     /**
      * Get the configured character encoding
