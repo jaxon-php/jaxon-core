@@ -30,8 +30,6 @@ class PackageTest extends TestCase
 
     public function testContainer()
     {
-        // $this->assertTrue(jaxon()->di()->h(TwitterClient::class));
-        // $this->assertTrue(jaxon()->di()->h(TwitterPackage::class));
         $this->assertTrue(jaxon()->di()->h(SamplePackage::class));
     }
 }
