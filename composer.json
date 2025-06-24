@@ -27,16 +27,15 @@
         "pimple/pimple": "^3.0",
         "nyholm/psr7": "^1.8",
         "nyholm/psr7-server": "^1.1",
-        "jaxon-php/jaxon-config": "dev-main",
-        "jaxon-php/jaxon-utils": "dev-main"
+        "jaxon-php/jaxon-config": "^1.0",
+        "jaxon-php/jaxon-utils": "^2.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.5",
         "php-coveralls/php-coveralls": "^2.5",
         "phpunit/phpcov": "^8.2",
-        "jaxon-php/jaxon-dialogs": "dev-main",
-        "jaxon-php/jaxon-upload": "dev-main",
-        "lagdo/twitter-feed": "dev-test"
+        "jaxon-php/jaxon-dialogs": "^5.0",
+        "jaxon-php/jaxon-upload": "^2.0"
     },
     "autoload": {
         "psr-4": {
