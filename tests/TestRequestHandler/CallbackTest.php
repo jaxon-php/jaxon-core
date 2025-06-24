@@ -9,7 +9,6 @@ use Jaxon\Request\Target;
 use Nyholm\Psr7Server\ServerRequestCreator;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
-
 use Exception;
 
 use function get_class;
@@ -47,9 +46,16 @@ class CallbackTest extends TestCase
     public function setUp(): void
     {
         jaxon()->setOption('core.response.send', false);
+        jaxon()->callback()->boot(function() {
+            $this->nBootCount++;
+        });
+        jaxon()->setOption('core.prefix.class', '');
+        // A second callback
+        jaxon()->callback()->boot(function() {
+            $this->nBootCount += 2;
+        });
         jaxon()->register(Jaxon::CALLABLE_FUNCTION, 'my_first_function',
             __DIR__ . '/../src/first.php');
-        jaxon()->setOption('core.prefix.class', '');
         jaxon()->register(Jaxon::CALLABLE_DIR, __DIR__ . '/../src/response', ['autoload' => true]);
     }
 
@@ -64,33 +70,17 @@ class CallbackTest extends TestCase
 
     public function testBootCallback()
     {
+        $this->assertEquals(3, $this->nBootCount);
+        // Too late to define a callback.
         jaxon()->callback()->boot(function() {
             $this->nBootCount++;
         });
-        // Process the request and get the response
-        $this->assertEquals(0, $this->nBootCount);
-        // The on boot callbacks are called by the jaxon() function.
-        jaxon()->setOption('core.prefix.class', '');
-        $this->assertEquals(0, $this->nBootCount);
-        // But each of them must be called only once.
-        jaxon()->setOption('core.prefix.class', '');
-        $this->assertEquals(0, $this->nBootCount);
-
-        // A second callback
-        jaxon()->callback()->boot(function() {
-            $this->nBootCount += 2;
-        });
+        $this->assertEquals(3, $this->nBootCount);
 
         // Process the request and get the response.
         jaxon()->processRequest();
 
         // The callbacks has run now.
-        $this->assertEquals(3, $this->nBootCount);
-        // The on boot callbacks are called by the jaxon() function.
-        jaxon()->setOption('core.prefix.class', '');
-        $this->assertEquals(3, $this->nBootCount);
-        // But each of them must be called only once.
-        jaxon()->setOption('core.prefix.class', '');
         $this->assertEquals(3, $this->nBootCount);
     }
 
