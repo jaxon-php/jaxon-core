@@ -26,17 +26,7 @@ class PsrPlugin extends AbstractResponsePlugin
     /**
      * @const The plugin name
      */
-    const NAME = 'psr';
-
-    /**
-     * @var Psr17Factory
-     */
-    private $xPsr17Factory;
-
-    /**
-     * @var RequestInterface
-     */
-    protected $xRequest;
+    public const NAME = 'psr';
 
     /**
      * The class constructor
@@ -44,11 +34,9 @@ class PsrPlugin extends AbstractResponsePlugin
      * @param Psr17Factory $xPsr17Factory
      * @param RequestInterface $xRequest
      */
-    public function __construct(Psr17Factory $xPsr17Factory, RequestInterface $xRequest)
-    {
-        $this->xPsr17Factory = $xPsr17Factory;
-        $this->xRequest = $xRequest;
-    }
+    public function __construct(private Psr17Factory $xPsr17Factory,
+        private RequestInterface $xRequest)
+    {}
 
     /**
      * @inheritDoc

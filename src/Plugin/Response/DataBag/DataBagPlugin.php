@@ -16,12 +16,7 @@ class DataBagPlugin extends AbstractResponsePlugin
     /**
      * @const The plugin name
      */
-    const NAME = 'bags';
-
-    /**
-     * @var Container
-     */
-    protected $di;
+    public const NAME = 'bags';
 
     /**
      * @var DataBag
@@ -31,10 +26,8 @@ class DataBagPlugin extends AbstractResponsePlugin
     /**
      * The constructor
      */
-    public function __construct(Container $di)
-    {
-        $this->di = $di;
-    }
+    public function __construct(protected Container $di)
+    {}
 
     /**
      * @return void

@@ -46,22 +46,15 @@ class PaginatorPlugin extends AbstractResponsePlugin
     /**
      * @const The plugin name
      */
-    const NAME = 'pg';
-
-    /**
-     * @var RendererInterface
-     */
-    protected $xRenderer;
+    public const NAME = 'pg';
 
     /**
      * The constructor.
      *
      * @param RendererInterface $xRenderer
      */
-    public function __construct(RendererInterface $xRenderer)
-    {
-        $this->xRenderer = $xRenderer;
-    }
+    public function __construct(protected RendererInterface $xRenderer)
+    {}
 
     /**
      * @inheritDoc

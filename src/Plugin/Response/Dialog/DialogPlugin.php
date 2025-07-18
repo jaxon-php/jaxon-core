@@ -29,7 +29,7 @@ class DialogPlugin implements PluginInterface, ResponsePluginInterface, ModalInt
     /**
      * @const The plugin name
      */
-    const NAME = 'dialog';
+    public const NAME = 'dialog';
 
     /**
      * The constructor
