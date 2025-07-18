@@ -259,7 +259,7 @@ class PackageManager
      * @return void
      * @throws SetupException
      */
-    public function registerPackage(string $sClassName, array $aUserOptions)
+    public function registerPackage(string $sClassName, array $aUserOptions = [])
     {
         $sClassName = trim($sClassName, '\\ ');
         if(!is_subclass_of($sClassName, AbstractPackage::class))
@@ -308,9 +308,22 @@ class PackageManager
 
         // Register packages
         $aPackageConfig = $xAppConfig->getOption('packages', []);
-        foreach($aPackageConfig as $sClassName => $aPkgOptions)
+        foreach($aPackageConfig as $xKey => $xValue)
         {
-            $this->registerPackage($sClassName, $aPkgOptions);
+            if(is_integer($xKey) && is_string($xValue))
+            {
+                // Register a package without options
+                $sClassName = $xValue;
+                $this->registerPackage($sClassName);
+                continue;
+            }
+            if(is_string($xKey) && is_array($xValue))
+            {
+                // Register a package with options
+                $sClassName = $xKey;
+                $aPkgOptions = $xValue;
+                $this->registerPackage($sClassName, $aPkgOptions);
+            }
         }
     }
 }

@@ -27,6 +27,7 @@ use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\CallableRegistryInterface;
 use Jaxon\Plugin\Code\CodeGenerator;
 use Jaxon\Plugin\CodeGeneratorInterface;
+use Jaxon\Plugin\PluginInterface;
 use Jaxon\Plugin\Request\CallableClass\CallableClassPlugin;
 use Jaxon\Plugin\Request\CallableClass\CallableDirPlugin;
 use Jaxon\Plugin\Request\CallableFunction\CallableFunctionPlugin;
@@ -44,21 +45,6 @@ use function in_array;
 
 class PluginManager
 {
-    /**
-     * @var Container
-     */
-    protected $di;
-
-    /**
-     * @var CodeGenerator
-     */
-    private $xCodeGenerator;
-
-    /**
-     * @var Translator
-     */
-    protected $xTranslator;
-
     /**
      * Request plugins, indexed by name
      *
@@ -87,12 +73,9 @@ class PluginManager
      * @param CodeGenerator $xCodeGenerator
      * @param Translator $xTranslator
      */
-    public function __construct(Container $di, CodeGenerator $xCodeGenerator, Translator $xTranslator)
-    {
-        $this->di = $di;
-        $this->xCodeGenerator = $xCodeGenerator;
-        $this->xTranslator = $xTranslator;
-    }
+    public function __construct(private Container $di,
+        private CodeGenerator $xCodeGenerator, private Translator $xTranslator)
+    {}
 
     /**
      * Get the request plugins
@@ -102,6 +85,49 @@ class PluginManager
     public function getRequestHandlers(): array
     {
         return $this->aRequestHandlers;
+    }
+
+    /**
+     * Register a plugin
+     *
+     * @param class-string $sClassName    The plugin class
+     * @param string $sPluginName    The plugin name
+     * @param array $aInterfaces    The plugin interfaces
+     *
+     * @return int
+     * @throws SetupException
+     */
+    private function _registerPlugin(string $sClassName, string $sPluginName, array $aInterfaces): int
+    {
+        // Any plugin must implement the PluginInterface interface.
+        if(!in_array(PluginInterface::class, $aInterfaces))
+        {
+            $sMessage = $this->xTranslator->trans('errors.register.invalid', [
+                'name' => $sClassName,
+            ]);
+            throw new SetupException($sMessage);
+        }
+
+        // Response plugin.
+        if(in_array(ResponsePluginInterface::class, $aInterfaces))
+        {
+            $this->aResponsePlugins[$sPluginName] = $sClassName;
+            return 1;
+        }
+
+        // Request plugin.
+        $nCount = 0;
+        if(in_array(CallableRegistryInterface::class, $aInterfaces))
+        {
+            $this->aRegistryPlugins[$sPluginName] = $sClassName;
+            $nCount++;
+        }
+        if(in_array(RequestHandlerInterface::class, $aInterfaces))
+        {
+            $this->aRequestHandlers[$sPluginName] = $sClassName;
+            $nCount++;
+        }
+        return $nCount;
     }
 
     /**
@@ -121,33 +147,21 @@ class PluginManager
      */
     public function registerPlugin(string $sClassName, string $sPluginName, int $nPriority = 1000)
     {
-        $bIsUsed = false;
         $aInterfaces = class_implements($sClassName);
+        $nCount = $this->_registerPlugin($sClassName, $sPluginName, $aInterfaces);
+
+        // Any plugin can implement the CodeGeneratorInterface interface.
         if(in_array(CodeGeneratorInterface::class, $aInterfaces))
         {
             $this->xCodeGenerator->addCodeGenerator($sClassName, $nPriority);
-            $bIsUsed = true;
+            $nCount++;
         }
-        if(in_array(CallableRegistryInterface::class, $aInterfaces))
+        // The class is not a valid plugin.
+        if($nCount === 0)
         {
-            $this->aRegistryPlugins[$sPluginName] = $sClassName;
-            $bIsUsed = true;
-        }
-        if(in_array(RequestHandlerInterface::class, $aInterfaces))
-        {
-            $this->aRequestHandlers[$sPluginName] = $sClassName;
-            $bIsUsed = true;
-        }
-        if(in_array(ResponsePluginInterface::class, $aInterfaces))
-        {
-            $this->aResponsePlugins[$sPluginName] = $sClassName;
-            $bIsUsed = true;
-        }
-
-        if(!$bIsUsed)
-        {
-            // The class is invalid.
-            $sMessage = $this->xTranslator->trans('errors.register.invalid', ['name' => $sClassName]);
+            $sMessage = $this->xTranslator->trans('errors.register.invalid', [
+                'name' => $sClassName,
+            ]);
             throw new SetupException($sMessage);
         }
 

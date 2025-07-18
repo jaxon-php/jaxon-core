@@ -15,6 +15,7 @@ namespace Jaxon\Plugin;
 
 use Jaxon\App\View\ViewRenderer;
 use Jaxon\Config\Config;
+use Stringable;
 
 abstract class AbstractPackage extends AbstractCodeGenerator
 {
@@ -44,7 +45,7 @@ abstract class AbstractPackage extends AbstractCodeGenerator
      *
      * @return Config
      */
-    public function getConfig()
+    final public function getConfig(): Config
     {
         return $this->xPkgConfig;
     }
@@ -54,7 +55,7 @@ abstract class AbstractPackage extends AbstractCodeGenerator
      *
      * @return void
      */
-    protected function init()
+    protected function init(): void
     {}
 
     /**
@@ -65,7 +66,7 @@ abstract class AbstractPackage extends AbstractCodeGenerator
      *
      * @return mixed
      */
-    public function getOption(string $sOption, $xDefault = null)
+    final public function getOption(string $sOption, $xDefault = null): mixed
     {
         return $this->xPkgConfig->getOption($sOption, $xDefault);
     }
@@ -75,7 +76,7 @@ abstract class AbstractPackage extends AbstractCodeGenerator
      *
      * @return ViewRenderer
      */
-    public function view(): ViewRenderer
+    final public function view(): ViewRenderer
     {
         return $this->xRenderer;
     }
@@ -92,18 +93,21 @@ abstract class AbstractPackage extends AbstractCodeGenerator
     /**
      * Get the HTML code of the package home page
      *
-     * @return string
+     * @return string|Stringable
      */
-    abstract public function getHtml(): string;
+    public function getHtml(): string|Stringable
+    {
+        return '';
+    }
 
     /**
      * Get the HTML code of the package home page
      *
      * This method is an alias for getHtml().
      *
-     * @return string
+     * @return string|Stringable
      */
-    public function html(): string
+    public function html(): string|Stringable
     {
         return $this->getHtml();
     }
