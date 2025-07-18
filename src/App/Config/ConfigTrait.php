@@ -29,7 +29,7 @@ trait ConfigTrait
      *
      * @return mixed
      */
-    public function getLibOption(string $sName, $xDefault = null)
+    public function getLibOption(string $sName, $xDefault = null): mixed
     {
         return $this->config()->getOption($sName, $xDefault);
     }
@@ -54,7 +54,7 @@ trait ConfigTrait
      *
      * @return void
      */
-    public function setLibOption(string $sName, $xValue)
+    public function setLibOption(string $sName, $xValue): void
     {
         $this->config()->setOption($sName, $xValue);
     }
@@ -67,7 +67,7 @@ trait ConfigTrait
      *
      * @return mixed
      */
-    public function getAppOption(string $sName, $xDefault = null)
+    public function getAppOption(string $sName, $xDefault = null): mixed
     {
         return $this->config()->getAppOption($sName, $xDefault);
     }
@@ -92,7 +92,7 @@ trait ConfigTrait
      *
      * @return void
      */
-    public function setAppOption(string $sName, $xValue)
+    public function setAppOption(string $sName, $xValue): void
     {
         $this->config()->setAppOption($sName, $xValue);
     }

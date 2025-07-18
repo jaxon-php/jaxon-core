@@ -37,7 +37,7 @@ trait ViewTrait
      *
      * @return void
      */
-    public function addNamespace(string $sNamespace, string $sDirectory, string $sExtension = '')
+    public function addNamespace(string $sNamespace, string $sDirectory, string $sExtension = ''): void
     {
         $this->aDirectories[$sNamespace] = ['path' => $sDirectory, 'ext' => $sExtension];
     }
@@ -49,7 +49,7 @@ trait ViewTrait
      *
      * @return void
      */
-    public function setCurrentNamespace(string $sNamespace)
+    public function setCurrentNamespace(string $sNamespace): void
     {
         $this->sDirectory = '';
         $this->sExtension = '';

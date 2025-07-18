@@ -145,7 +145,7 @@ class PluginManager
      * @return void
      * @throws SetupException
      */
-    public function registerPlugin(string $sClassName, string $sPluginName, int $nPriority = 1000)
+    public function registerPlugin(string $sClassName, string $sPluginName, int $nPriority = 1000): void
     {
         $aInterfaces = class_implements($sClassName);
         $nCount = $this->_registerPlugin($sClassName, $sPluginName, $aInterfaces);
@@ -199,7 +199,7 @@ class PluginManager
      * @return void
      * @throws SetupException
      */
-    public function registerCallable(string $sType, string $sCallable, $xOptions = [])
+    public function registerCallable(string $sType, string $sCallable, $xOptions = []): void
     {
         if(isset($this->aRegistryPlugins[$sType]) &&
             ($xPlugin = $this->di->g($this->aRegistryPlugins[$sType])))
@@ -217,7 +217,7 @@ class PluginManager
      * @return void
      * @throws SetupException
      */
-    public function registerPlugins()
+    public function registerPlugins(): void
     {
         // Request plugins
         $this->registerPlugin(CallableClassPlugin::class, Jaxon::CALLABLE_CLASS, 101);

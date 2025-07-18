@@ -65,7 +65,7 @@ trait PluginTrait
      * @return void
      * @throws SetupException
      */
-    public function register(string $sType, string $sName, $xOptions = [])
+    public function register(string $sType, string $sName, $xOptions = []): void
     {
         // We need the library to have been bootstrapped.
         $this->getBootstrap()->onBoot();

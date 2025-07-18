@@ -23,7 +23,7 @@ trait ViewTrait
      *
      * @return void
      */
-    private function registerViews()
+    private function registerViews(): void
     {
         // Jaxon template view
         $this->set(TemplateView::class, function($di) {

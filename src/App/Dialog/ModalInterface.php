@@ -26,12 +26,12 @@ interface ModalInterface
      *
      * @return void
      */
-    public function show(string $sTitle, string $sContent, array $aButtons = [], array $aOptions = []);
+    public function show(string $sTitle, string $sContent, array $aButtons = [], array $aOptions = []): void;
 
     /**
      * Hide the modal dialog.
      *
      * @return void
      */
-    public function hide();
+    public function hide(): void;
 }

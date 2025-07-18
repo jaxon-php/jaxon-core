@@ -26,5 +26,5 @@ interface ConfigListenerInterface
      *
      * @return void
      */
-    public function onChange(Config $xConfig, string $sName);
+    public function onChange(Config $xConfig, string $sName): void;
 }

@@ -42,5 +42,5 @@ interface RequestHandlerInterface
      *
      * @return void
      */
-    public function processRequest();
+    public function processRequest(): void;
 }

@@ -48,7 +48,7 @@ class DialogCommand
      *
      * @return void
      */
-    public function library(string $sLibrary)
+    public function library(string $sLibrary): void
     {
         $this->sLibrary = $sLibrary;
     }
@@ -60,7 +60,7 @@ class DialogCommand
      *
      * @return void
      */
-    public function title(string $sTitle)
+    public function title(string $sTitle): void
     {
         $this->sTitle = $sTitle;
     }

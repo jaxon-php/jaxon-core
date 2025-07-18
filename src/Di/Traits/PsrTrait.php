@@ -35,7 +35,7 @@ trait PsrTrait
      *
      * @return void
      */
-    private function registerPsr()
+    private function registerPsr(): void
     {
         // The server request
         $this->set(Psr17Factory::class, function() {

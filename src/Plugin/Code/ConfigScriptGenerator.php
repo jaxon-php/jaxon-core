@@ -40,7 +40,7 @@ class ConfigScriptGenerator extends AbstractCodeGenerator
      *
      * @return mixed
      */
-    private function option(string $sName)
+    private function option(string $sName): mixed
     {
         return $this->xConfigManager->getOption($sName);
     }

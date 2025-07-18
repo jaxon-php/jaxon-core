@@ -61,7 +61,7 @@ class DataBag implements JsonSerializable
      *
      * @return void
      */
-    public function clear(string $sBag)
+    public function clear(string $sBag): void
     {
         $this->aData[$sBag] = [];
         $this->xPlugin->addCommand('databag.clear', ['bag' => $sBag]);
@@ -74,7 +74,7 @@ class DataBag implements JsonSerializable
      *
      * @return void
      */
-    public function set(string $sBag, string $sKey, $xValue)
+    public function set(string $sBag, string $sKey, $xValue): void
     {
         $this->bTouched = true;
         $this->aData[$sBag][$sKey] = $xValue;
@@ -87,7 +87,7 @@ class DataBag implements JsonSerializable
      *
      * @return void
      */
-    public function new(string $sBag, string $sKey, $xValue)
+    public function new(string $sBag, string $sKey, $xValue): void
     {
         // Set the value only if it doesn't already exist.
         if(!isset($this->aData[$sBag]) || !key_exists($sKey, $this->aData[$sBag]))
@@ -103,7 +103,7 @@ class DataBag implements JsonSerializable
      *
      * @return mixed
      */
-    public function get(string $sBag, string $sKey, $xValue = null)
+    public function get(string $sBag, string $sKey, $xValue = null): mixed
     {
         return $this->aData[$sBag][$sKey] ?? $xValue;
     }

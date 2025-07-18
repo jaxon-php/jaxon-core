@@ -32,7 +32,7 @@ class DataBagPlugin extends AbstractResponsePlugin
     /**
      * @return void
      */
-    private function initDataBag()
+    private function initDataBag(): void
     {
         if($this->xDataBag !== null)
         {
@@ -65,6 +65,7 @@ class DataBagPlugin extends AbstractResponsePlugin
     private function readData($xData): array
     {
         // Todo: clean input data.
+        // Todo: verify the checksums.
         return is_string($xData) ?
             (json_decode($xData, true) ?: []) :
             (is_array($xData) ? $xData : []);
@@ -82,11 +83,12 @@ class DataBagPlugin extends AbstractResponsePlugin
     /**
      * @return void
      */
-    public function writeCommand()
+    public function writeCommand(): void
     {
         $this->initDataBag();
         if($this->xDataBag->touched())
         {
+            // Todo: calculate the checksums.
             $this->addCommand('databag.set', ['values' => $this->xDataBag]);
         }
     }

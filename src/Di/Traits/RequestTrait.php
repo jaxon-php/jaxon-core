@@ -25,7 +25,7 @@ trait RequestTrait
      *
      * @return void
      */
-    private function registerRequests()
+    private function registerRequests(): void
     {
         // The parameter reader
         $this->set(ParameterReader::class, function($di) {

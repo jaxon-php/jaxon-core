@@ -52,7 +52,7 @@ class DialogPlugin implements PluginInterface, ResponsePluginInterface, ModalInt
      *
      * @return void
      */
-    protected function init()
+    protected function init(): void
     {}
 
     /**
@@ -71,7 +71,7 @@ class DialogPlugin implements PluginInterface, ResponsePluginInterface, ModalInt
     /**
      * @inheritDoc
      */
-    public function show(string $sTitle, string $sContent, array $aButtons = [], array $aOptions = [])
+    public function show(string $sTitle, string $sContent, array $aButtons = [], array $aOptions = []): void
     {
         // Show the modal dialog
         $this->addCommand('dialog.modal.show',
@@ -81,7 +81,7 @@ class DialogPlugin implements PluginInterface, ResponsePluginInterface, ModalInt
     /**
      * @inheritDoc
      */
-    public function hide()
+    public function hide(): void
     {
         // Hide the modal dialog
         $this->addCommand('dialog.modal.hide', $this->xDialogCommand->hide());
@@ -99,7 +99,7 @@ class DialogPlugin implements PluginInterface, ResponsePluginInterface, ModalInt
     /**
      * @inheritDoc
      */
-    public function success(string $sMessage, ...$aArgs)
+    public function success(string $sMessage, ...$aArgs): void
     {
         $this->addCommand('dialog.alert.show', $this->xDialogCommand->success($sMessage, $aArgs));
     }
@@ -107,7 +107,7 @@ class DialogPlugin implements PluginInterface, ResponsePluginInterface, ModalInt
     /**
      * @inheritDoc
      */
-    public function info(string $sMessage, ...$aArgs)
+    public function info(string $sMessage, ...$aArgs): void
     {
         $this->addCommand('dialog.alert.show', $this->xDialogCommand->info($sMessage, $aArgs));
     }
@@ -115,7 +115,7 @@ class DialogPlugin implements PluginInterface, ResponsePluginInterface, ModalInt
     /**
      * @inheritDoc
      */
-    public function warning(string $sMessage, ...$aArgs)
+    public function warning(string $sMessage, ...$aArgs): void
     {
         $this->addCommand('dialog.alert.show', $this->xDialogCommand->warning($sMessage, $aArgs));
     }
@@ -123,7 +123,7 @@ class DialogPlugin implements PluginInterface, ResponsePluginInterface, ModalInt
     /**
      * @inheritDoc
      */
-    public function error(string $sMessage, ...$aArgs)
+    public function error(string $sMessage, ...$aArgs): void
     {
         $this->addCommand('dialog.alert.show', $this->xDialogCommand->error($sMessage, $aArgs));
     }

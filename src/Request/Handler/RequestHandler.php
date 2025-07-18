@@ -89,7 +89,7 @@ class RequestHandler
      * @return void
      * @throws RequestException
      */
-    private function _processRequest()
+    private function _processRequest(): void
     {
         // Process the request
         if($this->xRequestPlugin !== null)
@@ -106,7 +106,7 @@ class RequestHandler
      * @return void
      * @throws RequestException
      */
-    public function processRequest()
+    public function processRequest(): void
     {
         // Check if there is a plugin to process this request
         if(!$this->canProcessRequest())

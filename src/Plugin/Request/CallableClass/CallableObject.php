@@ -247,7 +247,7 @@ class CallableObject
      * @return void
      * @throws ReflectionException
      */
-    private function callMethod(string $sMethod, array $aArgs, bool $bAccessible)
+    private function callMethod(string $sMethod, array $aArgs, bool $bAccessible): void
     {
         $reflectionMethod = $this->xReflectionClass->getMethod($sMethod);
         $reflectionMethod->setAccessible($bAccessible); // Make it possible to call protected methods
@@ -262,7 +262,7 @@ class CallableObject
      * @return void
      * @throws ReflectionException
      */
-    private function callHookMethods(array $aHookMethods)
+    private function callHookMethods(array $aHookMethods): void
     {
         $sMethod = $this->xTarget->getMethodName();
         // The hooks defined at method level are merged with those defined at class level.
@@ -301,7 +301,7 @@ class CallableObject
      *
      * @return void
      */
-    private function setDiAttributes($xComponent, array $aDiOptions)
+    private function setDiAttributes($xComponent, array $aDiOptions): void
     {
         // Set the protected attributes of the object
         $cSetter = function($sAttr, $xDiValue) {
@@ -320,7 +320,7 @@ class CallableObject
      *
      * @return void
      */
-    public function setDiClassAttributes($xComponent)
+    public function setDiClassAttributes($xComponent): void
     {
         $aDiOptions = $this->xOptions->diOptions();
         $this->setDiAttributes($xComponent, $aDiOptions['*'] ?? []);
@@ -332,7 +332,7 @@ class CallableObject
      *
      * @return void
      */
-    public function setDiMethodAttributes($xComponent, string $sMethodName)
+    public function setDiMethodAttributes($xComponent, string $sMethodName): void
     {
         $aDiOptions = $this->xOptions->diOptions();
         $this->setDiAttributes($xComponent, $aDiOptions[$sMethodName] ?? []);
@@ -347,7 +347,7 @@ class CallableObject
      * @throws ReflectionException
      * @throws SetupException
      */
-    public function call(Target $xTarget)
+    public function call(Target $xTarget): void
     {
         $this->xTarget = $xTarget;
         $this->xComponent = $this->cdi->getTargetComponent($this->getClassName(), $xTarget);

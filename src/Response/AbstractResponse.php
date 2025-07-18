@@ -131,7 +131,7 @@ abstract class AbstractResponse
      *
      * @return void
      */
-    public function clearCommands()
+    public function clearCommands(): void
     {
         $this->xManager->clearCommands();
     }

@@ -13,7 +13,7 @@ trait MetadataTrait
      *
      * @return void
      */
-    private function registerMetadataReader()
+    private function registerMetadataReader(): void
     {
         // By default, register a fake metadata reader.
         $this->set('metadata_reader_null', function() {

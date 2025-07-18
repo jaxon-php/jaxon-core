@@ -223,7 +223,7 @@ class CallbackManager
      *
      * @return void
      */
-    private function executeCallback(callable $xCallback, array $aParameters)
+    private function executeCallback(callable $xCallback, array $aParameters): void
     {
         call_user_func_array($xCallback, $aParameters);
     }
@@ -234,7 +234,7 @@ class CallbackManager
      *
      * @return void
      */
-    private function executeCallbacks(array $aCallbacks, array $aParameters)
+    private function executeCallbacks(array $aCallbacks, array $aParameters): void
     {
         foreach($aCallbacks as $xCallback)
         {
@@ -249,7 +249,7 @@ class CallbackManager
      *
      * @return void
      */
-    public function onInit($xComponent)
+    public function onInit($xComponent): void
     {
         $this->executeCallbacks($this->aInitCallbacks, [$xComponent]);
     }
@@ -263,7 +263,7 @@ class CallbackManager
      * @return void
      * @throws RequestException
      */
-    public function onBefore(Target $xTarget, bool &$bEndRequest)
+    public function onBefore(Target $xTarget, bool &$bEndRequest): void
     {
         // Call the user defined callback
         foreach($this->aBeforeCallbacks as $xCallback)
@@ -285,7 +285,7 @@ class CallbackManager
      * @return void
      * @throws RequestException
      */
-    public function onAfter(Target $xTarget, bool $bEndRequest)
+    public function onAfter(Target $xTarget, bool $bEndRequest): void
     {
         $this->executeCallbacks($this->aAfterCallbacks, [$xTarget, $bEndRequest]);
     }
@@ -298,7 +298,7 @@ class CallbackManager
      * @return void
      * @throws RequestException
      */
-    public function onInvalid(RequestException $xException)
+    public function onInvalid(RequestException $xException): void
     {
         $this->executeCallbacks($this->aInvalidCallbacks, [$xException]);
         throw $xException;
@@ -312,7 +312,7 @@ class CallbackManager
      * @return void
      * @throws Exception
      */
-    public function onError(Exception $xException)
+    public function onError(Exception $xException): void
     {
         $aExceptionCallbacks = $this->getExceptionCallbacks($xException);
         $this->executeCallbacks($aExceptionCallbacks, [$xException]);

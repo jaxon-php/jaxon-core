@@ -32,7 +32,7 @@ class DataBagContext
      *
      * @return void
      */
-    public function set(string $sKey, $xValue)
+    public function set(string $sKey, $xValue): void
     {
         $this->xDataBag->set($this->sName, $sKey, $xValue);
     }
@@ -43,7 +43,7 @@ class DataBagContext
      *
      * @return void
      */
-    public function new(string $sKey, $xValue)
+    public function new(string $sKey, $xValue): void
     {
         $this->xDataBag->new($this->sName, $sKey, $xValue);
     }
@@ -54,7 +54,7 @@ class DataBagContext
      *
      * @return mixed
      */
-    public function get(string $sKey, $xValue = null)
+    public function get(string $sKey, $xValue = null): mixed
     {
         return $this->xDataBag->get($this->sName, $sKey, $xValue);
     }

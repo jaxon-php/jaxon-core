@@ -43,7 +43,7 @@ class Attr extends TypedValue
      *
      * @return Attr
      */
-    public static function set(string $sAttrName, $xAttrValue)
+    public static function set(string $sAttrName, $xAttrValue): Attr
     {
         return new Attr([
             '_type' => 'attr',

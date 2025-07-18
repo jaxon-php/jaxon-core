@@ -127,7 +127,7 @@ class CallableDirPlugin implements PluginInterface, CallableRegistryInterface
      * @inheritDoc
      * @throws SetupException
      */
-    public function getCallable(string $sCallable)
+    public function getCallable(string $sCallable): CallableObject|null
     {
         return $this->cdi->makeCallableObject($sCallable);
     }

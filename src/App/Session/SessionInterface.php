@@ -18,7 +18,7 @@ interface SessionInterface
      *
      * @return void
      */
-    public function newId(bool $bDeleteData = false);
+    public function newId(bool $bDeleteData = false): void;
 
     /**
      * Save data in the session
@@ -57,7 +57,7 @@ interface SessionInterface
      *
      * @return mixed
      */
-    public function get(string $sKey, $xDefault = null);
+    public function get(string $sKey, $xDefault = null): mixed;
 
     /**
      * Get all data in the session
@@ -73,12 +73,12 @@ interface SessionInterface
      *
      * @return void
      */
-    public function delete(string $sKey);
+    public function delete(string $sKey): void;
 
     /**
      * Delete all data in the session
      *
      * @return void
      */
-    public function clear();
+    public function clear(): void;
 }

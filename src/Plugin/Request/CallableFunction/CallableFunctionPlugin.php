@@ -135,7 +135,7 @@ class CallableFunctionPlugin extends AbstractRequestPlugin
     /**
      * @inheritDoc
      */
-    public function getCallable(string $sCallable)
+    public function getCallable(string $sCallable): CallableFunction|null
     {
         $sFunction = trim($sCallable);
         if(!isset($this->aFunctions[$sFunction]))
@@ -219,7 +219,7 @@ class CallableFunctionPlugin extends AbstractRequestPlugin
      * @inheritDoc
      * @throws RequestException
      */
-    public function processRequest()
+    public function processRequest(): void
     {
         $sRequestedFunction = $this->xTarget->getFunctionName();
 

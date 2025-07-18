@@ -29,7 +29,7 @@ interface AppInterface
      *
      * @return void
      */
-    public function setLogger(LoggerInterface|Closure $xLogger);
+    public function setLogger(LoggerInterface|Closure $xLogger): void;
 
     /**
      * Get the configured character encoding
@@ -155,7 +155,7 @@ interface AppInterface
      *
      * @return void
      */
-    public function asset(bool $bExport, bool $bMinify, string $sUri = '', string $sDir = '');
+    public function asset(bool $bExport, bool $bMinify, string $sUri = '', string $sDir = ''): void;
 
     /**
      * Read config options from a config file and set up the library

@@ -74,7 +74,8 @@ class Store implements JsonSerializable, Stringable
      *
      * @return Store
      */
-    public function setView(ViewInterface $xRenderer, string $sNamespace, string $sViewName, array $aViewData = []): Store
+    public function setView(ViewInterface $xRenderer,
+        string $sNamespace, string $sViewName, array $aViewData = []): Store
     {
         $this->xRenderer = $xRenderer;
         $this->sNamespace = trim($sNamespace);

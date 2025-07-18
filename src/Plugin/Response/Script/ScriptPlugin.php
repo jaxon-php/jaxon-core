@@ -14,7 +14,6 @@
 namespace Jaxon\Plugin\Response\Script;
 
 use Jaxon\Plugin\AbstractResponsePlugin;
-use Jaxon\Response\AjaxResponse;
 use Jaxon\Response\NodeResponse;
 use Jaxon\Script\CallFactory;
 use Jaxon\Script\Call\JqSelectorCall;
@@ -30,7 +29,7 @@ class ScriptPlugin extends AbstractResponsePlugin
     /**
      * @const The plugin name
      */
-    const NAME = 'script';
+    public const NAME = 'script';
 
     /**
      * The class constructor
@@ -41,25 +40,6 @@ class ScriptPlugin extends AbstractResponsePlugin
     {}
 
     /**
-     * @param JsExpr $xJsExpr
-     * @param AjaxResponse $xResponse
-     *
-     * @return void
-     */
-    private function _addCommand(JsExpr $xJsExpr, AjaxResponse $xResponse)
-    {
-        // Add the newly created expression to the response
-        $xResponse
-            ->addCommand('script.exec.expr', [
-                'expr' => $xJsExpr,
-                'context' => [
-                    'component' => is_a($xResponse, NodeResponse::class),
-                ],
-            ])
-            ->setOption('plugin', $this->getName());
-    }
-
-    /**
      * @return Closure
      */
     private function getCallback(): Closure
@@ -67,7 +47,14 @@ class ScriptPlugin extends AbstractResponsePlugin
         // The closure needs to capture the response object the script plugin is called with.
         $xResponse = $this->response();
         return function(JsExpr $xJsExpr) use($xResponse) {
-            $this->_addCommand($xJsExpr, $xResponse);
+            // Add the newly created expression to the response
+            $aOptions = [
+                'expr' => $xJsExpr,
+                'context' => is_a($xResponse, NodeResponse::class) ?
+                    ['component' => true] : [],
+            ];
+            $xResponse->addCommand('script.exec.expr', $aOptions)
+                ->setOption('plugin', $this->getName());
         };
     }
 

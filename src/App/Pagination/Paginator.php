@@ -386,7 +386,7 @@ class Paginator
      *
      * @return void
      */
-    public function render(JsExpr $xCall, string $sWrapperId = '')
+    public function render(JsExpr $xCall, string $sWrapperId = ''): void
     {
         if(($xFunc = $xCall->func()) === null)
         {

@@ -107,7 +107,7 @@ class CodeGenerator
      *
      * @return void
      */
-    public function addCodeGenerator(string $sClassName, int $nPriority)
+    public function addCodeGenerator(string $sClassName, int $nPriority): void
     {
         while(isset($this->aCodeGenerators[$nPriority]))
         {
@@ -161,7 +161,7 @@ class CodeGenerator
      *
      * @return void
      */
-    private function generatePluginCodes(CodeGeneratorInterface $xGenerator)
+    private function generatePluginCodes(CodeGeneratorInterface $xGenerator): void
     {
         if(!is_subclass_of($xGenerator, AbstractPlugin::class) ||
             $this->xAssetManager->shallIncludeAssets($xGenerator))
@@ -203,7 +203,7 @@ class CodeGenerator
      * @return void
      * @throws UriException
      */
-    private function generateCodes()
+    private function generateCodes(): void
     {
         if($this->bGenerated)
         {

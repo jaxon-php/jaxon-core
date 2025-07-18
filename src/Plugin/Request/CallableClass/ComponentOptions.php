@@ -124,7 +124,7 @@ class ComponentOptions
      *
      * @return void
      */
-    private function addProtectedMethods($xMethods)
+    private function addProtectedMethods($xMethods): void
     {
         if(!is_array($xMethods))
         {
@@ -215,7 +215,7 @@ class ComponentOptions
      *
      * @return void
      */
-    private function setHookMethods(array &$aHookMethods, $xValue)
+    private function setHookMethods(array &$aHookMethods, $xValue): void
     {
         foreach($xValue as $sCalledMethod => $xMethodToCall)
         {
@@ -237,7 +237,7 @@ class ComponentOptions
     /**
      * @param array $aDiOptions
      */
-    private function addDiOption(array $aDiOptions)
+    private function addDiOption(array $aDiOptions): void
     {
         $this->aDiOptions = array_merge($this->aDiOptions, $aDiOptions);
     }
@@ -250,7 +250,7 @@ class ComponentOptions
      *
      * @return void
      */
-    private function addOption(string $sName, $xValue)
+    private function addOption(string $sName, $xValue): void
     {
         switch($sName)
         {
@@ -278,7 +278,7 @@ class ComponentOptions
      *
      * @return void
      */
-    private function _addJsArrayOption(string $sFunctionName, string $sOptionName, $xOptionValue)
+    private function _addJsArrayOption(string $sFunctionName, string $sOptionName, $xOptionValue): void
     {
         if(is_string($xOptionValue))
         {
@@ -299,7 +299,7 @@ class ComponentOptions
      *
      * @return void
      */
-    private function _setJsOption(string $sFunctionName, string $sOptionName, $xOptionValue)
+    private function _setJsOption(string $sFunctionName, string $sOptionName, $xOptionValue): void
     {
         $this->aJsOptions[$sFunctionName][$sOptionName] = $xOptionValue;
     }
@@ -311,7 +311,7 @@ class ComponentOptions
      *
      * @return void
      */
-    private function addJsOption(string $sFunctionName, string $sOptionName, $xOptionValue)
+    private function addJsOption(string $sFunctionName, string $sOptionName, $xOptionValue): void
     {
         switch($sOptionName)
         {
@@ -338,7 +338,7 @@ class ComponentOptions
      *
      * @return void
      */
-    private function addFunctionOptions(string $sFunctionName, array $aFunctionOptions)
+    private function addFunctionOptions(string $sFunctionName, array $aFunctionOptions): void
     {
         foreach($aFunctionOptions as $sOptionName => $xOptionValue)
         {

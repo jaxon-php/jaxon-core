@@ -33,7 +33,7 @@ interface AlertInterface
      *
      * @return void
      */
-    public function success(string $sMessage, ...$aArgs);
+    public function success(string $sMessage, ...$aArgs): void;
 
     /**
      * Show an information message.
@@ -43,7 +43,7 @@ interface AlertInterface
      *
      * @return void
      */
-    public function info(string $sMessage, ...$aArgs);
+    public function info(string $sMessage, ...$aArgs): void;
 
     /**
      * Show a warning message.
@@ -53,7 +53,7 @@ interface AlertInterface
      *
      * @return void
      */
-    public function warning(string $sMessage, ...$aArgs);
+    public function warning(string $sMessage, ...$aArgs): void;
 
     /**
      * Show an error message.
@@ -63,5 +63,5 @@ interface AlertInterface
      *
      * @return void
      */
-    public function error(string $sMessage, ...$aArgs);
+    public function error(string $sMessage, ...$aArgs): void;
 }

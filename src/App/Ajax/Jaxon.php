@@ -136,7 +136,7 @@ final class Jaxon
      * @return void
      * @throws SetupException
      */
-    public function reset()
+    public function reset(): void
     {
         self::$xInstance = null;
     }

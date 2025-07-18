@@ -19,7 +19,7 @@ trait UtilTrait
      *
      * @return void
      */
-    private function registerUtils()
+    private function registerUtils(): void
     {
         // Translator
         $this->set(Translator::class, function($di) {

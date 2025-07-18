@@ -20,7 +20,7 @@ trait CallableTrait
      *
      * @return void
      */
-    private function registerCallables()
+    private function registerCallables(): void
     {
         // Validator
         $this->set(Validator::class, function($di) {

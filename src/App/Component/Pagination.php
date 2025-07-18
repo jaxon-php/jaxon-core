@@ -14,7 +14,7 @@ class Pagination extends AbstractComponent
     /**
      * @inheritDoc
      */
-    protected function initComponent(Container $di, ComponentHelper $xHelper)
+    protected function initComponent(Container $di, ComponentHelper $xHelper): void
     {
         $this->setHelper($xHelper);
         $this->setNodeResponse($di);

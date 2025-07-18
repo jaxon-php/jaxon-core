@@ -107,7 +107,7 @@ class CallableClassPlugin extends AbstractRequestPlugin
      * @inheritDoc
      * @throws SetupException
      */
-    public function getCallable(string $sCallable)
+    public function getCallable(string $sCallable): CallableObject|null
     {
         return $this->cdi->makeCallableObject($sCallable);
     }
@@ -232,7 +232,7 @@ class CallableClassPlugin extends AbstractRequestPlugin
      * @inheritDoc
      * @throws RequestException
      */
-    public function processRequest()
+    public function processRequest(): void
     {
         $sClassName = $this->xTarget->getClassName();
         $sMethodName = $this->xTarget->getMethodName();

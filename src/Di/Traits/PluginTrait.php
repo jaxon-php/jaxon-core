@@ -39,7 +39,7 @@ trait PluginTrait
      *
      * @return void
      */
-    private function registerPlugins()
+    private function registerPlugins(): void
     {
         // Plugin manager
         $this->set(PluginManager::class, function($di) {
@@ -190,7 +190,7 @@ trait PluginTrait
      * @return void
      * @throws SetupException
      */
-    public function registerPackage(string $sClassName, Config $xPkgConfig)
+    public function registerPackage(string $sClassName, Config $xPkgConfig): void
     {
         // Register the user class, but only if the user didn't already.
         if(!$this->h($sClassName))

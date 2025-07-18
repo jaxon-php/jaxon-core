@@ -109,7 +109,7 @@ class Bootstrap
      * @return void
      * @throws SetupException
      */
-    private function setupApp()
+    private function setupApp(): void
     {
         // Save the app config.
         $this->xConfigManager->setAppOptions($this->aAppOptions);
@@ -123,7 +123,7 @@ class Bootstrap
      * @return void
      * @throws SetupException
      */
-    public function setup()
+    public function setup(): void
     {
         // Prevent the Jaxon library from sending the response or exiting
         $this->xConfigManager->setOptions([
@@ -147,7 +147,7 @@ class Bootstrap
      *
      * @return void
      */
-    public function onBoot()
+    public function onBoot(): void
     {
         // Popping the callbacks makes each of them to be called once.
         $aBootCallbacks = $this->xCallbackManager->popBootCallbacks();

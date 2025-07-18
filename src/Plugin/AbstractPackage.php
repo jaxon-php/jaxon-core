@@ -38,7 +38,7 @@ abstract class AbstractPackage extends AbstractCodeGenerator
      *
      * @return string|array
      */
-    abstract public static function config();
+    abstract public static function config(): string|array;
 
     /**
      * Get the package config object

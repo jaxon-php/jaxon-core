@@ -101,7 +101,7 @@ class ConfigManager
      * @return void
      * @throws SetupException
      */
-    public function load(string $sConfigFile, string $sConfigSection = '')
+    public function load(string $sConfigFile, string $sConfigSection = ''): void
     {
         try
         {
@@ -158,7 +158,7 @@ class ConfigManager
      *
      * @return void
      */
-    public function setOption(string $sName, $xValue)
+    public function setOption(string $sName, $xValue): void
     {
         $this->xLibConfig = $this->xConfigSetter
             ->setOption($this->xLibConfig, $sName, $xValue);
@@ -174,7 +174,7 @@ class ConfigManager
      *
      * @return mixed
      */
-    public function getOption(string $sName, $xDefault = null)
+    public function getOption(string $sName, $xDefault = null): mixed
     {
         return $this->xLibConfig->getOption($sName, $xDefault);
     }
@@ -211,7 +211,7 @@ class ConfigManager
      *
      * @return void
      */
-    public function setAppOption(string $sName, $xValue)
+    public function setAppOption(string $sName, $xValue): void
     {
         $this->xAppConfig = $this->xConfigSetter
             ->setOption($this->xAppConfig, $sName, $xValue);
@@ -265,7 +265,7 @@ class ConfigManager
      *
      * @return mixed
      */
-    public function getAppOption(string $sName, $xDefault = null)
+    public function getAppOption(string $sName, $xDefault = null): mixed
     {
         return $this->xAppConfig->getOption($sName, $xDefault);
     }
@@ -312,7 +312,7 @@ class ConfigManager
      *
      * @return void
      */
-    public function addLibEventListener(string $sClassName)
+    public function addLibEventListener(string $sClassName): void
     {
         $this->xEventManager->addLibConfigListener($sClassName);
     }
@@ -322,7 +322,7 @@ class ConfigManager
      *
      * @return void
      */
-    public function addAppEventListener(string $sClassName)
+    public function addAppEventListener(string $sClassName): void
     {
         $this->xEventManager->addAppConfigListener($sClassName);
     }
@@ -334,7 +334,7 @@ class ConfigManager
      *
      * @return void
      */
-    public function globals(bool $bForce = false)
+    public function globals(bool $bForce = false): void
     {
         if($bForce || $this->getAppOption('helpers.global', true))
         {

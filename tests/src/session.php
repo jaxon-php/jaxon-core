@@ -21,7 +21,7 @@ class SessionManager implements SessionInterface
      *
      * @return void
      */
-    public function newId(bool $bDeleteData = false)
+    public function newId(bool $bDeleteData = false): void
     {
         session_regenerate_id($bDeleteData);
     }
@@ -71,7 +71,7 @@ class SessionManager implements SessionInterface
      *
      * @return mixed
      */
-    public function get(string $sKey, $xDefault = null)
+    public function get(string $sKey, $xDefault = null): mixed
     {
         return $_SESSION[$sKey] ?? $xDefault;
     }
@@ -93,7 +93,7 @@ class SessionManager implements SessionInterface
      *
      * @return void
      */
-    public function delete(string $sKey)
+    public function delete(string $sKey): void
     {
         if(isset($_SESSION[$sKey]))
         {
@@ -106,7 +106,7 @@ class SessionManager implements SessionInterface
      *
      * @return void
      */
-    public function clear()
+    public function clear(): void
     {
         session_unset();
     }

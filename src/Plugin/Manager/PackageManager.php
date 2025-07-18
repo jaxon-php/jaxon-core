@@ -60,7 +60,7 @@ class PackageManager
      *
      * @return void
      */
-    private function updateContainer(Config $xConfig)
+    private function updateContainer(Config $xConfig): void
     {
         $aOptions = $xConfig->getOption('container.set', []);
         foreach($aOptions as $xKey => $xValue)
@@ -97,7 +97,7 @@ class PackageManager
      * @return void
      * @throws SetupException
      */
-    private function registerCallables(array $aOptions, string $sCallableType)
+    private function registerCallables(array $aOptions, string $sCallableType): void
     {
         foreach($aOptions as $xKey => $xValue)
         {
@@ -122,7 +122,7 @@ class PackageManager
      *
      * @return void
      */
-    private function registerExceptionHandlers(Config $xConfig)
+    private function registerExceptionHandlers(Config $xConfig): void
     {
         foreach($xConfig->getOption('exceptions', []) as $sExClass => $xExHandler)
         {
@@ -141,7 +141,7 @@ class PackageManager
      * @return void
      */
     private function registerCallablesFromConfig(Config $xConfig,
-        string $sOptionName, string $sOptionKey, string $sCallableType)
+        string $sOptionName, string $sOptionKey, string $sCallableType): void
     {
         // The callable (directory path, class or function name) can be used as the
         // key of the array item, a string as the value of an entry without a key,
@@ -177,7 +177,7 @@ class PackageManager
      * @return void
      * @throws SetupException
      */
-    private function registerItemsFromConfig(Config $xConfig, ?Config $xUserConfig = null)
+    private function registerItemsFromConfig(Config $xConfig, ?Config $xUserConfig = null): void
     {
         // Set the config for the registered callables.
         $this->xRegistry->setPackageConfig($xConfig);
@@ -259,7 +259,7 @@ class PackageManager
      * @return void
      * @throws SetupException
      */
-    public function registerPackage(string $sClassName, array $aUserOptions = [])
+    public function registerPackage(string $sClassName, array $aUserOptions = []): void
     {
         $sClassName = trim($sClassName, '\\ ');
         if(!is_subclass_of($sClassName, AbstractPackage::class))
@@ -301,7 +301,7 @@ class PackageManager
      * @return void
      * @throws SetupException
      */
-    public function registerFromConfig()
+    public function registerFromConfig(): void
     {
         $xAppConfig = $this->xConfigManager->getAppConfig();
         $this->registerItemsFromConfig($xAppConfig);

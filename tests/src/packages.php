@@ -50,7 +50,7 @@ class BadConfigPackage extends AbstractPackage
     /**
      * @inheritDoc
      */
-    public static function config()
+    public static function config(): string|array
     {
         return true; // This is wrong. The return value must be a string or an array.
     }

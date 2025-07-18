@@ -22,29 +22,12 @@ namespace Jaxon\Plugin\Request\CallableFunction;
 
 use Jaxon\Di\Container;
 
+use function call_user_func_array;
+use function is_array;
+use function is_string;
+
 class CallableFunction
 {
-    /**
-     * The DI container
-     *
-     * @var Container
-     */
-    protected $di;
-
-    /**
-     * The name of the function in the ajax call
-     *
-     * @var string
-     */
-    private $sFunction;
-
-    /**
-     * The name of the generated javascript function
-     *
-     * @var string
-     */
-    private $sJsFunction;
-
     /**
      * A string or an array which defines the registered PHP function
      *
@@ -57,11 +40,11 @@ class CallableFunction
      *
      * @var string
      */
-    private $sInclude;
+    private $sInclude = '';
 
     /**
      * An associative array containing call options that will be sent
-     * to the browser curing client script generation
+     * to the browser with the client script.
      *
      * @var array
      */
@@ -75,11 +58,9 @@ class CallableFunction
      * @param string $sJsFunction
      * @param string $sPhpFunction
      */
-    public function __construct(Container $di, string $sFunction, string $sJsFunction, string $sPhpFunction)
+    public function __construct(private Container $di, private string $sFunction,
+        private string $sJsFunction, string $sPhpFunction)
     {
-        $this->di = $di;
-        $this->sFunction = $sFunction;
-        $this->sJsFunction = $sJsFunction;
         $this->xPhpFunction = $sPhpFunction;
     }
 
@@ -121,7 +102,7 @@ class CallableFunction
      *
      * @return void
      */
-    public function configure(string $sName, string $sValue)
+    public function configure(string $sName, string $sValue): void
     {
         switch($sName)
         {
@@ -145,9 +126,9 @@ class CallableFunction
      *
      * @return void
      */
-    public function call(array $aArgs = [])
+    public function call(array $aArgs = []): void
     {
-        if(($this->sInclude))
+        if($this->sInclude !== '')
         {
             require_once $this->sInclude;
         }

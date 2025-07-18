@@ -26,7 +26,7 @@ trait AppTrait
      *
      * @return void
      */
-    private function registerApp()
+    private function registerApp(): void
     {
         // Config Manager
         $this->set(ConfigEventManager::class, function($di) {

@@ -16,7 +16,7 @@ abstract class NodeComponent extends Component\AbstractComponent
     /**
      * @inheritDoc
      */
-    final protected function initComponent(Container $di, ComponentHelper $xHelper)
+    final protected function initComponent(Container $di, ComponentHelper $xHelper): void
     {
         $this->setHelper($xHelper);
         $this->setNodeResponse($di);
@@ -33,7 +33,7 @@ abstract class NodeComponent extends Component\AbstractComponent
      *
      * @return void
      */
-    protected function before()
+    protected function before(): void
     {}
 
     /**
@@ -41,7 +41,7 @@ abstract class NodeComponent extends Component\AbstractComponent
      *
      * @return void
      */
-    protected function after()
+    protected function after(): void
     {}
 
     /**
@@ -49,7 +49,7 @@ abstract class NodeComponent extends Component\AbstractComponent
      *
      * @return void
      */
-    final public function render()
+    final public function render(): void
     {
         $this->before();
         $this->node()->html((string)$this->html());
@@ -61,7 +61,7 @@ abstract class NodeComponent extends Component\AbstractComponent
      *
      * @return void
      */
-    final public function clear()
+    final public function clear(): void
     {
         $this->node()->clear();
     }
@@ -71,7 +71,7 @@ abstract class NodeComponent extends Component\AbstractComponent
      *
      * @return void
      */
-    final public function visible(bool $bVisible)
+    final public function visible(bool $bVisible): void
     {
         $bVisible ? $this->node()->jq()->show() : $this->node()->jq()->hide();
     }

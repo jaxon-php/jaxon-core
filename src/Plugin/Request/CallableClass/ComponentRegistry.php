@@ -124,7 +124,7 @@ class ComponentRegistry
      *
      * @return void
      */
-    public function setPackageConfig(Config $xConfig)
+    public function setPackageConfig(Config $xConfig): void
     {
         $this->xPackageConfig = $xConfig;
     }
@@ -132,7 +132,7 @@ class ComponentRegistry
     /**
      * @return void
      */
-    public function unsetPackageConfig()
+    public function unsetPackageConfig(): void
     {
         $this->xPackageConfig = null;
     }
@@ -164,7 +164,7 @@ class ComponentRegistry
      *
      * @return void
      */
-    public function updateHash(bool $bUpdateHash)
+    public function updateHash(bool $bUpdateHash): void
     {
         $this->bUpdateHash = $bUpdateHash;
     }
@@ -240,7 +240,7 @@ class ComponentRegistry
      * @return void
      */
     private function _registerComponent(string $sClassName, array $aClassOptions,
-        array $aDirectoryOptions = [])
+        array $aDirectoryOptions = []): void
     {
         $aOptions = $this->makeClassOptions($sClassName, $aClassOptions, $aDirectoryOptions);
         $this->cdi->registerComponent($sClassName, $aOptions);
@@ -258,7 +258,7 @@ class ComponentRegistry
      *
      * @return void
      */
-    public function registerComponent(string $sClassName, array $aClassOptions)
+    public function registerComponent(string $sClassName, array $aClassOptions): void
     {
         if($this->xPackageConfig !== null)
         {
@@ -298,7 +298,7 @@ class ComponentRegistry
      *
      * @return void
      */
-    public function registerDirectory(string $sDirectory, array $aOptions)
+    public function registerDirectory(string $sDirectory, array $aOptions): void
     {
         // Set the autoload option default value
         if(!isset($aOptions['autoload']))
@@ -320,7 +320,7 @@ class ComponentRegistry
      *
      * @return void
      */
-    private function addNamespace(string $sNamespace, array $aOptions)
+    private function addNamespace(string $sNamespace, array $aOptions): void
     {
         $this->aNamespaces[] = $sNamespace;
         $this->sHash .= $sNamespace . $aOptions['separator'];
@@ -334,7 +334,7 @@ class ComponentRegistry
      *
      * @return void
      */
-    public function registerNamespace(string $sNamespace, array $aOptions)
+    public function registerNamespace(string $sNamespace, array $aOptions): void
     {
         // Separator default value
         if(!isset($aOptions['separator']))
@@ -373,7 +373,7 @@ class ComponentRegistry
      *
      * @return void
      */
-    public function registerComponentsInDirectories()
+    public function registerComponentsInDirectories(): void
     {
         // This is to be done only once.
         if($this->bDirectoriesParsed)
@@ -412,7 +412,7 @@ class ComponentRegistry
      *
      * @return void
      */
-    public function registerComponentsInNamespaces()
+    public function registerComponentsInNamespaces(): void
     {
         // This is to be done only once.
         if($this->bNamespacesParsed)

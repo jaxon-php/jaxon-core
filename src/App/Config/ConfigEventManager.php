@@ -40,7 +40,7 @@ class ConfigEventManager
      *
      * @return void
      */
-    public function addLibConfigListener(string $sClassName)
+    public function addLibConfigListener(string $sClassName): void
     {
         $this->aLibConfigListeners[] = $sClassName;
     }
@@ -50,7 +50,7 @@ class ConfigEventManager
      *
      * @return void
      */
-    public function addAppConfigListener(string $sClassName)
+    public function addAppConfigListener(string $sClassName): void
     {
         $this->aAppConfigListeners[] = $sClassName;
     }
@@ -58,7 +58,7 @@ class ConfigEventManager
     /**
      * @inheritDoc
      */
-    public function libConfigChanged(Config $xConfig, string $sName)
+    public function libConfigChanged(Config $xConfig, string $sName): void
     {
         foreach($this->aLibConfigListeners as $sListener)
         {
@@ -69,7 +69,7 @@ class ConfigEventManager
     /**
      * @inheritDoc
      */
-    public function appConfigChanged(Config $xConfig, string $sName)
+    public function appConfigChanged(Config $xConfig, string $sName): void
     {
         foreach($this->aAppConfigListeners as $sListener)
         {

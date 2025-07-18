@@ -78,7 +78,7 @@ class ViewRenderer
      * @return void
      */
     public function addNamespace(string $sNamespace, string $sDirectory,
-        string $sExtension, string $sRenderer)
+        string $sExtension, string $sRenderer): void
     {
         $aNamespace = [
             'directory' => $sDirectory,
@@ -96,7 +96,7 @@ class ViewRenderer
      *
      * @return void
      */
-    public function addNamespaces(Config $xAppConfig, ?Config $xUserConfig = null)
+    public function addNamespaces(Config $xAppConfig, ?Config $xUserConfig = null): void
     {
         if(empty($aNamespaces = $xAppConfig->getOptionNames('views')))
         {
@@ -149,7 +149,7 @@ class ViewRenderer
      *
      * @return void
      */
-    public function addRenderer(string $sId, Closure $xClosure)
+    public function addRenderer(string $sId, Closure $xClosure): void
     {
         // Return the initialized view renderer
         $this->di->set("jaxon.app.view.$sId", function($di) use($sId, $xClosure) {
@@ -176,7 +176,7 @@ class ViewRenderer
      *
      * @return void
      */
-    public function setDefaultRenderer(string $sId, string $sExtension, Closure $xClosure)
+    public function setDefaultRenderer(string $sId, string $sExtension, Closure $xClosure): void
     {
         $this->setDefaultNamespace($sId);
         $this->addNamespace($sId, '', $sExtension, $sId);

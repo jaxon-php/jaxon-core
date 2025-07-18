@@ -20,7 +20,7 @@ trait ResponseTrait
      *
      * @return void
      */
-    private function registerResponses()
+    private function registerResponses(): void
     {
         // Global Response
         $this->set(Response::class, function($di) {

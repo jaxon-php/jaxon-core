@@ -133,7 +133,7 @@ class ResponseManager
      *
      * @return void
      */
-    public function setErrorMessage(string $sErrorMessage)
+    public function setErrorMessage(string $sErrorMessage): void
     {
         $this->sErrorMessage = $sErrorMessage;
     }
@@ -173,7 +173,7 @@ class ResponseManager
      *
      * @return void
      */
-    public function clearCommands()
+    public function clearCommands(): void
     {
         $this->aCommands = [];
     }
@@ -282,7 +282,7 @@ class ResponseManager
      *
      * @return Response
      */
-    public function getResponse()
+    public function getResponse(): Response
     {
         return $this->di->getResponse();
     }
@@ -329,7 +329,7 @@ class ResponseManager
      *
      * @return void
      */
-    public function debug(string $sMessage)
+    public function debug(string $sMessage): void
     {
         $this->aDebugMessages[] = $sMessage;
     }
@@ -341,7 +341,7 @@ class ResponseManager
      *
      * @return void
      */
-    public function error(string $sMessage)
+    public function error(string $sMessage): void
     {
         $this->clearCommands();
         $this->debug($sMessage);

@@ -66,7 +66,7 @@ trait DiAutoTrait
      *
      * @return void
      */
-    public function auto(string $sClass)
+    public function auto(string $sClass): void
     {
         $this->set($sClass, function() use ($sClass) {
             return $this->make($sClass);

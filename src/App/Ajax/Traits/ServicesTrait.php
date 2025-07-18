@@ -114,7 +114,7 @@ trait ServicesTrait
      *
      * @return void
      */
-    public function addViewRenderer(string $sRenderer, string $sExtension, Closure $xClosure)
+    public function addViewRenderer(string $sRenderer, string $sExtension, Closure $xClosure): void
     {
         $this->view()->setDefaultRenderer($sRenderer, $sExtension, $xClosure);
     }
@@ -124,7 +124,7 @@ trait ServicesTrait
      *
      * @return void
      */
-    public function setLogger(LoggerInterface|Closure $xLogger)
+    public function setLogger(LoggerInterface|Closure $xLogger): void
     {
         $this->di()->setLogger($xLogger);
     }
@@ -136,7 +136,7 @@ trait ServicesTrait
      *
      * @return void
      */
-    public function setSessionManager(Closure $xClosure)
+    public function setSessionManager(Closure $xClosure): void
     {
         $this->di()->setSessionManager($xClosure);
     }
