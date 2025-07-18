@@ -147,7 +147,7 @@ abstract class AbstractResponse
     public function plugin(string $sName): ?ResponsePluginInterface
     {
         $xResponsePlugin = $this->xPluginManager->getResponsePlugin($sName);
-        return !$xResponsePlugin ? null : $xResponsePlugin->_init($this);
+        return !$xResponsePlugin ? null : $xResponsePlugin->initPlugin($this);
     }
 
     /**

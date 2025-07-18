@@ -55,9 +55,9 @@ trait ResponsePluginTrait
     /**
      * @param AbstractResponse $xResponse   The response
      *
-     * @return ResponsePluginInterface
+     * @return static
      */
-    public function _init(AbstractResponse $xResponse): ResponsePluginInterface
+    public function initPlugin(AbstractResponse $xResponse): static
     {
         $this->xResponse = $xResponse;
         $this->init();

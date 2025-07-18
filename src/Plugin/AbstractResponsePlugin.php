@@ -34,6 +34,6 @@ abstract class AbstractResponsePlugin extends AbstractPlugin implements Response
      *
      * @return void
      */
-    protected function init()
+    protected function init(): void
     {}
 }
