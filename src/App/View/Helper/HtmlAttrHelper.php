@@ -95,18 +95,6 @@ class HtmlAttrHelper
     }
 
     /**
-     * Set a node as a target for event handler definitions
-     *
-     * @param string $name
-     *
-     * @return string
-     */
-    public function target(string $name = ''): string
-    {
-        return 'jxn-target="' . trim($name) . '"';
-    }
-
-    /**
      * Set a selector for the next event handler
      *
      * @param string $sSelector
@@ -150,7 +138,7 @@ class HtmlAttrHelper
      *
      * @return bool
      */
-    private function entryIsValid(array $aHandler): bool
+    private function eventIsValid(array $aHandler): bool
     {
         return count($aHandler) === 3 &&
             isset($aHandler[0]) && isset($aHandler[1]) && isset($aHandler[2]) &&
@@ -166,7 +154,7 @@ class HtmlAttrHelper
      */
     private function setEventHandler(array $aHandler, ?EventAttr $xAttr = null): EventAttr|null
     {
-        if(!$this->entryIsValid($aHandler))
+        if(!$this->eventIsValid($aHandler))
         {
             return $xAttr;
         }
