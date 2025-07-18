@@ -23,7 +23,7 @@ abstract class AbstractComponent
      *
      * @return void
      */
-    abstract protected function _init(Container $di, ComponentHelper $xHelper);
+    abstract protected function initComponent(Container $di, ComponentHelper $xHelper);
 
     /**
      * Get the js call factory.

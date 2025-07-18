@@ -313,9 +313,9 @@ class ComponentContainer
                 $xHelper = $this->get($this->getCallableHelperKey($sClassName));
                 $xHelper->xTarget = $this->xTarget;
 
-                // Call the protected "_init()" method of the Component class.
+                // Call the protected "initComponent()" method of the Component class.
                 $cSetter = function($di, $xHelper) {
-                    $this->_init($di, $xHelper);  // "$this" here refers to the Component class.
+                    $this->initComponent($di, $xHelper);  // "$this" here refers to the Component class.
                 };
                 $cSetter = $cSetter->bindTo($xClassInstance, $xClassInstance);
                 call_user_func($cSetter, $this->di, $xHelper);
