@@ -28,7 +28,7 @@ interface SessionInterface
      *
      * @return void
      */
-    public function set(string $sKey, $xValue);
+    public function set(string $sKey, mixed $xValue): void;
 
     /**
      * Save data in the session, that will be available only until the next call
@@ -53,11 +53,11 @@ interface SessionInterface
      * Get data from the session
      *
      * @param string $sKey    The session key
-     * @param mixed|null $xDefault    The default value
+     * @param mixed $xDefault    The default value
      *
      * @return mixed
      */
-    public function get(string $sKey, $xDefault = null): mixed;
+    public function get(string $sKey, mixed $xDefault = null): mixed;
 
     /**
      * Get all data in the session
