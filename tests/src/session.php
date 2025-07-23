@@ -34,7 +34,7 @@ class SessionManager implements SessionInterface
      *
      * @return void
      */
-    public function set(string $sKey, $xValue)
+    public function set(string $sKey, mixed $xValue): void
     {
         $_SESSION[$sKey] = $xValue;
     }
@@ -71,7 +71,7 @@ class SessionManager implements SessionInterface
      *
      * @return mixed
      */
-    public function get(string $sKey, $xDefault = null): mixed
+    public function get(string $sKey, mixed $xDefault = null): mixed
     {
         return $_SESSION[$sKey] ?? $xDefault;
     }
