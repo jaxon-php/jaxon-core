@@ -189,4 +189,21 @@ class HtmlAttrHelper
         return array_reduce($aHandlers, fn(EventAttr|null $xAttr, array $aHandler)
             => $this->setEventHandler($aHandler, $xAttr), null)?->__toString() ?? '';
     }
+
+    /**
+     * Get the HTML or Javascript ready code for a package
+     *
+     * @param string $sClass
+     * @param string $sCode
+     *
+     * @return string
+     */
+    public function package(string $sClass, string $sCode = 'html'): string
+    {
+        return match($sCode) {
+            'html' => jaxon()->package($sClass)?->getHtml() ?? '',
+            'ready' => jaxon()->package($sClass)?->getReadyScript() ?? '',
+            default => ''
+        };
+    }
 }
