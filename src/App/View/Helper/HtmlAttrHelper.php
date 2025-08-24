@@ -194,16 +194,21 @@ class HtmlAttrHelper
      * Get the HTML or Javascript ready code for a package
      *
      * @param string $sClass
-     * @param string $sCode
+     * @param string $sType
      *
      * @return string
      */
-    public function package(string $sClass, string $sCode = 'html'): string
+    public function package(string $sClass, string $sType = 'html'): string
     {
-        return match($sCode) {
+        $sCode = match($sType) {
             'html' => jaxon()->package($sClass)?->getHtml() ?? '',
             'ready' => jaxon()->package($sClass)?->getReadyScript() ?? '',
             default => ''
         };
+        $sCode = trim($sCode);
+
+        return $sType !== 'ready' || $sCode === '' ? $sCode :
+            // Call the ready code with the jaxon.dom.ready function.
+            "jaxon.dom.ready(() => $sCode)";
     }
 }
