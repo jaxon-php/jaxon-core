@@ -185,31 +185,37 @@ trait PluginTrait
      * Register a package
      *
      * @param class-string $sClassName    The package class name
-     * @param Config $xPkgConfig    The user provided package options
+     * @param array $aUserOptions    The user provided package options
      *
      * @return void
      * @throws SetupException
      */
-    public function registerPackage(string $sClassName, Config $xPkgConfig): void
+    public function registerPackage(string $sClassName, array $aUserOptions): void
     {
         // Register the user class, but only if the user didn't already.
         if(!$this->h($sClassName))
         {
-            $this->set($sClassName, function() use($sClassName) {
-                return $this->make($sClassName);
-            });
+            $this->set($sClassName, fn() => $this->make($sClassName));
         }
 
         // Save the package config in the container.
-        $this->val($this->getPackageConfigKey($sClassName), $xPkgConfig);
+        $sConfigKey = $this->getPackageConfigKey($sClassName);
+        $this->set($sConfigKey, function($di) use($aUserOptions) {
+            $xOptionsProvider = $aUserOptions['provider'] ?? null;
+            // The user can provide a callable that returns the package options.
+            if(is_callable($xOptionsProvider))
+            {
+                $aUserOptions = $xOptionsProvider($aUserOptions);
+            }
+            return $di->g(ConfigManager::class)->newConfig($aUserOptions);
+        });
 
         // Initialize the package instance.
-        $xPkgConfig = $this->getPackageConfig($sClassName);
-        $xViewRenderer = $this->g(ViewRenderer::class);
-        $this->extendPackage($sClassName, function() use($xPkgConfig, $xViewRenderer) {
-            // $this here is related to the Package instance.
-            $this->xPkgConfig = $xPkgConfig;
-            $this->xRenderer = $xViewRenderer;
+        $di = $this;
+        $this->extendPackage($sClassName, function() use($di, $sConfigKey) {
+            // $this here refers to the Package instance.
+            $this->xPkgConfig = $di->g($sConfigKey);
+            $this->xRenderer = $di->g(ViewRenderer::class);
             $this->init();
         });
     }

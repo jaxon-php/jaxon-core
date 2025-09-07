@@ -92,11 +92,10 @@ class ViewRenderer
      * Set the view namespaces.
      *
      * @param Config $xAppConfig    The config options provided in the library
-     * @param Config|null $xUserConfig    The config options provided in the app section of the global config file.
      *
      * @return void
      */
-    public function addNamespaces(Config $xAppConfig, ?Config $xUserConfig = null): void
+    public function addNamespaces(Config $xAppConfig): void
     {
         if(empty($aNamespaces = $xAppConfig->getOptionNames('views')))
         {
@@ -112,17 +111,6 @@ class ViewRenderer
             if(!isset($aNamespace['renderer']))
             {
                 $aNamespace['renderer'] = 'jaxon'; // 'jaxon' is the default renderer.
-            }
-
-            // If the lib config has defined a template option, then its value must be
-            // read from the app config.
-            if($xUserConfig !== null && isset($aNamespace['template']) &&
-                is_array($aNamespace['template']))
-            {
-                $sTemplateOption = $xAppConfig->getOption("$sOption.template.option");
-                $sTemplateDefault = $xAppConfig->getOption("$sOption.template.default");
-                $sTemplate = $xUserConfig->getOption($sTemplateOption, $sTemplateDefault);
-                $aNamespace['directory'] = rtrim($aNamespace['directory'], '/') . '/' . $sTemplate;
             }
             $this->aNamespaces[$sNamespace] = $aNamespace;
         }

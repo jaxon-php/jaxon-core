@@ -172,12 +172,11 @@ class PackageManager
      * Read and set Jaxon options from a JSON config file
      *
      * @param Config $xConfig The config options
-     * @param Config|null $xUserConfig The user provided package options
      *
      * @return void
      * @throws SetupException
      */
-    private function registerItemsFromConfig(Config $xConfig, ?Config $xUserConfig = null): void
+    private function registerItemsFromConfig(Config $xConfig): void
     {
         // Set the config for the registered callables.
         $this->xRegistry->setPackageConfig($xConfig);
@@ -196,7 +195,7 @@ class PackageManager
         // Register the view namespaces
         // Note: the $xUserConfig can provide a "template" option, which is used to customize
         // the user defined view namespaces. That's why it is needed here.
-        $this->xViewRenderer->addNamespaces($xConfig, $xUserConfig);
+        $this->xViewRenderer->addNamespaces($xConfig);
         // Save items in the DI container
         $this->updateContainer($xConfig);
         // Register the exception handlers
@@ -232,25 +231,6 @@ class PackageManager
     }
 
     /**
-     * Get the options provided by the package user
-     *
-     * @param array $aUserOptions    The user provided options
-     *
-     * @return Config
-     * @throws SetupException
-     */
-    private function getPackageUserConfig(array $aUserOptions): Config
-    {
-        $xOptionsProvider = $aUserOptions['provider'] ?? null;
-        // The user can provide a callable that returns the package options.
-        if(is_callable($xOptionsProvider))
-        {
-            $aUserOptions = $xOptionsProvider($aUserOptions);
-        }
-        return $this->xConfigManager->newConfig($aUserOptions);
-    }
-
-    /**
      * Register a package
      *
      * @param class-string $sClassName    The package class
@@ -270,12 +250,10 @@ class PackageManager
 
         // Register the declarations in the package config.
         $xAppConfig = $this->getPackageLibConfig($sClassName);
-        $xUserConfig = $this->getPackageUserConfig($aUserOptions);
-
-        $this->registerItemsFromConfig($xAppConfig, $xUserConfig);
+        $this->registerItemsFromConfig($xAppConfig);
 
         // Register the package and its options in the DI
-        $this->di->registerPackage($sClassName, $xUserConfig);
+        $this->di->registerPackage($sClassName, $aUserOptions);
 
         // Register the package as a code generator.
         $this->xCodeGenerator->addCodeGenerator($sClassName, 500);
