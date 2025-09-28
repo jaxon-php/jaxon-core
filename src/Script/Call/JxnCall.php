@@ -14,6 +14,7 @@ namespace Jaxon\Script\Call;
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
+use Jaxon\Script\Action\Attr;
 use Jaxon\Script\JsExpr;
 
 class JxnCall extends AbstractCall
@@ -55,5 +56,25 @@ class JxnCall extends AbstractCall
     public function _class(): string
     {
         return '';
+    }
+
+    /**
+     * Convert this call to array, when converting the response into json.
+     *
+     * @return array
+     */
+    public function jsonSerialize(): array
+    {
+        return (new JsExpr(Attr::get($this->_class())))->jsonSerialize();
+    }
+
+    /**
+     * Returns a call to jaxon as a string
+     *
+     * @return string
+     */
+    public function __toString(): string
+    {
+        return (new JsExpr(Attr::get($this->_class())))->__toString();
     }
 }

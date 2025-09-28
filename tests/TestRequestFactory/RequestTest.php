@@ -68,4 +68,64 @@ final class RequestTest extends TestCase
             rq('Sample')->method(2, 5, je()->rd()->page())->__toString()
         );
     }
+
+    /**
+     * @throws SetupException
+     */
+    public function testCallsToRqFactory()
+    {
+        $this->assertEquals(
+            'jaxon.exec({"_type":"expr","calls":[{"_type":"attr","_name":"JaxonSample"}]})',
+            rq('Sample')->__toString()
+        );
+        $this->assertEquals(
+            'jaxon.exec({"_type":"expr","calls":[{"_type":"attr","_name":""}]})',
+            rq()->__toString()
+        );
+    }
+
+    /**
+     * @throws SetupException
+     */
+    public function testCallsToJoFactory()
+    {
+        $this->assertEquals(
+            'jaxon.exec({"_type":"expr","calls":[{"_type":"attr","_name":"Sample"}]})',
+            jo('Sample')->__toString()
+        );
+        $this->assertEquals(
+            'jaxon.exec({"_type":"expr","calls":[{"_type":"attr","_name":"window"}]})',
+            jo()->__toString()
+        );
+    }
+
+    /**
+     * @throws SetupException
+     */
+    public function testCallsToJqFactory()
+    {
+        $this->assertEquals(
+            'jaxon.exec({"_type":"expr","calls":[{"_type":"select","_name":".selector","mode":"jq"}]})',
+            jq('.selector')->__toString()
+        );
+        $this->assertEquals(
+            'jaxon.exec({"_type":"expr","calls":[{"_type":"select","_name":"this","mode":"jq"}]})',
+            jq()->__toString()
+        );
+    }
+
+    /**
+     * @throws SetupException
+     */
+    public function testCallsToJeFactory()
+    {
+        $this->assertEquals(
+            'jaxon.exec({"_type":"expr","calls":[{"_type":"select","_name":"selector","mode":"js"}]})',
+            je('selector')->__toString()
+        );
+        $this->assertEquals(
+            'jaxon.exec({"_type":"expr","calls":[{"_type":"select","_name":"this","mode":"js"}]})',
+            je()->__toString()
+        );
+    }
 }

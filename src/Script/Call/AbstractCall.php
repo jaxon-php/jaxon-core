@@ -37,4 +37,24 @@ abstract class AbstractCall
     {
         return $this->_expr()->__call($sMethod, $aArguments);
     }
+
+    /**
+     * Convert this call to array, when converting the response into json.
+     *
+     * @return array
+     */
+    public function jsonSerialize(): array
+    {
+        return $this->_expr()->jsonSerialize();
+    }
+
+    /**
+     * Returns a call to jaxon as a string
+     *
+     * @return string
+     */
+    public function __toString(): string
+    {
+        return $this->_expr()->__toString();
+    }
 }
