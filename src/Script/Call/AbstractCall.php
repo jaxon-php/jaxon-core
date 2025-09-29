@@ -15,8 +15,9 @@
 namespace Jaxon\Script\Call;
 
 use Jaxon\Script\JsExpr;
+use JsonSerializable;
 
-abstract class AbstractCall
+abstract class AbstractCall implements JsonSerializable
 {
     /**
      * Create a js expression
