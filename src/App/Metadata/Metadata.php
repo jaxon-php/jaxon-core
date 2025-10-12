@@ -14,23 +14,160 @@
 
 namespace Jaxon\App\Metadata;
 
+use function array_filter;
+use function array_keys;
+use function count;
+
 class Metadata implements MetadataInterface
 {
     /**
-     * @param bool $bIsExcluded
-     * @param array $aProperties
-     * @param array $aProtectedMethods
+     * @var array<Data\ExcludeData>
      */
-    public function __construct(private bool $bIsExcluded,
-        private array $aProperties, private array $aProtectedMethods)
-    {}
+    private array $aExcludes = [];
+
+    /**
+     * @var array<Data\ContainerData>
+     */
+    private array $aContainers = [];
+
+    /**
+     * @var array<Data\DataBagData>
+     */
+    private array $aDataBags = [];
+
+    /**
+     * @var array<Data\CallbackData>
+     */
+    private array $aCallbacks = [];
+
+    /**
+     * @var array<Data\BeforeData>
+     */
+    private array $aBefores = [];
+
+    /**
+     * @var array<Data\AfterData>
+     */
+    private array $aAfters = [];
+
+    /**
+     * @var array<Data\UploadData>
+     */
+    private array $aUploads = [];
+
+    // /**
+    //  * @param bool $bIsExcluded
+    //  * @param array $aProperties
+    //  * @param array $aProtectedMethods
+    //  */
+    // public function __construct(private bool $bIsExcluded,
+    //     private array $aProperties, private array $aProtectedMethods)
+    // {}
+
+    /**
+     * @param string $sMethod
+     *
+     * @return Data\ExcludeData
+     */
+    public function exclude(string $sMethod = '*'): Data\ExcludeData
+    {
+        if(!isset($this->aExcludes[$sMethod]))
+        {
+            $this->aExcludes[$sMethod] = new Data\ExcludeData();
+        }
+        return $this->aExcludes[$sMethod];
+    }
+
+    /**
+     * @param string $sMethod
+     *
+     * @return Data\ContainerData
+     */
+    public function container(string $sMethod = '*'): Data\ContainerData
+    {
+        if(!isset($this->aContainers[$sMethod]))
+        {
+            $this->aContainers[$sMethod] = new Data\ContainerData();
+        }
+        return $this->aContainers[$sMethod];
+    }
+
+    /**
+     * @param string $sMethod
+     *
+     * @return Data\DataBagData
+     */
+    public function databag(string $sMethod = '*'): Data\DataBagData
+    {
+        if(!isset($this->aDataBags[$sMethod]))
+        {
+            $this->aDataBags[$sMethod] = new Data\DataBagData();
+        }
+        return $this->aDataBags[$sMethod];
+    }
+
+    /**
+     * @param string $sMethod
+     *
+     * @return Data\CallbackData
+     */
+    public function callback(string $sMethod = '*'): Data\CallbackData
+    {
+        if(!isset($this->aCallbacks[$sMethod]))
+        {
+            $this->aCallbacks[$sMethod] = new Data\CallbackData();
+        }
+        return $this->aCallbacks[$sMethod];
+    }
+
+    /**
+     * @param string $sMethod
+     *
+     * @return Data\BeforeData
+     */
+    public function before(string $sMethod = '*'): Data\BeforeData
+    {
+        if(!isset($this->aBefores[$sMethod]))
+        {
+            $this->aBefores[$sMethod] = new Data\BeforeData();
+        }
+        return $this->aBefores[$sMethod];
+    }
+
+    /**
+     * @param string $sMethod
+     *
+     * @return Data\AfterData
+     */
+    public function after(string $sMethod = '*'): Data\AfterData
+    {
+        if(!isset($this->aAfters[$sMethod]))
+        {
+            $this->aAfters[$sMethod] = new Data\AfterData();
+        }
+        return $this->aAfters[$sMethod];
+    }
+
+    /**
+     * @param string $sMethod
+     *
+     * @return Data\UploadData
+     */
+    public function upload(string $sMethod = '*'): Data\UploadData
+    {
+        if(!isset($this->aUploads[$sMethod]))
+        {
+            $this->aUploads[$sMethod] = new Data\UploadData();
+        }
+        return $this->aUploads[$sMethod];
+    }
 
     /**
      * @inheritDoc
      */
     public function isExcluded(): bool
     {
-        return $this->bIsExcluded;
+        return isset($this->aExcludes['*']) && $this->aExcludes['*']->getValue() === true;
     }
 
     /**
@@ -38,7 +175,37 @@ class Metadata implements MetadataInterface
      */
     public function getProperties(): array
     {
-        return $this->aProperties;
+        $aAttributes = [
+            // $this->aExcludes,
+            $this->aContainers,
+            $this->aDataBags,
+            $this->aCallbacks,
+            $this->aBefores,
+            $this->aAfters,
+            $this->aUploads,
+        ];
+        $aProperties = [];
+        $aClassProperties = [];
+
+        foreach($aAttributes as $aData)
+        {
+            foreach($aData as $sMethod => $xData)
+            {
+                if($sMethod === '*')
+                {
+                    $aClassProperties[$xData->getName()] = $xData->getValue();
+                    continue;
+                }
+                $aProperties[$sMethod][$xData->getName()] = $xData->getValue();
+            }
+        }
+
+        if(count($aClassProperties) > 0)
+        {
+            $aProperties['*'] = $aClassProperties;
+        }
+
+        return $aProperties;
     }
 
     /**
@@ -46,6 +213,7 @@ class Metadata implements MetadataInterface
      */
     public function getProtectedMethods(): array
     {
-        return $this->aProtectedMethods;
+        return array_filter(array_keys($this->aExcludes), fn(string $sName) =>
+            $sName !== '*' && $this->aExcludes[$sName]->getValue() === true);
     }
 }
