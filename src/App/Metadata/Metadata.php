@@ -16,6 +16,7 @@ namespace Jaxon\App\Metadata;
 
 use function array_filter;
 use function array_keys;
+use function array_values;
 use function count;
 
 class Metadata implements MetadataInterface
@@ -187,9 +188,9 @@ class Metadata implements MetadataInterface
         $aProperties = [];
         $aClassProperties = [];
 
-        foreach($aAttributes as $aData)
+        foreach($aAttributes as $aAttributeValues)
         {
-            foreach($aData as $sMethod => $xData)
+            foreach($aAttributeValues as $sMethod => $xData)
             {
                 if($sMethod === '*')
                 {
@@ -213,7 +214,8 @@ class Metadata implements MetadataInterface
      */
     public function getProtectedMethods(): array
     {
-        return array_filter(array_keys($this->aExcludes), fn(string $sName) =>
-            $sName !== '*' && $this->aExcludes[$sName]->getValue() === true);
+        $aMethods = array_keys($this->aExcludes);
+        return array_values(array_filter($aMethods, fn(string $sName) =>
+            $sName !== '*' && $this->aExcludes[$sName]->getValue() === true));
     }
 }

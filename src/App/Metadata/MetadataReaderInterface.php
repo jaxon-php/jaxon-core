@@ -21,7 +21,7 @@ interface MetadataReaderInterface
      *
      * @param InputDataInterface $xInput
      *
-     * @return MetadataInterface|null
+     * @return Metadata|null
      */
-    public function getAttributes(InputDataInterface $xInput): ?MetadataInterface;
+    public function getAttributes(InputDataInterface $xInput): ?Metadata;
 }
