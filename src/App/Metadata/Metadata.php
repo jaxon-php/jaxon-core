@@ -32,9 +32,9 @@ class Metadata implements MetadataInterface
     private array $aContainers = [];
 
     /**
-     * @var array<Data\DataBagData>
+     * @var array<Data\DatabagData>
      */
-    private array $aDataBags = [];
+    private array $aDatabags = [];
 
     /**
      * @var array<Data\CallbackData>
@@ -96,15 +96,15 @@ class Metadata implements MetadataInterface
     /**
      * @param string $sMethod
      *
-     * @return Data\DataBagData
+     * @return Data\DatabagData
      */
-    public function databag(string $sMethod = '*'): Data\DataBagData
+    public function databag(string $sMethod = '*'): Data\DatabagData
     {
-        if(!isset($this->aDataBags[$sMethod]))
+        if(!isset($this->aDatabags[$sMethod]))
         {
-            $this->aDataBags[$sMethod] = new Data\DataBagData();
+            $this->aDatabags[$sMethod] = new Data\DatabagData();
         }
-        return $this->aDataBags[$sMethod];
+        return $this->aDatabags[$sMethod];
     }
 
     /**
@@ -179,7 +179,7 @@ class Metadata implements MetadataInterface
         $aAttributes = [
             // $this->aExcludes,
             $this->aContainers,
-            $this->aDataBags,
+            $this->aDatabags,
             $this->aCallbacks,
             $this->aBefores,
             $this->aAfters,
@@ -188,9 +188,9 @@ class Metadata implements MetadataInterface
         $aProperties = [];
         $aClassProperties = [];
 
-        foreach($aAttributes as $aAttributeValues)
+        foreach($aAttributes as $aValues)
         {
-            foreach($aAttributeValues as $sMethod => $xData)
+            foreach($aValues as $sMethod => $xData)
             {
                 if($sMethod === '*')
                 {
@@ -217,5 +217,43 @@ class Metadata implements MetadataInterface
         $aMethods = array_keys($this->aExcludes);
         return array_values(array_filter($aMethods, fn(string $sName) =>
             $sName !== '*' && $this->aExcludes[$sName]->getValue() === true));
+    }
+
+    /**
+     * @return array
+     */
+    public function encode(): array
+    {
+        $aAttributes = [
+            'exclude' => $this->aExcludes,
+            'container' => $this->aContainers,
+            'databag' => $this->aDatabags,
+            'callback' => $this->aCallbacks,
+            'before' => $this->aBefores,
+            'after' => $this->aAfters,
+            'upload' => $this->aUploads,
+        ];
+
+        $sVar = '$'; // The dollar car.
+        $aCalls = [
+            "{$sVar}xMetadata = new " . Metadata::class . '();'
+        ];
+        foreach($aAttributes as $sAttr => $aValues)
+        {
+            if(count($aValues) === 0)
+            {
+                continue;
+            }
+            foreach($aValues as $sMethod => $xData)
+            {
+                $aCalls[] = "{$sVar}xData = {$sVar}xMetadata->{$sAttr}('$sMethod');";
+                foreach($xData->encode("{$sVar}xData") as $sCall)
+                {
+                    $aCalls[] = $sCall;
+                }
+            }
+        }
+        $aCalls[] = "return {$sVar}xMetadata;";
+        return $aCalls;
     }
 }

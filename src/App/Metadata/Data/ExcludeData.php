@@ -14,7 +14,7 @@
 
 namespace Jaxon\App\Metadata\Data;
 
-class ExcludeData
+class ExcludeData extends AbstractData
 {
     /**
      * @var bool
@@ -45,5 +45,15 @@ class ExcludeData
     public function setValue(bool $bValue): void
     {
         $this->bValue = $bValue;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function encode(string $sVarName): array
+    {
+        return [
+            "{$sVarName}->setValue(" . ($this->bValue ? 'true' : 'false') . ");",
+        ];
     }
 }

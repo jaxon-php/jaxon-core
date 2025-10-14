@@ -1,7 +1,7 @@
 <?php
 
 /**
- * DataBagData.php
+ * DatabagData.php
  *
  * Databag metadata for Jaxon classes.
  *
@@ -16,9 +16,10 @@ namespace Jaxon\App\Metadata\Data;
 
 use Jaxon\Exception\SetupException;
 
+use function array_map;
 use function preg_match;
 
-class DataBagData
+class DatabagData extends AbstractData
 {
     /**
      * The databag names
@@ -67,5 +68,13 @@ class DataBagData
         $this->validateName($sName);
 
         $this->aNames[] = $sName;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function encode(string $sVarName): array
+    {
+        return array_map(fn($sName) => "{$sVarName}->addValue('$sName');", $this->aNames);
     }
 }

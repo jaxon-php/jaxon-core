@@ -16,9 +16,10 @@ namespace Jaxon\App\Metadata\Data;
 
 use Jaxon\Exception\SetupException;
 
+use function addslashes;
 use function preg_match;
 
-abstract class HookData
+abstract class HookData extends AbstractData
 {
     /**
      * @var array
@@ -72,5 +73,19 @@ abstract class HookData
         $this->validateMethod($sMethod);
 
         $this->aCalls[$sMethod] = $aParams;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function encode(string $sVarName): array
+    {
+        $aCalls = [];
+        foreach($this->aCalls as $sMethod => $aParams)
+        {
+            $sParams = addslashes(json_encode($aParams));
+            $aCalls[] = "{$sVarName}->addCall('$sMethod', json_decode(\"$sParams\", true));";
+        }
+        return $aCalls;
     }
 }

@@ -18,7 +18,7 @@ use Jaxon\Exception\SetupException;
 
 use function preg_match;
 
-class UploadData
+class UploadData extends AbstractData
 {
     /**
      * The id of the upload field
@@ -68,5 +68,15 @@ class UploadData
         $this->validateField($sField);
 
         $this->sField = $sField;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function encode(string $sVarName): array
+    {
+        return [
+            "{$sVarName}->setValue('{$this->sField}');",
+        ];
     }
 }

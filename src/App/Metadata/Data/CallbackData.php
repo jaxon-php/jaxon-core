@@ -16,9 +16,10 @@ namespace Jaxon\App\Metadata\Data;
 
 use Jaxon\Exception\SetupException;
 
+use function array_map;
 use function preg_match;
 
-class CallbackData
+class CallbackData extends AbstractData
 {
     /**
      * The callback js objects
@@ -67,5 +68,13 @@ class CallbackData
         $this->validateObjectName($sName);
 
         $this->aNames[] = $sName;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function encode(string $sVarName): array
+    {
+        return array_map(fn($sName) => "{$sVarName}->addValue('$sName');", $this->aNames);
     }
 }

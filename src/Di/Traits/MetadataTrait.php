@@ -4,6 +4,7 @@ namespace Jaxon\Di\Traits;
 
 use Jaxon\App\Metadata\InputDataInterface;
 use Jaxon\App\Metadata\Metadata;
+use Jaxon\App\Metadata\MetadataCache;
 use Jaxon\App\Metadata\MetadataReaderInterface;
 
 trait MetadataTrait
@@ -15,6 +16,10 @@ trait MetadataTrait
      */
     private function registerMetadataReader(): void
     {
+        // Metadata cache
+        $this->set(MetadataCache::class, fn($di) =>
+            new MetadataCache($di->g('jaxon_metadata_cache_dir')));
+
         // By default, register a fake metadata reader.
         $this->set('metadata_reader_null', function() {
             return new class implements MetadataReaderInterface
@@ -25,6 +30,16 @@ trait MetadataTrait
                 }
             };
         });
+    }
+
+    /**
+     * Get the metadata cache
+     *
+     * @return MetadataCache
+     */
+    public function getMetadataCache(): MetadataCache
+    {
+        return $this->g(MetadataCache::class);
     }
 
     /**

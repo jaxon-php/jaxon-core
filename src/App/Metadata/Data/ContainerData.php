@@ -16,9 +16,10 @@ namespace Jaxon\App\Metadata\Data;
 
 use Jaxon\Exception\SetupException;
 
+use function addslashes;
 use function preg_match;
 
-class ContainerData
+class ContainerData extends AbstractData
 {
     /**
      * The properties to get from the container
@@ -83,5 +84,20 @@ class ContainerData
         $this->validateClass($sClass);
 
         $this->aProperties[$sAttr] = $sClass;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function encode(string $sVarName): array
+    {
+        $aCalls = [];
+        foreach($this->aProperties as $sAttr => $sClass)
+        {
+            $sClass = addslashes($sClass);
+            $aCalls[] = "{$sVarName}->addValue('$sAttr', '$sClass');";
+        }
+
+        return $aCalls;
     }
 }
