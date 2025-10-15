@@ -14,6 +14,9 @@
 
 namespace Jaxon\App\Metadata;
 
+use function count;
+use function file_put_contents;
+use function implode;
 use function is_callable;
 use function str_replace;
 use function strtolower;
@@ -31,10 +34,38 @@ class MetadataCache
      *
      * @return string
      */
-    private function filename(string $sClass): string
+    private function filepath(string $sClass): string
     {
-        $sName = str_replace(['\\', '.'], '_', strtolower($sClass));
-        return "{$this->sCacheDir}/{$sName}.php";
+        $sFilename = str_replace(['\\', '.'], '_', strtolower($sClass));
+        return "{$this->sCacheDir}/jaxon_metadata_{$sFilename}.php";
+    }
+
+    /**
+     * Generate the PHP code to create a metadata object.
+     *
+     * @return array
+     */
+    private function encode(Metadata $xMetadata): array
+    {
+        $sVar = '$'; // The dollar char.
+        $aCalls = ["{$sVar}xMetadata = new " . Metadata::class . '();'];
+        foreach($xMetadata->getAttributes() as $sType => $aValues)
+        {
+            if(count($aValues) === 0)
+            {
+                continue;
+            }
+            foreach($aValues as $sMethod => $xData)
+            {
+                $aCalls[] = "{$sVar}xData = {$sVar}xMetadata->{$sType}('$sMethod');";
+                foreach($xData->encode("{$sVar}xData") as $sCall)
+                {
+                    $aCalls[] = $sCall;
+                }
+            }
+        }
+        $aCalls[] = "return {$sVar}xMetadata;";
+        return $aCalls;
     }
 
     /**
@@ -45,8 +76,7 @@ class MetadataCache
      */
     public function save(string $sClass, Metadata $xMetadata): void
     {
-        $sFilename = $this->filename($sClass);
-        $sDataCode = implode("\n    ", $xMetadata->encode());
+        $sDataCode = implode("\n    ", $this->encode($xMetadata));
         $sPhpCode = <<<CODE
 <?php
 
@@ -55,7 +85,7 @@ return function() {
 };
 
 CODE;
-        file_put_contents($sFilename, $sPhpCode);
+        file_put_contents($this->filepath($sClass), $sPhpCode);
     }
 
     /**
@@ -65,7 +95,7 @@ CODE;
      */
     public function read(string $sClass): ?Metadata
     {
-        $fFunction = require $this->filename($sClass);
-        return !is_callable($fFunction) ? null : $fFunction();
+        $fCreator = require $this->filepath($sClass);
+        return !is_callable($fCreator) ? null : $fCreator();
     }
 }

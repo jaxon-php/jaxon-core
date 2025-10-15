@@ -14,13 +14,9 @@
 
 namespace Jaxon\Plugin\Request\CallableClass;
 
-use Jaxon\App\FuncComponent;
-use Jaxon\App\NodeComponent;
-use Jaxon\App\Metadata\MetadataInterface;
-use ReflectionClass;
-
 use function array_merge;
 use function array_unique;
+use function explode;
 use function in_array;
 use function is_array;
 use function is_string;
@@ -83,15 +79,15 @@ class ComponentOptions
     /**
      * The constructor
      *
-     * @param ReflectionClass $xReflectionClass
      * @param array $aOptions
-     * @param MetadataInterface|null $xMetadata
+     * @param bool $bExcluded
+     * @param array $aProtectedMethods
+     * @param array $aProperties
      */
-    public function __construct(private ReflectionClass $xReflectionClass,
-        array $aOptions, ?MetadataInterface $xMetadata)
+    public function __construct(array $aOptions, bool $bExcluded,
+        array $aProtectedMethods, array $aProperties)
     {
-        $this->bExcluded = ($xMetadata?->isExcluded() ?? false) ||
-            (bool)($aOptions['excluded'] ?? false);
+        $this->bExcluded = $bExcluded || (bool)($aOptions['excluded'] ?? false);
         if($this->bExcluded)
         {
             return;
@@ -103,34 +99,36 @@ class ComponentOptions
             $this->sSeparator = $sSeparator;
         }
         $this->addProtectedMethods($aOptions['protected']);
-        $this->addProtectedMethods($xMetadata?->getProtectedMethods() ?? []);
+        $this->addProtectedMethods($aProtectedMethods);
 
         foreach($aOptions['functions'] as $sNames => $aFunctionOptions)
         {
-            $aFunctionNames = explode(',', $sNames); // Names are in comma-separated list.
+            // Names are in a comma-separated list.
+            $aFunctionNames = explode(',', $sNames);
             foreach($aFunctionNames as $sFunctionName)
             {
                 $this->addFunctionOptions($sFunctionName, $aFunctionOptions);
             }
         }
-        foreach($xMetadata?->getProperties() ?? [] as $sFunctionName => $aFunctionOptions)
+        foreach($aProperties as $sFunctionName => $aFunctionOptions)
         {
             $this->addFunctionOptions($sFunctionName, $aFunctionOptions);
         }
     }
 
     /**
-     * @param mixed $xMethods
+     * @param array|string $xMethods
      *
      * @return void
      */
-    private function addProtectedMethods($xMethods): void
+    private function addProtectedMethods(array|string $xMethods): void
     {
         if(!is_array($xMethods))
         {
             $this->aProtectedMethods[trim((string)$xMethods)] = true;
             return;
         }
+
         foreach($xMethods as $sMethod)
         {
             $this->aProtectedMethods[trim((string)$sMethod)] = true;
@@ -153,26 +151,6 @@ class ComponentOptions
     public function separator(): string
     {
         return $this->sSeparator;
-    }
-
-    /**
-     * @param string $sMethodName
-     * @param bool $bTakeAll
-     *
-     * @return bool
-     */
-    public function isProtectedMethod(string $sMethodName, bool $bTakeAll): bool
-    {
-        // The public methods of the Component base classes are protected.
-        if(($this->xReflectionClass->isSubclassOf(NodeComponent::class) &&
-            in_array($sMethodName, ['item', 'html'])) ||
-            ($this->xReflectionClass->isSubclassOf(FuncComponent::class) &&
-            in_array($sMethodName, ['paginator'])))
-        {
-            return true;
-        }
-        return !$bTakeAll && (isset($this->aProtectedMethods['*'])
-            || isset($this->aProtectedMethods[$sMethodName]));
     }
 
     /**
@@ -288,6 +266,7 @@ class ComponentOptions
         {
             return; // Do not save.
         }
+
         $aOptions = $this->aJsOptions[$sFunctionName][$sOptionName] ?? [];
         $this->aJsOptions[$sFunctionName][$sOptionName] = array_merge($aOptions, $xOptionValue);
     }
@@ -374,6 +353,7 @@ class ComponentOptions
         {
             $aOptions['callback'] = str_replace('"', '', json_encode($aOptions['callback']));
         }
+
         return $aOptions;
     }
 }
