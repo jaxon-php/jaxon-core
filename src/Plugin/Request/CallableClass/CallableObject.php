@@ -23,9 +23,6 @@
 
 namespace Jaxon\Plugin\Request\CallableClass;
 
-use Jaxon\App\Metadata\InputData;
-use Jaxon\App\Metadata\MetadataInterface;
-use Jaxon\Config\Config;
 use Jaxon\Di\ComponentContainer;
 use Jaxon\Di\Container;
 use Jaxon\Exception\SetupException;
@@ -33,10 +30,7 @@ use Jaxon\Request\Target;
 use Closure;
 use ReflectionClass;
 use ReflectionException;
-use ReflectionMethod;
-use ReflectionProperty;
 
-use function array_filter;
 use function array_map;
 use function array_merge;
 use function call_user_func;
@@ -44,7 +38,6 @@ use function is_array;
 use function is_string;
 use function json_encode;
 use function str_replace;
-use function substr;
 
 class CallableObject
 {
@@ -63,113 +56,27 @@ class CallableObject
     private $xTarget;
 
     /**
-     * The options of this component
-     *
-     * @var ComponentOptions|null
-     */
-    private $xOptions = null;
-
-    /**
-     * @var int
-     */
-    private $nPropertiesFilter = ReflectionProperty::IS_PUBLIC | ReflectionProperty::IS_PROTECTED;
-
-    /**
-     * @var int
-     */
-    private $nMethodsFilter = ReflectionMethod::IS_PUBLIC;
-
-    /**
      * The class constructor
      *
      * @param ComponentContainer $cdi
      * @param Container $di
      * @param ReflectionClass $xReflectionClass
-     * @param array $aOptions
+     * @param ComponentOptions $xOptions
      */
-    public function __construct(protected ComponentContainer $cdi, protected Container $di,
-        private ReflectionClass $xReflectionClass, array $aOptions)
-    {
-        $xMetadata = $this->getAttributes($xReflectionClass, $aOptions);
-        $this->xOptions = new ComponentOptions($xReflectionClass, $aOptions, $xMetadata);
-    }
+    public function __construct(protected ComponentContainer $cdi,
+        protected Container $di, private ReflectionClass $xReflectionClass,
+        private ComponentOptions $xOptions)
+    {}
 
     /**
-     * @param ReflectionClass $xReflectionClass
-     * @param array $aOptions
-     *
-     * @return MetadataInterface|null
-     */
-    private function getAttributes(ReflectionClass $xReflectionClass, array $aOptions): ?MetadataInterface
-    {
-        /** @var Config|null */
-        $xConfig = $aOptions['config'] ?? null;
-        if($xConfig === null)
-        {
-            return null;
-        }
-
-        $xMetadataReader = $this->di->getMetadataReader($xConfig->getOption('metadata', ''));
-        return $xMetadataReader->getAttributes(new InputData($xReflectionClass,
-            $this->getPublicMethods(true), $this->getProperties()));
-    }
-
-    /**
-     * Get the public and protected attributes of the callable object
-     *
-     * @return array
-     */
-    private function getProperties(): array
-    {
-        return array_map(function($xProperty) {
-            return $xProperty->getName();
-        }, $this->xReflectionClass->getProperties($this->nPropertiesFilter));
-    }
-
-    /**
-     * @param string $sMethodName
-     * @param bool $bTakeAll
+     * @param string|null $sMethodName
      *
      * @return bool
      */
-    private function isProtectedMethod(string $sMethodName, bool $bTakeAll): bool
+    public function excluded(?string $sMethodName = null): bool
     {
-        // Don't take magic __call, __construct, __destruct methods
-        // Don't take protected methods
-        return substr($sMethodName, 0, 2) === '__' || ($this->xOptions !== null &&
-            $this->xOptions->isProtectedMethod($sMethodName, $bTakeAll));
-    }
-
-    /**
-     * Get the public methods of the callable object
-     *
-     * @param bool $bTakeAll
-     *
-     * @return array
-     */
-    public function getPublicMethods(bool $bTakeAll): array
-    {
-        $aMethods = array_map(function($xMethod) {
-            return $xMethod->getShortName();
-        }, $this->xReflectionClass->getMethods($this->nMethodsFilter));
-
-        return array_filter($aMethods, function($sMethodName) use($bTakeAll) {
-            return !$this->isProtectedMethod($sMethodName, $bTakeAll);
-        });
-    }
-
-    /**
-     * @param string|null $sMethod
-     *
-     * @return bool
-     */
-    public function excluded(?string $sMethod = null): bool
-    {
-        if($sMethod !== null && $this->isProtectedMethod($sMethod, false))
-        {
-            return true;
-        }
-        return $this->xOptions->excluded();
+        return $sMethodName === null ? $this->xOptions->excluded() :
+            $this->xOptions->isProtectedMethod($sMethodName);
     }
 
     /**
@@ -216,13 +123,14 @@ class CallableObject
                 return is_array($xOption) ? json_encode($xOption) : $xOption;
             }, $this->xOptions->getMethodOptions($sMethodName));
         };
+        $aMethods = $this->cdi->getPublicMethods($this->xReflectionClass);
+        $aMethods = array_filter($aMethods, fn($sMethodName) =>
+            !$this->xOptions->isProtectedMethod($sMethodName));
 
-        return array_map(function($sMethodName) use($fGetOption) {
-            return [
-                'name' => $sMethodName,
-                'config' => $fGetOption($sMethodName),
-            ];
-        }, $this->getPublicMethods(false));
+        return array_map(fn($sMethodName) => [
+            'name' => $sMethodName,
+            'config' => $fGetOption($sMethodName),
+        ], $aMethods);
     }
 
     /**
@@ -250,7 +158,8 @@ class CallableObject
     private function callMethod(string $sMethod, array $aArgs, bool $bAccessible): void
     {
         $reflectionMethod = $this->xReflectionClass->getMethod($sMethod);
-        $reflectionMethod->setAccessible($bAccessible); // Make it possible to call protected methods
+        // Make it possible to call protected methods
+        $reflectionMethod->setAccessible($bAccessible);
         $reflectionMethod->invokeArgs($this->xComponent, $aArgs);
     }
 

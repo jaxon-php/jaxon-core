@@ -17,10 +17,16 @@ namespace Jaxon\Di;
 use Jaxon\App\Component\AbstractComponent;
 use Jaxon\App\Component\Pagination;
 use Jaxon\App\Config\ConfigManager;
+use Jaxon\App\FuncComponent;
+use Jaxon\App\NodeComponent;
 use Jaxon\App\I18n\Translator;
+use Jaxon\App\Metadata\InputData;
+use Jaxon\App\Metadata\Metadata;
+use Jaxon\Config\Config;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\Request\CallableClass\CallableObject;
 use Jaxon\Plugin\Request\CallableClass\ComponentHelper;
+use Jaxon\Plugin\Request\CallableClass\ComponentOptions;
 use Jaxon\Plugin\Request\CallableClass\ComponentRegistry;
 use Jaxon\Request\Handler\CallbackManager;
 use Jaxon\Request\Target;
@@ -30,8 +36,13 @@ use Pimple\Container as PimpleContainer;
 use Closure;
 use ReflectionClass;
 use ReflectionException;
+use ReflectionMethod;
+use ReflectionProperty;
 
+use function array_filter;
+use function array_map;
 use function call_user_func;
+use function in_array;
 use function str_replace;
 use function trim;
 
@@ -86,7 +97,7 @@ class ComponentContainer
         // Register the pagination component, but do not export to js.
         $this->registerComponent(Pagination::class, [
             'excluded' => true,
-            'namespace' => 'Jaxon\App\Component',
+            'namespace' => 'Jaxon\\App\\Component',
         ]);
     }
 
@@ -272,6 +283,104 @@ class ComponentContainer
     }
 
     /**
+     * @param ReflectionClass $xReflectionClass
+     * @param string $sMethodName
+     *
+     * @return bool
+     */
+    private function isNotCallable(ReflectionClass $xReflectionClass, string $sMethodName): bool
+    {
+        // Don't take magic __call, __construct, __destruct methods
+        // The public methods of the Component base classes are protected.
+        return substr($sMethodName, 0, 2) === '__' ||
+            ($xReflectionClass->isSubclassOf(NodeComponent::class) &&
+            in_array($sMethodName, ['item', 'html'])) ||
+            ($xReflectionClass->isSubclassOf(FuncComponent::class) &&
+            in_array($sMethodName, ['paginator']));
+    }
+
+    /**
+     * Get the public methods of the callable object
+     *
+     * @param ReflectionClass $xReflectionClass
+     *
+     * @return array
+     */
+    public function getPublicMethods(ReflectionClass $xReflectionClass): array
+    {
+        $aMethods = array_map(fn($xMethod) => $xMethod->getShortName(),
+            $xReflectionClass->getMethods(ReflectionMethod::IS_PUBLIC));
+
+        return array_filter($aMethods, fn($sMethodName) =>
+            !$this->isNotCallable($xReflectionClass, $sMethodName));
+    }
+
+    /**
+     * @param ReflectionClass $xReflectionClass
+     * @param array $aOptions
+     *
+     * @return Metadata|null
+     */
+    private function getComponentMetadata(ReflectionClass $xReflectionClass,
+        array $aOptions): ?Metadata
+    {
+        /** @var Config|null */
+        $xConfig = $aOptions['config'] ?? null;
+        if($xConfig === null || (bool)($aOptions['excluded'] ?? false))
+        {
+            return null;
+        }
+        $sReaderId = $xConfig->getOption('metadata.reader');
+        if(!in_array($sReaderId, ['attributes', 'annotations']))
+        {
+            return null;
+        }
+
+        // Try to get the class metadata from the cache.
+        $sClassName = $xReflectionClass->getName();
+        $xMetadataCache = !$xConfig->getOption('metadata.cache') ?
+            null : $this->di->getMetadataCache();
+        $xMetadata = $xMetadataCache?->read($sClassName) ?? null;
+
+        if($xMetadata !== null)
+        {
+            return $xMetadata;
+        }
+
+        $aProperties = array_map(fn($xProperty) => $xProperty->getName(),
+            $xReflectionClass->getProperties(ReflectionProperty::IS_PUBLIC |
+                ReflectionProperty::IS_PROTECTED));
+        $aMethods = $this->getPublicMethods($xReflectionClass);
+
+        $xMetadataReader = $this->di->getMetadataReader($sReaderId);
+        $xInput = new InputData($xReflectionClass, $aMethods, $aProperties);
+        $xMetadata = $xMetadataReader->getAttributes($xInput);
+
+        // Try to save the metadata in the cache
+        if($xMetadataCache !== null && $xMetadata !== null)
+        {
+            $xMetadataCache->save($sClassName, $xMetadata);
+        }
+        return $xMetadata;
+    }
+
+    /**
+     * @param ReflectionClass $xReflectionClass
+     * @param array $aOptions
+     *
+     * @return ComponentOptions
+     */
+    private function getComponentOptions(ReflectionClass $xReflectionClass,
+        array $aOptions): ComponentOptions
+    {
+        $xMetadata = $this->getComponentMetadata($xReflectionClass, $aOptions);
+        $bExcluded = $xMetadata?->isExcluded() ?? false;
+        $aProtectedMethods = $xMetadata?->getProtectedMethods() ?? [];
+        $aProperties = $xMetadata?->getProperties() ?? [];
+        return new ComponentOptions($aOptions, $bExcluded, $aProtectedMethods, $aProperties);
+    }
+
+    /**
      * Register a component
      *
      * @param class-string $sClassName The component name
@@ -303,7 +412,8 @@ class ComponentContainer
         // Register the callable object
         $this->set($sComponentObject, function() use($sClassName, $aOptions) {
             $xReflectionClass = $this->get($this->getReflectionClassKey($sClassName));
-            return new CallableObject($this, $this->di, $xReflectionClass, $aOptions);
+            $xOptions = $this->getComponentOptions($xReflectionClass, $aOptions);
+            return new CallableObject($this, $this->di, $xReflectionClass, $xOptions);
         });
 
         // Initialize the user class instance

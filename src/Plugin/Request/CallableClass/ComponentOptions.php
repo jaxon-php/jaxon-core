@@ -136,6 +136,17 @@ class ComponentOptions
     }
 
     /**
+     * @param string $sMethodName
+     *
+     * @return bool
+     */
+    public function isProtectedMethod(string $sMethodName): bool
+    {
+        return isset($this->aProtectedMethods['*']) ||
+            isset($this->aProtectedMethods[$sMethodName]);
+    }
+
+    /**
      * Check if the js code for this object must be generated
      *
      * @return bool
@@ -353,7 +364,6 @@ class ComponentOptions
         {
             $aOptions['callback'] = str_replace('"', '', json_encode($aOptions['callback']));
         }
-
         return $aOptions;
     }
 }
