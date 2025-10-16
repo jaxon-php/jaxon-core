@@ -17,17 +17,10 @@ namespace Jaxon\Di;
 use Jaxon\App\Component\AbstractComponent;
 use Jaxon\App\Component\Pagination;
 use Jaxon\App\Config\ConfigManager;
-use Jaxon\App\FuncComponent;
-use Jaxon\App\NodeComponent;
 use Jaxon\App\I18n\Translator;
-use Jaxon\App\Metadata\InputData;
-use Jaxon\App\Metadata\Metadata;
-use Jaxon\Config\Config;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\Request\CallableClass\CallableObject;
 use Jaxon\Plugin\Request\CallableClass\ComponentHelper;
-use Jaxon\Plugin\Request\CallableClass\ComponentOptions;
-use Jaxon\Plugin\Request\CallableClass\ComponentRegistry;
 use Jaxon\Request\Handler\CallbackManager;
 use Jaxon\Request\Target;
 use Jaxon\Script\Call\JxnCall;
@@ -36,20 +29,15 @@ use Pimple\Container as PimpleContainer;
 use Closure;
 use ReflectionClass;
 use ReflectionException;
-use ReflectionMethod;
-use ReflectionProperty;
 
-use function array_filter;
-use function array_map;
 use function call_user_func;
-use function in_array;
 use function str_replace;
 use function trim;
 
 class ComponentContainer
 {
-    use Traits\ComponentKeyTrait;
     use Traits\DiAutoTrait;
+    use Traits\ComponentTrait;
 
     /**
      * If the underscore is used as separator in js class names.
@@ -64,13 +52,6 @@ class ComponentContainer
      * @var PimpleContainer
      */
     private $xContainer;
-
-    /**
-     * The classes, both registered and found in registered directories.
-     *
-     * @var array
-     */
-    protected $aComponents = [];
 
     /**
      * This will be set only when getting the object targetted by the ajax request.
@@ -142,7 +123,7 @@ class ComponentContainer
      */
     public function set(string $sClass, Closure $xClosure)
     {
-       $this->xContainer->offsetSet($sClass, function() use($xClosure) {
+        $this->xContainer->offsetSet($sClass, function() use($xClosure) {
             return $xClosure($this);
         });
     }
@@ -193,14 +174,14 @@ class ComponentContainer
     }
 
     /**
-     * Save a component options
+     * Register a component and its options
      *
      * @param class-string $sClassName    The class name
      * @param array $aOptions    The class options
      *
      * @return void
      */
-    public function registerComponent(string $sClassName, array $aOptions = [])
+    public function registerComponent(string $sClassName, array $aOptions = []): void
     {
         try
         {
@@ -216,7 +197,7 @@ class ComponentContainer
                 return;
             }
 
-            $this->aComponents[$sClassName] = $aOptions;
+            $this->_saveClassOptions($sClassName, $aOptions);
             $this->val($this->getReflectionClassKey($sClassName), $xReflectionClass);
             // Register the user class, but only if the user didn't already.
             if(!$this->has($sClassName))
@@ -228,156 +209,9 @@ class ComponentContainer
         }
         catch(ReflectionException $e)
         {
-            throw new SetupException($this->di->g(Translator::class)
+            throw new SetupException($this->cn()->g(Translator::class)
                 ->trans('errors.class.invalid', ['name' => $sClassName]));
         }
-    }
-
-    /**
-     * Find a component amongst the registered namespaces and directories.
-     *
-     * @param class-string $sClassName The class name
-     *
-     * @return void
-     * @throws SetupException
-     */
-    private function discoverComponent(string $sClassName)
-    {
-        if(!isset($this->aComponents[$sClassName]))
-        {
-            $xRegistry = $this->di->g(ComponentRegistry::class);
-            $xRegistry->updateHash(false); // Disable hash calculation.
-            $aOptions = $xRegistry->getNamespaceComponentOptions($sClassName);
-            if($aOptions !== null)
-            {
-                $this->registerComponent($sClassName, $aOptions);
-            }
-            else // if(!isset($this->aComponents[$sClassName]))
-            {
-                // The component was not found in a registered namespace. We need to parse all
-                // the directories to be able to find a component registered without a namespace.
-                $xRegistry->registerComponentsInDirectories();
-            }
-        }
-        if(!isset($this->aComponents[$sClassName]))
-        {
-            throw new SetupException($this->di->g(Translator::class)
-                ->trans('errors.class.invalid', ['name' => $sClassName]));
-        }
-    }
-
-    /**
-     * Get callable objects for known classes
-     *
-     * @return array
-     * @throws SetupException
-     */
-    public function getCallableObjects(): array
-    {
-        $aCallableObjects = [];
-        foreach($this->aComponents as $sClassName => $_)
-        {
-            $aCallableObjects[$sClassName] = $this->makeCallableObject($sClassName);
-        }
-        return $aCallableObjects;
-    }
-
-    /**
-     * @param ReflectionClass $xReflectionClass
-     * @param string $sMethodName
-     *
-     * @return bool
-     */
-    private function isNotCallable(ReflectionClass $xReflectionClass, string $sMethodName): bool
-    {
-        // Don't take magic __call, __construct, __destruct methods
-        // The public methods of the Component base classes are protected.
-        return substr($sMethodName, 0, 2) === '__' ||
-            ($xReflectionClass->isSubclassOf(NodeComponent::class) &&
-            in_array($sMethodName, ['item', 'html'])) ||
-            ($xReflectionClass->isSubclassOf(FuncComponent::class) &&
-            in_array($sMethodName, ['paginator']));
-    }
-
-    /**
-     * Get the public methods of the callable object
-     *
-     * @param ReflectionClass $xReflectionClass
-     *
-     * @return array
-     */
-    public function getPublicMethods(ReflectionClass $xReflectionClass): array
-    {
-        $aMethods = array_map(fn($xMethod) => $xMethod->getShortName(),
-            $xReflectionClass->getMethods(ReflectionMethod::IS_PUBLIC));
-
-        return array_filter($aMethods, fn($sMethodName) =>
-            !$this->isNotCallable($xReflectionClass, $sMethodName));
-    }
-
-    /**
-     * @param ReflectionClass $xReflectionClass
-     * @param array $aOptions
-     *
-     * @return Metadata|null
-     */
-    private function getComponentMetadata(ReflectionClass $xReflectionClass,
-        array $aOptions): ?Metadata
-    {
-        /** @var Config|null */
-        $xConfig = $aOptions['config'] ?? null;
-        if($xConfig === null || (bool)($aOptions['excluded'] ?? false))
-        {
-            return null;
-        }
-        $sReaderId = $xConfig->getOption('metadata.reader');
-        if(!in_array($sReaderId, ['attributes', 'annotations']))
-        {
-            return null;
-        }
-
-        // Try to get the class metadata from the cache.
-        $sClassName = $xReflectionClass->getName();
-        $xMetadataCache = !$xConfig->getOption('metadata.cache') ?
-            null : $this->di->getMetadataCache();
-        $xMetadata = $xMetadataCache?->read($sClassName) ?? null;
-
-        if($xMetadata !== null)
-        {
-            return $xMetadata;
-        }
-
-        $aProperties = array_map(fn($xProperty) => $xProperty->getName(),
-            $xReflectionClass->getProperties(ReflectionProperty::IS_PUBLIC |
-                ReflectionProperty::IS_PROTECTED));
-        $aMethods = $this->getPublicMethods($xReflectionClass);
-
-        $xMetadataReader = $this->di->getMetadataReader($sReaderId);
-        $xInput = new InputData($xReflectionClass, $aMethods, $aProperties);
-        $xMetadata = $xMetadataReader->getAttributes($xInput);
-
-        // Try to save the metadata in the cache
-        if($xMetadataCache !== null && $xMetadata !== null)
-        {
-            $xMetadataCache->save($sClassName, $xMetadata);
-        }
-        return $xMetadata;
-    }
-
-    /**
-     * @param ReflectionClass $xReflectionClass
-     * @param array $aOptions
-     *
-     * @return ComponentOptions
-     */
-    private function getComponentOptions(ReflectionClass $xReflectionClass,
-        array $aOptions): ComponentOptions
-    {
-        $xMetadata = $this->getComponentMetadata($xReflectionClass, $aOptions);
-        $bExcluded = $xMetadata?->isExcluded() ?? false;
-        $aProtectedMethods = $xMetadata?->getProtectedMethods() ?? [];
-        $aProperties = $xMetadata?->getProperties() ?? [];
-        return new ComponentOptions($aOptions, $bExcluded, $aProtectedMethods, $aProperties);
     }
 
     /**
@@ -407,7 +241,7 @@ class ComponentContainer
         });
 
         $this->discoverComponent($sClassName);
-        $aOptions = $this->aComponents[$sClassName];
+        $aOptions = $this->_getClassOptions($sClassName);
 
         // Register the callable object
         $this->set($sComponentObject, function() use($sClassName, $aOptions) {
@@ -531,7 +365,7 @@ class ComponentContainer
      *
      * @return JxnCall
      */
-    private function getFunctionRequestFactory(): JxnCall
+    public function getFunctionRequestFactory(): JxnCall
     {
         return $this->get($this->getRequestFactoryKey(JxnCall::class));
     }
@@ -543,7 +377,7 @@ class ComponentContainer
      *
      * @return JxnCall|null
      */
-    private function getComponentRequestFactory(string $sClassName): ?JxnCall
+    public function getComponentRequestFactory(string $sClassName): ?JxnCall
     {
         $sClassName = trim($sClassName, " \t");
         if($sClassName === '')
@@ -557,18 +391,5 @@ class ComponentContainer
             $this->registerRequestFactory($sClassName, $sFactoryKey);
         }
         return $this->get($sFactoryKey);
-    }
-
-    /**
-     * Get a factory.
-     *
-     * @param string|class-string $sClassName
-     *
-     * @return JxnCall|null
-     */
-    public function getRequestFactory(string $sClassName = ''): JxnCall
-    {
-        return $sClassName === '' ? $this->getFunctionRequestFactory() :
-            $this->getComponentRequestFactory($sClassName);
     }
 }

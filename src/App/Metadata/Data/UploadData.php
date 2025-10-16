@@ -75,8 +75,6 @@ class UploadData extends AbstractData
      */
     public function encode(string $sVarName): array
     {
-        return [
-            "{$sVarName}->setValue('{$this->sField}');",
-        ];
+        return ["{$sVarName}->setValue('{$this->sField}');"];
     }
 }

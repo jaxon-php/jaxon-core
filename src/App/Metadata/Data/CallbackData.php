@@ -75,6 +75,7 @@ class CallbackData extends AbstractData
      */
     public function encode(string $sVarName): array
     {
-        return array_map(fn($sName) => "{$sVarName}->addValue('$sName');", $this->aNames);
+        return array_map(fn($sName) =>
+            "{$sVarName}->addValue('$sName');", $this->aNames);
     }
 }

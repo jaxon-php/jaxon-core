@@ -14,10 +14,11 @@
 
 namespace Jaxon\App\Metadata;
 
-use function count;
+use Closure;
+
+use function file_exists;
 use function file_put_contents;
 use function implode;
-use function is_callable;
 use function str_replace;
 use function strtolower;
 
@@ -47,24 +48,21 @@ class MetadataCache
      */
     private function encode(Metadata $xMetadata): array
     {
-        $sVar = '$'; // The dollar char.
-        $aCalls = ["{$sVar}xMetadata = new " . Metadata::class . '();'];
+        $sMetadataVar = '$xMetadata';
+        $sDataVar = '$xData';
+        $aCalls = ["$sMetadataVar = new " . Metadata::class . '();'];
         foreach($xMetadata->getAttributes() as $sType => $aValues)
         {
-            if(count($aValues) === 0)
-            {
-                continue;
-            }
             foreach($aValues as $sMethod => $xData)
             {
-                $aCalls[] = "{$sVar}xData = {$sVar}xMetadata->{$sType}('$sMethod');";
-                foreach($xData->encode("{$sVar}xData") as $sCall)
+                $aCalls[] = "$sDataVar = {$sMetadataVar}->{$sType}('{$sMethod}');";
+                foreach($xData->encode($sDataVar) as $sCall)
                 {
                     $aCalls[] = $sCall;
                 }
             }
         }
-        $aCalls[] = "return {$sVar}xMetadata;";
+        $aCalls[] = "return $sMetadataVar;";
         return $aCalls;
     }
 
@@ -95,7 +93,8 @@ CODE;
      */
     public function read(string $sClass): ?Metadata
     {
-        $fCreator = require $this->filepath($sClass);
-        return !is_callable($fCreator) ? null : $fCreator();
+        $sPath = $this->filepath($sClass);
+        $fCreator = file_exists($sPath) ? require $sPath : null;
+        return $fCreator instanceof Closure ? $fCreator() : null;
     }
 }

@@ -52,8 +52,6 @@ class ExcludeData extends AbstractData
      */
     public function encode(string $sVarName): array
     {
-        return [
-            "{$sVarName}->setValue(" . ($this->bValue ? 'true' : 'false') . ");",
-        ];
+        return ["{$sVarName}->setValue(" . ($this->bValue ? 'true' : 'false') . ");"];
     }
 }

@@ -18,7 +18,7 @@ use ReflectionClass;
 
 use function is_string;
 
-class InputData implements InputDataInterface
+class InputData
 {
     /**
      * @var ReflectionClass
@@ -33,11 +33,14 @@ class InputData implements InputDataInterface
     public function __construct(ReflectionClass|string $xClass,
         private array $aMethods = [], private array $aProperties = [])
     {
-        $this->xReflectionClass = is_string($xClass) ? new ReflectionClass($xClass) : $xClass;
+        $this->xReflectionClass = is_string($xClass) ?
+            new ReflectionClass($xClass) : $xClass;
     }
 
     /**
-     * @inheritDoc
+     * Get the reflection class
+     *
+     * @return ReflectionClass
      */
     public function getReflectionClass(): ReflectionClass
     {
@@ -45,7 +48,9 @@ class InputData implements InputDataInterface
     }
 
     /**
-     * @inheritDoc
+     * The methods to check for metadata
+     *
+     * @return array
      */
     public function getMethods(): array
     {
@@ -53,7 +58,9 @@ class InputData implements InputDataInterface
     }
 
     /**
-     * @inheritDoc
+     * The properties to check for metadata
+     *
+     * @return array
      */
     public function getProperties(): array
     {

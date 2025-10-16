@@ -84,8 +84,8 @@ class ComponentOptions
      * @param array $aProtectedMethods
      * @param array $aProperties
      */
-    public function __construct(array $aOptions, bool $bExcluded,
-        array $aProtectedMethods, array $aProperties)
+    public function __construct(array $aOptions, bool $bExcluded = false,
+        array $aProtectedMethods = [], array $aProperties = [])
     {
         $this->bExcluded = $bExcluded || (bool)($aOptions['excluded'] ?? false);
         if($this->bExcluded)

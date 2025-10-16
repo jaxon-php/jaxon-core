@@ -13,7 +13,7 @@ if(<?php echo $sJsClass ?> === undefined) {
 <?php echo $sJsClass ?>.<?php echo $aMethod['name'] ?> = function() {
     return jaxon.request({ type: 'class', name: '<?php echo $this->sClass ?>', method: '<?php
         echo $aMethod['name'] ?>' }, { parameters: arguments<?php
-        foreach($aMethod['config'] as $sKey => $sValue): ?>, <?php
+        foreach($aMethod['options'] as $sKey => $sValue): ?>, <?php
         echo $sKey ?>: <?php echo $sValue ?><?php endforeach ?> });
 };
 <?php endforeach;

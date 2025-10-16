@@ -27,7 +27,6 @@ use Jaxon\Plugin\Request\CallableClass\ComponentRegistry;
 use Jaxon\Request\Handler\CallbackManager;
 
 use function is_array;
-use function is_callable;
 use function is_integer;
 use function is_string;
 use function is_subclass_of;
@@ -107,6 +106,7 @@ class PackageManager
                 $this->xPluginManager->registerCallable($sCallableType, $xValue);
                 continue;
             }
+
             if(is_string($xKey) && (is_array($xValue) || is_string($xValue)))
             {
                 // Register a function with options
@@ -159,6 +159,7 @@ class PackageManager
                 $aCallables[] = $xValue;
                 continue;
             }
+
             if(is_array($xValue) && isset($xValue[$sOptionKey]))
             {
                 $aCallables[$xValue[$sOptionKey]] = $xValue;
@@ -295,6 +296,7 @@ class PackageManager
                 $this->registerPackage($sClassName);
                 continue;
             }
+
             if(is_string($xKey) && is_array($xValue))
             {
                 // Register a package with options

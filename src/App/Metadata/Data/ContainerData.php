@@ -94,10 +94,8 @@ class ContainerData extends AbstractData
         $aCalls = [];
         foreach($this->aProperties as $sAttr => $sClass)
         {
-            $sClass = addslashes($sClass);
-            $aCalls[] = "{$sVarName}->addValue('$sAttr', '$sClass');";
+            $aCalls[] = "{$sVarName}->addValue('$sAttr', '" . addslashes($sClass) . "');";
         }
-
         return $aCalls;
     }
 }

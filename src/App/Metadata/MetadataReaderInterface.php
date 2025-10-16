@@ -19,9 +19,9 @@ interface MetadataReaderInterface
     /**
      * Get the component metadata
      *
-     * @param InputDataInterface $xInput
+     * @param InputData $xInput
      *
      * @return Metadata|null
      */
-    public function getAttributes(InputDataInterface $xInput): ?Metadata;
+    public function getAttributes(InputData $xInput): ?Metadata;
 }

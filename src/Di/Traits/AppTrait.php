@@ -87,6 +87,16 @@ trait AppTrait
     }
 
     /**
+     * Get the config manager
+     *
+     * @return ConfigManager
+     */
+    public function config(): ConfigManager
+    {
+        return $this->g(ConfigManager::class);
+    }
+
+    /**
      * Get the javascript library version
      *
      * @return string
@@ -103,7 +113,7 @@ trait AppTrait
      */
     public function getRequestUri(): string
     {
-        $xConfigManager = $this->g(ConfigManager::class);
-        return $xConfigManager->getOption('core.request.uri', $this->getParameterReader()->uri());
+        return $this->config()->getOption('core.request.uri',
+            $this->getParameterReader()->uri());
     }
 }

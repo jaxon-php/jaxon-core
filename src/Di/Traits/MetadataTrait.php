@@ -2,7 +2,7 @@
 
 namespace Jaxon\Di\Traits;
 
-use Jaxon\App\Metadata\InputDataInterface;
+use Jaxon\App\Metadata\InputData;
 use Jaxon\App\Metadata\Metadata;
 use Jaxon\App\Metadata\MetadataCache;
 use Jaxon\App\Metadata\MetadataReaderInterface;
@@ -24,7 +24,7 @@ trait MetadataTrait
         $this->set('metadata_reader_null', function() {
             return new class implements MetadataReaderInterface
             {
-                public function getAttributes(InputDataInterface $xInputData): ?Metadata
+                public function getAttributes(InputData $xInputData): ?Metadata
                 {
                     return null;
                 }

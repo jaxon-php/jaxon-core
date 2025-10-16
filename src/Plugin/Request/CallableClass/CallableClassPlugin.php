@@ -253,15 +253,14 @@ class CallableClassPlugin extends AbstractRequestPlugin
             /** @var CallableObject */
             $xCallableObject = $this->getCallable($sClassName);
 
-            $sError = 'errors.objects.call';
-            if(!$xCallableObject->excluded($sMethodName))
+            if($xCallableObject->excluded($sMethodName))
             {
-                $xCallableObject->call($this->xTarget);
-                return;
+                // Unable to find the requested class or method
+                $this->throwException('', 'errors.objects.excluded', $aErrorParams);
             }
 
-            // Unable to find the requested class or method
-            $this->throwException('', 'errors.objects.excluded', $aErrorParams);
+            $sError = 'errors.objects.call';
+            $xCallableObject->call($this->xTarget);
         }
         catch(ReflectionException|SetupException $e)
         {

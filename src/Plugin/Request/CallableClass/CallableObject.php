@@ -110,6 +110,18 @@ class CallableObject
     }
 
     /**
+     * @param string $sMethodName
+     *
+     * @return array
+     */
+    private function getMethodOptions(string $sMethodName): array
+    {
+        return array_map(fn($xOption) =>
+            is_array($xOption) ? json_encode($xOption) : $xOption,
+            $this->xOptions->getMethodOptions($sMethodName));
+    }
+
+    /**
      * Return a list of methods of the component to export to javascript
      *
      * @return array
@@ -118,18 +130,12 @@ class CallableObject
     {
         // Get the method options, and convert each of them to
         // a string to be displayed in the js script template.
-        $fGetOption = function($sMethodName) {
-            return array_map(function($xOption) {
-                return is_array($xOption) ? json_encode($xOption) : $xOption;
-            }, $this->xOptions->getMethodOptions($sMethodName));
-        };
-        $aMethods = $this->cdi->getPublicMethods($this->xReflectionClass);
-        $aMethods = array_filter($aMethods, fn($sMethodName) =>
-            !$this->xOptions->isProtectedMethod($sMethodName));
+        $aMethods = array_filter($this->cdi->getPublicMethods($this->xReflectionClass),
+            fn($sMethodName) => !$this->xOptions->isProtectedMethod($sMethodName));
 
         return array_map(fn($sMethodName) => [
             'name' => $sMethodName,
-            'config' => $fGetOption($sMethodName),
+            'options' => $this->getMethodOptions($sMethodName),
         ], $aMethods);
     }
 
