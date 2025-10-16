@@ -16,11 +16,15 @@ namespace Jaxon\App\Metadata;
 
 use Closure;
 
+use function dirname;
 use function file_exists;
 use function file_put_contents;
 use function implode;
+use function mkdir;
+use function rtrim;
 use function str_replace;
 use function strtolower;
+use function trim;
 
 class MetadataCache
 {
@@ -37,8 +41,10 @@ class MetadataCache
      */
     private function filepath(string $sClass): string
     {
-        $sFilename = str_replace(['\\', '.'], '_', strtolower($sClass));
-        return "{$this->sCacheDir}/jaxon_metadata_{$sFilename}.php";
+        $sFilename = trim(str_replace(['\\', '.'], DIRECTORY_SEPARATOR,
+            strtolower($sClass)), DIRECTORY_SEPARATOR);
+        return rtrim($this->sCacheDir, "/\\") . DIRECTORY_SEPARATOR .
+            "metadata" . DIRECTORY_SEPARATOR . "{$sFilename}.php";
     }
 
     /**
@@ -83,7 +89,10 @@ return function() {
 };
 
 CODE;
-        file_put_contents($this->filepath($sClass), $sPhpCode);
+        // Recursively create the directories.
+        $sPath = $this->filepath($sClass);
+        @mkdir(dirname($sPath), 0755, true);
+        file_put_contents($sPath, $sPhpCode);
     }
 
     /**
