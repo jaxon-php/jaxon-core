@@ -223,8 +223,8 @@ trait ComponentTrait
         {
             return null;
         }
-        $sReaderId = $xPackageConfig->getOption('metadata.reader');
-        if(!in_array($sReaderId, ['attributes', 'annotations']))
+        $sMetadataFormat = $xPackageConfig->getOption('metadata.format');
+        if(!in_array($sMetadataFormat, ['attributes', 'annotations']))
         {
             return null;
         }
@@ -254,7 +254,7 @@ trait ComponentTrait
                 ReflectionProperty::IS_PROTECTED));
         $aMethods = $this->getPublicMethods($xReflectionClass);
 
-        $xMetadataReader = $di->getMetadataReader($sReaderId);
+        $xMetadataReader = $di->getMetadataReader($sMetadataFormat);
         $xInput = new InputData($xReflectionClass, $aMethods, $aProperties);
         $xMetadata = $xMetadataReader->getAttributes($xInput);
 
