@@ -53,4 +53,12 @@ interface UploadHandlerInterface
      * @return bool
      */
     public function processRequest(ServerRequestInterface $xRequest): bool;
+
+    /**
+     * @param string $sStorage
+     * @param Closure $cFactory
+     *
+     * @return void
+     */
+    public function registerStorageAdapter(string $sStorage, Closure $cFactory);
 }
