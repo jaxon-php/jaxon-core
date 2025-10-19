@@ -19,20 +19,20 @@ class Jaxon
     /**
      * @const string
      */
-    const VERSION = 'Jaxon 5.x';
+    public const VERSION = 'Jaxon 5.x';
 
     /**
      * @const string
      */
-    const CALLABLE_CLASS = 'CallableClass';
+    public const CALLABLE_CLASS = 'CallableClass';
 
     /**
      * @const string
      */
-    const CALLABLE_DIR = 'CallableDir';
+    public const CALLABLE_DIR = 'CallableDir';
 
     /**
      * @const string
      */
-    const CALLABLE_FUNCTION = 'CallableFunction';
+    public const CALLABLE_FUNCTION = 'CallableFunction';
 }

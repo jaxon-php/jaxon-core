@@ -175,9 +175,9 @@ class Container
      * Get a class instance
      *
      * @template T
-     * @param string|class-string<T> $sClass The full class name
+     * @param class-string<T> $sClass The full class name
      *
-     * @return ($sClass is class-string ? T : mixed)
+     * @return T
      */
     public function g(string $sClass): mixed
     {
@@ -188,9 +188,9 @@ class Container
      * Get a class instance
      *
      * @template T
-     * @param string|class-string<T> $sClass The full class name
+     * @param class-string<T> $sClass The full class name
      *
-     * @return ($sClass is class-string ? T : mixed)
+     * @return T
      * @throws SetupException
      */
     public function get(string $sClass): mixed

@@ -32,6 +32,8 @@ use ReflectionProperty;
 use function array_filter;
 use function array_map;
 use function in_array;
+use function str_replace;
+use function substr;
 
 trait ComponentTrait
 {
@@ -63,7 +65,7 @@ trait ComponentTrait
      *
      * @return void
      */
-    abstract public function registerComponent(string $sClassName, array $aOptions = []): void;
+    abstract public function saveComponent(string $sClassName, array $aOptions): void;
 
     /**
      * @param class-string $sClassName The component name
@@ -72,7 +74,7 @@ trait ComponentTrait
      */
     private function getCallableObjectKey(string $sClassName): string
     {
-        return $sClassName . '_CallableObject';
+        return "{$sClassName}_CallableObject";
     }
 
     /**
@@ -82,7 +84,7 @@ trait ComponentTrait
      */
     private function getCallableHelperKey(string $sClassName): string
     {
-        return $sClassName . '_CallableHelper';
+        return "{$sClassName}_CallableHelper";
     }
 
     /**
@@ -92,7 +94,7 @@ trait ComponentTrait
      */
     private function getReflectionClassKey(string $sClassName): string
     {
-        return $sClassName . '_ReflectionClass';
+        return "{$sClassName}_ReflectionClass";
     }
 
     /**
@@ -102,28 +104,30 @@ trait ComponentTrait
      */
     private function getRequestFactoryKey(string $sClassName): string
     {
-        return $sClassName . '_RequestFactory';
+        return "{$sClassName}_RequestFactory";
     }
 
     /**
-     * @param string $sClassName    The class name
-     * @param array $aOptions    The class options
+     * @param string $sClassName
+     * @param array $aOptions
      *
      * @return void
      */
     private function _saveClassOptions(string $sClassName, array $aOptions): void
     {
-        $this->aComponents[$sClassName] = $aOptions;
+        $sOptionsId = str_replace('\\', $aOptions['separator'], $sClassName);
+        $this->aComponents[$sOptionsId] = $aOptions;
     }
 
     /**
-     * @param string $sClassName    The class name
+     * @param string $sClassName
      *
      * @return array
      */
     private function _getClassOptions(string $sClassName): array
     {
-        return $this->aComponents[$sClassName];
+        return $this->aComponents[str_replace('\\', '.', $sClassName)] ??
+            $this->aComponents[str_replace('\\', '_', $sClassName)];
     }
 
     /**
@@ -134,29 +138,39 @@ trait ComponentTrait
      * @return void
      * @throws SetupException
      */
-    private function discoverComponent(string $sClassName)
+    private function discoverComponent(string $sClassName): void
     {
-        if(!isset($this->aComponents[$sClassName]))
+        $xRegistry = $this->cn()->g(ComponentRegistry::class);
+        $xRegistry->updateHash(false); // Disable hash calculation.
+
+        $sComponentId = str_replace('\\', '.', $sClassName);
+        if(!isset($this->aComponents[$sComponentId]))
         {
-            $xRegistry = $this->cn()->g(ComponentRegistry::class);
-            $xRegistry->updateHash(false); // Disable hash calculation.
             $aOptions = $xRegistry->getNamespaceComponentOptions($sClassName);
             if($aOptions !== null)
             {
-                $this->registerComponent($sClassName, $aOptions);
-            }
-            else // if(!isset($this->aComponents[$sClassName]))
-            {
-                // The component was not found in a registered namespace. We need to parse all
-                // the directories to be able to find a component registered without a namespace.
-                $xRegistry->registerComponentsInDirectories();
+                $this->saveComponent($sClassName, $aOptions);
             }
         }
-        if(!isset($this->aComponents[$sClassName]))
+        if(isset($this->aComponents[$sComponentId]))
         {
-            throw new SetupException($this->cn()->g(Translator::class)
-                ->trans('errors.class.invalid', ['name' => $sClassName]));
+            return; // The component is found.
         }
+
+        // The component was not found in a registered namespace. We need to parse all
+        // the directories to be able to find a component registered without a namespace.
+        $sComponentId = str_replace('\\', '_', $sClassName);
+        if(!isset($this->aComponents[$sComponentId]))
+        {
+            $xRegistry->registerComponentsInDirectories();
+        }
+        if(isset($this->aComponents[$sComponentId]))
+        {
+            return; // The component is found.
+        }
+
+        throw new SetupException($this->cn()->g(Translator::class)
+            ->trans('errors.class.invalid', ['name' => $sClassName]));
     }
 
     /**

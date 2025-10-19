@@ -40,13 +40,6 @@ class ComponentContainer
     use Traits\ComponentTrait;
 
     /**
-     * If the underscore is used as separator in js class names.
-     *
-     * @var bool
-     */
-    private $bUsingUnderscore = false;
-
-    /**
      * The Dependency Injection Container for registered classes
      *
      * @var PimpleContainer
@@ -76,8 +69,9 @@ class ComponentContainer
                 ->getOption('core.prefix.function', '')));
 
         // Register the pagination component, but do not export to js.
-        $this->registerComponent(Pagination::class, [
+        $this->saveComponent(Pagination::class, [
             'excluded' => true,
+            'separator' => '.',
             'namespace' => 'Jaxon\\App\\Component',
         ]);
     }
@@ -90,15 +84,6 @@ class ComponentContainer
     protected function cn(): Container
     {
         return $this->di;
-    }
-
-
-    /**
-     * @return void
-     */
-    public function useUnderscore()
-    {
-        $this->bUsingUnderscore = true;
     }
 
     /**
@@ -123,9 +108,7 @@ class ComponentContainer
      */
     public function set(string $sClass, Closure $xClosure)
     {
-        $this->xContainer->offsetSet($sClass, function() use($xClosure) {
-            return $xClosure($this);
-        });
+        $this->xContainer->offsetSet($sClass, fn() => $xClosure($this));
     }
 
     /**
@@ -181,7 +164,7 @@ class ComponentContainer
      *
      * @return void
      */
-    public function registerComponent(string $sClassName, array $aOptions = []): void
+    public function saveComponent(string $sClassName, array $aOptions): void
     {
         try
         {
@@ -198,13 +181,13 @@ class ComponentContainer
             }
 
             $this->_saveClassOptions($sClassName, $aOptions);
-            $this->val($this->getReflectionClassKey($sClassName), $xReflectionClass);
+
+            $sClassKey = $this->getReflectionClassKey($sClassName);
+            $this->val($sClassKey, $xReflectionClass);
             // Register the user class, but only if the user didn't already.
             if(!$this->has($sClassName))
             {
-                $this->set($sClassName, function() use($sClassName) {
-                    return $this->make($this->get($this->getReflectionClassKey($sClassName)));
-                });
+                $this->set($sClassName, fn() => $this->make($this->get($sClassKey)));
             }
         }
         catch(ReflectionException $e)
@@ -219,16 +202,19 @@ class ComponentContainer
      *
      * @param class-string $sClassName The component name
      *
-     * @return void
+     * @return string
      * @throws SetupException
      */
-    private function _registerComponent(string $sClassName)
+    private function _registerComponent(string $sClassName): string
     {
+        // Replace all separators ('.' or '_') with antislashes, and trim the class name.
+        $sClassName = trim(str_replace(['.', '_'], '\\', $sClassName), '\\');
+
         $sComponentObject = $this->getCallableObjectKey($sClassName);
         // Prevent duplication. It's important not to use the class name here.
         if($this->has($sComponentObject))
         {
-            return;
+            return $sClassName;
         }
 
         // Register the helper class
@@ -241,10 +227,10 @@ class ComponentContainer
         });
 
         $this->discoverComponent($sClassName);
-        $aOptions = $this->_getClassOptions($sClassName);
 
         // Register the callable object
-        $this->set($sComponentObject, function() use($sClassName, $aOptions) {
+        $this->set($sComponentObject, function() use($sClassName) {
+            $aOptions = $this->_getClassOptions($sClassName);
             $xReflectionClass = $this->get($this->getReflectionClassKey($sClassName));
             $xOptions = $this->getComponentOptions($xReflectionClass, $aOptions);
             return new CallableObject($this, $this->di, $xReflectionClass, $xOptions);
@@ -282,6 +268,8 @@ class ComponentContainer
 
             return $xClassInstance;
         });
+
+        return $sClassName;
     }
 
     /**
@@ -297,19 +285,6 @@ class ComponentContainer
     }
 
     /**
-     * @param string $sClassName A class name, but possibly with dot or underscore as separator
-     *
-     * @return class-string
-     * @throws SetupException
-     */
-    private function getClassName(string $sClassName): string
-    {
-        // Replace all separators ('.' or '_') with antislashes, and trim the class name.
-        $sSeparator = !$this->bUsingUnderscore ? '.' : '_';
-        return trim(str_replace($sSeparator, '\\', $sClassName), '\\');
-    }
-
-    /**
      * Get the callable object for a given class
      * The callable object is registered if it is not already in the DI.
      *
@@ -320,8 +295,7 @@ class ComponentContainer
      */
     public function makeCallableObject(string $sClassName): ?CallableObject
     {
-        $sClassName = $this->getClassName($sClassName);
-        $this->_registerComponent($sClassName);
+        $sClassName = $this->_registerComponent($sClassName);
         return $this->getCallableObject($sClassName);
     }
 
@@ -336,8 +310,7 @@ class ComponentContainer
      */
     public function makeComponent(string $sClassName): mixed
     {
-        $sClassName = $this->getClassName($sClassName);
-        $this->_registerComponent($sClassName);
+        $sClassName = $this->_registerComponent($sClassName);
         return $this->get($sClassName);
     }
 

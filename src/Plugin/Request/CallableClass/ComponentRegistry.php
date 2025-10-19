@@ -20,7 +20,6 @@ use Jaxon\Di\ComponentContainer;
 
 use function array_merge;
 use function file_exists;
-use function in_array;
 use function is_string;
 use function str_replace;
 use function strlen;
@@ -243,7 +242,7 @@ class ComponentRegistry
         array $aDirectoryOptions = []): void
     {
         $aOptions = $this->makeClassOptions($sClassName, $aClassOptions, $aDirectoryOptions);
-        $this->cdi->registerComponent($sClassName, $aOptions);
+        $this->cdi->saveComponent($sClassName, $aOptions);
         if($this->bUpdateHash)
         {
             $this->sHash .= $sClassName . $aOptions['timestamp'];
@@ -260,6 +259,8 @@ class ComponentRegistry
      */
     public function registerComponent(string $sClassName, array $aClassOptions): void
     {
+        // For classes, the underscore is used as separator.
+        $aClassOptions['separator'] = '_';
         if($this->xPackageConfig !== null)
         {
             $aClassOptions['config'] = $this->xPackageConfig;
@@ -300,6 +301,8 @@ class ComponentRegistry
      */
     public function registerDirectory(string $sDirectory, array $aOptions): void
     {
+        // For directories without namespace, the underscore is used as separator.
+        $aOptions['separator'] = '_';
         // Set the autoload option default value
         if(!isset($aOptions['autoload']))
         {
@@ -336,20 +339,8 @@ class ComponentRegistry
      */
     public function registerNamespace(string $sNamespace, array $aOptions): void
     {
-        // Separator default value
-        if(!isset($aOptions['separator']))
-        {
-            $aOptions['separator'] = '.';
-        }
-        $aOptions['separator'] = trim($aOptions['separator']);
-        if(!in_array($aOptions['separator'], ['.', '_']))
-        {
-            $aOptions['separator'] = '.';
-        }
-        if($aOptions['separator'] === '_')
-        {
-            $this->cdi->useUnderscore();
-        }
+        // For namespaces, the dot is used as separator.
+        $aOptions['separator'] = '.';
         // Set the autoload option default value
         if(!isset($aOptions['autoload']))
         {
@@ -366,6 +357,59 @@ class ComponentRegistry
         }
 
         $this->aNamespaceOptions[$sNamespace] = $aOptions;
+    }
+
+    /**
+     * Read classes from directories registered with namespaces
+     *
+     * @return void
+     */
+    public function registerComponentsInNamespaces(): void
+    {
+        // This is to be done only once.
+        if($this->bNamespacesParsed)
+        {
+            return;
+        }
+        $this->bNamespacesParsed = true;
+
+        // Browse directories with namespaces and read all the files.
+        $sDS = DIRECTORY_SEPARATOR;
+        foreach($this->aNamespaceOptions as $sNamespace => $aDirectoryOptions)
+        {
+            $this->addNamespace($sNamespace, ['separator' => '.']);
+
+            // Iterate on dir content
+            $sDirectory = $aDirectoryOptions['directory'];
+            $itFile = new SortedFileIterator($sDirectory);
+            foreach($itFile as $xFile)
+            {
+                // skip everything except PHP files
+                if(!$xFile->isFile() || $xFile->getExtension() !== 'php')
+                {
+                    continue;
+                }
+
+                // Find the class path (the same as the class namespace)
+                $sClassPath = $sNamespace;
+                $sRelativePath = substr($xFile->getPath(), strlen($sDirectory));
+                $sRelativePath = trim(str_replace($sDS, '\\', $sRelativePath), '\\');
+                if($sRelativePath !== '')
+                {
+                    $sClassPath .= '\\' . $sRelativePath;
+                }
+
+                $this->addNamespace($sClassPath, ['separator' => '.']);
+
+                $sClassName = $sClassPath . '\\' . $xFile->getBasename('.php');
+                $aClassOptions = [
+                    'separator' => '.',
+                    'namespace' => $sNamespace,
+                    'timestamp' => $xFile->getMTime(),
+                ];
+                $this->_registerComponent($sClassName, $aClassOptions, $aDirectoryOptions);
+            }
+        }
     }
 
     /**
@@ -396,61 +440,15 @@ class ComponentRegistry
                 }
 
                 $sClassName = $xFile->getBasename('.php');
-                $aClassOptions = ['timestamp' => $xFile->getMTime()];
+                $aClassOptions = [
+                    'separator' => '_',
+                    'timestamp' => $xFile->getMTime(),
+                ];
                 if(($aDirectoryOptions['autoload']) && $this->xAutoloader !== null)
                 {
                     // Set classmap autoloading. Must be done before registering the class.
                     $this->xAutoloader->addClassMap([$sClassName => $xFile->getPathname()]);
                 }
-                $this->_registerComponent($sClassName, $aClassOptions, $aDirectoryOptions);
-            }
-        }
-    }
-
-    /**
-     * Read classes from directories registered with namespaces
-     *
-     * @return void
-     */
-    public function registerComponentsInNamespaces(): void
-    {
-        // This is to be done only once.
-        if($this->bNamespacesParsed)
-        {
-            return;
-        }
-        $this->bNamespacesParsed = true;
-
-        // Browse directories with namespaces and read all the files.
-        $sDS = DIRECTORY_SEPARATOR;
-        foreach($this->aNamespaceOptions as $sNamespace => $aDirectoryOptions)
-        {
-            $this->addNamespace($sNamespace, ['separator' => $aDirectoryOptions['separator']]);
-
-            // Iterate on dir content
-            $sDirectory = $aDirectoryOptions['directory'];
-            $itFile = new SortedFileIterator($sDirectory);
-            foreach($itFile as $xFile)
-            {
-                // skip everything except PHP files
-                if(!$xFile->isFile() || $xFile->getExtension() !== 'php')
-                {
-                    continue;
-                }
-
-                // Find the class path (the same as the class namespace)
-                $sClassPath = $sNamespace;
-                $sRelativePath = substr($xFile->getPath(), strlen($sDirectory));
-                $sRelativePath = trim(str_replace($sDS, '\\', $sRelativePath), '\\');
-                if($sRelativePath !== '')
-                {
-                    $sClassPath .= '\\' . $sRelativePath;
-                }
-
-                $this->addNamespace($sClassPath, ['separator' => $aDirectoryOptions['separator']]);
-
-                $sClassName = $sClassPath . '\\' . $xFile->getBasename('.php');
-                $aClassOptions = ['namespace' => $sNamespace, 'timestamp' => $xFile->getMTime()];
                 $this->_registerComponent($sClassName, $aClassOptions, $aDirectoryOptions);
             }
         }
@@ -463,7 +461,7 @@ class ComponentRegistry
      */
     public function registerAllComponents(): void
     {
-        $this->registerComponentsInDirectories();
         $this->registerComponentsInNamespaces();
+        $this->registerComponentsInDirectories();
     }
 }
