@@ -182,9 +182,9 @@ trait ComponentTrait
     public function getCallableObjects(): array
     {
         $aCallableObjects = [];
-        foreach($this->aComponents as $sClassName => $_)
+        foreach($this->aComponents as $sComponentId => $_)
         {
-            $aCallableObjects[$sClassName] = $this->makeCallableObject($sClassName);
+            $aCallableObjects[$sComponentId] = $this->makeCallableObject($sComponentId);
         }
         return $aCallableObjects;
     }

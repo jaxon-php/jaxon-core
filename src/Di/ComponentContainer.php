@@ -200,15 +200,15 @@ class ComponentContainer
     /**
      * Register a component
      *
-     * @param class-string $sClassName The component name
+     * @param string $sComponentId The component name
      *
      * @return string
      * @throws SetupException
      */
-    private function _registerComponent(string $sClassName): string
+    private function _registerComponent(string $sComponentId): string
     {
         // Replace all separators ('.' or '_') with antislashes, and trim the class name.
-        $sClassName = trim(str_replace(['.', '_'], '\\', $sClassName), '\\');
+        $sClassName = trim(str_replace(['.', '_'], '\\', $sComponentId), '\\');
 
         $sComponentObject = $this->getCallableObjectKey($sClassName);
         // Prevent duplication. It's important not to use the class name here.
@@ -229,8 +229,8 @@ class ComponentContainer
         $this->discoverComponent($sClassName);
 
         // Register the callable object
-        $this->set($sComponentObject, function() use($sClassName) {
-            $aOptions = $this->_getClassOptions($sClassName);
+        $this->set($sComponentObject, function() use($sComponentId, $sClassName) {
+            $aOptions = $this->_getClassOptions($sComponentId);
             $xReflectionClass = $this->get($this->getReflectionClassKey($sClassName));
             $xOptions = $this->getComponentOptions($xReflectionClass, $aOptions);
             return new CallableObject($this, $this->di, $xReflectionClass, $xOptions);
@@ -274,63 +274,33 @@ class ComponentContainer
 
     /**
      * Get the callable object for a given class
-     *
-     * @param class-string $sClassName
-     *
-     * @return CallableObject
-     */
-    public function getCallableObject(string $sClassName): CallableObject
-    {
-        return $this->get($this->getCallableObjectKey($sClassName));
-    }
-
-    /**
-     * Get the callable object for a given class
      * The callable object is registered if it is not already in the DI.
      *
-     * @param class-string $sClassName The class name of the callable object
+     * @param string $sComponentId
      *
      * @return CallableObject|null
      * @throws SetupException
      */
-    public function makeCallableObject(string $sClassName): ?CallableObject
+    public function makeCallableObject(string $sComponentId): ?CallableObject
     {
-        $sClassName = $this->_registerComponent($sClassName);
-        return $this->getCallableObject($sClassName);
+        $sClassName = $this->_registerComponent($sComponentId);
+        return $this->get($this->getCallableObjectKey($sClassName));
     }
 
     /**
      * Get an instance of a component by name
      *
      * @template T
-     * @param class-string<T> $sClassName the class name
+     * @param string<T> $sClassName the class name
      *
      * @return T|null
      * @throws SetupException
      */
     public function makeComponent(string $sClassName): mixed
     {
-        $sClassName = $this->_registerComponent($sClassName);
+        $sComponentId = str_replace('\\', '.', $sClassName);
+        $sClassName = $this->_registerComponent($sComponentId);
         return $this->get($sClassName);
-    }
-
-    /**
-     * @param class-string $sClassName
-     * @param string $sFactoryKey
-     *
-     * @return void
-     */
-    private function registerRequestFactory(string $sClassName, string $sFactoryKey)
-    {
-        $this->xContainer->offsetSet($sFactoryKey, function() use($sClassName) {
-            if(!($xCallable = $this->makeCallableObject($sClassName)))
-            {
-                return null;
-            }
-
-            $sPrefix = $this->di->g(ConfigManager::class)->getOption('core.prefix.class', '');
-            return new JxnClassCall($sPrefix . $xCallable->getJsName());
-        });
     }
 
     /**
@@ -361,7 +331,17 @@ class ComponentContainer
         $sFactoryKey = $this->getRequestFactoryKey($sClassName);
         if(!$this->has($sFactoryKey))
         {
-            $this->registerRequestFactory($sClassName, $sFactoryKey);
+            $this->xContainer->offsetSet($sFactoryKey, function() use($sClassName) {
+                $sComponentId = str_replace('\\', '.', $sClassName);
+                if(!($xCallable = $this->makeCallableObject($sComponentId)))
+                {
+                    return null;
+                }
+
+                $xConfigManager = $this->di->g(ConfigManager::class);
+                $sPrefix = $xConfigManager->getOption('core.prefix.class', '');
+                return new JxnClassCall($sPrefix . $xCallable->getJsName());
+            });
         }
         return $this->get($sFactoryKey);
     }

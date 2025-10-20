@@ -13,6 +13,8 @@
 
 namespace Jaxon\Request;
 
+use function trim;
+
 class Target implements TargetInterface
 {
     /**
@@ -97,14 +99,13 @@ class Target implements TargetInterface
     /**
      * Create a target of type Class
      *
-     * @param string $sClassName    The class name
-     * @param string $sMethodName    The method name
+     * @param array $aCall
      *
      * @return Target
      */
-    public static function makeClass(string $sClassName, string $sMethodName): Target
+    public static function makeClass(array $aCall): Target
     {
-        return new Target(self::TYPE_CLASS, '', $sClassName, $sMethodName);
+        return new Target(self::TYPE_CLASS, '', trim($aCall['name']), trim($aCall['method']));
     }
 
     /**

@@ -48,7 +48,7 @@ class RegistrationTest extends TestCase
         jaxon()->setOption('js.app.minify', true);
         $sScript = jaxon()->getScript();
         // Check that the return value is a file URI, and not js code.
-        $this->assertStringNotContainsString('SamplePackageClass = {}', $sScript);
+        $this->assertStringNotContainsString('SamplePackageClass = {', $sScript);
         $this->assertStringContainsString('http://example.test/js', $sScript);
         $this->assertStringContainsString('.min.js', $sScript);
     }
@@ -61,7 +61,7 @@ class RegistrationTest extends TestCase
         jaxon()->setOption('js.app.minify', false);
         $sScript = jaxon()->getScript();
         // Check that the return value is a file URI, and not js code.
-        $this->assertStringNotContainsString('SamplePackageClass = {}', $sScript);
+        $this->assertStringNotContainsString('SamplePackageClass = {', $sScript);
         $this->assertStringContainsString('http://example.test/js', $sScript);
         $this->assertStringNotContainsString('.min.js', $sScript);
         $this->assertStringContainsString('.js', $sScript);
@@ -85,7 +85,7 @@ class RegistrationTest extends TestCase
         jaxon()->setOption('js.app.minify', true);
         $sScript = jaxon()->getScript();
         // Check that the return value is a file URI, and not js code.
-        $this->assertStringNotContainsString('SamplePackageClass = {}', $sScript);
+        $this->assertStringNotContainsString('SamplePackageClass = {', $sScript);
         $this->assertStringContainsString('http://example.test/js', $sScript);
         $this->assertStringNotContainsString('.min.js', $sScript);
         $this->assertStringContainsString('.js', $sScript);
@@ -98,7 +98,7 @@ class RegistrationTest extends TestCase
     {
         // Change the js dir
         jaxon()->setOption('js.app.dir', __DIR__ . '/../src/script'); // This dir must not exist.
-        $this->assertStringContainsString('SamplePackageClass = {}', jaxon()->script());
+        $this->assertStringContainsString('SamplePackageClass = {', jaxon()->script());
     }
 
     /**
@@ -108,7 +108,7 @@ class RegistrationTest extends TestCase
     {
         // Change the js dir
         jaxon()->setOption('js.app.file', 'js/app'); // This dir must not exist.
-        $this->assertStringContainsString('SamplePackageClass = {}', jaxon()->script());
+        $this->assertStringContainsString('SamplePackageClass = {', jaxon()->script());
     }
 
     public function testSetupIncorrectFile()

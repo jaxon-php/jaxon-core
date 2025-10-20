@@ -11,6 +11,7 @@ use Jaxon\Plugin\Request\CallableFunction\CallableFunctionPlugin;
 use Jaxon\Utils\Http\UriException;
 use PHPUnit\Framework\TestCase;
 use Sample;
+
 use function strlen;
 
 final class FunctionTest extends TestCase
@@ -152,12 +153,12 @@ final class FunctionTest extends TestCase
         // This URI will be parsed by the URI detector
         $_SERVER['REQUEST_URI'] = 'http://example.test/path';
         $sJsCode = jaxon()->getScript(true, true);
-        // file_put_contents(__DIR__ . '/../src/js/plugin.js', $sJsCode);
-        $this->assertEquals(file_get_contents(__DIR__ . '/../src/js/plugin.js'), $sJsCode);
+        // file_put_contents(__DIR__ . '/../src/js/plugin.html', $sJsCode);
+        $this->assertEquals(file_get_contents(__DIR__ . '/../src/js/plugin.html'), $sJsCode);
         $this->assertEquals(32, strlen(jaxon()->di()->getCodeGenerator()->getHash()));
 
         $sJsCode = jaxon()->getCss() . "\n\n" . jaxon()->getJs() . "\n\n" . jaxon()->getScript();
-        $this->assertEquals(file_get_contents(__DIR__ . '/../src/js/plugin.js'), $sJsCode);
+        $this->assertEquals(file_get_contents(__DIR__ . '/../src/js/plugin.html'), $sJsCode);
 
         unset($_SERVER['REQUEST_URI']);
     }

@@ -23,7 +23,6 @@ namespace Jaxon\Plugin\Request\CallableClass;
 use Jaxon\Jaxon;
 use Jaxon\App\I18n\Translator;
 use Jaxon\Di\ComponentContainer;
-use Jaxon\Di\Container;
 use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\AbstractRequestPlugin;
@@ -31,37 +30,41 @@ use Jaxon\Request\Target;
 use Jaxon\Request\Validator;
 use Jaxon\Utils\Template\TemplateEngine;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Log\LoggerInterface;
 use ReflectionException;
 
-use function array_reduce;
+use function array_map;
+use function array_merge;
+use function explode;
+use function implode;
 use function is_array;
 use function is_string;
 use function md5;
-use function str_replace;
-use function strpos;
-use function strlen;
-use function substr;
+use function str_repeat;
 use function trim;
-use function uksort;
 
 class CallableClassPlugin extends AbstractRequestPlugin
 {
     /**
+     * @var array
+     */
+    private array $aCallableObjects = [];
+
+    /**
      * The class constructor
      *
      * @param string $sPrefix
-     * @param bool $bDebug
-     * @param Container $di
+     * @param LoggerInterface $xLogger
      * @param ComponentContainer $cdi
      * @param ComponentRegistry $xRegistry
-     * @param TemplateEngine $xTemplateEngine
      * @param Translator $xTranslator
+     * @param TemplateEngine $xTemplateEngine
      * @param Validator $xValidator
      */
-    public function __construct(private string $sPrefix, private bool $bDebug,
-        private Container $di, private ComponentContainer $cdi,
-        private ComponentRegistry $xRegistry, private TemplateEngine $xTemplateEngine,
-        private Translator $xTranslator, private Validator $xValidator)
+    public function __construct(private string $sPrefix,
+        private LoggerInterface $xLogger, private ComponentContainer $cdi,
+        private ComponentRegistry $xRegistry, private Translator $xTranslator,
+        private TemplateEngine $xTemplateEngine, private Validator $xValidator)
     {}
 
     /**
@@ -122,53 +125,89 @@ class CallableClassPlugin extends AbstractRequestPlugin
     }
 
     /**
-     * Generate client side javascript code for namespaces
+     * Add a callable object to the script generator
      *
-     * @return string
+     * @param CallableObject $xCallableObject
+     *
+     * @return void
      */
-    private function getNamespacesScript(): string
-    {
-        $sCode = '';
-        $aJsClasses = [];
-        foreach($this->xRegistry->getNamespaces() as $sNamespace)
-        {
-            $offset = 0;
-            $sJsNamespace = str_replace('\\', '.', $sNamespace);
-            $sJsNamespace .= '.Null'; // This is a sentinel. The last token is not processed in the while loop.
-            while(($dotPosition = strpos($sJsNamespace, '.', $offset)) !== false)
-            {
-                $sJsClass = substr($sJsNamespace, 0, $dotPosition);
-                // Generate code for this object
-                if(!isset($aJsClasses[$sJsClass]))
-                {
-                    $sCode .= $this->sPrefix . "$sJsClass = {};\n";
-                    $aJsClasses[$sJsClass] = $sJsClass;
-                }
-                $offset = $dotPosition + 1;
-            }
-        }
-        return $sCode;
-    }
-
-    /**
-     * Generate client side javascript code for a callable class
-     *
-     * @param CallableObject $xCallableObject The corresponding callable object
-     *
-     * @return string
-     */
-    private function getCallableScript(CallableObject $xCallableObject): string
+    private function addCallable(CallableObject $xCallableObject): void
     {
         if($xCallableObject->excluded())
         {
-            return '';
+            return;
         }
 
-        return $this->xTemplateEngine->render('jaxon::callables/object.js', [
-            'sPrefix' => $this->sPrefix,
-            'sClass' => $xCallableObject->getJsName(),
-            'aMethods' => $xCallableObject->getCallableMethods(),
-        ]);
+        $aCallableObject = &$this->aCallableObjects;
+        foreach(explode('.', $xCallableObject->getJsName()) as $sName)
+        {
+            if(!isset($aCallableObject['children'][$sName]))
+            {
+                $aCallableObject['children'][$sName] = [];
+            }
+            $aCallableObject = &$aCallableObject['children'][$sName];
+        }
+        $aCallableObject['methods'] = $xCallableObject->getCallableMethods();
+    }
+
+    /**
+     * @param string $sIndent
+     * @param array $aTemplateVars
+     *
+     * @return string
+     */
+    private function renderMethod(string $sIndent, array $aTemplateVars): string
+    {
+        return $sIndent . trim($this->xTemplateEngine
+            ->render('jaxon::callables/method.js', $aTemplateVars));
+    }
+
+    /**
+     * @param string $sJsClass
+     * @param array $aCallable
+     * @param int $nRepeat
+     *
+     * @return string
+     */
+    private function renderCallable(string $sJsClass, array $aCallable, int $nRepeat): string
+    {
+        $nRepeat += 2; // Indentation.
+        $sIndent = str_repeat(' ', $nRepeat);
+
+        $fMethodCallback = fn($aMethod) => $this->renderMethod($sIndent,
+            ['sJsClass' => $sJsClass, 'aMethod' => $aMethod]);
+        $aMethods = !isset($aCallable['methods']) ? [] :
+            array_map($fMethodCallback, $aCallable['methods']);
+
+        $aChildren = [];
+        foreach($aCallable['children'] ?? [] as $sName => $aChild)
+        {
+            $aChildren[] = $this->renderChild("$sName:", "$sJsClass.$sName",
+                $aChild, $nRepeat) . ',';
+        }
+
+        return implode("\n", array_merge($aMethods, $aChildren));
+    }
+
+    /**
+     * @param string $sJsVar
+     * @param string $sJsClass
+     * @param array $aCallable
+     * @param int $nRepeat
+     *
+     * @return string
+     */
+    private function renderChild(string $sJsVar, string $sJsClass,
+        array $aCallable, int $nRepeat = 0): string
+    {
+        $sIndent = str_repeat(' ', $nRepeat);
+        $sScript = $this->renderCallable($sJsClass, $aCallable, $nRepeat);
+
+        return <<<CODE
+$sIndent$sJsVar {
+$sScript
+$sIndent}
+CODE;
     }
 
     /**
@@ -180,15 +219,20 @@ class CallableClassPlugin extends AbstractRequestPlugin
     public function getScript(): string
     {
         $this->xRegistry->registerAllComponents();
-        $aCallableObjects = $this->cdi->getCallableObjects();
-        // Sort the options by key length asc
-        uksort($aCallableObjects, function($name1, $name2) {
-            return strlen($name1) - strlen($name2);
-        });
 
-        return array_reduce($aCallableObjects, function($sCode, $xCallableObject) {
-            return $sCode . $this->getCallableScript($xCallableObject);
-        }, $this->getNamespacesScript());
+        $this->aCallableObjects = ['children' => []];
+        foreach($this->cdi->getCallableObjects() as $xCallableObject)
+        {
+            $this->addCallable($xCallableObject);
+        }
+
+        $aScripts = [];
+        foreach($this->aCallableObjects['children'] as $sJsClass => $aCallable)
+        {
+            $aScripts[] = $this->renderChild("{$this->sPrefix}$sJsClass =",
+                $sJsClass, $aCallable) . ';';
+        }
+        return implode("\n", $aScripts) . "\n";
     }
 
     /**
@@ -198,7 +242,8 @@ class CallableClassPlugin extends AbstractRequestPlugin
     {
         $aCall = $xRequest->getAttribute('jxncall');
         return $aCall !== null && ($aCall['type'] ?? '') === 'class' &&
-            isset($aCall['name']) && isset($aCall['method']);
+            isset($aCall['name']) && isset($aCall['method']) &&
+            is_string($aCall['name']) && is_string($aCall['method']);
     }
 
     /**
@@ -206,8 +251,7 @@ class CallableClassPlugin extends AbstractRequestPlugin
      */
     public function setTarget(ServerRequestInterface $xRequest): Target
     {
-        $aCall = $xRequest->getAttribute('jxncall');
-        $this->xTarget = Target::makeClass(trim($aCall['name']), trim($aCall['method']));
+        $this->xTarget = Target::makeClass($xRequest->getAttribute('jxncall'));
         return $this->xTarget;
     }
 
@@ -224,7 +268,7 @@ class CallableClassPlugin extends AbstractRequestPlugin
     {
         $sMessage = $this->xTranslator->trans($sErrorCode, $aErrorParams) .
             (!$sExceptionMessage ? '' : "\n$sExceptionMessage");
-        $this->di->getLogger()->error($sMessage);
+        $this->xLogger->error($sMessage);
         throw new RequestException($sMessage);
     }
 

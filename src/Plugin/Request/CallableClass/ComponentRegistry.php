@@ -441,7 +441,7 @@ class ComponentRegistry
 
                 $sClassName = $xFile->getBasename('.php');
                 $aClassOptions = [
-                    'separator' => '_',
+                    'separator' => '.',
                     'timestamp' => $xFile->getMTime(),
                 ];
                 if(($aDirectoryOptions['autoload']) && $this->xAutoloader !== null)
