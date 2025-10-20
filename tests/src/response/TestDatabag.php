@@ -2,7 +2,7 @@
 
 use Jaxon\App\FuncComponent;
 
-class TestDataBag extends FuncComponent
+class TestDatabag extends FuncComponent
 {
     public function getValue()
     {

@@ -8,7 +8,7 @@ use Jaxon\App\I18n\Translator;
 use Jaxon\Di\ComponentContainer;
 use Jaxon\Di\Container;
 use Jaxon\Plugin\Manager\PluginManager;
-use Jaxon\Plugin\Response\DataBag\DataBagPlugin;
+use Jaxon\Plugin\Response\Databag\DatabagPlugin;
 use Jaxon\Request\Handler\CallbackManager;
 use Jaxon\Request\Handler\ParameterReader;
 use Jaxon\Request\Handler\RequestHandler;
@@ -44,7 +44,7 @@ trait RequestTrait
         $this->set(RequestHandler::class, function($di) {
             return new RequestHandler($di->g(Container::class), $di->g(PluginManager::class),
                 $di->g(ResponseManager::class), $di->g(CallbackManager::class),
-                $di->g(DataBagPlugin::class));
+                $di->g(DatabagPlugin::class));
         });
         // Requests and calls Factory
         $this->set(CallFactory::class, function($di) {

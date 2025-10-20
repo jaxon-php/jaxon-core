@@ -10,7 +10,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use PHPUnit\Framework\TestCase;
 
 
-class PluginDataBagTest extends TestCase
+class PluginDatabagTest extends TestCase
 {
     /**
      * @throws SetupException
@@ -43,7 +43,7 @@ class PluginDataBagTest extends TestCase
                 ->withParsedBody([
                     'jxncall' => json_encode([
                         'type' => 'class',
-                        'name' => 'TestDataBag',
+                        'name' => 'TestDatabag',
                         'method' => 'getValue',
                         'args' => [],
                     ]),
@@ -75,7 +75,7 @@ class PluginDataBagTest extends TestCase
                 ->withParsedBody([
                     'jxncall' => json_encode([
                         'type' => 'class',
-                        'name' => 'TestDataBag',
+                        'name' => 'TestDatabag',
                         'method' => 'setValue',
                         'args' => [],
                     ]),
@@ -107,7 +107,7 @@ class PluginDataBagTest extends TestCase
                 ->withParsedBody([
                     'jxncall' => json_encode([
                         'type' => 'class',
-                        'name' => 'TestDataBag',
+                        'name' => 'TestDatabag',
                         'method' => 'updateValue',
                         'args' => [],
                     ]),
@@ -149,7 +149,7 @@ class PluginDataBagTest extends TestCase
                 ->withQueryParams([
                     'jxncall' => json_encode([
                         'type' => 'class',
-                        'name' => 'TestDataBag',
+                        'name' => 'TestDatabag',
                         'method' => 'updateValue',
                         'args' => [],
                     ]),

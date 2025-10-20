@@ -1,9 +1,9 @@
 <?php
 
-namespace Jaxon\Plugin\Response\DataBag;
+namespace Jaxon\Plugin\Response\Databag;
 
-use Jaxon\App\DataBag\DataBag;
-use Jaxon\App\DataBag\DataBagContext;
+use Jaxon\App\Databag\Databag;
+use Jaxon\App\Databag\DatabagContext;
 use Jaxon\Di\Container;
 use Jaxon\Plugin\AbstractResponsePlugin;
 
@@ -11,7 +11,7 @@ use function is_array;
 use function is_string;
 use function json_decode;
 
-class DataBagPlugin extends AbstractResponsePlugin
+class DatabagPlugin extends AbstractResponsePlugin
 {
     /**
      * @const The plugin name
@@ -19,9 +19,9 @@ class DataBagPlugin extends AbstractResponsePlugin
     public const NAME = 'bags';
 
     /**
-     * @var DataBag
+     * @var Databag
      */
-    protected $xDataBag = null;
+    protected $xDatabag = null;
 
     /**
      * The constructor
@@ -32,9 +32,9 @@ class DataBagPlugin extends AbstractResponsePlugin
     /**
      * @return void
      */
-    private function initDataBag(): void
+    private function initDatabag(): void
     {
-        if($this->xDataBag !== null)
+        if($this->xDatabag !== null)
         {
             return;
         }
@@ -46,7 +46,7 @@ class DataBagPlugin extends AbstractResponsePlugin
         $aData = is_array($aBody) ?
             $this->readData($aBody['jxnbags'] ?? []) :
             $this->readData($aParams['jxnbags'] ?? []);
-        $this->xDataBag = new DataBag($this, $aData);
+        $this->xDatabag = new Databag($this, $aData);
     }
 
     /**
@@ -85,22 +85,22 @@ class DataBagPlugin extends AbstractResponsePlugin
      */
     public function writeCommand(): void
     {
-        $this->initDataBag();
-        if($this->xDataBag->touched())
+        $this->initDatabag();
+        if($this->xDatabag->touched())
         {
             // Todo: calculate the checksums.
-            $this->addCommand('databag.set', ['values' => $this->xDataBag]);
+            $this->addCommand('databag.set', ['values' => $this->xDatabag]);
         }
     }
 
     /**
      * @param string $sName
      *
-     * @return DataBagContext
+     * @return DatabagContext
      */
-    public function bag(string $sName): DataBagContext
+    public function bag(string $sName): DatabagContext
     {
-        $this->initDataBag();
-        return new DataBagContext($this->xDataBag, $sName);
+        $this->initDatabag();
+        return new DatabagContext($this->xDatabag, $sName);
     }
 }

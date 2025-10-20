@@ -1,18 +1,18 @@
 <?php
 
-namespace Jaxon\App\DataBag;
+namespace Jaxon\App\Databag;
 
-use Jaxon\Plugin\Response\DataBag\DataBagPlugin;
+use Jaxon\Plugin\Response\Databag\DatabagPlugin;
 use JsonSerializable;
 
 use function array_map;
 use function is_array;
 use function key_exists;
 
-class DataBag implements JsonSerializable
+class Databag implements JsonSerializable
 {
     /**
-     * @var DataBagPlugin
+     * @var DatabagPlugin
      */
     protected $xPlugin;
 
@@ -31,7 +31,7 @@ class DataBag implements JsonSerializable
      *
      * @param array $aData
      */
-    public function __construct(DataBagPlugin $xPlugin, array $aData)
+    public function __construct(DatabagPlugin $xPlugin, array $aData)
     {
         $this->xPlugin = $xPlugin;
         // Ensure all contents are arrays.

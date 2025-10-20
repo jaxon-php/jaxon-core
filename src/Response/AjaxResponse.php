@@ -21,10 +21,10 @@
 
 namespace Jaxon\Response;
 
-use Jaxon\App\DataBag\DataBagContext;
+use Jaxon\App\Databag\DatabagContext;
 use Jaxon\App\Pagination\Paginator;
 use Jaxon\Exception\AppException;
-use Jaxon\Plugin\Response\DataBag\DataBagPlugin;
+use Jaxon\Plugin\Response\Databag\DatabagPlugin;
 use Jaxon\Plugin\Response\Pagination\PaginatorPlugin;
 use Jaxon\Plugin\Response\Psr\PsrPlugin;
 use Jaxon\Plugin\Response\Script\ScriptPlugin;
@@ -209,11 +209,11 @@ abstract class AjaxResponse extends AbstractResponse
      *
      * @param string $sName
      *
-     * @return DataBagContext
+     * @return DatabagContext
      */
-    public function bag(string $sName): DataBagContext
+    public function bag(string $sName): DatabagContext
     {
-        return $this->plugin(DataBagPlugin::class)->bag($sName);
+        return $this->plugin(DatabagPlugin::class)->bag($sName);
     }
 
     /**

@@ -1,13 +1,13 @@
 <?php
 
-namespace Jaxon\App\DataBag;
+namespace Jaxon\App\Databag;
 
-class DataBagContext
+class DatabagContext
 {
     /**
-     * @var DataBag
+     * @var Databag
      */
-    protected $xDataBag;
+    protected $xDatabag;
 
     /**
      * @var string
@@ -17,12 +17,12 @@ class DataBagContext
     /**
      * The constructor
      *
-     * @param DataBag $xDataBag
+     * @param Databag $xDatabag
      * @param string $sName
      */
-    public function __construct(DataBag $xDataBag, string $sName)
+    public function __construct(Databag $xDatabag, string $sName)
     {
-        $this->xDataBag = $xDataBag;
+        $this->xDatabag = $xDatabag;
         $this->sName = $sName;
     }
 
@@ -34,7 +34,7 @@ class DataBagContext
      */
     public function set(string $sKey, $xValue): void
     {
-        $this->xDataBag->set($this->sName, $sKey, $xValue);
+        $this->xDatabag->set($this->sName, $sKey, $xValue);
     }
 
     /**
@@ -45,7 +45,7 @@ class DataBagContext
      */
     public function new(string $sKey, $xValue): void
     {
-        $this->xDataBag->new($this->sName, $sKey, $xValue);
+        $this->xDatabag->new($this->sName, $sKey, $xValue);
     }
 
     /**
@@ -56,6 +56,6 @@ class DataBagContext
      */
     public function get(string $sKey, $xValue = null): mixed
     {
-        return $this->xDataBag->get($this->sName, $sKey, $xValue);
+        return $this->xDatabag->get($this->sName, $sKey, $xValue);
     }
 }

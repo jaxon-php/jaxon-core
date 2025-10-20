@@ -24,7 +24,7 @@ use Jaxon\Di\Container;
 use Jaxon\Exception\RequestException;
 use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Plugin\RequestHandlerInterface;
-use Jaxon\Plugin\Response\DataBag\DataBagPlugin;
+use Jaxon\Plugin\Response\Databag\DatabagPlugin;
 use Jaxon\Response\Manager\ResponseManager;
 use Exception;
 
@@ -44,11 +44,11 @@ class RequestHandler
      * @param PluginManager $xPluginManager
      * @param ResponseManager $xResponseManager
      * @param CallbackManager $xCallbackManager
-     * @param DataBagPlugin $xDataBagPlugin
+     * @param DatabagPlugin $xDatabagPlugin
      */
     public function __construct(private Container $di, private PluginManager $xPluginManager,
         private ResponseManager $xResponseManager, private CallbackManager $xCallbackManager,
-        private DataBagPlugin $xDataBagPlugin)
+        private DatabagPlugin $xDatabagPlugin)
     {}
 
     /**
@@ -96,7 +96,7 @@ class RequestHandler
         {
             $this->xRequestPlugin->processRequest();
             // Process the databag
-            $this->xDataBagPlugin->writeCommand();
+            $this->xDatabagPlugin->writeCommand();
         }
     }
 

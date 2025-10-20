@@ -2,7 +2,7 @@
 
 namespace Jaxon\App\Component;
 
-use Jaxon\App\DataBag\DataBagContext;
+use Jaxon\App\Databag\DatabagContext;
 use Jaxon\App\Session\SessionInterface;
 use Jaxon\App\Stash\Stash;
 use Jaxon\App\View\ViewRenderer;
@@ -107,9 +107,9 @@ trait ComponentTrait
      *
      * @param string  $sBagName
      *
-     * @return DataBagContext
+     * @return DatabagContext
      */
-    protected function bag(string $sBagName): DataBagContext
+    protected function bag(string $sBagName): DatabagContext
     {
         return $this->response()->bag($sBagName);
     }

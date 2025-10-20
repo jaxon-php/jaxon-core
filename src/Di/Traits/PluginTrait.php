@@ -19,7 +19,7 @@ use Jaxon\Plugin\Code\ReadyScriptGenerator;
 use Jaxon\Plugin\Manager\PackageManager;
 use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Plugin\Request\CallableClass\ComponentRegistry;
-use Jaxon\Plugin\Response\DataBag\DataBagPlugin;
+use Jaxon\Plugin\Response\Databag\DatabagPlugin;
 use Jaxon\Plugin\Response\Dialog\DialogPlugin;
 use Jaxon\Plugin\Response\Pagination\PaginatorPlugin;
 use Jaxon\Plugin\Response\Script\ScriptPlugin;
@@ -81,9 +81,9 @@ trait PluginTrait
         $this->set(ScriptPlugin::class, function($di) {
             return new ScriptPlugin($di->g(CallFactory::class));
         });
-        // DataBag response plugin
-        $this->set(DataBagPlugin::class, function($di) {
-            return new DataBagPlugin($di->g(Container::class));
+        // Databag response plugin
+        $this->set(DatabagPlugin::class, function($di) {
+            return new DatabagPlugin($di->g(Container::class));
         });
         // Dialog response plugin
         $this->set(DialogPlugin::class, function($di) {
