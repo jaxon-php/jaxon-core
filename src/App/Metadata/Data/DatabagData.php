@@ -17,6 +17,7 @@ namespace Jaxon\App\Metadata\Data;
 use Jaxon\Exception\SetupException;
 
 use function array_map;
+use function array_values;
 use function preg_match;
 
 class DatabagData extends AbstractData
@@ -41,7 +42,7 @@ class DatabagData extends AbstractData
      */
     public function getValue(): mixed
     {
-        return $this->aNames;
+        return array_values($this->aNames);
     }
 
     /**
@@ -67,7 +68,7 @@ class DatabagData extends AbstractData
     {
         $this->validateName($sName);
 
-        $this->aNames[] = $sName;
+        $this->aNames[$sName] = $sName;
     }
 
     /**

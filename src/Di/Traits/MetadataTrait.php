@@ -24,9 +24,9 @@ trait MetadataTrait
         $this->set('metadata_reader_null', function() {
             return new class implements MetadataReaderInterface
             {
-                public function getAttributes(InputData $xInputData): ?Metadata
+                public function getAttributes(InputData $xInputData): Metadata
                 {
-                    return null;
+                    return new Metadata();
                 }
             };
         });
