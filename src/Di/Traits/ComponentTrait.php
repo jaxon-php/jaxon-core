@@ -45,6 +45,13 @@ trait ComponentTrait
     protected $aComponents = [];
 
     /**
+     * The classes, both registered and found in registered directories.
+     *
+     * @var array
+     */
+    protected $aComponentPublicMethods = [];
+
+    /**
      * The container for parameters
      *
      * @return Container
@@ -190,20 +197,22 @@ trait ComponentTrait
     }
 
     /**
-     * @param ReflectionClass $xReflectionClass
-     * @param string $sMethodName
+     * @param string $sKey
+     * @param string $sClass
      *
-     * @return bool
+     * @return void
      */
-    private function isNotCallable(ReflectionClass $xReflectionClass, string $sMethodName): bool
+    private function setComponentPublicMethods(string $sKey, string $sClass): void
     {
-        // Don't take the magic __call, __construct, __destruct methods,
-        // and the public methods of the Component base classes.
-        return substr($sMethodName, 0, 2) === '__' ||
-            ($xReflectionClass->isSubclassOf(NodeComponent::class) &&
-            in_array($sMethodName, ['item', 'html'])) ||
-            ($xReflectionClass->isSubclassOf(FuncComponent::class) &&
-            in_array($sMethodName, ['paginator']));
+        if(isset($this->aComponentPublicMethods[$sKey]))
+        {
+            return;
+        }
+
+        $xReflectionClass = new ReflectionClass($sClass);
+        $aMethods = $xReflectionClass->getMethods(ReflectionMethod::IS_PUBLIC);
+        $this->aComponentPublicMethods[$sKey] = array_map(fn($xMethod) =>
+            $xMethod->getName(), $aMethods);
     }
 
     /**
@@ -213,23 +222,34 @@ trait ComponentTrait
      *
      * @return array
      */
-    public function getPublicMethods(ReflectionClass $xReflectionClass): array
+    private function getPublicMethods(ReflectionClass $xReflectionClass): array
     {
         $aMethods = array_map(fn($xMethod) => $xMethod->getShortName(),
             $xReflectionClass->getMethods(ReflectionMethod::IS_PUBLIC));
+        // Don't take the magic __call, __construct, __destruct methods.
+        $aMethods = array_filter($aMethods, fn($sMethodName) =>
+            substr($sMethodName, 0, 2) !== '__');
 
-        return array_filter($aMethods, fn($sMethodName) =>
-            !$this->isNotCallable($xReflectionClass, $sMethodName));
+        // Don't take the public methods of the Component base classes.
+        $aBaseMethods = match(true) {
+            $xReflectionClass->isSubclassOf(NodeComponent::class) =>
+                $this->aComponentPublicMethods['node'],
+            $xReflectionClass->isSubclassOf(FuncComponent::class) =>
+                $this->aComponentPublicMethods['func'],
+            default => [],
+        };
+        return [$aMethods, $aBaseMethods];
     }
 
     /**
      * @param ReflectionClass $xReflectionClass
+     * @param array $aMethods
      * @param array $aOptions
      *
      * @return Metadata|null
      */
     private function getComponentMetadata(ReflectionClass $xReflectionClass,
-        array $aOptions): ?Metadata
+        array $aMethods, array $aOptions): Metadata|null
     {
         /** @var Config|null */
         $xPackageConfig = $aOptions['config'] ?? null;
@@ -266,7 +286,6 @@ trait ComponentTrait
         $aProperties = array_map(fn($xProperty) => $xProperty->getName(),
             $xReflectionClass->getProperties(ReflectionProperty::IS_PUBLIC |
                 ReflectionProperty::IS_PROTECTED));
-        $aMethods = $this->getPublicMethods($xReflectionClass);
 
         $xMetadataReader = $di->getMetadataReader($sMetadataFormat);
         $xInput = new InputData($xReflectionClass, $aMethods, $aProperties);
@@ -290,9 +309,9 @@ trait ComponentTrait
     private function getComponentOptions(ReflectionClass $xReflectionClass,
         array $aOptions): ComponentOptions
     {
-        $xMetadata = $this->getComponentMetadata($xReflectionClass, $aOptions);
-        return !$xMetadata ? new ComponentOptions($aOptions) :
-            new ComponentOptions($aOptions, $xMetadata->isExcluded(),
-            $xMetadata->getProtectedMethods(), $xMetadata->getProperties());
+        $aMethods = $this->getPublicMethods($xReflectionClass);
+        $xMetadata = $this->getComponentMetadata($xReflectionClass, $aMethods[0], $aOptions);
+
+        return new ComponentOptions($aMethods, $aOptions, $xMetadata);
     }
 }

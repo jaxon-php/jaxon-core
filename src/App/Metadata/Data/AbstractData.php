@@ -14,6 +14,8 @@
 
 namespace Jaxon\App\Metadata\Data;
 
+use function preg_match;
+
 abstract class AbstractData
 {
     /**
@@ -24,4 +26,14 @@ abstract class AbstractData
      * @return array
      */
     abstract public function encode(string $sVarName): array;
+
+    /**
+     * @param string $sMethod
+     *
+     * @return bool
+     */
+    protected function validateMethod(string $sMethod): bool
+    {
+        return preg_match('/^[a-zA-Z][a-zA-Z0-9_]*$/', $sMethod) > 0;
+    }
 }

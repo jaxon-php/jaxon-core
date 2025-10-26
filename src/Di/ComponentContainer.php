@@ -14,10 +14,13 @@
 
 namespace Jaxon\Di;
 
+use Jaxon\App\Component;
 use Jaxon\App\Component\AbstractComponent;
 use Jaxon\App\Component\Pagination;
 use Jaxon\App\Config\ConfigManager;
+use Jaxon\App\FuncComponent;
 use Jaxon\App\I18n\Translator;
+use Jaxon\App\NodeComponent;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\Request\CallableClass\CallableObject;
 use Jaxon\Plugin\Request\CallableClass\ComponentHelper;
@@ -72,8 +75,12 @@ class ComponentContainer
         $this->saveComponent(Pagination::class, [
             'excluded' => true,
             'separator' => '.',
-            'namespace' => 'Jaxon\\App\\Component',
+            // The namespace has the same name as the Component class.
+            'namespace' => Component::class,
         ]);
+
+        $this->setComponentPublicMethods('node', NodeComponent::class);
+        $this->setComponentPublicMethods('func', FuncComponent::class);
     }
 
     /**

@@ -31,12 +31,10 @@ use Closure;
 use ReflectionClass;
 use ReflectionException;
 
-use function array_map;
 use function array_merge;
 use function call_user_func;
 use function is_array;
 use function is_string;
-use function json_encode;
 use function str_replace;
 
 class CallableObject
@@ -76,7 +74,7 @@ class CallableObject
     public function excluded(?string $sMethodName = null): bool
     {
         return $sMethodName === null ? $this->xOptions->excluded() :
-            $this->xOptions->isProtectedMethod($sMethodName);
+            !$this->xOptions->isPublicMethod($sMethodName);
     }
 
     /**
@@ -110,33 +108,13 @@ class CallableObject
     }
 
     /**
-     * @param string $sMethodName
-     *
-     * @return array
-     */
-    private function getMethodOptions(string $sMethodName): array
-    {
-        return array_map(fn($xOption) =>
-            is_array($xOption) ? json_encode($xOption) : $xOption,
-            $this->xOptions->getMethodOptions($sMethodName));
-    }
-
-    /**
      * Return a list of methods of the component to export to javascript
      *
      * @return array
      */
     public function getCallableMethods(): array
     {
-        // Get the method options, and convert each of them to
-        // a string to be displayed in the js script template.
-        $aMethods = array_filter($this->cdi->getPublicMethods($this->xReflectionClass),
-            fn($sMethodName) => !$this->xOptions->isProtectedMethod($sMethodName));
-
-        return array_map(fn($sMethodName) => [
-            'name' => $sMethodName,
-            'options' => $this->getMethodOptions($sMethodName),
-        ], $aMethods);
+        return $this->xOptions->getCallableMethods();
     }
 
     /**

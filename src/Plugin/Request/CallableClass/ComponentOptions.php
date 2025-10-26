@@ -14,8 +14,14 @@
 
 namespace Jaxon\Plugin\Request\CallableClass;
 
+use Jaxon\App\Metadata\Metadata;
+
+use function array_diff;
+use function array_intersect;
+use function array_map;
 use function array_merge;
 use function array_unique;
+use function count;
 use function explode;
 use function in_array;
 use function is_array;
@@ -42,11 +48,25 @@ class ComponentOptions
     private $sSeparator = '.';
 
     /**
+     * A list of methods of the user registered callable object the library can export to javascript
+     *
+     * @var array
+     */
+    private $aPublicMethods = [];
+
+    /**
      * A list of methods of the user registered callable object the library must not export to javascript
      *
      * @var array
      */
     private $aProtectedMethods = [];
+
+    /**
+     * The methods in the export attributes
+     *
+     * @var array
+     */
+    private $aExportMethods = [];
 
     /**
      * A list of methods to call before processing the request
@@ -79,15 +99,14 @@ class ComponentOptions
     /**
      * The constructor
      *
+     * @param array $aMethods
      * @param array $aOptions
-     * @param bool $bExcluded
-     * @param array $aProtectedMethods
-     * @param array $aProperties
+     * @param Metadata|null $xMetadata
      */
-    public function __construct(array $aOptions, bool $bExcluded = false,
-        array $aProtectedMethods = [], array $aProperties = [])
+    public function __construct(array $aMethods, array $aOptions, Metadata|null $xMetadata)
     {
-        $this->bExcluded = $bExcluded || (bool)($aOptions['excluded'] ?? false);
+        $this->bExcluded = ($xMetadata?->isExcluded() ?? false) ||
+            (bool)($aOptions['excluded'] ?? false);
         if($this->bExcluded)
         {
             return;
@@ -99,7 +118,6 @@ class ComponentOptions
             $this->sSeparator = $sSeparator;
         }
         $this->addProtectedMethods($aOptions['protected']);
-        $this->addProtectedMethods($aProtectedMethods);
 
         foreach($aOptions['functions'] as $sNames => $aFunctionOptions)
         {
@@ -110,10 +128,18 @@ class ComponentOptions
                 $this->addFunctionOptions($sFunctionName, $aFunctionOptions);
             }
         }
-        foreach($aProperties as $sFunctionName => $aFunctionOptions)
+
+        if($xMetadata !== null)
         {
-            $this->addFunctionOptions($sFunctionName, $aFunctionOptions);
+            $this->aExportMethods = $xMetadata->getExportMethods();
+            $this->addProtectedMethods($xMetadata->getProtectedMethods());
+            foreach($xMetadata->getProperties() as $sFunctionName => $aFunctionOptions)
+            {
+                $this->addFunctionOptions($sFunctionName, $aFunctionOptions);
+            }
         }
+
+        $this->aPublicMethods = $this->filterPublicMethods($aMethods);
     }
 
     /**
@@ -123,16 +149,38 @@ class ComponentOptions
      */
     private function addProtectedMethods(array|string $xMethods): void
     {
-        if(!is_array($xMethods))
+        $this->aProtectedMethods = array_merge($this->aProtectedMethods,
+            !is_array($xMethods) ? [trim((string)$xMethods)] :
+            array_map(fn($sMethod) => trim((string)$sMethod), $xMethods));
+    }
+
+    /**
+     * @param array $aMethods
+     *
+     * @return array
+     */
+    private function filterPublicMethods(array $aMethods): array
+    {
+        if($this->bExcluded || in_array('*', $this->aProtectedMethods))
         {
-            $this->aProtectedMethods[trim((string)$xMethods)] = true;
-            return;
+            return [];
         }
 
-        foreach($xMethods as $sMethod)
+        $aBaseMethods = $aMethods[1];
+        $aMethods = $aMethods[0];
+
+        if(isset($this->aExportMethods['only']))
         {
-            $this->aProtectedMethods[trim((string)$sMethod)] = true;
+            $aMethods = array_intersect($aMethods, $this->aExportMethods['only']);
         }
+        $aMethods = array_diff($aMethods, $this->aProtectedMethods,
+            $this->aExportMethods['except'] ?? []);
+        if(count($aBaseMethods) > 0 && isset($this->aExportMethods['base']))
+        {
+            $aBaseMethods = array_diff($aBaseMethods, $this->aExportMethods['base']);
+        }
+
+        return array_diff($aMethods, $aBaseMethods);
     }
 
     /**
@@ -140,10 +188,9 @@ class ComponentOptions
      *
      * @return bool
      */
-    public function isProtectedMethod(string $sMethodName): bool
+    public function isPublicMethod(string $sMethodName): bool
     {
-        return isset($this->aProtectedMethods['*']) ||
-            isset($this->aProtectedMethods[$sMethodName]);
+        return in_array($sMethodName, $this->aPublicMethods);
     }
 
     /**
@@ -345,7 +392,7 @@ class ComponentOptions
      *
      * @return array
      */
-    public function getMethodOptions(string $sMethodName): array
+    private function getMethodOptions(string $sMethodName): array
     {
         // First take the common options.
         $aOptions = array_merge($this->aJsOptions['*'] ?? []); // Clone the array
@@ -364,6 +411,23 @@ class ComponentOptions
         {
             $aOptions['callback'] = str_replace('"', '', json_encode($aOptions['callback']));
         }
-        return $aOptions;
+
+        return array_map(fn($xOption) =>
+            is_array($xOption) ? json_encode($xOption) : $xOption, $aOptions);
+    }
+
+    /**
+     * Return a list of methods of the component to export to javascript
+     *
+     * @return array
+     */
+    public function getCallableMethods(): array
+    {
+        // Get the method options, and convert each of them to
+        // a string to be displayed in the js script template.
+        return array_map(fn($sMethodName) => [
+            'name' => $sMethodName,
+            'options' => $this->getMethodOptions($sMethodName),
+        ], $this->aPublicMethods);
     }
 }

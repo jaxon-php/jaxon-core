@@ -20,7 +20,7 @@ class Misc extends FuncComponent
         $xResponse->debug('This is a different response!');
     }
 
-    public function appendbefore()
+    public function appendBefore()
     {
         $this->response->alert('This is the global response!');
         $xResponse = jaxon()->newResponse();

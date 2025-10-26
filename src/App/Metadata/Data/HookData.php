@@ -17,7 +17,7 @@ namespace Jaxon\App\Metadata\Data;
 use Jaxon\Exception\SetupException;
 
 use function addslashes;
-use function preg_match;
+use function json_encode;
 
 abstract class HookData extends AbstractData
 {
@@ -49,29 +49,17 @@ abstract class HookData extends AbstractData
 
     /**
      * @param string $sMethod
-     *
-     * @return void
-     */
-    protected function validateMethod(string $sMethod): void
-    {
-        if(preg_match('/^[a-zA-Z][a-zA-Z0-9_]*$/', $sMethod) > 0)
-        {
-            return;
-        }
-        $sType = $this->getType();
-        throw new SetupException("$sMethod is not a valid \"call\" value for $sType.");
-    }
-
-    /**
-     * @param string $sMethod
      * @param array $aParams
      *
      * @return void
      */
     public function addCall(string $sMethod, array $aParams): void
     {
-        $this->validateMethod($sMethod);
-
+        if(!$this->validateMethod($sMethod))
+        {
+            $sType = $this->getType();
+            throw new SetupException("'$sMethod' is not a valid \"call\" value for $sType.");
+        }
         $this->aCalls[$sMethod] = $aParams;
     }
 

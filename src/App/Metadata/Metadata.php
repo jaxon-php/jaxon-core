@@ -26,6 +26,7 @@ class Metadata
      */
     private array $aAttributes = [
         'exclude' => [],
+        'export' => [],
         'container' => [],
         'databag' => [],
         'callback' => [],
@@ -51,6 +52,18 @@ class Metadata
     {
         return $this->aAttributes['exclude'][$sMethod] ??
             $this->aAttributes['exclude'][$sMethod] = new Data\ExcludeData();
+    }
+
+    /**
+     * @param string $sMethod
+     *
+     * @return Data\ExportData
+     */
+    public function export(string $sMethod = '*'): Data\ExportData
+    {
+        $sMethod = '*'; // On classes only
+        return $this->aAttributes['export'][$sMethod] ??
+            $this->aAttributes['export'][$sMethod] = new Data\ExportData();
     }
 
     /**
@@ -163,6 +176,18 @@ class Metadata
         }
 
         return $aProperties;
+    }
+
+    /**
+     * Get the methods in the export attributes
+     *
+     * @return array
+     */
+    public function getExportMethods(): array
+    {
+        /** @var Data\ExportData */
+        $xExportData = $this->aAttributes['export']['*'] ?? null;
+        return $xExportData?->getMethods() ?? [];
     }
 
     /**
