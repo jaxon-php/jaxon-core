@@ -16,6 +16,7 @@ namespace Jaxon\App\Metadata;
 
 use function array_filter;
 use function array_keys;
+use function array_merge;
 use function array_values;
 use function count;
 
@@ -185,22 +186,49 @@ class Metadata
      */
     public function getExportMethods(): array
     {
+        /** @var array<Data\ExcludeData> */
+        $aAttributes = $this->aAttributes['exclude'];
+        $aExcludeMethods = array_keys($aAttributes);
+        $aExcludeMethods = array_values(array_filter($aExcludeMethods,
+            fn(string $sName) => $sName !== '*' &&
+                $aAttributes[$sName]->getValue() === true));
+
         /** @var Data\ExportData */
         $xExportData = $this->aAttributes['export']['*'] ?? null;
-        return $xExportData?->getMethods() ?? [];
+        $aExportMethods = $xExportData?->getValue() ?? [];
+
+        $aExceptMethods = $aExportMethods['except'] ?? [];
+        $aExportMethods['except'] = array_merge($aExcludeMethods, $aExceptMethods);
+        return $aExportMethods;
     }
 
     /**
-     * Get the protected methods
+     * Get the exluded methods
      *
      * @return array
      */
-    public function getProtectedMethods(): array
+    public function getExceptMethods(): array
     {
-        /** @var array<Data\ExcludeData> */
-        $aAttributes = $this->aAttributes['exclude'];
-        $aMethods = array_keys($aAttributes);
-        return array_values(array_filter($aMethods, fn(string $sName) =>
-            $sName !== '*' && $aAttributes[$sName]->getValue() === true));
+        return $this->getExportMethods()['except'];
+    }
+
+    /**
+     * Get the export base methods
+     *
+     * @return array
+     */
+    public function getExportBaseMethods(): array
+    {
+        return $this->getExportMethods()['base'] ?? [];
+    }
+
+    /**
+     * Get the export only methods
+     *
+     * @return array
+     */
+    public function getExportOnlyMethods(): array
+    {
+        return $this->getExportMethods()['only'] ?? [];
     }
 }

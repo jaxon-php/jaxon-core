@@ -21,6 +21,7 @@ use function array_intersect;
 use function array_map;
 use function array_merge;
 use function array_unique;
+use function array_values;
 use function count;
 use function explode;
 use function in_array;
@@ -55,18 +56,11 @@ class ComponentOptions
     private $aPublicMethods = [];
 
     /**
-     * A list of methods of the user registered callable object the library must not export to javascript
-     *
-     * @var array
-     */
-    private $aProtectedMethods = [];
-
-    /**
      * The methods in the export attributes
      *
      * @var array
      */
-    private $aExportMethods = [];
+    private $aExportMethods = ['except' => []];
 
     /**
      * A list of methods to call before processing the request
@@ -112,11 +106,10 @@ class ComponentOptions
             return;
         }
 
+        // Options from the config.
         $sSeparator = $aOptions['separator'];
-        if($sSeparator === '_' || $sSeparator === '.')
-        {
-            $this->sSeparator = $sSeparator;
-        }
+        $this->sSeparator = $sSeparator === '_' ? $sSeparator : '.';
+
         $this->addProtectedMethods($aOptions['protected']);
 
         foreach($aOptions['functions'] as $sNames => $aFunctionOptions)
@@ -129,10 +122,15 @@ class ComponentOptions
             }
         }
 
+        // Options from the attributes or annotations.
         if($xMetadata !== null)
         {
-            $this->aExportMethods = $xMetadata->getExportMethods();
-            $this->addProtectedMethods($xMetadata->getProtectedMethods());
+            // Excluded methods must be merged with the existing ones.
+            $aExportMethods = $xMetadata->getExportMethods();
+            $aExportMethods['except'] = array_unique(array_merge(
+                $aExportMethods['except'] ?? [], $this->aExportMethods['except']));
+            $this->aExportMethods = $aExportMethods;
+
             foreach($xMetadata->getProperties() as $sFunctionName => $aFunctionOptions)
             {
                 $this->addFunctionOptions($sFunctionName, $aFunctionOptions);
@@ -149,7 +147,7 @@ class ComponentOptions
      */
     private function addProtectedMethods(array|string $xMethods): void
     {
-        $this->aProtectedMethods = array_merge($this->aProtectedMethods,
+        $this->aExportMethods['except'] = array_merge($this->aExportMethods['except'],
             !is_array($xMethods) ? [trim((string)$xMethods)] :
             array_map(fn($sMethod) => trim((string)$sMethod), $xMethods));
     }
@@ -161,26 +159,33 @@ class ComponentOptions
      */
     private function filterPublicMethods(array $aMethods): array
     {
-        if($this->bExcluded || in_array('*', $this->aProtectedMethods))
+        if($this->bExcluded || in_array('*', $this->aExportMethods['except']))
         {
             return [];
         }
 
         $aBaseMethods = $aMethods[1];
+        $aNoMethods = $aMethods[2];
         $aMethods = $aMethods[0];
-
         if(isset($this->aExportMethods['only']))
         {
             $aMethods = array_intersect($aMethods, $this->aExportMethods['only']);
         }
-        $aMethods = array_diff($aMethods, $this->aProtectedMethods,
-            $this->aExportMethods['except'] ?? []);
+        $aMethods = array_diff($aMethods, $this->aExportMethods['except']);
         if(count($aBaseMethods) > 0 && isset($this->aExportMethods['base']))
         {
             $aBaseMethods = array_diff($aBaseMethods, $this->aExportMethods['base']);
         }
 
-        return array_diff($aMethods, $aBaseMethods);
+        return array_values(array_diff($aMethods, $aBaseMethods, $aNoMethods));
+    }
+
+    /**
+     * @return array
+     */
+    public function getPublicMethods(): array
+    {
+        return $this->aPublicMethods;
     }
 
     /**

@@ -23,7 +23,7 @@ use function json_encode;
 class ExportData extends AbstractData
 {
     /**
-     * @var array
+     * @var array<string, array<string>>
      */
     private array $aMethods = [];
 
@@ -38,7 +38,7 @@ class ExportData extends AbstractData
     /**
      * @return mixed
      */
-    public function getMethods(): mixed
+    public function getValue(): mixed
     {
         return $this->aMethods;
     }
@@ -52,7 +52,7 @@ class ExportData extends AbstractData
     {
         foreach(['base', 'only', 'except'] as $sKey)
         {
-            foreach($aMethods[$sKey] as $sMethod)
+            foreach($aMethods[$sKey] ?? [] as $sMethod)
             {
                 if(!is_string($sMethod) || !$this->validateMethod($sMethod))
                 {

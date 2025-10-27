@@ -199,10 +199,12 @@ trait ComponentTrait
     /**
      * @param string $sKey
      * @param string $sClass
+     * @param array $aNeverExported
      *
      * @return void
      */
-    private function setComponentPublicMethods(string $sKey, string $sClass): void
+    private function setComponentPublicMethods(string $sKey, string $sClass,
+        array $aNeverExported): void
     {
         if(isset($this->aComponentPublicMethods[$sKey]))
         {
@@ -211,8 +213,10 @@ trait ComponentTrait
 
         $xReflectionClass = new ReflectionClass($sClass);
         $aMethods = $xReflectionClass->getMethods(ReflectionMethod::IS_PUBLIC);
-        $this->aComponentPublicMethods[$sKey] = array_map(fn($xMethod) =>
-            $xMethod->getName(), $aMethods);
+        $this->aComponentPublicMethods[$sKey] = [
+            array_map(fn($xMethod) => $xMethod->getName(), $aMethods),
+            $aNeverExported,
+        ];
     }
 
     /**
@@ -231,14 +235,16 @@ trait ComponentTrait
             substr($sMethodName, 0, 2) !== '__');
 
         // Don't take the public methods of the Component base classes.
+        // And also return the methods that must never be exported.
         $aBaseMethods = match(true) {
             $xReflectionClass->isSubclassOf(NodeComponent::class) =>
                 $this->aComponentPublicMethods['node'],
             $xReflectionClass->isSubclassOf(FuncComponent::class) =>
                 $this->aComponentPublicMethods['func'],
-            default => [],
+            default => [[], []],
         };
-        return [$aMethods, $aBaseMethods];
+
+        return [$aMethods, ...$aBaseMethods];
     }
 
     /**
@@ -306,7 +312,7 @@ trait ComponentTrait
      *
      * @return ComponentOptions
      */
-    private function getComponentOptions(ReflectionClass $xReflectionClass,
+    public function getComponentOptions(ReflectionClass $xReflectionClass,
         array $aOptions): ComponentOptions
     {
         $aMethods = $this->getPublicMethods($xReflectionClass);

@@ -79,8 +79,8 @@ class ComponentContainer
             'namespace' => Component::class,
         ]);
 
-        $this->setComponentPublicMethods('node', NodeComponent::class);
-        $this->setComponentPublicMethods('func', FuncComponent::class);
+        $this->setComponentPublicMethods('node', NodeComponent::class, ['item', 'html']);
+        $this->setComponentPublicMethods('func', FuncComponent::class, ['paginator']);
     }
 
     /**
