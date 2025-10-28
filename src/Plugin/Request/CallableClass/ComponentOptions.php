@@ -101,18 +101,12 @@ class ComponentOptions
     {
         $this->bExcluded = ($xMetadata?->isExcluded() ?? false) ||
             (bool)($aOptions['excluded'] ?? false);
-        if($this->bExcluded)
-        {
-            return;
-        }
 
         // Options from the config.
-        $sSeparator = $aOptions['separator'];
-        $this->sSeparator = $sSeparator === '_' ? $sSeparator : '.';
-
-        $this->addProtectedMethods($aOptions['protected']);
-
-        foreach($aOptions['functions'] as $sNames => $aFunctionOptions)
+        $sSeparator = $aOptions['separator'] ?? '.';
+        $this->sSeparator = $sSeparator === '_' ? '_' : '.';
+        $this->addProtectedMethods($aOptions['protected'] ?? []);
+        foreach($aOptions['functions'] ?? [] as $sNames => $aFunctionOptions)
         {
             // Names are in a comma-separated list.
             $aFunctionNames = explode(',', $sNames);
@@ -125,16 +119,7 @@ class ComponentOptions
         // Options from the attributes or annotations.
         if($xMetadata !== null)
         {
-            // Excluded methods must be merged with the existing ones.
-            $aExportMethods = $xMetadata->getExportMethods();
-            $aExportMethods['except'] = array_unique(array_merge(
-                $aExportMethods['except'] ?? [], $this->aExportMethods['except']));
-            $this->aExportMethods = $aExportMethods;
-
-            foreach($xMetadata->getProperties() as $sFunctionName => $aFunctionOptions)
-            {
-                $this->addFunctionOptions($sFunctionName, $aFunctionOptions);
-            }
+            $this->readMetadataOptions($xMetadata);
         }
 
         $this->aPublicMethods = $this->filterPublicMethods($aMethods);
@@ -150,6 +135,24 @@ class ComponentOptions
         $this->aExportMethods['except'] = array_merge($this->aExportMethods['except'],
             !is_array($xMethods) ? [trim((string)$xMethods)] :
             array_map(fn($sMethod) => trim((string)$sMethod), $xMethods));
+    }
+
+    /**
+     * @param Metadata $xMetadata
+     *
+     * @return void
+     */
+    private function readMetadataOptions(Metadata $xMetadata): void
+    {
+        // Excluded methods must be merged with the existing ones.
+        $aExportMethods = $xMetadata->getExportMethods();
+        $aExportMethods['except'] = array_unique(array_merge(
+            $aExportMethods['except'] ?? [], $this->aExportMethods['except']));
+        $this->aExportMethods = $aExportMethods;
+        foreach($xMetadata->getProperties() as $sFunctionName => $aFunctionOptions)
+        {
+            $this->addFunctionOptions($sFunctionName, $aFunctionOptions);
+        }
     }
 
     /**
@@ -266,9 +269,11 @@ class ComponentOptions
             }
             if(is_array($xMethodToCall))
             {
-                $aHookMethods[$sCalledMethod] = array_merge($aHookMethods[$sCalledMethod], $xMethodToCall);
+                $aHookMethods[$sCalledMethod] =
+                    array_merge($aHookMethods[$sCalledMethod], $xMethodToCall);
+                continue;
             }
-            elseif(is_string($xMethodToCall))
+            if(is_string($xMethodToCall))
             {
                 $aHookMethods[$sCalledMethod][] = $xMethodToCall;
             }
