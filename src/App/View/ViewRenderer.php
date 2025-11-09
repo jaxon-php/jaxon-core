@@ -4,13 +4,10 @@ namespace Jaxon\App\View;
 
 use Jaxon\Config\Config;
 use Jaxon\Di\Container;
-
 use Closure;
 
 use function array_filter;
 use function array_merge;
-use function is_array;
-use function rtrim;
 use function strrpos;
 use function substr;
 
@@ -24,7 +21,7 @@ class ViewRenderer
     /**
      * The view data store
      *
-     * @var Store
+     * @var Store|null
      */
     protected $xStore = null;
 

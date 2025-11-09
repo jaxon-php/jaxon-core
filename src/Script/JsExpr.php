@@ -58,7 +58,7 @@ class JsExpr extends TypedValue implements Stringable
     protected $aConfirm = [];
 
     /**
-     * @param DialogCommand
+     * @var DialogCommand
      */
     private static DialogCommand $xDialogCommand;
 

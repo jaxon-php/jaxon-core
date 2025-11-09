@@ -114,11 +114,11 @@ trait PluginTrait
      * Find a response plugin by name or class name
      *
      * @template R of ResponsePluginInterface
-     * @param string|class-string<R> $sName    The name of the plugin
+     * @param class-string<R>|string $sName    The name or class of the plugin
      *
      * @return ($sName is class-string ? R : ResponsePluginInterface)|null
      */
-    public function plugin(string $sName): ?ResponsePluginInterface
+    public function plugin(string $sName): ResponsePluginInterface|null
     {
         return $this->getPluginManager()->getResponsePlugin($sName);
     }

@@ -79,7 +79,7 @@ class CodeGenerator
     protected $aCodeJsFiles = [];
 
     /**
-     * @var string
+     * @var bool
      */
     protected $bGenerated = false;
 
@@ -261,16 +261,17 @@ class CodeGenerator
      */
     public function getJsScript(): string
     {
+        $aJsScripts = [];
         foreach($this->aCodeGenerators as $sClassName)
         {
             $xGenerator = $this->getCodeGenerator($sClassName);
             // Javascript code
             if(($sJsScript = trim($xGenerator->getScript(), " \n")) !== '')
             {
-                $aJsScript[] = $sJsScript;
+                $aJsScripts[] = $sJsScript;
             }
         }
-        return implode("\n\n", $aJsScript);
+        return implode("\n\n", $aJsScripts);
     }
 
     /**

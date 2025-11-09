@@ -24,7 +24,6 @@ namespace Jaxon\Response\Manager;
 use Jaxon\App\I18n\Translator;
 use Jaxon\Exception\AppException;
 use Jaxon\Di\Container;
-use Jaxon\Response\AbstractResponse;
 use Jaxon\Response\AjaxResponse;
 use Jaxon\Response\NodeResponse;
 use Jaxon\Response\Response;
@@ -43,7 +42,7 @@ class ResponseManager
      * The current response object that will be sent back to the browser
      * once the request processing phase is complete
      *
-     * @var AbstractResponse
+     * @var AjaxResponse|null
      */
     private $xResponse = null;
 

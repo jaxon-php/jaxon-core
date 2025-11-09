@@ -25,7 +25,7 @@ class CallbackData extends AbstractData
     /**
      * The callback js objects
      *
-     * @var string
+     * @var array
      */
     protected $aNames = [];
 

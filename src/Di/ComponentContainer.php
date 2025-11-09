@@ -52,7 +52,7 @@ class ComponentContainer
     /**
      * This will be set only when getting the object targetted by the ajax request.
      *
-     * @var Target
+     * @var Target|null
      */
     private $xTarget = null;
 
@@ -298,7 +298,7 @@ class ComponentContainer
      * Get an instance of a component by name
      *
      * @template T
-     * @param string<T> $sClassName the class name
+     * @param class-string<T> $sClassName the class name
      *
      * @return T|null
      * @throws SetupException

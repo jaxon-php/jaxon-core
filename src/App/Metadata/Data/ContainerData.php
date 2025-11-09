@@ -24,7 +24,7 @@ class ContainerData extends AbstractData
     /**
      * The properties to get from the container
      *
-     * @var string
+     * @var array
      */
     protected $aProperties = [];
 

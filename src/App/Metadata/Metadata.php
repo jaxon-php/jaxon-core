@@ -193,7 +193,7 @@ class Metadata
             fn(string $sName) => $sName !== '*' &&
                 $aAttributes[$sName]->getValue() === true));
 
-        /** @var Data\ExportData */
+        /** @var Data\ExportData|null */
         $xExportData = $this->aAttributes['export']['*'] ?? null;
         $aExportMethods = $xExportData?->getValue() ?? [];
 

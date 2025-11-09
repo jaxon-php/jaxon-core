@@ -142,7 +142,7 @@ abstract class AbstractResponse
      * @template R of ResponsePluginInterface
      * @param string|class-string<R> $sName    The name of the plugin
      *
-     * @return ($sName is class-string ? R : ResponsePluginInterface)|null
+     * @return ($sName is class-string ? R|null : ResponsePluginInterface|null)
      */
     public function plugin(string $sName): ?ResponsePluginInterface
     {

@@ -206,7 +206,7 @@ class CallableFunctionPlugin extends AbstractRequestPlugin
      * @param string $sErrorMessage
      *
      * @throws RequestException
-     * @return void
+     * @return never
      */
     private function throwException(Exception $xException, string $sErrorMessage): void
     {

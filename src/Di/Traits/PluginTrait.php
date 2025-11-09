@@ -11,6 +11,7 @@ use Jaxon\App\View\ViewRenderer;
 use Jaxon\Config\Config;
 use Jaxon\Di\Container;
 use Jaxon\Exception\SetupException;
+use Jaxon\Plugin\AbstractPackage;
 use Jaxon\Plugin\Code\AssetManager;
 use Jaxon\Plugin\Code\CodeGenerator;
 use Jaxon\Plugin\Code\ConfigScriptGenerator;
@@ -167,7 +168,7 @@ trait PluginTrait
 
     /**
      * @param class-string $sClassName    The package class name
-     * @param-closure-this Package $cSetter
+     * @param-closure-this AbstractPackage $cSetter
      *
      * @return void
      */
@@ -213,7 +214,7 @@ trait PluginTrait
         // Initialize the package instance.
         $di = $this;
         $this->extendPackage($sClassName, function() use($di, $sConfigKey) {
-            // $this here refers to the Package instance.
+            // $this here refers to the AbstractPackage instance.
             $this->xPkgConfig = $di->g($sConfigKey);
             $this->xRenderer = $di->g(ViewRenderer::class);
             $this->init();

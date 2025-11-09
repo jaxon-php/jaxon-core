@@ -106,7 +106,7 @@ class ParameterFactory
     /**
      * Make a parameter of type numeric
      *
-     * @param numeric $nValue    the value of the parameter
+     * @param int $nValue    the value of the parameter
      *
      * @return TypedValue
      */

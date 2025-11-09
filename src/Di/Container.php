@@ -22,7 +22,6 @@ use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Closure;
-use Exception;
 use ReflectionClass;
 use ReflectionNamedType;
 use ReflectionParameter;
@@ -200,7 +199,7 @@ class Container
             return $this->xAppContainer != null && $this->xAppContainer->has($sClass) ?
                 $this->xAppContainer->get($sClass) : $this->xLibContainer->offsetGet($sClass);
         }
-        catch(Exception|Throwable $e)
+        catch(Throwable $e)
         {
             $xLogger = $this->g(LoggerInterface::class);
             $xTranslator = $this->g(Translator::class);

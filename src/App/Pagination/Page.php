@@ -24,7 +24,7 @@ class Page
     public $sText;
 
     /**
-     * @var string
+     * @var int
      */
     public $nNumber;
 

@@ -111,4 +111,14 @@ abstract class AbstractPackage extends AbstractCodeGenerator
     {
         return $this->getHtml();
     }
+
+    /**
+     * Get the Js code of the ready() callback
+     *
+     * @return string|Stringable
+     */
+    public function getReadyScript(): string|Stringable
+    {
+        return '';
+    }
 }

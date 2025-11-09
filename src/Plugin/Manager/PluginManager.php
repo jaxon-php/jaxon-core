@@ -176,9 +176,9 @@ class PluginManager
      * Find the specified response plugin by name or class name
      *
      * @template R of ResponsePluginInterface
-     * @param string|class-string<R> $sName    The name of the plugin
+     * @param string|class-string<R> $sName    The name or class of the plugin
      *
-     * @return ($sName is class-string ? R : ResponsePluginInterface)|null
+     * @return ($sName is class-string ? R|null : ResponsePluginInterface|null)
      */
     public function getResponsePlugin(string $sName): ?ResponsePluginInterface
     {

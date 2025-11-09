@@ -15,7 +15,7 @@
 namespace Jaxon\Plugin\Code;
 
 use Jaxon\App\Config\ConfigManager;
-use Jaxon\Plugin\AbstractCodegenerator;
+use Jaxon\Plugin\AbstractCodeGenerator;
 use Jaxon\Request\Handler\ParameterReader;
 use Jaxon\Utils\Http\UriException;
 use Jaxon\Utils\Template\TemplateEngine;

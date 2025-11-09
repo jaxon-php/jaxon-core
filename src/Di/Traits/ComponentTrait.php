@@ -298,7 +298,7 @@ trait ComponentTrait
         $xMetadata = $xMetadataReader->getAttributes($xInput);
 
         // Try to save the metadata in the cache
-        if($xMetadataCache !== null && $xMetadata !== null)
+        if($xMetadataCache !== null)
         {
             $xMetadataCache->save($xReflectionClass->getName(), $xMetadata);
         }

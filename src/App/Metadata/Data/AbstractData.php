@@ -28,6 +28,16 @@ abstract class AbstractData
     abstract public function encode(string $sVarName): array;
 
     /**
+     * @return string
+     */
+    abstract public function getName(): string;
+
+    /**
+     * @return mixed
+     */
+    abstract public function getValue(): mixed;
+
+    /**
      * @param string $sMethod
      *
      * @return bool

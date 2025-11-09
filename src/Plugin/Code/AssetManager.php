@@ -128,7 +128,7 @@ class AssetManager
     /**
      * Write javascript files and return the corresponding URI
      *
-     * @param CodeGenerator $codeGenerator
+     * @param CodeGenerator $xCodeGenerator
      *
      * @return string
      */

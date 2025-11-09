@@ -28,7 +28,6 @@ namespace Jaxon\App\Ajax;
 use Jaxon\App\Config\ConfigManager;
 use Jaxon\Di\ComponentContainer;
 use Jaxon\Di\Container;
-use Jaxon\Exception\SetupException;
 use Jaxon\Request\Handler\CallbackManager;
 
 final class Jaxon
@@ -41,7 +40,7 @@ final class Jaxon
     use Traits\SendResponseTrait;
 
     /**
-     * @var Jaxon
+     * @var Jaxon|null
      */
     private static $xInstance = null;
 
@@ -134,7 +133,6 @@ final class Jaxon
 
     /**
      * @return void
-     * @throws SetupException
      */
     public function reset(): void
     {

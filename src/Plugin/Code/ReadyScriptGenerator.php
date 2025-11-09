@@ -14,7 +14,7 @@
 
 namespace Jaxon\Plugin\Code;
 
-use Jaxon\Plugin\AbstractCodegenerator;
+use Jaxon\Plugin\AbstractCodeGenerator;
 
 class ReadyScriptGenerator extends AbstractCodeGenerator
 {

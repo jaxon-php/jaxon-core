@@ -25,7 +25,7 @@ class DatabagData extends AbstractData
     /**
      * The databag names
      *
-     * @var string
+     * @var array
      */
     protected $aNames = [];
 

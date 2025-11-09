@@ -14,10 +14,9 @@
 
 namespace Jaxon\Request\Handler;
 
-use Exception;
 use Jaxon\Exception\RequestException;
 use Jaxon\Request\Target;
-use Jaxon\Response\Manager\ResponseManager;
+use Exception;
 
 use function array_merge;
 use function array_values;
@@ -27,13 +26,6 @@ use function is_a;
 
 class CallbackManager
 {
-    /**
-     * The response manager.
-     *
-     * @var ResponseManager
-     */
-    private $xResponseManager;
-
     /**
      * The callbacks to run after booting the library
      *
@@ -82,14 +74,6 @@ class CallbackManager
      * @var callable[]
      */
     protected $aInitCallbacks = [];
-
-    /**
-     * @param ResponseManager $xResponseManager
-     */
-    public function __construct(ResponseManager $xResponseManager)
-    {
-        $this->xResponseManager = $xResponseManager;
-    }
 
     /**
      * Get the library booting callbacks, and reset the array.

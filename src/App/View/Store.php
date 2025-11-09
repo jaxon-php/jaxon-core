@@ -12,9 +12,9 @@ class Store implements JsonSerializable, Stringable
     /**
      * The view renderer
      *
-     * @var ViewInterface
+     * @var ViewInterface|null
      */
-    protected $xRenderer;
+    protected $xRenderer = null;
 
     /**
      * The view namespace
