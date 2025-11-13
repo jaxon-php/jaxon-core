@@ -4,8 +4,8 @@
   }
 </style>
 
-<script type="text/javascript" src="https://cdn.jsdelivr.net/gh/jaxon-php/jaxon-js@5.0.8/dist/libs/chibi/chibi.js"  charset="UTF-8"></script>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/gh/jaxon-php/jaxon-js@5.0.8/dist/jaxon.core.js"  charset="UTF-8"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/gh/jaxon-php/jaxon-js@5.0.9/dist/libs/chibi/chibi.js"  charset="UTF-8"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/gh/jaxon-php/jaxon-js@5.0.9/dist/jaxon.core.js"  charset="UTF-8"></script>
 
 <script type="text/javascript"  charset="UTF-8">
 /* <![CDATA[ */
