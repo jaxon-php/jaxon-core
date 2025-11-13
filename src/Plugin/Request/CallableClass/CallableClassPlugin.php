@@ -35,6 +35,7 @@ use ReflectionException;
 
 use function array_map;
 use function array_merge;
+use function count;
 use function explode;
 use function implode;
 use function is_array;
@@ -158,6 +159,14 @@ class CallableClassPlugin extends AbstractRequestPlugin
      */
     private function renderMethod(string $sIndent, array $aTemplateVars): string
     {
+        $aOptions = [];
+        foreach($aTemplateVars['aMethod']['options'] as $sKey => $sValue)
+        {
+            $aOptions[] = "$sKey: $sValue";
+        }
+        $aTemplateVars['sArguments'] = count($aOptions) === 0 ? 'args' :
+            'args, { ' . implode(',', $aOptions) . ' }';
+
         return $sIndent . trim($this->xTemplateEngine
             ->render('jaxon::callables/method.js', $aTemplateVars));
     }

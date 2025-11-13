@@ -1,33 +1,33 @@
 Jaxon_Tests_Ns_Ajax_ClassA = {
-  methodAa: function() { return jaxon.request({ type: 'class', name: 'Jaxon_Tests_Ns_Ajax_ClassA', method: 'methodAa' }, { parameters: arguments }); },
-  methodAb: function() { return jaxon.request({ type: 'class', name: 'Jaxon_Tests_Ns_Ajax_ClassA', method: 'methodAb' }, { parameters: arguments }); },
+  methodAa: (...args) => jxn.rc('Jaxon_Tests_Ns_Ajax_ClassA', 'methodAa', args),
+  methodAb: (...args) => jxn.rc('Jaxon_Tests_Ns_Ajax_ClassA', 'methodAb', args),
 };
 Jaxon_Tests_Ns_Ajax_ClassB = {
-  methodBa: function() { return jaxon.request({ type: 'class', name: 'Jaxon_Tests_Ns_Ajax_ClassB', method: 'methodBa' }, { parameters: arguments }); },
-  methodBb: function() { return jaxon.request({ type: 'class', name: 'Jaxon_Tests_Ns_Ajax_ClassB', method: 'methodBb' }, { parameters: arguments }); },
+  methodBa: (...args) => jxn.rc('Jaxon_Tests_Ns_Ajax_ClassB', 'methodBa', args),
+  methodBb: (...args) => jxn.rc('Jaxon_Tests_Ns_Ajax_ClassB', 'methodBb', args),
 };
 Jaxon_Tests_Ns_Ajax_ClassC = {
-  methodCa: function() { return jaxon.request({ type: 'class', name: 'Jaxon_Tests_Ns_Ajax_ClassC', method: 'methodCa' }, { parameters: arguments }); },
-  methodCb: function() { return jaxon.request({ type: 'class', name: 'Jaxon_Tests_Ns_Ajax_ClassC', method: 'methodCb' }, { parameters: arguments }); },
+  methodCa: (...args) => jxn.rc('Jaxon_Tests_Ns_Ajax_ClassC', 'methodCa', args),
+  methodCb: (...args) => jxn.rc('Jaxon_Tests_Ns_Ajax_ClassC', 'methodCb', args),
 };
 Jaxon = {
   NsTests: {
     DirA: {
       ClassA: {
-        methodAa: function() { return jaxon.request({ type: 'class', name: 'Jaxon.NsTests.DirA.ClassA', method: 'methodAa' }, { parameters: arguments }); },
-        methodAb: function() { return jaxon.request({ type: 'class', name: 'Jaxon.NsTests.DirA.ClassA', method: 'methodAb' }, { parameters: arguments }); },
+        methodAa: (...args) => jxn.rc('Jaxon.NsTests.DirA.ClassA', 'methodAa', args),
+        methodAb: (...args) => jxn.rc('Jaxon.NsTests.DirA.ClassA', 'methodAb', args),
       },
     },
     DirB: {
       ClassB: {
-        methodBa: function() { return jaxon.request({ type: 'class', name: 'Jaxon.NsTests.DirB.ClassB', method: 'methodBa' }, { parameters: arguments }); },
-        methodBb: function() { return jaxon.request({ type: 'class', name: 'Jaxon.NsTests.DirB.ClassB', method: 'methodBb' }, { parameters: arguments }); },
+        methodBa: (...args) => jxn.rc('Jaxon.NsTests.DirB.ClassB', 'methodBa', args),
+        methodBb: (...args) => jxn.rc('Jaxon.NsTests.DirB.ClassB', 'methodBb', args),
       },
     },
     DirC: {
       ClassC: {
-        methodCa: function() { return jaxon.request({ type: 'class', name: 'Jaxon.NsTests.DirC.ClassC', method: 'methodCa' }, { parameters: arguments }); },
-        methodCb: function() { return jaxon.request({ type: 'class', name: 'Jaxon.NsTests.DirC.ClassC', method: 'methodCb' }, { parameters: arguments }); },
+        methodCa: (...args) => jxn.rc('Jaxon.NsTests.DirC.ClassC', 'methodCa', args),
+        methodCb: (...args) => jxn.rc('Jaxon.NsTests.DirC.ClassC', 'methodCb', args),
       },
     },
   },

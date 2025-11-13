@@ -1,29 +1,29 @@
-jaxon.config.requestURI = "<?php echo $this->sRequestURI ?>";
-jaxon.config.statusMessages = <?php echo $this->sStatusMessages ?>;
-jaxon.config.waitCursor = <?php echo $this->sWaitCursor ?>;
-jaxon.config.version = "<?php echo $this->sVersion ?>";
-jaxon.config.defaultMode = "<?php echo $this->sDefaultMode ?>";
-jaxon.config.defaultMethod = "<?php echo $this->sDefaultMethod ?>";
-jaxon.config.responseType = "<?php echo $this->sResponseType ?>";
+const jxn = jaxon;
+jxn.rc = (name, method, parameters, options = {}) => jxn.request({ type: 'class', name, method }, { parameters, ...options});
+jxn.rf = (name, parameters, options = {}) => jxn.request({ type: 'func', name }, { parameters, ...options});
+
+jxn.config.requestURI = "<?php echo $this->sRequestURI ?>";
+jxn.config.statusMessages = <?php echo $this->sStatusMessages ?>;
+jxn.config.waitCursor = <?php echo $this->sWaitCursor ?>;
+jxn.config.version = "<?php echo $this->sVersion ?>";
+jxn.config.defaultMode = "<?php echo $this->sDefaultMode ?>";
+jxn.config.defaultMethod = "<?php echo $this->sDefaultMethod ?>";
+jxn.config.responseType = "<?php echo $this->sResponseType ?>";
 
 <?php if($this->nResponseQueueSize > 0): ?>
-jaxon.config.responseQueueSize = <?php echo $this->nResponseQueueSize ?>;
+jxn.config.responseQueueSize = <?php echo $this->nResponseQueueSize ?>;
 <?php endif ?>
 
 <?php if(($this->bDebug)): ?>
-jaxon.debug.active = true;
+jxn.debug.active = true;
 <?php if(($this->sDebugOutputID)): ?>
-jaxon.debug.outputID = "<?php echo $this->sDebugOutputID ?>";
+jxn.debug.outputID = "<?php echo $this->sDebugOutputID ?>";
 <?php endif ?>
 <?php if(($this->bVerboseDebug)): ?>
-jaxon.debug.verbose.active = true;
+jxn.debug.verbose.active = true;
 <?php endif ?>
 <?php endif ?>
 
 <?php if(($this->sCsrfMetaName)): ?>
-jaxon.setCsrf('<?php echo $this->sCsrfMetaName ?>');
+jxn.setCsrf('<?php echo $this->sCsrfMetaName ?>');
 <?php endif ?>
-
-const jxn = jaxon;
-jxn.rc = (name, method, parameters, options = {}) => jaxon.request({ type: 'class', name, method }, { parameters, ...options});
-jxn.rf = (name, parameters, options = {}) => jaxon.request({ type: 'func', name }, { parameters, ...options});

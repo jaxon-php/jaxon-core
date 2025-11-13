@@ -1,12 +1,12 @@
 JxnClassA = {
-  methodAa: function() { return jaxon.request({ type: 'class', name: 'ClassA', method: 'methodAa' }, { parameters: arguments }); },
-  methodAb: function() { return jaxon.request({ type: 'class', name: 'ClassA', method: 'methodAb' }, { parameters: arguments }); },
+  methodAa: (...args) => jxn.rc('ClassA', 'methodAa', args),
+  methodAb: (...args) => jxn.rc('ClassA', 'methodAb', args),
 };
 JxnClassB = {
-  methodBa: function() { return jaxon.request({ type: 'class', name: 'ClassB', method: 'methodBa' }, { parameters: arguments }); },
-  methodBb: function() { return jaxon.request({ type: 'class', name: 'ClassB', method: 'methodBb' }, { parameters: arguments }); },
+  methodBa: (...args) => jxn.rc('ClassB', 'methodBa', args),
+  methodBb: (...args) => jxn.rc('ClassB', 'methodBb', args),
 };
 JxnClassC = {
-  methodCa: function() { return jaxon.request({ type: 'class', name: 'ClassC', method: 'methodCa' }, { parameters: arguments }); },
-  methodCb: function() { return jaxon.request({ type: 'class', name: 'ClassC', method: 'methodCb' }, { parameters: arguments }); },
+  methodCa: (...args) => jxn.rc('ClassC', 'methodCa', args),
+  methodCb: (...args) => jxn.rc('ClassC', 'methodCb', args),
 };

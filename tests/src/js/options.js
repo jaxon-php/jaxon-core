@@ -1,13 +1,13 @@
 JxnSample = {
-  myMethod: function() { return jaxon.request({ type: 'class', name: 'Sample', method: 'myMethod' }, { parameters: arguments, asynchronous: true }); },
+  myMethod: (...args) => jxn.rc('Sample', 'myMethod', args, { asynchronous: true }),
 };
 JxnClassA = {
-  methodAb: function() { return jaxon.request({ type: 'class', name: 'ClassA', method: 'methodAb' }, { parameters: arguments, bags: ["bag.name"] }); },
+  methodAb: (...args) => jxn.rc('ClassA', 'methodAb', args, { bags: ["bag.name"] }),
 };
 JxnClassB = {
-  methodBa: function() { return jaxon.request({ type: 'class', name: 'ClassB', method: 'methodBa' }, { parameters: arguments }); },
+  methodBa: (...args) => jxn.rc('ClassB', 'methodBa', args),
 };
 JxnClassC = {
-  methodCa: function() { return jaxon.request({ type: 'class', name: 'ClassC', method: 'methodCa' }, { parameters: arguments, upload: 'methodBb' }); },
-  methodCb: function() { return jaxon.request({ type: 'class', name: 'ClassC', method: 'methodCb' }, { parameters: arguments }); },
+  methodCa: (...args) => jxn.rc('ClassC', 'methodCa', args, { upload: 'methodBb' }),
+  methodCb: (...args) => jxn.rc('ClassC', 'methodCb', args),
 };

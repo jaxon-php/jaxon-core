@@ -1,6 +1,6 @@
 JxnSample = {
-  myMethod: function() { return jaxon.request({ type: 'class', name: 'Sample', method: 'myMethod' }, { parameters: arguments }); },
+  myMethod: (...args) => jxn.rc('Sample', 'myMethod', args),
 };
 JxnTheClass = {
-  theMethod: function() { return jaxon.request({ type: 'class', name: 'TheClass', method: 'theMethod' }, { parameters: arguments }); },
+  theMethod: (...args) => jxn.rc('TheClass', 'theMethod', args),
 };

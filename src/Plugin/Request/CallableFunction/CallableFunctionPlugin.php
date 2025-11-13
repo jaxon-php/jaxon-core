@@ -34,6 +34,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Exception;
 
 use function array_keys;
+use function count;
 use function implode;
 use function is_array;
 use function is_string;
@@ -160,10 +161,17 @@ class CallableFunctionPlugin extends AbstractRequestPlugin
      */
     private function getCallableScript(CallableFunction $xFunction): string
     {
+        $aOptions = [];
+        foreach($xFunction->getOptions() as $sKey => $sValue)
+        {
+            $aOptions[] = "$sKey: $sValue";
+        }
+
         return $this->xTemplateEngine->render('jaxon::callables/function.js', [
             'sName' => $xFunction->getName(),
             'sJsName' => $xFunction->getJsName(),
-            'aOptions' => $xFunction->getOptions(),
+            'sArguments' => count($aOptions) === 0 ? 'args' :
+                'args, { ' . implode(',', $aOptions) . ' }',
         ]);
     }
 
