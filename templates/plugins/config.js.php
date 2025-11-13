@@ -23,3 +23,7 @@ jaxon.debug.verbose.active = true;
 <?php if(($this->sCsrfMetaName)): ?>
 jaxon.setCsrf('<?php echo $this->sCsrfMetaName ?>');
 <?php endif ?>
+
+const jxn = jaxon;
+jxn.rc = (name, method, parameters, options = {}) => jaxon.request({ type: 'class', name, method }, { parameters, ...options});
+jxn.rf = (name, parameters, options = {}) => jaxon.request({ type: 'func', name }, { parameters, ...options});
