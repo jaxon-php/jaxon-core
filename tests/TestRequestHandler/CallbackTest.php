@@ -70,18 +70,18 @@ class CallbackTest extends TestCase
 
     public function testBootCallback()
     {
-        $this->assertEquals(3, $this->nBootCount);
+        $this->assertEquals(0, $this->nBootCount);
         // Too late to define a callback.
         jaxon()->callback()->boot(function() {
             $this->nBootCount++;
         });
-        $this->assertEquals(3, $this->nBootCount);
+        $this->assertEquals(0, $this->nBootCount);
 
         // Process the request and get the response.
         jaxon()->processRequest();
 
         // The callbacks has run now.
-        $this->assertEquals(3, $this->nBootCount);
+        $this->assertEquals(4, $this->nBootCount);
     }
 
     /**

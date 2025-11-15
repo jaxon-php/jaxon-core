@@ -13,13 +13,13 @@ const jxn = jaxon;
 jxn.rc = (name, method, parameters, options = {}) => jxn.request({ type: 'class', name, method }, { parameters, ...options});
 jxn.rf = (name, parameters, options = {}) => jxn.request({ type: 'func', name }, { parameters, ...options});
 
-jxn.config.requestURI = "http://example.test/path";
+jxn.config.requestURI = 'http://example.test/path';
 jxn.config.statusMessages = false;
 jxn.config.waitCursor = true;
-jxn.config.version = "Jaxon 5.x";
-jxn.config.defaultMode = "asynchronous";
-jxn.config.defaultMethod = "POST";
-jxn.config.responseType = "JSON";
+jxn.config.version = 'Jaxon 5.x';
+jxn.config.defaultMode = 'asynchronous';
+jxn.config.defaultMethod = 'POST';
+jxn.config.responseType = 'JSON';
 
 jxn_my_first_function = (...args) => jxn.rf('my_first_function', args);
 jxn_my_alias_function = (...args) => jxn.rf('my_alias_function', args, { upload: 'html_field_id' });

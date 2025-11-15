@@ -108,14 +108,14 @@ class RequestHandler
      */
     public function processRequest(): void
     {
+        // We need the library to have been bootstrapped.
+        $this->di->getBootstrap()->onBoot();
+
         // Check if there is a plugin to process this request
         if(!$this->canProcessRequest())
         {
             return;
         }
-
-        // We need the library to have been bootstrapped.
-        $this->di->getBootstrap()->onBoot();
 
         try
         {
