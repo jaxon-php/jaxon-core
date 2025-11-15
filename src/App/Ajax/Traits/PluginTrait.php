@@ -67,8 +67,6 @@ trait PluginTrait
      */
     public function register(string $sType, string $sName, $xOptions = []): void
     {
-        // We need the library to have been bootstrapped.
-        $this->getBootstrap()->onBoot();
         $this->getPluginManager()->registerCallable($sType, $sName, $xOptions);
     }
 
@@ -89,8 +87,6 @@ trait PluginTrait
      */
     public function registerPlugin(string $sClassName, string $sPluginName, int $nPriority = 1000)
     {
-        // We need the library to have been bootstrapped.
-        $this->getBootstrap()->onBoot();
         $this->getPluginManager()->registerPlugin($sClassName, $sPluginName, $nPriority);
     }
 
@@ -105,8 +101,6 @@ trait PluginTrait
      */
     public function registerPackage(string $sClassName, array $xPkgOptions = [])
     {
-        // We need the library to have been bootstrapped.
-        $this->getBootstrap()->onBoot();
         $this->getPackageManager()->registerPackage($sClassName, $xPkgOptions);
     }
 

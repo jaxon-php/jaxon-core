@@ -139,7 +139,6 @@ class Bootstrap
 
         // Setup the app.
         $this->setupApp();
-        $this->onBoot();
     }
 
     /**

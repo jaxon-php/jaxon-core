@@ -114,6 +114,9 @@ class RequestHandler
             return;
         }
 
+        // We need the library to have been bootstrapped.
+        $this->di->getBootstrap()->onBoot();
+
         try
         {
             $bEndRequest = false;
