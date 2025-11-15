@@ -70,7 +70,7 @@ final class Jaxon
         $xContainer->val(ComponentContainer::class, $xComponentContainer);
 
         // Make the helpers functions available in the global namespace.
-        self::$xInstance->getCallbackManager()->boot(function() {
+        self::$xInstance->callback()->boot(function() {
             self::$xInstance->config()->globals();
         });
 
@@ -98,7 +98,7 @@ final class Jaxon
      */
     public function config(): ConfigManager
     {
-        return $this->di()->g(ConfigManager::class);
+        return $this->xContainer->config();
     }
 
     /**
@@ -128,7 +128,7 @@ final class Jaxon
      */
     public function callback(): CallbackManager
     {
-        return $this->getCallbackManager();
+        return $this->xContainer->callback();
     }
 
     /**

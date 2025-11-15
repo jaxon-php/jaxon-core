@@ -308,6 +308,16 @@ class ConfigManager
     }
 
     /**
+     * Check if the remote logging is enabled
+     *
+     * @return bool
+     */
+    public function loggingEnabled(): bool
+    {
+        return $this->getAppOption('options.logging.enabled', false);
+    }
+
+    /**
      * @param string $sClassName
      *
      * @return void

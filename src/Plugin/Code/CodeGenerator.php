@@ -133,9 +133,8 @@ class CodeGenerator
      */
     public function getHash(): string
     {
-        $aHashes = array_map(function($sClassName) {
-            return $this->getCodeGenerator($sClassName)->getHash();
-        }, $this->aCodeGenerators);
+        $aHashes = array_map(fn($sClassName) =>
+            $this->getCodeGenerator($sClassName)->getHash(), $this->aCodeGenerators);
         $aHashes[] = $this->sVersion;
         return md5(implode('', $aHashes));
     }
@@ -210,12 +209,16 @@ class CodeGenerator
             return;
         }
 
-        $this->xAssetManager = $this->di->getAssetManager();
-        $this->sJsOptions = $this->xAssetManager->getJsOptions();
+        // We need the library to have been bootstrapped.
+        $this->di->getBootstrap()->onBoot();
 
         // Sort the code generators by ascending priority
         ksort($this->aCodeGenerators);
 
+        // Cannot be injected because of dependency loop.
+        $this->xAssetManager = $this->di->getAssetManager();
+
+        $this->sJsOptions = $this->xAssetManager->getJsOptions();
         foreach($this->aCodeGenerators as $sClassName)
         {
             $this->generatePluginCodes($this->getCodeGenerator($sClassName));

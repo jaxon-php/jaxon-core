@@ -66,14 +66,6 @@ trait ServicesTrait
     }
 
     /**
-     * @return CallbackManager
-     */
-    protected function getCallbackManager(): CallbackManager
-    {
-        return $this->di()->getCallbackManager();
-    }
-
-    /**
      * @return RequestHandler
      */
     protected function getRequestHandler(): RequestHandler

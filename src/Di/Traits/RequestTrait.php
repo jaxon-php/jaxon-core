@@ -57,6 +57,16 @@ trait RequestTrait
     }
 
     /**
+     * Get the callback manager
+     *
+     * @return CallbackManager
+     */
+    public function callback(): CallbackManager
+    {
+        return $this->g(CallbackManager::class);
+    }
+
+    /**
      * Get the js call factory
      *
      * @return CallFactory
@@ -94,16 +104,6 @@ trait RequestTrait
     public function getUploadHandler(): ?UploadHandlerInterface
     {
         return $this->g(UploadHandlerInterface::class);
-    }
-
-    /**
-     * Get the callback manager
-     *
-     * @return CallbackManager
-     */
-    public function getCallbackManager(): CallbackManager
-    {
-        return $this->g(CallbackManager::class);
     }
 
     /**

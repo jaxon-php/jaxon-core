@@ -18,6 +18,8 @@ use Jaxon\Di\Container;
 use Jaxon\Exception\SetupException;
 use ReflectionClass;
 use ReflectionException;
+use ReflectionNamedType;
+use ReflectionParameter;
 
 use function array_map;
 use function is_string;
@@ -30,6 +32,36 @@ trait DiAutoTrait
      * @return Container
      */
     abstract protected function cn(): Container;
+
+    /**
+     * @param ReflectionClass $xClass
+     * @param ReflectionParameter $xParameter
+     *
+     * @return mixed
+     * @throws SetupException
+     */
+    private function getParameter(ReflectionClass $xClass, ReflectionParameter $xParameter)
+    {
+        $xType = $xParameter->getType();
+        $sParameterName = '$' . $xParameter->getName();
+        // Check the parameter class first.
+        if($xType instanceof ReflectionNamedType)
+        {
+            $sParameterType = $xType->getName();
+            // The class + the name
+            if($this->cn()->has("$sParameterType $sParameterName"))
+            {
+                return $this->cn()->get("$sParameterType $sParameterName");
+            }
+            // The class only
+            if($this->cn()->has($sParameterType))
+            {
+                return $this->cn()->get($sParameterType);
+            }
+        }
+        // Check the name only
+        return $this->cn()->get($sParameterName);
+    }
 
     /**
      * Create an instance of a class, getting the constructor parameters from the DI container
@@ -53,9 +85,8 @@ trait DiAutoTrait
             return $xClass->newInstance();
         }
 
-        $aParameters = array_map(function($xParameter) use($xClass) {
-            return $this->cn()->getParameter($xClass, $xParameter);
-        }, $constructor->getParameters());
+        $aParameters = array_map(fn($xParameter) =>
+            $this->getParameter($xClass, $xParameter), $constructor->getParameters());
         return $xClass->newInstanceArgs($aParameters);
     }
 
@@ -68,8 +99,6 @@ trait DiAutoTrait
      */
     public function auto(string $sClass): void
     {
-        $this->set($sClass, function() use ($sClass) {
-            return $this->make($sClass);
-        });
+        $this->set($sClass, fn() => $this->make($sClass));
     }
 }

@@ -52,8 +52,7 @@ class ConfigScriptGenerator extends AbstractCodeGenerator
     public function getScript(): string
     {
         // It is important to call $this->xParameterReader->uri() only if necessary.
-        $sUri = $this->xConfigManager->getOption('core.request.uri') ?:
-            $this->xParameterReader->uri();
+        $sUri = $this->option('core.request.uri') ?: $this->xParameterReader->uri();
         $aOptions = [
             'sResponseType'      => 'JSON',
             'sVersion'           => $this->option('core.version'),
@@ -62,6 +61,7 @@ class ConfigScriptGenerator extends AbstractCodeGenerator
             'sDefaultMode'       => $this->option('core.request.mode'),
             'sDefaultMethod'     => $this->option('core.request.method'),
             'sCsrfMetaName'      => $this->option('core.request.csrf_meta'),
+            'bLoggingEnabled'    => $this->xConfigManager->loggingEnabled(),
             'bDebug'             => $this->option('core.debug.on'),
             'bVerboseDebug'      => $this->option('core.debug.verbose'),
             'sDebugOutputID'     => $this->option('core.debug.output_id'),

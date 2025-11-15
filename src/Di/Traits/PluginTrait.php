@@ -3,6 +3,7 @@
 namespace Jaxon\Di\Traits;
 
 use Jaxon\Jaxon;
+use Jaxon\App\Ajax\Bootstrap;
 use Jaxon\App\Config\ConfigManager;
 use Jaxon\App\Dialog\Manager\DialogCommand;
 use Jaxon\App\I18n\Translator;

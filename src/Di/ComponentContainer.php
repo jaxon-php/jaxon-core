@@ -16,6 +16,7 @@ namespace Jaxon\Di;
 
 use Jaxon\App\Component;
 use Jaxon\App\Component\AbstractComponent;
+use Jaxon\App\Component\Logger as LoggerComponent;
 use Jaxon\App\Component\Pagination;
 use Jaxon\App\Config\ConfigManager;
 use Jaxon\App\FuncComponent;
@@ -79,6 +80,18 @@ class ComponentContainer
             'namespace' => Component::class,
         ]);
 
+        // Register the logger component, and export to js.
+        $this->di->callback()->boot(function() {
+            if($this->di->config()->loggingEnabled())
+            {
+                $this->saveComponent(LoggerComponent::class, [
+                    'separator' => '.',
+                    // The namespace has the same name as the Component class.
+                    'namespace' => Component::class,
+                ]);
+            }
+        });
+
         $this->setComponentPublicMethods('node', NodeComponent::class, ['item', 'html']);
         $this->setComponentPublicMethods('func', FuncComponent::class, ['paginator']);
     }
@@ -113,7 +126,7 @@ class ComponentContainer
      *
      * @return void
      */
-    public function set(string $sClass, Closure $xClosure)
+    public function set(string $sClass, Closure $xClosure): void
     {
         $this->xContainer->offsetSet($sClass, fn() => $xClosure($this));
     }
@@ -126,7 +139,7 @@ class ComponentContainer
      *
      * @return void
      */
-    public function val(string $sKey, $xValue)
+    public function val(string $sKey, $xValue): void
     {
        $this->xContainer->offsetSet($sKey, $xValue);
     }
@@ -139,7 +152,7 @@ class ComponentContainer
      *
      * @return T
      */
-    public function get(string $sClass)
+    public function get(string $sClass): mixed
     {
         return $this->xContainer->offsetGet($sClass);
     }

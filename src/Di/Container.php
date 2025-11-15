@@ -22,9 +22,6 @@ use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Closure;
-use ReflectionClass;
-use ReflectionNamedType;
-use ReflectionParameter;
 use Throwable;
 
 use function is_a;
@@ -252,34 +249,6 @@ class Container
         $this->set($sAlias, function($di) use ($sClass) {
             return $di->get($sClass);
         });
-    }
-
-    /**
-     * @param ReflectionClass $xClass
-     * @param ReflectionParameter $xParameter
-     *
-     * @return mixed
-     * @throws SetupException
-     */
-    public function getParameter(ReflectionClass $xClass, ReflectionParameter $xParameter)
-    {
-        $xType = $xParameter->getType();
-        // Check the parameter class first.
-        if($xType instanceof ReflectionNamedType)
-        {
-            // Check the class + the name
-            if($this->has($xType->getName() . ' $' . $xParameter->getName()))
-            {
-                return $this->get($xType->getName() . ' $' . $xParameter->getName());
-            }
-            // Check the class only
-            if($this->has($xType->getName()))
-            {
-                return $this->get($xType->getName());
-            }
-        }
-        // Check the name only
-        return $this->get('$' . $xParameter->getName());
     }
 
     /**
