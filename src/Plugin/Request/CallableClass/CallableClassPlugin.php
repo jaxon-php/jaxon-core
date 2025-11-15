@@ -134,7 +134,8 @@ class CallableClassPlugin extends AbstractRequestPlugin
      */
     private function addCallable(CallableObject $xCallableObject): void
     {
-        if($xCallableObject->excluded())
+        $aCallableMethods = $xCallableObject->getCallableMethods();
+        if($xCallableObject->excluded() || count($aCallableMethods) === 0)
         {
             return;
         }
@@ -148,7 +149,7 @@ class CallableClassPlugin extends AbstractRequestPlugin
             }
             $aCallableObject = &$aCallableObject['children'][$sName];
         }
-        $aCallableObject['methods'] = $xCallableObject->getCallableMethods();
+        $aCallableObject['methods'] = $aCallableMethods;
     }
 
     /**
