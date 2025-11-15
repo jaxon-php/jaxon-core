@@ -24,7 +24,7 @@ class Logger
      *
      * @return void
      */
-    public function log($level, string|\Stringable $message, array $context = [])
+    public function log($level, string|\Stringable $message, array $context = []): void
     {
         $this->logger->log($level, $message, $context);
     }
