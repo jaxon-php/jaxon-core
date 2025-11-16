@@ -63,6 +63,7 @@ class ClassTest extends TestCase
     {
         $this->assertEquals(32, strlen($this->xPlugin->getHash()));
         // $this->assertEquals('927202fb3aaa987a88d943939c3efe36', $this->xPlugin->getHash());
+        // file_put_contents(__DIR__ . '/../src/js/class.js', $this->xPlugin->getScript());
         $this->assertEquals(strlen(file_get_contents(__DIR__ . '/../src/js/class.js')),
             strlen($this->xPlugin->getScript()));
     }

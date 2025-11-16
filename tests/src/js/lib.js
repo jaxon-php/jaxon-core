@@ -9,21 +9,22 @@
 
 <script type="text/javascript"  charset="UTF-8">
 /* <![CDATA[ */
-const jxn = jaxon;
-jxn.rc = (name, method, parameters, options = {}) => jxn.request({ type: 'class', name, method }, { parameters, ...options});
-jxn.rf = (name, parameters, options = {}) => jxn.request({ type: 'func', name }, { parameters, ...options});
+jaxon.config.requestURI = 'http://example.test/path';
+jaxon.config.statusMessages = false;
+jaxon.config.waitCursor = true;
+jaxon.config.version = 'Jaxon 5.x';
+jaxon.config.defaultMode = 'asynchronous';
+jaxon.config.defaultMethod = 'POST';
+jaxon.config.responseType = 'JSON';
 
-jxn.config.requestURI = 'http://example.test/path';
-jxn.config.statusMessages = false;
-jxn.config.waitCursor = true;
-jxn.config.version = 'Jaxon 5.x';
-jxn.config.defaultMode = 'asynchronous';
-jxn.config.defaultMethod = 'POST';
-jxn.config.responseType = 'JSON';
+const jx = {
+  rc: (name, method, parameters, options = {}) => jaxon.request({ type: 'class', name, method }, { parameters, ...options}),
+  rf: (name, parameters, options = {}) => jaxon.request({ type: 'func', name }, { parameters, ...options}),
+};
 
-jxn_my_first_function = (...args) => jxn.rf('my_first_function', args);
-jxn_my_alias_function = (...args) => jxn.rf('my_alias_function', args, { upload: 'html_field_id' });
-jxn_my_third_function = (...args) => jxn.rf('my_third_function', args);
+jxn_my_first_function = (...args) => jx.rf('my_first_function', args);
+jxn_my_alias_function = (...args) => jx.rf('my_alias_function', args, { upload: 'html_field_id' });
+jxn_my_third_function = (...args) => jx.rf('my_third_function', args);
 
 jaxon.dom.ready(() => jaxon.processCustomAttrs());
 /* ]]> */
