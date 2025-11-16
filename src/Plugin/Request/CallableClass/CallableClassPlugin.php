@@ -47,9 +47,14 @@ use function trim;
 class CallableClassPlugin extends AbstractRequestPlugin
 {
     /**
-     * @var array
+     * @var array<CallableObject>
      */
     private array $aCallableObjects = [];
+
+    /**
+     * @var array<string>
+     */
+    private array $aCallableNames = [];
 
     /**
      * The class constructor
@@ -141,7 +146,8 @@ class CallableClassPlugin extends AbstractRequestPlugin
         }
 
         $aCallableObject = &$this->aCallableObjects;
-        foreach(explode('.', $xCallableObject->getJsName()) as $sName)
+        $sJsName = $xCallableObject->getJsName();
+        foreach(explode('.', $sJsName) as $sName)
         {
             if(!isset($aCallableObject['children'][$sName]))
             {
@@ -149,7 +155,10 @@ class CallableClassPlugin extends AbstractRequestPlugin
             }
             $aCallableObject = &$aCallableObject['children'][$sName];
         }
+
         $aCallableObject['methods'] = $aCallableMethods;
+        $aCallableObject['index'] = count($this->aCallableNames);
+        $this->aCallableNames[] = $sJsName;
     }
 
     /**
@@ -166,7 +175,7 @@ class CallableClassPlugin extends AbstractRequestPlugin
             $aOptions[] = "$sKey: $sValue";
         }
         $aTemplateVars['sArguments'] = count($aOptions) === 0 ? 'args' :
-            'args, { ' . implode(',', $aOptions) . ' }';
+            'args, { ' . implode(', ', $aOptions) . ' }';
 
         return $sIndent . trim($this->xTemplateEngine
             ->render('jaxon::callables/method.js', $aTemplateVars));
@@ -175,17 +184,19 @@ class CallableClassPlugin extends AbstractRequestPlugin
     /**
      * @param string $sJsClass
      * @param array $aCallable
-     * @param int $nRepeat
+     * @param int $nIndent
      *
      * @return string
      */
-    private function renderCallable(string $sJsClass, array $aCallable, int $nRepeat): string
+    private function renderCallable(string $sJsClass, array $aCallable, int $nIndent): string
     {
-        $nRepeat += 2; // Indentation.
-        $sIndent = str_repeat(' ', $nRepeat);
+        $nIndent += 2; // Indentation.
+        $sIndent = str_repeat(' ', $nIndent);
 
-        $fMethodCallback = fn($aMethod) => $this->renderMethod($sIndent,
-            ['sJsClass' => $sJsClass, 'aMethod' => $aMethod]);
+        $fMethodCallback = fn($aMethod) => $this->renderMethod($sIndent, [
+            'aMethod' => $aMethod,
+            'nIndex' => $aCallable['index'] ?? 0,
+        ]);
         $aMethods = !isset($aCallable['methods']) ? [] :
             array_map($fMethodCallback, $aCallable['methods']);
 
@@ -193,7 +204,7 @@ class CallableClassPlugin extends AbstractRequestPlugin
         foreach($aCallable['children'] ?? [] as $sName => $aChild)
         {
             $aChildren[] = $this->renderChild("$sName:", "$sJsClass.$sName",
-                $aChild, $nRepeat) . ',';
+                $aChild, $nIndent) . ',';
         }
 
         return implode("\n", array_merge($aMethods, $aChildren));
@@ -203,15 +214,15 @@ class CallableClassPlugin extends AbstractRequestPlugin
      * @param string $sJsVar
      * @param string $sJsClass
      * @param array $aCallable
-     * @param int $nRepeat
+     * @param int $nIndent
      *
      * @return string
      */
     private function renderChild(string $sJsVar, string $sJsClass,
-        array $aCallable, int $nRepeat = 0): string
+        array $aCallable, int $nIndent = 0): string
     {
-        $sIndent = str_repeat(' ', $nRepeat);
-        $sScript = $this->renderCallable($sJsClass, $aCallable, $nRepeat);
+        $sIndent = str_repeat(' ', $nIndent);
+        $sScript = $this->renderCallable($sJsClass, $aCallable, $nIndent);
 
         return <<<CODE
 $sIndent$sJsVar {
@@ -230,13 +241,18 @@ CODE;
     {
         $this->xRegistry->registerAllComponents();
 
+        $this->aCallableNames = [];
         $this->aCallableObjects = ['children' => []];
         foreach($this->cdi->getCallableObjects() as $xCallableObject)
         {
             $this->addCallable($xCallableObject);
         }
 
-        $aScripts = [];
+        $aScripts = [
+            $this->xTemplateEngine ->render('jaxon::callables/objects.js', [
+                'aCallableNames' => $this->aCallableNames,
+            ])
+        ];
         foreach($this->aCallableObjects['children'] as $sJsClass => $aCallable)
         {
             $aScripts[] = $this->renderChild("{$this->sPrefix}$sJsClass =",
