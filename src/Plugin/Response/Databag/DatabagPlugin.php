@@ -40,13 +40,8 @@ class DatabagPlugin extends AbstractResponsePlugin
         }
 
         // Get the databag contents from the HTTP request parameters.
-        $xRequest = $this->di->getRequest();
-        $aBody = $xRequest->getParsedBody();
-        $aParams = $xRequest->getQueryParams();
-        $aData = is_array($aBody) ?
-            $this->readData($aBody['jxnbags'] ?? []) :
-            $this->readData($aParams['jxnbags'] ?? []);
-        $this->xDatabag = new Databag($this, $aData);
+        $aBags = $this->di->getRequest()->getAttribute('jxnbags', []);
+        $this->xDatabag = new Databag($this, $this->readData($aBags));
     }
 
     /**

@@ -16,8 +16,6 @@ use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7Server\ServerRequestCreator;
 use Psr\Http\Message\ServerRequestInterface;
 
-use function is_array;
-
 trait PsrTrait
 {
     /**
@@ -55,11 +53,9 @@ trait PsrTrait
         });
         // Server request with the Jaxon request parameter as attribute
         $this->set($this->sPsrServerRequest, function($di) {
+            /** @var ParameterReader */
             $xParameterReader = $di->g(ParameterReader::class);
-            $xRequest = $di->g(ServerRequestInterface::class);
-            $aRequestParameter = $xParameterReader->getRequestParameter($xRequest);
-            return !is_array($aRequestParameter) ? $xRequest :
-                $xRequest->withAttribute('jxncall', $aRequestParameter);
+            return $xParameterReader->setRequestParameter($di->g(ServerRequestInterface::class));
         });
         // PSR factory
         $this->set(PsrFactory::class, function($di) {

@@ -114,15 +114,25 @@ class ParameterReader
     /**
      * @param ServerRequestInterface $xRequest
      *
-     * @return array|null
+     * @return ServerRequestInterface
      */
-    public function getRequestParameter(ServerRequestInterface $xRequest): ?array
+    public function setRequestParameter(ServerRequestInterface $xRequest): ServerRequestInterface
     {
         $aBody = $xRequest->getParsedBody();
         $aParams = is_array($aBody) ? $aBody : $xRequest->getQueryParams();
         // Check if Jaxon call parameters are present.
-        return !isset($aParams['jxncall']) || !is_string($aParams['jxncall']) ? null :
-            json_decode($this->decodeRequestParameter($aParams['jxncall']), true);
+        if(isset($aParams['jxncall']) && is_string($aParams['jxncall']))
+        {
+            $xRequest = $xRequest->withAttribute('jxncall', json_decode($this
+                ->decodeRequestParameter($aParams['jxncall']), true));
+        }
+        // Check if Jaxon bags parameters are present.
+        if(isset($aParams['jxnbags']) && is_string($aParams['jxnbags']))
+        {
+            $xRequest = $xRequest->withAttribute('jxnbags', json_decode($this
+                ->decodeRequestParameter($aParams['jxnbags']), true));
+        }
+        return $xRequest;
     }
 
     /**
