@@ -9,6 +9,7 @@ use Jaxon\App\View\ViewRenderer;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\Request\CallableClass\ComponentHelper;
 use Jaxon\Request\TargetInterface;
+use Jaxon\Request\Upload\FileInterface;
 use Jaxon\Response\AjaxResponse;
 use Psr\Log\LoggerInterface;
 
@@ -95,7 +96,7 @@ trait ComponentTrait
     /**
      * Get the uploaded files
      *
-     * @return array
+     * @return array<FileInterface>
      */
     protected function files(): array
     {
