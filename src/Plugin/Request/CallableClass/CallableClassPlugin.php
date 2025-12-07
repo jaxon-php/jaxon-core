@@ -40,6 +40,7 @@ use function is_array;
 use function is_string;
 use function md5;
 use function strlen;
+use function str_replace;
 use function trim;
 use function uksort;
 
@@ -222,7 +223,8 @@ class CallableClassPlugin extends RequestPlugin
 
         return $this->xTemplateEngine->render('jaxon::callables/object.js', [
             'sPrefix' => $this->sPrefix,
-            'sClass' => $xCallableObject->getJsName(),
+            'sClass' => str_replace('\\', '.', $xCallableObject->getClassName()),
+            'sJsClass' => $xCallableObject->getJsName(),
             'aMethods' => $xCallableObject->getCallableMethods(),
         ]);
     }

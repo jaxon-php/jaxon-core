@@ -1,4 +1,4 @@
-<?php $sJsClass = $this->sPrefix . $this->sClass ?>
+<?php $sJsClass = $this->sPrefix . $this->sJsClass ?>
 <?php
 // An exported PHP class can have the same name as a subdir in the same parent dir.
 // So, we must make sure that embedded js objects do not already exist, before we create them.
