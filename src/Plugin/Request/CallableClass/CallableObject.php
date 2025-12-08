@@ -98,6 +98,16 @@ class CallableObject
     }
 
     /**
+     * Get the name of the javascript parameter in the ajax request
+     *
+     * @return string
+     */
+    public function getJsParam(): string
+    {
+        return str_replace('\\', '.', $this->getClassName());
+    }
+
+    /**
      * Get the js options of the component
      *
      * @return array

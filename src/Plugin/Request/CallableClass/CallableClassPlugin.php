@@ -54,7 +54,7 @@ class CallableClassPlugin extends AbstractRequestPlugin
     /**
      * @var array<string>
      */
-    private array $aCallableNames = [];
+    private array $aCallableParams = [];
 
     /**
      * The class constructor
@@ -156,9 +156,21 @@ class CallableClassPlugin extends AbstractRequestPlugin
             $aCallableObject = &$aCallableObject['children'][$sName];
         }
 
+        $sJsParam = $xCallableObject->getJsParam();
+
         $aCallableObject['methods'] = $aCallableMethods;
-        $aCallableObject['index'] = count($this->aCallableNames);
-        $this->aCallableNames[] = $sJsName;
+        $aCallableObject['param'] = $sJsParam;
+
+        // Add the js param to the list, if it is not already in.
+        if(isset($this->aCallableParams[$sJsParam]))
+        {
+            $aCallableObject['index'] = $this->aCallableParams[$sJsParam];
+            return;
+        }
+
+        $nIndex = count($this->aCallableParams);
+        $this->aCallableParams[$sJsParam] = $nIndex;
+        $aCallableObject['index'] = $nIndex;
     }
 
     /**
@@ -241,7 +253,7 @@ CODE;
     {
         $this->xRegistry->registerAllComponents();
 
-        $this->aCallableNames = [];
+        $this->aCallableParams = [];
         $this->aCallableObjects = ['children' => []];
         foreach($this->cdi->getCallableObjects() as $xCallableObject)
         {
@@ -250,7 +262,7 @@ CODE;
 
         $aScripts = [
             $this->xTemplateEngine ->render('jaxon::callables/objects.js', [
-                'aCallableNames' => $this->aCallableNames,
+                'aCallableParams' => $this->aCallableParams,
             ])
         ];
         foreach($this->aCallableObjects['children'] as $sJsClass => $aCallable)
