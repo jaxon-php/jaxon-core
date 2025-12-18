@@ -8,6 +8,7 @@ use Jaxon\Config\ConfigReader;
 use Jaxon\Config\ConfigSetter;
 use Jaxon\Utils\Http\UriDetector;
 use Jaxon\Utils\Template\TemplateEngine;
+use Jaxon\Utils\Translation\Translator as BaseTranslator;
 
 use function rtrim;
 use function trim;
@@ -39,6 +40,8 @@ trait UtilTrait
             $xTranslator->loadTranslations($sResourceDir . '/es/labels.php', 'es');
             return $xTranslator;
         });
+        // Define an alis for the translator with the base class name.
+        $this->alias(BaseTranslator::class, Translator::class);
 
         // Config reader
         $this->set(ConfigReader::class, function($di) {
