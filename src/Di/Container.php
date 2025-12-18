@@ -27,7 +27,7 @@ use Throwable;
 use function is_a;
 use function realpath;
 
-class Container
+class Container implements ContainerInterface
 {
     use Traits\AppTrait;
     use Traits\PsrTrait;
