@@ -14,6 +14,7 @@
 namespace Jaxon\App\Ajax\Traits;
 
 use Jaxon\App\Ajax\Bootstrap;
+use Jaxon\App\Config\ConfigManager;
 use Jaxon\App\I18n\Translator;
 use Jaxon\App\Session\SessionInterface;
 use Jaxon\App\View\ViewRenderer;
@@ -32,6 +33,14 @@ use Closure;
 trait ServicesTrait
 {
     use DiTrait;
+
+    /**
+     * @return ConfigManager
+     */
+    public function config(): ConfigManager
+    {
+        return $this->xContainer->config();
+    }
 
     /**
      * @return Translator
@@ -134,6 +143,14 @@ trait ServicesTrait
     }
 
     /**
+     * @return SessionInterface|null
+     */
+    public function session(): ?SessionInterface
+    {
+        return $this->di()->getSessionManager();
+    }
+
+    /**
      * @return UploadHandlerInterface|null
      */
     public function upload(): ?UploadHandlerInterface
@@ -150,6 +167,8 @@ trait ServicesTrait
     }
 
     /**
+     * Get the template engine
+     *
      * @return TemplateEngine
      */
     public function template(): TemplateEngine
@@ -158,6 +177,8 @@ trait ServicesTrait
     }
 
     /**
+     * Get the view renderer
+     *
      * @return ViewRenderer
      */
     public function view(): ViewRenderer
@@ -166,10 +187,12 @@ trait ServicesTrait
     }
 
     /**
-     * @return SessionInterface|null
+     * Get the callback manager
+     *
+     * @return CallbackManager
      */
-    public function session(): ?SessionInterface
+    public function callback(): CallbackManager
     {
-        return $this->di()->getSessionManager();
+        return $this->xContainer->callback();
     }
 }

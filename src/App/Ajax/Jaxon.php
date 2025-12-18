@@ -25,10 +25,8 @@
 
 namespace Jaxon\App\Ajax;
 
-use Jaxon\App\Config\ConfigManager;
 use Jaxon\Di\ComponentContainer;
 use Jaxon\Di\Container;
-use Jaxon\Request\Handler\CallbackManager;
 
 final class Jaxon
 {
@@ -70,9 +68,7 @@ final class Jaxon
         $xContainer->val(ComponentContainer::class, $xComponentContainer);
 
         // Make the helpers functions available in the global namespace.
-        self::$xInstance->callback()->boot(function() {
-            self::$xInstance->config()->globals();
-        });
+        self::$xInstance->callback()->boot(fn() => self::$xInstance->config()->globals());
 
         return self::$xInstance;
     }
@@ -94,14 +90,6 @@ final class Jaxon
     }
 
     /**
-     * @return ConfigManager
-     */
-    public function config(): ConfigManager
-    {
-        return $this->xContainer->config();
-    }
-
-    /**
      * Set the ajax endpoint URI
      *
      * @param string $sUri    The ajax endpoint URI
@@ -119,16 +107,6 @@ final class Jaxon
     public function app(): AppInterface
     {
         return $this->xContainer->getApp();
-    }
-
-    /**
-     * Get the callback manager
-     *
-     * @return CallbackManager
-     */
-    public function callback(): CallbackManager
-    {
-        return $this->xContainer->callback();
     }
 
     /**
