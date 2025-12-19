@@ -2,7 +2,6 @@
 
 namespace Jaxon\App\Databag;
 
-use Jaxon\Plugin\Response\Databag\DatabagPlugin;
 use JsonSerializable;
 
 use function key_exists;
@@ -19,7 +18,7 @@ class Databag implements JsonSerializable
      *
      * @param array $aData
      */
-    public function __construct(protected DatabagPlugin $xPlugin, protected array $aData)
+    public function __construct(protected array $aData)
     {}
 
     /**
@@ -45,8 +44,8 @@ class Databag implements JsonSerializable
      */
     public function clear(string $sBag): void
     {
+        $this->bTouched = true;
         $this->aData[$sBag] = [];
-        $this->xPlugin->addCommand('databag.clear', ['bag' => $sBag]);
     }
 
     /**

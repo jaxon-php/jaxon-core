@@ -5,26 +5,13 @@ namespace Jaxon\App\Databag;
 class DatabagContext
 {
     /**
-     * @var Databag
-     */
-    protected $xDatabag;
-
-    /**
-     * @var string
-     */
-    protected $sName;
-
-    /**
      * The constructor
      *
      * @param Databag $xDatabag
      * @param string $sName
      */
-    public function __construct(Databag $xDatabag, string $sName)
-    {
-        $this->xDatabag = $xDatabag;
-        $this->sName = $sName;
-    }
+    public function __construct(protected Databag $xDatabag, protected string $sName)
+    {}
 
     /**
      * @param string $sKey
@@ -57,5 +44,14 @@ class DatabagContext
     public function get(string $sKey, $xValue = null): mixed
     {
         return $this->xDatabag->get($this->sName, $sKey, $xValue);
+    }
+
+    /**
+     * @return self
+     */
+    public function clear(): self
+    {
+        $this->xDatabag->clear($this->sName);
+        return $this;
     }
 }

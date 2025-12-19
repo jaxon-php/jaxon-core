@@ -65,7 +65,7 @@ class DatabagPlugin extends AbstractResponsePlugin
      */
     private function databag(): Databag
     {
-        return $this->xDatabag ?? $this->xDatabag = new Databag($this, $this->readData());
+        return $this->xDatabag ?? $this->xDatabag = new Databag($this->readData());
     }
 
     /**
