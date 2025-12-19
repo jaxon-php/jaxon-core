@@ -5,22 +5,10 @@ namespace Jaxon\App\Databag;
 use Jaxon\Plugin\Response\Databag\DatabagPlugin;
 use JsonSerializable;
 
-use function array_map;
-use function is_array;
 use function key_exists;
 
 class Databag implements JsonSerializable
 {
-    /**
-     * @var DatabagPlugin
-     */
-    protected $xPlugin;
-
-    /**
-     * @var array
-     */
-    protected $aData = [];
-
     /**
      * @var bool
      */
@@ -31,14 +19,8 @@ class Databag implements JsonSerializable
      *
      * @param array $aData
      */
-    public function __construct(DatabagPlugin $xPlugin, array $aData)
-    {
-        $this->xPlugin = $xPlugin;
-        // Ensure all contents are arrays.
-        $this->aData = array_map(function($aValue) {
-            return is_array($aValue) ? $aValue : [];
-        }, $aData);
-    }
+    public function __construct(protected DatabagPlugin $xPlugin, protected array $aData)
+    {}
 
     /**
      * @return bool

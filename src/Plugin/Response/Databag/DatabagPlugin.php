@@ -4,9 +4,10 @@ namespace Jaxon\Plugin\Response\Databag;
 
 use Jaxon\App\Databag\Databag;
 use Jaxon\App\Databag\DatabagContext;
-use Jaxon\Di\Container;
 use Jaxon\Plugin\AbstractResponsePlugin;
+use Closure;
 
+use function array_map;
 use function is_array;
 use function is_string;
 use function json_decode;
@@ -24,25 +25,17 @@ class DatabagPlugin extends AbstractResponsePlugin
     protected $xDatabag = null;
 
     /**
-     * The constructor
+     * @var array<DatabagContext>
      */
-    public function __construct(protected Container $di)
-    {}
+    protected array $aContext = [];
 
     /**
-     * @return void
+     * The constructor
+     *
+     * @param Closure $fData
      */
-    private function initDatabag(): void
-    {
-        if($this->xDatabag !== null)
-        {
-            return;
-        }
-
-        // Get the databag contents from the HTTP request parameters.
-        $aBags = $this->di->getRequest()->getAttribute('jxnbags', []);
-        $this->xDatabag = new Databag($this, $this->readData($aBags));
-    }
+    public function __construct(private Closure $fData)
+    {}
 
     /**
      * @inheritDoc
@@ -53,17 +46,26 @@ class DatabagPlugin extends AbstractResponsePlugin
     }
 
     /**
-     * @param mixed $xData
-     *
      * @return array
      */
-    private function readData($xData): array
+    private function readData(): array
     {
         // Todo: clean input data.
         // Todo: verify the checksums.
-        return is_string($xData) ?
+        $xData = ($this->fData)();
+        $aData = is_string($xData) ?
             (json_decode($xData, true) ?: []) :
             (is_array($xData) ? $xData : []);
+        // Ensure all contents are arrays.
+        return array_map(fn($aValue) => is_array($aValue) ? $aValue : [], $aData);
+    }
+
+    /**
+     * @return Databag
+     */
+    private function databag(): Databag
+    {
+        return $this->xDatabag ?? $this->xDatabag = new Databag($this, $this->readData());
     }
 
     /**
@@ -80,11 +82,11 @@ class DatabagPlugin extends AbstractResponsePlugin
      */
     public function writeCommand(): void
     {
-        $this->initDatabag();
-        if($this->xDatabag->touched())
+        $xDatabag = $this->databag();
+        if($xDatabag->touched())
         {
             // Todo: calculate the checksums.
-            $this->addCommand('databag.set', ['values' => $this->xDatabag]);
+            $this->addCommand('databag.set', ['values' => $xDatabag]);
         }
     }
 
@@ -95,7 +97,8 @@ class DatabagPlugin extends AbstractResponsePlugin
      */
     public function bag(string $sName): DatabagContext
     {
-        $this->initDatabag();
-        return new DatabagContext($this->xDatabag, $sName);
+        // The contexts are saved and reused.
+        return $this->aContext[$sName] ??
+            $this->aContext[$sName] = new DatabagContext($this->databag(), $sName);
     }
 }

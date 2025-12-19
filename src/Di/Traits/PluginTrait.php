@@ -83,9 +83,9 @@ trait PluginTrait
         $this->set(ScriptPlugin::class, function($di) {
             return new ScriptPlugin($di->g(CallFactory::class));
         });
-        // Databag response plugin
+        // Databag response plugin. Get the databag contents from the HTTP request parameters.
         $this->set(DatabagPlugin::class, function($di) {
-            return new DatabagPlugin($di->g(Container::class));
+            return new DatabagPlugin(fn() => $di->getRequest()->getAttribute('jxnbags', []));
         });
         // Dialog response plugin
         $this->set(DialogPlugin::class, function($di) {
