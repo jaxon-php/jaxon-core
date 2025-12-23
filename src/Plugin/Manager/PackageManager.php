@@ -22,7 +22,6 @@ use Jaxon\Config\Config;
 use Jaxon\Di\Container;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\AbstractPackage;
-use Jaxon\Plugin\Code\CodeGenerator;
 use Jaxon\Plugin\Request\CallableClass\ComponentRegistry;
 use Jaxon\Request\Handler\CallbackManager;
 
@@ -41,15 +40,14 @@ class PackageManager
      * @param Translator $xTranslator
      * @param PluginManager $xPluginManager
      * @param ConfigManager $xConfigManager
-     * @param CodeGenerator $xCodeGenerator
      * @param ViewRenderer $xViewRenderer
      * @param CallbackManager $xCallbackManager
      * @param ComponentRegistry $xRegistry
      */
     public function __construct(private Container $di, private Translator $xTranslator,
         private PluginManager $xPluginManager, private ConfigManager $xConfigManager,
-        private CodeGenerator $xCodeGenerator, private ViewRenderer $xViewRenderer,
-        private CallbackManager $xCallbackManager, private ComponentRegistry $xRegistry)
+        private ViewRenderer $xViewRenderer, private CallbackManager $xCallbackManager,
+        private ComponentRegistry $xRegistry)
     {}
 
     /**
@@ -257,7 +255,7 @@ class PackageManager
         $this->di->registerPackage($sClassName, $aUserOptions);
 
         // Register the package as a code generator.
-        $this->xCodeGenerator->addCodeGenerator($sClassName, 500);
+        $this->xPluginManager->registerCodeGenerator($sClassName, 500);
     }
 
     /**

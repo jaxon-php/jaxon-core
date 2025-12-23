@@ -3,7 +3,6 @@
 namespace Jaxon\Di\Traits;
 
 use Jaxon\Jaxon;
-use Jaxon\App\Ajax\Bootstrap;
 use Jaxon\App\Config\ConfigManager;
 use Jaxon\App\Dialog\Manager\DialogCommand;
 use Jaxon\App\I18n\Translator;
@@ -13,11 +12,11 @@ use Jaxon\Config\Config;
 use Jaxon\Di\Container;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\AbstractPackage;
-use Jaxon\Plugin\Code\AssetManager;
 use Jaxon\Plugin\Code\CodeGenerator;
 use Jaxon\Plugin\Code\ConfigScriptGenerator;
 use Jaxon\Plugin\Code\MinifierInterface;
 use Jaxon\Plugin\Code\ReadyScriptGenerator;
+use Jaxon\Plugin\Code\StorageManager;
 use Jaxon\Plugin\Manager\PackageManager;
 use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Plugin\Request\CallableClass\ComponentRegistry;
@@ -55,21 +54,21 @@ trait PluginTrait
         $this->set(PackageManager::class, function($di) {
             return new PackageManager($di->g(Container::class), $di->g(Translator::class),
                 $di->g(PluginManager::class), $di->g(ConfigManager::class),
-                $di->g(CodeGenerator::class), $di->g(ViewRenderer::class),
-                $di->g(CallbackManager::class), $di->g(ComponentRegistry::class));
+                $di->g(ViewRenderer::class), $di->g(CallbackManager::class),
+                $di->g(ComponentRegistry::class));
         });
         // Code Generation
         $this->set(MinifierInterface::class, function() {
             return new class extends FileMinifier implements MinifierInterface
             {};
         });
-        $this->set(AssetManager::class, function($di) {
-            return new AssetManager($di->g(ConfigManager::class),
+        $this->set(StorageManager::class, function($di) {
+            return new StorageManager($di->g(ConfigManager::class),
                 $di->g(MinifierInterface::class));
         });
         $this->set(CodeGenerator::class, function($di) {
             return new CodeGenerator(Jaxon::VERSION, $di->g(Container::class),
-                $di->g(TemplateEngine::class));
+                $di->g(TemplateEngine::class), $di->g(ConfigManager::class));
         });
         $this->set(ConfigScriptGenerator::class, function($di) {
             return new ConfigScriptGenerator($di->g(ParameterReader::class),
@@ -128,13 +127,13 @@ trait PluginTrait
     }
 
     /**
-     * Get the asset manager
+     * Get the storage manager
      *
-     * @return AssetManager
+     * @return StorageManager
      */
-    public function getAssetManager(): AssetManager
+    public function getStorageManager(): StorageManager
     {
-        return $this->g(AssetManager::class);
+        return $this->g(StorageManager::class);
     }
 
     /**

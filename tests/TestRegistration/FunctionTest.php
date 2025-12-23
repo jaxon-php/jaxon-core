@@ -131,8 +131,8 @@ final class FunctionTest extends TestCase
         $_SERVER['REQUEST_URI'] = 'http://example.test/path';
 
         $sJsCode = jaxon()->getScript(true, true);
-        // file_put_contents(__DIR__ . '/../src/js/lib.js', $sJsCode);
-        $this->assertEquals(file_get_contents(__DIR__ . '/../src/js/lib.js'), $sJsCode);
+        // file_put_contents(__DIR__ . '/../src/js/lib.html', $sJsCode);
+        $this->assertEquals(file_get_contents(__DIR__ . '/../src/js/lib.html'), $sJsCode);
         $this->assertEquals(32, strlen(jaxon()->di()->getCodeGenerator()->getHash()));
 
         unset($_SERVER['REQUEST_URI']);

@@ -180,13 +180,13 @@ class CallableFunctionPlugin extends AbstractRequestPlugin
      */
     public function getScript(): string
     {
-        $code = '';
+        $aScripts = [];
         foreach(array_keys($this->aFunctions) as $sFunction)
         {
             $xFunction = $this->getCallable($sFunction);
-            $code .= $this->getCallableScript($xFunction);
+            $aScripts[] = trim($this->getCallableScript($xFunction));
         }
-        return $code;
+        return implode("\n", $aScripts) . "\n";
     }
 
     /**

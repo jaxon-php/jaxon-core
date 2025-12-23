@@ -15,14 +15,16 @@
 namespace Jaxon\Plugin\Code;
 
 use Jaxon\Plugin\AbstractCodeGenerator;
+use Jaxon\Plugin\JsCode;
+use Jaxon\Plugin\JsCodeGeneratorInterface;
 
-class ReadyScriptGenerator extends AbstractCodeGenerator
+class ReadyScriptGenerator extends AbstractCodeGenerator implements JsCodeGeneratorInterface
 {
     /**
      * @inheritDoc
      */
-    public function getScript(): string
+    public function getJsCode(): JsCode
     {
-        return "jaxon.dom.ready(() => jaxon.processCustomAttrs());";
+        return new JsCode(sCodeBefore: "jaxon.dom.ready(() => jaxon.processCustomAttrs());");
     }
 }

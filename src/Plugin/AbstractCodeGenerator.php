@@ -14,8 +14,6 @@
 
 namespace Jaxon\Plugin;
 
-use Jaxon\Plugin\Code\JsCode;
-
 abstract class AbstractCodeGenerator implements CodeGeneratorInterface
 {
     /**
@@ -48,13 +46,5 @@ abstract class AbstractCodeGenerator implements CodeGeneratorInterface
     public function getScript(): string
     {
         return '';
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getJsCode(): ?JsCode
-    {
-        return null;
     }
 }

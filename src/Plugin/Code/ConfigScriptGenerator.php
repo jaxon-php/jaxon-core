@@ -16,11 +16,13 @@ namespace Jaxon\Plugin\Code;
 
 use Jaxon\App\Config\ConfigManager;
 use Jaxon\Plugin\AbstractCodeGenerator;
+use Jaxon\Plugin\JsCode;
+use Jaxon\Plugin\JsCodeGeneratorInterface;
 use Jaxon\Request\Handler\ParameterReader;
 use Jaxon\Utils\Http\UriException;
 use Jaxon\Utils\Template\TemplateEngine;
 
-class ConfigScriptGenerator extends AbstractCodeGenerator
+class ConfigScriptGenerator extends AbstractCodeGenerator implements JsCodeGeneratorInterface
 {
     /**
      * The constructor
@@ -49,7 +51,7 @@ class ConfigScriptGenerator extends AbstractCodeGenerator
      * @inheritDoc
      * @throws UriException
      */
-    public function getScript(): string
+    public function getJsCode(): JsCode
     {
         // It is important to call $this->xParameterReader->uri() only if necessary.
         $sUri = $this->option('core.request.uri') ?: $this->xParameterReader->uri();
@@ -69,6 +71,8 @@ class ConfigScriptGenerator extends AbstractCodeGenerator
             'sStatusMessages'    => $this->option('js.lib.show_status') ? 'true' : 'false',
             'sWaitCursor'        => $this->option('js.lib.show_cursor') ? 'true' : 'false',
         ];
-        return $this->xTemplateEngine->render('jaxon::plugins/config.js', $aOptions);
+        $sJsCode = $this->xTemplateEngine->render('jaxon::plugins/config.js', $aOptions);
+
+        return new JsCode(sCodeBefore: $sJsCode);
     }
 }

@@ -13,8 +13,6 @@
 
 namespace Jaxon\Plugin;
 
-use Jaxon\Plugin\Code\JsCode;
-
 interface CodeGeneratorInterface
 {
     /**
@@ -50,13 +48,4 @@ interface CodeGeneratorInterface
      * @return string
      */
     public function getScript(): string;
-
-    /**
-     * Get the javascript codes to include into the page
-     *
-     * The code must NOT be enclosed in HTML tags.
-     *
-     * @return JsCode|null
-     */
-    public function getJsCode(): ?JsCode;
 }

@@ -10,95 +10,98 @@ class TemplateTest extends TestCase
 {
     public function testTemplate()
     {
-        $sJs = '<script type="text/javascript" src="http://example.test/path"  charset="UTF-8"></script>';
+        $sJs = '<script type="text/javascript" src="http://example.test/path" charset="UTF-8"></script>';
         $sTemplateJs = trim(jaxon()->template()->render('plugins/include.js',
-            ['sUrl' => 'http://example.test/path', 'sJsOptions' => '']));
+            ['sUrl' => 'http://example.test/path', 'sOptions' => 'charset="UTF-8"']));
         $this->assertEquals($sJs, $sTemplateJs);
     }
 
     public function testTemplateEmbedded()
     {
-        $sJs = '<script type="text/javascript" src="http://example.test/path"  charset="UTF-8"></script>';
+        $sJs = '<script type="text/javascript" src="http://example.test/path" charset="UTF-8"></script>';
         $sTemplateJs = trim(jaxon()->template()->render('plugins/includes.js',
-            ['aUrls' => ['http://example.test/path'], 'sJsOptions' => '']));
+            ['aUrls' => ['http://example.test/path'], 'sOptions' => 'charset="UTF-8"']));
         $this->assertEquals($sJs, $sTemplateJs);
     }
 
     public function testTemplateWithNamespace()
     {
-        $sJs = '<script type="text/javascript" src="http://example.test/path"  charset="UTF-8"></script>';
+        $sJs = '<script type="text/javascript" src="http://example.test/path" charset="UTF-8"></script>';
         $sTemplateJs = trim(jaxon()->template()->render('jaxon::plugins/include.js',
-            ['sUrl' => 'http://example.test/path', 'sJsOptions' => '']));
+            ['sUrl' => 'http://example.test/path', 'sOptions' => 'charset="UTF-8"']));
         $this->assertEquals($sJs, $sTemplateJs);
     }
 
     public function testTemplateEmbeddedWithNamespace()
     {
-        $sJs = '<script type="text/javascript" src="http://example.test/path"  charset="UTF-8"></script>';
+        $sJs = '<script type="text/javascript" src="http://example.test/path" charset="UTF-8"></script>';
         $sTemplateJs = trim(jaxon()->template()->render('jaxon::plugins/includes.js',
-            ['aUrls' => ['http://example.test/path'], 'sJsOptions' => '']));
+            ['aUrls' => ['http://example.test/path'], 'sOptions' => 'charset="UTF-8"']));
         $this->assertEquals($sJs, $sTemplateJs);
     }
 
     public function testTemplateUnknown()
     {
         $sTemplateJs = trim(jaxon()->template()->render('jaxon::plugins/unknown',
-            ['aUrls' => ['http://example.test/path'], 'sJsOptions' => '']));
+            ['aUrls' => ['http://example.test/path'], 'sOptions' => 'charset="UTF-8"']));
         $this->assertEquals('', $sTemplateJs);
     }
 
     public function testView()
     {
-        $sJs = '<script type="text/javascript" src="http://example.test/path"  charset="UTF-8"></script>';
+        $sJs = '<script type="text/javascript" src="http://example.test/path" charset="UTF-8"></script>';
         $sViewJs = trim(jaxon()->view()->render('plugins/include.js',
-            ['sUrl' => 'http://example.test/path', 'sJsOptions' => '']));
+            ['sUrl' => 'http://example.test/path', 'sOptions' => 'charset="UTF-8"']));
         $this->assertEquals($sJs, $sViewJs);
     }
 
     public function testViewEmbedded()
     {
-        $sJs = '<script type="text/javascript" src="http://example.test/path"  charset="UTF-8"></script>';
+        $sJs = '<script type="text/javascript" src="http://example.test/path" charset="UTF-8"></script>';
         $sViewJs = trim(jaxon()->view()->render('plugins/includes.js',
-            ['aUrls' => ['http://example.test/path'], 'sJsOptions' => '']));
+            ['aUrls' => ['http://example.test/path'], 'sOptions' => 'charset="UTF-8"']));
         $this->assertEquals($sJs, $sViewJs);
     }
 
     public function testViewJsonConversion()
     {
-        $sJs = '{"view":"<script type=\"text\/javascript\" src=\"http:\/\/example.test\/path\"  charset=\"UTF-8\"><\/script>"}';
+        $sJs = '{"view":"<script type=\"text\/javascript\" src=\"http:\/\/example.test\/path\" charset=\"UTF-8\"><\/script>"}';
         $sViewJs = json_encode(['view' => jaxon()->view()->render('plugins/includes.js',
-            ['aUrls' => ['http://example.test/path'], 'sJsOptions' => ''])]);
+            ['aUrls' => ['http://example.test/path'], 'sOptions' => 'charset="UTF-8"'])]);
         $this->assertEquals($sJs, $sViewJs);
     }
 
     public function testViewWithNamespace()
     {
-        $sJs = '<script type="text/javascript" src="http://example.test/path"  charset="UTF-8"></script>';
+        $sJs = '<script type="text/javascript" src="http://example.test/path" charset="UTF-8"></script>';
         $sViewJs = trim(jaxon()->view()->render('jaxon::plugins/include.js',
-            ['sUrl' => 'http://example.test/path', 'sJsOptions' => '']));
+            ['sUrl' => 'http://example.test/path', 'sOptions' => 'charset="UTF-8"']));
         $this->assertEquals($sJs, $sViewJs);
     }
 
     public function testViewEmbeddedWithNamespace()
     {
-        $sJs = '<script type="text/javascript" src="http://example.test/path"  charset="UTF-8"></script>';
+        $sJs = '<script type="text/javascript" src="http://example.test/path" charset="UTF-8"></script>';
         $sViewJs = trim(jaxon()->view()->render('jaxon::plugins/includes.js',
-            ['aUrls' => ['http://example.test/path'], 'sJsOptions' => '']));
+            ['aUrls' => ['http://example.test/path'], 'sOptions' => 'charset="UTF-8"']));
         $this->assertEquals($sJs, $sViewJs);
     }
 
     public function testViewVarsWith()
     {
-        $sJs = '<script type="text/javascript" src="http://example.test/path"  charset="UTF-8"></script>';
+        $sJs = '<script type="text/javascript" src="http://example.test/path" charset="UTF-8"></script>';
         $sViewJs = trim(jaxon()->view()->render('jaxon::plugins/includes.js')
-            ->with('aUrls', ['http://example.test/path'])->with('sJsOptions', ''));
+            ->with('aUrls', ['http://example.test/path'])
+            ->with('sOptions', 'charset="UTF-8"'));
         $this->assertEquals($sJs, $sViewJs);
     }
 
     public function testViewVarsSet()
     {
-        $sJs = '<script type="text/javascript" src="http://example.test/path"  charset="UTF-8"></script>';
-        $sViewJs = trim(jaxon()->view()->set('aUrls', ['http://example.test/path'])->set('sJsOptions', '')
+        $sJs = '<script type="text/javascript" src="http://example.test/path" charset="UTF-8"></script>';
+        $sViewJs = trim(jaxon()->view()
+            ->set('aUrls', ['http://example.test/path'])
+            ->set('sOptions', 'charset="UTF-8"')
             ->render('jaxon::plugins/includes.js'));
         $this->assertEquals($sJs, $sViewJs);
     }
@@ -106,16 +109,16 @@ class TemplateTest extends TestCase
     public function testViewVarsShare()
     {
         jaxon()->view()->share('aUrls', ['http://example.test/path']);
-        jaxon()->view()->share('sJsOptions', '');
-        $sJs = '<script type="text/javascript" src="http://example.test/path"  charset="UTF-8"></script>';
+        jaxon()->view()->share('sOptions', 'charset="UTF-8"');
+        $sJs = '<script type="text/javascript" src="http://example.test/path" charset="UTF-8"></script>';
         $sViewJs = trim(jaxon()->view()->render('jaxon::plugins/includes.js'));
         $this->assertEquals($sJs, $sViewJs);
     }
 
     public function testViewVarsShareValues()
     {
-        jaxon()->view()->shareValues(['aUrls' => ['http://example.test/path'], 'sJsOptions' => '']);
-        $sJs = '<script type="text/javascript" src="http://example.test/path"  charset="UTF-8"></script>';
+        jaxon()->view()->shareValues(['aUrls' => ['http://example.test/path'], 'sOptions' => 'charset="UTF-8"']);
+        $sJs = '<script type="text/javascript" src="http://example.test/path" charset="UTF-8"></script>';
         $sViewJs = trim(jaxon()->view()->render('jaxon::plugins/includes.js'));
         $this->assertEquals($sJs, $sViewJs);
     }
@@ -123,7 +126,7 @@ class TemplateTest extends TestCase
     public function testViewUnknown()
     {
         $sTemplateJs = trim(jaxon()->view()->render('jaxon::plugins/unknown',
-            ['aUrls' => ['http://example.test/path'], 'sJsOptions' => '']));
+            ['aUrls' => ['http://example.test/path'], 'sOptions' => 'charset="UTF-8"']));
         $this->assertEquals('', $sTemplateJs);
     }
 
@@ -132,7 +135,7 @@ class TemplateTest extends TestCase
         jaxon()->di()->getViewRenderer()->addNamespace('nr',
             __DIR__ . '/../../templates/', '.php', 'unknown');
         $sTemplateJs = trim(jaxon()->view()->render('unknown::plugins/includes',
-            ['aUrls' => ['http://example.test/path'], 'sJsOptions' => '']));
+            ['aUrls' => ['http://example.test/path'], 'sOptions' => 'charset="UTF-8"']));
         $this->assertEquals('', $sTemplateJs);
     }
 }

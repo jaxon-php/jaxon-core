@@ -1,7 +1,5 @@
-<?php if(($this->sScript)): ?>
-<script type="text/javascript" <?php echo $this->sJsOptions ?> charset="UTF-8">
-/* <![CDATA[ */
-<?php echo $this->sScript, "\n" ?>
-/* ]]> */
+<?php if(($this->sCode)): ?>
+<script type="text/javascript"<?php echo $this->sOptions === '' ? '' : ' ', $this->sOptions ?>>
+<?php echo $this->sCode, "\n" ?>
 </script>
 <?php endif ?>

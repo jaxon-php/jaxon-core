@@ -27,6 +27,8 @@ use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\CallableRegistryInterface;
 use Jaxon\Plugin\Code\CodeGenerator;
 use Jaxon\Plugin\CodeGeneratorInterface;
+use Jaxon\Plugin\CssCodeGeneratorInterface;
+use Jaxon\Plugin\JsCodeGeneratorInterface;
 use Jaxon\Plugin\PluginInterface;
 use Jaxon\Plugin\Request\CallableClass\CallableClassPlugin;
 use Jaxon\Plugin\Request\CallableClass\CallableDirPlugin;
@@ -131,6 +133,47 @@ class PluginManager
     }
 
     /**
+     * @param string $sClassName
+     * @param int $nPriority
+     * @param array $aInterfaces
+     *
+     * @return int
+     */
+    private function _registerCodeGenerator(string $sClassName, int $nPriority, array $aInterfaces): int
+    {
+        // Any plugin can implement the one of the 3 code generator interfaces.
+        $nCount = 0;
+        if(in_array(CssCodeGeneratorInterface::class, $aInterfaces))
+        {
+            $this->xCodeGenerator->addCssCodeGenerator($sClassName, $nPriority);
+            $nCount++;
+        }
+        if(in_array(JsCodeGeneratorInterface::class, $aInterfaces))
+        {
+            $this->xCodeGenerator->addJsCodeGenerator($sClassName, $nPriority);
+            $nCount++;
+        }
+        if(in_array(CodeGeneratorInterface::class, $aInterfaces))
+        {
+            $this->xCodeGenerator->addCodeGenerator($sClassName, $nPriority);
+            $nCount++;
+        }
+        return $nCount;
+    }
+
+    /**
+     * @param string $sClassName
+     * @param int $nPriority
+     *
+     * @return void
+     */
+    public function registerCodeGenerator(string $sClassName, int $nPriority): void
+    {
+        $aInterfaces = class_implements($sClassName);
+        $this->_registerCodeGenerator($sClassName, $nPriority, $aInterfaces);
+    }
+
+    /**
      * Register a plugin
      *
      * Below is a table for priorities and their description:
@@ -149,13 +192,8 @@ class PluginManager
     {
         $aInterfaces = class_implements($sClassName);
         $nCount = $this->_registerPlugin($sClassName, $sPluginName, $aInterfaces);
+        $nCount += $this->_registerCodeGenerator($sClassName, $nPriority, $aInterfaces);
 
-        // Any plugin can implement the CodeGeneratorInterface interface.
-        if(in_array(CodeGeneratorInterface::class, $aInterfaces))
-        {
-            $this->xCodeGenerator->addCodeGenerator($sClassName, $nPriority);
-            $nCount++;
-        }
         // The class is not a valid plugin.
         if($nCount === 0)
         {
