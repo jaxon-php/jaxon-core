@@ -27,6 +27,8 @@ use Jaxon\App\I18n\Translator;
 use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\AbstractRequestPlugin;
+use Jaxon\Plugin\JsCode;
+use Jaxon\Plugin\JsCodeGeneratorInterface;
 use Jaxon\Request\Target;
 use Jaxon\Request\Validator;
 use Jaxon\Utils\Template\TemplateEngine;
@@ -41,7 +43,7 @@ use function is_string;
 use function md5;
 use function trim;
 
-class CallableFunctionPlugin extends AbstractRequestPlugin
+class CallableFunctionPlugin extends AbstractRequestPlugin implements JsCodeGeneratorInterface
 {
     /**
      * The registered functions names
@@ -178,7 +180,7 @@ class CallableFunctionPlugin extends AbstractRequestPlugin
     /**
      * @inheritDoc
      */
-    public function getScript(): string
+    public function getJsCode(): JsCode
     {
         $aScripts = [];
         foreach(array_keys($this->aFunctions) as $sFunction)
@@ -186,7 +188,7 @@ class CallableFunctionPlugin extends AbstractRequestPlugin
             $xFunction = $this->getCallable($sFunction);
             $aScripts[] = trim($this->getCallableScript($xFunction));
         }
-        return implode("\n", $aScripts) . "\n";
+        return new JsCode(implode("\n", $aScripts) . "\n");
     }
 
     /**

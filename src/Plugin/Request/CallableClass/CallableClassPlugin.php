@@ -26,6 +26,8 @@ use Jaxon\Di\ComponentContainer;
 use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\AbstractRequestPlugin;
+use Jaxon\Plugin\JsCode;
+use Jaxon\Plugin\JsCodeGeneratorInterface;
 use Jaxon\Request\Target;
 use Jaxon\Request\Validator;
 use Jaxon\Utils\Template\TemplateEngine;
@@ -44,7 +46,7 @@ use function md5;
 use function str_repeat;
 use function trim;
 
-class CallableClassPlugin extends AbstractRequestPlugin
+class CallableClassPlugin extends AbstractRequestPlugin implements JsCodeGeneratorInterface
 {
     /**
      * @var array<CallableObject>
@@ -249,7 +251,7 @@ CODE;
      * @return string
      * @throws SetupException
      */
-    public function getScript(): string
+    public function getJsCode(): JsCode
     {
         $this->xRegistry->registerAllComponents();
 
@@ -270,7 +272,7 @@ CODE;
             $aScripts[] = $this->renderChild("{$this->sPrefix}$sJsClass =",
                 $sJsClass, $aCallable) . ';';
         }
-        return implode("\n", $aScripts) . "\n";
+        return new JsCode(implode("\n", $aScripts) . "\n");
     }
 
     /**

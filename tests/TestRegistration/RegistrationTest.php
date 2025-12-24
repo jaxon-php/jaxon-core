@@ -23,7 +23,7 @@ class RegistrationTest extends TestCase
         jaxon()->setOption('core.prefix.class', 'Jxn');
 
         jaxon()->register(Jaxon::CALLABLE_CLASS, 'Sample', [
-            'include' => __DIR__ . '/../src/sample.php',
+            'include' => dirname(__DIR__) . '/src/sample.php',
             'functions' => [
                 '*' => [
                     'asynchronous' => 'true',
@@ -31,7 +31,7 @@ class RegistrationTest extends TestCase
             ],
         ]);
 
-        jaxon()->register(Jaxon::CALLABLE_DIR, __DIR__ . '/../src/dir', [
+        jaxon()->register(Jaxon::CALLABLE_DIR, dirname(__DIR__) . '/src/dir', [
             'autoload' => true,
             'classes' => [
                 'ClassA' => [
@@ -142,8 +142,9 @@ class RegistrationTest extends TestCase
     {
         $this->assertEquals(32, strlen($this->xPlugin->getHash()));
         // $this->assertEquals('56222468ad00b31763366f1185ec564d', $this->xPlugin->getHash());
-        // file_put_contents(__DIR__ . '/../src/js/options.js', $this->xPlugin->getScript());
-        $this->assertEquals(file_get_contents(__DIR__ . '/../src/js/options.js'), $this->xPlugin->getScript());
+        // file_put_contents(dirname(__DIR__) . '/src/js/options.js', $this->xPlugin->getJsCode()->code());
+        $this->assertEquals(file_get_contents(dirname(__DIR__) . '/src/js/options.js'),
+            $this->xPlugin->getJsCode()->code());
     }
 
     /**
@@ -156,7 +157,7 @@ class RegistrationTest extends TestCase
 
         // Register a function
         jaxon()->register(Jaxon::CALLABLE_FUNCTION, 'my_first_function',
-            __DIR__ . '/../src/first.php');
+            dirname(__DIR__) . '/src/first.php');
         // Register a function with an alias
         $sHash2 = jaxon()->di()->getCodeGenerator()->getHash();
 
@@ -172,7 +173,7 @@ class RegistrationTest extends TestCase
 
     public function testInvalidPluginId()
     {
-        require_once __DIR__ . '/../src/sample.php';
+        require_once dirname(__DIR__) . '/src/sample.php';
         // Register a class with an incorrect plugin id.
         $this->expectException(SetupException::class);
         jaxon()->register('PluginNotFound', 'Sample');

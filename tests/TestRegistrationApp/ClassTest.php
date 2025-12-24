@@ -2,7 +2,7 @@
 
 namespace Jaxon\Tests\TestRegistrationApp;
 
-require_once __DIR__ . '/../src/classes.php';
+require_once dirname(__DIR__) . '/src/classes.php';
 
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\Request\CallableClass\CallableClassPlugin;
@@ -24,7 +24,7 @@ class ClassTest extends TestCase
      */
     public function setUp(): void
     {
-        jaxon()->app()->setup(__DIR__ . '/../config/app/classes.php');
+        jaxon()->app()->setup(dirname(__DIR__) . '/config/app/classes.php');
 
         $this->xPlugin = jaxon()->di()->getCallableClassPlugin();
     }
@@ -60,8 +60,8 @@ class ClassTest extends TestCase
     {
         $this->assertEquals(32, strlen($this->xPlugin->getHash()));
         // $this->assertEquals('927202fb3aaa987a88d943939c3efe36', $this->xPlugin->getHash());
-        $this->assertEquals(strlen(file_get_contents(__DIR__ . '/../src/js/class.js')),
-            strlen($this->xPlugin->getScript()));
+        $this->assertEquals(strlen(file_get_contents(dirname(__DIR__) . '/src/js/class.js')),
+            strlen($this->xPlugin->getJsCode()->code()));
     }
 
     public function testClassNotFound()

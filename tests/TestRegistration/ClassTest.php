@@ -8,10 +8,12 @@ use Jaxon\Plugin\Request\CallableClass\CallableClassPlugin;
 use Jaxon\Plugin\Request\CallableClass\CallableObject;
 use PHPUnit\Framework\TestCase;
 use TheClass;
+
+use function dirname;
 use function file_get_contents;
 use function strlen;
 
-require_once __DIR__ . '/../src/classes.php';
+require_once dirname(__DIR__) . '/src/classes.php';
 
 class ClassTest extends TestCase
 {
@@ -27,7 +29,7 @@ class ClassTest extends TestCase
     {
         jaxon()->setOption('core.prefix.class', 'Jxn');
 
-        jaxon()->register(Jaxon::CALLABLE_CLASS, 'Sample', __DIR__ . '/../src/sample.php');
+        jaxon()->register(Jaxon::CALLABLE_CLASS, 'Sample', dirname(__DIR__) . '/src/sample.php');
         jaxon()->register(Jaxon::CALLABLE_CLASS, TheClass::class);
 
         $this->xPlugin = jaxon()->di()->getCallableClassPlugin();
@@ -63,9 +65,9 @@ class ClassTest extends TestCase
     {
         $this->assertEquals(32, strlen($this->xPlugin->getHash()));
         // $this->assertEquals('927202fb3aaa987a88d943939c3efe36', $this->xPlugin->getHash());
-        // file_put_contents(__DIR__ . '/../src/js/class.js', $this->xPlugin->getScript());
-        $this->assertEquals(strlen(file_get_contents(__DIR__ . '/../src/js/class.js')),
-            strlen($this->xPlugin->getScript()));
+        // file_put_contents(dirname(__DIR__) . '/src/js/class.js', $this->xPlugin->getJsCode()->code());
+        $this->assertEquals(strlen(file_get_contents(dirname(__DIR__) . '/src/js/class.js')),
+            strlen($this->xPlugin->getJsCode()->code()));
     }
 
     public function testClassNotFound()
@@ -82,7 +84,7 @@ class ClassTest extends TestCase
     {
         // Register a class method as a function, with unknown option
         jaxon()->register(Jaxon::CALLABLE_CLASS, 'TheClass', [
-            'include' => __DIR__ . '/../src/classes.php',
+            'include' => dirname(__DIR__) . '/src/classes.php',
             'protected' => 'protectedMethod',
             'functions' => [
                 '*' => [
