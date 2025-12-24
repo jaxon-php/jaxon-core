@@ -29,7 +29,7 @@ class DirectoryTest extends TestCase
      */
     public function setUp(): void
     {
-        jaxon()->app()->setup(__DIR__ . '/../config/app/directories.php');
+        jaxon()->app()->setup(dirname(__DIR__) . '/config/app/directories.php');
 
         $this->xDirPlugin = jaxon()->di()->getCallableDirPlugin();
         $this->xClassPlugin = jaxon()->di()->getCallableClassPlugin();

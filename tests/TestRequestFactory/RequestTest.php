@@ -22,7 +22,7 @@ final class RequestTest extends TestCase
     {
         // jaxon()->setOption('core.prefix.class', 'Jxn');
 
-        jaxon()->register(Jaxon::CALLABLE_CLASS, 'Sample', __DIR__ . '/../src/sample.php');
+        jaxon()->register(Jaxon::CALLABLE_CLASS, 'Sample', dirname(__DIR__) . '/src/sample.php');
 
         $this->xPlugin = jaxon()->di()->getCallableClassPlugin();
     }

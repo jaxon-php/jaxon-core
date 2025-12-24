@@ -14,6 +14,8 @@ use Jaxon\Di\Container;
 use Jaxon\Request\Handler\CallbackManager;
 use Jaxon\Plugin\Manager\PackageManager;
 
+use function dirname;
+
 trait AppTrait
 {
     /**
@@ -33,7 +35,7 @@ trait AppTrait
             return new ConfigEventManager($di->g(Container::class));
         });
         $this->set(ConfigManager::class, function($di) {
-            $aDefaultOptions = require(__DIR__ . '/../../../config/lib.php');
+            $aDefaultOptions = require(dirname(__DIR__, 3) . '/config/lib.php');
             return new ConfigManager($aDefaultOptions, $di->g(Translator::class),
                 $di->g(ConfigReader::class), $di->g(ConfigSetter::class),
                 $di->g(ConfigEventManager::class));

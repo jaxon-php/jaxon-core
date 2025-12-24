@@ -18,7 +18,7 @@ class PageDomTest extends TestCase
     public function setUp(): void
     {
         jaxon()->setOption('core.prefix.class', '');
-        jaxon()->register(Jaxon::CALLABLE_DIR, __DIR__ . '/../src/response');
+        jaxon()->register(Jaxon::CALLABLE_DIR, dirname(__DIR__) . '/src/response');
     }
 
     /**

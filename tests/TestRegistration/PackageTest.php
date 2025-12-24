@@ -2,7 +2,7 @@
 
 namespace Jaxon\Tests\TestRegistration;
 
-require_once __DIR__ . '/../src/packages.php';
+require_once dirname(__DIR__) . '/src/packages.php';
 
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\AbstractPackage;
@@ -60,7 +60,7 @@ class PackageTest extends TestCase
 
     public function testRegisterInvalidPackage()
     {
-        require_once __DIR__ . '/../src/sample.php';
+        require_once dirname(__DIR__) . '/src/sample.php';
         // Register a class which is not a package as a package.
         $this->expectException(SetupException::class);
         jaxon()->registerPackage('Sample');

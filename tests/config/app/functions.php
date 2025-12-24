@@ -1,6 +1,6 @@
 <?php
 
-$defsDir = realpath(__DIR__ . '/../../src');
+$defsDir = realpath(dirname(__DIR__, 2) . '/src');
 require_once "$defsDir/classes.php";
 
 return [

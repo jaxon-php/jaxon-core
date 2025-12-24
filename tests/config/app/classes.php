@@ -1,6 +1,6 @@
 <?php
 
-$defsDir = rtrim(realpath(__DIR__ . '/../../src'), '/');
+$defsDir = rtrim(realpath(dirname(__DIR__, 2) . '/src'), '/');
 require_once "$defsDir/classes.php";
 
 return [

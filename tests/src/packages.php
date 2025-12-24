@@ -24,7 +24,7 @@ class SamplePackage extends AbstractPackage
             ],
             'views' => [
                 'test' => [
-                    'directory' => realpath(__DIR__ . '/../views'),
+                    'directory' => realpath(dirname(__DIR__) . '/views'),
                     'extension' => '.php',
                     // 'renderer' => 'jaxon', // This is the default value.
                     'template' => [

@@ -21,7 +21,7 @@ class NamespaceTest extends TestCase
     {
         jaxon()->setOption('core.response.send', false);
         jaxon()->setOption('core.prefix.class', '');
-        jaxon()->register(Jaxon::CALLABLE_DIR, __DIR__ . '/../src/dir_ns', 'Jaxon\NsTests');
+        jaxon()->register(Jaxon::CALLABLE_DIR, dirname(__DIR__) . '/src/dir_ns', 'Jaxon\NsTests');
     }
 
     /**

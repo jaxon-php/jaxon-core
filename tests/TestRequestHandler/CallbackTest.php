@@ -55,8 +55,8 @@ class CallbackTest extends TestCase
             $this->nBootCount += 2;
         });
         jaxon()->register(Jaxon::CALLABLE_FUNCTION, 'my_first_function',
-            __DIR__ . '/../src/first.php');
-        jaxon()->register(Jaxon::CALLABLE_DIR, __DIR__ . '/../src/response', ['autoload' => true]);
+            dirname(__DIR__) . '/src/first.php');
+        jaxon()->register(Jaxon::CALLABLE_DIR, dirname(__DIR__) . '/src/response', ['autoload' => true]);
     }
 
     /**

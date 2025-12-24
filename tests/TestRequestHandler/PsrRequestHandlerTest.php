@@ -35,7 +35,7 @@ class PsrRequestHandlerTest extends TestCase
                 return jaxon()->di()->g(TemplateView::class);
             });
 
-        $this->xPsrConfigMiddleware = jaxon()->psr()->config(__DIR__ . '/../config/app/classes.php');
+        $this->xPsrConfigMiddleware = jaxon()->psr()->config(dirname(__DIR__) . '/config/app/classes.php');
         $this->xPsrAjaxMiddleware = jaxon()->psr()->ajax();
         $this->xPsrRequestHandler = jaxon()->psr()->handler();
         // PSR request handler that does nothing, useful to call the config middleware.

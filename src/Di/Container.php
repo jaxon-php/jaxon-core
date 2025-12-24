@@ -24,8 +24,8 @@ use Psr\Log\NullLogger;
 use Closure;
 use Throwable;
 
+use function dirname;
 use function is_a;
-use function realpath;
 
 class Container implements ContainerInterface
 {
@@ -66,13 +66,12 @@ class Container implements ContainerInterface
         // Register the null logger by default
         $this->setLogger(new NullLogger());
 
+        $sBaseDir = dirname(__DIR__, 2);
         // Template directory
-        $sTemplateDir = realpath(__DIR__ . '/../../templates');
-        $this->val('jaxon.core.dir.template', $sTemplateDir);
+        $this->val('jaxon.core.dir.template', "$sBaseDir/templates");
 
         // Translation directory
-        $sTranslationDir = realpath(__DIR__ . '/../../translations');
-        $this->val('jaxon.core.dir.translation', $sTranslationDir);
+        $this->val('jaxon.core.dir.translation', "$sBaseDir/translations");
 
         $this->registerAll();
         $this->setEventHandlers();

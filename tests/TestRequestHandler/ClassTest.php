@@ -18,7 +18,7 @@ class ClassTest extends TestCase
     public function setUp(): void
     {
         jaxon()->setOption('core.response.send', false);
-        jaxon()->register(Jaxon::CALLABLE_CLASS, 'Sample', __DIR__ . '/../src/sample.php');
+        jaxon()->register(Jaxon::CALLABLE_CLASS, 'Sample', dirname(__DIR__) . '/src/sample.php');
     }
 
     /**
@@ -226,7 +226,7 @@ class ClassTest extends TestCase
     {
         jaxon()->setAppOption('', true);
         jaxon()->register(Jaxon::CALLABLE_CLASS, 'Excluded', [
-            'include' => __DIR__ . '/../src/excluded.php',
+            'include' => dirname(__DIR__) . '/src/excluded.php',
             'functions' => [
                 '*' => [
                     'excluded' => true,
@@ -260,7 +260,7 @@ class ClassTest extends TestCase
     {
         jaxon()->setAppOption('', true);
         jaxon()->register(Jaxon::CALLABLE_CLASS, 'Excluded', [
-            'include' => __DIR__ . '/../src/excluded.php',
+            'include' => dirname(__DIR__) . '/src/excluded.php',
             'functions' => [
                 'action' => [
                     'excluded' => true,

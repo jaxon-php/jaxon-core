@@ -1,7 +1,7 @@
 <?php
 
-$baseDir = realpath(__DIR__ . '/../..');
-$defsDir = realpath(__DIR__ . '/../../src');
+$baseDir = realpath(dirname(__DIR__, 2) . '');
+$defsDir = realpath(dirname(__DIR__, 2) . '/src');
 require_once "$defsDir/classes.php";
 require_once "$defsDir/packages.php";
 

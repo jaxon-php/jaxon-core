@@ -133,7 +133,7 @@ class TemplateTest extends TestCase
     public function testViewUnknownRenderer()
     {
         jaxon()->di()->getViewRenderer()->addNamespace('nr',
-            __DIR__ . '/../../templates/', '.php', 'unknown');
+            dirname(__DIR__, 2) . '/templates/', '.php', 'unknown');
         $sTemplateJs = trim(jaxon()->view()->render('unknown::plugins/includes',
             ['aUrls' => ['http://example.test/path'], 'sOptions' => 'charset="UTF-8"']));
         $this->assertEquals('', $sTemplateJs);

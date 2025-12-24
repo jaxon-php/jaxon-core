@@ -17,7 +17,7 @@ class ParameterTest extends TestCase
     public function setUp(): void
     {
         jaxon()->setOption('core.response.send', false);
-        jaxon()->register(Jaxon::CALLABLE_CLASS, 'Sample', __DIR__ . '/../src/sample.php');
+        jaxon()->register(Jaxon::CALLABLE_CLASS, 'Sample', dirname(__DIR__) . '/src/sample.php');
     }
 
     /**

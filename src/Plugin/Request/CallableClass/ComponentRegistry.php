@@ -19,6 +19,7 @@ use Jaxon\Config\Config;
 use Jaxon\Di\ComponentContainer;
 
 use function array_merge;
+use function dirname;
 use function file_exists;
 use function is_string;
 use function str_replace;
@@ -110,11 +111,11 @@ class ComponentRegistry
     public function __construct(protected ComponentContainer $cdi)
     {
         // Set the composer autoloader
-        if(file_exists(($sAutoloadFile = __DIR__ . '/../../../../../../autoload.php')) ||
-            file_exists(($sAutoloadFile = __DIR__ . '/../../../../../vendor/autoload.php')) ||
-            file_exists(($sAutoloadFile = __DIR__ . '/../../../../vendor/autoload.php')))
+        if(file_exists(($sAutoloadFile = dirname(__DIR__, 6) . '/autoload.php')) ||
+            file_exists(($sAutoloadFile = dirname(__DIR__, 5) . '/vendor/autoload.php')) ||
+            file_exists(($sAutoloadFile = dirname(__DIR__, 4) . '/vendor/autoload.php')))
         {
-            $this->xAutoloader = require($sAutoloadFile);
+            $this->xAutoloader = require $sAutoloadFile;
         }
     }
 

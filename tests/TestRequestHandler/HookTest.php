@@ -45,7 +45,7 @@ class HookTest extends TestCase
     {
         jaxon()->setOption('core.response.send', false);
         jaxon()->setOption('core.prefix.class', '');
-        jaxon()->register(Jaxon::CALLABLE_DIR, __DIR__ . '/../src/response', [
+        jaxon()->register(Jaxon::CALLABLE_DIR, dirname(__DIR__) . '/src/response', [
             'classes' => [
                 'TestHk' => [
                     'functions' => [

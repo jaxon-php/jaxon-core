@@ -18,16 +18,16 @@ class FunctionTest extends TestCase
     {
         jaxon()->setOption('core.response.send', false);
         jaxon()->register(Jaxon::CALLABLE_FUNCTION, 'my_first_function',
-            __DIR__ . '/../src/first.php');
+            dirname(__DIR__) . '/src/first.php');
         jaxon()->register(Jaxon::CALLABLE_FUNCTION, 'my_second_function', [
             'alias' => 'my_alias_function',
-            'include' => __DIR__ . '/../src/functions.php',
+            'include' => dirname(__DIR__) . '/src/functions.php',
         ]);
         // Register a class method as a function
         jaxon()->register(Jaxon::CALLABLE_FUNCTION, 'myMethod', [
             'alias' => 'my_third_function',
             'class' => 'Sample',
-            'include' => __DIR__ . '/../src/sample.php',
+            'include' => dirname(__DIR__) . '/src/sample.php',
         ]);
     }
 

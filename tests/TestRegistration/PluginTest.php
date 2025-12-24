@@ -37,7 +37,7 @@ class PluginTest extends TestCase
 
     public function testRegisterInvalidPlugin()
     {
-        require_once __DIR__ . '/../src/sample.php';
+        require_once dirname(__DIR__) . '/src/sample.php';
         // Register a class which is not a plugin as a plugin.
         $this->expectException(SetupException::class);
         jaxon()->registerPlugin('Sample', 'sample');

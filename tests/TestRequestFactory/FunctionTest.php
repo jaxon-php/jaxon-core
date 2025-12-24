@@ -17,7 +17,7 @@ final class FunctionTest extends TestCase
         jaxon()->setOption('core.prefix.function', 'jxn_');
         // Register a function
         jaxon()->register(Jaxon::CALLABLE_FUNCTION, 'my_first_function',
-            __DIR__ . '/../src/first.php');
+            dirname(__DIR__) . '/src/first.php');
         // Register a function with an alias
         jaxon()->register(Jaxon::CALLABLE_FUNCTION, 'my_second_function', [
             'alias' => 'my_alias_function',

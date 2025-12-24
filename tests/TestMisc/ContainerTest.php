@@ -13,6 +13,7 @@ use Pimple\Container as AppContainer;
 use Pimple\Psr11\Container as PsrContainer;
 use PHPUnit\Framework\TestCase;
 
+use function dirname;
 use function get_class;
 
 class ContainerTest extends TestCase
@@ -22,7 +23,7 @@ class ContainerTest extends TestCase
      */
     public function setUp(): void
     {
-        jaxon()->app()->setup(__DIR__ . '/../config/app/container.php');
+        jaxon()->app()->setup(dirname(__DIR__) . '/config/app/container.php');
     }
 
     /**
