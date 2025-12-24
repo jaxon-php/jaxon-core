@@ -99,8 +99,15 @@ class AssetManager
 
         $sRootDir = $this->getAssetDir($sExt);
         // Fylsystem options: we don't want the root dir to be created if it doesn't exist.
-        $aOptions = ['lazyRootCreation' => true];
-        return $this->xStorageManager->make('local', $sRootDir, $aOptions);
+        $aAdapterOptions = ['lazyRootCreation' => true];
+        $aDirOptions = [
+            'config' => [
+                'public_url' => $this->getAssetUri($sExt),
+            ],
+        ];
+        return $this->xStorageManager
+            ->adapter('local', $aAdapterOptions)
+            ->make($sRootDir, $aDirOptions);
     }
 
     /**
@@ -358,6 +365,13 @@ class AssetManager
         return $this->writeFile($xStorage, $sMinFilePath, $sMinContent);
     }
 
+    private function getPublicUrl(string $sFilePath, string $sExt): string
+    {
+        $sUri = $this->getAssetUri($sExt);
+        return $sUri !== '' ? "$sUri/$sFilePath" :
+            $this->storage($sExt)->publicUrl($sFilePath);
+    }
+
     /**
      * Write javascript or css files and return the corresponding URI
      *
@@ -373,7 +387,7 @@ class AssetManager
         // - The assets.js.export option must be set to true
         // - The assets.js.uri and assets.js.dir options must be set to non null values
         if(!$this->shallExportAsset($sExt) ||
-            $this->getAssetUri($sExt) === '' ||
+            // $this->getAssetUri($sExt) === '' ||
             $this->getAssetDir($sExt) === '')
         {
             return '';
@@ -398,15 +412,15 @@ class AssetManager
             return '';
         }
 
-        $sUri = $this->getAssetUri($sExt);
         if(!$this->shallMinifyAsset($sExt))
         {
-            return "{$sUri}/{$sFileName}.{$sExt}";
+            return $this->getPublicUrl($sFilePath, $sExt);
         }
 
         // If the file cannot be minified, return the plain js file.
         return $this->minifyAsset($sExt, $sFilePath, $sMinFilePath) ?
-            "{$sUri}/{$sFileName}.min.{$sExt}" : "{$sUri}/{$sFileName}.{$sExt}";
+            $this->getPublicUrl($sMinFilePath, $sExt) :
+            $this->getPublicUrl($sFilePath, $sExt);
     }
 
     /**
