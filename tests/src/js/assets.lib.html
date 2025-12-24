@@ -1,0 +1,97 @@
+<script type="text/javascript" charset="UTF-8">
+jaxon.config.requestURI = 'http://example.test/path';
+jaxon.config.statusMessages = false;
+jaxon.config.waitCursor = true;
+jaxon.config.version = 'Jaxon 5.x';
+jaxon.config.defaultMode = 'asynchronous';
+jaxon.config.defaultMethod = 'POST';
+jaxon.config.responseType = 'JSON';
+jaxon.debug.active = true;
+
+jaxon.dom.ready(() => jaxon.processCustomAttrs());
+
+jaxon.dom.ready(() => jaxon.dialog.config({"labels":{"confirm":{"yes":"Yes","no":"No"}},"defaults":[]}));
+
+const jx = {
+  rc: (name, method, parameters, options = {}) => jaxon.request({ type: 'class', name, method }, { parameters, ...options}),
+  rf: (name, parameters, options = {}) => jaxon.request({ type: 'func', name }, { parameters, ...options}),
+  c0: 'Sample',
+  c1: 'TheClass',
+  c2: 'SamplePackageClass',
+  c3: 'Jaxon.Tests.Ns.Ajax.ClassA',
+  c4: 'Jaxon.Tests.Ns.Ajax.ClassB',
+  c5: 'Jaxon.Tests.Ns.Ajax.ClassC',
+  c6: 'Jaxon.NsTests.DirA.ClassA',
+  c7: 'Jaxon.NsTests.DirB.ClassB',
+  c8: 'Jaxon.NsTests.DirC.ClassC',
+  c9: 'ClassA',
+  c10: 'ClassB',
+  c11: 'ClassC',
+};
+
+JxnSample = {
+  myMethod: (...args) => jx.rc(jx.c0, 'myMethod', args),
+};
+JxnTheClass = {
+  theMethod: (...args) => jx.rc(jx.c1, 'theMethod', args),
+};
+JxnSamplePackageClass = {
+  home: (...args) => jx.rc(jx.c2, 'home', args),
+};
+JxnJaxon = {
+  Tests: {
+    Ns: {
+      Ajax: {
+        ClassA: {
+          methodAa: (...args) => jx.rc(jx.c3, 'methodAa', args),
+          methodAb: (...args) => jx.rc(jx.c3, 'methodAb', args),
+        },
+        ClassB: {
+          methodBa: (...args) => jx.rc(jx.c4, 'methodBa', args),
+          methodBb: (...args) => jx.rc(jx.c4, 'methodBb', args),
+        },
+        ClassC: {
+          methodCa: (...args) => jx.rc(jx.c5, 'methodCa', args),
+          methodCb: (...args) => jx.rc(jx.c5, 'methodCb', args),
+        },
+      },
+    },
+  },
+  NsTests: {
+    DirA: {
+      ClassA: {
+        methodAa: (...args) => jx.rc(jx.c6, 'methodAa', args),
+        methodAb: (...args) => jx.rc(jx.c6, 'methodAb', args),
+      },
+    },
+    DirB: {
+      ClassB: {
+        methodBa: (...args) => jx.rc(jx.c7, 'methodBa', args),
+        methodBb: (...args) => jx.rc(jx.c7, 'methodBb', args),
+      },
+    },
+    DirC: {
+      ClassC: {
+        methodCa: (...args) => jx.rc(jx.c8, 'methodCa', args),
+        methodCb: (...args) => jx.rc(jx.c8, 'methodCb', args),
+      },
+    },
+  },
+};
+JxnClassA = {
+  methodAa: (...args) => jx.rc(jx.c9, 'methodAa', args),
+  methodAb: (...args) => jx.rc(jx.c9, 'methodAb', args),
+};
+JxnClassB = {
+  methodBa: (...args) => jx.rc(jx.c10, 'methodBa', args),
+  methodBb: (...args) => jx.rc(jx.c10, 'methodBb', args),
+};
+JxnClassC = {
+  methodCa: (...args) => jx.rc(jx.c11, 'methodCa', args),
+  methodCb: (...args) => jx.rc(jx.c11, 'methodCb', args),
+};
+
+jxn_my_first_function = (...args) => jx.rf('my_first_function', args);
+jxn_my_alias_function = (...args) => jx.rf('my_alias_function', args, { upload: 'html_field_id' });
+jxn_my_third_function = (...args) => jx.rf('my_third_function', args);
+</script>

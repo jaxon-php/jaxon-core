@@ -99,7 +99,8 @@ class Bootstrap
         {
             $aJsOptions['dir'] = $sDir;
         }
-        $this->xConfigManager->setOptions($aJsOptions, 'js.app');
+        // The export options are saved in the "app" section of the config.
+        $this->xConfigManager->setAppOptions($aJsOptions, 'assets.js');
         return $this;
     }
 

@@ -4,8 +4,8 @@ use Jaxon\Tests\Ns\Lib\Service;
 use Jaxon\Tests\Ns\Lib\ServiceAuto;
 use Jaxon\Tests\Ns\Lib\ServiceInterface;
 
-$testDir = realpath(__DIR__ . '/../..');
-$defsDir = realpath(__DIR__ . '/../../src');
+$testDir = realpath(dirname(__DIR__, 2) . '');
+$defsDir = realpath(dirname(__DIR__, 2) . '/src');
 require_once "$defsDir/classes.php";
 require_once "$defsDir/packages.php";
 
@@ -13,6 +13,14 @@ return [
     'app' => [
         'metadata' => [
             'format' => 'annotations',
+        ],
+        'assets' => [
+            'js' => [
+                'file' => 'assets',
+            ],
+            'include' => [
+                'all' => false,
+            ],
         ],
         'functions' => [
             'my_first_function' => "$defsDir/first.php",
@@ -89,15 +97,6 @@ return [
             'prefix' => [
                 'function' => 'jxn_',
                 'class' => 'Jxn',
-            ],
-        ],
-        'js' => [
-            'app' => [
-            ],
-        ],
-        'assets' => [
-            'include' => [
-                'all' => false,
             ],
         ],
     ],

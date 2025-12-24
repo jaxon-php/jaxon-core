@@ -2,28 +2,36 @@
 
 namespace Jaxon\Tests\TestRegistrationApp;
 
-require_once __DIR__ . '/../src/classes.php';
+require_once dirname(__DIR__) . '/src/classes.php';
 
 use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\Code\MinifierInterface;
-use Jaxon\Utils\Http\UriException;
 use Nyholm\Psr7Server\ServerRequestCreator;
 use Psr\Http\Message\ServerRequestInterface;
 use PHPUnit\Framework\TestCase;
 
 use function Jaxon\Dialogs\_register;
 
-class RegistrationTest extends TestCase
+/**
+ * Tests with the assets export options in the "lib" section of the config file.
+ */
+class ExportAssetsInLibTest extends TestCase
 {
     private $jsDir = '';
 
     public function setUp(): void
     {
-        $this->jsDir = realpath(__DIR__ . '/../src/js');
+        $this->jsDir = realpath(dirname(__DIR__) . '/src/js');
         _register();
-        jaxon()->app()->setup(__DIR__ . '/../config/app/app.php');
-        jaxon()->app()->asset(true, true, 'http://example.test/js', $this->jsDir);
+        jaxon()->app()->setup(dirname(__DIR__) . '/config/app/assets.lib.php');
+        // Set the assets options in the "lib" section of the config.
+        jaxon()->setOptions([
+            'export' => true,
+            'minify' => true,
+            'uri' => 'http://example.test/js',
+            'dir' => $this->jsDir,
+        ], 'js.app');
     }
 
     /**
@@ -33,33 +41,39 @@ class RegistrationTest extends TestCase
     {
         // Delete the generated js files
         $sHash = jaxon()->di()->getCodeGenerator()->getHash();
-        @unlink($this->jsDir . "/$sHash.js");
-        @unlink($this->jsDir . "/$sHash.min.js");
+        @unlink("{$this->jsDir}/$sHash.js");
+        @unlink("{$this->jsDir}/$sHash.min.js");
+        @unlink("{$this->jsDir}/assets.js");
+        @unlink("{$this->jsDir}/assets.min.js");
 
         jaxon()->reset();
         parent::tearDown();
     }
 
-    /**
-     * @throws UriException
-     */
+    public function testExportFileContent()
+    {
+        jaxon()->setOptions(['export' => false, 'minify' => false], 'js.app');
+        $sScript = jaxon()->getScript();
+        // file_put_contents(dirname(__DIR__) . '/src/js/assets.lib.html', $sScript);
+        $this->assertEquals(file_get_contents(dirname(__DIR__) . '/src/js/assets.lib.html'), $sScript);
+    }
+
     public function testScriptExportMinified()
     {
         jaxon()->setOption('js.app.minify', true);
         $sScript = jaxon()->getScript();
+        // file_put_contents(dirname(__DIR__) . '/src/js/app.link.min.html', $sScript);
         // Check that the return value is a file URI, and not js code.
         $this->assertStringNotContainsString('SamplePackageClass = {', $sScript);
         $this->assertStringContainsString('http://example.test/js', $sScript);
         $this->assertStringContainsString('.min.js', $sScript);
     }
 
-    /**
-     * @throws UriException
-     */
     public function testScriptExportNotMinified()
     {
         jaxon()->setOption('js.app.minify', false);
         $sScript = jaxon()->getScript();
+        // file_put_contents(dirname(__DIR__) . '/src/js/app.link.html', $sScript);
         // Check that the return value is a file URI, and not js code.
         $this->assertStringNotContainsString('SamplePackageClass = {', $sScript);
         $this->assertStringContainsString('http://example.test/js', $sScript);
@@ -67,9 +81,6 @@ class RegistrationTest extends TestCase
         $this->assertStringContainsString('.js', $sScript);
     }
 
-    /**
-     * @throws UriException
-     */
     public function testScriptErrorMinifier()
     {
         // Register a minifier that always fails.
@@ -91,41 +102,34 @@ class RegistrationTest extends TestCase
         $this->assertStringContainsString('.js', $sScript);
     }
 
-    /**
-     * @throws UriException
-     */
     public function testScriptExportErrorIncorrectDir()
     {
         // Change the js dir
-        jaxon()->setOption('js.app.dir', __DIR__ . '/../src/script'); // This dir must not exist.
-        $this->assertStringContainsString('SamplePackageClass = {', jaxon()->script());
+        jaxon()->setOption('js.app.dir', dirname(__DIR__) . '/src/script'); // This dir must not exist.
+        $sScript = jaxon()->getScript();
+        $this->assertStringContainsString('SamplePackageClass = {', $sScript);
     }
 
-    /**
-     * @throws UriException
-     */
     public function testScriptExportErrorIncorrectFile()
     {
         // Change the js dir
         jaxon()->setOption('js.app.file', 'js/app'); // This dir must not exist.
-        $this->assertStringContainsString('SamplePackageClass = {', jaxon()->script());
+        $sScript = jaxon()->getScript();
+        $this->assertStringContainsString('SamplePackageClass = {', $sScript);
     }
 
     public function testSetupIncorrectFile()
     {
         $this->expectException(SetupException::class);
-        jaxon()->app()->setup(__DIR__ . '/../config/app/not-found.php');
+        jaxon()->app()->setup(dirname(__DIR__) . '/config/app/not-found.php');
     }
 
     public function testSetupIncorrectConfig()
     {
         $this->expectException(SetupException::class);
-        jaxon()->app()->setup(__DIR__ . '/../config/app/app-error.php');
+        jaxon()->app()->setup(dirname(__DIR__) . '/config/app/app-error.php');
     }
 
-    /**
-     * @throws RequestException
-     */
     public function testJaxonClassAnnotations()
     {
         // The server request
@@ -147,9 +151,6 @@ class RegistrationTest extends TestCase
         jaxon()->di()->getCallableClassPlugin()->processRequest();
     }
 
-    /**
-     * @throws RequestException
-     */
     public function testRequestToJaxonClass()
     {
         // The server request
@@ -168,8 +169,8 @@ class RegistrationTest extends TestCase
         });
 
         $this->assertTrue(jaxon()->canProcessRequest());
-        // The processRequest() method now calls httpResponse().
         $this->expectException(RequestException::class);
+        // The processRequest() method now calls httpResponse(), which throws an exception.
         jaxon()->processRequest();
         // $this->expectException(RequestException::class);
         // jaxon()->httpResponse();
