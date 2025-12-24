@@ -11,7 +11,8 @@ use Nyholm\Psr7Server\ServerRequestCreator;
 use Psr\Http\Message\ServerRequestInterface;
 use PHPUnit\Framework\TestCase;
 
-use function Jaxon\Dialogs\_register;
+use function Jaxon\Dialogs\_register as register_dialogs;
+use function Jaxon\Storage\_register as register_storage;
 
 /**
  * Tests with the assets export options in the "lib" section of the config file.
@@ -23,7 +24,8 @@ class ExportAssetsInLibTest extends TestCase
     public function setUp(): void
     {
         $this->jsDir = realpath(dirname(__DIR__) . '/src/js');
-        _register();
+        register_dialogs();
+        register_storage();
         jaxon()->app()->setup(dirname(__DIR__) . '/config/app/assets.lib.php');
         // Set the assets options in the "lib" section of the config.
         jaxon()->setOptions([
@@ -86,7 +88,11 @@ class ExportAssetsInLibTest extends TestCase
         // Register a minifier that always fails.
         jaxon()->di()->set(MinifierInterface::class, function() {
             return new class implements MinifierInterface {
-                public function minify(string $sJsFile, string $sMinFile): bool
+                public function minifyJsCode(string $sCode): string|false
+                {
+                    return false;
+                }
+                public function minifyCssCode(string $sCode): string|false
                 {
                     return false;
                 }
@@ -112,8 +118,8 @@ class ExportAssetsInLibTest extends TestCase
 
     public function testScriptExportErrorIncorrectFile()
     {
-        // Change the js dir
-        jaxon()->setOption('js.app.file', 'js/app'); // This dir must not exist.
+        // The js subdir path is corrupted (with the '\0' char).
+        jaxon()->setAppOption('assets.js.file', "\0js/app");
         $sScript = jaxon()->getScript();
         $this->assertStringContainsString('SamplePackageClass = {', $sScript);
     }

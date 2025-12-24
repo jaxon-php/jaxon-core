@@ -7,10 +7,18 @@ interface MinifierInterface
     /**
      * Minify javascript code
      *
-     * @param string $sJsFile The javascript file to be minified
-     * @param string $sMinFile The minified javascript file
+     * @param string $sCode The javascript code to be minified
      *
-     * @return bool
+     * @return string|false
      */
-    public function minify(string $sJsFile, string $sMinFile): bool;
+    public function minifyJsCode(string $sCode): string|false;
+
+    /**
+     * Minify css code
+     *
+     * @param string $sCode The css code to be minified
+     *
+     * @return string|false
+     */
+    public function minifyCssCode(string $sCode): string|false;
 }

@@ -12,6 +12,7 @@ use Jaxon\Utils\Http\UriException;
 use PHPUnit\Framework\TestCase;
 use Sample;
 
+use function Jaxon\Storage\_register as register_storage;
 use function strlen;
 
 final class FunctionTest extends TestCase
@@ -26,6 +27,7 @@ final class FunctionTest extends TestCase
      */
     public function setUp(): void
     {
+        register_storage();
         jaxon()->setOption('core.prefix.function', 'jxn_');
         // Register a function
         jaxon()->register(Jaxon::CALLABLE_FUNCTION, 'my_first_function',

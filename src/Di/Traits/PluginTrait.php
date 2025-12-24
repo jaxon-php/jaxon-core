@@ -12,11 +12,11 @@ use Jaxon\Config\Config;
 use Jaxon\Di\Container;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\AbstractPackage;
+use Jaxon\Plugin\Code\AssetManager;
 use Jaxon\Plugin\Code\CodeGenerator;
 use Jaxon\Plugin\Code\ConfigScriptGenerator;
 use Jaxon\Plugin\Code\MinifierInterface;
 use Jaxon\Plugin\Code\ReadyScriptGenerator;
-use Jaxon\Plugin\Code\StorageManager;
 use Jaxon\Plugin\Manager\PackageManager;
 use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Plugin\Request\CallableClass\ComponentRegistry;
@@ -27,6 +27,7 @@ use Jaxon\Plugin\Response\Script\ScriptPlugin;
 use Jaxon\Request\Handler\CallbackManager;
 use Jaxon\Request\Handler\ParameterReader;
 use Jaxon\Script\CallFactory;
+use Jaxon\Storage\StorageManager;
 use Jaxon\Utils\File\FileMinifier;
 use Jaxon\Utils\Template\TemplateEngine;
 use Closure;
@@ -62,9 +63,9 @@ trait PluginTrait
             return new class extends FileMinifier implements MinifierInterface
             {};
         });
-        $this->set(StorageManager::class, function($di) {
-            return new StorageManager($di->g(ConfigManager::class),
-                $di->g(MinifierInterface::class));
+        $this->set(AssetManager::class, function($di) {
+            return new AssetManager($di->g(ConfigManager::class),
+                $di->g(StorageManager::class), $di->g(MinifierInterface::class));
         });
         $this->set(CodeGenerator::class, function($di) {
             return new CodeGenerator(Jaxon::VERSION, $di->g(Container::class),
@@ -129,11 +130,11 @@ trait PluginTrait
     /**
      * Get the storage manager
      *
-     * @return StorageManager
+     * @return AssetManager
      */
-    public function getStorageManager(): StorageManager
+    public function getAssetManager(): AssetManager
     {
-        return $this->g(StorageManager::class);
+        return $this->g(AssetManager::class);
     }
 
     /**

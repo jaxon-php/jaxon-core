@@ -1,7 +1,7 @@
 <?php
 
 /**
- * StorageManager.php
+ * AssetManager.php
  *
  * Generate static files for Jaxon CSS and Javascript codes.
  *
@@ -21,25 +21,30 @@ use Jaxon\Plugin\AbstractPlugin;
 use Jaxon\Plugin\CodeGeneratorInterface as Generator;
 use Jaxon\Plugin\CssCodeGeneratorInterface as CssGenerator;
 use Jaxon\Plugin\JsCodeGeneratorInterface as JsGenerator;
+use Jaxon\Storage\StorageManager;
+use Lagdo\Facades\Logger;
+use League\Flysystem\Filesystem;
 use Closure;
+use Throwable;
 
-use function file_put_contents;
 use function implode;
 use function is_array;
-use function is_dir;
-use function is_file;
 use function is_string;
 use function is_subclass_of;
-use function is_writable;
 use function rtrim;
 use function trim;
 
-class StorageManager
+class AssetManager
 {
     /**
      * @var Config|null
      */
     protected Config|null $xConfig = null;
+
+    /**
+     * @var array<Filesystem>
+     */
+    protected array $aStorage = [];
 
     /**
      * Default library URL
@@ -52,10 +57,11 @@ class StorageManager
      * The constructor
      *
      * @param ConfigManager $xConfigManager
+     * @param StorageManager $xStorageManager
      * @param MinifierInterface $xMinifier
      */
     public function __construct(private ConfigManager $xConfigManager,
-        private MinifierInterface $xMinifier)
+        private StorageManager $xStorageManager, private MinifierInterface $xMinifier)
     {}
 
     /**
@@ -77,6 +83,34 @@ class StorageManager
                 'js' => $this->xConfigManager->getOption('js.app'),
                 'include' => $this->xConfigManager->getOption('assets.include'),
             ]);
+    }
+
+    /**
+     * @param string $sExt
+     *
+     * @return Filesystem
+     */
+    protected function _storage(string $sExt): Filesystem
+    {
+        if($this->config()->hasOption('storage'))
+        {
+            return $this->xStorageManager->get($this->config()->getOption('storage'));
+        }
+
+        $sRootDir = $this->getAssetDir($sExt);
+        // Fylsystem options: we don't want the root dir to be created if it doesn't exist.
+        $aOptions = ['lazyRootCreation' => true];
+        return $this->xStorageManager->make('local', $sRootDir, $aOptions);
+    }
+
+    /**
+     * @param string $sExt
+     *
+     * @return Filesystem
+     */
+    protected function storage(string $sExt): Filesystem
+    {
+        return $this->aStorage[$sExt] ??= $this->_storage($sExt);
     }
 
     /**
@@ -250,6 +284,50 @@ class StorageManager
     }
 
     /**
+     * @param Filesystem $xStorage
+     * @param string $sFilePath
+     *
+     * @return bool
+     */
+    private function fileExists(Filesystem $xStorage, string $sFilePath): bool
+    {
+        try
+        {
+            return $xStorage->fileExists($sFilePath);
+        }
+        catch(Throwable $e)
+        {
+            Logger::warning("Unable to check asset file at $sFilePath.", [
+                'error' => $e->getMessage(),
+            ]);
+            return false;
+        }
+    }
+
+    /**
+     * @param Filesystem $xStorage
+     * @param string $sFilePath
+     * @param string $sContent
+     *
+     * @return bool
+     */
+    private function writeFile(Filesystem $xStorage, string $sFilePath, string $sContent): bool
+    {
+        try
+        {
+            $xStorage->write($sFilePath, $sContent);
+            return true;
+        }
+        catch(Throwable $e)
+        {
+            Logger::warning("Unable to write to asset file at $sFilePath.", [
+                'error' => $e->getMessage(),
+            ]);
+            return false;
+        }
+    }
+
+    /**
      * @param string $sExt
      * @param string $sFilePath
      * @param string $sMinFilePath
@@ -258,14 +336,26 @@ class StorageManager
      */
     private function minifyAsset(string $sExt, string $sFilePath, string $sMinFilePath): bool
     {
-        return match(true) {
-            // Check if the minification is enabled.
-            !$this->shallMinifyAsset($sExt) => false,
-            // If the file already exists, then there's nothing to do.
-            is_file($sMinFilePath) => true,
-            // Minify the file.
-            default => $this->xMinifier->minify($sFilePath, $sMinFilePath),
-        };
+        if(!$this->shallMinifyAsset($sExt))
+        {
+            return false;
+        }
+
+        $xStorage = $this->storage($sExt);
+        if($xStorage->fileExists($sMinFilePath))
+        {
+            return true;
+        }
+
+        $sMinContent = $sExt === 'js' ?
+            $this->xMinifier->minifyJsCode($xStorage->read($sFilePath)) :
+            $this->xMinifier->minifyCssCode($xStorage->read($sFilePath));
+        if($sMinContent === false || $sMinContent === '')
+        {
+            return false;
+        }
+
+        return $this->writeFile($xStorage, $sMinFilePath, $sMinContent);
     }
 
     /**
@@ -290,20 +380,20 @@ class StorageManager
         }
 
         // Check dir access
-        $sDirectory = $this->getAssetDir($sExt);
+        $xStorage = $this->storage($sExt);
         $sFileName = $this->getAssetFile($cGetHash, $sExt);
         // - The assets.js.dir must be writable
-        if(!$sFileName || !is_dir($sDirectory) || !is_writable($sDirectory))
+        if(!$sFileName || !$xStorage->directoryExists('') /*|| $xStorage->visibility('') !== 'public'*/)
         {
             return '';
         }
 
-        $sFilePath = "{$sDirectory}/{$sFileName}.{$sExt}";
-        $sMinFilePath = "{$sDirectory}/{$sFileName}.min.{$sExt}";
+        $sFilePath = "{$sFileName}.{$sExt}";
+        $sMinFilePath = "{$sFileName}.min.{$sExt}";
 
         // Try to create the file and write the code, if it doesn't exist.
-        if(!is_file($sFilePath) &&
-            !@file_put_contents($sFilePath, $cGetCode()))
+        if(!$this->fileExists($xStorage, $sFilePath) &&
+            !$this->writeFile($xStorage, $sFilePath, $cGetCode()))
         {
             return '';
         }

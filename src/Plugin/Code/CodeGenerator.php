@@ -28,9 +28,9 @@ use function usort;
 class CodeGenerator
 {
     /**
-     * @var StorageManager|null
+     * @var AssetManager|null
      */
-    private $xStorageManager = null;
+    private $xAssetManager = null;
 
     /**
      * @var array<string>
@@ -80,12 +80,12 @@ class CodeGenerator
     }
 
     /**
-     * @return StorageManager
+     * @return AssetManager
      */
-    private function storage(): StorageManager
+    private function asset(): AssetManager
     {
         // Cannot be injected because of dependency loop.
-        return $this->xStorageManager ??= $this->di->getStorageManager();
+        return $this->xAssetManager ??= $this->di->getAssetManager();
     }
 
     /**
@@ -162,7 +162,7 @@ class CodeGenerator
     {
         return $this->renderTemplate('include.css', [
             'sUrl' => $aCssFile['uri'],
-            'sOptions' => $this->storage()->makeFileOptions($aCssFile),
+            'sOptions' => $this->asset()->makeFileOptions($aCssFile),
         ]);
     }
 
@@ -175,7 +175,7 @@ class CodeGenerator
     {
         return $this->renderTemplate('include.js', [
             'sUrl' => $aJsFile['uri'],
-            'sOptions' => $this->storage()->makeFileOptions($aJsFile),
+            'sOptions' => $this->asset()->makeFileOptions($aJsFile),
         ]);
     }
 
@@ -189,7 +189,7 @@ class CodeGenerator
      */
     private function render(string $sTemplate, array $aVars = []): string
     {
-        $aVars['sJsOptions'] = $this->storage()->getJsOptions();
+        $aVars['sJsOptions'] = $this->asset()->getJsOptions();
         return $this->xTemplateEngine->render("jaxon::plugins/$sTemplate", $aVars);
     }
 
@@ -215,8 +215,8 @@ class CodeGenerator
 
         // Load the Jaxon lib js files, before the other libs js files.
         $this->xCode->addJsTag(trim($this->renderTemplate('includes.js', [
-            'aUrls' => $this->storage()->getJsLibFiles(),
-            'sOptions' => $this->storage()->getJsOptions(),
+            'aUrls' => $this->asset()->getJsLibFiles(),
+            'sOptions' => $this->asset()->getJsOptions(),
         ])));
 
         $renderJsTag = fn(array $aJsFile) => $this->renderJsTag($aJsFile);
@@ -224,7 +224,7 @@ class CodeGenerator
         foreach($this->aCodeGenerators as [$sClassName, $nType])
         {
             $xGenerator = $this->di->g($sClassName);
-            $bIncludeAssets = $this->storage()->shallIncludeAssets($xGenerator);
+            $bIncludeAssets = $this->asset()->shallIncludeAssets($xGenerator);
 
             switch($nType)
             {
@@ -259,18 +259,18 @@ class CodeGenerator
 
         $cGetHash = fn() => $this->getHash();
         $cGetCode = fn() => implode(self::SEPARATOR, $aCodes);
-        $sUrl = $this->storage()->createCssFiles($cGetHash, $cGetCode);
+        $sUrl = $this->asset()->createCssFiles($cGetHash, $cGetCode);
         // Wrap the js code into the corresponding HTML tag.
         $aTags[] = $sUrl !== '' ?
             // The generated code is saved to a file. Render the corresponding URL.
             $this->renderTemplate('include.css', [
                 'sUrl' => $sUrl,
-                'sOptions' => $this->storage()->getCssOptions(),
+                'sOptions' => $this->asset()->getCssOptions(),
             ]) :
             // Otherwise, render the code.
             $this->renderTemplate('wrapper.css', [
                 'sCode' => $cGetCode(),
-                'sOptions' => $this->storage()->getCssOptions(),
+                'sOptions' => $this->asset()->getCssOptions(),
             ]);
 
         return implode(self::SEPARATOR, $aTags);
@@ -312,14 +312,14 @@ class CodeGenerator
             $aTags[] = $this->getJs();
         }
 
-        $aJsOptions = $this->storage()->getJsOptions();
+        $aJsOptions = $this->asset()->getJsOptions();
 
         $aJsCodes = $this->xCode->jsCodes();
         if(count($this->xCode->jsCodes()) > 0)
         {
             $cGetHash = fn() => $this->getHash();
             $cGetCode = fn() => implode(self::SEPARATOR, $aJsCodes);
-            $sUrl = $this->storage()->createJsFiles($cGetHash, $cGetCode);
+            $sUrl = $this->asset()->createJsFiles($cGetHash, $cGetCode);
             // Wrap the js code into the corresponding HTML tag.
             $aTags[] = $sUrl !== '' ?
                 // The generated code is saved to a file. Render the corresponding URL.
