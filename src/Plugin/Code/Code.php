@@ -162,7 +162,6 @@ class Code
             }
         }
         // Javascript code
-        $sJsScript = trim($xGenerator->getScript(), self::TRIM);
         if(($sJsScript = trim($xGenerator->getScript(), self::TRIM)) !== '')
         {
             $this->aJsCodes[] = $sJsScript;

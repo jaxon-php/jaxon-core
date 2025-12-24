@@ -200,14 +200,19 @@ class HtmlAttrHelper
      */
     public function package(string $sClass, string $sType = 'html'): string
     {
-        $sCode = match($sType) {
-            'html' => jaxon()->package($sClass)?->getHtml() ?? '',
-            'ready' => jaxon()->package($sClass)?->getReadyScript() ?? '',
-            default => ''
-        };
-        $sCode = trim($sCode);
+        if(($xPackage = jaxon()->package($sClass)) === null)
+        {
+            return '';
+        }
 
-        return $sType !== 'ready' || $sCode === '' ? $sCode :
+        $sCode = trim(match($sType) {
+            'html' => $xPackage->getHtml(),
+            'inline' => $xPackage->getInlineScript(),
+            'ready' => $xPackage->getReadyScript(),
+            default => ''
+        });
+
+        return $sCode === '' || $sType !== 'ready' ? $sCode :
             // Call the ready code with the jaxon.dom.ready function.
             "jaxon.dom.ready(() => $sCode)";
     }

@@ -117,6 +117,16 @@ abstract class AbstractPackage extends AbstractCodeGenerator
      *
      * @return string|Stringable
      */
+    public function getInlineScript(): string|Stringable
+    {
+        return '';
+    }
+
+    /**
+     * Get the Js code of the ready() callback
+     *
+     * @return string|Stringable
+     */
     public function getReadyScript(): string|Stringable
     {
         return '';
