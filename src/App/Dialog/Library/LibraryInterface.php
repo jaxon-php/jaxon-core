@@ -1,7 +1,9 @@
 <?php
 
 /**
- * DialogLibraryInterface.php - Interface for javascript dialog library adapters.
+ * LibraryInterface.php
+ *
+ * Interface for javascript dialog library adapters.
  *
  * @package jaxon-core
  * @author Thierry Feuzeu <thierry.feuzeu@gmail.com>
@@ -11,8 +13,6 @@
  */
 
 namespace Jaxon\App\Dialog\Library;
-
-use Jaxon\Plugin\Code\JsCode;
 
 interface LibraryInterface
 {
@@ -24,37 +24,30 @@ interface LibraryInterface
     public function getName(): string;
 
     /**
-     * Get the library base URI
+     * Get the CSS urls
+     *
+     * @return array
+     */
+    public function getCssUrls(): array;
+
+    /**
+     * Get the CSS header code
      *
      * @return string
      */
-    public function getUri(): string;
+    public function getCssCode(): string;
 
     /**
-     * Get the CSS header code and file includes
+     * Get the javascript files
+     *
+     * @return array
+     */
+    public function getJsUrls(): array;
+
+    /**
+     * Get the javascript code
      *
      * @return string
      */
-    public function getCss(): string;
-
-    /**
-     * Get the javascript header code and file includes
-     *
-     * @return string
-     */
-    public function getJs(): string;
-
-    /**
-     * Get the javascript code to be printed into the page
-     *
-     * @return string
-     */
-    public function getScript(): string;
-
-    /**
-     * Get the javascript codes to include into the page
-     *
-     * @return JsCode|null
-     */
-    public function getJsCode(): ?JsCode;
+    public function getJsCode(): string;
 }
