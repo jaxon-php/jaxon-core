@@ -215,7 +215,7 @@ class CodeGenerator
 
         // Load the Jaxon lib js files, before the other libs js files.
         $this->xCode->addJsTag(trim($this->renderTemplate('includes.js', [
-            'aUrls' => $this->asset()->getJsLibFiles(),
+            'aUrls' => $this->asset()->getJsLibUrls(),
             'sOptions' => $this->asset()->getJsOptions(),
         ])));
 

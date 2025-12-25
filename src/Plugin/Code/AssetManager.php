@@ -16,7 +16,6 @@ namespace Jaxon\Plugin\Code;
 
 use Jaxon\App\Config\ConfigManager;
 use Jaxon\Config\Config;
-use Jaxon\Config\ConfigSetter;
 use Jaxon\Plugin\AbstractPlugin;
 use Jaxon\Plugin\CodeGeneratorInterface as Generator;
 use Jaxon\Plugin\CssCodeGeneratorInterface as CssGenerator;
@@ -36,11 +35,6 @@ use function trim;
 
 class AssetManager
 {
-    /**
-     * @var Config|null
-     */
-    protected Config|null $xConfig = null;
-
     /**
      * @var array<Filesystem>
      */
@@ -69,40 +63,27 @@ class AssetManager
      */
     protected function config(): Config
     {
-        if($this->xConfig !== null)
-        {
-            return $this->xConfig;
-        }
-
-        $xConfigSetter = new ConfigSetter();
-        // Copy the assets options in a new config object.
-        return $this->xConfig = $this->xConfigManager->hasAppOption('assets') ?
-            $xConfigSetter->newConfig($this->xConfigManager->getAppOption('assets')) :
-            // Convert the options in the "lib" section to the same format as in the "app" section.
-            $xConfigSetter->newConfig([
-                'js' => $this->xConfigManager->getOption('js.app'),
-                'include' => $this->xConfigManager->getOption('assets.include'),
-            ]);
+        return $this->xConfigManager->getExportConfig();
     }
 
     /**
-     * @param string $sExt
+     * @param string $sAsset "js" or "css"
      *
      * @return Filesystem
      */
-    protected function _storage(string $sExt): Filesystem
+    protected function _storage(string $sAsset): Filesystem
     {
         if($this->config()->hasOption('storage'))
         {
             return $this->xStorageManager->get($this->config()->getOption('storage'));
         }
 
-        $sRootDir = $this->getAssetDir($sExt);
+        $sRootDir = $this->getAssetDir($sAsset);
         // Fylsystem options: we don't want the root dir to be created if it doesn't exist.
         $aAdapterOptions = ['lazyRootCreation' => true];
         $aDirOptions = [
             'config' => [
-                'public_url' => $this->getAssetUri($sExt),
+                'public_url' => $this->getAssetUri($sAsset),
             ],
         ];
         return $this->xStorageManager
@@ -111,13 +92,13 @@ class AssetManager
     }
 
     /**
-     * @param string $sExt
+     * @param string $sAsset "js" or "css"
      *
      * @return Filesystem
      */
-    protected function storage(string $sExt): Filesystem
+    protected function storage(string $sAsset): Filesystem
     {
-        return $this->aStorage[$sExt] ??= $this->_storage($sExt);
+        return $this->aStorage[$sAsset] ??= $this->_storage($sAsset);
     }
 
     /**
@@ -207,7 +188,7 @@ class AssetManager
      *
      * @return array
      */
-    public function getJsLibFiles(): array
+    public function getJsLibUrls(): array
     {
         $sJsExtension = $this->config()->getOption('minify') ? '.min.js' : '.js';
         // The URI for the javascript library files
@@ -216,77 +197,77 @@ class AssetManager
 
         // Add component files to the javascript file array.
         $sChibiUrl = "$sJsLibUri/libs/chibi/chibi$sJsExtension";
-        $aJsFiles = [
+        $aJsUrls = [
             $this->xConfigManager->getOption('js.lib.jq', $sChibiUrl),
             "$sJsLibUri/jaxon.core$sJsExtension",
         ];
         if($this->xConfigManager->getOption('core.debug.on'))
         {
             $sLanguage = $this->xConfigManager->getOption('core.language');
-            $aJsFiles[] = "$sJsLibUri/jaxon.debug$sJsExtension";
-            $aJsFiles[] = "$sJsLibUri/lang/jaxon.$sLanguage$sJsExtension";
+            $aJsUrls[] = "$sJsLibUri/jaxon.debug$sJsExtension";
+            $aJsUrls[] = "$sJsLibUri/lang/jaxon.$sLanguage$sJsExtension";
         }
 
-        return $aJsFiles;
+        return $aJsUrls;
     }
 
     /**
-     * @param string $sExt
+     * @param string $sAsset "js" or "css"
      *
      * @return string
      */
-    private function getAssetUri(string $sExt): string
+    private function getAssetUri(string $sAsset): string
     {
-        return rtrim($this->config()->hasOption("$sExt.uri") ?
-            $this->config()->getOption("$sExt.uri") :
+        return rtrim($this->config()->hasOption("$sAsset.uri") ?
+            $this->config()->getOption("$sAsset.uri") :
             $this->config()->getOption('uri', ''), '/');
     }
 
     /**
-     * @param string $sExt
+     * @param string $sAsset "js" or "css"
      *
      * @return string
      */
-    private function getAssetDir(string $sExt): string
+    private function getAssetDir(string $sAsset): string
     {
-        return rtrim($this->config()->hasOption("$sExt.dir") ?
-            $this->config()->getOption("$sExt.dir") :
+        return rtrim($this->config()->hasOption("$sAsset.dir") ?
+            $this->config()->getOption("$sAsset.dir") :
             $this->config()->getOption('dir', ''), '/\/');
     }
 
     /**
      * @param Closure $cGetHash
-     * @param string $sExt
+     * @param string $sAsset "js" or "css"
      *
      * @return string
      */
-    private function getAssetFile(Closure $cGetHash, string $sExt): string
+    private function getAssetFile(Closure $cGetHash, string $sAsset): string
     {
-        return $this->config()->hasOption("$sExt.file") ?
-            $this->config()->getOption("$sExt.file") : $cGetHash();
+        return $this->config()->hasOption("$sAsset.file") ?
+            $this->config()->getOption("$sAsset.file") : $cGetHash();
     }
 
     /**
-     * @param string $sExt
+     * @param string $sAsset "js" or "css"
      *
      * @return bool
      */
-    private function shallMinifyAsset(string $sExt): bool
+    private function minifyEnabled(string $sAsset): bool
     {
-        return $this->config()->hasOption("$sExt.minify") ?
-            $this->config()->getOption("$sExt.minify") :
+        return $this->config()->hasOption("$sAsset.minify") ?
+            $this->config()->getOption("$sAsset.minify") :
             $this->config()->getOption('minify', false);
     }
 
     /**
-     * @param string $sExt
+     * @param string $sAsset "js" or "css"
      *
      * @return bool
      */
-    private function shallExportAsset(string $sExt): bool
+    private function exportEnabled(string $sAsset): bool
     {
-        return $this->config()->hasOption("$sExt.export") ?
-            $this->config()->getOption("$sExt.export") :
+        return $this->config()->hasOption("$sAsset.export") ?
+            $this->config()->getOption("$sAsset.export") :
             $this->config()->getOption('export', false);
     }
 
@@ -335,26 +316,26 @@ class AssetManager
     }
 
     /**
-     * @param string $sExt
+     * @param string $sAsset "js" or "css"
      * @param string $sFilePath
      * @param string $sMinFilePath
      *
      * @return bool
      */
-    private function minifyAsset(string $sExt, string $sFilePath, string $sMinFilePath): bool
+    private function minifyAsset(string $sAsset, string $sFilePath, string $sMinFilePath): bool
     {
-        if(!$this->shallMinifyAsset($sExt))
+        if(!$this->minifyEnabled($sAsset))
         {
             return false;
         }
 
-        $xStorage = $this->storage($sExt);
+        $xStorage = $this->storage($sAsset);
         if($xStorage->fileExists($sMinFilePath))
         {
             return true;
         }
 
-        $sMinContent = $sExt === 'js' ?
+        $sMinContent = $sAsset === 'js' ?
             $this->xMinifier->minifyJsCode($xStorage->read($sFilePath)) :
             $this->xMinifier->minifyCssCode($xStorage->read($sFilePath));
         if($sMinContent === false || $sMinContent === '')
@@ -365,11 +346,11 @@ class AssetManager
         return $this->writeFile($xStorage, $sMinFilePath, $sMinContent);
     }
 
-    private function getPublicUrl(string $sFilePath, string $sExt): string
+    private function getPublicUrl(string $sFilePath, string $sAsset): string
     {
-        $sUri = $this->getAssetUri($sExt);
+        $sUri = $this->getAssetUri($sAsset);
         return $sUri !== '' ? "$sUri/$sFilePath" :
-            $this->storage($sExt)->publicUrl($sFilePath);
+            $this->storage($sAsset)->publicUrl($sFilePath);
     }
 
     /**
@@ -377,33 +358,33 @@ class AssetManager
      *
      * @param Closure $cGetHash
      * @param Closure $cGetCode
-     * @param string $sExt
+     * @param string $sAsset "js" or "css"
      *
      * @return string
      */
-    public function createFiles(Closure $cGetHash, Closure $cGetCode, string $sExt): string
+    public function createFiles(Closure $cGetHash, Closure $cGetCode, string $sAsset): string
     {
         // Check if the config options allow the file creation.
         // - The assets.js.export option must be set to true
         // - The assets.js.uri and assets.js.dir options must be set to non null values
-        if(!$this->shallExportAsset($sExt) ||
-            // $this->getAssetUri($sExt) === '' ||
-            $this->getAssetDir($sExt) === '')
+        if(!$this->exportEnabled($sAsset) ||
+            // $this->getAssetUri($sAsset) === '' ||
+            $this->getAssetDir($sAsset) === '')
         {
             return '';
         }
 
         // Check dir access
-        $xStorage = $this->storage($sExt);
-        $sFileName = $this->getAssetFile($cGetHash, $sExt);
+        $xStorage = $this->storage($sAsset);
+        $sFileName = $this->getAssetFile($cGetHash, $sAsset);
         // - The assets.js.dir must be writable
         if(!$sFileName || !$xStorage->directoryExists('') /*|| $xStorage->visibility('') !== 'public'*/)
         {
             return '';
         }
 
-        $sFilePath = "{$sFileName}.{$sExt}";
-        $sMinFilePath = "{$sFileName}.min.{$sExt}";
+        $sFilePath = "{$sFileName}.{$sAsset}";
+        $sMinFilePath = "{$sFileName}.min.{$sAsset}";
 
         // Try to create the file and write the code, if it doesn't exist.
         if(!$this->fileExists($xStorage, $sFilePath) &&
@@ -412,15 +393,15 @@ class AssetManager
             return '';
         }
 
-        if(!$this->shallMinifyAsset($sExt))
+        if(!$this->minifyEnabled($sAsset))
         {
-            return $this->getPublicUrl($sFilePath, $sExt);
+            return $this->getPublicUrl($sFilePath, $sAsset);
         }
 
         // If the file cannot be minified, return the plain js file.
-        return $this->minifyAsset($sExt, $sFilePath, $sMinFilePath) ?
-            $this->getPublicUrl($sMinFilePath, $sExt) :
-            $this->getPublicUrl($sFilePath, $sExt);
+        return $this->minifyAsset($sAsset, $sFilePath, $sMinFilePath) ?
+            $this->getPublicUrl($sMinFilePath, $sAsset) :
+            $this->getPublicUrl($sFilePath, $sAsset);
     }
 
     /**

@@ -40,6 +40,11 @@ class ConfigManager
     protected $xAppConfig;
 
     /**
+     * @var Config|null
+     */
+    private Config|null $xExportConfig = null;
+
+    /**
      * The constructor
      *
      * @param array $aDefaultOptions
@@ -283,6 +288,18 @@ class ConfigManager
     }
 
     /**
+     * Get the app options with a given prefix in a new config object
+     *
+     * @param string $sPrefix
+     *
+     * @return Config
+     */
+    public function getConfig(string $sPrefix): Config
+    {
+        return $this->xConfigSetter->newConfig($this->getAppOption($sPrefix, []));
+    }
+
+    /**
      * Create a new the config object
      *
      * @param array $aOptions     The options array
@@ -350,5 +367,25 @@ class ConfigManager
         {
             require_once dirname(__DIR__, 2) . '/globals.php';
         }
+    }
+
+    /**
+     * @return Config
+     */
+    public function getExportConfig(): Config
+    {
+        if($this->xExportConfig !== null)
+        {
+            return $this->xExportConfig;
+        }
+
+        // Copy the assets options in a new config object.
+        return $this->xExportConfig = $this->hasAppOption('assets') ?
+            $this->xConfigSetter->newConfig($this->getAppOption('assets')) :
+            // Convert the options in the "lib" section to the same format as in the "app" section.
+            $this->xConfigSetter->newConfig([
+                'js' => $this->getOption('js.app'),
+                'include' => $this->getOption('assets.include'),
+            ]);
     }
 }

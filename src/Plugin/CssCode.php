@@ -18,10 +18,22 @@ class CssCode
 {
     /**
      * @param string $sCode
-     * @param array $aFiles
+     * @param array $aUrls
      */
-    public function __construct(protected string $sCode = '', protected array $aFiles = [])
+    public function __construct(protected string $sCode = '', protected array $aUrls = [])
     {}
+
+    /**
+     * Get the CSS files to include into the page
+     *
+     * Each entry can be a string or an array with "uri" and "options".
+     *
+     * @return array
+     */
+    public function urls(): array
+    {
+        return $this->aUrls;
+    }
 
     /**
      * Get the CSS code to include into the page
@@ -33,17 +45,5 @@ class CssCode
     public function code(): string
     {
         return $this->sCode;
-    }
-
-    /**
-     * Get the CSS files to include into the page
-     *
-     * Each entry can be a string or an array with "uri" and "options".
-     *
-     * @return array
-     */
-    public function files(): array
-    {
-        return $this->aFiles;
     }
 }

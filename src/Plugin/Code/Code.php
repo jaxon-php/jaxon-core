@@ -32,22 +32,12 @@ class Code
     /**
      * @var array
      */
-    protected $aCssFiles = [];
-
-    /**
-     * @var array
-     */
     protected $aCssCodes = [];
 
     /**
      * @var array
      */
     protected $aJsTags = [];
-
-    /**
-     * @var array
-     */
-    protected $aJsFiles = [];
 
     /**
      * @var array
@@ -90,14 +80,6 @@ class Code
     /**
      * @return array
      */
-    public function cssFiles(): array
-    {
-        return $this->aCssFiles;
-    }
-
-    /**
-     * @return array
-     */
     public function cssCodes(): array
     {
         return $this->aCssCodes;
@@ -119,14 +101,6 @@ class Code
     public function addJsTag(string $sTag): void
     {
         $this->aJsTags[] = $sTag;
-    }
-
-    /**
-     * @return array
-     */
-    public function jsFiles(): array
-    {
-        return $this->aJsFiles;
     }
 
     /**
@@ -181,11 +155,11 @@ class Code
         if($bIncludeAssets)
         {
             // HTML tags for CSS
-            foreach($xCode->files() as $xFile)
+            foreach($xCode->urls() as $xUrl)
             {
                 $aCssFile = match(true) {
-                    is_string($xFile) => ['uri' => $xFile, 'options' => []],
-                    is_array($xFile) => $xFile,
+                    is_string($xUrl) => ['uri' => $xUrl, 'options' => []],
+                    is_array($xUrl) => $xUrl,
                     default => null,
                 };
                 if($aCssFile !== null)
@@ -215,11 +189,11 @@ class Code
         if($bIncludeAssets)
         {
             // HTML tags for js
-            foreach($xCode->files() as $xFile)
+            foreach($xCode->urls() as $xUrl)
             {
                 $aJsFile = match(true) {
-                    is_string($xFile) => ['uri' => $xFile, 'options' => []],
-                    is_array($xFile) => $xFile,
+                    is_string($xUrl) => ['uri' => $xUrl, 'options' => []],
+                    is_array($xUrl) => $xUrl,
                     default => null,
                 };
                 if($aJsFile !== null)
