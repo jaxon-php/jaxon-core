@@ -12,7 +12,6 @@ use Psr\Http\Message\ServerRequestInterface;
 use PHPUnit\Framework\TestCase;
 
 use function Jaxon\Dialogs\_register as register_dialogs;
-use function Jaxon\Storage\_register as register_storage;
 
 /**
  * Tests with the assets export options in the "lib" section of the config file.
@@ -25,7 +24,6 @@ class ExportAssetsInAppTest extends TestCase
     {
         $this->jsDir = realpath(dirname(__DIR__) . '/src/js');
         register_dialogs();
-        register_storage();
         jaxon()->app()->setup(dirname(__DIR__) . '/config/app/assets.app.php');
         // The asset() method sets the options in the "app" section of the config.
         jaxon()->app()->asset(true, true, 'http://example.test/js', $this->jsDir);
