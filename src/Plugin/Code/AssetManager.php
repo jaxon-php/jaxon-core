@@ -244,7 +244,10 @@ class AssetManager
     private function getAssetFile(Closure $cGetHash, string $sAsset): string
     {
         return $this->config()->hasOption("$sAsset.file") ?
-            $this->config()->getOption("$sAsset.file") : $cGetHash();
+            $this->config()->getOption("$sAsset.file") :
+            // Make sure to call invoke callback only if required.
+            ($this->config()->hasOption("file") ?
+            $this->config()->getOption("file") : $cGetHash());
     }
 
     /**
