@@ -35,7 +35,7 @@
         "phpunit/phpunit": "^9.5",
         "php-coveralls/php-coveralls": "^2.5",
         "phpunit/phpcov": "^8.2",
-        "jaxon-php/jaxon-dialogs": "^5.0",
+        "jaxon-php/jaxon-dialogs": "^5.1",
         "jaxon-php/jaxon-upload": "^2.0"
     },
     "autoload": {
