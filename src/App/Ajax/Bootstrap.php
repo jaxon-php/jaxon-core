@@ -79,13 +79,17 @@ class Bootstrap
      *
      * @param bool $bExport    Whether to export the js code in a file
      * @param bool $bMinify    Whether to minify the exported js file
-     * @param string $sUri    The URI to access the js file
-     * @param string $sDir    The directory where to create the js file
+     * @param string $sUri     The URI to access the js file
+     * @param string $sDir     The directory where to create the js file
+     * @param string $sType    The asset type: "js" or "css"
      *
      * @return Bootstrap
      */
-    public function asset(bool $bExport, bool $bMinify, string $sUri = '', string $sDir = ''): Bootstrap
+    public function asset(bool $bExport, bool $bMinify,
+        string $sUri = '', string $sDir = '', string $sType = ''): Bootstrap
     {
+        $sPrefix = $sType === 'js' || $sType === 'css' ? "assets.$sType" : 'assets';
+
         // Jaxon library settings
         $aJsOptions = [
             'export' => $bExport,
@@ -100,7 +104,7 @@ class Bootstrap
             $aJsOptions['dir'] = $sDir;
         }
         // The export options are saved in the "app" section of the config.
-        $this->xConfigManager->setAppOptions($aJsOptions, 'assets.js');
+        $this->xConfigManager->setAppOptions($aJsOptions, $sPrefix);
         return $this;
     }
 
