@@ -46,18 +46,20 @@ abstract class AbstractApp implements AppInterface
     }
 
     /**
-     * Set the javascript asset
+     * Set the javascript or css asset
      *
-     * @param bool $bExport    Whether to export the js code in a file
-     * @param bool $bMinify    Whether to minify the exported js file
-     * @param string $sUri    The URI to access the js file
-     * @param string $sDir    The directory where to create the js file
+     * @param bool $bExport    Whether to export the code in a file
+     * @param bool $bMinify    Whether to minify the exported file
+     * @param string $sUri     The URI to access the exported file
+     * @param string $sDir     The directory where to create the file
+     * @param string $sType    The asset type: "js" or "css"
      *
      * @return void
      */
-    public function asset(bool $bExport, bool $bMinify, string $sUri = '', string $sDir = ''): void
+    public function asset(bool $bExport, bool $bMinify,
+        string $sUri = '', string $sDir = '', string $sType = ''): void
     {
-        $this->bootstrap()->asset($bExport, $bMinify, $sUri, $sDir);
+        $this->bootstrap()->asset($bExport, $bMinify, $sUri, $sDir, $sType);
     }
 
     /**

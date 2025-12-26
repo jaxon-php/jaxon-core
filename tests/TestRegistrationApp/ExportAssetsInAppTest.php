@@ -26,7 +26,7 @@ class ExportAssetsInAppTest extends TestCase
         register_dialogs();
         jaxon()->app()->setup(dirname(__DIR__) . '/config/app/assets.app.php');
         // The asset() method sets the options in the "app" section of the config.
-        jaxon()->app()->asset(true, true, 'http://example.test/js', $this->jsDir);
+        jaxon()->config()->asset(true, true, 'http://example.test/js', $this->jsDir);
     }
 
     /**
