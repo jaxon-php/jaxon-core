@@ -17,6 +17,7 @@ namespace Jaxon\Di;
 use Jaxon\App\I18n\Translator;
 use Jaxon\App\Session\SessionInterface;
 use Jaxon\Exception\SetupException;
+use Lagdo\Facades\ContainerWrapper;
 use Pimple\Container as PimpleContainer;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
@@ -61,10 +62,14 @@ class Container implements ContainerInterface
     {
         $this->xLibContainer = new PimpleContainer();
 
+        // The container instance is saved in the container.
         $this->val(Container::class, $this);
 
         // Register the null logger by default
         $this->setLogger(new NullLogger());
+
+        // Setup the logger facade. Don't overwrite if it's already set.
+        ContainerWrapper::setContainer($this, false);
 
         $sBaseDir = dirname(__DIR__, 2);
         // Template directory
