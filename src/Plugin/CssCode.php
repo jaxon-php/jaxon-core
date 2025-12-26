@@ -18,9 +18,11 @@ class CssCode
 {
     /**
      * @param string $sCode
+     * @param string $sHtml
      * @param array $aUrls
      */
-    public function __construct(protected string $sCode = '', protected array $aUrls = [])
+    public function __construct(protected string $sCode = '',
+        protected string $sHtml = '', protected array $aUrls = [])
     {}
 
     /**
@@ -45,5 +47,17 @@ class CssCode
     public function code(): string
     {
         return $this->sCode;
+    }
+
+    /**
+     * Get the CSS code to include into the page
+     *
+     * The code must be enclosed in HTML tags.
+     *
+     * @return string
+     */
+    public function html(): string
+    {
+        return $this->sHtml;
     }
 }

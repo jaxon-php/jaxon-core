@@ -154,6 +154,11 @@ class Code
         $xCode = $xGenerator->getCssCode();
         if($bIncludeAssets)
         {
+            // CSS html tags
+            if(($aCssHtml = trim($xCode->html(), self::TRIM)) !== '')
+            {
+                $this->aCssTags[] = $aCssHtml;
+            }
             // HTML tags for CSS
             foreach($xCode->urls() as $xUrl)
             {
@@ -188,6 +193,11 @@ class Code
         $xCode = $xGenerator->getJsCode();
         if($bIncludeAssets)
         {
+            // Javascript html tags
+            if(($aJsHtml = trim($xCode->html(), self::TRIM)) !== '')
+            {
+                $this->aJsTags[] = $aJsHtml;
+            }
             // HTML tags for js
             foreach($xCode->urls() as $xUrl)
             {

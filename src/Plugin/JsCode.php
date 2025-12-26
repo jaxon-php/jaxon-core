@@ -18,9 +18,13 @@ class JsCode
 {
     /**
      * @param string $sCode
+     * @param string $sHtml
      * @param array $aUrls
+     * @param string $sCodeBefore
+     * @param string $sCodeAfter
      */
-    public function __construct(protected string $sCode = '', protected array $aUrls = [],
+    public function __construct(protected string $sCode = '',
+        protected string $sHtml = '', protected array $aUrls = [],
         protected string $sCodeBefore = '', protected string $sCodeAfter = '')
     {}
 
@@ -46,6 +50,18 @@ class JsCode
     public function code(): string
     {
         return $this->sCode;
+    }
+
+    /**
+     * Get the javascript code to include into the page
+     *
+     * The code must be enclosed in HTML tags.
+     *
+     * @return string
+     */
+    public function html(): string
+    {
+        return $this->sHtml;
     }
 
     /**
