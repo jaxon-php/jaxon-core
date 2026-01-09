@@ -14,13 +14,13 @@
 
 namespace Jaxon\Request\Handler;
 
+use Jaxon\Exception\AppException;
 use Jaxon\Exception\RequestException;
 use Jaxon\Request\Target;
 use Exception;
 
 use function array_merge;
 use function array_values;
-use function count;
 use function call_user_func_array;
 use function is_a;
 
@@ -300,13 +300,8 @@ class CallbackManager
     {
         $aExceptionCallbacks = $this->getExceptionCallbacks($xException);
         $this->executeCallbacks($aExceptionCallbacks, [$xException]);
-        if(count($aExceptionCallbacks) > 0)
-        {
-            // Do not throw the exception if a custom handler is defined
-            return;
-        }
-
         $this->executeCallbacks($this->aErrorCallbacks, [$xException]);
-        throw $xException;
+
+        throw new AppException($xException->getMessage());
     }
 }
