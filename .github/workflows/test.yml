@@ -3,7 +3,7 @@ name: Tests
 on: [push, pull_request]
 
 env:
-  COMPOSER_ROOT_VERSION: 5.0.0
+  # COMPOSER_ROOT_VERSION: 5.0.0
 
 jobs:
   build:
