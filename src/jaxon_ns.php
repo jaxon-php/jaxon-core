@@ -22,6 +22,7 @@ use Jaxon\Script\Call\JsObjectCall;
 use Jaxon\Script\Call\JsSelectorCall;
 use Jaxon\Script\Call\JxnCall;
 use Jaxon\Script\ParameterFactory;
+use Jaxon\Storage\StorageManager;
 
 /**
  * Return the single instance of the Jaxon class
@@ -115,4 +116,14 @@ function attr(): HtmlAttrHelper
 function pm(): ParameterFactory
 {
     return jaxon()->di()->getParameterFactory();
+}
+
+/**
+ * Get the storage manager
+ *
+ * @return StorageManager
+ */
+function storage(): StorageManager
+{
+    return jaxon()->di()->g(StorageManager::class);
 }
