@@ -22,6 +22,7 @@ use Exception;
 use function array_merge;
 use function array_values;
 use function call_user_func_array;
+use function count;
 use function is_a;
 
 class CallbackManager
@@ -89,26 +90,6 @@ class CallbackManager
         $aCallbacks = $this->aBootCallbacks;
         $this->aBootCallbacks = [];
         return $aCallbacks;
-    }
-
-    /**
-     * Get the exception callbacks.
-     *
-     * @param Exception $xException      The exception class
-     *
-     * @return callable[]
-     */
-    private function getExceptionCallbacks(Exception $xException): array
-    {
-        $aExceptionCallbacks = [];
-        foreach($this->aExceptionCallbacks as $sExClass => $aCallbacks)
-        {
-            if(is_a($xException, $sExClass))
-            {
-                $aExceptionCallbacks = array_merge($aExceptionCallbacks, $aCallbacks);
-            }
-        }
-        return array_values($aExceptionCallbacks);
     }
 
     /**
@@ -289,6 +270,26 @@ class CallbackManager
     }
 
     /**
+     * Get the exception callbacks.
+     *
+     * @param Exception $xException      The exception class
+     *
+     * @return callable[]
+     */
+    private function getExceptionCallbacks(Exception $xException): array
+    {
+        $aExceptionCallbacks = [];
+        foreach($this->aExceptionCallbacks as $sExClass => $aCallbacks)
+        {
+            if(is_a($xException, $sExClass))
+            {
+                $aExceptionCallbacks = array_merge($aExceptionCallbacks, $aCallbacks);
+            }
+        }
+        return array_merge(array_values($aExceptionCallbacks), $this->aErrorCallbacks);
+    }
+
+    /**
      * These callbacks are called whenever an invalid request is processed.
      *
      * @param Exception $xException
@@ -299,9 +300,12 @@ class CallbackManager
     public function onError(Exception $xException): void
     {
         $aExceptionCallbacks = $this->getExceptionCallbacks($xException);
-        $this->executeCallbacks($aExceptionCallbacks, [$xException]);
-        $this->executeCallbacks($this->aErrorCallbacks, [$xException]);
+        if(count($aExceptionCallbacks) === 0)
+        {
+            // Throw the exception if no handler is found.
+            throw new AppException($xException->getMessage());
+        }
 
-        throw new AppException($xException->getMessage());
+        $this->executeCallbacks($aExceptionCallbacks, [$xException]);
     }
 }
