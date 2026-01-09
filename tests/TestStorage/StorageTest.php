@@ -9,7 +9,7 @@ use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
 use PHPUnit\Framework\TestCase;
 
 use function Jaxon\jaxon;
-use function Jaxon\Storage\storage;
+use function Jaxon\storage;
 use function dirname;
 use function file_get_contents;
 
