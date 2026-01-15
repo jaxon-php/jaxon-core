@@ -4,8 +4,6 @@ namespace Jaxon\App;
 
 use Jaxon\App\View\ViewRenderer;
 
-use function Jaxon\jaxon;
-
 trait RenderViewTrait
 {
     /**
@@ -16,17 +14,11 @@ trait RenderViewTrait
     private string $sViewPrefix = '';
 
     /**
-     * @var ViewRenderer
-     */
-    private static ViewRenderer $xViewRenderer = null;
-
-    /**
+     * Get the view renderer
+     *
      * @return ViewRenderer
      */
-    private static function renderer(): ViewRenderer
-    {
-        return self::$xViewRenderer ??= jaxon()->view();
-    }
+    abstract protected function view(): ViewRenderer;
 
     /**
      * @param string $sViewPrefix
@@ -49,7 +41,7 @@ trait RenderViewTrait
      */
     final public function renderView(string $sViewName, array $aViewData = []): void
     {
-        $sHtml = self::renderer()->render("{$this->sViewPrefix}$sViewName", $aViewData);
+        $sHtml = $this->view()->render("{$this->sViewPrefix}$sViewName", $aViewData);
         $this->before();
         $this->node()->html($sHtml === null ? '' : (string)$sHtml);
         $this->after();
