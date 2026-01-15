@@ -26,7 +26,10 @@ abstract class NodeComponent extends Component\AbstractComponent
     /**
      * @return string|Stringable
      */
-    abstract public function html(): string|Stringable;
+    public function html(): string|Stringable
+    {
+        return '';
+    }
 
     /**
      * Called before rendering the component.
