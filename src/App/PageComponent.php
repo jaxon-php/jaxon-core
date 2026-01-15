@@ -8,6 +8,16 @@ use Jaxon\Script\JsExpr;
 abstract class PageComponent extends NodeComponent
 {
     /**
+     * @var string
+     */
+    protected $sPreviousText = '';
+
+    /**
+     * @var string
+     */
+    protected $sNextText = '';
+
+    /**
      * @var PageNumberInput|null
      */
     private PageNumberInput|null $xInput = null;
@@ -26,6 +36,32 @@ abstract class PageComponent extends NodeComponent
     private function input(): PageNumberInput
     {
         return $this->xInput ??= $this->makeInput();
+    }
+
+    /**
+     * Set the text for the previous page link
+     *
+     * @param string $sText    The text for the previous page link
+     *
+     * @return self
+     */
+    public function setPreviousText(string $sText): self
+    {
+        $this->sPreviousText = $sText;
+        return $this;
+    }
+
+    /**
+     * Set the text for the next page link
+     *
+     * @param string $sText    The text for the previous page link
+     *
+     * @return self
+     */
+    public function setNextText(string $sText): self
+    {
+        $this->sNextText = $sText;
+        return $this;
     }
 
     /**
@@ -71,6 +107,15 @@ abstract class PageComponent extends NodeComponent
             ->paginator($pageNumber, $this->limit(), $this->count())
             // This callback will receive the final value of the current page number.
             ->page($this->input()->setFinalPageNumber(...));
+        // Set the previous and next link texts.
+        if($this->sPreviousText !== '')
+        {
+            $paginator->setPreviousText($this->sPreviousText);
+        }
+        if($this->sNextText !== '')
+        {
+            $paginator->setNextText($this->sNextText);
+        }
         // Now the page number is set, the page content can be rendered.
         $this->render();
         // Render the pagination component.
