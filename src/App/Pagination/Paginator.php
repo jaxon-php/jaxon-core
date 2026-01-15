@@ -48,22 +48,17 @@ use Jaxon\Script\JsExpr;
 use Closure;
 
 use function array_pop;
+use function array_map;
 use function array_shift;
-use function array_walk;
 use function ceil;
 use function count;
-use function floor;
 use function is_a;
 use function max;
+use function range;
 use function trim;
 
 class Paginator
 {
-    /**
-     * @var integer
-     */
-    protected $nItemsCount = 0;
-
     /**
      * @var integer
      */
@@ -72,17 +67,7 @@ class Paginator
     /**
      * @var integer
      */
-    protected $nItemsPerPage = 0;
-
-    /**
-     * @var integer
-     */
-    protected $nPageNumber = 0;
-
-    /**
-     * @var integer
-     */
-    protected $nMaxPages = 10;
+    protected $nMaxPages = 9;
 
     /**
      * @var string
@@ -100,11 +85,6 @@ class Paginator
     protected $sEllipsysText = '...';
 
     /**
-     * @var PaginatorPlugin
-     */
-    private $xPlugin;
-
-    /**
      * The constructor.
      *
      * @param PaginatorPlugin $xPlugin
@@ -112,12 +92,9 @@ class Paginator
      * @param int $nItemsPerPage    The number of items per page
      * @param int $nItemsCount      The total number of items
      */
-    public function __construct(PaginatorPlugin $xPlugin, int $nPageNumber, int $nItemsPerPage, int $nItemsCount)
+    public function __construct(private PaginatorPlugin $xPlugin, protected int $nPageNumber,
+        protected int $nItemsPerPage, protected int $nItemsCount)
     {
-        $this->xPlugin = $xPlugin;
-        $this->nItemsPerPage = $nItemsPerPage > 0 ? $nItemsPerPage : 0;
-        $this->nItemsCount = $nItemsCount > 0 ? $nItemsCount : 0;
-        $this->nPageNumber = $nPageNumber < 1 ? 1 : $nPageNumber;
         $this->updatePagesCount();
     }
 
@@ -128,11 +105,18 @@ class Paginator
      */
     private function updatePagesCount(): Paginator
     {
-        $this->nPagesCount = ($this->nItemsPerPage === 0 ? 0 :
-            (int)ceil($this->nItemsCount / $this->nItemsPerPage));
-        if($this->nPageNumber > $this->nPagesCount)
+        $this->nItemsPerPage = $this->nItemsPerPage > 0 ? $this->nItemsPerPage : 0;
+        // $this->nItemsCount = $this->nItemsCount > 0 ? $this->nItemsCount : 0;
+        $this->nPageNumber = $this->nPageNumber < 1 ? 1 : $this->nPageNumber;
+
+        if($this->nItemsCount >= 0)
         {
-            $this->nPageNumber = $this->nPagesCount;
+            $this->nPagesCount = ($this->nItemsPerPage === 0 ? 0 :
+                (int)ceil($this->nItemsCount / $this->nItemsPerPage));
+            if($this->nPageNumber > $this->nPagesCount)
+            {
+                $this->nPageNumber = $this->nPagesCount;
+            }
         }
         return $this;
     }
@@ -172,7 +156,8 @@ class Paginator
      */
     public function setMaxPages(int $nMaxPages): Paginator
     {
-        $this->nMaxPages = max($nMaxPages, 4);
+        // Make sure the max number of pages is odd and greater than 5.
+        $this->nMaxPages = max((int)(($nMaxPages - 1) / 2) * 2 + 1, 5);
         return $this;
     }
 
@@ -195,7 +180,8 @@ class Paginator
      */
     protected function getNextPage(): Page
     {
-        return $this->nPageNumber >= $this->nPagesCount ?
+        // The next page link is always active when the total number of items is not privided.
+        return $this->nItemsCount >= 0 && $this->nPageNumber >= $this->nPagesCount ?
             new Page('disabled', $this->sNextText, 0) :
             new Page('enabled', $this->sNextText, $this->nPageNumber + 1);
     }
@@ -220,60 +206,91 @@ class Paginator
     /**
      * Get the array of page numbers to be printed.
      *
+     * Example: [1, 2, 3, 4, 5, 6, 7]
+     *
+     * @return array
+     */
+    protected function getAllPageNumbers(): array
+    {
+        return range(1, $this->nPagesCount);
+    }
+
+    /**
+     * Get the array of page numbers to be printed, when the total number of items is not provided.
+     *
      * Example: [1, 0, 4, 5, 6, 0, 10]
      *
      * @return array
      */
-    protected function getPageNumbers(): array
+    protected function getPageNumbersWithoutTotal(): array
     {
         $aPageNumbers = [];
 
-        if($this->nPagesCount <= $this->nMaxPages)
-        {
-            for($i = 0; $i < $this->nPagesCount; $i++)
-            {
-                $aPageNumbers[] = $i + 1;
-            }
-
-            return $aPageNumbers;
-        }
-
         // Determine the sliding range, centered around the current page.
-        $nNumAdjacents = (int)floor(($this->nMaxPages - 4) / 2);
+        $nNumAdjacents = ($this->nMaxPages - 1) / 2;
 
         $nSlidingStart = 1;
-        $nSlidingEndOffset = $nNumAdjacents + 3 - $this->nPageNumber;
-        if($nSlidingEndOffset < 0)
+        $nSlidingStartThreshold = $nNumAdjacents;
+        $nSlidingEnd = $this->nPageNumber + $nNumAdjacents - 1;
+
+        if($this->nPageNumber > $nNumAdjacents + 1)
         {
-            $nSlidingStart = $this->nPageNumber - $nNumAdjacents;
-            $nSlidingEndOffset = 0;
+            $nSlidingStart = $this->nPageNumber - $nNumAdjacents + 2;
+        }
+        if($this->nPageNumber <= $nSlidingStartThreshold)
+        {
+            $nSlidingEnd += $nSlidingStartThreshold - $this->nPageNumber + 1;
         }
 
+        // Build the list of page numbers. Pages with 0 as number are ellipsys.
+        $aStartPages = $nSlidingStart > 1 ? [1, 0] : [];
+        $aPageNumbers = range($nSlidingStart, $nSlidingEnd);
+        // Ellipsys are always added at the end of the list.
+        return [...$aStartPages, ...$aPageNumbers, 0];
+    }
+
+    /**
+     * Get the array of page numbers to be printed, when the total number of items is provided.
+     *
+     * Example: [1, 0, 4, 5, 6, 0, 10]
+     *
+     * @return array
+     */
+    protected function getPageNumbersWithTotal(): array
+    {
+        $aPageNumbers = [];
+
+        // Determine the sliding range, centered around the current page.
+        $nNumAdjacents = ($this->nMaxPages - 1) / 2;
+
+        $nSlidingStart = 1;
+        $nSlidingStartThreshold = $nNumAdjacents;
         $nSlidingEnd = $this->nPagesCount;
-        $nSlidingStartOffset = $this->nPageNumber + $nNumAdjacents + 2 - $this->nPagesCount;
-        if($nSlidingStartOffset < 0)
+        $nSlidingEndThreshold = $this->nPagesCount - $nNumAdjacents;
+
+        if($this->nPageNumber > $nNumAdjacents + 1)
         {
-            $nSlidingEnd = $this->nPageNumber + $nNumAdjacents;
-            $nSlidingStartOffset = 0;
+            $nSlidingStart = $this->nPageNumber - $nNumAdjacents + 2;
+        }
+        if($this->nPageNumber > $nSlidingEndThreshold)
+        {
+            $nSlidingStart -= $this->nPageNumber - $nSlidingEndThreshold;
         }
 
-        // Build the list of page numbers.
-        if($nSlidingStart > 1)
+        if($this->nPageNumber < $this->nPagesCount - $nNumAdjacents)
         {
-            $aPageNumbers[] = 1;
-            $aPageNumbers[] = 0; // Ellipsys;
+            $nSlidingEnd = $this->nPageNumber + $nNumAdjacents - 2;
         }
-        for($i = $nSlidingStart - $nSlidingStartOffset; $i <= $nSlidingEnd + $nSlidingEndOffset; $i++)
+        if($this->nPageNumber <= $nSlidingStartThreshold)
         {
-            $aPageNumbers[] = $i;
-        }
-        if($nSlidingEnd < $this->nPagesCount)
-        {
-            $aPageNumbers[] = 0; // Ellipsys;
-            $aPageNumbers[] = $this->nPagesCount;
+            $nSlidingEnd += $nSlidingStartThreshold - $this->nPageNumber + 1;
         }
 
-        return $aPageNumbers;
+        // Build the list of page numbers. Pages with 0 as number are ellipsys.
+        $aStartPages = $nSlidingStart > 1 ? [1, 0] : [];
+        $aEndPages = $nSlidingEnd < $this->nPagesCount ? [0, $this->nPagesCount] : [];
+        $aPageNumbers = range($nSlidingStart, $nSlidingEnd);
+        return [...$aStartPages, ...$aPageNumbers, ...$aEndPages];
     }
 
     /**
@@ -293,19 +310,19 @@ class Paginator
      */
     public function pages(): array
     {
-        if($this->nPagesCount < 2)
+        $aPageNumbers = match(true) {
+            $this->nItemsCount < 0 => $this->getPageNumbersWithoutTotal(),
+            $this->nPagesCount < 2 => [],
+            $this->nPagesCount <= $this->nMaxPages => $this->getAllPageNumbers(),
+            default => $this->getPageNumbersWithTotal(),
+        };
+        if(count($aPageNumbers) === 0)
         {
             return [];
         }
 
-        $aPageNumbers = $this->getPageNumbers();
-        $aPages = [$this->getPrevPage()];
-        array_walk($aPageNumbers, function($nNumber) use(&$aPages) {
-            $aPages[] = $this->getPage($nNumber);
-        });
-        $aPages[] = $this->getNextPage();
-
-        return $aPages;
+        $aPages = array_map($this->getPage(...), $aPageNumbers);
+        return [$this->getPrevPage(), ...$aPages, $this->getNextPage()];
     }
 
     /**
