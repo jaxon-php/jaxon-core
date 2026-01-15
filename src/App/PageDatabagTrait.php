@@ -2,17 +2,11 @@
 
 namespace Jaxon\App;
 
-use Jaxon\App\Pagination\Paginator;
+use Jaxon\App\Pagination\PageNumberInput;
+use Jaxon\App\Pagination\PageNumberInputBag;
 
 trait PageDatabagTrait
 {
-    /**
-     * The current page number.
-     *
-     * @var int
-     */
-    private int $currentPage = 1;
-
     /**
      * Get the pagination databag name.
      *
@@ -28,57 +22,12 @@ trait PageDatabagTrait
     abstract protected function bagAttr(): string;
 
     /**
-     * Get the page number.
-     *
-     * @param int $pageNumber
-     *
-     * @return int
+     * @return PageNumberInput
      */
-    private function getPageNumber(int $pageNumber): int
+    protected function makeInput(): PageNumberInput
     {
-        // If no page number is provided, then get the value from the databag.
-        return $pageNumber > 0 ? $pageNumber :
-            (int)$this->bag($this->bagName())->get($this->bagAttr(), 1);
-    }
-
-    /**
-     * Set the page number.
-     *
-     * @param int $currentPage
-     *
-     * @return void
-     */
-    private function setCurrentPage(int $currentPage): void
-    {
-        // Save the current page in the databag.
-        $this->bag($this->bagName())->set($this->bagAttr(), $currentPage);
-        $this->currentPage = $currentPage;
-    }
-
-    /**
-     * Get the paginator for the component.
-     *
-     * @param int $pageNumber
-     *
-     * @return Paginator
-     */
-    protected function paginator(int $pageNumber): Paginator
-    {
-        return $this->cl(Component\Pagination::class)
-            // Use the js class name as component item identifier.
-            ->item($this->rq()->_class())
-            ->paginator($this->getPageNumber($pageNumber), $this->limit(), $this->count())
-            // This callback will receive the final value of the current page number.
-            ->page(fn(int $currentPage) => $this->setCurrentPage($currentPage));
-    }
-
-    /**
-     * Get the current page number
-     *
-     * @return int
-     */
-    protected function currentPage(): int
-    {
-        return $this->currentPage;
+        $bag = $this->bag($this->bagName());
+        return new PageNumberInputBag( fn() => (int)$bag->get($this->bagAttr(), 1),
+            fn(int $currentPage) => $bag->set($this->bagAttr(), $currentPage));
     }
 }
