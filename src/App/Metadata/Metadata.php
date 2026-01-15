@@ -147,7 +147,8 @@ class Metadata
         $aClassProperties = [];
         foreach($this->aAttributes as $sType => $aValues)
         {
-            if($sType === 'exclude')
+            // These attributes are processed in the getExportMethods() method.
+            if($sType === 'exclude' || $sType === 'export')
             {
                 continue;
             }

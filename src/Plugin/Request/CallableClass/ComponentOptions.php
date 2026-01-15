@@ -362,6 +362,8 @@ class ComponentOptions
     {
         switch($sOptionName)
         {
+        case 'export':
+            return; // The export option has already been processed. It is discarded here.
         case 'excluded':
             if((bool)$xOptionValue)
             {
