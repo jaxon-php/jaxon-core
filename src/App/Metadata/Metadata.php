@@ -16,7 +16,6 @@ namespace Jaxon\App\Metadata;
 
 use function array_filter;
 use function array_keys;
-use function array_merge;
 use function array_values;
 use function count;
 
@@ -63,8 +62,7 @@ class Metadata
     public function export(string $sMethod = '*'): Data\ExportData
     {
         $sMethod = '*'; // On classes only
-        return $this->aAttributes['export'][$sMethod] ??
-            $this->aAttributes['export'][$sMethod] = new Data\ExportData();
+        return $this->aAttributes['export'][$sMethod] ??= new Data\ExportData();
     }
 
     /**
@@ -74,8 +72,7 @@ class Metadata
      */
     public function container(string $sMethod = '*'): Data\ContainerData
     {
-        return $this->aAttributes['container'][$sMethod] ??
-            $this->aAttributes['container'][$sMethod] = new Data\ContainerData();
+        return $this->aAttributes['container'][$sMethod] ??= new Data\ContainerData();
     }
 
     /**
@@ -85,8 +82,7 @@ class Metadata
      */
     public function databag(string $sMethod = '*'): Data\DatabagData
     {
-        return $this->aAttributes['databag'][$sMethod] ??
-            $this->aAttributes['databag'][$sMethod] = new Data\DatabagData();
+        return $this->aAttributes['databag'][$sMethod] ??= new Data\DatabagData();
     }
 
     /**
@@ -96,8 +92,7 @@ class Metadata
      */
     public function callback(string $sMethod = '*'): Data\CallbackData
     {
-        return $this->aAttributes['callback'][$sMethod] ??
-            $this->aAttributes['callback'][$sMethod] = new Data\CallbackData();
+        return $this->aAttributes['callback'][$sMethod] ??= new Data\CallbackData();
     }
 
     /**
@@ -107,8 +102,7 @@ class Metadata
      */
     public function before(string $sMethod = '*'): Data\BeforeData
     {
-        return $this->aAttributes['before'][$sMethod] ??
-            $this->aAttributes['before'][$sMethod] = new Data\BeforeData();
+        return $this->aAttributes['before'][$sMethod] ??= new Data\BeforeData();
     }
 
     /**
@@ -118,8 +112,7 @@ class Metadata
      */
     public function after(string $sMethod = '*'): Data\AfterData
     {
-        return $this->aAttributes['after'][$sMethod] ??
-            $this->aAttributes['after'][$sMethod] = new Data\AfterData();
+        return $this->aAttributes['after'][$sMethod] ??= new Data\AfterData();
     }
 
     /**
@@ -129,8 +122,7 @@ class Metadata
      */
     public function upload(string $sMethod = '*'): Data\UploadData
     {
-        return $this->aAttributes['upload'][$sMethod] ??
-            $this->aAttributes['upload'][$sMethod] = new Data\UploadData();
+        return $this->aAttributes['upload'][$sMethod] ??= new Data\UploadData();
     }
 
     /**
@@ -198,7 +190,7 @@ class Metadata
         $aExportMethods = $xExportData?->getValue() ?? [];
 
         $aExceptMethods = $aExportMethods['except'] ?? [];
-        $aExportMethods['except'] = array_merge($aExcludeMethods, $aExceptMethods);
+        $aExportMethods['except'] = [...$aExcludeMethods, ...$aExceptMethods];
         return $aExportMethods;
     }
 

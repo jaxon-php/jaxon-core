@@ -19,7 +19,6 @@ use Jaxon\App\Metadata\Metadata;
 use function array_diff;
 use function array_intersect;
 use function array_map;
-use function array_merge;
 use function array_unique;
 use function array_values;
 use function count;
@@ -132,9 +131,9 @@ class ComponentOptions
      */
     private function addProtectedMethods(array|string $xMethods): void
     {
-        $this->aExportMethods['except'] = array_merge($this->aExportMethods['except'],
-            !is_array($xMethods) ? [trim((string)$xMethods)] :
-            array_map(fn($sMethod) => trim((string)$sMethod), $xMethods));
+        $aMethods = is_string($xMethods) ? [trim($xMethods)] :
+            array_map(fn($sMethod) => trim((string)$sMethod), $xMethods);
+        $this->aExportMethods['except'] = [...$this->aExportMethods['except'], ...$aMethods];
     }
 
     /**
@@ -146,8 +145,10 @@ class ComponentOptions
     {
         // Excluded methods must be merged with the existing ones.
         $aExportMethods = $xMetadata->getExportMethods();
-        $aExportMethods['except'] = array_unique(array_merge(
-            $aExportMethods['except'] ?? [], $this->aExportMethods['except']));
+        $aExportMethods['except'] = array_unique([
+            ...($aExportMethods['except'] ?? []),
+            ...$this->aExportMethods['except']
+        ]);
         $this->aExportMethods = $aExportMethods;
         foreach($xMetadata->getProperties() as $sFunctionName => $aFunctionOptions)
         {
@@ -269,8 +270,7 @@ class ComponentOptions
             }
             if(is_array($xMethodToCall))
             {
-                $aHookMethods[$sCalledMethod] =
-                    array_merge($aHookMethods[$sCalledMethod], $xMethodToCall);
+                $aHookMethods[$sCalledMethod] = [...$aHookMethods[$sCalledMethod], ...$xMethodToCall];
                 continue;
             }
             if(is_string($xMethodToCall))
@@ -285,7 +285,7 @@ class ComponentOptions
      */
     private function addDiOption(array $aDiOptions): void
     {
-        $this->aDiOptions = array_merge($this->aDiOptions, $aDiOptions);
+        $this->aDiOptions = [...$this->aDiOptions, ...$aDiOptions];
     }
 
     /**
@@ -336,7 +336,7 @@ class ComponentOptions
         }
 
         $aOptions = $this->aJsOptions[$sFunctionName][$sOptionName] ?? [];
-        $this->aJsOptions[$sFunctionName][$sOptionName] = array_merge($aOptions, $xOptionValue);
+        $this->aJsOptions[$sFunctionName][$sOptionName] = [...$aOptions, ...$xOptionValue];
     }
 
     /**
@@ -367,7 +367,7 @@ class ComponentOptions
             {
                 $this->addProtectedMethods($sFunctionName);
             }
-            break;
+            return;
         // For databags and callbacks, all the value are merged in a single array.
         case 'bags':
         case 'callback':
@@ -405,7 +405,7 @@ class ComponentOptions
     private function getMethodOptions(string $sMethodName): array
     {
         // First take the common options.
-        $aOptions = array_merge($this->aJsOptions['*'] ?? []); // Clone the array
+        $aOptions = [...($this->aJsOptions['*'] ?? [])]; // Clone the array
         // Then add the method options.
         $aMethodOptions = $this->aJsOptions[$sMethodName] ?? [];
         foreach($aMethodOptions as $sOptionName => $xOptionValue)
@@ -414,7 +414,7 @@ class ComponentOptions
             // For all the other options, keep the last value.
             $aOptions[$sOptionName] = !in_array($sOptionName, ['bags', 'callback']) ?
                 $xOptionValue :
-                array_unique(array_merge($aOptions[$sOptionName] ?? [], $xOptionValue));
+                array_unique([...($aOptions[$sOptionName] ?? []), ...$xOptionValue]);
         }
         // Since callbacks are js object names, they need a special formatting.
         if(isset($aOptions['callback']))
@@ -422,8 +422,8 @@ class ComponentOptions
             $aOptions['callback'] = str_replace('"', '', json_encode($aOptions['callback']));
         }
 
-        return array_map(fn($xOption) =>
-            is_array($xOption) ? json_encode($xOption) : $xOption, $aOptions);
+        return array_map(fn($xOption) => is_array($xOption) ?
+            json_encode($xOption) : $xOption, $aOptions);
     }
 
     /**

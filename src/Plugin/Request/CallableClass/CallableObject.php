@@ -71,7 +71,7 @@ class CallableObject
      *
      * @return bool
      */
-    public function excluded(?string $sMethodName = null): bool
+    public function excluded(string|null $sMethodName = null): bool
     {
         return $sMethodName === null ? $this->xOptions->excluded() :
             !$this->xOptions->isPublicMethod($sMethodName);
