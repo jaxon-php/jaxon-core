@@ -105,20 +105,21 @@ class ComponentOptions
         $sSeparator = $aOptions['separator'] ?? '.';
         $this->sSeparator = $sSeparator === '_' ? '_' : '.';
         $this->addProtectedMethods($aOptions['protected'] ?? []);
+        $this->setExportMethods($aOptions['export'] ?? []);
         foreach($aOptions['functions'] ?? [] as $sNames => $aFunctionOptions)
         {
             // Names are in a comma-separated list.
-            $aFunctionNames = explode(',', $sNames);
-            foreach($aFunctionNames as $sFunctionName)
-            {
-                $this->addFunctionOptions($sFunctionName, $aFunctionOptions);
-            }
+            $this->setFunctionProperties(explode(',', $sNames), $aFunctionOptions);
         }
 
         // Options from the attributes or annotations.
         if($xMetadata !== null)
         {
-            $this->readMetadataOptions($xMetadata);
+            $this->setExportMethods($xMetadata->getExportMethods());
+            foreach($xMetadata->getProperties() as $sFunctionName => $aFunctionOptions)
+            {
+                $this->setFunctionProperties([$sFunctionName], $aFunctionOptions);
+            }
         }
 
         $this->aPublicMethods = $this->filterPublicMethods($aMethods);
@@ -137,20 +138,33 @@ class ComponentOptions
     }
 
     /**
-     * @param Metadata $xMetadata
+     * @param array $aExportMethods
      *
      * @return void
      */
-    private function readMetadataOptions(Metadata $xMetadata): void
+    private function setExportMethods(array $aExportMethods): void
     {
-        // Excluded methods must be merged with the existing ones.
-        $aExportMethods = $xMetadata->getExportMethods();
-        $aExportMethods['except'] = array_unique([
-            ...($aExportMethods['except'] ?? []),
-            ...$this->aExportMethods['except']
-        ]);
-        $this->aExportMethods = $aExportMethods;
-        foreach($xMetadata->getProperties() as $sFunctionName => $aFunctionOptions)
+        foreach(['base', 'only', 'except'] as $sKey)
+        {
+            if(isset($aExportMethods[$sKey]))
+            {
+                $this->aExportMethods[$sKey] = array_unique([
+                    ...($this->aExportMethods[$sKey] ?? []),
+                    ...$aExportMethods[$sKey]
+                ]);
+            }
+        }
+    }
+
+    /**
+     * @param array<string> $aFunctionNames
+     * @param array $aFunctionOptions
+     *
+     * @return void
+     */
+    private function setFunctionProperties(array $aFunctionNames, array $aFunctionOptions): void
+    {
+        foreach($aFunctionNames as $sFunctionName)
         {
             $this->addFunctionOptions($sFunctionName, $aFunctionOptions);
         }
