@@ -17,6 +17,8 @@ namespace Jaxon;
 use Jaxon\App\Ajax\Jaxon as JaxonLib;
 use Jaxon\App\View\Helper\HtmlAttrHelper;
 use Jaxon\Exception\SetupException;
+use Jaxon\Script\Action\HtmlValue;
+use Jaxon\Script\Action\PageValue;
 use Jaxon\Script\Call\JqSelectorCall;
 use Jaxon\Script\Call\JsObjectCall;
 use Jaxon\Script\Call\JsSelectorCall;
@@ -108,6 +110,16 @@ function attr(): HtmlAttrHelper
 }
 
 /**
+ * Get the storage manager
+ *
+ * @return StorageManager
+ */
+function storage(): StorageManager
+{
+    return jaxon()->di()->g(StorageManager::class);
+}
+
+/**
  * Get the single instance of the parameter factory
  *
  * @return ParameterFactory
@@ -119,11 +131,59 @@ function pm(): ParameterFactory
 }
 
 /**
- * Get the storage manager
+ * @param string sElementId
  *
- * @return StorageManager
+ * @return array
  */
-function storage(): StorageManager
+function form(string $sElementId): array
 {
-    return jaxon()->di()->g(StorageManager::class);
+    return je($sElementId)->rd()->form();
+}
+
+/**
+ * @param string sElementId
+ *
+ * @return array
+ */
+function checked(string $sElementId): array
+{
+    return je($sElementId)->rd()->checked();
+}
+
+/**
+ * @param string sElementId
+ *
+ * @return HtmlValue
+ */
+function input(string $sElementId): HtmlValue
+{
+    return je($sElementId)->rd()->input();
+}
+
+/**
+ * @param string sElementId
+ *
+ * @return HtmlValue
+ */
+function select(string $sElementId): HtmlValue
+{
+    return je($sElementId)->rd()->select();
+}
+
+/**
+ * @param string sElementId
+ *
+ * @return HtmlValue
+ */
+function html(string $sElementId): HtmlValue
+{
+    return je($sElementId)->rd()->html();
+}
+
+/**
+ * @return PageValue
+ */
+function page(): PageValue
+{
+    return je()->rd()->page();
 }
