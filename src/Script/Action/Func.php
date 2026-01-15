@@ -2,7 +2,6 @@
 
 namespace Jaxon\Script\Action;
 
-use JsonSerializable;
 use function array_map;
 
 class Func extends TypedValue

@@ -69,9 +69,7 @@ trait PageDatabagTrait
             ->item($this->rq()->_class())
             ->paginator($this->getPageNumber($pageNumber), $this->limit(), $this->count())
             // This callback will receive the final value of the current page number.
-            ->page(function(int $currentPage) {
-                $this->setCurrentPage($currentPage);
-            });
+            ->page(fn(int $currentPage) => $this->setCurrentPage($currentPage));
     }
 
     /**

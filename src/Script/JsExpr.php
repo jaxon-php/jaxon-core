@@ -134,7 +134,7 @@ class JsExpr extends TypedValue implements Stringable
      * @param string $sAttribute
      * @param mixed $xValue
      *
-     * @return void
+     * @return self
      */
     public function __set(string $sAttribute, $xValue)
     {

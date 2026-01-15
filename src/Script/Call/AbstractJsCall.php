@@ -67,7 +67,7 @@ abstract class AbstractJsCall extends AbstractCall
      * @param string $sAttribute
      * @param mixed $xValue
      *
-     * @return void
+     * @return JsExpr
      */
     public function __set(string $sAttribute, $xValue)
     {

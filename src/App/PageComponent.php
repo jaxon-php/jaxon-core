@@ -41,9 +41,7 @@ abstract class PageComponent extends NodeComponent
             ->item($this->rq()->_class())
             ->paginator($pageNumber > 0 ? $pageNumber : 1, $this->limit(), $this->count())
             // This callback will receive the final value of the current page number.
-            ->page(function(int $currentPage) {
-                $this->currentPage = $currentPage;
-            });
+            ->page(fn(int $currentPage) => $this->currentPage = $currentPage);
     }
 
     /**
