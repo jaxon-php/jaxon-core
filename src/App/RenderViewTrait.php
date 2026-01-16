@@ -39,10 +39,10 @@ trait RenderViewTrait
      *
      * @return void
      */
-    final public function renderView(string $sViewName, array $aViewData = []): void
+    final protected function renderView(string $sViewName, array $aViewData = []): void
     {
-        $sHtml = $this->view()->render("{$this->sViewPrefix}$sViewName", $aViewData);
         $this->before();
+        $sHtml = $this->view()->render("{$this->sViewPrefix}$sViewName", $aViewData);
         $this->node()->html($sHtml === null ? '' : (string)$sHtml);
         $this->after();
     }
