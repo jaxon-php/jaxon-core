@@ -6,7 +6,7 @@ use Jaxon\App\Pagination\Paginator;
 use Jaxon\Di\Container;
 use Jaxon\Plugin\Request\CallableClass\ComponentHelper;
 
-class FuncComponent extends Component\AbstractComponent
+abstract class FuncComponent extends Component\AbstractComponent
 {
     use Component\HelperTrait;
     use Component\AjaxResponseTrait;
@@ -19,6 +19,8 @@ class FuncComponent extends Component\AbstractComponent
     {
         $this->setHelper($xHelper);
         $this->setAjaxResponse($di);
+        // Allow the user app to setup the component.
+        $this->setupComponent();
     }
 
     /**

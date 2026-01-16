@@ -21,6 +21,8 @@ abstract class NodeComponent extends Component\AbstractComponent
         $this->setHelper($xHelper);
         $this->setNodeResponse($di);
         $this->setAjaxResponse($di);
+        // Allow the user app to setup the component.
+        $this->setupComponent();
     }
 
     /**

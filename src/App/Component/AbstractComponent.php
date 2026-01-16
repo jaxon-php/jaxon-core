@@ -26,6 +26,14 @@ abstract class AbstractComponent
     abstract protected function initComponent(Container $di, ComponentHelper $xHelper);
 
     /**
+     * Initialize the component
+     *
+     * @return void
+     */
+    protected function setupComponent(): void
+    {}
+
+    /**
      * Get the js call factory.
      *
      * @param string $sClassName
