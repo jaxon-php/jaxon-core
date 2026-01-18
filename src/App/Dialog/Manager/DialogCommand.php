@@ -14,11 +14,17 @@
 namespace Jaxon\App\Dialog\Manager;
 
 use Jaxon\Script\Action\TypedValue;
+use Closure;
 
 use function array_map;
 
 class DialogCommand
 {
+    /**
+     * @var LibraryRegistryInterface|null
+     */
+    private LibraryRegistryInterface|null $xRegistry = null;
+
     /**
      * The next alert library
      *
@@ -36,10 +42,20 @@ class DialogCommand
     /**
      * The constructor
      *
-     * @param LibraryRegistryInterface|null $xRegistry
+     * @param Closure $fRegistry
      */
-    public function __construct(private ?LibraryRegistryInterface $xRegistry)
+    public function __construct(private Closure $fRegistry)
     {}
+
+    /**
+     * Get the registry using the provided callback.
+     *
+     * @return LibraryRegistryInterface
+     */
+    private function registry(): LibraryRegistryInterface
+    {
+        return $this->xRegistry ??= ($this->fRegistry)();
+    }
 
     /**
      * Set the library for the next alert.
@@ -114,7 +130,7 @@ class DialogCommand
     {
         return [
             'lib' => $this->getLibrary() ?:
-                ($this->xRegistry?->getAlertLibrary()->getName() ?? ''),
+                ($this->registry()->getAlertLibrary()->getName() ?? ''),
             'message' => [
                 'type' => $sType,
                 'title' => $this->getTitle(),
@@ -198,7 +214,7 @@ class DialogCommand
     {
         return [
             'lib' => $this->getLibrary() ?:
-                ($this->xRegistry?->getModalLibrary()->getName() ?? ''),
+                ($this->registry()->getModalLibrary()?->getName() ?? ''),
             'dialog' => [
                 'title' => $sTitle,
                 'content' => $sContent,
@@ -217,7 +233,7 @@ class DialogCommand
     {
         return [
             'lib' => $this->getLibrary() ?:
-                ($this->xRegistry?->getModalLibrary()->getName() ?? ''),
+                ($this->registry()->getModalLibrary()?->getName() ?? ''),
         ];
     }
 
@@ -233,7 +249,7 @@ class DialogCommand
     {
         return [
             'lib' => $this->getLibrary() ?:
-                ($this->xRegistry?->getConfirmLibrary()->getName() ?? ''),
+                ($this->registry()->getConfirmLibrary()->getName() ?? ''),
             'question' => [
                 'title' => $this->getTitle(),
                 'phrase' => $this->phrase($sQuestion, $aArgs),

@@ -2,6 +2,10 @@
 
 namespace Jaxon\Di\Traits;
 
+use Jaxon\App\Dialog\Library\AlertInterface;
+use Jaxon\App\Dialog\Library\ConfirmInterface;
+use Jaxon\App\Dialog\Library\ModalInterface;
+use Jaxon\App\Dialog\Library\NoDialogLibrary;
 use Jaxon\App\Dialog\Manager\DialogCommand;
 use Jaxon\App\Dialog\Manager\LibraryRegistryInterface;
 use Jaxon\App\Pagination\Renderer;
@@ -45,12 +49,27 @@ trait ViewTrait
         });
 
         // By default there is no dialog library registry.
-        $this->set(LibraryRegistryInterface::class, function($di) {
-            return null;
-        });
+        $this->set(NoDialogLibrary::class, fn() => new NoDialogLibrary());
+        $this->set(LibraryRegistryInterface::class, fn($di) =>
+            new class($di) implements LibraryRegistryInterface
+            {
+                public function __construct(private $di){}
+                public function getAlertLibrary(): AlertInterface
+                {
+                    return $this->di->g(NoDialogLibrary::class);
+                }
+                public function getConfirmLibrary(): ConfirmInterface
+                {
+                    return $this->di->g(NoDialogLibrary::class);
+                }
+                public function getModalLibrary(): ?ModalInterface
+                {
+                    return null;
+                }
+            });
         // Dialog command
         $this->set(DialogCommand::class, function($di) {
-            return new DialogCommand($di->g(LibraryRegistryInterface::class));
+            return new DialogCommand(fn() => $di->g(LibraryRegistryInterface::class));
         });
         // Pagination renderer
         $this->set(RendererInterface::class, function($di) {

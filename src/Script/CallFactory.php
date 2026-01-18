@@ -14,14 +14,12 @@ namespace Jaxon\Script;
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-use Jaxon\App\Dialog\Manager\DialogCommand;
 use Jaxon\Di\ComponentContainer;
 use Jaxon\Exception\SetupException;
 use Jaxon\Script\Call\JsSelectorCall;
 use Jaxon\Script\Call\JqSelectorCall;
 use Jaxon\Script\Call\JsObjectCall;
 use Jaxon\Script\Call\JxnCall;
-use Jaxon\Script\JsExpr;
 use Closure;
 
 use function trim;
@@ -32,12 +30,9 @@ class CallFactory
      * The constructor.
      *
      * @param ComponentContainer $cdi
-     * @param DialogCommand $xDialogCommand
      */
-    public function __construct(private ComponentContainer $cdi, DialogCommand $xDialogCommand)
-    {
-        JsExpr::setDialogCommand($xDialogCommand);
-    }
+    public function __construct(private ComponentContainer $cdi)
+    {}
 
     /**
      * Get a factory for a registered class.

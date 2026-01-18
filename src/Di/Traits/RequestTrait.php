@@ -3,7 +3,6 @@
 namespace Jaxon\Di\Traits;
 
 use Jaxon\App\Config\ConfigManager;
-use Jaxon\App\Dialog\Manager\DialogCommand;
 use Jaxon\App\I18n\Translator;
 use Jaxon\Di\ComponentContainer;
 use Jaxon\Di\Container;
@@ -34,7 +33,7 @@ trait RequestTrait
         });
         // Callback Manager
         $this->set(CallbackManager::class, function($di) {
-            return new CallbackManager($di->g(ResponseManager::class));
+            return new CallbackManager();
         });
         // By default, register a null upload handler
         $this->set(UploadHandlerInterface::class, function() {
@@ -48,7 +47,7 @@ trait RequestTrait
         });
         // Requests and calls Factory
         $this->set(CallFactory::class, function($di) {
-            return new CallFactory($di->g(ComponentContainer::class), $di->g(DialogCommand::class));
+            return new CallFactory($di->g(ComponentContainer::class));
         });
         // Factory for function parameters
         $this->set(ParameterFactory::class, function() {

@@ -30,6 +30,7 @@ use Jaxon\Request\Handler\CallbackManager;
 use Jaxon\Request\Target;
 use Jaxon\Script\Call\JxnCall;
 use Jaxon\Script\Call\JxnClassCall;
+use Jaxon\Script\JsExpr;
 use Pimple\Container as PimpleContainer;
 use Closure;
 use ReflectionClass;
@@ -95,6 +96,8 @@ class ComponentContainer
                 ]);
             }
         });
+
+        JsExpr::setDialogCommand($di->getDialogCommand());
 
         $this->setComponentPublicMethods('node', NodeComponent::class, ['item', 'html']);
         $this->setComponentPublicMethods('func', FuncComponent::class, ['paginator']);
