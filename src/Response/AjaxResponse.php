@@ -25,6 +25,7 @@ use Jaxon\App\Databag\DatabagContext;
 use Jaxon\App\Pagination\Paginator;
 use Jaxon\Exception\AppException;
 use Jaxon\Plugin\Response\Databag\DatabagPlugin;
+use Jaxon\Plugin\Response\Dialog\DialogPlugin;
 use Jaxon\Plugin\Response\Pagination\PaginatorPlugin;
 use Jaxon\Plugin\Response\Psr\PsrPlugin;
 use Jaxon\Plugin\Response\Script\ScriptPlugin;
@@ -214,6 +215,16 @@ abstract class AjaxResponse extends AbstractResponse
     public function bag(string $sName): DatabagContext
     {
         return $this->plugin(DatabagPlugin::class)->bag($sName);
+    }
+
+    /**
+     * Get the dialog plugin
+     *
+     * @return DialogPlugin
+     */
+    public function dialog(): DialogPlugin
+    {
+        return $this->plugin(DialogPlugin::class);
     }
 
     /**

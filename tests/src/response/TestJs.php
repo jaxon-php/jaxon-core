@@ -18,7 +18,7 @@ class TestJs extends FuncComponent
         }, 'Confirm?');
     }
 
-    public function alert()
+    public function message()
     {
         $this->response()->alert('This is an alert!!');
     }

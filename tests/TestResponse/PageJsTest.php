@@ -98,7 +98,7 @@ class PageJsTest extends TestCase
                     'jxncall' => json_encode([
                         'type' => 'class',
                         'name' => 'TestJs',
-                        'method' => 'alert',
+                        'method' => 'message',
                         'args' => [],
                     ]),
                 ])

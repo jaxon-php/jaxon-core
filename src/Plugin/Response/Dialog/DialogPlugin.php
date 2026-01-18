@@ -74,8 +74,8 @@ class DialogPlugin implements PluginInterface, ResponsePluginInterface, ModalInt
     public function show(string $sTitle, string $sContent, array $aButtons = [], array $aOptions = []): void
     {
         // Show the modal dialog
-        $this->addCommand('dialog.modal.show',
-            $this->xDialogCommand->show($sTitle, $sContent, $aButtons, $aOptions));
+        $this->addCommand('dialog.modal.show', $this->xDialogCommand
+            ->show($sTitle, $sContent, $aButtons, $aOptions));
     }
 
     /**
@@ -101,7 +101,8 @@ class DialogPlugin implements PluginInterface, ResponsePluginInterface, ModalInt
      */
     public function success(string $sMessage, ...$aArgs): void
     {
-        $this->addCommand('dialog.alert.show', $this->xDialogCommand->success($sMessage, $aArgs));
+        $this->addCommand('dialog.alert.show', $this->xDialogCommand
+            ->success($sMessage, $aArgs));
     }
 
     /**
@@ -109,7 +110,8 @@ class DialogPlugin implements PluginInterface, ResponsePluginInterface, ModalInt
      */
     public function info(string $sMessage, ...$aArgs): void
     {
-        $this->addCommand('dialog.alert.show', $this->xDialogCommand->info($sMessage, $aArgs));
+        $this->addCommand('dialog.alert.show', $this->xDialogCommand
+            ->info($sMessage, $aArgs));
     }
 
     /**
@@ -117,7 +119,8 @@ class DialogPlugin implements PluginInterface, ResponsePluginInterface, ModalInt
      */
     public function warning(string $sMessage, ...$aArgs): void
     {
-        $this->addCommand('dialog.alert.show', $this->xDialogCommand->warning($sMessage, $aArgs));
+        $this->addCommand('dialog.alert.show', $this->xDialogCommand
+            ->warning($sMessage, $aArgs));
     }
 
     /**
@@ -125,6 +128,7 @@ class DialogPlugin implements PluginInterface, ResponsePluginInterface, ModalInt
      */
     public function error(string $sMessage, ...$aArgs): void
     {
-        $this->addCommand('dialog.alert.show', $this->xDialogCommand->error($sMessage, $aArgs));
+        $this->addCommand('dialog.alert.show', $this->xDialogCommand
+            ->error($sMessage, $aArgs));
     }
 }
