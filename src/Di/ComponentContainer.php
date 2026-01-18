@@ -52,11 +52,14 @@ class ComponentContainer
     private $xContainer;
 
     /**
-     * This will be set only when getting the object targetted by the ajax request.
-     *
+     * @var string
+     */
+    private string $sCurrentClassName = '';
+
+    /**
      * @var Target|null
      */
-    private $xTarget = null;
+    private Target|null $xCurrentTarget = null;
 
     /**
      * The class constructor
@@ -159,7 +162,41 @@ class ComponentContainer
     }
 
     /**
-     * Get a component helper
+     * Get the component called in the ajax request.
+     *
+     * @template T
+     * @param class-string<T> $sClassName the class name
+     * @param Target $xTarget
+     *
+     * @return T|null
+     */
+    public function getCalledComponent(string $sClassName, Target $xTarget): mixed
+    {
+        $this->sCurrentClassName = $sClassName;
+        $this->xCurrentTarget = $xTarget;
+
+        $xComponent = $this->get($sClassName);
+        /** @var CallableObject */
+        $xCallableObject = $this->get($this->getCallableObjectKey($sClassName));
+        $xCallableObject->setDiMethodAttributes($xComponent, $xTarget->method());
+
+        return $xComponent;
+    }
+
+    /**
+     * Get the component target
+     *
+     * @param string $sClassName the class name
+     *
+     * @return Target|null
+     */
+    public function getComponentTarget(string $sClassName): Target|null
+    {
+        return $sClassName === $this->sCurrentClassName ? $this->xCurrentTarget : null;
+    }
+
+    /**
+     * Get the component helper
      *
      * @param string $sClassName the class name
      *
@@ -168,32 +205,6 @@ class ComponentContainer
     public function getComponentHelper(string $sClassName): ComponentHelper
     {
         return $this->get($this->getCallableHelperKey($sClassName));
-    }
-
-    /**
-     * Set the target for the component which is called by the request
-     *
-     * @param string $sClassName the class name
-     * @param Target $xTarget
-     *
-     * @return void
-     */
-    public function setComponentTarget(string $sClassName, Target $xTarget): void
-    {
-        $this->val($this->getCallableTargetKey($sClassName), $xTarget);
-    }
-
-    /**
-     * Get a component when one of its method needs to be called
-     *
-     * @param string $sClassName the class name
-     *
-     * @return Target|null
-     */
-    private function getComponentTarget(string $sClassName): Target|null
-    {
-        $sKey = $this->getCallableTargetKey($sClassName);
-        return $this->has($sKey) ? $this->get($sKey) : null;
     }
 
     /**
@@ -265,7 +276,6 @@ class ComponentContainer
         $this->set($this->getCallableHelperKey($sClassName),
             fn() => new ComponentHelper($this->di->getViewRenderer(),
                 $this->di->getLogger(), $this->di->getStash(),
-                $this->getComponentTarget($sClassName),
                 $this->di->getUploadHandler(), $this->di->getSessionManager()));
 
         $this->discoverComponent($sClassName);
@@ -284,7 +294,7 @@ class ComponentContainer
             {
                 // Call the protected "initComponent()" method of the Component class.
                 $cSetter = function($di, $xFactory) {
-                    // "$this" here refers to the Component class.
+                    // "$this" here refers to the AbstractComponent instance.
                     $this->initComponent($di, $xFactory); 
                 };
                 $cSetter = $cSetter->bindTo($xClassInstance, $xClassInstance);
@@ -297,15 +307,10 @@ class ComponentContainer
 
             // Set attributes from the DI container.
             // The class level DI options are set on any component.
-            // The method level DI options are set only on the targetted component.
+            // The method level DI options will be set only on the targetted component.
             /** @var CallableObject */
             $xCallableObject = $this->get($this->getCallableObjectKey($sClassName));
             $xCallableObject->setDiClassAttributes($xClassInstance);
-            if($this->xTarget !== null)
-            {
-                $sMethodName = $this->xTarget->getMethodName();
-                $xCallableObject->setDiMethodAttributes($xClassInstance, $sMethodName);
-            }
 
             return $xClassInstance;
         });

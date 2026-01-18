@@ -146,7 +146,7 @@ class ComponentOptions
     {
         foreach(['base', 'only', 'except'] as $sKey)
         {
-            if(isset($aExportMethods[$sKey]))
+            if(is_array($aExportMethods[$sKey] ?? false))
             {
                 $this->aExportMethods[$sKey] = array_unique([
                     ...($this->aExportMethods[$sKey] ?? []),

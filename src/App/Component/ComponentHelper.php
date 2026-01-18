@@ -17,8 +17,7 @@ namespace Jaxon\App\Component;
 use Jaxon\App\Session\SessionInterface;
 use Jaxon\App\Stash\Stash;
 use Jaxon\App\View\ViewRenderer;
-use Jaxon\Request\Target;
-use Jaxon\Request\Upload\UploadHandlerInterface as UploadHandler;
+use Jaxon\Request\Upload\UploadHandlerInterface;
 use Psr\Log\LoggerInterface;
 
 class ComponentHelper
@@ -27,13 +26,12 @@ class ComponentHelper
      * @param ViewRenderer $xViewRenderer
      * @param LoggerInterface $xLogger
      * @param Stash $xStash
-     * @param Target|null $xTarget
-     * @param UploadHandler|null $xUploadHandler
+     * @param UploadHandlerInterface|null $xUploadHandler
      * @param SessionInterface|null $xSessionManager
      */
     public function __construct(public readonly ViewRenderer $xViewRenderer,
         public readonly LoggerInterface $xLogger, public readonly Stash $xStash,
-        public readonly ?Target $xTarget, public readonly ?UploadHandler $xUploadHandler,
+        public readonly ?UploadHandlerInterface $xUploadHandler,
         public readonly ?SessionInterface $xSessionManager)
     {}
 }

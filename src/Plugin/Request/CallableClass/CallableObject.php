@@ -253,9 +253,7 @@ class CallableObject
     public function call(Target $xTarget): void
     {
         $this->xTarget = $xTarget;
-        $sClassName = $this->getClassName();
-        $this->cdi->setComponentTarget($sClassName, $xTarget);
-        $this->xComponent = $this->cdi->get($sClassName);
+        $this->xComponent = $this->cdi->getCalledComponent($this->getClassName(), $xTarget);
 
         // Methods to call before processing the request
         $this->callHookMethods($this->xOptions->beforeMethods());

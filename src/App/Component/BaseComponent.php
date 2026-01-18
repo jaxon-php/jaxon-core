@@ -33,9 +33,9 @@ abstract class BaseComponent extends AbstractComponent
      *
      * @return TargetInterface|null
      */
-    protected function target(): ?TargetInterface
+    protected function target(): TargetInterface|null
     {
-        return $this->helper()->xTarget;
+        return $this->factory()->target();
     }
 
     /**

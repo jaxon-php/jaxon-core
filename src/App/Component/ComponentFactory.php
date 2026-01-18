@@ -16,12 +16,23 @@ namespace Jaxon\App\Component;
 
 use Jaxon\Di\ComponentContainer;
 use Jaxon\Exception\SetupException;
+use Jaxon\Request\Target;
 use Jaxon\Script\Call\JxnCall;
 
 use function trim;
 
 class ComponentFactory
 {
+    /**
+     * @var ComponentHelper|null
+     */
+    private ComponentHelper|null $xHelper = null;
+
+    /**
+     * @var Target|null
+     */
+    private Target|null $xTarget = null;
+
     /**
      * @var JxnCall
      */
@@ -33,6 +44,22 @@ class ComponentFactory
      */
     public function __construct(private ComponentContainer $cdi, private string $sClassName)
     {}
+
+    /**
+     * @return ComponentHelper
+     */
+    public function helper(): ComponentHelper
+    {
+        return $this->xHelper ??= $this->cdi->getComponentHelper($this->sClassName);
+    }
+
+    /**
+     * @return Target
+     */
+    public function target(): Target
+    {
+        return $this->xTarget ??= $this->cdi->getComponentTarget($this->sClassName);
+    }
 
     /**
      * @return JxnCall
@@ -67,13 +94,5 @@ class ComponentFactory
     {
         return !($sClassName = trim($sClassName)) ? $this->jxnCall() :
             $this->cdi->getComponentRequestFactory($sClassName);
-    }
-
-    /**
-     * @return ComponentHelper
-     */
-    public function helper(): ComponentHelper
-    {
-        return $this->cdi->getComponentHelper($this->sClassName);
     }
 }
