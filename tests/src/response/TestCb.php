@@ -6,7 +6,7 @@ class TestCb extends FuncComponent
 {
     public function simple()
     {
-        $this->response->alert('This is the global response!');
+        $this->response()->alert('This is the global response!');
     }
 
     /**

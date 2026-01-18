@@ -10,7 +10,7 @@ trait NodeResponseTrait
     /**
      * @var NodeResponse
      */
-    protected $nodeResponse = null;
+    protected readonly NodeResponse $nodeResponse;
 
     /**
      * @var string
@@ -36,6 +36,16 @@ trait NodeResponseTrait
      * @return NodeResponse
      */
     final protected function node(): NodeResponse
+    {
+        return $this->nodeResponse;
+    }
+
+    /**
+     * Get the component response
+     *
+     * @return NodeResponse
+     */
+    final protected function nodeResponse(): NodeResponse
     {
         return $this->nodeResponse;
     }

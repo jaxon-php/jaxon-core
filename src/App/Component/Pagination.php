@@ -2,21 +2,20 @@
 
 namespace Jaxon\App\Component;
 
+use Jaxon\App\Component\ComponentFactory;
 use Jaxon\App\Pagination\Paginator;
 use Jaxon\Di\Container;
-use Jaxon\Plugin\Request\CallableClass\ComponentHelper;
 
 class Pagination extends AbstractComponent
 {
-    use HelperTrait;
     use NodeResponseTrait;
 
     /**
      * @inheritDoc
      */
-    final protected function initComponent(Container $di, ComponentHelper $xHelper): void
+    final protected function initComponent(Container $di, ComponentFactory $xFactory): void
     {
-        $this->setHelper($xHelper);
+        $this->setFactory($xFactory);
         $this->setNodeResponse($di);
     }
 
@@ -31,6 +30,6 @@ class Pagination extends AbstractComponent
      */
     final public function paginator(int $nPageNumber, int $nItemsPerPage, int $nTotalItems): Paginator
     {
-        return $this->nodeResponse->paginator($nPageNumber, $nItemsPerPage, $nTotalItems);
+        return $this->node()->paginator($nPageNumber, $nItemsPerPage, $nTotalItems);
     }
 }

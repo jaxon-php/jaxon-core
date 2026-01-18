@@ -2,22 +2,20 @@
 
 namespace Jaxon\App;
 
+use Jaxon\App\Component\ComponentFactory;
 use Jaxon\App\Pagination\Paginator;
 use Jaxon\Di\Container;
-use Jaxon\Plugin\Request\CallableClass\ComponentHelper;
 
-abstract class FuncComponent extends Component\AbstractComponent
+abstract class FuncComponent extends Component\BaseComponent
 {
-    use Component\HelperTrait;
     use Component\AjaxResponseTrait;
-    use Component\ComponentTrait;
 
     /**
      * @inheritDoc
      */
-    final protected function initComponent(Container $di, ComponentHelper $xHelper): void
+    final protected function initComponent(Container $di, ComponentFactory $xFactory): void
     {
-        $this->setHelper($xHelper);
+        $this->setFactory($xFactory);
         $this->setAjaxResponse($di);
         // Allow the user app to setup the component.
         $this->setupComponent();
@@ -34,6 +32,6 @@ abstract class FuncComponent extends Component\AbstractComponent
      */
     final public function paginator(int $nPageNumber, int $nItemsPerPage, int $nTotalItems): Paginator
     {
-        return $this->response->paginator($nPageNumber, $nItemsPerPage, $nTotalItems);
+        return $this->response()->paginator($nPageNumber, $nItemsPerPage, $nTotalItems);
     }
 }

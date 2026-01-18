@@ -16,6 +16,8 @@ namespace Jaxon\Di;
 
 use Jaxon\App\Component;
 use Jaxon\App\Component\AbstractComponent;
+use Jaxon\App\Component\ComponentFactory;
+use Jaxon\App\Component\ComponentHelper;
 use Jaxon\App\Component\Logger as LoggerComponent;
 use Jaxon\App\Component\Pagination;
 use Jaxon\App\Config\ConfigManager;
@@ -24,7 +26,6 @@ use Jaxon\App\I18n\Translator;
 use Jaxon\App\NodeComponent;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\Request\CallableClass\CallableObject;
-use Jaxon\Plugin\Request\CallableClass\ComponentHelper;
 use Jaxon\Request\Handler\CallbackManager;
 use Jaxon\Request\Target;
 use Jaxon\Script\Call\JxnCall;
@@ -158,22 +159,41 @@ class ComponentContainer
     }
 
     /**
-     * Get a component when one of its method needs to be called
+     * Get a component helper
      *
-     * @template T
-     * @param class-string<T> $sClassName the class name
+     * @param string $sClassName the class name
+     *
+     * @return ComponentHelper
+     */
+    public function getComponentHelper(string $sClassName): ComponentHelper
+    {
+        return $this->get($this->getCallableHelperKey($sClassName));
+    }
+
+    /**
+     * Set the target for the component which is called by the request
+     *
+     * @param string $sClassName the class name
      * @param Target $xTarget
      *
-     * @return T|null
+     * @return void
      */
-    public function getTargetComponent(string $sClassName, Target $xTarget): mixed
+    public function setComponentTarget(string $sClassName, Target $xTarget): void
     {
-        // Set the target only when getting the object targetted by the ajax request.
-        $this->xTarget = $xTarget;
-        $xComponent = $this->get($sClassName);
-        $this->xTarget = null;
+        $this->val($this->getCallableTargetKey($sClassName), $xTarget);
+    }
 
-        return $xComponent;
+    /**
+     * Get a component when one of its method needs to be called
+     *
+     * @param string $sClassName the class name
+     *
+     * @return Target|null
+     */
+    private function getComponentTarget(string $sClassName): Target|null
+    {
+        $sKey = $this->getCallableTargetKey($sClassName);
+        return $this->has($sKey) ? $this->get($sKey) : null;
     }
 
     /**
@@ -237,14 +257,16 @@ class ComponentContainer
             return $sClassName;
         }
 
-        // Register the helper class
-        $this->set($this->getCallableHelperKey($sClassName), function() use($sClassName) {
-            $xFactory = $this->di->getCallFactory();
-            return new ComponentHelper($this, $xFactory->rq($sClassName),
-                $xFactory, $this->di->getViewRenderer(),
-                $this->di->getLogger(), $this->di->getSessionManager(),
-                $this->di->getStash(), $this->di->getUploadHandler());
-        });
+        // Register the callable factory class
+        $this->set($this->getCallableFactoryKey($sClassName),
+            fn() => new ComponentFactory($this, $sClassName));
+
+        // Register the callable helper class
+        $this->set($this->getCallableHelperKey($sClassName),
+            fn() => new ComponentHelper($this->di->getViewRenderer(),
+                $this->di->getLogger(), $this->di->getStash(),
+                $this->getComponentTarget($sClassName),
+                $this->di->getUploadHandler(), $this->di->getSessionManager()));
 
         $this->discoverComponent($sClassName);
 
@@ -260,15 +282,14 @@ class ComponentContainer
         $this->xContainer->extend($sClassName, function($xClassInstance) use($sClassName) {
             if($xClassInstance instanceof AbstractComponent)
             {
-                $xHelper = $this->get($this->getCallableHelperKey($sClassName));
-                $xHelper->xTarget = $this->xTarget;
-
                 // Call the protected "initComponent()" method of the Component class.
-                $cSetter = function($di, $xHelper) {
-                    $this->initComponent($di, $xHelper);  // "$this" here refers to the Component class.
+                $cSetter = function($di, $xFactory) {
+                    // "$this" here refers to the Component class.
+                    $this->initComponent($di, $xFactory); 
                 };
                 $cSetter = $cSetter->bindTo($xClassInstance, $xClassInstance);
-                call_user_func($cSetter, $this->di, $xHelper);
+                $xFactory = $this->get($this->getCallableFactoryKey($sClassName));
+                call_user_func($cSetter, $this->di, $xFactory);
             }
 
             // Run the callbacks for class initialisation

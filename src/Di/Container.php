@@ -204,7 +204,8 @@ class Container implements ContainerInterface
         {
             $xLogger = $this->g(LoggerInterface::class);
             $xTranslator = $this->g(Translator::class);
-            $sMessage = $e->getMessage() . ': ' . $xTranslator->trans('errors.class.container', ['name' => $sClass]);
+            $sMessage = $e->getMessage() . ': ' .
+                $xTranslator->trans('errors.class.container', ['name' => $sClass]);
             $xLogger->error($e->getMessage(), ['message' => $sMessage]);
             throw new SetupException($sMessage);
         }
@@ -250,9 +251,7 @@ class Container implements ContainerInterface
      */
     public function alias(string $sAlias, string $sClass)
     {
-        $this->set($sAlias, function($di) use ($sClass) {
-            return $di->get($sClass);
-        });
+        $this->set($sAlias, fn($di) => $di->get($sClass));
     }
 
     /**

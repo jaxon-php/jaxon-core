@@ -7,7 +7,7 @@ class SamplePackageClass extends FuncComponent
 {
     public function home()
     {
-        $this->response->debug('This class is registered by a package!!');
+        $this->response()->debug('This class is registered by a package!!');
     }
 }
 

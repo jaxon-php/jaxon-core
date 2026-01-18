@@ -26,11 +26,11 @@ use Jaxon\Plugin\AbstractResponsePlugin;
  *
  * Step 2: Create a paginator and render the pagination into the wrapper.
  *
- * $this->response->pg->paginator($pageNumber, $perPage, $total)
+ * $this->response()->pg->paginator($pageNumber, $perPage, $total)
  *     ->render($this->rq()->page(), $wrapperId);
  *
  * // Or, using the response shortcut
- * $this->response->paginator($pageNumber, $perPage, $total)
+ * $this->response()->paginator($pageNumber, $perPage, $total)
  *     ->render($this->rq()->page(), $wrapperId);
  *
  * // In a class that inherits from CallableClass

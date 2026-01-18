@@ -2,32 +2,31 @@
 
 namespace Jaxon\App\Component;
 
-use Jaxon\App\Databag\DatabagContext;
+use Jaxon\App\Component\ComponentHelper;
 use Jaxon\App\Session\SessionInterface;
 use Jaxon\App\Stash\Stash;
 use Jaxon\App\View\ViewRenderer;
-use Jaxon\Exception\SetupException;
-use Jaxon\Plugin\Request\CallableClass\ComponentHelper;
 use Jaxon\Request\TargetInterface;
 use Jaxon\Request\Upload\FileInterface;
-use Jaxon\Response\AjaxResponse;
 use Psr\Log\LoggerInterface;
 
-trait ComponentTrait
+abstract class BaseComponent extends AbstractComponent
 {
     /**
-     * Get the component helper
+     * Initialize the component
      *
-     * @return ComponentHelper
+     * @return void
      */
-    abstract protected function helper(): ComponentHelper;
+    protected function setupComponent(): void
+    {}
 
     /**
-     * Get the Ajax response
-     *
-     * @return AjaxResponse
+     * @return ComponentHelper
      */
-    abstract protected function response(): AjaxResponse;
+    protected function helper(): ComponentHelper
+    {
+        return $this->factory()->helper();
+    }
 
     /**
      * Get the Jaxon request target
@@ -47,20 +46,6 @@ trait ComponentTrait
     protected function stash(): Stash
     {
         return $this->helper()->xStash;
-    }
-
-    /**
-     * Get an instance of a Jaxon class by name
-     *
-     * @template T
-     * @param class-string<T> $sClassName the class name
-     *
-     * @return T|null
-     * @throws SetupException
-     */
-    protected function cl(string $sClassName): mixed
-    {
-        return $this->helper()->cl($sClassName);
     }
 
     /**
@@ -101,17 +86,5 @@ trait ComponentTrait
     protected function files(): array
     {
         return $this->helper()->xUploadHandler->files();
-    }
-
-    /**
-     * Get a data bag.
-     *
-     * @param string  $sBagName
-     *
-     * @return DatabagContext
-     */
-    protected function bag(string $sBagName): DatabagContext
-    {
-        return $this->response()->bag($sBagName);
     }
 }

@@ -115,6 +115,26 @@ trait ComponentTrait
     }
 
     /**
+     * @param class-string $sClassName The component name
+     *
+     * @return string
+     */
+    private function getCallableFactoryKey(string $sClassName): string
+    {
+        return "{$sClassName}_CallableFactory";
+    }
+
+    /**
+     * @param class-string $sClassName The component name
+     *
+     * @return string
+     */
+    private function getCallableTargetKey(string $sClassName): string
+    {
+        return "{$sClassName}_CallableTarget";
+    }
+
+    /**
      * @param string $sClassName
      * @param array $aOptions
      *

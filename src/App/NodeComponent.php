@@ -2,25 +2,23 @@
 
 namespace Jaxon\App;
 
+use Jaxon\App\Component\ComponentFactory;
 use Jaxon\Di\Container;
-use Jaxon\Plugin\Request\CallableClass\ComponentHelper;
 use Stringable;
 
-abstract class NodeComponent extends Component\AbstractComponent
+abstract class NodeComponent extends Component\BaseComponent
 {
-    use Component\HelperTrait;
-    use Component\NodeResponseTrait;
     use Component\AjaxResponseTrait;
-    use Component\ComponentTrait;
+    use Component\NodeResponseTrait;
 
     /**
      * @inheritDoc
      */
-    final protected function initComponent(Container $di, ComponentHelper $xHelper): void
+    final protected function initComponent(Container $di, ComponentFactory $xFactory): void
     {
-        $this->setHelper($xHelper);
-        $this->setNodeResponse($di);
+        $this->setFactory($xFactory);
         $this->setAjaxResponse($di);
+        $this->setNodeResponse($di);
         // Allow the user app to setup the component.
         $this->setupComponent();
     }
