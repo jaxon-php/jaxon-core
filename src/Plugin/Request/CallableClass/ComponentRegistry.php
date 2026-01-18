@@ -209,6 +209,10 @@ class ComponentRegistry
             {
                 $aClassOptions['excluded'] = (bool)$aOptionGroup['excluded'];
             }
+            if(isset($aOptionGroup['export']))
+            {
+                $aClassOptions['export'] = (array)$aOptionGroup['export'];
+            }
             if(isset($aOptionGroup['protected']))
             {
                 if(is_string($aOptionGroup['protected']))
