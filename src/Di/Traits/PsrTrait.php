@@ -36,9 +36,7 @@ trait PsrTrait
     private function registerPsr(): void
     {
         // The server request
-        $this->set(Psr17Factory::class, function() {
-            return new Psr17Factory();
-        });
+        $this->set(Psr17Factory::class, fn() => new Psr17Factory());
         $this->set(ServerRequestCreator::class, function($di) {
             $xPsr17Factory = $di->g(Psr17Factory::class);
             return new ServerRequestCreator(
@@ -48,37 +46,31 @@ trait PsrTrait
                 $xPsr17Factory, // StreamFactory
             );
         });
-        $this->set(ServerRequestInterface::class, function($di) {
-            return $di->g(ServerRequestCreator::class)->fromGlobals();
-        });
+        $this->set(ServerRequestInterface::class, fn($di) =>
+            $di->g(ServerRequestCreator::class)->fromGlobals());
         // Server request with the Jaxon request parameter as attribute
         $this->set($this->sPsrServerRequest, function($di) {
             /** @var ParameterReader */
             $xParameterReader = $di->g(ParameterReader::class);
             return $xParameterReader->setRequestParameter($di->g(ServerRequestInterface::class));
         });
+
         // PSR factory
-        $this->set(PsrFactory::class, function($di) {
-            return new PsrFactory($di->g(Container::class));
-        });
+        $this->set(PsrFactory::class, fn($di) => new PsrFactory($di->g(Container::class)));
         // PSR request handler
-        $this->set(PsrRequestHandler::class, function($di) {
-            return new PsrRequestHandler($di->g(Container::class), $di->g(RequestHandler::class),
-                $di->g(ResponseManager::class), $di->g(Translator::class));
-        });
+        $this->set(PsrRequestHandler::class, fn($di) =>
+            new PsrRequestHandler($di->g(Container::class), $di->g(RequestHandler::class),
+                $di->g(ResponseManager::class), $di->g(Translator::class)));
         // PSR config middleware
-        $this->set(PsrConfigMiddleware::class, function($di) {
-            return new PsrConfigMiddleware($di->g(Container::class), $di->g($this->sPsrConfig));
-        });
+        $this->set(PsrConfigMiddleware::class, fn($di) =>
+            new PsrConfigMiddleware($di->g(Container::class), $di->g($this->sPsrConfig)));
         // PSR ajax middleware
-        $this->set(PsrAjaxMiddleware::class, function($di) {
-            return new PsrAjaxMiddleware($di->g(Container::class), $di->g(RequestHandler::class),
-                $di->g(ResponseManager::class));
-        });
+        $this->set(PsrAjaxMiddleware::class, fn($di) =>
+            new PsrAjaxMiddleware($di->g(Container::class),
+                $di->g(RequestHandler::class), $di->g(ResponseManager::class)));
         // The PSR response plugin
-        $this->set(PsrPlugin::class, function($di) {
-            return new PsrPlugin($di->g(Psr17Factory::class), $di->g(ServerRequestInterface::class));
-        });
+        $this->set(PsrPlugin::class, fn($di) =>
+            new PsrPlugin($di->g(Psr17Factory::class), $di->g(ServerRequestInterface::class)));
     }
 
     /**

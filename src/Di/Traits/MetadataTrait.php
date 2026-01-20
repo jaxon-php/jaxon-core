@@ -21,14 +21,12 @@ trait MetadataTrait
             new MetadataCache($di->g('jaxon_metadata_cache_dir')));
 
         // By default, register a fake metadata reader.
-        $this->set('metadata_reader_null', function() {
-            return new class implements MetadataReaderInterface
+        $this->set('metadata_reader_null', fn() => new class implements MetadataReaderInterface
+        {
+            public function getAttributes(InputData $xInputData): Metadata
             {
-                public function getAttributes(InputData $xInputData): Metadata
-                {
-                    return new Metadata();
-                }
-            };
+                return new Metadata();
+            }
         });
     }
 

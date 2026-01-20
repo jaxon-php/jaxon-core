@@ -33,8 +33,8 @@ class ResponseCallTest extends TestCase
     public function testCallConfirm()
     {
         // Send a request to the registered class
-        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)
+        jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
+            $c->g(ServerRequestCreator::class)
                 ->fromGlobals()
                 ->withParsedBody([
                     'jxncall' => json_encode([
@@ -44,8 +44,7 @@ class ResponseCallTest extends TestCase
                         'args' => [],
                     ]),
                 ])
-                ->withMethod('POST');
-        });
+                ->withMethod('POST'));
 
         // Process the request and get the response
         jaxon()->di()->getRequestHandler()->processRequest();
@@ -59,8 +58,8 @@ class ResponseCallTest extends TestCase
     public function testCallConfirmElseWarning()
     {
         // Send a request to the registered class
-        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)
+        jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
+            $c->g(ServerRequestCreator::class)
                 ->fromGlobals()
                 ->withParsedBody([
                     'jxncall' => json_encode([
@@ -70,8 +69,7 @@ class ResponseCallTest extends TestCase
                         'args' => [],
                     ]),
                 ])
-                ->withMethod('POST');
-        });
+                ->withMethod('POST'));
 
         // Process the request and get the response
         jaxon()->di()->getRequestHandler()->processRequest();
@@ -85,8 +83,8 @@ class ResponseCallTest extends TestCase
     public function testCallConfirmElseError()
     {
         // Send a request to the registered class
-        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)
+        jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
+            $c->g(ServerRequestCreator::class)
                 ->fromGlobals()
                 ->withParsedBody([
                     'jxncall' => json_encode([
@@ -96,8 +94,7 @@ class ResponseCallTest extends TestCase
                         'args' => [],
                     ]),
                 ])
-                ->withMethod('POST');
-        });
+                ->withMethod('POST'));
 
         // Process the request and get the response
         jaxon()->di()->getRequestHandler()->processRequest();
@@ -111,8 +108,8 @@ class ResponseCallTest extends TestCase
     public function testCallConditionIfeq()
     {
         // Send a request to the registered class
-        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)
+        jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
+            $c->g(ServerRequestCreator::class)
                 ->fromGlobals()
                 ->withParsedBody([
                     'jxncall' => json_encode([
@@ -122,8 +119,7 @@ class ResponseCallTest extends TestCase
                         'args' => [],
                     ]),
                 ])
-                ->withMethod('POST');
-        });
+                ->withMethod('POST'));
 
         // Process the request and get the response
         jaxon()->di()->getRequestHandler()->processRequest();
@@ -137,8 +133,8 @@ class ResponseCallTest extends TestCase
     public function testCallConditionIfteq()
     {
         // Send a request to the registered class
-        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)
+        jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
+            $c->g(ServerRequestCreator::class)
                 ->fromGlobals()
                 ->withParsedBody([
                     'jxncall' => json_encode([
@@ -148,8 +144,7 @@ class ResponseCallTest extends TestCase
                         'args' => [],
                     ]),
                 ])
-                ->withMethod('POST');
-        });
+                ->withMethod('POST'));
 
         // Process the request and get the response
         jaxon()->di()->getRequestHandler()->processRequest();
@@ -163,8 +158,8 @@ class ResponseCallTest extends TestCase
     public function testCallConditionIfne()
     {
         // Send a request to the registered class
-        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)
+        jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
+            $c->g(ServerRequestCreator::class)
                 ->fromGlobals()
                 ->withParsedBody([
                     'jxncall' => json_encode([
@@ -174,8 +169,7 @@ class ResponseCallTest extends TestCase
                         'args' => [],
                     ]),
                 ])
-                ->withMethod('POST');
-        });
+                ->withMethod('POST'));
 
         // Process the request and get the response
         jaxon()->di()->getRequestHandler()->processRequest();
@@ -189,8 +183,8 @@ class ResponseCallTest extends TestCase
     public function testCallConditionIfnte()
     {
         // Send a request to the registered class
-        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)
+        jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
+            $c->g(ServerRequestCreator::class)
                 ->fromGlobals()
                 ->withParsedBody([
                     'jxncall' => json_encode([
@@ -200,8 +194,7 @@ class ResponseCallTest extends TestCase
                         'args' => [],
                     ]),
                 ])
-                ->withMethod('POST');
-        });
+                ->withMethod('POST'));
 
         // Process the request and get the response
         jaxon()->di()->getRequestHandler()->processRequest();
@@ -215,8 +208,8 @@ class ResponseCallTest extends TestCase
     public function testCallConditionIfgt()
     {
         // Send a request to the registered class
-        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)
+        jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
+            $c->g(ServerRequestCreator::class)
                 ->fromGlobals()
                 ->withParsedBody([
                     'jxncall' => json_encode([
@@ -226,8 +219,7 @@ class ResponseCallTest extends TestCase
                         'args' => [],
                     ]),
                 ])
-                ->withMethod('POST');
-        });
+                ->withMethod('POST'));
 
         // Process the request and get the response
         jaxon()->di()->getRequestHandler()->processRequest();
@@ -241,8 +233,8 @@ class ResponseCallTest extends TestCase
     public function testCallConditionIfge()
     {
         // Send a request to the registered class
-        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)
+        jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
+            $c->g(ServerRequestCreator::class)
                 ->fromGlobals()
                 ->withParsedBody([
                     'jxncall' => json_encode([
@@ -252,8 +244,7 @@ class ResponseCallTest extends TestCase
                         'args' => [],
                     ]),
                 ])
-                ->withMethod('POST');
-        });
+                ->withMethod('POST'));
 
         // Process the request and get the response
         jaxon()->di()->getRequestHandler()->processRequest();
@@ -267,8 +258,8 @@ class ResponseCallTest extends TestCase
     public function testCallConditionIflt()
     {
         // Send a request to the registered class
-        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)
+        jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
+            $c->g(ServerRequestCreator::class)
                 ->fromGlobals()
                 ->withParsedBody([
                     'jxncall' => json_encode([
@@ -278,8 +269,7 @@ class ResponseCallTest extends TestCase
                         'args' => [],
                     ]),
                 ])
-                ->withMethod('POST');
-        });
+                ->withMethod('POST'));
 
         // Process the request and get the response
         jaxon()->di()->getRequestHandler()->processRequest();
@@ -293,8 +283,8 @@ class ResponseCallTest extends TestCase
     public function testCallConditionIfle()
     {
         // Send a request to the registered class
-        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)
+        jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
+            $c->g(ServerRequestCreator::class)
                 ->fromGlobals()
                 ->withParsedBody([
                     'jxncall' => json_encode([
@@ -304,8 +294,7 @@ class ResponseCallTest extends TestCase
                         'args' => [],
                     ]),
                 ])
-                ->withMethod('POST');
-        });
+                ->withMethod('POST'));
 
         // Process the request and get the response
         jaxon()->di()->getRequestHandler()->processRequest();

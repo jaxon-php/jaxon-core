@@ -44,8 +44,8 @@ class ResponseTest extends TestCase
     public function testResponseContent()
     {
         // Send a request to the registered class
-        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)
+        jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
+            $c->g(ServerRequestCreator::class)
                 ->fromGlobals()
                 ->withParsedBody([
                     'jxncall' => json_encode([
@@ -55,8 +55,7 @@ class ResponseTest extends TestCase
                         'args' => [],
                     ]),
                 ])
-                ->withMethod('POST');
-        });
+                ->withMethod('POST'));
 
         $this->assertEquals('{"jxn":{"commands":[]}}', jaxon()->di()->getResponseManager()->getOutput());
         // Process the request and get the response
@@ -79,8 +78,8 @@ class ResponseTest extends TestCase
     public function testCommandOption()
     {
         // Send a request to the registered class
-        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)
+        jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
+            $c->g(ServerRequestCreator::class)
                 ->fromGlobals()
                 ->withParsedBody([
                     'jxncall' => json_encode([
@@ -90,8 +89,7 @@ class ResponseTest extends TestCase
                         'args' => [],
                     ]),
                 ])
-                ->withMethod('POST');
-        });
+                ->withMethod('POST'));
 
         // Process the request and get the response
         jaxon()->di()->getRequestHandler()->processRequest();
@@ -110,8 +108,8 @@ class ResponseTest extends TestCase
     public function testMergeResponse()
     {
         // Send a request to the registered class
-        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)
+        jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
+            $c->g(ServerRequestCreator::class)
                 ->fromGlobals()
                 ->withParsedBody([
                     'jxncall' => json_encode([
@@ -121,8 +119,7 @@ class ResponseTest extends TestCase
                         'args' => [],
                     ]),
                 ])
-                ->withMethod('POST');
-        });
+                ->withMethod('POST'));
 
         // Process the request and get the response
         jaxon()->di()->getRequestHandler()->processRequest();
@@ -136,8 +133,8 @@ class ResponseTest extends TestCase
     public function testDebugCommand()
     {
         // Send a request to the registered class
-        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)
+        jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
+            $c->g(ServerRequestCreator::class)
                 ->fromGlobals()
                 ->withParsedBody([
                     'jxncall' => json_encode([
@@ -147,8 +144,7 @@ class ResponseTest extends TestCase
                         'args' => [],
                     ]),
                 ])
-                ->withMethod('POST');
-        });
+                ->withMethod('POST'));
 
         jaxon()->di()->getResponseManager()->debug('This is the first debug message!!');
         // Process the request and get the response
@@ -163,8 +159,8 @@ class ResponseTest extends TestCase
     public function testAppendResponseBefore()
     {
         // Send a request to the registered class
-        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)
+        jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
+            $c->g(ServerRequestCreator::class)
                 ->fromGlobals()
                 ->withParsedBody([
                     'jxncall' => json_encode([
@@ -174,8 +170,7 @@ class ResponseTest extends TestCase
                         'args' => [],
                     ]),
                 ])
-                ->withMethod('POST');
-        });
+                ->withMethod('POST'));
 
         // Process the request and get the response
         jaxon()->di()->getRequestHandler()->processRequest();
@@ -186,8 +181,8 @@ class ResponseTest extends TestCase
     public function testResponseCommands()
     {
         // Send a request to the registered class
-        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)
+        jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
+            $c->g(ServerRequestCreator::class)
                 ->fromGlobals()
                 ->withParsedBody([
                     'jxncall' => json_encode([
@@ -197,8 +192,7 @@ class ResponseTest extends TestCase
                         'args' => [],
                     ]),
                 ])
-                ->withMethod('POST');
-        });
+                ->withMethod('POST'));
 
         // Process the request and get the response
         jaxon()->di()->getRequestHandler()->processRequest();
@@ -218,8 +212,8 @@ class ResponseTest extends TestCase
     public function testResponseJsCommands()
     {
         // Send a request to the registered class
-        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)
+        jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
+            $c->g(ServerRequestCreator::class)
                 ->fromGlobals()
                 ->withParsedBody([
                     'jxncall' => json_encode([
@@ -229,8 +223,7 @@ class ResponseTest extends TestCase
                         'args' => [],
                     ]),
                 ])
-                ->withMethod('POST');
-        });
+                ->withMethod('POST'));
 
         // Process the request and get the response
         jaxon()->di()->getRequestHandler()->processRequest();
@@ -247,8 +240,8 @@ class ResponseTest extends TestCase
     public function testResponsePaginator()
     {
         // Send a request to the registered class
-        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)
+        jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
+            $c->g(ServerRequestCreator::class)
                 ->fromGlobals()
                 ->withParsedBody([
                     'jxncall' => json_encode([
@@ -258,8 +251,7 @@ class ResponseTest extends TestCase
                         'args' => [2],
                     ]),
                 ])
-                ->withMethod('POST');
-        });
+                ->withMethod('POST'));
 
         // Process the request and get the response
         jaxon()->di()->getRequestHandler()->processRequest();

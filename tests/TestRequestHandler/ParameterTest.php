@@ -35,8 +35,8 @@ class ParameterTest extends TestCase
     public function testRequestWithNoPlugin()
     {
         // Send a request to the registered class
-        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)
+        jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
+            $c->g(ServerRequestCreator::class)
                 ->fromGlobals()
                 ->withParsedBody([
                     'jxncall' => json_encode([
@@ -44,8 +44,7 @@ class ParameterTest extends TestCase
                         'args' => [],
                     ]),
                 ])
-                ->withMethod('POST');
-        });
+                ->withMethod('POST'));
 
         $this->assertFalse(jaxon()->di()->getRequestHandler()->canProcessRequest());
         // Process the request and get the response
@@ -58,8 +57,8 @@ class ParameterTest extends TestCase
     public function testGetParameterProcessing()
     {
         // The server request
-        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)
+        jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
+            $c->g(ServerRequestCreator::class)
                 ->fromGlobals()
                 ->withQueryParams([
                     'jxncall' => json_encode([
@@ -74,8 +73,7 @@ class ParameterTest extends TestCase
                         ],
                     ]),
                 ])
-                ->withMethod('GET');
-        });
+                ->withMethod('GET'));
 
         $aParameter = jaxon()->di()->getRequestArguments();
 
@@ -105,8 +103,8 @@ class ParameterTest extends TestCase
     public function testPostParameterProcessing()
     {
         // The server request
-        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)
+        jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
+            $c->g(ServerRequestCreator::class)
                 ->fromGlobals()
                 ->withParsedBody([
                     'jxncall' => json_encode([
@@ -121,8 +119,7 @@ class ParameterTest extends TestCase
                         ],
                     ]),
                 ])
-                ->withMethod('POST');
-        });
+                ->withMethod('POST'));
 
         $aParameter = jaxon()->di()->getRequestArguments();
 
@@ -153,8 +150,8 @@ class ParameterTest extends TestCase
     {
         jaxon()->setOption('core.decode_utf8', true);
         // The server request
-        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)
+        jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
+            $c->g(ServerRequestCreator::class)
                 ->fromGlobals()
                 ->withParsedBody([
                     'jxncall' => json_encode([
@@ -169,8 +166,7 @@ class ParameterTest extends TestCase
                         ],
                     ]),
                 ])
-                ->withMethod('POST');
-        });
+                ->withMethod('POST'));
 
         $aParameter = jaxon()->di()->getRequestArguments();
 
@@ -203,8 +199,8 @@ class ParameterTest extends TestCase
         unset($_SERVER['HTTP_CONTENT_TYPE']);
         $_SERVER['CONTENT_TYPE'] = 'multipart/form-data';
         // The server request
-        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)
+        jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
+            $c->g(ServerRequestCreator::class)
                 ->fromGlobals()
                 ->withParsedBody([
                     'jxncall' => json_encode([
@@ -219,8 +215,7 @@ class ParameterTest extends TestCase
                         ],
                     ]),
                 ])
-                ->withMethod('POST');
-        });
+                ->withMethod('POST'));
 
         $aParameter = jaxon()->di()->getRequestArguments();
 
@@ -253,8 +248,8 @@ class ParameterTest extends TestCase
         unset($_SERVER['CONTENT_TYPE']);
         $_SERVER['HTTP_CONTENT_TYPE'] = 'multipart/form-data';
         // The server request
-        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)
+        jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
+            $c->g(ServerRequestCreator::class)
                 ->fromGlobals()
                 ->withParsedBody([
                     'jxncall' => json_encode([
@@ -269,8 +264,7 @@ class ParameterTest extends TestCase
                         ],
                     ]),
                 ])
-                ->withMethod('POST');
-        });
+                ->withMethod('POST'));
 
         $aParameter = jaxon()->di()->getRequestArguments();
 

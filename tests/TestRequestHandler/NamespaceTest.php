@@ -39,8 +39,8 @@ class NamespaceTest extends TestCase
     public function testGetRequestToJaxonClass()
     {
         // The server request
-        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)
+        jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
+            $c->g(ServerRequestCreator::class)
                 ->fromGlobals()
                 ->withQueryParams([
                     'jxncall' => json_encode([
@@ -50,8 +50,7 @@ class NamespaceTest extends TestCase
                         'args' => [],
                     ]),
                 ])
-                ->withMethod('GET');
-        });
+                ->withMethod('GET'));
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
         $this->assertTrue(jaxon()->di()->getCallableClassPlugin()->canProcessRequest(jaxon()->di()->getRequest()));
@@ -64,8 +63,8 @@ class NamespaceTest extends TestCase
     public function testPostRequestToJaxonClass()
     {
         // The server request
-        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)
+        jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
+            $c->g(ServerRequestCreator::class)
                 ->fromGlobals()
                 ->withParsedBody([
                     'jxncall' => json_encode([
@@ -75,8 +74,7 @@ class NamespaceTest extends TestCase
                         'args' => [],
                     ]),
                 ])
-                ->withMethod('POST');
-        });
+                ->withMethod('POST'));
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
         $this->assertTrue(jaxon()->di()->getCallableClassPlugin()->canProcessRequest(jaxon()->di()->getRequest()));
@@ -90,8 +88,8 @@ class NamespaceTest extends TestCase
     public function testRequestToJaxonClass()
     {
         // The server request
-        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)
+        jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
+            $c->g(ServerRequestCreator::class)
                 ->fromGlobals()
                 ->withParsedBody([
                     'jxncall' => json_encode([
@@ -101,8 +99,7 @@ class NamespaceTest extends TestCase
                         'args' => [],
                     ]),
                 ])
-                ->withMethod('POST');
-        });
+                ->withMethod('POST'));
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
         jaxon()->processRequest();

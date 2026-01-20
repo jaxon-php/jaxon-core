@@ -23,9 +23,8 @@ trait ResponseTrait
     private function registerResponses(): void
     {
         // Global Response
-        $this->set(Response::class, function($di) {
-            return new Response($di->g(ResponseManager::class), $di->g(PluginManager::class));
-        });
+        $this->set(Response::class, fn($di) =>
+            new Response($di->g(ResponseManager::class), $di->g(PluginManager::class)));
         // Response Manager
         $this->set(ResponseManager::class, function($di) {
             $sEncoding = trim($di->g(ConfigManager::class)->getOption('core.encoding', ''));

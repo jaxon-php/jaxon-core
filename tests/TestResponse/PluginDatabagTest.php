@@ -37,8 +37,8 @@ class PluginDatabagTest extends TestCase
     public function testCommandGetValue()
     {
         // Send a request to the registered class
-        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)
+        jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
+            $c->g(ServerRequestCreator::class)
                 ->fromGlobals()
                 ->withParsedBody([
                     'jxncall' => json_encode([
@@ -48,8 +48,7 @@ class PluginDatabagTest extends TestCase
                         'args' => [],
                     ]),
                 ])
-                ->withMethod('POST');
-        });
+                ->withMethod('POST'));
         // Process the request and get the response
         $this->assertTrue(jaxon()->canProcessRequest());
         jaxon()->di()->getRequestHandler()->processRequest();
@@ -69,8 +68,8 @@ class PluginDatabagTest extends TestCase
     public function testCommandSetValue()
     {
         // Send a request to the registered class
-        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)
+        jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
+            $c->g(ServerRequestCreator::class)
                 ->fromGlobals()
                 ->withParsedBody([
                     'jxncall' => json_encode([
@@ -80,8 +79,7 @@ class PluginDatabagTest extends TestCase
                         'args' => [],
                     ]),
                 ])
-                ->withMethod('POST');
-        });
+                ->withMethod('POST'));
         // Process the request and get the response
         $this->assertTrue(jaxon()->canProcessRequest());
         jaxon()->di()->getRequestHandler()->processRequest();
@@ -101,8 +99,8 @@ class PluginDatabagTest extends TestCase
     public function testCommandUpdateValueWithMethodPost()
     {
         // Send a request to the registered class
-        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)
+        jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
+            $c->g(ServerRequestCreator::class)
                 ->fromGlobals()
                 ->withParsedBody([
                     'jxncall' => json_encode([
@@ -113,8 +111,7 @@ class PluginDatabagTest extends TestCase
                     ]),
                     'jxnbags' => json_encode(['dataset' => ['key1' => 'value1']]),
                 ])
-                ->withMethod('POST');
-        });
+                ->withMethod('POST'));
         // Process the request and get the response
         $this->assertTrue(jaxon()->canProcessRequest());
         jaxon()->di()->getRequestHandler()->processRequest();
@@ -143,8 +140,8 @@ class PluginDatabagTest extends TestCase
     public function testCommandUpdateValueWithMethodGet()
     {
         // Send a request to the registered class
-        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)
+        jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
+            $c->g(ServerRequestCreator::class)
                 ->fromGlobals()
                 ->withQueryParams([
                     'jxncall' => json_encode([
@@ -155,8 +152,7 @@ class PluginDatabagTest extends TestCase
                     ]),
                     'jxnbags' => json_encode(['dataset' => ['key1' => 'value1']]),
                 ])
-                ->withMethod('GET');
-        });
+                ->withMethod('GET'));
         // Process the request and get the response
         $this->assertTrue(jaxon()->canProcessRequest());
         jaxon()->di()->getRequestHandler()->processRequest();

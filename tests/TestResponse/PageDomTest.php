@@ -37,8 +37,8 @@ class PageDomTest extends TestCase
     public function testCommandAssign()
     {
         // Send a request to the registered class
-        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)
+        jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
+            $c->g(ServerRequestCreator::class)
                 ->fromGlobals()
                 ->withParsedBody([
                     'jxncall' => json_encode([
@@ -48,8 +48,7 @@ class PageDomTest extends TestCase
                         'args' => [],
                     ]),
                 ])
-                ->withMethod('POST');
-        });
+                ->withMethod('POST'));
         // Process the request and get the response
         $this->assertTrue(jaxon()->canProcessRequest());
         jaxon()->di()->getRequestHandler()->processRequest();
@@ -64,8 +63,8 @@ class PageDomTest extends TestCase
     public function testCommandHtml()
     {
         // Send a request to the registered class
-        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)
+        jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
+            $c->g(ServerRequestCreator::class)
                 ->fromGlobals()
                 ->withParsedBody([
                     'jxncall' => json_encode([
@@ -75,8 +74,7 @@ class PageDomTest extends TestCase
                         'args' => [],
                     ]),
                 ])
-                ->withMethod('POST');
-        });
+                ->withMethod('POST'));
         // Process the request and get the response
         $this->assertTrue(jaxon()->canProcessRequest());
         jaxon()->di()->getRequestHandler()->processRequest();
@@ -91,8 +89,8 @@ class PageDomTest extends TestCase
     public function testCommandAppend()
     {
         // Send a request to the registered class
-        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)
+        jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
+            $c->g(ServerRequestCreator::class)
                 ->fromGlobals()
                 ->withParsedBody([
                     'jxncall' => json_encode([
@@ -102,8 +100,7 @@ class PageDomTest extends TestCase
                         'args' => [],
                     ]),
                 ])
-                ->withMethod('POST');
-        });
+                ->withMethod('POST'));
         // Process the request and get the response
         $this->assertTrue(jaxon()->canProcessRequest());
         jaxon()->di()->getRequestHandler()->processRequest();
@@ -118,8 +115,8 @@ class PageDomTest extends TestCase
     public function testCommandPrepend()
     {
         // Send a request to the registered class
-        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)
+        jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
+            $c->g(ServerRequestCreator::class)
                 ->fromGlobals()
                 ->withParsedBody([
                     'jxncall' => json_encode([
@@ -129,8 +126,7 @@ class PageDomTest extends TestCase
                         'args' => [],
                     ]),
                 ])
-                ->withMethod('POST');
-        });
+                ->withMethod('POST'));
         // Process the request and get the response
         $this->assertTrue(jaxon()->canProcessRequest());
         jaxon()->di()->getRequestHandler()->processRequest();
@@ -145,8 +141,8 @@ class PageDomTest extends TestCase
     public function testCommandReplace()
     {
         // Send a request to the registered class
-        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)
+        jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
+            $c->g(ServerRequestCreator::class)
                 ->fromGlobals()
                 ->withParsedBody([
                     'jxncall' => json_encode([
@@ -156,8 +152,7 @@ class PageDomTest extends TestCase
                         'args' => [],
                     ]),
                 ])
-                ->withMethod('POST');
-        });
+                ->withMethod('POST'));
         // Process the request and get the response
         $this->assertTrue(jaxon()->canProcessRequest());
         jaxon()->di()->getRequestHandler()->processRequest();
@@ -172,8 +167,8 @@ class PageDomTest extends TestCase
     public function testCommandClear()
     {
         // Send a request to the registered class
-        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)
+        jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
+            $c->g(ServerRequestCreator::class)
                 ->fromGlobals()
                 ->withParsedBody([
                     'jxncall' => json_encode([
@@ -183,8 +178,7 @@ class PageDomTest extends TestCase
                         'args' => [],
                     ]),
                 ])
-                ->withMethod('POST');
-        });
+                ->withMethod('POST'));
         // Process the request and get the response
         $this->assertTrue(jaxon()->canProcessRequest());
         jaxon()->di()->getRequestHandler()->processRequest();
@@ -199,8 +193,8 @@ class PageDomTest extends TestCase
     public function testCommandRemove()
     {
         // Send a request to the registered class
-        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)
+        jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
+            $c->g(ServerRequestCreator::class)
                 ->fromGlobals()
                 ->withParsedBody([
                     'jxncall' => json_encode([
@@ -210,8 +204,7 @@ class PageDomTest extends TestCase
                         'args' => [],
                     ]),
                 ])
-                ->withMethod('POST');
-        });
+                ->withMethod('POST'));
         // Process the request and get the response
         $this->assertTrue(jaxon()->canProcessRequest());
         jaxon()->di()->getRequestHandler()->processRequest();
@@ -226,8 +219,8 @@ class PageDomTest extends TestCase
     public function testCommandInsertBefore()
     {
         // Send a request to the registered class
-        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)
+        jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
+            $c->g(ServerRequestCreator::class)
                 ->fromGlobals()
                 ->withParsedBody([
                     'jxncall' => json_encode([
@@ -237,8 +230,7 @@ class PageDomTest extends TestCase
                         'args' => [],
                     ]),
                 ])
-                ->withMethod('POST');
-        });
+                ->withMethod('POST'));
         // Process the request and get the response
         $this->assertTrue(jaxon()->canProcessRequest());
         jaxon()->di()->getRequestHandler()->processRequest();

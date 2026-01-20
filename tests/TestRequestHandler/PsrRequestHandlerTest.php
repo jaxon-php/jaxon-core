@@ -31,9 +31,7 @@ class PsrRequestHandlerTest extends TestCase
         jaxon()->psr()
             ->logger(new NullLogger())
             ->container(new PsrContainer(new AppContainer()))
-            ->view('default', '.php', function() {
-                return jaxon()->di()->g(TemplateView::class);
-            });
+            ->view('default', '.php', fn() => jaxon()->di()->g(TemplateView::class));
 
         $this->xPsrConfigMiddleware = jaxon()->psr()->config(dirname(__DIR__) . '/config/app/classes.php');
         $this->xPsrAjaxMiddleware = jaxon()->psr()->ajax();

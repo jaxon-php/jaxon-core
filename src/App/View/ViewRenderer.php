@@ -141,9 +141,8 @@ class ViewRenderer
             // Get the defined renderer
             $xRenderer = $xClosure($di);
             // Init the renderer with the template namespaces
-            $aNamespaces = array_filter($this->aNamespaces, function($aOptions) use($sId) {
-                return $aOptions['renderer'] === $sId;
-            });
+            $aNamespaces = array_filter($this->aNamespaces,
+                fn($aOptions) => $aOptions['renderer'] === $sId);
             foreach($aNamespaces as $sName => $aOptions)
             {
                 $xRenderer->addNamespace($sName, $aOptions['directory'], $aOptions['extension']);

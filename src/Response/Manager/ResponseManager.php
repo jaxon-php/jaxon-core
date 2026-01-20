@@ -185,13 +185,7 @@ class ResponseManager
      */
     private function getCommandArgs(array|JsonSerializable $aArgs, bool $bRemoveEmpty = false): array
     {
-        if(!$bRemoveEmpty)
-        {
-            return $aArgs;
-        }
-        return array_filter($aArgs, function($xArg) {
-            return !empty($xArg);
-        });
+        return $bRemoveEmpty ? array_filter($aArgs, fn($xArg) => !empty($xArg)) : $aArgs;
     }
 
     /**

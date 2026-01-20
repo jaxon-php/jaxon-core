@@ -27,32 +27,22 @@ trait RequestTrait
     private function registerRequests(): void
     {
         // The parameter reader
-        $this->set(ParameterReader::class, function($di) {
-            return new ParameterReader($di->g(Container::class), $di->g(Translator::class),
-                $di->g(ConfigManager::class), $di->g(UriDetector::class));
-        });
+        $this->set(ParameterReader::class, fn($di) =>
+            new ParameterReader($di->g(Container::class), $di->g(Translator::class),
+                $di->g(ConfigManager::class), $di->g(UriDetector::class)));
         // Callback Manager
-        $this->set(CallbackManager::class, function($di) {
-            return new CallbackManager();
-        });
+        $this->set(CallbackManager::class, fn() => new CallbackManager());
         // By default, register a null upload handler
-        $this->set(UploadHandlerInterface::class, function() {
-            return null;
-        });
+        $this->set(UploadHandlerInterface::class, fn() => null);
         // Request Handler
-        $this->set(RequestHandler::class, function($di) {
-            return new RequestHandler($di->g(Container::class), $di->g(PluginManager::class),
+        $this->set(RequestHandler::class, fn($di) =>
+            new RequestHandler($di->g(Container::class), $di->g(PluginManager::class),
                 $di->g(ResponseManager::class), $di->g(CallbackManager::class),
-                $di->g(DatabagPlugin::class));
-        });
+                $di->g(DatabagPlugin::class)));
         // Requests and calls Factory
-        $this->set(CallFactory::class, function($di) {
-            return new CallFactory($di->g(ComponentContainer::class));
-        });
+        $this->set(CallFactory::class, fn($di) => new CallFactory($di->g(ComponentContainer::class)));
         // Factory for function parameters
-        $this->set(ParameterFactory::class, function() {
-            return new ParameterFactory();
-        });
+        $this->set(ParameterFactory::class, fn() => new ParameterFactory());
     }
 
     /**

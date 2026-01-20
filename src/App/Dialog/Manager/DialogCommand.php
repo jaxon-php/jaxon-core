@@ -91,9 +91,7 @@ class DialogCommand
     {
         return [
             'str' => $sStr,
-            'args' => array_map(function($xArg) {
-                return TypedValue::make($xArg);
-            }, $aArgs),
+            'args' => array_map(TypedValue::make(...), $aArgs),
         ];
     }
 

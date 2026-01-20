@@ -36,8 +36,8 @@ class ClassTest extends TestCase
     public function testGetRequestToJaxonClass()
     {
         // The server request
-        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)
+        jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
+            $c->g(ServerRequestCreator::class)
                 ->fromGlobals()
                 ->withQueryParams([
                     'jxncall' => json_encode([
@@ -46,8 +46,7 @@ class ClassTest extends TestCase
                         'method' => 'myMethod',
                         'args' => [],
                     ]),
-                ]);
-        });
+                ]));
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
         $this->assertFalse(jaxon()->di()->getCallableFunctionPlugin()->canProcessRequest(jaxon()->di()->getRequest()));
@@ -62,8 +61,8 @@ class ClassTest extends TestCase
     public function testPostRequestToJaxonClass()
     {
         // The server request
-        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)
+        jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
+            $c->g(ServerRequestCreator::class)
                 ->fromGlobals()
                 ->withParsedBody([
                     'jxncall' => json_encode([
@@ -72,8 +71,7 @@ class ClassTest extends TestCase
                         'method' => 'myMethod',
                         'args' => [],
                     ]),
-                ]);
-        });
+                ]));
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
         $this->assertFalse(jaxon()->di()->getCallableFunctionPlugin()->canProcessRequest(jaxon()->di()->getRequest()));
@@ -89,8 +87,8 @@ class ClassTest extends TestCase
     public function testRequestToJaxonClass()
     {
         // The server request
-        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)
+        jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
+            $c->g(ServerRequestCreator::class)
                 ->fromGlobals()
                 ->withParsedBody([
                     'jxncall' => json_encode([
@@ -99,8 +97,7 @@ class ClassTest extends TestCase
                         'method' => 'myMethod',
                         'args' => [],
                     ]),
-                ]);
-        });
+                ]));
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
         jaxon()->processRequest();
@@ -125,8 +122,8 @@ class ClassTest extends TestCase
     public function testRequestWithIncorrectClassName()
     {
         // The server request
-        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)
+        jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
+            $c->g(ServerRequestCreator::class)
                 ->fromGlobals()
                 ->withParsedBody([
                     'jxncall' => json_encode([
@@ -135,8 +132,7 @@ class ClassTest extends TestCase
                         'method' => 'myMethod',
                         'args' => [],
                     ]),
-                ]);
-        });
+                ]));
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
         $this->expectException(RequestException::class);
@@ -150,8 +146,8 @@ class ClassTest extends TestCase
     public function testRequestWithUnknownClassName()
     {
         // The server request
-        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)
+        jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
+            $c->g(ServerRequestCreator::class)
                 ->fromGlobals()
                 ->withParsedBody([
                     'jxncall' => json_encode([
@@ -160,8 +156,7 @@ class ClassTest extends TestCase
                         'method' => 'myMethod',
                         'args' => [],
                     ]),
-                ]);
-        });
+                ]));
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
         $this->expectException(RequestException::class);
@@ -175,8 +170,8 @@ class ClassTest extends TestCase
     public function testRequestWithUnknownMethodName()
     {
         // The server request
-        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)
+        jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
+            $c->g(ServerRequestCreator::class)
                 ->fromGlobals()
                 ->withParsedBody([
                     'jxncall' => json_encode([
@@ -185,8 +180,7 @@ class ClassTest extends TestCase
                         'method' => 'unknownMethod',
                         'args' => [],
                     ]),
-                ]);
-        });
+                ]));
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
         $this->expectException(RequestException::class);
@@ -200,8 +194,8 @@ class ClassTest extends TestCase
     public function testRequestWithIncorrectMethodName()
     {
         // The server request
-        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)
+        jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
+            $c->g(ServerRequestCreator::class)
                 ->fromGlobals()
                 ->withParsedBody([
                     'jxncall' => json_encode([
@@ -210,8 +204,7 @@ class ClassTest extends TestCase
                         'method' => 'my Method',
                         'args' => [],
                     ]),
-                ]);
-        });
+                ]));
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
         $this->expectException(RequestException::class);
@@ -234,8 +227,8 @@ class ClassTest extends TestCase
             ],
         ]);
         // The server request
-        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)
+        jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
+            $c->g(ServerRequestCreator::class)
                 ->fromGlobals()
                 ->withParsedBody([
                     'jxncall' => json_encode([
@@ -244,8 +237,7 @@ class ClassTest extends TestCase
                         'method' => 'action',
                         'args' => [],
                     ]),
-                ]);
-        });
+                ]));
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
         $this->expectException(RequestException::class);
@@ -268,8 +260,8 @@ class ClassTest extends TestCase
             ],
         ]);
         // The server request
-        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)
+        jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
+            $c->g(ServerRequestCreator::class)
                 ->fromGlobals()
                 ->withParsedBody([
                     'jxncall' => json_encode([
@@ -278,8 +270,7 @@ class ClassTest extends TestCase
                         'method' => 'action',
                         'args' => [],
                     ]),
-                ]);
-        });
+                ]));
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
         $this->expectException(RequestException::class);

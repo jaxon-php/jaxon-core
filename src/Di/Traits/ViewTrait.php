@@ -30,16 +30,12 @@ trait ViewTrait
     private function registerViews(): void
     {
         // Jaxon template view
-        $this->set(TemplateView::class, function($di) {
-            return new TemplateView($di->g(TemplateEngine::class));
-        });
+        $this->set(TemplateView::class, fn($di) => new TemplateView($di->g(TemplateEngine::class)));
         // View Renderer
         $this->set(ViewRenderer::class, function($di) {
             $xViewRenderer = new ViewRenderer($di->g(Container::class));
             // Add the default view renderer
-            $xViewRenderer->addRenderer('jaxon', function($di) {
-                return $di->g(TemplateView::class);
-            });
+            $xViewRenderer->addRenderer('jaxon', fn($di) => $di->g(TemplateView::class));
             $sTemplateDir = rtrim(trim($di->g('jaxon.core.dir.template')), '/\\');
             $sPaginationDir = $sTemplateDir . DIRECTORY_SEPARATOR . 'pagination';
             // By default, render pagination templates with Jaxon.
@@ -53,7 +49,8 @@ trait ViewTrait
         $this->set(LibraryRegistryInterface::class, fn($di) =>
             new class($di) implements LibraryRegistryInterface
             {
-                public function __construct(private $di){}
+                public function __construct(private $di)
+                {}
                 public function getAlertLibrary(): AlertInterface
                 {
                     return $this->di->g(NoDialogLibrary::class);
@@ -68,18 +65,14 @@ trait ViewTrait
                 }
             });
         // Dialog command
-        $this->set(DialogCommand::class, function($di) {
-            return new DialogCommand(fn() => $di->g(LibraryRegistryInterface::class));
-        });
+        $this->set(DialogCommand::class, fn($di) =>
+            new DialogCommand(fn() => $di->g(LibraryRegistryInterface::class)));
+
         // Pagination renderer
-        $this->set(RendererInterface::class, function($di) {
-            return new Renderer($di->g(ViewRenderer::class));
-        });
+        $this->set(RendererInterface::class, fn($di) => new Renderer($di->g(ViewRenderer::class)));
 
         // Helpers for HTML custom attributes formatting
-        $this->set(HtmlAttrHelper::class, function($di) {
-            return new HtmlAttrHelper($di->g(ComponentContainer::class));
-        });
+        $this->set(HtmlAttrHelper::class, fn($di) => new HtmlAttrHelper($di->g(ComponentContainer::class)));
     }
 
     /**

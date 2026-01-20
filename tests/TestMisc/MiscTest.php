@@ -63,9 +63,7 @@ final class MiscTest extends TestCase
 
     public function testSessions()
     {
-        jaxon()->di()->setSessionManager(function() {
-            return new SessionManager();
-        });
+        jaxon()->di()->setSessionManager(fn() => new SessionManager());
         $this->assertNull(jaxon()->session()->get('key'));
         jaxon()->session()->set('key', 'value');
         $this->assertEquals('value', jaxon()->session()->get('key'));

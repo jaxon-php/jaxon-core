@@ -84,8 +84,8 @@ class ExportAssetsInLibTest extends TestCase
     public function testScriptErrorMinifier()
     {
         // Register a minifier that always fails.
-        jaxon()->di()->set(MinifierInterface::class, function() {
-            return new class implements MinifierInterface {
+        jaxon()->di()->set(MinifierInterface::class, fn() =>
+            new class implements MinifierInterface {
                 public function minifyJsCode(string $sCode): string|false
                 {
                     return false;
@@ -94,8 +94,7 @@ class ExportAssetsInLibTest extends TestCase
                 {
                     return false;
                 }
-            };
-        });
+            });
         // The js file must be generated but not minified.
         jaxon()->setOption('js.app.minify', true);
         $sScript = jaxon()->getScript();
@@ -137,8 +136,8 @@ class ExportAssetsInLibTest extends TestCase
     public function testJaxonClassAnnotations()
     {
         // The server request
-        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)
+        jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
+            $c->g(ServerRequestCreator::class)
                 ->fromGlobals()
                 ->withParsedBody([
                     'jxncall' => json_encode([
@@ -148,8 +147,7 @@ class ExportAssetsInLibTest extends TestCase
                         'args' => [],
                     ]),
                 ])
-                ->withMethod('POST');
-        });
+                ->withMethod('POST'));
 
         $this->assertTrue(jaxon()->canProcessRequest());
         jaxon()->di()->getCallableClassPlugin()->processRequest();
@@ -158,8 +156,8 @@ class ExportAssetsInLibTest extends TestCase
     public function testRequestToJaxonClass()
     {
         // The server request
-        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)
+        jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
+            $c->g(ServerRequestCreator::class)
                 ->fromGlobals()
                 ->withParsedBody([
                     'jxncall' => json_encode([
@@ -169,8 +167,7 @@ class ExportAssetsInLibTest extends TestCase
                         'args' => [],
                     ]),
                 ])
-                ->withMethod('POST');
-        });
+                ->withMethod('POST'));
 
         $this->assertTrue(jaxon()->canProcessRequest());
         $this->expectException(RequestException::class);

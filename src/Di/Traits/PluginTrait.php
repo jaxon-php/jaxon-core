@@ -52,49 +52,36 @@ trait PluginTrait
             return $xPluginManager;
         });
         // Package manager
-        $this->set(PackageManager::class, function($di) {
-            return new PackageManager($di->g(Container::class), $di->g(Translator::class),
+        $this->set(PackageManager::class, fn($di) =>
+            new PackageManager($di->g(Container::class), $di->g(Translator::class),
                 $di->g(PluginManager::class), $di->g(ConfigManager::class),
                 $di->g(ViewRenderer::class), $di->g(CallbackManager::class),
-                $di->g(ComponentRegistry::class));
-        });
+                $di->g(ComponentRegistry::class)));
         // Code Generation
-        $this->set(MinifierInterface::class, function() {
-            return new class extends FileMinifier implements MinifierInterface
-            {};
-        });
-        $this->set(AssetManager::class, function($di) {
-            return new AssetManager($di->g(ConfigManager::class),
-                $di->g(StorageManager::class), $di->g(MinifierInterface::class));
-        });
-        $this->set(CodeGenerator::class, function($di) {
-            return new CodeGenerator(Jaxon::VERSION, $di->g(Container::class),
-                $di->g(TemplateEngine::class), $di->g(ConfigManager::class));
-        });
-        $this->set(ConfigScriptGenerator::class, function($di) {
-            return new ConfigScriptGenerator($di->g(ParameterReader::class),
-                $di->g(TemplateEngine::class), $di->g(ConfigManager::class));
-        });
-        $this->set(ReadyScriptGenerator::class, function($di) {
-            return new ReadyScriptGenerator();
-        });
+        $this->set(MinifierInterface::class, fn()=>
+            new class extends FileMinifier implements MinifierInterface {});
+        $this->set(AssetManager::class, fn($di) =>
+            new AssetManager($di->g(ConfigManager::class),
+                $di->g(StorageManager::class), $di->g(MinifierInterface::class)));
+        $this->set(CodeGenerator::class, fn($di) =>
+            new CodeGenerator(Jaxon::VERSION, $di->g(Container::class),
+                $di->g(TemplateEngine::class), $di->g(ConfigManager::class)));
+        $this->set(ConfigScriptGenerator::class, fn($di) =>
+            new ConfigScriptGenerator($di->g(ParameterReader::class),
+                $di->g(TemplateEngine::class), $di->g(ConfigManager::class)));
+        $this->set(ReadyScriptGenerator::class, fn() => new ReadyScriptGenerator());
 
         // Script response plugin
-        $this->set(ScriptPlugin::class, function($di) {
-            return new ScriptPlugin($di->g(CallFactory::class));
-        });
+        $this->set(ScriptPlugin::class, fn($di) => new ScriptPlugin($di->g(CallFactory::class)));
         // Databag response plugin. Get the databag contents from the HTTP request parameters.
-        $this->set(DatabagPlugin::class, function($di) {
-            return new DatabagPlugin(fn() => $di->getRequest()->getAttribute('jxnbags', []));
-        });
+        $this->set(DatabagPlugin::class, fn($di) =>
+            new DatabagPlugin(fn() => $di->getRequest()->getAttribute('jxnbags', [])));
         // Dialog response plugin
-        $this->set(DialogPlugin::class, function($di) {
-            return new DialogPlugin($di->g(DialogCommand::class));
-        });
+        $this->set(DialogPlugin::class, fn($di) =>
+            new DialogPlugin($di->g(DialogCommand::class)));
         // Paginator response plugin
-        $this->set(PaginatorPlugin::class, function($di) {
-            return new PaginatorPlugin($di->g(RendererInterface::class));
-        });
+        $this->set(PaginatorPlugin::class, fn($di) =>
+            new PaginatorPlugin($di->g(RendererInterface::class)));
     }
 
     /**

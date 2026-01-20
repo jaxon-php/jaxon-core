@@ -49,8 +49,8 @@ class DirectoryTest extends TestCase
     public function testGetRequestToJaxonClass()
     {
         // The server request
-        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)
+        jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
+            $c->g(ServerRequestCreator::class)
                 ->fromGlobals()
                 ->withQueryParams([
                     'jxncall' => json_encode([
@@ -59,8 +59,7 @@ class DirectoryTest extends TestCase
                         'method' => 'methodAa',
                         'args' => [],
                     ]),
-                ]);
-        });
+                ]));
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
         $this->assertTrue(jaxon()->di()->getCallableClassPlugin()->canProcessRequest(jaxon()->di()->getRequest()));
@@ -73,8 +72,8 @@ class DirectoryTest extends TestCase
     public function testPostRequestToJaxonClass()
     {
         // The server request
-        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)
+        jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
+            $c->g(ServerRequestCreator::class)
                 ->fromGlobals()
                 ->withParsedBody([
                     'jxncall' => json_encode([
@@ -83,8 +82,7 @@ class DirectoryTest extends TestCase
                         'method' => 'methodBb',
                         'args' => [],
                     ]),
-                ]);
-        });
+                ]));
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
         $this->assertTrue(jaxon()->di()->getCallableClassPlugin()->canProcessRequest(jaxon()->di()->getRequest()));
@@ -98,8 +96,8 @@ class DirectoryTest extends TestCase
     public function testRequestToJaxonClass()
     {
         // The server request
-        jaxon()->di()->set(ServerRequestInterface::class, function($c) {
-            return $c->g(ServerRequestCreator::class)
+        jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
+            $c->g(ServerRequestCreator::class)
                 ->fromGlobals()
                 ->withParsedBody([
                     'jxncall' => json_encode([
@@ -108,8 +106,7 @@ class DirectoryTest extends TestCase
                         'method' => 'methodCa',
                         'args' => [],
                     ]),
-                ]);
-        });
+                ]));
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
         jaxon()->processRequest();
