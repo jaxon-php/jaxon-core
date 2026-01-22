@@ -57,7 +57,7 @@ class PackageManager
      *
      * @return void
      */
-    private function updateContainer(Config $xConfig): void
+    public function updateContainer(Config $xConfig): void
     {
         $aOptions = $xConfig->getOption('container.set', []);
         foreach($aOptions as $xKey => $xValue)

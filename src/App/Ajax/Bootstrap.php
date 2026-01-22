@@ -107,6 +107,8 @@ class Bootstrap
     {
         // Save the app config.
         $this->xConfigManager->setAppOptions($this->aAppOptions);
+        // Setup the DI container from the app config.
+        $this->xPackageManager->updateContainer($this->xConfigManager->getAppConfig());
         // Register user functions and classes
         $this->xPackageManager->registerFromConfig();
     }

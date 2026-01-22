@@ -111,8 +111,8 @@ class ConfigManager
         try
         {
             // Read the options and save in the config.
-            $this->xLibConfig = $this->xConfigSetter
-                ->setOptions($this->xLibConfig, $this->read($sConfigFile), $sConfigSection);
+            $this->xLibConfig = $this->xConfigSetter->setOptions($this->xLibConfig,
+                $this->read($sConfigFile), $sConfigSection);
             // Call the config change listeners.
             $this->xEventManager->libConfigChanged($this->xLibConfig, '');
         }

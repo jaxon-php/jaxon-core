@@ -27,7 +27,7 @@ trait PageDatabagTrait
     protected function makeInput(): PageNumberInput
     {
         $bag = $this->bag($this->bagName());
-        return new PageNumberInputBag( fn() => (int)$bag->get($this->bagAttr(), 1),
+        return new PageNumberInputBag(fn() => (int)$bag->get($this->bagAttr(), 1),
             fn(int $currentPage) => $bag->set($this->bagAttr(), $currentPage));
     }
 }
