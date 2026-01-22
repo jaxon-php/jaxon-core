@@ -42,13 +42,6 @@ class Container implements ContainerInterface
     use Traits\DiAutoTrait;
 
     /**
-     * The library Dependency Injection Container
-     *
-     * @var PimpleContainer
-     */
-    private $xLibContainer;
-
-    /**
      * The application or framework Dependency Injection Container
      *
      * @var ContainerInterface
@@ -97,7 +90,7 @@ class Container implements ContainerInterface
      *
      * @return void
      */
-    private function registerAll()
+    private function registerAll(): void
     {
         $this->registerApp();
         $this->registerPsr();
@@ -117,7 +110,7 @@ class Container implements ContainerInterface
      *
      * @return void
      */
-    public function setLogger(LoggerInterface|Closure $xLogger)
+    public function setLogger(LoggerInterface|Closure $xLogger): void
     {
         is_a($xLogger, LoggerInterface::class) ?
             $this->val(LoggerInterface::class, $xLogger) :
@@ -141,7 +134,7 @@ class Container implements ContainerInterface
      *
      * @return void
      */
-    public function setContainer(ContainerInterface $xContainer)
+    public function setContainer(ContainerInterface $xContainer): void
     {
         $this->xAppContainer = $xContainer;
     }
@@ -220,7 +213,7 @@ class Container implements ContainerInterface
      *
      * @return void
      */
-    public function set(string $sClass, Closure $xClosure, bool $bIsSingleton = true)
+    public function set(string $sClass, Closure $xClosure, bool $bIsSingleton = true): void
     {
         // Wrap the user closure into a new closure, so it can take this container as a parameter.
         $xClosure = fn() => $xClosure($this);
@@ -236,7 +229,7 @@ class Container implements ContainerInterface
      *
      * @return void
      */
-    public function val(string $sKey, $xValue)
+    public function val(string $sKey, $xValue): void
     {
        $this->xLibContainer->offsetSet($sKey, $xValue);
     }
@@ -249,9 +242,22 @@ class Container implements ContainerInterface
      *
      * @return void
      */
-    public function alias(string $sAlias, string $sClass)
+    public function alias(string $sAlias, string $sClass): void
     {
         $this->set($sAlias, fn($di) => $di->get($sClass));
+    }
+
+    /**
+     * Save a closure in the container
+     *
+     * @param string|class-string $sClass    The full class name
+     * @param Closure $xClosure    The closure
+     *
+     * @return void
+     */
+    public function extend(string $sClass, Closure $xClosure): void
+    {
+        $this->xLibContainer->extend($sClass, $xClosure);
     }
 
     /**
@@ -271,7 +277,7 @@ class Container implements ContainerInterface
      *
      * @return void
      */
-    public function setSessionManager(Closure $xClosure)
+    public function setSessionManager(Closure $xClosure): void
     {
         $this->set(SessionInterface::class, $xClosure);
     }

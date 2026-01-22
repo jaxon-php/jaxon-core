@@ -30,12 +30,20 @@ use Jaxon\Script\CallFactory;
 use Jaxon\Storage\StorageManager;
 use Jaxon\Utils\File\FileMinifier;
 use Jaxon\Utils\Template\TemplateEngine;
+use Pimple\Container as PimpleContainer;
 use Closure;
 
 use function call_user_func;
 
 trait PluginTrait
 {
+    /**
+     * The library Dependency Injection Container
+     *
+     * @var PimpleContainer
+     */
+    private $xLibContainer;
+
     /**
      * Register the values into the container
      *

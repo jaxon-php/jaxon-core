@@ -83,6 +83,12 @@ class PackageManager
             // The key is the class name. It must be a string.
             $this->di->alias((string)$xKey, (string)$xValue);
         }
+        $aOptions = $xConfig->getOption('container.extend', []);
+        foreach($aOptions as $xKey => $xValue)
+        {
+            // The key is the class name. It must be a string.
+            $this->di->extend((string)$xKey, $xValue);
+        }
     }
 
     /**
