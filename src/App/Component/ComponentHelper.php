@@ -19,9 +19,15 @@ use Jaxon\App\Stash\Stash;
 use Jaxon\App\View\ViewRenderer;
 use Jaxon\Request\Upload\UploadHandlerInterface;
 use Psr\Log\LoggerInterface;
+use Closure;
 
 class ComponentHelper
 {
+    /**
+     * @var array
+     */
+    private array $extensions = [];
+
     /**
      * @param ViewRenderer $xViewRenderer
      * @param LoggerInterface $xLogger
@@ -34,4 +40,36 @@ class ComponentHelper
         public readonly ?UploadHandlerInterface $xUploadHandler,
         public readonly ?SessionInterface $xSessionManager)
     {}
+
+    /**
+     * @param string $target
+     * @param Closure $extension
+     *
+     * @return self
+     */
+    final public function extend(string $target, Closure $extension): self
+    {
+        if($target === 'html' || $target === 'item')
+        {
+            $this->extensions[$target] ??= [];
+            $this->extensions[$target][] = $extension;
+        }
+        // All other target values are ignored.
+        return $this;
+    }
+
+    /**
+     * @param string $target
+     * @param string $value
+     *
+     * @return string
+     */
+    final public function extendValue(string $target, string $value): string
+    {
+        foreach(($this->extensions[$target] ?? []) as $extension)
+        {
+            $value = $extension($value);
+        }
+        return $value;
+    }
 }

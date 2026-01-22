@@ -55,7 +55,7 @@ abstract class NodeComponent extends Component\BaseComponent
     final public function render(): void
     {
         $this->before();
-        $this->node()->html($this->extendValue('html', (string)$this->html()));
+        $this->node()->html($this->helper()->extendValue('html', (string)$this->html()));
         $this->after();
     }
 

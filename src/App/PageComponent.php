@@ -73,7 +73,7 @@ abstract class PageComponent extends NodeComponent
     private function paginationComponentItem(): string
     {
         // Use the js class name as the pagination component item identifier.
-        return $this->extendValue('item', $this->rq()->_class());
+        return $this->helper()->extendValue('item', $this->rq()->_class());
     }
 
     /**
