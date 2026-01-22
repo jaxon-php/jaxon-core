@@ -24,7 +24,7 @@ abstract class FuncComponent extends Component\BaseComponent
     /**
      * Create a paginator.
      *
-     * @param int $nPageNumber     The current page number
+     * @param int $nPageNumber      The current page number
      * @param int $nItemsPerPage    The number of items per page
      * @param int $nTotalItems      The total number of items
      *

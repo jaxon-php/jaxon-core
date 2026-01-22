@@ -4,6 +4,7 @@ namespace Jaxon\App\Component;
 
 use Jaxon\Di\Container;
 use Jaxon\Response\NodeResponse;
+use Closure;
 
 trait NodeResponseTrait
 {
@@ -15,7 +16,12 @@ trait NodeResponseTrait
     /**
      * @var string
      */
-    protected $overrides = '';
+    protected string $overrides = '';
+
+    /**
+     * @var array
+     */
+    private array $extensions = [];
 
     /**
      * @param Container $di
@@ -51,6 +57,39 @@ trait NodeResponseTrait
     }
 
     /**
+     * @param string $target
+     * @param Closure $extension
+     *
+     * @return self
+     */
+    final protected function extend(string $target, Closure $extension): self
+    {
+        if($target === 'html' || $target === 'item')
+        {
+            $this->extensions[$target] ??= [];
+            $this->extensions[$target][] = $extension;
+        }
+
+        // All other target values are ignored.
+        return $this;
+    }
+
+    /**
+     * @param string $target
+     * @param string $value
+     *
+     * @return string
+     */
+    private function extendValue(string $target, string $value): string
+    {
+        foreach(($this->extensions[$target] ?? []) as $extension)
+        {
+            $value = $extension($value);
+        }
+        return $value;
+    }
+
+    /**
      * Set the component item.
      *
      * @param string $item
@@ -59,7 +98,7 @@ trait NodeResponseTrait
      */
     final public function item(string $item): self
     {
-        $this->node()->item($item);
+        $this->node()->item($this->extendValue('item', $item));
         return $this;
     }
 }
