@@ -80,7 +80,7 @@ trait NodeResponseTrait
      *
      * @return string
      */
-    private function extendValue(string $target, string $value): string
+    final protected function extendValue(string $target, string $value): string
     {
         foreach(($this->extensions[$target] ?? []) as $extension)
         {

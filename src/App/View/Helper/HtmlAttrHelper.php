@@ -16,6 +16,7 @@ namespace Jaxon\App\View\Helper;
 
 use Jaxon\App\Component\Pagination;
 use Jaxon\App\NodeComponent;
+use Jaxon\App\PageComponent;
 use Jaxon\Di\ComponentContainer;
 use Jaxon\Script\JsExpr;
 use Jaxon\Script\Call\JxnCall;
@@ -32,9 +33,9 @@ use function trim;
 class HtmlAttrHelper
 {
     /**
-     * @var string|null
+     * @var string
      */
-    private string|null $sPaginationComponent = null;
+    private string $sPaginationComponent;
 
     /**
      * The constructor
@@ -42,7 +43,9 @@ class HtmlAttrHelper
      * @param ComponentContainer $cdi
      */
     public function __construct(protected ComponentContainer $cdi)
-    {}
+    {
+        $this->sPaginationComponent = rq(Pagination::class)->_class();
+    }
 
     /**
      * Get the component HTML code
@@ -79,18 +82,34 @@ class HtmlAttrHelper
     }
 
     /**
+     * @param JxnCall|PageComponent $xPaginated
+     *
+     * @return array
+     */
+    public function paginationAttributes(JxnCall|PageComponent $xPaginated): array
+    {
+        if(is_a($xPaginated, PageComponent::class))
+        {
+            /** @var PageComponent */
+            $xComponent = $xPaginated;
+            return $xComponent->paginationAttributes();
+        }
+
+        /** @var JxnCall */
+        $xJsCall = $xPaginated;
+        return [$this->sPaginationComponent, $xJsCall->_class()];
+    }
+
+    /**
      * Attach the pagination component to a DOM node
      *
-     * @param JxnCall $xJsCall
+     * @param JxnCall|PageComponent $xPaginated
      *
      * @return string
      */
-    public function pagination(JxnCall $xJsCall): string
+    public function pagination(JxnCall|PageComponent $xPaginated): string
     {
-        // The pagination is always rendered with the same Pagination component.
-        $sComponent = $this->sPaginationComponent ?:
-            ($this->sPaginationComponent = rq(Pagination::class)->_class());
-        $sItem = $xJsCall->_class();
+        [$sComponent, $sItem] = $this->paginationAttributes($xPaginated);
         return "jxn-bind=\"$sComponent\" jxn-item=\"$sItem\"";
     }
 
@@ -158,6 +177,7 @@ class HtmlAttrHelper
         {
             return $xAttr;
         }
+
         // The array content is valid.
         [$sSelector, $sEvent, $xJsExpr] = $aHandler;
         return !$xAttr ?
