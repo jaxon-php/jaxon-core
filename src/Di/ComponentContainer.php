@@ -135,7 +135,7 @@ class ComponentContainer
      */
     public function set(string $sClass, Closure $xClosure): void
     {
-        $this->xContainer->offsetSet($sClass, fn() => $xClosure($this));
+        $this->xContainer->offsetSet($sClass, fn() => $xClosure($this->di));
     }
 
     /**
@@ -277,9 +277,9 @@ class ComponentContainer
 
         // Register the callable helper class
         $this->set($this->getCallableHelperKey($sClassName),
-            fn() => new ComponentHelper($this->di->getViewRenderer(),
-                $this->di->getLogger(), $this->di->getStash(),
-                $this->di->getUploadHandler(), $this->di->getSessionManager()));
+            fn(Container $di) => new ComponentHelper($di->getViewRenderer(),
+                $di->getLogger(), $di->getStash(), $di->getUploadHandler(),
+                $di->getSessionManager(), $di->getPaginationRenderer()));
 
         $this->discoverComponent($sClassName);
 

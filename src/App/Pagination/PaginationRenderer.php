@@ -17,9 +17,10 @@ namespace Jaxon\App\Pagination;
 use Jaxon\App\View\ViewRenderer;
 
 use function array_map;
+use function count;
 use function trim;
 
-class Renderer implements RendererInterface
+class PaginationRenderer
 {
     /**
      * The constructor.
@@ -53,12 +54,26 @@ class Renderer implements RendererInterface
      *
      * @return string
      */
-    public function render(array $aPages, Page $xPrevPage, Page $xNextPage): string
+    private function render(array $aPages, Page $xPrevPage, Page $xNextPage): string
     {
         return trim($this->xRenderer->render('pagination::wrapper', [
             'links' => array_map(fn($xPage) => $this->renderPage($xPage), $aPages),
             'prev' => $this->renderPage($xPrevPage),
             'next' => $this->renderPage($xNextPage),
         ])->__toString());
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getHtml(Paginator $xPaginator): string
+    {
+        [$xPrevPage, $aPages, $xNextPage] = $xPaginator->pages();
+        if($xPrevPage === null || $xNextPage === null || count($aPages) === 0)
+        {
+            return '';
+        }
+
+        return $this->render($aPages, $xPrevPage, $xNextPage);
     }
 }

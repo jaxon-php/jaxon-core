@@ -14,6 +14,7 @@
 
 namespace Jaxon\App\Component;
 
+use Jaxon\App\Pagination\PaginationRenderer;
 use Jaxon\App\Session\SessionInterface;
 use Jaxon\App\Stash\Stash;
 use Jaxon\App\View\ViewRenderer;
@@ -34,11 +35,13 @@ class ComponentHelper
      * @param Stash $xStash
      * @param UploadHandlerInterface|null $xUploadHandler
      * @param SessionInterface|null $xSessionManager
+     * @param PaginationRenderer $xPaginationRenderer
      */
     public function __construct(public readonly ViewRenderer $xViewRenderer,
         public readonly LoggerInterface $xLogger, public readonly Stash $xStash,
-        public readonly ?UploadHandlerInterface $xUploadHandler,
-        public readonly ?SessionInterface $xSessionManager)
+        public readonly UploadHandlerInterface|null $xUploadHandler,
+        public readonly SessionInterface|null $xSessionManager,
+        public readonly PaginationRenderer $xPaginationRenderer)
     {}
 
     /**
@@ -54,6 +57,7 @@ class ComponentHelper
             $this->extensions[$target] ??= [];
             $this->extensions[$target][] = $extension;
         }
+
         // All other target values are ignored.
         return $this;
     }

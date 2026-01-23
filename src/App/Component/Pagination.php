@@ -3,7 +3,7 @@
 namespace Jaxon\App\Component;
 
 use Jaxon\App\Component\ComponentFactory;
-use Jaxon\App\Pagination\Paginator;
+use Jaxon\App\Pagination\NodePaginator;
 use Jaxon\Di\Container;
 
 class Pagination extends AbstractComponent
@@ -26,10 +26,11 @@ class Pagination extends AbstractComponent
      * @param int $nItemsPerPage    The number of items per page
      * @param int $nTotalItems      The total number of items
      *
-     * @return Paginator
+     * @return NodePaginator
      */
-    final public function paginator(int $nPageNumber, int $nItemsPerPage, int $nTotalItems): Paginator
+    final public function paginator(int $nPageNumber, int $nItemsPerPage, int $nTotalItems): NodePaginator
     {
-        return $this->node()->paginator($nPageNumber, $nItemsPerPage, $nTotalItems);
+        return new NodePaginator($nPageNumber, $nItemsPerPage, $nTotalItems,
+            $this->factory()->helper()->xPaginationRenderer, $this->node());
     }
 }

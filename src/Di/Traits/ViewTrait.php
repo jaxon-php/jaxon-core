@@ -8,8 +8,7 @@ use Jaxon\App\Dialog\Library\ModalInterface;
 use Jaxon\App\Dialog\Library\NoDialogLibrary;
 use Jaxon\App\Dialog\Manager\DialogCommand;
 use Jaxon\App\Dialog\Manager\LibraryRegistryInterface;
-use Jaxon\App\Pagination\Renderer;
-use Jaxon\App\Pagination\RendererInterface;
+use Jaxon\App\Pagination\PaginationRenderer;
 use Jaxon\App\View\Helper\HtmlAttrHelper;
 use Jaxon\App\View\TemplateView;
 use Jaxon\App\View\ViewRenderer;
@@ -69,10 +68,12 @@ trait ViewTrait
             new DialogCommand(fn() => $di->g(LibraryRegistryInterface::class)));
 
         // Pagination renderer
-        $this->set(RendererInterface::class, fn($di) => new Renderer($di->g(ViewRenderer::class)));
+        $this->set(PaginationRenderer::class, fn($di) =>
+            new PaginationRenderer($di->g(ViewRenderer::class)));
 
         // Helpers for HTML custom attributes formatting
-        $this->set(HtmlAttrHelper::class, fn($di) => new HtmlAttrHelper($di->g(ComponentContainer::class)));
+        $this->set(HtmlAttrHelper::class, fn($di) =>
+            new HtmlAttrHelper($di->g(ComponentContainer::class)));
     }
 
     /**
@@ -103,5 +104,15 @@ trait ViewTrait
     public function getDialogCommand(): DialogCommand
     {
         return $this->g(DialogCommand::class);
+    }
+
+    /**
+     * Get the pagination renderer
+     *
+     * @return PaginationRenderer
+     */
+    public function getPaginationRenderer(): PaginationRenderer
+    {
+        return $this->g(PaginationRenderer::class);
     }
 }

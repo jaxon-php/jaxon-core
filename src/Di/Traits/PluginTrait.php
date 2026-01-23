@@ -6,7 +6,7 @@ use Jaxon\Jaxon;
 use Jaxon\App\Config\ConfigManager;
 use Jaxon\App\Dialog\Manager\DialogCommand;
 use Jaxon\App\I18n\Translator;
-use Jaxon\App\Pagination\RendererInterface;
+use Jaxon\App\Pagination\PaginationRenderer;
 use Jaxon\App\View\ViewRenderer;
 use Jaxon\Config\Config;
 use Jaxon\Di\Container;
@@ -89,7 +89,7 @@ trait PluginTrait
             new DialogPlugin($di->g(DialogCommand::class)));
         // Paginator response plugin
         $this->set(PaginatorPlugin::class, fn($di) =>
-            new PaginatorPlugin($di->g(RendererInterface::class)));
+            new PaginatorPlugin($di->g(PaginationRenderer::class)));
     }
 
     /**

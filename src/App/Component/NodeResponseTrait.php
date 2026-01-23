@@ -59,7 +59,7 @@ trait NodeResponseTrait
      */
     final public function item(string $item): self
     {
-        $this->node()->item($this->helper()->extendValue('item', $item));
+        $this->node()->item($this->factory()->helper()->extendValue('item', $item));
         return $this;
     }
 }

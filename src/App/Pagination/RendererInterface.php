@@ -17,13 +17,11 @@ namespace Jaxon\App\Pagination;
 interface RendererInterface
 {
     /**
-     * Render an array of pagination links
+     * Get the pagination HTML code
      *
-     * @param Page[] $aPages
-     * @param Page $xPrevPage
-     * @param Page $xNextPage
+     * @param Paginator $xPaginator
      *
      * @return string
      */
-    public function render(array $aPages, Page $xPrevPage, Page $xNextPage): string;
+    public function getHtml(Paginator $xPaginator): string;
 }

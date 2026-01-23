@@ -1,7 +1,9 @@
 <?php
 
 /**
- * Page.php - A page link for the Jaxon Paginator
+ * Page.php
+ *
+ * A page link for the Jaxon Paginator
  *
  * @package jaxon-core
  * @copyright 2024 Thierry Feuzeu
