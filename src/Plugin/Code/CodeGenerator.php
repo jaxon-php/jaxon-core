@@ -23,6 +23,7 @@ use function array_map;
 use function count;
 use function implode;
 use function md5;
+use function trim;
 use function usort;
 
 class CodeGenerator
@@ -252,14 +253,13 @@ class CodeGenerator
 
         $aTags = $this->xCode->cssTags();
         $aCodes = $this->xCode->cssCodes();
-        if(count($aCodes) === 0)
-        {
-            return implode(self::SEPARATOR, $aTags);
-        }
+        $aCodes[] = '
+.pagination li a {
+  cursor: pointer;
+}';
 
-        $cGetHash = fn() => $this->getHash();
-        $cGetCode = fn() => implode(self::SEPARATOR, $aCodes);
-        $sUrl = $this->asset()->createCssFiles($cGetHash, $cGetCode);
+        $cGetCode = fn() => implode(self::SEPARATOR, array_map(trim(...), $aCodes));
+        $sUrl = $this->asset()->createCssFiles(fn() => $this->getHash(), $cGetCode);
         // Wrap the js code into the corresponding HTML tag.
         $aTags[] = $sUrl !== '' ?
             // The generated code is saved to a file. Render the corresponding URL.
@@ -273,7 +273,7 @@ class CodeGenerator
                 'sOptions' => $this->asset()->getCssOptions(),
             ]);
 
-        return implode(self::SEPARATOR, $aTags);
+        return implode(self::SEPARATOR, array_map(trim(...), $aTags));
     }
 
     /**

@@ -22,11 +22,9 @@
 namespace Jaxon\Response;
 
 use Jaxon\App\Databag\DatabagContext;
-use Jaxon\App\Pagination\Paginator;
 use Jaxon\Exception\AppException;
 use Jaxon\Plugin\Response\Databag\DatabagPlugin;
 use Jaxon\Plugin\Response\Dialog\DialogPlugin;
-use Jaxon\Plugin\Response\Pagination\PaginatorPlugin;
 use Jaxon\Plugin\Response\Psr\PsrPlugin;
 use Jaxon\Plugin\Response\Script\ScriptPlugin;
 use Jaxon\Script\Call\JqSelectorCall;
@@ -225,21 +223,6 @@ abstract class AjaxResponse extends AbstractResponse
     public function dialog(): DialogPlugin
     {
         return $this->plugin(DialogPlugin::class);
-    }
-
-    /**
-     * Render an HTML pagination control.
-     *
-     * @param int $nPageNumber     The current page number
-     * @param int $nItemsPerPage    The number of items per page
-     * @param int $nTotalItems      The total number of items
-     *
-     * @return Paginator
-     */
-    public function paginator(int $nPageNumber, int $nItemsPerPage, int $nTotalItems): Paginator
-    {
-        return $this->plugin(PaginatorPlugin::class)
-            ->paginator($nPageNumber, $nItemsPerPage, $nTotalItems);
     }
 
     /**

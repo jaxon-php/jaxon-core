@@ -37,7 +37,6 @@ use Jaxon\Plugin\RequestHandlerInterface;
 use Jaxon\Plugin\Response\Databag\DatabagPlugin;
 use Jaxon\Plugin\Response\Dialog\DialogPlugin;
 use Jaxon\Plugin\Response\Script\ScriptPlugin;
-use Jaxon\Plugin\Response\Pagination\PaginatorPlugin;
 use Jaxon\Plugin\Response\Psr\PsrPlugin;
 use Jaxon\Plugin\ResponsePluginInterface;
 use Jaxon\Request\Handler\ParameterReader;
@@ -266,7 +265,6 @@ class PluginManager
         $this->registerPlugin(ScriptPlugin::class, ScriptPlugin::NAME, 700);
         $this->registerPlugin(DatabagPlugin::class, DatabagPlugin::NAME, 700);
         $this->registerPlugin(DialogPlugin::class, DialogPlugin::NAME, 750);
-        $this->registerPlugin(PaginatorPlugin::class, PaginatorPlugin::NAME, 800);
         $this->registerPlugin(PsrPlugin::class, PsrPlugin::NAME, 850);
     }
 

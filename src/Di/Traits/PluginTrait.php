@@ -22,7 +22,6 @@ use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Plugin\Request\CallableClass\ComponentRegistry;
 use Jaxon\Plugin\Response\Databag\DatabagPlugin;
 use Jaxon\Plugin\Response\Dialog\DialogPlugin;
-use Jaxon\Plugin\Response\Pagination\PaginatorPlugin;
 use Jaxon\Plugin\Response\Script\ScriptPlugin;
 use Jaxon\Request\Handler\CallbackManager;
 use Jaxon\Request\Handler\ParameterReader;
@@ -87,9 +86,6 @@ trait PluginTrait
         // Dialog response plugin
         $this->set(DialogPlugin::class, fn($di) =>
             new DialogPlugin($di->g(DialogCommand::class)));
-        // Paginator response plugin
-        $this->set(PaginatorPlugin::class, fn($di) =>
-            new PaginatorPlugin($di->g(PaginationRenderer::class)));
     }
 
     /**

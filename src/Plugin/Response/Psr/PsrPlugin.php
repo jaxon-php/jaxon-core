@@ -1,7 +1,7 @@
 <?php
 
 /**
- * PaginatorPlugin.php
+ * PsrPlugin.php
  *
  * A plugin to convert a response content to PSR.
  *
