@@ -54,7 +54,7 @@ class Misc extends FuncComponent
 
     public function paginate(int $page = 0)
     {
-        $this->response()->paginator($page, 10, 25)
+        $this->paginator($page, 10, 25)
             ->render($this->rq()->paginate(), 'pagination');
     }
 }

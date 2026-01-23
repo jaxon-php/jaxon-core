@@ -4,7 +4,8 @@ namespace Jaxon\Tests\TestUi;
 
 use Jaxon\Jaxon;
 use Jaxon\Exception\SetupException;
-use Jaxon\Plugin\Response\Pagination\PaginatorPlugin;
+use Jaxon\App\Pagination\FuncPaginator;
+use Jaxon\App\Pagination\PaginationRenderer;
 use Jaxon\Response\Response;
 use PHPUnit\Framework\TestCase;
 
@@ -18,9 +19,9 @@ class PaginatorTest extends TestCase
     protected $xResponse = null;
 
     /**
-     * @var PaginatorPlugin
+     * @var PaginationRenderer
      */
-    protected $xPaginatorPlugin = null;
+    protected $xPaginationRenderer = null;
 
     /**
      * @throws SetupException
@@ -32,7 +33,22 @@ class PaginatorTest extends TestCase
 
         $this->xResponse = jaxon()->getResponse();
         $this->xResponse->clearCommands();
-        $this->xPaginatorPlugin = $this->xResponse->plugin('pg');
+        $this->xPaginationRenderer = jaxon()->di()->getPaginationRenderer();
+    }
+
+    /**
+     * Create a paginator.
+     *
+     * @param int $nPageNumber      The current page number
+     * @param int $nItemsPerPage    The number of items per page
+     * @param int $nTotalItems      The total number of items
+     *
+     * @return FuncPaginator
+     */
+    protected function paginator(int $nPageNumber, int $nItemsPerPage, int $nTotalItems): FuncPaginator
+    {
+        return new FuncPaginator($nPageNumber, $nItemsPerPage, $nTotalItems,
+            $this->xPaginationRenderer, $this->xResponse);
     }
 
     /**
@@ -50,29 +66,29 @@ class PaginatorTest extends TestCase
     public function testNoPagination()
     {
         // No pagination for only one page
-        $aPages = $this->xPaginatorPlugin->paginator(1, 10, 0)->pages();
+        [, $aPages, ] = $this->paginator(1, 10, 0)->pages();
         $this->assertIsArray($aPages);
         $this->assertCount(0, $aPages);
 
-        $aPages = $this->xPaginatorPlugin->paginator(1, 10, 7)->pages();
+        [, $aPages, ] = $this->paginator(1, 10, 7)->pages();
         $this->assertIsArray($aPages);
         $this->assertCount(0, $aPages);
 
-        $aPages = $this->xPaginatorPlugin->paginator(1, 10, 10)->pages();
+        [, $aPages, ] = $this->paginator(1, 10, 10)->pages();
         $this->assertIsArray($aPages);
         $this->assertCount(0, $aPages);
 
-        $this->xPaginatorPlugin->paginator(1, 10, 0)
+        $this->paginator(1, 10, 0)
             ->render(rq('Sample')->method(jq('#div')->val), 'wrapper');
         $this->assertCount(1, $this->xResponse->getCommands());
 
         $this->xResponse->clearCommands();
-        $this->xPaginatorPlugin->paginator(1, 10, 7)
+        $this->paginator(1, 10, 7)
             ->render(rq('Sample')->method(jq('#div')->val), 'wrapper');
         $this->assertCount(1, $this->xResponse->getCommands());
 
         $this->xResponse->clearCommands();
-        $this->xPaginatorPlugin->paginator(1, 10, 10)
+        $this->paginator(1, 10, 10)
             ->render(rq('Sample')->method(jq('#div')->val), 'wrapper');
         $this->assertCount(1, $this->xResponse->getCommands());
     }
@@ -82,10 +98,10 @@ class PaginatorTest extends TestCase
      */
     public function testFirstPageWithNoPageNumber()
     {
-        $xPaginator = $this->xPaginatorPlugin->paginator(1, 10, 12);
-        $aPages = $xPaginator->pages();
+        $xPaginator = $this->paginator(1, 10, 12);
+        [, $aPages, ] = $xPaginator->pages();
         $this->assertIsArray($aPages);
-        $this->assertCount(4, $aPages);
+        $this->assertCount(2, $aPages);
 
         $sHtml = '<ul class="pagination">' .
             '<li class="disabled"><span>&laquo;</span></li>' .
@@ -117,10 +133,10 @@ class PaginatorTest extends TestCase
      */
     public function testLastPageWithNoPageNumber()
     {
-        $xPaginator = $this->xPaginatorPlugin->paginator(2, 10, 12);
-        $aPages = $xPaginator->pages();
+        $xPaginator = $this->paginator(2, 10, 12);
+        [, $aPages, ] = $xPaginator->pages();
         $this->assertIsArray($aPages);
-        $this->assertCount(4, $aPages);
+        $this->assertCount(2, $aPages);
 
         $sHtml = '<ul class="pagination">' .
             '<li class="enabled" data-page="1"><a role="link">&laquo;</a></li>' .
@@ -148,10 +164,10 @@ class PaginatorTest extends TestCase
      */
     public function testMiddlePageWithNoPageNumber()
     {
-        $xPaginator = $this->xPaginatorPlugin->paginator(2, 10, 24);
-        $aPages = $xPaginator->pages();
+        $xPaginator = $this->paginator(2, 10, 24);
+        [, $aPages, ] = $xPaginator->pages();
         $this->assertIsArray($aPages);
-        $this->assertCount(5, $aPages);
+        $this->assertCount(3, $aPages);
 
         $sHtml = '<ul class="pagination">' .
             '<li class="enabled" data-page="1"><a role="link">&laquo;</a></li>' .
@@ -180,10 +196,10 @@ class PaginatorTest extends TestCase
      */
     public function testPaginationWithPageNumber()
     {
-        $xPaginator = $this->xPaginatorPlugin->paginator(1, 10, 24);
-        $aPages = $xPaginator->pages();
+        $xPaginator = $this->paginator(1, 10, 24);
+        [, $aPages, ] = $xPaginator->pages();
         $this->assertIsArray($aPages);
-        $this->assertCount(5, $aPages);
+        $this->assertCount(3, $aPages);
 
         $sHtml = '<ul class="pagination">' .
             '<li class="disabled"><span>&laquo;</span></li>' .
@@ -216,10 +232,10 @@ class PaginatorTest extends TestCase
      */
     public function testNextAndPrevTexts()
     {
-        $xPaginator = $this->xPaginatorPlugin->paginator(1, 10, 12)->setNextText('Next')->setPreviousText('Prev');
-        $aPages = $xPaginator->pages();
+        $xPaginator = $this->paginator(1, 10, 12)->setNextText('Next')->setPreviousText('Prev');
+        [, $aPages, ] = $xPaginator->pages();
         $this->assertIsArray($aPages);
-        $this->assertCount(4, $aPages);
+        $this->assertCount(2, $aPages);
 
         $sHtml = '<ul class="pagination">' .
             '<li class="disabled"><span>Prev</span></li>' .
@@ -247,11 +263,11 @@ class PaginatorTest extends TestCase
      */
     public function testMaxPagesStart()
     {
-        $xPaginator = $this->xPaginatorPlugin->paginator(2, 5, 48)
+        $xPaginator = $this->paginator(2, 5, 48)
             ->setNextText('Next')->setPreviousText('Prev')->setMaxPages(5);
-        $aPages = $xPaginator->pages();
+        [, $aPages, ] = $xPaginator->pages();
         $this->assertIsArray($aPages);
-        $this->assertCount(7, $aPages);
+        $this->assertCount(5, $aPages);
 
         $sHtml = '<ul class="pagination">' .
             '<li class="enabled" data-page="1"><a role="link">Prev</a></li>' .
@@ -282,11 +298,11 @@ class PaginatorTest extends TestCase
      */
     public function testMaxPagesMiddle()
     {
-        $xPaginator = $this->xPaginatorPlugin->paginator(6, 5, 48)
+        $xPaginator = $this->paginator(6, 5, 48)
             ->setNextText('Next')->setPreviousText('Prev')->setMaxPages(5);
-        $aPages = $xPaginator->pages();
+        [, $aPages, ] = $xPaginator->pages();
         $this->assertIsArray($aPages);
-        $this->assertCount(7, $aPages);
+        $this->assertCount(5, $aPages);
 
         $sHtml = '<ul class="pagination">' .
             '<li class="enabled" data-page="5"><a role="link">Prev</a></li>' .
@@ -317,11 +333,11 @@ class PaginatorTest extends TestCase
      */
     public function testMaxPagesSevenMiddle()
     {
-        $xPaginator = $this->xPaginatorPlugin->paginator(6, 5, 48)
+        $xPaginator = $this->paginator(6, 5, 48)
             ->setNextText('Next')->setPreviousText('Prev')->setMaxPages(7);
-        $aPages = $xPaginator->pages();
+        [, $aPages, ] = $xPaginator->pages();
         $this->assertIsArray($aPages);
-        $this->assertCount(9, $aPages);
+        $this->assertCount(7, $aPages);
 
         $sHtml = '<ul class="pagination">' .
             '<li class="enabled" data-page="5"><a role="link">Prev</a></li>' .
@@ -354,11 +370,11 @@ class PaginatorTest extends TestCase
      */
     public function testMaxPagesEnd()
     {
-        $xPaginator = $this->xPaginatorPlugin->paginator(10, 5, 48)
+        $xPaginator = $this->paginator(10, 5, 48)
             ->setNextText('Next')->setPreviousText('Prev')->setMaxPages(5);
-        $aPages = $xPaginator->pages();
+        [, $aPages, ] = $xPaginator->pages();
         $this->assertIsArray($aPages);
-        $this->assertCount(7, $aPages);
+        $this->assertCount(5, $aPages);
 
         $sHtml = '<ul class="pagination">' .
             '<li class="enabled" data-page="9"><a role="link">Prev</a></li>' .
@@ -389,11 +405,11 @@ class PaginatorTest extends TestCase
      */
     public function testMaxPagesBeforeEnd()
     {
-        $xPaginator = $this->xPaginatorPlugin->paginator(9, 5, 48)
+        $xPaginator = $this->paginator(9, 5, 48)
             ->setNextText('Next')->setPreviousText('Prev')->setMaxPages(5);
-        $aPages = $xPaginator->pages();
+        [, $aPages, ] = $xPaginator->pages();
         $this->assertIsArray($aPages);
-        $this->assertCount(7, $aPages);
+        $this->assertCount(5, $aPages);
 
         $sHtml = '<ul class="pagination">' .
             '<li class="enabled" data-page="8"><a role="link">Prev</a></li>' .
@@ -424,11 +440,11 @@ class PaginatorTest extends TestCase
      */
     public function testMaxPagesMin()
     {
-        $xPaginator = $this->xPaginatorPlugin->paginator(9, 5, 48)
+        $xPaginator = $this->paginator(9, 5, 48)
             ->setNextText('Next')->setPreviousText('Prev')->setMaxPages(3);
-        $aPages = $xPaginator->pages();
+        [, $aPages, ] = $xPaginator->pages();
         $this->assertIsArray($aPages);
-        $this->assertCount(7, $aPages);
+        $this->assertCount(5, $aPages);
 
         $sHtml = '<ul class="pagination">' .
             '<li class="enabled" data-page="8"><a role="link">Prev</a></li>' .
