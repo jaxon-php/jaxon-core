@@ -41,6 +41,7 @@ SOFTWARE.
 namespace Jaxon\App\Pagination;
 
 use Jaxon\App\Pagination\Page;
+use Jaxon\Script\JsExpr;
 use Closure;
 
 use function array_map;
@@ -48,8 +49,9 @@ use function ceil;
 use function count;
 use function max;
 use function range;
+use function trim;
 
-class Paginator
+abstract class Paginator
 {
     /**
      * @var integer
@@ -82,9 +84,10 @@ class Paginator
      * @param int $nPageNumber     The current page number
      * @param int $nItemsPerPage    The number of items per page
      * @param int $nItemsCount      The total number of items
+     * @param PaginationRenderer $xRenderer
      */
-    public function __construct(protected int $nPageNumber,
-        protected int $nItemsPerPage, protected int $nItemsCount)
+    public function __construct(protected int $nPageNumber, protected int $nItemsPerPage,
+        protected int $nItemsCount, protected PaginationRenderer $xRenderer)
     {
         $this->updatePagesCount();
     }
@@ -342,5 +345,30 @@ class Paginator
         $fOffsetCallback(($this->nPageNumber - 1) * $this->nItemsPerPage);
 
         return $this;
+    }
+
+    /**
+     * @param string $sHtml
+     * @param array $aParams
+     *
+     * @return void
+     */
+    abstract protected function showHtml(string $sHtml, array $aParams): void;
+
+    /**
+     * Render the pagination links with a given javascript call.
+     *
+     * @param JsExpr $xCall
+     * @param array $aParams
+     *
+     * @return void
+     */
+    protected function paginate(JsExpr $xCall, ...$aParams): void
+    {
+        if(($xFunc = $xCall->func()) !== null)
+        {
+            $this->showHtml(trim((string)$this->xRenderer->getHtml($this)),
+                [$xFunc->withPage()->jsonSerialize(), ...$aParams]);
+        }
     }
 }

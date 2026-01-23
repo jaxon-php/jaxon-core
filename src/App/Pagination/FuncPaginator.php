@@ -16,8 +16,6 @@ namespace Jaxon\App\Pagination;
 use Jaxon\Response\Response;
 use Jaxon\Script\JsExpr;
 
-use function trim;
-
 class FuncPaginator extends Paginator
 {
     /**
@@ -30,9 +28,25 @@ class FuncPaginator extends Paginator
      * @param Response $xResponse
      */
     public function __construct(int $nPageNumber, int $nItemsPerPage, int $nItemsCount,
-        private PaginationRenderer $xRenderer, private Response $xResponse)
+        PaginationRenderer $xRenderer, private Response $xResponse)
     {
-        parent::__construct($nPageNumber, $nItemsPerPage, $nItemsCount);
+        parent::__construct($nPageNumber, $nItemsPerPage, $nItemsCount, $xRenderer);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function showHtml(string $sHtml, array $aParams): void
+    {
+        [$aFunc, $sWrapperId] = $aParams;
+        // The HTML code must always be displayed, even if it is empty.
+        $this->xResponse->html($sWrapperId, $sHtml);
+        // Set click handlers on the pagination links
+        if($sHtml !== '')
+        {
+            $aParams = ['id' => $sWrapperId, 'func' => $aFunc];
+            $this->xResponse->addCommand('pg.paginate', $aParams);
+        }
     }
 
     /**
@@ -45,23 +59,6 @@ class FuncPaginator extends Paginator
      */
     public function render(JsExpr $xCall, string $sWrapperId): void
     {
-        if(($xFunc = $xCall->func()) === null)
-        {
-            return;
-        }
-
-        $sHtml = trim((string)$this->xRenderer->getHtml($this));
-        // The HTML code must always be displayed, even if it is empty.
-        $this->xResponse->html($sWrapperId, $sHtml);
-
-        // Set click handlers on the pagination links
-        if($sHtml !== '')
-        {
-            $aParams = [
-                'id' => $sWrapperId,
-                'func' => $xFunc->withPage()->jsonSerialize(),
-            ];
-            $this->xResponse->addCommand('pg.paginate', $aParams);
-        }
+        $this->paginate($xCall, $sWrapperId);
     }
 }
