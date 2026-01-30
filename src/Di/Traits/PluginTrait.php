@@ -198,7 +198,7 @@ trait PluginTrait
             // The user can provide a callable that returns the package options.
             if(is_callable($xOptionsProvider))
             {
-                $aUserOptions = $xOptionsProvider($aUserOptions);
+                $aUserOptions = $xOptionsProvider($aUserOptions, $di);
             }
             return $di->g(ConfigManager::class)->newConfig($aUserOptions);
         });
