@@ -2,13 +2,12 @@
 
 namespace Jaxon\App;
 
+use Jaxon\App\Pagination\NodePaginator;
 use Jaxon\App\Pagination\PageNumberInput;
-use Jaxon\App\Pagination\Paginator;
 use Jaxon\Script\JsExpr;
 use Closure;
 
 use function is_a;
-use function is_string;
 
 abstract class PageComponent extends NodeComponent
 {
@@ -92,33 +91,47 @@ abstract class PageComponent extends NodeComponent
     /**
      * Get the paginator for the component.
      *
-     * @param Closure|string|int $xOption
+     * @param Closure $fSetup
      *
-     * @return PageComponent|Paginator
+     * @return self
      */
-    final protected function paginator(Closure|string|int $xOption): PageComponent|Paginator
+    final protected function paginatorSetup(Closure $fSetup): self
     {
-        if(is_a($xOption, Closure::class))
-        {
-            $this->fPaginatorSetup = $xOption;
-            return $this;
-        }
+         $this->fPaginatorSetup = $fSetup;
+        return $this;
+    }
 
-        if(is_string($xOption))
+    /**
+     * Get the paginator for the component.
+     *
+     * @param class-string $sComponent
+     *
+     * @return self
+     */
+    final protected function paginatorComponent(string $sComponent): self
+    {
+        // Invalid values are ignored.
+        if(is_a($sComponent, Component\Pagination::class, true))
         {
-            if(is_a($xOption, Component\Pagination::class, true))
-            {
-                $this->sPaginationComponent = $xOption;
-            }
-            // Invalid values are ignored.
-            return $this;
+            $this->sPaginationComponent = $sComponent;
         }
+        return $this;
+    }
 
-        $pageNumber = $this->input()->getInputPageNumber($xOption);
+    /**
+     * Get the paginator for the component.
+     *
+     * @param int $nPageNumber
+     *
+     * @return NodePaginator
+     */
+    final protected function paginator(int $nPageNumber): NodePaginator
+    {
+        $nPageNumber = $this->input()->getInputPageNumber($nPageNumber);
         $paginator = $this->cl($this->sPaginationComponent)
             ->item($this->paginationComponentItem())
             // This call will also set the current page number value.
-            ->paginator($pageNumber, $this->limit(), $this->count())
+            ->paginator($nPageNumber, $this->limit(), $this->count())
             // This callback will receive the final value of the current page number.
             ->page($this->input()->setFinalPageNumber(...));
 
@@ -135,14 +148,14 @@ abstract class PageComponent extends NodeComponent
      * Render the page and pagination components.
      *
      * @param JsExpr $xCall
-     * @param int $pageNumber
+     * @param int $nPageNumber
      *
      * @return void
      */
-    final protected function paginate(JsExpr $xCall, int $pageNumber): void
+    final protected function paginate(JsExpr $xCall, int $nPageNumber): void
     {
         // Get the paginator for the component.
-        $paginator = $this->paginator($pageNumber);
+        $paginator = $this->paginator($nPageNumber);
         // Now the page number is set, the page content can be rendered.
         $this->render();
         // Render the pagination component.
