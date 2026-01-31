@@ -46,7 +46,7 @@ class Databag implements JsonSerializable
     public function clear(string $sBag): void
     {
         $this->aTouched[$sBag] = true;
-        $this->aData[$sBag] = [];
+        $this->aData[$sBag] = null;
     }
 
     /**
