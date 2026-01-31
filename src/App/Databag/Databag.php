@@ -4,14 +4,15 @@ namespace Jaxon\App\Databag;
 
 use JsonSerializable;
 
+use function count;
 use function key_exists;
 
 class Databag implements JsonSerializable
 {
     /**
-     * @var bool
+     * @var array<bool>
      */
-    protected $bTouched = false;
+    private array $aTouched = [];
 
     /**
      * The constructor
@@ -26,7 +27,7 @@ class Databag implements JsonSerializable
      */
     public function touched(): bool
     {
-        return $this->bTouched;
+        return count($this->aTouched) > 0;
     }
 
     /**
@@ -44,7 +45,7 @@ class Databag implements JsonSerializable
      */
     public function clear(string $sBag): void
     {
-        $this->bTouched = true;
+        $this->aTouched[$sBag] = true;
         $this->aData[$sBag] = [];
     }
 
@@ -57,7 +58,7 @@ class Databag implements JsonSerializable
      */
     public function set(string $sBag, string $sKey, $xValue): void
     {
-        $this->bTouched = true;
+        $this->aTouched[$sBag] = true;
         $this->aData[$sBag][$sKey] = $xValue;
     }
 
@@ -96,6 +97,11 @@ class Databag implements JsonSerializable
      */
     public function jsonSerialize(): array
     {
-        return $this->aData;
+        $aData = [];
+        foreach($this->aTouched as $sBag => $_)
+        {
+            $aData[$sBag] = $this->aData[$sBag];
+        }
+        return $aData;
     }
 }
