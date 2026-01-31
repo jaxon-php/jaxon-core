@@ -9,7 +9,7 @@ use Closure;
 
 use function is_a;
 
-abstract class PageComponent extends NodeComponent
+abstract class PageComponent extends Component\NodeComponent
 {
     /**
      * @var Closure|null
@@ -160,5 +160,35 @@ abstract class PageComponent extends NodeComponent
         $this->render();
         // Render the pagination component.
         $paginator->render($xCall);
+    }
+
+    /**
+     * Clear the attached DOM node content.
+     *
+     * @return void
+     */
+    final public function clear(): void
+    {
+        $this->node()->clear();
+        // Also clear the related pagination component.
+        $this->cl($this->sPaginationComponent)
+            ->item($this->paginationComponentItem())
+            ->clear();
+    }
+
+    /**
+     * Show/hide the attached DOM node.
+     *
+     * @param bool $bVisible
+     *
+     * @return void
+     */
+    final public function visible(bool $bVisible): void
+    {
+        $bVisible ? $this->node()->jq()->show() : $this->node()->jq()->hide();
+        // Also show/hide the related pagination component.
+        $this->cl($this->sPaginationComponent)
+            ->item($this->paginationComponentItem())
+            ->visible($bVisible);
     }
 }
