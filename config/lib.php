@@ -17,6 +17,10 @@ return [
         'response' => [
             'send'              => true,
         ],
+        'bag' => [
+            'readable'          => false,
+            'editable'          => false,
+        ],
         'debug' => [
             'on'                => false,
             'verbose'           => false,
@@ -28,9 +32,6 @@ return [
         'error' => [
             'handle'            => false,
             'log_file'          => '',
-        ],
-        'jquery' => [
-            'no_conflict'       => false,
         ],
     ],
     'js' => [

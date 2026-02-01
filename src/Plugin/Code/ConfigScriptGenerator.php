@@ -57,22 +57,24 @@ class ConfigScriptGenerator extends AbstractCodeGenerator implements JsCodeGener
         $sUri = $this->option('core.request.uri') ?: $this->xParameterReader->uri();
         $aOptions = [
             'sResponseType'      => 'JSON',
-            'sVersion'           => $this->option('core.version'),
-            'sLanguage'          => $this->option('core.language'),
+            'sVersion'           => (string)$this->option('core.version'),
+            'sLanguage'          => (string)$this->option('core.language'),
             'sRequestURI'        => $sUri,
-            'sDefaultMode'       => $this->option('core.request.mode'),
-            'sDefaultMethod'     => $this->option('core.request.method'),
-            'sCsrfMetaName'      => $this->option('core.request.csrf_meta'),
+            'sDefaultMode'       => (string)$this->option('core.request.mode'),
+            'sDefaultMethod'     => (string)$this->option('core.request.method'),
+            'sCsrfMetaName'      => (string)$this->option('core.request.csrf_meta'),
+            // 'bBagReadable '      => (bool)$this->option('core.bag.readable'),
+            // 'bBagEditable'       => (bool)$this->option('core.bag.editable'),
             'bLoggingEnabled'    => $this->xConfigManager->loggingEnabled(),
-            'bDebug'             => $this->option('core.debug.on'),
-            'bVerboseDebug'      => $this->option('core.debug.verbose'),
-            'sDebugOutputID'     => $this->option('core.debug.output_id'),
-            'nResponseQueueSize' => $this->option('js.lib.queue_size'),
+            'bDebug'             => (bool)$this->option('core.debug.on'),
+            'bVerboseDebug'      => (bool)$this->option('core.debug.verbose'),
+            'sDebugOutputID'     => (string)$this->option('core.debug.output_id'),
+            'nResponseQueueSize' => (int)$this->option('js.lib.queue_size'),
             'sStatusMessages'    => $this->option('js.lib.show_status') ? 'true' : 'false',
             'sWaitCursor'        => $this->option('js.lib.show_cursor') ? 'true' : 'false',
         ];
-        $sJsCode = $this->xTemplateEngine->render('jaxon::plugins/config.js', $aOptions);
 
-        return new JsCode(sCodeBefore: $sJsCode);
+        return new JsCode(sCodeBefore: $this->xTemplateEngine
+            ->render('jaxon::plugins/config.js', $aOptions));
     }
 }
