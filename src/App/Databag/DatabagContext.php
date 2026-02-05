@@ -47,6 +47,14 @@ class DatabagContext
     }
 
     /**
+     * @return array
+     */
+    public function getAll(): array
+    {
+        return $this->xDatabag->getAll();
+    }
+
+    /**
      * @return self
      */
     public function clear(): self

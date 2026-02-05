@@ -59,6 +59,11 @@ trait ComponentTrait
     abstract protected function cn(): Container;
 
     /**
+     * @var int
+     */
+    private int $filter = ReflectionProperty::IS_PUBLIC | ReflectionProperty::IS_PROTECTED;
+
+    /**
      * @param class-string $sClassName
      *
      * @return CallableObject|null
@@ -300,8 +305,7 @@ trait ComponentTrait
         }
 
         $aProperties = array_map(fn($xProperty) => $xProperty->getName(),
-            $xReflectionClass->getProperties(ReflectionProperty::IS_PUBLIC |
-                ReflectionProperty::IS_PROTECTED));
+            $xReflectionClass->getProperties($this->filter));
 
         $xMetadataReader = $di->getMetadataReader($sMetadataFormat);
         $xInput = new InputData($xReflectionClass, $aMethods, $aProperties);

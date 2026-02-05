@@ -184,21 +184,6 @@ class CallableObject
     }
 
     /**
-     * @param object $xComponent
-     * @param string $sAttr
-     * @param object $xDiValue
-     * @param-closure-this object $cSetter
-     *
-     * @return void
-     */
-    private function setDiAttribute($xComponent, string $sAttr, $xDiValue, Closure $cSetter): void
-    {
-        // Allow the setter to access protected attributes.
-        $cSetter = $cSetter->bindTo($xComponent, $xComponent);
-        call_user_func($cSetter, $sAttr, $xDiValue);
-    }
-
-    /**
      * @param mixed $xComponent
      * @param array $aDiOptions
      *
@@ -214,7 +199,9 @@ class CallableObject
         };
         foreach($aDiOptions as $sAttr => $sClass)
         {
-            $this->setDiAttribute($xComponent, $sAttr, $this->di->get($sClass), $cSetter);
+            // Allow the setter to access protected attributes.
+            $cSetter = $cSetter->bindTo($xComponent, $xComponent);
+            call_user_func($cSetter, $sAttr, $this->di->get($sClass));
         }
     }
 
