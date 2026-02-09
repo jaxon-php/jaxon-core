@@ -27,15 +27,15 @@ trait RequestTrait
     private function registerRequests(): void
     {
         // The parameter reader
-        $this->set(ParameterReader::class, fn($di) =>
+        $this->set(ParameterReader::class, fn(Container $di) =>
             new ParameterReader($di->g(Container::class), $di->g(Translator::class),
                 $di->g(ConfigManager::class), $di->g(UriDetector::class)));
         // Callback Manager
-        $this->set(CallbackManager::class, fn() => new CallbackManager());
+        $this->set(CallbackManager::class, fn(Container $di) => new CallbackManager($di));
         // By default, register a null upload handler
         $this->set(UploadHandlerInterface::class, fn() => null);
         // Request Handler
-        $this->set(RequestHandler::class, fn($di) =>
+        $this->set(RequestHandler::class, fn(Container $di) =>
             new RequestHandler($di->g(Container::class), $di->g(PluginManager::class),
                 $di->g(ResponseManager::class), $di->g(CallbackManager::class),
                 $di->g(DatabagPlugin::class)));

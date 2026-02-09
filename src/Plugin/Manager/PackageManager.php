@@ -84,10 +84,10 @@ class PackageManager
             $this->di->alias((string)$xKey, (string)$xValue);
         }
         $aOptions = $xConfig->getOption('container.extend', []);
-        foreach($aOptions as $xKey => $xValue)
+        foreach($aOptions as $sClass => $xClosure)
         {
-            // The key is the class name. It must be a string.
-            $this->di->extend((string)$xKey, $xValue);
+            // The service extensions are postponed until the DI is already setup.
+            $this->xCallbackManager->addExtendedService($sClass, $xClosure);
         }
     }
 

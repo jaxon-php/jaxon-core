@@ -14,12 +14,13 @@
 
 namespace Jaxon\Request\Handler;
 
+use Jaxon\Di\Container;
 use Jaxon\Exception\AppException;
 use Jaxon\Exception\RequestException;
 use Jaxon\Request\Target;
+use Closure;
 use Exception;
 
-use function array_merge;
 use function array_values;
 use function call_user_func_array;
 use function count;
@@ -77,17 +78,59 @@ class CallbackManager
     protected $aInitCallbacks = [];
 
     /**
+     * The DI services to be extended
+     *
+     * @var array<string, Closure>
+     */
+    protected $aExtendedServices = [];
+
+    /**
+     * The constructor
+     *
+     * @param Container $di
+     */
+    public function __construct(private Container $di)
+    {}
+
+    /**
+     * @param string $sClass
+     * @param Closure $xClosure
+     *
+     * @return void
+     */
+    public function addExtendedService(string $sClass, Closure $xClosure): void
+    {
+        $this->aExtendedServices[$sClass] = $xClosure;
+    }
+
+    /**
      * Get the library booting callbacks, and reset the array.
      *
      * @return callable[]
      */
     public function popBootCallbacks(): array
     {
-        if(empty($this->aBootCallbacks))
+        $aCallbacks = $this->aBootCallbacks;
+        // Because extending a service requires that it is already defined,
+        // the service extensions are postponed until the DI is already setup.
+        if(count($this->aExtendedServices) > 0)
+        {
+            $aExtendedServices = $this->aExtendedServices;
+            $this->aExtendedServices = [];
+            // Prepend the extended services callback to the list.
+            $aCallbacks = [function() use($aExtendedServices) {
+                foreach($aExtendedServices as $sClass => $xClosure)
+                {
+                    $this->di->extend($sClass, $xClosure);
+                }
+            }, ...$aCallbacks]; 
+        }
+
+        if(count($aCallbacks) === 0)
         {
             return [];
         }
-        $aCallbacks = $this->aBootCallbacks;
+
         $this->aBootCallbacks = [];
         return $aCallbacks;
     }
@@ -283,10 +326,10 @@ class CallbackManager
         {
             if(is_a($xException, $sExClass))
             {
-                $aExceptionCallbacks = array_merge($aExceptionCallbacks, $aCallbacks);
+                $aExceptionCallbacks = [...$aExceptionCallbacks, ...$aCallbacks];
             }
         }
-        return array_merge(array_values($aExceptionCallbacks), $this->aErrorCallbacks);
+        return [...array_values($aExceptionCallbacks), ...$this->aErrorCallbacks];
     }
 
     /**
