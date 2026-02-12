@@ -7,6 +7,7 @@ use Jaxon\App\I18n\Translator;
 use Jaxon\Config\Config;
 use Jaxon\Config\ConfigReader;
 use Jaxon\Config\ConfigSetter;
+use Jaxon\Di\Container;
 use Jaxon\Storage\StorageManager;
 use Jaxon\Utils\Http\UriDetector;
 use Jaxon\Utils\Template\TemplateEngine;
@@ -25,7 +26,7 @@ trait UtilTrait
     private function registerUtils(): void
     {
         // Translator
-        $this->set(Translator::class, function($di) {
+        $this->set(Translator::class, function(Container $di) {
             $xTranslator = new Translator();
             $sResourceDir = rtrim(trim($di->g('jaxon.core.dir.translation')), '/\\');
             // Load the debug translations
@@ -47,14 +48,14 @@ trait UtilTrait
         $this->alias(BaseTranslator::class, Translator::class);
 
         // Config reader
-        $this->set(ConfigReader::class, fn($di): ConfigReader =>
+        $this->set(ConfigReader::class, fn(Container $di): ConfigReader =>
             new ConfigReader($di->g(ConfigSetter::class)));
 
         // Config setter
         $this->set(ConfigSetter::class, fn() => new ConfigSetter());
 
         // Template engine
-        $this->set(TemplateEngine::class, function($di) {
+        $this->set(TemplateEngine::class, function(Container $di) {
             $xTemplateEngine = new TemplateEngine();
             $sTemplateDir = rtrim(trim($di->g('jaxon.core.dir.template')), '/\\');
             $sPaginationDir = $sTemplateDir . DIRECTORY_SEPARATOR . 'pagination';
@@ -72,7 +73,7 @@ trait UtilTrait
         $this->set(Stash::class, fn(): Stash => new Stash());
 
         // File storage
-        $this->set(StorageManager::class, function($di): StorageManager {
+        $this->set(StorageManager::class, function(Container $di): StorageManager {
             $xConfigGetter = function() use($di): Config {
                 $aConfigOptions = $di->config()->getAppOption('storage', []);
                 return $di->g(ConfigSetter::class)->newConfig($aConfigOptions);

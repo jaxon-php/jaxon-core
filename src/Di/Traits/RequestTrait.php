@@ -40,7 +40,8 @@ trait RequestTrait
                 $di->g(ResponseManager::class), $di->g(CallbackManager::class),
                 $di->g(DatabagPlugin::class)));
         // Requests and calls Factory
-        $this->set(CallFactory::class, fn($di) => new CallFactory($di->g(ComponentContainer::class)));
+        $this->set(CallFactory::class, fn(Container $di) =>
+            new CallFactory($di->g(ComponentContainer::class)));
         // Factory for function parameters
         $this->set(ParameterFactory::class, fn() => new ParameterFactory());
     }

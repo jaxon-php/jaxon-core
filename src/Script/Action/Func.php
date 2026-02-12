@@ -30,6 +30,7 @@ class Func extends TypedValue
      */
     public function withPage(): self
     {
+        // Check if there's already a page number in the parameters list.
         foreach($this->aArguments as $xArgument)
         {
             if(TypedValue::isPage($xArgument))

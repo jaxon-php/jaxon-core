@@ -23,13 +23,13 @@ trait CallableTrait
     private function registerCallables(): void
     {
         // Validator
-        $this->set(Validator::class, fn($di) =>
+        $this->set(Validator::class, fn(Container $di) =>
             new Validator($di->g(ConfigManager::class), $di->g(Translator::class)));
         // Callable objects registry
-        $this->set(ComponentRegistry::class, fn($di) =>
+        $this->set(ComponentRegistry::class, fn(Container $di) =>
             new ComponentRegistry($di->g(ComponentContainer::class)));
         // Callable class plugin
-        $this->set(CallableClassPlugin::class, function($di) {
+        $this->set(CallableClassPlugin::class, function(Container $di) {
             $sPrefix = $di->g(ConfigManager::class)->getOption('core.prefix.class');
             return new CallableClassPlugin($sPrefix, $di->getLogger(),
                 $di->g(ComponentContainer::class), $di->g(ComponentRegistry::class),
@@ -37,11 +37,11 @@ trait CallableTrait
                 $di->g(Validator::class));
         });
         // Callable dir plugin
-        $this->set(CallableDirPlugin::class, fn($di) =>
+        $this->set(CallableDirPlugin::class, fn(Container $di) =>
             new CallableDirPlugin($di->g(ComponentContainer::class),
                 $di->g(ComponentRegistry::class), $di->g(Translator::class)));
         // Callable function plugin
-        $this->set(CallableFunctionPlugin::class, function($di) {
+        $this->set(CallableFunctionPlugin::class, function(Container $di) {
             $sPrefix = $di->g(ConfigManager::class)->getOption('core.prefix.function');
             $bDebug = $di->g(ConfigManager::class)->getOption('core.debug.on', false);
             return new CallableFunctionPlugin($sPrefix, $bDebug,

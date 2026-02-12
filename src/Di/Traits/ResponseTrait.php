@@ -23,10 +23,10 @@ trait ResponseTrait
     private function registerResponses(): void
     {
         // Global Response
-        $this->set(Response::class, fn($di) =>
+        $this->set(Response::class, fn(Container $di) =>
             new Response($di->g(ResponseManager::class), $di->g(PluginManager::class)));
         // Response Manager
-        $this->set(ResponseManager::class, function($di) {
+        $this->set(ResponseManager::class, function(Container $di) {
             $sEncoding = trim($di->g(ConfigManager::class)->getOption('core.encoding', ''));
             return new ResponseManager($di->g(Container::class), $di->g(Translator::class), $sEncoding);
         });

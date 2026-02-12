@@ -6,7 +6,6 @@ use Jaxon\Jaxon;
 use Jaxon\App\Config\ConfigManager;
 use Jaxon\App\Dialog\Manager\DialogCommand;
 use Jaxon\App\I18n\Translator;
-use Jaxon\App\Pagination\PaginationRenderer;
 use Jaxon\App\View\ViewRenderer;
 use Jaxon\Config\Config;
 use Jaxon\Di\Container;
@@ -51,7 +50,7 @@ trait PluginTrait
     private function registerPlugins(): void
     {
         // Plugin manager
-        $this->set(PluginManager::class, function($di) {
+        $this->set(PluginManager::class, function(Container $di) {
             $xPluginManager = new PluginManager($di->g(Container::class),
                 $di->g(CodeGenerator::class), $di->g(Translator::class));
             // Register the Jaxon request and response plugins
@@ -59,7 +58,7 @@ trait PluginTrait
             return $xPluginManager;
         });
         // Package manager
-        $this->set(PackageManager::class, fn($di) =>
+        $this->set(PackageManager::class, fn(Container $di) =>
             new PackageManager($di->g(Container::class), $di->g(Translator::class),
                 $di->g(PluginManager::class), $di->g(ConfigManager::class),
                 $di->g(ViewRenderer::class), $di->g(CallbackManager::class),
@@ -67,24 +66,24 @@ trait PluginTrait
         // Code Generation
         $this->set(MinifierInterface::class, fn()=>
             new class extends FileMinifier implements MinifierInterface {});
-        $this->set(AssetManager::class, fn($di) =>
+        $this->set(AssetManager::class, fn(Container $di) =>
             new AssetManager($di->g(ConfigManager::class),
                 $di->g(StorageManager::class), $di->g(MinifierInterface::class)));
-        $this->set(CodeGenerator::class, fn($di) =>
+        $this->set(CodeGenerator::class, fn(Container $di) =>
             new CodeGenerator(Jaxon::VERSION, $di->g(Container::class),
                 $di->g(TemplateEngine::class), $di->g(ConfigManager::class)));
-        $this->set(ConfigScriptGenerator::class, fn($di) =>
+        $this->set(ConfigScriptGenerator::class, fn(Container $di) =>
             new ConfigScriptGenerator($di->g(ParameterReader::class),
                 $di->g(TemplateEngine::class), $di->g(ConfigManager::class)));
         $this->set(ReadyScriptGenerator::class, fn() => new ReadyScriptGenerator());
 
         // Script response plugin
-        $this->set(ScriptPlugin::class, fn($di) => new ScriptPlugin($di->g(CallFactory::class)));
+        $this->set(ScriptPlugin::class, fn(Container $di) => new ScriptPlugin($di->g(CallFactory::class)));
         // Databag response plugin. Get the databag contents from the HTTP request parameters.
-        $this->set(DatabagPlugin::class, fn($di) =>
+        $this->set(DatabagPlugin::class, fn(Container $di) =>
             new DatabagPlugin(fn() => $di->getRequest()->getAttribute('jxnbags', [])));
         // Dialog response plugin
-        $this->set(DialogPlugin::class, fn($di) =>
+        $this->set(DialogPlugin::class, fn(Container $di) =>
             new DialogPlugin($di->g(DialogCommand::class)));
     }
 
@@ -193,7 +192,7 @@ trait PluginTrait
 
         // Save the package config in the container.
         $sConfigKey = $this->getPackageConfigKey($sClassName);
-        $this->set($sConfigKey, function($di) use($aUserOptions) {
+        $this->set($sConfigKey, function(Container $di) use($aUserOptions) {
             $xOptionsProvider = $aUserOptions['provider'] ?? null;
             // The user can provide a callable that returns the package options.
             if(is_callable($xOptionsProvider))

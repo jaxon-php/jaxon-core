@@ -29,12 +29,13 @@ trait ViewTrait
     private function registerViews(): void
     {
         // Jaxon template view
-        $this->set(TemplateView::class, fn($di) => new TemplateView($di->g(TemplateEngine::class)));
+        $this->set(TemplateView::class, fn(Container $di) =>
+            new TemplateView($di->g(TemplateEngine::class)));
         // View Renderer
-        $this->set(ViewRenderer::class, function($di) {
+        $this->set(ViewRenderer::class, function(Container $di) {
             $xViewRenderer = new ViewRenderer($di->g(Container::class));
             // Add the default view renderer
-            $xViewRenderer->addRenderer('jaxon', fn($di) => $di->g(TemplateView::class));
+            $xViewRenderer->addRenderer('jaxon', fn(Container $di) => $di->g(TemplateView::class));
             $sTemplateDir = rtrim(trim($di->g('jaxon.core.dir.template')), '/\\');
             $sPaginationDir = $sTemplateDir . DIRECTORY_SEPARATOR . 'pagination';
             // By default, render pagination templates with Jaxon.
@@ -45,7 +46,7 @@ trait ViewTrait
 
         // By default there is no dialog library registry.
         $this->set(NoDialogLibrary::class, fn() => new NoDialogLibrary());
-        $this->set(LibraryRegistryInterface::class, fn($di) =>
+        $this->set(LibraryRegistryInterface::class, fn(Container $di) =>
             new class($di) implements LibraryRegistryInterface
             {
                 public function __construct(private $di)
@@ -64,15 +65,15 @@ trait ViewTrait
                 }
             });
         // Dialog command
-        $this->set(DialogCommand::class, fn($di) =>
+        $this->set(DialogCommand::class, fn(Container $di) =>
             new DialogCommand(fn() => $di->g(LibraryRegistryInterface::class)));
 
         // Pagination renderer
-        $this->set(PaginationRenderer::class, fn($di) =>
+        $this->set(PaginationRenderer::class, fn(Container $di) =>
             new PaginationRenderer($di->g(ViewRenderer::class)));
 
         // Helpers for HTML custom attributes formatting
-        $this->set(HtmlAttrHelper::class, fn($di) =>
+        $this->set(HtmlAttrHelper::class, fn(Container $di) =>
             new HtmlAttrHelper($di->g(ComponentContainer::class)));
     }
 
