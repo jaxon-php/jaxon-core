@@ -23,6 +23,7 @@ namespace Jaxon\Response;
 
 use Jaxon\App\Databag\DatabagContext;
 use Jaxon\Exception\AppException;
+use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\Response\Databag\DatabagPlugin;
 use Jaxon\Plugin\Response\Dialog\DialogPlugin;
 use Jaxon\Plugin\Response\Psr\PsrPlugin;
@@ -30,6 +31,7 @@ use Jaxon\Plugin\Response\Script\ScriptPlugin;
 use Jaxon\Script\Call\JqSelectorCall;
 use Jaxon\Script\Call\JsObjectCall;
 use Jaxon\Script\Call\JsSelectorCall;
+use Jaxon\Script\Call\JxnCall;
 use Jaxon\Script\JsExpr;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 use Closure;
@@ -164,6 +166,19 @@ abstract class AjaxResponse extends AbstractResponse
     {
         $this->xManager->addCommand('script.sleep', ['duration' => $tenths]);
         return $this;
+    }
+
+    /**
+     * Get a factory for a registered class.
+     *
+     * @param string $sClassName
+     *
+     * @return JxnCall|null
+     * @throws SetupException
+     */
+    public function rq(string $sClassName = ''): ?JxnCall
+    {
+        return $this->plugin(ScriptPlugin::class)->rq($sClassName);
     }
 
     /**

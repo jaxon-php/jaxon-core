@@ -13,6 +13,7 @@
 
 namespace Jaxon\Plugin\Response\Script;
 
+use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\AbstractResponsePlugin;
 use Jaxon\Response\NodeResponse;
 use Jaxon\Script\CallFactory;
@@ -20,6 +21,7 @@ use Jaxon\Script\Call\AbstractCall;
 use Jaxon\Script\Call\JqSelectorCall;
 use Jaxon\Script\Call\JsObjectCall;
 use Jaxon\Script\Call\JsSelectorCall;
+use Jaxon\Script\Call\JxnCall;
 use Jaxon\Script\JsExpr;
 
 use function is_a;
@@ -78,6 +80,24 @@ class ScriptPlugin extends AbstractResponsePlugin
     {
         // Use the version number as hash
         return '5.0.0';
+    }
+
+    /**
+     * Get a factory for a registered class.
+     *
+     * @param string $sClassName
+     *
+     * @return JxnCall|null
+     * @throws SetupException
+     */
+    public function rq(string $sClassName = ''): ?JxnCall
+    {
+        /*
+         * The provided closure will be called each time a js expression is created with this factory,
+         * with the expression as the only parameter.
+         * It is currently used to attach the expression to a Jaxon response.
+         */
+        return $this->setCallback($this->xFactory->rq($sClassName));
     }
 
     /**

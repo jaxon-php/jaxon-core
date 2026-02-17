@@ -140,11 +140,11 @@ abstract class AbstractResponse
      * Find a response plugin by name or class name
      *
      * @template R of ResponsePluginInterface
-     * @param string|class-string<R> $sName    The name of the plugin
+     * @param class-string<R>|string $sName    The name of the plugin
      *
-     * @return ($sName is class-string ? R|null : ResponsePluginInterface|null)
+     * @return ($sName is class-string ? R : ResponsePluginInterface)|null
      */
-    public function plugin(string $sName): ?ResponsePluginInterface
+    public function plugin(string $sName): ResponsePluginInterface|null
     {
         $xResponsePlugin = $this->xPluginManager->getResponsePlugin($sName);
         return !$xResponsePlugin ? null : $xResponsePlugin->initPlugin($this);
