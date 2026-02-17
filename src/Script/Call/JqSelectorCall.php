@@ -16,22 +16,17 @@ namespace Jaxon\Script\Call;
 
 use Jaxon\Script\Action\Selector;
 use Jaxon\Script\JsExpr;
-use Closure;
 
 class JqSelectorCall extends AbstractJsCall
 {
     /**
      * The constructor.
      *
-     * @param Closure|null $xExprCb
      * @param string $sSelector    The jQuery selector path
      * @param mixed $xContext    A context associated to the selector
      */
-    public function __construct(?Closure $xExprCb, protected string $sSelector,
-        protected $xContext = null)
-    {
-        parent::__construct($xExprCb);
-    }
+    public function __construct(protected string $sSelector, protected $xContext = null)
+    {}
 
     /**
      * Get the call to add to the expression
@@ -54,7 +49,7 @@ class JqSelectorCall extends AbstractJsCall
      */
     public function on(string $sName, JsExpr $xHandler): JsExpr
     {
-        return $this->_expr()->event('jq', $sName, $xHandler);
+        return $this->_cbExpr()->event('jq', $sName, $xHandler);
     }
 
     /**
@@ -66,6 +61,6 @@ class JqSelectorCall extends AbstractJsCall
      */
     public function click(JsExpr $xHandler): JsExpr
     {
-        return $this->_expr()->event('jq', 'click', $xHandler);
+        return $this->_cbExpr()->event('jq', 'click', $xHandler);
     }
 }

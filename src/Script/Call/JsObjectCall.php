@@ -15,20 +15,16 @@ namespace Jaxon\Script\Call;
  */
 
 use Jaxon\Script\Action\Attr;
-use Closure;
 
 class JsObjectCall extends AbstractJsCall
 {
     /**
      * The class constructor
      *
-     * @param Closure|null $xExprCb
      * @param string $sJsObject
      */
-    public function __construct(?Closure $xExprCb, protected string $sJsObject)
-    {
-        parent::__construct($xExprCb);
-    }
+    public function __construct(protected string $sJsObject)
+    {}
 
     /**
      * Get the call to add to the expression

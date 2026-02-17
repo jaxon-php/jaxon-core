@@ -16,9 +16,41 @@ namespace Jaxon\Script\Call;
 
 use Jaxon\Script\JsExpr;
 use JsonSerializable;
+use Closure;
 
 abstract class AbstractCall implements JsonSerializable
 {
+    /**
+     * @var Closure|null $xExprCb
+     */
+    private Closure|null $xExprCb = null;
+
+    /**
+     * @param Closure $xExprCb
+     *
+     * @return static
+     */
+    public function _cb(Closure $xExprCb): static
+    {
+        $this->xExprCb = $xExprCb;
+        return $this;
+    }
+
+    /**
+     * Apply the callback on the defined json expression
+     *
+     * @return JsExpr
+     */
+    protected function _cbExpr(): JsExpr
+    {
+        $xJsExpr = $this->_expr();
+        if($this->xExprCb !== null)
+        {
+            ($this->xExprCb)($xJsExpr);
+        }
+        return $xJsExpr;
+    }
+
     /**
      * Create a js expression
      *
@@ -36,7 +68,7 @@ abstract class AbstractCall implements JsonSerializable
      */
     public function __call(string $sMethod, array $aArguments): JsExpr
     {
-        return $this->_expr()->__call($sMethod, $aArguments);
+        return $this->_cbExpr()->__call($sMethod, $aArguments);
     }
 
     /**

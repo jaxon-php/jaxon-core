@@ -20,7 +20,6 @@ use Jaxon\Script\Call\JsSelectorCall;
 use Jaxon\Script\Call\JqSelectorCall;
 use Jaxon\Script\Call\JsObjectCall;
 use Jaxon\Script\Call\JxnCall;
-use Closure;
 
 use function trim;
 
@@ -53,18 +52,12 @@ class CallFactory
      * Get a factory for a Javascript object.
      *
      * @param string $sObject
-     * @param Closure|null $xExprCb
      *
      * @return JsObjectCall|null
      */
-    public function jo(string $sObject = '', ?Closure $xExprCb = null): ?JsObjectCall
+    public function jo(string $sObject = ''): ?JsObjectCall
     {
-        /*
-         * The provided closure will be called each time a js expression is created with this factory,
-         * with the expression as the only parameter.
-         * It is currently used to attach the expression to a Jaxon response.
-         */
-        return new JsObjectCall($xExprCb, trim($sObject, " \t"));
+        return new JsObjectCall(trim($sObject, " \t"));
     }
 
     /**
@@ -72,35 +65,23 @@ class CallFactory
      *
      * @param string $sPath    The jQuery selector path
      * @param mixed $xContext    A context associated to the selector
-     * @param Closure|null $xExprCb
      *
      * @return JqSelectorCall
      */
-    public function jq(string $sPath = '', $xContext = null, ?Closure $xExprCb = null): JqSelectorCall
+    public function jq(string $sPath = '', $xContext = null): JqSelectorCall
     {
-        /*
-         * The provided closure will be called each time a js expression is created with this factory,
-         * with the expression as the only parameter.
-         * It is currently used to attach the expression to a Jaxon response.
-         */
-        return new JqSelectorCall($xExprCb, trim($sPath, " \t"), $xContext);
+        return new JqSelectorCall(trim($sPath, " \t"), $xContext);
     }
 
     /**
      * Get a factory for a Javascript element selector.
      *
      * @param string $sElementId    The DOM element id
-     * @param Closure|null $xExprCb
      *
      * @return JsSelectorCall
      */
-    public function je(string $sElementId = '', ?Closure $xExprCb = null): JsSelectorCall
+    public function je(string $sElementId = ''): JsSelectorCall
     {
-        /*
-         * The provided closure will be called each time a js expression is created with this factory,
-         * with the expression as the only parameter.
-         * It is currently used to attach the expression to a Jaxon response.
-         */
-        return new JsSelectorCall($xExprCb, trim($sElementId, " \t"));
+        return new JsSelectorCall(trim($sElementId, " \t"));
     }
 }

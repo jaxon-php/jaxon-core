@@ -13,7 +13,7 @@ namespace Jaxon\Script\Call;
  * @license https://opensource.org/licenses/BSD-3-Clause BSD 3-Clause License
  * @link https://github.com/jaxon-php/jaxon-core
  */
- 
+
 class JxnClassCall extends JxnCall
 {
     /**

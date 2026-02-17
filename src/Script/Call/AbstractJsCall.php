@@ -17,18 +17,9 @@ namespace Jaxon\Script\Call;
 use Jaxon\Script\Action\Attr;
 use Jaxon\Script\Action\Selector;
 use Jaxon\Script\JsExpr;
-use Closure;
 
 abstract class AbstractJsCall extends AbstractCall
 {
-    /**
-     * The constructor.
-     *
-     * @param Closure|null $xExprCb
-     */
-    protected function __construct(protected ?Closure $xExprCb)
-    {}
-
     /**
      * Get the call to add to the expression
      *
@@ -43,10 +34,7 @@ abstract class AbstractJsCall extends AbstractCall
      */
     protected function _expr(): JsExpr
     {
-        $xJsExpr = new JsExpr($this->_exprCall());
-        // Apply the callback, if one was defined.
-        $this->xExprCb !== null && ($this->xExprCb)($xJsExpr);
-        return $xJsExpr;
+        return new JsExpr($this->_exprCall());
     }
 
     /**
@@ -58,7 +46,7 @@ abstract class AbstractJsCall extends AbstractCall
      */
     public function __get(string $sAttribute): JsExpr
     {
-        return $this->_expr()->__get( $sAttribute);
+        return $this->_cbExpr()->__get( $sAttribute);
     }
 
     /**
@@ -71,6 +59,6 @@ abstract class AbstractJsCall extends AbstractCall
      */
     public function __set(string $sAttribute, $xValue)
     {
-        return $this->_expr()->__set($sAttribute, $xValue);
+        return $this->_cbExpr()->__set($sAttribute, $xValue);
     }
 }

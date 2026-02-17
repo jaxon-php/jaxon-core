@@ -17,20 +17,16 @@ namespace Jaxon\Script\Call;
 use Jaxon\Script\Action\HtmlReader;
 use Jaxon\Script\Action\Selector;
 use Jaxon\Script\JsExpr;
-use Closure;
 
 class JsSelectorCall extends AbstractJsCall
 {
     /**
      * The constructor.
      *
-     * @param Closure|null $xExprCb
      * @param string $sElementId    The DOM element id
      */
-    public function __construct(?Closure $xExprCb, protected string $sElementId)
-    {
-        parent::__construct($xExprCb);
-    }
+    public function __construct(protected string $sElementId)
+    {}
 
     /**
      * Get the call to add to the expression
@@ -53,7 +49,7 @@ class JsSelectorCall extends AbstractJsCall
      */
     public function addEventListener(string $sName, JsExpr $xHandler): JsExpr
     {
-        return $this->_expr()->event('js', $sName, $xHandler);
+        return $this->_cbExpr()->event('js', $sName, $xHandler);
     }
 
     /**
@@ -65,7 +61,7 @@ class JsSelectorCall extends AbstractJsCall
      */
     public function click(JsExpr $xHandler): JsExpr
     {
-        return $this->_expr()->event('js', 'click', $xHandler);
+        return $this->_cbExpr()->event('js', 'click', $xHandler);
     }
 
     /**
