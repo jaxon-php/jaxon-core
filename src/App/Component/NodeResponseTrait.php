@@ -55,9 +55,9 @@ trait NodeResponseTrait
      *
      * @param string $item
      *
-     * @return self
+     * @return static
      */
-    final public function item(string $item): self
+    final public function item(string $item): static
     {
         $this->node()->item($this->factory()->helper()->extendValue('item', $item));
         return $this;

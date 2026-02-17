@@ -93,9 +93,9 @@ abstract class PageComponent extends Component\NodeComponent
      *
      * @param Closure $fSetup
      *
-     * @return self
+     * @return static
      */
-    final protected function paginatorSetup(Closure $fSetup): self
+    final protected function paginatorSetup(Closure $fSetup): static
     {
          $this->fPaginatorSetup = $fSetup;
         return $this;
@@ -106,9 +106,9 @@ abstract class PageComponent extends Component\NodeComponent
      *
      * @param class-string $sComponent
      *
-     * @return self
+     * @return static
      */
-    final protected function paginatorComponent(string $sComponent): self
+    final protected function paginatorComponent(string $sComponent): static
     {
         // Invalid values are ignored.
         if(is_a($sComponent, Component\Pagination::class, true))

@@ -63,9 +63,9 @@ abstract class AjaxResponse extends AbstractResponse
      *
      * @param string $sFunc    The name of the function to call
      *
-     * @return self
+     * @return static
      */
-    public function call(string $sFunc): self
+    public function call(string $sFunc): static
     {
         $aArgs = func_get_args();
         array_shift($aArgs);
@@ -79,9 +79,9 @@ abstract class AjaxResponse extends AbstractResponse
      *
      * @param JsExpr $xJsExpr    The json expression to execute
      *
-     * @return self
+     * @return static
      */
-    public function exec(JsExpr $xJsExpr): self
+    public function exec(JsExpr $xJsExpr): static
     {
         $this->xManager->addCommand('script.exec.expr', ['expr' => $xJsExpr]);
         return $this;
@@ -99,9 +99,9 @@ abstract class AjaxResponse extends AbstractResponse
      *
      * @throws AppException
      *
-     * @return self
+     * @return static
      */
-    public function confirm(Closure $fConfirm, string $sQuestion, array $aArgs = []): self
+    public function confirm(Closure $fConfirm, string $sQuestion, array $aArgs = []): static
     {
         $this->xManager->addConfirmCommand('dialog.confirm',
             fn() => $fConfirm($this), $sQuestion, $aArgs);
@@ -114,9 +114,9 @@ abstract class AjaxResponse extends AbstractResponse
      * @param string $sMessage    The message to be displayed
      * @param array $aArgs      The arguments for the placeholders in the message
      *
-     * @return self
+     * @return static
      */
-    public function alert(string $sMessage, array $aArgs = []): self
+    public function alert(string $sMessage, array $aArgs = []): static
     {
         $this->xManager->addAlertCommand('dialog.alert.show', $sMessage, $aArgs);
         return $this;
@@ -127,9 +127,9 @@ abstract class AjaxResponse extends AbstractResponse
      *
      * @param string $sMessage    The message to be displayed
      *
-     * @return self
+     * @return static
      */
-    public function debug(string $sMessage): self
+    public function debug(string $sMessage): static
     {
         $this->xManager->addCommand('script.debug', ['message' => $this->str($sMessage)]);
         return $this;
@@ -141,9 +141,9 @@ abstract class AjaxResponse extends AbstractResponse
      * @param string $sURL    The relative or fully qualified URL
      * @param integer $nDelay    Number of seconds to delay before the redirect occurs
      *
-     * @return self
+     * @return static
      */
-    public function redirect(string $sURL, int $nDelay = 0): self
+    public function redirect(string $sURL, int $nDelay = 0): static
     {
         $this->xManager->addCommand('script.redirect', [
             'delay' => $nDelay,
@@ -160,9 +160,9 @@ abstract class AjaxResponse extends AbstractResponse
      *
      * @param integer $tenths    The number of 1/10ths of a second to sleep
      *
-     * @return self
+     * @return static
      */
-    public function sleep(int $tenths): self
+    public function sleep(int $tenths): static
     {
         $this->xManager->addCommand('script.sleep', ['duration' => $tenths]);
         return $this;

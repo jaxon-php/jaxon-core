@@ -33,9 +33,9 @@ class Response extends AjaxResponse
      * @param string $sAttribute    The attribute to be assigned
      * @param string $sValue    The value to be assigned to the attribute
      *
-     * @return self
+     * @return static
      */
-    public function assign(string $sTarget, string $sAttribute, string $sValue): self
+    public function assign(string $sTarget, string $sAttribute, string $sValue): static
     {
         $this->xManager->addCommand('node.assign', [
             'id' => $this->str($sTarget),
@@ -53,9 +53,9 @@ class Response extends AjaxResponse
      * @param string $sTarget    The id of the html element on the browser
      * @param string $sValue    The value to be assigned to the attribute
      *
-     * @return self
+     * @return static
      */
-    public function html(string $sTarget, string $sValue): self
+    public function html(string $sTarget, string $sValue): static
     {
         return $this->assign($sTarget, 'innerHTML', $sValue);
     }
@@ -67,9 +67,9 @@ class Response extends AjaxResponse
      * @param string $sCssAttribute    The CSS attribute to be assigned
      * @param string $sValue    The value to be assigned to the attribute
      *
-     * @return self
+     * @return static
      */
-    public function style(string $sTarget, string $sCssAttribute, string $sValue): self
+    public function style(string $sTarget, string $sCssAttribute, string $sValue): static
     {
         return $this->assign($sTarget, "style.$sCssAttribute", $sValue);
     }
@@ -81,9 +81,9 @@ class Response extends AjaxResponse
      * @param string $sAttribute    The name of the attribute to be appended to
      * @param string $sValue    The data to be appended to the attribute
      *
-     * @return self
+     * @return static
      */
-    public function append(string $sTarget, string $sAttribute, string $sValue): self
+    public function append(string $sTarget, string $sAttribute, string $sValue): static
     {
         $this->xManager->addCommand('node.append', [
             'id' => $this->str($sTarget),
@@ -100,9 +100,9 @@ class Response extends AjaxResponse
      * @param string $sAttribute    The name of the attribute to be prepended to
      * @param string $sValue    The value to be prepended to the attribute
      *
-     * @return self
+     * @return static
      */
-    public function prepend(string $sTarget, string $sAttribute, string $sValue): self
+    public function prepend(string $sTarget, string $sAttribute, string $sValue): static
     {
         $this->xManager->addCommand('node.prepend', [
             'id' => $this->str($sTarget),
@@ -120,10 +120,10 @@ class Response extends AjaxResponse
      * @param string $sSearch    The needle to search for
      * @param string $sReplace    The data to use in place of the needle
      *
-     * @return self
+     * @return static
      */
     public function replace(string $sTarget, string $sAttribute,
-        string $sSearch, string $sReplace): self
+        string $sSearch, string $sReplace): static
     {
         $this->xManager->addCommand('node.replace', [
             'id' => $this->str($sTarget),
@@ -140,9 +140,9 @@ class Response extends AjaxResponse
      * @param string $sTarget    The id of the element to be updated.
      * @param string $sAttribute    The attribute to be cleared
      *
-     * @return self
+     * @return static
      */
-    public function clear(string $sTarget, string $sAttribute = 'innerHTML'): self
+    public function clear(string $sTarget, string $sAttribute = 'innerHTML'): static
     {
         $this->xManager->addCommand('node.clear', [
             'id' => $this->str($sTarget),
@@ -156,9 +156,9 @@ class Response extends AjaxResponse
      *
      * @param string $sTarget    The id of the element to be removed
      *
-     * @return self
+     * @return static
      */
-    public function remove(string $sTarget): self
+    public function remove(string $sTarget): static
     {
         $this->xManager->addCommand('node.remove', [
             'id' => $this->str($sTarget),
@@ -173,9 +173,9 @@ class Response extends AjaxResponse
      * @param JxnCall $xCall    A call to the component
      * @param string $sItem     The component item
      *
-     * @return self
+     * @return static
      */
-    public function bind(string $sTarget, JxnCall $xCall, string $sItem = ''): self
+    public function bind(string $sTarget, JxnCall $xCall, string $sItem = ''): static
     {
         $this->xManager->addCommand('node.bind', [
             'id' => $this->str($sTarget),
@@ -197,9 +197,9 @@ class Response extends AjaxResponse
      * @param string $sTag    The tag name to be used for the new element
      * @param string $sId    The id to assign to the new element
      *
-     * @return self
+     * @return static
      */
-    public function create(string $sParent, string $sTag, string $sId): self
+    public function create(string $sParent, string $sTag, string $sId): static
     {
         $this->xManager->addCommand('node.create', [
             'id' => $this->str($sParent),
@@ -219,9 +219,9 @@ class Response extends AjaxResponse
      * @param string $sTag    The tag name to be used for the new element
      * @param string $sId    The id to assign to the new element
      *
-     * @return self
+     * @return static
      */
-    public function insertBefore(string $sBefore, string $sTag, string $sId): self
+    public function insertBefore(string $sBefore, string $sTag, string $sId): static
     {
         $this->xManager->addCommand('node.insert.before', [
             'id' => $this->str($sBefore),
@@ -242,9 +242,9 @@ class Response extends AjaxResponse
      * @param string $sTag    The tag name to be used for the new element
      * @param string $sId    The id to assign to the new element
      *
-     * @return self
+     * @return static
      */
-    public function insert(string $sBefore, string $sTag, string $sId): self
+    public function insert(string $sBefore, string $sTag, string $sId): static
     {
         return $this->insertBefore($sBefore, $sTag, $sId);
     }
@@ -257,9 +257,9 @@ class Response extends AjaxResponse
      * @param string $sTag    The tag name to be used for the new element
      * @param string $sId    The id to assign to the new element
      *
-     * @return self
+     * @return static
      */
-    public function insertAfter(string $sAfter, string $sTag, string $sId): self
+    public function insertAfter(string $sAfter, string $sTag, string $sId): static
     {
         $this->xManager->addCommand('node.insert.after', [
             'id' => $this->str($sAfter),
@@ -280,9 +280,9 @@ class Response extends AjaxResponse
      * @param string $sEvent    The name of the event
      * @param JsExpr $xCall    The event handler
      *
-     * @return self
+     * @return static
      */
-    public function setEventHandler(string $sTarget, string $sEvent, JsExpr $xCall): self
+    public function setEventHandler(string $sTarget, string $sEvent, JsExpr $xCall): static
     {
         $this->xManager->addCommand('handler.event.set', [
             'id' => $this->str($sTarget),
@@ -299,9 +299,9 @@ class Response extends AjaxResponse
      * @param string $sTarget    The id of the element
      * @param JsExpr $xCall    The event handler
      *
-     * @return self
+     * @return static
      */
-    public function onClick(string $sTarget, JsExpr $xCall): self
+    public function onClick(string $sTarget, JsExpr $xCall): static
     {
         return $this->setEventHandler($sTarget, 'onclick', $xCall);
     }
@@ -315,9 +315,9 @@ class Response extends AjaxResponse
      * @param string $sEvent    The name of the event
      * @param JsExpr $xCall    The event handler
      *
-     * @return self
+     * @return static
      */
-    public function addEventHandler(string $sTarget, string $sEvent, JsExpr $xCall): self
+    public function addEventHandler(string $sTarget, string $sEvent, JsExpr $xCall): static
     {
         $this->xManager->addCommand('handler.event.add', [
             'id' => $this->str($sTarget),
@@ -336,9 +336,9 @@ class Response extends AjaxResponse
      * @param string $sEvent    The name of the event
      * @param string $sHandler    The name of the javascript function to call when the event is fired
      *
-     * @return self
+     * @return static
      */
-    public function addHandler(string $sTarget, string $sEvent, string $sHandler): self
+    public function addHandler(string $sTarget, string $sEvent, string $sHandler): static
     {
         $this->xManager->addCommand('handler.add', [
             'id' => $this->str($sTarget),
@@ -356,9 +356,9 @@ class Response extends AjaxResponse
      * @param string $sEvent    The name of the event
      * @param string $sHandler    The name of the javascript function called when the event is fired
      *
-     * @return self
+     * @return static
      */
-    public function removeHandler(string $sTarget, string $sEvent, string $sHandler): self
+    public function removeHandler(string $sTarget, string $sEvent, string $sHandler): static
     {
         $this->xManager->addCommand('handler.remove', [
             'id' => $this->str($sTarget),

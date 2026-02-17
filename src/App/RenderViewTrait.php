@@ -23,9 +23,9 @@ trait RenderViewTrait
     /**
      * @param string $sViewPrefix
      *
-     * @return self
+     * @return static
      */
-    final protected function setViewPrefix(string $sViewPrefix): self
+    final protected function setViewPrefix(string $sViewPrefix): static
     {
         $this->sViewPrefix = $sViewPrefix;
         return $this;

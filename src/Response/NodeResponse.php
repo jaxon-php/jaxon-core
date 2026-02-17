@@ -53,9 +53,9 @@ class NodeResponse extends AjaxResponse
      *
      * @param string $sItem
      *
-     * @return self
+     * @return static
      */
-    public function item(string $sItem = 'main'): self
+    public function item(string $sItem = 'main'): static
     {
         $this->aComponent['item'] = $this->str($sItem);
         return $this;
@@ -84,9 +84,9 @@ class NodeResponse extends AjaxResponse
      * @param string $sAttribute    The attribute to be assigned
      * @param string $sValue    The value to be assigned to the attribute
      *
-     * @return self
+     * @return static
      */
-    public function assign(string $sAttribute, string $sValue): self
+    public function assign(string $sAttribute, string $sValue): static
     {
         $this->addCommand('node.assign', [
             'attr' => $this->str($sAttribute),
@@ -102,9 +102,9 @@ class NodeResponse extends AjaxResponse
      *
      * @param string $sValue    The value to be assigned to the attribute
      *
-     * @return self
+     * @return static
      */
-    public function html(string $sValue): self
+    public function html(string $sValue): static
     {
         return $this->assign('innerHTML', $sValue);
     }
@@ -115,9 +115,9 @@ class NodeResponse extends AjaxResponse
      * @param string $sCssAttribute    The CSS attribute to be assigned
      * @param string $sValue    The value to be assigned to the attribute
      *
-     * @return self
+     * @return static
      */
-    public function style(string $sCssAttribute, string $sValue): self
+    public function style(string $sCssAttribute, string $sValue): static
     {
         return $this->assign("style.$sCssAttribute", $sValue);
     }
@@ -128,9 +128,9 @@ class NodeResponse extends AjaxResponse
      * @param string $sAttribute    The name of the attribute to be appended to
      * @param string $sValue    The data to be appended to the attribute
      *
-     * @return self
+     * @return static
      */
-    public function append(string $sAttribute, string $sValue): self
+    public function append(string $sAttribute, string $sValue): static
     {
         $this->addCommand('node.append', [
             'attr' => $this->str($sAttribute),
@@ -145,9 +145,9 @@ class NodeResponse extends AjaxResponse
      * @param string $sAttribute    The name of the attribute to be prepended to
      * @param string $sValue    The value to be prepended to the attribute
      *
-     * @return self
+     * @return static
      */
-    public function prepend(string $sAttribute, string $sValue): self
+    public function prepend(string $sAttribute, string $sValue): static
     {
         $this->addCommand('node.prepend', [
             'attr' => $this->str($sAttribute),
@@ -163,9 +163,9 @@ class NodeResponse extends AjaxResponse
      * @param string $sSearch    The needle to search for
      * @param string $sReplace    The data to use in place of the needle
      *
-     * @return self
+     * @return static
      */
-    public function replace(string $sAttribute, string $sSearch, string $sReplace): self
+    public function replace(string $sAttribute, string $sSearch, string $sReplace): static
     {
         $this->addCommand('node.replace', [
             'attr' => $this->str($sAttribute),
@@ -180,9 +180,9 @@ class NodeResponse extends AjaxResponse
      *
      * @param string $sAttribute    The attribute to be cleared
      *
-     * @return self
+     * @return static
      */
-    public function clear(string $sAttribute = 'innerHTML'): self
+    public function clear(string $sAttribute = 'innerHTML'): static
     {
         $this->addCommand('node.clear', [
             'attr' => $this->str($sAttribute),
@@ -193,9 +193,9 @@ class NodeResponse extends AjaxResponse
     /**
      * Add a command to remove an element from the document
      *
-     * @return self
+     * @return static
      */
-    public function remove(): self
+    public function remove(): static
     {
         $this->addCommand('node.remove', []);
         return $this;
