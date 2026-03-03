@@ -53,12 +53,9 @@ class ScriptPlugin extends AbstractResponsePlugin
         // So the current response is read and passed to the closure.
         $xResponse = $this->response();
         $xCall->_cb(function(JsExpr $xJsExpr) use($xResponse) {
+            $aContext = is_a($xResponse, NodeResponse::class) ? ['component' => true] : [];
             // Add the newly created expression to the response
-            $aOptions = [
-                'expr' => $xJsExpr,
-                'context' => is_a($xResponse, NodeResponse::class) ?
-                    ['component' => true] : [],
-            ];
+            $aOptions = ['expr' => $xJsExpr, 'context' => $aContext];
             $xResponse->addCommand('script.exec.expr', $aOptions)
                 ->setOption('plugin', $this->getName());
         });
