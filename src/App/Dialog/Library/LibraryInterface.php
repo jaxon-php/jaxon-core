@@ -50,4 +50,11 @@ interface LibraryInterface
      * @return string
      */
     public function getJsCode(): string;
+
+    /**
+     * Get the options of the js library
+     *
+     * @return array
+     */
+    public function getJsOptions(): array;
 }
