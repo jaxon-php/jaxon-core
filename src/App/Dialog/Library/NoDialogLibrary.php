@@ -55,4 +55,12 @@ class NoDialogLibrary implements LibraryInterface, AlertInterface, ConfirmInterf
     {
         return '';
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function getJsOptions(): array
+    {
+        return [];
+    }
 }
