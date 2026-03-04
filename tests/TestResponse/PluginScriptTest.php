@@ -29,6 +29,18 @@ class PluginScriptTest extends TestCase
         parent::tearDown();
     }
 
+    public function testJeNull()
+    {
+        // No function in the js expession
+        $this->assertNull(je('value')->checked->func());
+    }
+
+    public function testJqNull()
+    {
+        // No function in the js expession
+        $this->assertNull(jq('#value')->checked->func());
+    }
+
     /**
      * @throws SetupException
      * @throws RequestException
@@ -52,7 +64,7 @@ class PluginScriptTest extends TestCase
         $this->assertTrue(jaxon()->canProcessRequest());
         jaxon()->di()->getRequestHandler()->processRequest();
         $aCommands = jaxon()->getResponse()->getCommands();
-        $this->assertCount(2, $aCommands);
+        $this->assertCount(3, $aCommands);
 
         $this->assertEquals('script', $aCommands[0]['options']['plugin']);
         $this->assertEquals('script.exec.expr', $aCommands[0]['name']);
@@ -84,7 +96,7 @@ class PluginScriptTest extends TestCase
         $this->assertTrue(jaxon()->canProcessRequest());
         jaxon()->di()->getRequestHandler()->processRequest();
         $aCommands = jaxon()->getResponse()->getCommands();
-        $this->assertCount(2, $aCommands);
+        $this->assertCount(3, $aCommands);
 
         $this->assertEquals('script', $aCommands[0]['options']['plugin']);
         $this->assertEquals('script.exec.expr', $aCommands[0]['name']);

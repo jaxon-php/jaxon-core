@@ -39,23 +39,23 @@ class JsExpr extends TypedValue implements Stringable
     /**
      * The arguments of the else() calls
      *
-     * @var array
+     * @var array|null
      */
-    protected $aAlert = [];
+    protected $aAlert = null;
 
     /**
      * A condition to check before making the call
      *
-     * @var array
+     * @var array|null
      */
-    protected $aCondition = [];
+    protected $aCondition = null;
 
     /**
      * The arguments of the confirm() call
      *
-     * @var array
+     * @var array|null
      */
-    protected $aConfirm = [];
+    protected $aConfirm = null;
 
     /**
      * @var DialogCommand
@@ -426,15 +426,15 @@ class JsExpr extends TypedValue implements Stringable
             'calls' => array_map(fn(JsonSerializable|array $xCall) =>
                 is_array($xCall) ? $xCall : $xCall->jsonSerialize(), $this->aCalls),
         ];
-        if(($this->aConfirm))
+        if($this->aConfirm !== null)
         {
             $aJsExpr['confirm'] = $this->aConfirm;
         }
-        if(($this->aCondition))
+        if($this->aCondition !== null)
         {
             $aJsExpr['condition'] = $this->aCondition;
         }
-        if(($this->aAlert))
+        if($this->aAlert !== null)
         {
             $aJsExpr['alert'] = $this->aAlert;
         }

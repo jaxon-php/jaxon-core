@@ -29,48 +29,60 @@ class TestJeComponent extends NodeComponent
     public function ifeq()
     {
         $this->response()->je('target')->click($this->rq()->render()
-            ->ifeq('1', 1)->elseInfo('Info'));
+            ->ifeq(je('value')->val()->trim(), 'value')->elseInfo('Info'));
     }
 
     public function ifteq()
     {
         $this->response()->je('target')->click($this->rq()->render()
-            ->ifteq('1', 1)->elseInfo('Info'));
+            ->ifteq(je('value')->val()->trim(), 'value')->elseInfo('Info'));
     }
 
     public function ifne()
     {
         $this->response()->je('target')->click($this->rq()->render()
-            ->ifne('1', 1)->elseInfo('Info'));
+            ->ifne(je('value')->val()->trim(), 'value')->elseInfo('Info'));
     }
 
     public function ifnte()
     {
         $this->response()->je('target')->click($this->rq()->render()
-            ->ifnte('1', 1)->elseInfo('Info'));
+            ->ifnte(je('value')->val()->trim(), 'value')->elseInfo('Info'));
     }
 
     public function ifgt()
     {
         $this->response()->je('target')->click($this->rq()->render()
-            ->ifgt(10, 1)->elseSuccess('Success'));
+            ->ifgt(je('value')->val()->toInt(), 1)->elseSuccess('Success'));
     }
 
     public function ifge()
     {
         $this->response()->je('target')->click($this->rq()->render()
-            ->ifge(10, 1)->elseSuccess('Success'));
+            ->ifge(je('value')->val()->toInt(), 1)->elseSuccess('Success'));
     }
 
     public function iflt()
     {
         $this->response()->je('target')->click($this->rq()->render()
-            ->iflt(10, 1)->elseSuccess('Success'));
+            ->iflt(je('value')->val()->toInt(), 1)->elseSuccess('Success'));
     }
 
     public function ifle()
     {
         $this->response()->je('target')->click($this->rq()->render()
-            ->ifle(10, 1)->elseSuccess('Success'));
+            ->ifle(je('value')->val()->toInt(), 1)->elseSuccess('Success'));
+    }
+
+    public function when()
+    {
+        $this->response()->je('target')->click($this->rq()->render()
+            ->when(je('value')->checked)->elseShow('Success'));
+    }
+
+    public function unless()
+    {
+        $this->response()->je('target')->click($this->rq()->render()
+            ->unless(je('value')->checked)->elseShow('Success'));
     }
 }
