@@ -39,9 +39,9 @@ class Misc extends FuncComponent
         // Add an event handler on the target node
         $this->response()->addEventHandler('target', 'click', jo('console')->log('Clicked!!'));
         // Bind the target to a component
-        $this->response()->bind('target', $this->rq('TestComponent'));
+        $this->response()->bind('target', $this->rq('TestJqComponent'));
         // Bind the target to a component with item
-        $this->response()->bind('target', $this->rq('TestComponent'), 'item');
+        $this->response()->bind('target', $this->rq('TestJqComponent'), 'item');
     }
 
     public function jsCommands()
