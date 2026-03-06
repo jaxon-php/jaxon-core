@@ -302,4 +302,54 @@ class ResponseJqCallTest extends TestCase
         $aCommands = $xResponse->getCommands();
         $this->assertEquals('script.exec.expr', $aCommands[0]['name']);
     }
+
+    public function testCallConditionWhen()
+    {
+        // Send a request to the registered class
+        jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
+            $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withParsedBody([
+                    'jxncall' => json_encode([
+                        'type' => 'class',
+                        'name' => 'TestJqComponent',
+                        'method' => 'when',
+                        'args' => [],
+                    ]),
+                ])
+                ->withMethod('POST'));
+
+        // Process the request and get the response
+        jaxon()->di()->getRequestHandler()->processRequest();
+        $xResponse = jaxon()->getResponse();
+        $this->assertEquals(1, $xResponse->getCommandCount());
+
+        $aCommands = $xResponse->getCommands();
+        $this->assertEquals('script.exec.expr', $aCommands[0]['name']);
+    }
+
+    public function testCallConditionUnless()
+    {
+        // Send a request to the registered class
+        jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
+            $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withParsedBody([
+                    'jxncall' => json_encode([
+                        'type' => 'class',
+                        'name' => 'TestJqComponent',
+                        'method' => 'unless',
+                        'args' => [],
+                    ]),
+                ])
+                ->withMethod('POST'));
+
+        // Process the request and get the response
+        jaxon()->di()->getRequestHandler()->processRequest();
+        $xResponse = jaxon()->getResponse();
+        $this->assertEquals(1, $xResponse->getCommandCount());
+
+        $aCommands = $xResponse->getCommands();
+        $this->assertEquals('script.exec.expr', $aCommands[0]['name']);
+    }
 }

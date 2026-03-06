@@ -18,6 +18,20 @@ class TestJs extends FuncComponent
         }, 'Confirm?');
     }
 
+    public function nestedConfirm()
+    {
+        $this->response()->confirm(function($resp) {
+            $resp->confirm(function($resp2) {
+                $resp2->debug('This should throw an exception!!');
+            }, 'Confirm again?');
+        }, 'Confirm?');
+    }
+
+    public function dialog(string $title, string $content)
+    {
+        $this->response()->dialog()->show($title, $content);
+    }
+
     public function message()
     {
         $this->response()->alert('This is an alert!!');
@@ -35,7 +49,8 @@ class TestJs extends FuncComponent
 
     public function setEvent()
     {
-        $this->response()->setEventHandler('div', 'click', jo('console')->debug("A debug message"));
+        $this->response()->setEventHandler('div', 'click',
+            jo('console')->debug("A debug message"));
     }
 
     public function onClick()

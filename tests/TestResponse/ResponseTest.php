@@ -262,4 +262,36 @@ class ResponseTest extends TestCase
         $this->assertEquals('node.assign', $aCommands[0]['name']);
         $this->assertEquals('pg.paginate', $aCommands[1]['name']);
     }
+
+    /**
+     * @throws RequestException
+     */
+    public function testCommandArrayable()
+    {
+        // Send a request to the registered class
+        jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
+            $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withParsedBody([
+                    'jxncall' => json_encode([
+                        'type' => 'class',
+                        'name' => 'Misc',
+                        'method' => 'paginate',
+                        'args' => [2],
+                    ]),
+                ])
+                ->withMethod('POST'));
+
+        // Process the request and get the response
+        jaxon()->di()->getRequestHandler()->processRequest();
+        $xResponse = jaxon()->getResponse();
+        $this->assertEquals(2, $xResponse->getCommandCount());
+
+        $aCommand = $xResponse->getCommands()[0];
+        $this->assertEquals('node.assign', $aCommand['name']);
+
+        $this->assertFalse($aCommand->offsetExists('test'));
+        $aCommand->offsetSet('test', 'value');
+        $aCommand->offsetUnset('test');
+    }
 }

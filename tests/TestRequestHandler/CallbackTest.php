@@ -93,7 +93,7 @@ class CallbackTest extends TestCase
                 ->withParsedBody([
                     'jxncall' => json_encode([
                         'type' => 'class',
-                        'name' => 'TestCb',
+                        'name' => 'TestCallback',
                         'method' => 'simple',
                         'args' => [],
                     ]),
@@ -103,7 +103,7 @@ class CallbackTest extends TestCase
         jaxon()->processRequest();
 
         $this->assertNotNull($this->xCallable);
-        $this->assertEquals('TestCb', get_class($this->xCallable));
+        $this->assertEquals('TestCallback', get_class($this->xCallable));
     }
 
     /**
@@ -156,7 +156,7 @@ class CallbackTest extends TestCase
                 ->withParsedBody([
                     'jxncall' => json_encode([
                         'type' => 'class',
-                        'name' => 'TestCb',
+                        'name' => 'TestCallback',
                         'method' => 'simple',
                         'args' => [],
                     ]),
@@ -170,7 +170,7 @@ class CallbackTest extends TestCase
         $this->assertNotNull($this->xTarget);
         $this->assertTrue($this->xTarget->isClass());
         $this->assertFalse($this->xTarget->isFunction());
-        $this->assertEquals('TestCb', $this->xTarget->getClassName());
+        $this->assertEquals('TestCallback', $this->xTarget->getClassName());
         $this->assertEquals('simple', $this->xTarget->getMethodName());
         $this->assertEquals('', $this->xTarget->getFunctionName());
     }
@@ -190,7 +190,7 @@ class CallbackTest extends TestCase
                 ->withParsedBody([
                     'jxncall' => json_encode([
                         'type' => 'class',
-                        'name' => 'TestCb',
+                        'name' => 'TestCallback',
                         'method' => 'simple',
                         'args' => [],
                     ]),
@@ -203,7 +203,7 @@ class CallbackTest extends TestCase
         $this->assertNotNull($this->xTarget);
         $this->assertTrue($this->xTarget->isClass());
         $this->assertFalse($this->xTarget->isFunction());
-        $this->assertEquals('TestCb', $this->xTarget->getClassName());
+        $this->assertEquals('TestCallback', $this->xTarget->getClassName());
         $this->assertEquals('simple', $this->xTarget->getMethodName());
         $this->assertEquals('', $this->xTarget->getFunctionName());
     }
@@ -227,7 +227,7 @@ class CallbackTest extends TestCase
                 ->withParsedBody([
                     'jxncall' => json_encode([
                         'type' => 'class',
-                        'name' => 'TestCb',
+                        'name' => 'TestCallback',
                         'method' => 'simple',
                         'args' => [],
                     ]),
@@ -260,7 +260,7 @@ class CallbackTest extends TestCase
                 ->withParsedBody([
                     'jxncall' => json_encode([
                         'type' => 'class',
-                        'name' => 'TestCb',
+                        'name' => 'TestCallback',
                         'method' => 'simple',
                         'args' => [],
                     ]),
@@ -293,7 +293,7 @@ class CallbackTest extends TestCase
                 ->withParsedBody([
                     'jxncall' => json_encode([
                         'type' => 'class',
-                        'name' => 'TestCb',
+                        'name' => 'TestCallback',
                         'method' => 'simple',
                         'args' => [],
                     ]),
@@ -326,7 +326,7 @@ class CallbackTest extends TestCase
                 ->withParsedBody([
                     'jxncall' => json_encode([
                         'type' => 'class',
-                        'name' => 'TestCb',
+                        'name' => 'TestCallback',
                         'method' => 'sim ple', // There's an error in the function name.
                         'args' => [],
                     ]),
@@ -361,7 +361,7 @@ class CallbackTest extends TestCase
                 ->withParsedBody([
                     'jxncall' => json_encode([
                         'type' => 'class',
-                        'name' => 'TestCb',
+                        'name' => 'TestCallback',
                         'method' => 'error', // This function throws an exception.
                         'args' => [],
                     ]),

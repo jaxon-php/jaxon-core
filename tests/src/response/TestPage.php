@@ -2,12 +2,18 @@
 
 use Jaxon\App\FuncComponent;
 
-class TestDom extends FuncComponent
+class TestPage extends FuncComponent
 {
     public function assign()
     {
         $this->response()->assign('div', 'innerHTML', 'This HTML content to assign');
         $this->response()->assign('div', 'css.color', 'blue');
+    }
+
+    public function style()
+    {
+        $this->response()->html('div', 'This HTML content to assign');
+        $this->response()->style('div', 'color', 'blue');
     }
 
     public function html()

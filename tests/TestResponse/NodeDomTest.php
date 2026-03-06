@@ -10,7 +10,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use PHPUnit\Framework\TestCase;
 
 
-class PageDomTest extends TestCase
+class NodeDomTest extends TestCase
 {
     /**
      * @throws SetupException
@@ -43,7 +43,7 @@ class PageDomTest extends TestCase
                 ->withParsedBody([
                     'jxncall' => json_encode([
                         'type' => 'class',
-                        'name' => 'TestPage',
+                        'name' => 'TestNode',
                         'method' => 'assign',
                         'args' => [],
                     ]),
@@ -69,7 +69,7 @@ class PageDomTest extends TestCase
                 ->withParsedBody([
                     'jxncall' => json_encode([
                         'type' => 'class',
-                        'name' => 'TestPage',
+                        'name' => 'TestNode',
                         'method' => 'style',
                         'args' => [],
                     ]),
@@ -86,32 +86,6 @@ class PageDomTest extends TestCase
      * @throws SetupException
      * @throws RequestException
      */
-    public function testCommandHtml()
-    {
-        // Send a request to the registered class
-        jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
-            $c->g(ServerRequestCreator::class)
-                ->fromGlobals()
-                ->withParsedBody([
-                    'jxncall' => json_encode([
-                        'type' => 'class',
-                        'name' => 'TestPage',
-                        'method' => 'html',
-                        'args' => [],
-                    ]),
-                ])
-                ->withMethod('POST'));
-        // Process the request and get the response
-        $this->assertTrue(jaxon()->canProcessRequest());
-        jaxon()->di()->getRequestHandler()->processRequest();
-        $xResponse = jaxon()->getResponse();
-        $this->assertEquals(1, $xResponse->getCommandCount());
-    }
-
-    /**
-     * @throws SetupException
-     * @throws RequestException
-     */
     public function testCommandAppend()
     {
         // Send a request to the registered class
@@ -121,7 +95,7 @@ class PageDomTest extends TestCase
                 ->withParsedBody([
                     'jxncall' => json_encode([
                         'type' => 'class',
-                        'name' => 'TestPage',
+                        'name' => 'TestNode',
                         'method' => 'append',
                         'args' => [],
                     ]),
@@ -147,7 +121,7 @@ class PageDomTest extends TestCase
                 ->withParsedBody([
                     'jxncall' => json_encode([
                         'type' => 'class',
-                        'name' => 'TestPage',
+                        'name' => 'TestNode',
                         'method' => 'prepend',
                         'args' => [],
                     ]),
@@ -173,7 +147,7 @@ class PageDomTest extends TestCase
                 ->withParsedBody([
                     'jxncall' => json_encode([
                         'type' => 'class',
-                        'name' => 'TestPage',
+                        'name' => 'TestNode',
                         'method' => 'replace',
                         'args' => [],
                     ]),
@@ -199,8 +173,8 @@ class PageDomTest extends TestCase
                 ->withParsedBody([
                     'jxncall' => json_encode([
                         'type' => 'class',
-                        'name' => 'TestPage',
-                        'method' => 'clear',
+                        'name' => 'TestNode',
+                        'method' => 'clean',
                         'args' => [],
                     ]),
                 ])
@@ -225,34 +199,8 @@ class PageDomTest extends TestCase
                 ->withParsedBody([
                     'jxncall' => json_encode([
                         'type' => 'class',
-                        'name' => 'TestPage',
+                        'name' => 'TestNode',
                         'method' => 'remove',
-                        'args' => [],
-                    ]),
-                ])
-                ->withMethod('POST'));
-        // Process the request and get the response
-        $this->assertTrue(jaxon()->canProcessRequest());
-        jaxon()->di()->getRequestHandler()->processRequest();
-        $xResponse = jaxon()->getResponse();
-        $this->assertEquals(1, $xResponse->getCommandCount());
-    }
-
-    /**
-     * @throws SetupException
-     * @throws RequestException
-     */
-    public function testCommandInsertBefore()
-    {
-        // Send a request to the registered class
-        jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
-            $c->g(ServerRequestCreator::class)
-                ->fromGlobals()
-                ->withParsedBody([
-                    'jxncall' => json_encode([
-                        'type' => 'class',
-                        'name' => 'TestPage',
-                        'method' => 'insertBefore',
                         'args' => [],
                     ]),
                 ])

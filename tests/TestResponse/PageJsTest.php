@@ -3,12 +3,12 @@
 namespace Jaxon\Tests\TestResponse;
 
 use Jaxon\Jaxon;
+use Jaxon\Exception\AppException;
 use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;
 use Nyholm\Psr7Server\ServerRequestCreator;
 use Psr\Http\Message\ServerRequestInterface;
 use PHPUnit\Framework\TestCase;
-
 
 class PageJsTest extends TestCase
 {
@@ -34,7 +34,7 @@ class PageJsTest extends TestCase
      * @throws SetupException
      * @throws RequestException
      */
-    function testCommandRedirect()
+    public function testCommandRedirect()
     {
         // Send a request to the registered class
         jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
@@ -60,7 +60,7 @@ class PageJsTest extends TestCase
      * @throws SetupException
      * @throws RequestException
      */
-    function testCommandConfirm()
+    public function testCommandConfirm()
     {
         // Send a request to the registered class
         jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
@@ -86,7 +86,33 @@ class PageJsTest extends TestCase
      * @throws SetupException
      * @throws RequestException
      */
-    function testCommandAlert()
+    public function testNestedConfirm()
+    {
+        // Send a request to the registered class
+        jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
+            $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withParsedBody([
+                    'jxncall' => json_encode([
+                        'type' => 'class',
+                        'name' => 'TestJs',
+                        'method' => 'nestedConfirm',
+                        'args' => [],
+                    ]),
+                ])
+                ->withMethod('POST'));
+        // Process the request and get the response
+        $this->assertTrue(jaxon()->canProcessRequest());
+
+        $this->expectException(AppException::class);
+        jaxon()->di()->getRequestHandler()->processRequest();
+    }
+
+    /**
+     * @throws SetupException
+     * @throws RequestException
+     */
+    public function testCommandAlert()
     {
         // Send a request to the registered class
         jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
@@ -112,7 +138,7 @@ class PageJsTest extends TestCase
      * @throws SetupException
      * @throws RequestException
      */
-    function testCommandDebug()
+    public function testCommandDialog()
     {
         // Send a request to the registered class
         jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
@@ -122,8 +148,8 @@ class PageJsTest extends TestCase
                     'jxncall' => json_encode([
                         'type' => 'class',
                         'name' => 'TestJs',
-                        'method' => 'debug',
-                        'args' => [],
+                        'method' => 'dialog',
+                        'args' => ['Message title', 'Message content'],
                     ]),
                 ])
                 ->withMethod('POST'));
@@ -138,7 +164,45 @@ class PageJsTest extends TestCase
      * @throws SetupException
      * @throws RequestException
      */
-    function testCommandCall()
+    public function testCommandDebug()
+    {
+        // Send a request to the registered class
+        jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
+            $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withParsedBody([
+                    'jxncall' => json_encode([
+                        'type' => 'class',
+                        'name' => 'TestJs',
+                        'method' => 'debug',
+                        'args' => [],
+                    ]),
+                ])
+                ->withMethod('POST'));
+
+        // Add a debug message using the reponse manager.
+        $xResponseManager = jaxon()->di()->getResponseManager();
+        $xResponseManager->debug('This is a debug message!!');
+
+        // Error message
+        $xResponseManager->setErrorMessage($xResponseManager->trans('Error!!!'));
+
+        // Process the request and get the response
+        $this->assertTrue(jaxon()->canProcessRequest());
+        jaxon()->di()->getRequestHandler()->processRequest();
+
+        $xResponse = $xResponseManager->ajaxResponse();
+        $this->assertEquals(2, $xResponse->getCommandCount());
+
+        $aDebugMessages = $xResponseManager->getDebugMessages();
+        $this->assertNotEmpty($aDebugMessages);
+    }
+
+    /**
+     * @throws SetupException
+     * @throws RequestException
+     */
+    public function testCommandCall()
     {
         // Send a request to the registered class
         jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
@@ -164,7 +228,7 @@ class PageJsTest extends TestCase
      * @throws SetupException
      * @throws RequestException
      */
-    function testCommandSetEvent()
+    public function testCommandSetEvent()
     {
         // Send a request to the registered class
         jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
@@ -190,7 +254,7 @@ class PageJsTest extends TestCase
      * @throws SetupException
      * @throws RequestException
      */
-    function testCommandOnClick()
+    public function testCommandOnClick()
     {
         // Send a request to the registered class
         jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
@@ -216,7 +280,7 @@ class PageJsTest extends TestCase
      * @throws SetupException
      * @throws RequestException
      */
-    function testCommandAddHandler()
+    public function testCommandAddHandler()
     {
         // Send a request to the registered class
         jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
@@ -242,7 +306,7 @@ class PageJsTest extends TestCase
      * @throws SetupException
      * @throws RequestException
      */
-    function testCommandRemoveHandler()
+    public function testCommandRemoveHandler()
     {
         // Send a request to the registered class
         jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
@@ -268,7 +332,7 @@ class PageJsTest extends TestCase
      * @throws SetupException
      * @throws RequestException
      */
-    function testCommandSleep()
+    public function testCommandSleep()
     {
         // Send a request to the registered class
         jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>

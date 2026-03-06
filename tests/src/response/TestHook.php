@@ -2,7 +2,7 @@
 
 use Jaxon\App\FuncComponent;
 
-class TestHk extends FuncComponent
+class TestHook extends FuncComponent
 {
     protected function before()
     {

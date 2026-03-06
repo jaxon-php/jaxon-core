@@ -47,7 +47,7 @@ class HookTest extends TestCase
         jaxon()->setOption('core.prefix.class', '');
         jaxon()->register(Jaxon::CALLABLE_DIR, dirname(__DIR__) . '/src/response', [
             'classes' => [
-                'TestHk' => [
+                'TestHook' => [
                     'functions' => [
                         '*' => [
                             '__before' => 'before',
@@ -92,7 +92,7 @@ class HookTest extends TestCase
                 ->withParsedBody([
                     'jxncall' => json_encode([
                         'type' => 'class',
-                        'name' => 'TestHk',
+                        'name' => 'TestHook',
                         'method' => 'one',
                         'args' => [],
                     ]),
@@ -117,7 +117,7 @@ class HookTest extends TestCase
                 ->withParsedBody([
                     'jxncall' => json_encode([
                         'type' => 'class',
-                        'name' => 'TestHk',
+                        'name' => 'TestHook',
                         'method' => 'two',
                         'args' => [],
                     ]),
@@ -142,7 +142,7 @@ class HookTest extends TestCase
                 ->withParsedBody([
                     'jxncall' => json_encode([
                         'type' => 'class',
-                        'name' => 'TestHk',
+                        'name' => 'TestHook',
                         'method' => 'three',
                         'args' => [],
                     ]),
@@ -167,7 +167,7 @@ class HookTest extends TestCase
                 ->withParsedBody([
                     'jxncall' => json_encode([
                         'type' => 'class',
-                        'name' => 'TestHk',
+                        'name' => 'TestHook',
                         'method' => 'four',
                         'args' => [],
                     ]),
@@ -192,7 +192,7 @@ class HookTest extends TestCase
                 ->withParsedBody([
                     'jxncall' => json_encode([
                         'type' => 'class',
-                        'name' => 'TestHk',
+                        'name' => 'TestHook',
                         'method' => 'param',
                         'args' => ['value'],
                     ]),

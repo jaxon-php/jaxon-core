@@ -2,7 +2,7 @@
 
 use Jaxon\App\FuncComponent;
 
-class TestCb extends FuncComponent
+class TestCallback extends FuncComponent
 {
     public function simple()
     {

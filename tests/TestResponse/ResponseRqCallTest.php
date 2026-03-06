@@ -8,7 +8,7 @@ use Nyholm\Psr7Server\ServerRequestCreator;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 
-class ResponseJeCallTest extends TestCase
+class ResponseRqCallTest extends TestCase
 {
     /**
      * @throws SetupException
@@ -37,7 +37,7 @@ class ResponseJeCallTest extends TestCase
                 ->withParsedBody([
                     'jxncall' => json_encode([
                         'type' => 'class',
-                        'name' => 'TestJeComponent',
+                        'name' => 'TestRqComponent',
                         'method' => 'confirm',
                         'args' => [],
                     ]),
@@ -62,7 +62,7 @@ class ResponseJeCallTest extends TestCase
                 ->withParsedBody([
                     'jxncall' => json_encode([
                         'type' => 'class',
-                        'name' => 'TestJeComponent',
+                        'name' => 'TestRqComponent',
                         'method' => 'confirmElseWarning',
                         'args' => [],
                     ]),
@@ -87,7 +87,7 @@ class ResponseJeCallTest extends TestCase
                 ->withParsedBody([
                     'jxncall' => json_encode([
                         'type' => 'class',
-                        'name' => 'TestJeComponent',
+                        'name' => 'TestRqComponent',
                         'method' => 'confirmElseError',
                         'args' => [],
                     ]),
@@ -112,7 +112,7 @@ class ResponseJeCallTest extends TestCase
                 ->withParsedBody([
                     'jxncall' => json_encode([
                         'type' => 'class',
-                        'name' => 'TestJeComponent',
+                        'name' => 'TestRqComponent',
                         'method' => 'ifeq',
                         'args' => [],
                     ]),
@@ -137,7 +137,7 @@ class ResponseJeCallTest extends TestCase
                 ->withParsedBody([
                     'jxncall' => json_encode([
                         'type' => 'class',
-                        'name' => 'TestJeComponent',
+                        'name' => 'TestRqComponent',
                         'method' => 'ifteq',
                         'args' => [],
                     ]),
@@ -162,7 +162,7 @@ class ResponseJeCallTest extends TestCase
                 ->withParsedBody([
                     'jxncall' => json_encode([
                         'type' => 'class',
-                        'name' => 'TestJeComponent',
+                        'name' => 'TestRqComponent',
                         'method' => 'ifne',
                         'args' => [],
                     ]),
@@ -187,7 +187,7 @@ class ResponseJeCallTest extends TestCase
                 ->withParsedBody([
                     'jxncall' => json_encode([
                         'type' => 'class',
-                        'name' => 'TestJeComponent',
+                        'name' => 'TestRqComponent',
                         'method' => 'ifnte',
                         'args' => [],
                     ]),
@@ -212,7 +212,7 @@ class ResponseJeCallTest extends TestCase
                 ->withParsedBody([
                     'jxncall' => json_encode([
                         'type' => 'class',
-                        'name' => 'TestJeComponent',
+                        'name' => 'TestRqComponent',
                         'method' => 'ifgt',
                         'args' => [],
                     ]),
@@ -237,7 +237,7 @@ class ResponseJeCallTest extends TestCase
                 ->withParsedBody([
                     'jxncall' => json_encode([
                         'type' => 'class',
-                        'name' => 'TestJeComponent',
+                        'name' => 'TestRqComponent',
                         'method' => 'ifge',
                         'args' => [],
                     ]),
@@ -262,7 +262,7 @@ class ResponseJeCallTest extends TestCase
                 ->withParsedBody([
                     'jxncall' => json_encode([
                         'type' => 'class',
-                        'name' => 'TestJeComponent',
+                        'name' => 'TestRqComponent',
                         'method' => 'iflt',
                         'args' => [],
                     ]),
@@ -287,7 +287,7 @@ class ResponseJeCallTest extends TestCase
                 ->withParsedBody([
                     'jxncall' => json_encode([
                         'type' => 'class',
-                        'name' => 'TestJeComponent',
+                        'name' => 'TestRqComponent',
                         'method' => 'ifle',
                         'args' => [],
                     ]),
@@ -312,7 +312,7 @@ class ResponseJeCallTest extends TestCase
                 ->withParsedBody([
                     'jxncall' => json_encode([
                         'type' => 'class',
-                        'name' => 'TestJeComponent',
+                        'name' => 'TestRqComponent',
                         'method' => 'when',
                         'args' => [],
                     ]),
@@ -337,7 +337,7 @@ class ResponseJeCallTest extends TestCase
                 ->withParsedBody([
                     'jxncall' => json_encode([
                         'type' => 'class',
-                        'name' => 'TestJeComponent',
+                        'name' => 'TestRqComponent',
                         'method' => 'unless',
                         'args' => [],
                     ]),
