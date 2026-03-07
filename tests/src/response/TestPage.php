@@ -12,7 +12,7 @@ class TestPage extends FuncComponent
 
     public function style()
     {
-        $this->response()->html('div', 'This HTML content to assign');
+        $this->cl(TestNode::class)->item('test')->render();
         $this->response()->style('div', 'color', 'blue');
     }
 

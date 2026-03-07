@@ -2,7 +2,7 @@
 
 namespace Jaxon\Tests\Ns\Lib;
 
-class ServiceExt
+class ServiceExtConf
 {
     private $value = 'initial';
 

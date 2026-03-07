@@ -8,8 +8,10 @@ use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\AbstractPackage;
 use Jaxon\Utils\Http\UriException;
 use PHPUnit\Framework\TestCase;
+use EmptyPackage;
 use SamplePackage;
 
+use function get_class;
 
 class PackageTest extends TestCase
 {
@@ -20,6 +22,7 @@ class PackageTest extends TestCase
     {
         jaxon()->setOption('core.prefix.class', '');
         jaxon()->setOption('core.request.uri', 'http://example.test/path');
+        jaxon()->registerPackage(EmptyPackage::class);
         jaxon()->registerPackage(SamplePackage::class,
             ['option1' => 'value1', 'option2' => ['option3' => 'value3']]);
     }
@@ -36,15 +39,17 @@ class PackageTest extends TestCase
     /**
      * @throws UriException
      */
-    // public function testPackage()
-    // {
-    //     $this->assertNotNull(jaxon()->package(SamplePackage::class));
-    //     $this->assertEquals(SamplePackage::class, get_class(jaxon()->package(SamplePackage::class)));
-    //     $xSamplePackage = jaxon()->package(SamplePackage::class);
-    //     $xSamplePackage->ready();
-    //     $sScript = jaxon()->getScript();
-    //     $this->assertStringContainsString('SamplePackageClass = {}', $sScript);
-    // }
+    public function testEmptyPackage()
+    {
+        $xEmptyPackage = jaxon()->package(EmptyPackage::class);
+        $this->assertNotNull($xEmptyPackage);
+        $this->assertNotNull($xEmptyPackage->view());
+        $this->assertEquals(EmptyPackage::class, get_class($xEmptyPackage));
+        $this->assertEquals('', $xEmptyPackage->html());
+        $this->assertEquals('', $xEmptyPackage->getHtml());
+        $this->assertEquals('', $xEmptyPackage->getInlineScript());
+        $this->assertEquals('', $xEmptyPackage->getReadyScript());
+    }
 
     public function testPackageOptions()
     {

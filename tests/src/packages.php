@@ -11,6 +11,17 @@ class SamplePackageClass extends FuncComponent
     }
 }
 
+class EmptyPackage extends AbstractPackage
+{
+    /**
+     * @inheritDoc
+     */
+    public static function config(): array
+    {
+        return [];
+    }
+}
+
 class SamplePackage extends AbstractPackage
 {
     /**

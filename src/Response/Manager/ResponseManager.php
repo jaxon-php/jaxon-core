@@ -25,9 +25,7 @@ use Jaxon\App\I18n\Translator;
 use Jaxon\Exception\AppException;
 use Jaxon\Di\Container;
 use Jaxon\Response\AjaxResponse;
-use Jaxon\Response\NodeResponse;
 use Jaxon\Response\Response;
-use Jaxon\Script\Call\JxnCall;
 use Closure;
 use JsonSerializable;
 
@@ -298,18 +296,6 @@ class ResponseManager
     public function ajaxResponse(): AjaxResponse
     {
         return $this->xResponse ?: $this->di->getResponse();
-    }
-
-    /**
-     * Create a new reponse for a Jaxon component
-     *
-     * @param JxnCall $xJxnCall
-     *
-     * @return NodeResponse
-     */
-    public function newNodeResponse(JxnCall $xJxnCall): NodeResponse
-    {
-        return $this->di->newNodeResponse($xJxnCall);
     }
 
     /**

@@ -138,32 +138,6 @@ class PageJsTest extends TestCase
      * @throws SetupException
      * @throws RequestException
      */
-    public function testCommandDialog()
-    {
-        // Send a request to the registered class
-        jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
-            $c->g(ServerRequestCreator::class)
-                ->fromGlobals()
-                ->withParsedBody([
-                    'jxncall' => json_encode([
-                        'type' => 'class',
-                        'name' => 'TestJs',
-                        'method' => 'dialog',
-                        'args' => ['Message title', 'Message content'],
-                    ]),
-                ])
-                ->withMethod('POST'));
-        // Process the request and get the response
-        $this->assertTrue(jaxon()->canProcessRequest());
-        jaxon()->di()->getRequestHandler()->processRequest();
-        $xResponse = jaxon()->getResponse();
-        $this->assertEquals(1, $xResponse->getCommandCount());
-    }
-
-    /**
-     * @throws SetupException
-     * @throws RequestException
-     */
     public function testCommandDebug()
     {
         // Send a request to the registered class
@@ -352,5 +326,109 @@ class PageJsTest extends TestCase
         jaxon()->di()->getRequestHandler()->processRequest();
         $xResponse = jaxon()->getResponse();
         $this->assertEquals(1, $xResponse->getCommandCount());
+    }
+
+    /**
+     * @throws SetupException
+     * @throws RequestException
+     */
+    public function testDialogCommandShow()
+    {
+        // Send a request to the registered class
+        jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
+            $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withParsedBody([
+                    'jxncall' => json_encode([
+                        'type' => 'class',
+                        'name' => 'TestDialog',
+                        'method' => 'show',
+                        'args' => ['Message title', 'Message content'],
+                    ]),
+                ])
+                ->withMethod('POST'));
+        // Process the request and get the response
+        $this->assertTrue(jaxon()->canProcessRequest());
+        jaxon()->di()->getRequestHandler()->processRequest();
+        $xResponse = jaxon()->getResponse();
+        $this->assertEquals(1, $xResponse->getCommandCount());
+    }
+
+    /**
+     * @throws SetupException
+     * @throws RequestException
+     */
+    public function testDialogCommandShowWith()
+    {
+        // Send a request to the registered class
+        jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
+            $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withParsedBody([
+                    'jxncall' => json_encode([
+                        'type' => 'class',
+                        'name' => 'TestDialog',
+                        'method' => 'with',
+                        'args' => ['Message title', 'Message content'],
+                    ]),
+                ])
+                ->withMethod('POST'));
+        // Process the request and get the response
+        $this->assertTrue(jaxon()->canProcessRequest());
+        jaxon()->di()->getRequestHandler()->processRequest();
+        $xResponse = jaxon()->getResponse();
+        $this->assertEquals(1, $xResponse->getCommandCount());
+    }
+
+    /**
+     * @throws SetupException
+     * @throws RequestException
+     */
+    public function testDialogCommandHide()
+    {
+        // Send a request to the registered class
+        jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
+            $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withParsedBody([
+                    'jxncall' => json_encode([
+                        'type' => 'class',
+                        'name' => 'TestDialog',
+                        'method' => 'hide',
+                        'args' => [],
+                    ]),
+                ])
+                ->withMethod('POST'));
+        // Process the request and get the response
+        $this->assertTrue(jaxon()->canProcessRequest());
+        jaxon()->di()->getRequestHandler()->processRequest();
+        $xResponse = jaxon()->getResponse();
+        $this->assertEquals(1, $xResponse->getCommandCount());
+    }
+
+    /**
+     * @throws SetupException
+     * @throws RequestException
+     */
+    public function testDialogAlerts()
+    {
+        // Send a request to the registered class
+        jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
+            $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withParsedBody([
+                    'jxncall' => json_encode([
+                        'type' => 'class',
+                        'name' => 'TestDialog',
+                        'method' => 'alerts',
+                        'args' => [],
+                    ]),
+                ])
+                ->withMethod('POST'));
+        // Process the request and get the response
+        $this->assertTrue(jaxon()->canProcessRequest());
+        jaxon()->di()->getRequestHandler()->processRequest();
+        $xResponse = jaxon()->getResponse();
+        $this->assertEquals(4, $xResponse->getCommandCount());
     }
 }

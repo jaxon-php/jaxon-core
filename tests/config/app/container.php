@@ -4,6 +4,7 @@ use Jaxon\Tests\Ns\Lib\Service;
 use Jaxon\Tests\Ns\Lib\ServiceAuto;
 use Jaxon\Tests\Ns\Lib\ServiceAutoClassParam;
 use Jaxon\Tests\Ns\Lib\ServiceAutoParam;
+use Jaxon\Tests\Ns\Lib\ServiceExtConf;
 use Jaxon\Tests\Ns\Lib\ServiceInterface;
 
 return [
@@ -39,6 +40,13 @@ return [
                 ServiceAuto::class,
                 ServiceAutoClassParam::class,
                 ServiceAutoParam::class,
+                ServiceExtConf::class,
+            ],
+            'extend' => [
+                ServiceExtConf::class => function(ServiceExtConf $service) {
+                    $service->changeValue();
+                    return $service;
+                },
             ],
         ],
     ],
@@ -49,6 +57,9 @@ return [
             ],
             'request' => [
                 'uri' => 'ajax.php',
+            ],
+            'response' => [
+                'send' => false,
             ],
             'prefix' => [
                 'class' => 'Jxn',

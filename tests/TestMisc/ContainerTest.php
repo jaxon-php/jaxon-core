@@ -8,6 +8,7 @@ use Jaxon\Tests\Ns\Lib\ServiceAuto;
 use Jaxon\Tests\Ns\Lib\ServiceAutoClassParam;
 use Jaxon\Tests\Ns\Lib\ServiceAutoParam;
 use Jaxon\Tests\Ns\Lib\ServiceExt;
+use Jaxon\Tests\Ns\Lib\ServiceExtConf;
 use Jaxon\Tests\Ns\Lib\ServiceInterface;
 use Pimple\Container as AppContainer;
 use Pimple\Psr11\Container as PsrContainer;
@@ -81,6 +82,48 @@ class ContainerTest extends TestCase
         // Access the class from the Jaxon container
         $this->assertFalse(jaxon()->di()->h(ServiceExt::class));
         $this->assertTrue(jaxon()->di()->has(ServiceExt::class));
-        $this->assertEquals(ServiceExt::class, get_class(jaxon()->di()->get(ServiceExt::class)));
+    }
+
+    /**
+     * @throws SetupException
+     */
+    public function testServiceExtension()
+    {
+        jaxon()->di()->set(ServiceExt::class, function() {
+            return new ServiceExt();
+        });
+        jaxon()->di()->extend(ServiceExt::class, function(ServiceExt $service) {
+            $service->changeValue();
+            return $service;
+        });
+
+        $service = jaxon()->di()->g(ServiceExt::class);
+        $this->assertEquals(ServiceExt::class, get_class($service));
+        $this->assertEquals('changed', $service->getValue());
+    }
+
+    /**
+     * @throws SetupException
+     */
+    public function testServiceExtensionConfDef()
+    {
+        // The extensions in conf are not applied unless the library is booted.
+        $service = jaxon()->di()->g(ServiceExtConf::class);
+        $this->assertEquals(ServiceExtConf::class, get_class($service));
+        $this->assertEquals('initial', $service->getValue());
+    }
+
+    /**
+     * @throws SetupException
+     */
+    public function testServiceExtensionConfDone()
+    {
+        // This calls makes sure the library is booted.
+        jaxon()->processRequest();
+        $this->assertEmpty(jaxon()->callback()->popBootCallbacks());
+
+        $service = jaxon()->di()->g(ServiceExtConf::class);
+        $this->assertEquals(ServiceExtConf::class, get_class($service));
+        $this->assertEquals('changed', $service->getValue());
     }
 }

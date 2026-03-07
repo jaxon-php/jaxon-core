@@ -3,6 +3,7 @@
 namespace Jaxon\Tests\TestRequestHandler;
 
 use Jaxon\Jaxon;
+use Jaxon\Exception\AppException;
 use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;
 use Jaxon\Request\Target;
@@ -218,7 +219,6 @@ class CallbackTest extends TestCase
         jaxon()->callback()->before(function($xTarget, &$bEndRequest) {
             $xResponse = jaxon()->newResponse();
             $xResponse->alert('This is the before callback!');
-            return $xResponse;
         });
         // Send a request to the registered class
         jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
@@ -251,7 +251,6 @@ class CallbackTest extends TestCase
             $bEndRequest = true;
             $xResponse = jaxon()->newResponse();
             $xResponse->alert('This is the before callback!');
-            return $xResponse;
         });
         // Send a request to the registered class
         jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
@@ -284,7 +283,6 @@ class CallbackTest extends TestCase
         jaxon()->callback()->after(function($xTarget) {
             $xResponse = jaxon()->newResponse();
             $xResponse->alert('This is the after callback!');
-            return $xResponse;
         });
         // Send a request to the registered class
         jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
@@ -317,7 +315,6 @@ class CallbackTest extends TestCase
             $this->sMessage = $e->getMessage();
             $xResponse = jaxon()->newResponse();
             $xResponse->alert('This is the invalid callback!');
-            return $xResponse;
         });
         // Send a request to the registered class
         jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
@@ -352,7 +349,6 @@ class CallbackTest extends TestCase
             $this->sMessage = $e->getMessage();
             $xResponse = jaxon()->newResponse();
             $xResponse->alert('This is the error callback!');
-            return $xResponse;
         });
         // Send a request to the registered class
         jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
@@ -368,7 +364,42 @@ class CallbackTest extends TestCase
                 ])
                 ->withMethod('POST'));
         // Process the request and get the response
-        // $this->expectException(Exception::class);
+        jaxon()->processRequest();
+
+        $xResponse = jaxon()->getResponse();
+        $this->assertEquals(2, $xResponse->getCommandCount());
+        $this->assertNotEquals('', $this->sMessage);
+    }
+
+    /**
+     * @throws SetupException
+     * @throws RequestException
+     */
+    public function testUserFunctionExceptionCallback()
+    {
+        $this->sMessage = '';
+        // Two callbacks for the same exception.
+        jaxon()->callback()->error(function(AppException $e) {
+            $this->sMessage = $e->getMessage();
+        }, AppException::class);
+        jaxon()->callback()->error(function(AppException $e) {
+            $xResponse = jaxon()->newResponse();
+            $xResponse->alert('This is the exception callback!');
+        }, AppException::class);
+        // Send a request to the registered class
+        jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
+            $c->g(ServerRequestCreator::class)
+                ->fromGlobals()
+                ->withParsedBody([
+                    'jxncall' => json_encode([
+                        'type' => 'class',
+                        'name' => 'TestCallback',
+                        'method' => 'app', // This function throws an exception.
+                        'args' => [],
+                    ]),
+                ])
+                ->withMethod('POST'));
+        // Process the request and get the response
         jaxon()->processRequest();
 
         $xResponse = jaxon()->getResponse();
