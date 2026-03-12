@@ -14,49 +14,44 @@ namespace Jaxon\App\View\Helper;
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-use Jaxon\App\Component\Pagination;
 use Jaxon\App\NodeComponent;
 use Jaxon\App\PageComponent;
 use Jaxon\Di\ComponentContainer;
-use Jaxon\Script\JsExpr;
+use Jaxon\Script\CallFactory;
 use Jaxon\Script\Call\JxnCall;
+use Jaxon\Script\JsExpr;
 
 use function array_reduce;
 use function count;
 use function htmlentities;
 use function is_a;
 use function is_string;
-use function Jaxon\rq;
 use function json_encode;
 use function trim;
 
 class HtmlAttrHelper
 {
     /**
-     * @var string
-     */
-    private string $sPaginationComponent;
-
-    /**
      * The constructor
      *
      * @param ComponentContainer $cdi
+     * @param CallFactory $xCallFactory
+     * @param string $sPaginationComponent
      */
-    public function __construct(protected ComponentContainer $cdi)
-    {
-        $this->sPaginationComponent = rq(Pagination::class)->_class();
-    }
+    public function __construct(protected ComponentContainer $cdi,
+        protected CallFactory $xCallFactory, private string $sPaginationComponent)
+    {}
 
     /**
      * Get the component HTML code
      *
-     * @param JxnCall $xJsCall
+     * @param JxnCall|class-string $xJsCall
      *
      * @return string
      */
-    public function html(JxnCall $xJsCall): string
+    public function html(JxnCall|string $xJsCall): string
     {
-        $sClassName = $xJsCall->_class();
+        $sClassName = is_string($xJsCall) ? trim($xJsCall) : $xJsCall->_class();
         if(!$sClassName)
         {
             return '';
@@ -70,13 +65,22 @@ class HtmlAttrHelper
     /**
      * Attach a component to a DOM node
      *
-     * @param JxnCall $xJsCall
+     * @param JxnCall|class-string $xJsCall
      * @param string $item
      *
      * @return string
      */
-    public function bind(JxnCall $xJsCall, string $item = ''): string
+    public function bind(JxnCall|string $xJsCall, string $item = ''): string
     {
+        if(is_string($xJsCall))
+        {
+            $xJsCall = $this->xCallFactory->rq($xJsCall);
+            if($xJsCall === null)
+            {
+                return '';
+            }
+        }
+
         $item = trim($item);
         return 'jxn-bind="' . $xJsCall->_class() . (!$item ? '"' : '" jxn-item="' . $item . '"');
     }

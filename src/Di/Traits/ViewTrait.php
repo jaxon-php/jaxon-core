@@ -2,6 +2,7 @@
 
 namespace Jaxon\Di\Traits;
 
+use Jaxon\App\Component\Pagination;
 use Jaxon\App\Dialog\Library\AlertInterface;
 use Jaxon\App\Dialog\Library\ConfirmInterface;
 use Jaxon\App\Dialog\Library\ModalInterface;
@@ -14,6 +15,7 @@ use Jaxon\App\View\TemplateView;
 use Jaxon\App\View\ViewRenderer;
 use Jaxon\Di\ComponentContainer;
 use Jaxon\Di\Container;
+use Jaxon\Script\CallFactory;
 use Jaxon\Utils\Template\TemplateEngine;
 
 use function rtrim;
@@ -73,8 +75,11 @@ trait ViewTrait
             new PaginationRenderer($di->g(ViewRenderer::class)));
 
         // Helpers for HTML custom attributes formatting
-        $this->set(HtmlAttrHelper::class, fn(Container $di) =>
-            new HtmlAttrHelper($di->g(ComponentContainer::class)));
+        $this->set(HtmlAttrHelper::class, function(Container $di) {
+            $xCallFactory = $di->g(CallFactory::class);
+            return new HtmlAttrHelper($di->g(ComponentContainer::class),
+                $xCallFactory, $xCallFactory->rq(Pagination::class)->_class());
+        });
     }
 
     /**
