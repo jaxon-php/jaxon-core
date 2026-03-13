@@ -86,11 +86,11 @@ class HtmlAttrHelper
     }
 
     /**
-     * @param JxnCall|PageComponent $xPaginated
+     * @param JxnCall|PageComponent|class-string $xPaginated
      *
      * @return array
      */
-    public function paginationAttributes(JxnCall|PageComponent $xPaginated): array
+    public function paginationAttributes(JxnCall|PageComponent|string $xPaginated): array
     {
         if(is_a($xPaginated, PageComponent::class))
         {
@@ -100,21 +100,21 @@ class HtmlAttrHelper
         }
 
         /** @var JxnCall */
-        $xJsCall = $xPaginated;
-        return [$this->sPaginationComponent, $xJsCall->_class()];
+        $xJsCall = is_string($xPaginated) ? $this->xCallFactory->rq($xPaginated) : $xPaginated;
+        return $xJsCall === null ? ['', ''] : [$this->sPaginationComponent, $xJsCall->_class()];
     }
 
     /**
      * Attach the pagination component to a DOM node
      *
-     * @param JxnCall|PageComponent $xPaginated
+     * @param JxnCall|PageComponent|class-string $xPaginated
      *
      * @return string
      */
-    public function pagination(JxnCall|PageComponent $xPaginated): string
+    public function pagination(JxnCall|PageComponent|string $xPaginated): string
     {
         [$sComponent, $sItem] = $this->paginationAttributes($xPaginated);
-        return "jxn-bind=\"$sComponent\" jxn-item=\"$sItem\"";
+        return $sComponent === '' ? '' : "jxn-bind=\"$sComponent\" jxn-item=\"$sItem\"";
     }
 
     /**
