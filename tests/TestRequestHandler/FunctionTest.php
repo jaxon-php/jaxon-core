@@ -159,7 +159,7 @@ class FunctionTest extends TestCase
                         'name' => 'my_third_function',
                         'args' => [],
                     ]),
-                    ])
+                ])
                 ->withMethod('POST'));
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());

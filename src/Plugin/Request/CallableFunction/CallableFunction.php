@@ -22,6 +22,7 @@ namespace Jaxon\Plugin\Request\CallableFunction;
 
 use Jaxon\Di\ComponentContainer;
 use Jaxon\Di\Container;
+use Exception;
 
 use function call_user_func_array;
 use function is_array;
@@ -127,8 +128,16 @@ class CallableFunction
      */
     private function getClassInstance(string $sClassName): mixed
     {
-        return $this->di->h($sClassName) ? $this->di->g($sClassName) :
-            ($this->cdi->makeComponent($sClassName) ?: $this->di->make($sClassName));
+        try
+        {
+            // First check if the class is a registered component.
+            return $this->cdi->makeComponent($sClassName);
+        }
+        catch(Exception)
+        {
+            return $this->di->h($sClassName) ?
+                $this->di->g($sClassName) : $this->di->make($sClassName);
+        }
     }
 
     /**
