@@ -243,7 +243,7 @@ class JsExpr extends TypedValue implements Stringable
     }
 
     /**
-     * Check if a value is equal to another before sending the request
+     * Check if a value is equal to another
      *
      * @param mixed $xValue1    The first value to compare
      * @param mixed $xValue2    The second value to compare
@@ -257,7 +257,7 @@ class JsExpr extends TypedValue implements Stringable
     }
 
     /**
-     * Check if a value is equal to another before sending the request
+     * Check if a value is equal to another
      *
      * @param mixed $xValue1    The first value to compare
      * @param mixed $xValue2    The second value to compare
@@ -271,7 +271,7 @@ class JsExpr extends TypedValue implements Stringable
     }
 
     /**
-     * Check if a value is not equal to another before sending the request
+     * Check if a value is not equal to another
      *
      * @param mixed $xValue1    The first value to compare
      * @param mixed $xValue2    The second value to compare
@@ -285,7 +285,7 @@ class JsExpr extends TypedValue implements Stringable
     }
 
     /**
-     * Check if a value is not equal to another before sending the request
+     * Check if a value is not equal to another
      *
      * @param mixed $xValue1    The first value to compare
      * @param mixed $xValue2    The second value to compare
@@ -299,7 +299,7 @@ class JsExpr extends TypedValue implements Stringable
     }
 
     /**
-     * Check if a value is greater than another before sending the request
+     * Check if a value is greater than another
      *
      * @param mixed $xValue1    The first value to compare
      * @param mixed $xValue2    The second value to compare
@@ -313,7 +313,7 @@ class JsExpr extends TypedValue implements Stringable
     }
 
     /**
-     * Check if a value is greater or equal to another before sending the request
+     * Check if a value is greater or equal to another
      *
      * @param mixed $xValue1    The first value to compare
      * @param mixed $xValue2    The second value to compare
@@ -327,7 +327,7 @@ class JsExpr extends TypedValue implements Stringable
     }
 
     /**
-     * Check if a value is lower than another before sending the request
+     * Check if a value is lower than another
      *
      * @param mixed $xValue1    The first value to compare
      * @param mixed $xValue2    The second value to compare
@@ -341,7 +341,7 @@ class JsExpr extends TypedValue implements Stringable
     }
 
     /**
-     * Check if a value is lower or equal to another before sending the request
+     * Check if a value is lower or equal to another
      *
      * @param mixed $xValue1    The first value to compare
      * @param mixed $xValue2    The second value to compare
@@ -355,31 +355,53 @@ class JsExpr extends TypedValue implements Stringable
     }
 
     /**
-     * Add a condition to the request
+     * Check if a value is equal to true.
      *
-     * The request is sent only if the condition is true.
-     *
-     * @param mixed $xCondition    The condition to check
+     * @param mixed $xValue    The value to check
      *
      * @return self
      */
-    public function when($xCondition): self
+    public function when($xValue): self
     {
-        return $this->ifeq(true, $xCondition);
+        return $this->ifeq(true, $xValue);
     }
 
     /**
-     * Add a condition to the request
+     * Check if a value is equal to false.
      *
-     * The request is sent only if the condition is false.
-     *
-     * @param mixed $xCondition    The condition to check
+     * @param mixed $xValue    The value to check
      *
      * @return self
      */
-    public function unless($xCondition): self
+    public function unless($xValue): self
     {
-        return $this->ifeq(false, $xCondition);
+        return $this->ifeq(false, $xValue);
+    }
+
+    /**
+     * Check if a value is truthy
+     *
+     * @param mixed $xValue    The value to check
+     *
+     * @return self
+     */
+    public function ifty($xValue): self
+    {
+        $this->aCondition = ['ty', TypedValue::make($xValue)];
+        return $this;
+    }
+
+    /**
+     * Check if a value falsy
+     *
+     * @param mixed $xValue    The value to check
+     *
+     * @return self
+     */
+    public function iffy($xValue): self
+    {
+        $this->aCondition = ['fy', TypedValue::make($xValue)];
+        return $this;
     }
 
     /**
