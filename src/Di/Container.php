@@ -257,7 +257,7 @@ class Container implements ContainerInterface
      */
     public function extend(string $sClass, Closure $xClosure): void
     {
-        $this->xLibContainer->extend($sClass, $xClosure);
+        $this->xLibContainer->extend($sClass, fn($xClass) => $xClosure($xClass, $this));
     }
 
     /**
