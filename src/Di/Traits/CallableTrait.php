@@ -45,8 +45,9 @@ trait CallableTrait
             $sPrefix = $di->g(ConfigManager::class)->getOption('core.prefix.function');
             $bDebug = $di->g(ConfigManager::class)->getOption('core.debug.on', false);
             return new CallableFunctionPlugin($sPrefix, $bDebug,
-                $di->g(Container::class), $di->g(TemplateEngine::class),
-                $di->g(Translator::class), $di->g(Validator::class));
+                $di->g(Container::class), $di->g(ComponentContainer::class),
+                $di->g(Translator::class), $di->g(Validator::class),
+                $di->g(TemplateEngine::class));
         });
     }
 

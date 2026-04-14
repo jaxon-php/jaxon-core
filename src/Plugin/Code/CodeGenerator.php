@@ -220,8 +220,8 @@ class CodeGenerator
             'sOptions' => $this->asset()->getJsOptions(),
         ])));
 
-        $renderJsTag = fn(array $aJsFile) => $this->renderJsTag($aJsFile);
-        $renderCssTag = fn(array $aCssFile) => $this->renderCssTag($aCssFile);
+        $renderJsTag = $this->renderJsTag(...);
+        $renderCssTag = $this->renderCssTag(...);
         foreach($this->aCodeGenerators as [$sClassName, $nType])
         {
             $xGenerator = $this->di->g($sClassName);

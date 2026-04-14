@@ -116,7 +116,7 @@ class Code
     }
 
     /**
-     * @param CodeGeneratorInterface $xCodeGenerator
+     * @param CodeGeneratorInterface $xGenerator
      *
      * @return void
      */
@@ -143,7 +143,7 @@ class Code
     }
 
     /**
-     * @param CodeGeneratorInterface $xCodeGenerator
+     * @param CssCodeGeneratorInterface $xGenerator
      * @param Closure $renderTag
      *
      * @return void
@@ -182,7 +182,7 @@ class Code
     }
 
     /**
-     * @param CodeGeneratorInterface $xCodeGenerator
+     * @param JsCodeGeneratorInterface $xGenerator
      * @param Closure $renderTag
      *
      * @return void

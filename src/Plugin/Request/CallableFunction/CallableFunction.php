@@ -20,6 +20,7 @@
 
 namespace Jaxon\Plugin\Request\CallableFunction;
 
+use Jaxon\Di\ComponentContainer;
 use Jaxon\Di\Container;
 
 use function call_user_func_array;
@@ -54,12 +55,13 @@ class CallableFunction
      * The constructor
      *
      * @param Container $di
+     * @param ComponentContainer $cdi
      * @param string $sFunction
      * @param string $sJsFunction
      * @param string $sPhpFunction
      */
-    public function __construct(private Container $di, private string $sFunction,
-        private string $sJsFunction, string $sPhpFunction)
+    public function __construct(private Container $di, private ComponentContainer $cdi,
+        private string $sFunction, private string $sJsFunction, string $sPhpFunction)
     {
         $this->xPhpFunction = $sPhpFunction;
     }
@@ -119,6 +121,17 @@ class CallableFunction
     }
 
     /**
+     * @param string $sClassName
+     *
+     * @return mixed
+     */
+    private function getClassInstance(string $sClassName): mixed
+    {
+        return $this->di->h($sClassName) ? $this->di->g($sClassName) :
+            ($this->cdi->makeComponent($sClassName) ?: $this->di->make($sClassName));
+    }
+
+    /**
      * Call the registered user function, including an external file if needed
      * and passing along the specified arguments
      *
@@ -135,9 +148,7 @@ class CallableFunction
         // If the function is an alias for a class method, then instantiate the class
         if(is_array($this->xPhpFunction) && is_string($this->xPhpFunction[0]))
         {
-            $sClassName = $this->xPhpFunction[0];
-            $this->xPhpFunction[0] = $this->di->h($sClassName) ?
-                $this->di->g($sClassName) : $this->di->make($sClassName);
+            $this->xPhpFunction[0] = $this->getClassInstance($this->xPhpFunction[0]);
         }
         call_user_func_array($this->xPhpFunction, $aArgs);
     }

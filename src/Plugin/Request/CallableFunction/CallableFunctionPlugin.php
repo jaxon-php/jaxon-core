@@ -22,6 +22,7 @@
 namespace Jaxon\Plugin\Request\CallableFunction;
 
 use Jaxon\Jaxon;
+use Jaxon\Di\ComponentContainer;
 use Jaxon\Di\Container;
 use Jaxon\App\I18n\Translator;
 use Jaxon\Exception\RequestException;
@@ -36,6 +37,8 @@ use Psr\Http\Message\ServerRequestInterface;
 use Exception;
 
 use function array_keys;
+use function array_map;
+use function array_values;
 use function count;
 use function implode;
 use function is_array;
@@ -65,13 +68,14 @@ class CallableFunctionPlugin extends AbstractRequestPlugin implements JsCodeGene
      * @param string $sPrefix
      * @param bool $bDebug
      * @param Container $di
-     * @param TemplateEngine $xTemplateEngine
+     * @param ComponentContainer $cdi
      * @param Translator $xTranslator
      * @param Validator $xValidator
+     * @param TemplateEngine $xTemplateEngine
      */
     public function __construct(private string $sPrefix, private bool $bDebug,
-        private Container $di, private TemplateEngine $xTemplateEngine,
-        private Translator $xTranslator, private Validator $xValidator)
+        private Container $di, private ComponentContainer $cdi, private Translator $xTranslator,
+        private Validator $xValidator, private TemplateEngine $xTemplateEngine)
     {}
 
     /**
@@ -145,8 +149,8 @@ class CallableFunctionPlugin extends AbstractRequestPlugin implements JsCodeGene
         {
             return null;
         }
-        $xCallable = new CallableFunction($this->di, $sFunction,
-            $this->sPrefix . $sFunction, $this->aFunctions[$sFunction]);
+        $xCallable = new CallableFunction($this->di, $this->cdi, $sFunction,
+            "{$this->sPrefix}$sFunction", $this->aFunctions[$sFunction]);
         foreach($this->aOptions[$sFunction] as $sName => $sValue)
         {
             $xCallable->configure($sName, $sValue);
@@ -163,11 +167,9 @@ class CallableFunctionPlugin extends AbstractRequestPlugin implements JsCodeGene
      */
     private function getCallableScript(CallableFunction $xFunction): string
     {
-        $aOptions = [];
-        foreach($xFunction->getOptions() as $sKey => $sValue)
-        {
-            $aOptions[] = "$sKey: $sValue";
-        }
+        $aOptions = $xFunction->getOptions();
+        $aOptions = array_map(fn($sKey, $sValue) => "$sKey: $sValue",
+            array_keys($aOptions), array_values($aOptions));
 
         return $this->xTemplateEngine->render('jaxon::callables/function.js', [
             'sName' => $xFunction->getName(),
