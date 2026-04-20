@@ -45,7 +45,7 @@ class AssetManager
      *
      * @var string
      */
-    private const JS_LIB_URL = 'https://cdn.jsdelivr.net/gh/jaxon-php/jaxon-js@5.2.3/dist';
+    private const JS_LIB_URL = 'https://cdn.jsdelivr.net/gh/jaxon-php/jaxon-js@5.2.4/dist';
 
     /**
      * The constructor
