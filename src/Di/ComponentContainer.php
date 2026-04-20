@@ -293,6 +293,13 @@ class ComponentContainer
 
         // Initialize the user class instance
         $this->xContainer->extend($sClassName, function($xClassInstance) use($sClassName) {
+            // Set attributes from the DI container.
+            // The class level DI options are set on any component.
+            // The method level DI options will be set only on the targetted component.
+            /** @var CallableObject */
+            $xCallableObject = $this->get($this->getCallableObjectKey($sClassName));
+            $xCallableObject->setDiClassAttributes($xClassInstance);
+
             if($xClassInstance instanceof AbstractComponent)
             {
                 // Call the protected "initComponent()" method of the Component class.
@@ -307,13 +314,6 @@ class ComponentContainer
 
             // Run the callbacks for class initialisation
             $this->di->g(CallbackManager::class)->onInit($xClassInstance);
-
-            // Set attributes from the DI container.
-            // The class level DI options are set on any component.
-            // The method level DI options will be set only on the targetted component.
-            /** @var CallableObject */
-            $xCallableObject = $this->get($this->getCallableObjectKey($sClassName));
-            $xCallableObject->setDiClassAttributes($xClassInstance);
 
             return $xClassInstance;
         });
