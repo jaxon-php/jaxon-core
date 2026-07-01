@@ -4,6 +4,7 @@ namespace Jaxon\App\Databag;
 
 use JsonSerializable;
 
+use function array_filter;
 use function count;
 use function key_exists;
 
@@ -15,8 +16,6 @@ class Databag implements JsonSerializable
     private array $aTouched = [];
 
     /**
-     * The constructor
-     *
      * @param array $aData
      */
     public function __construct(protected array $aData)
@@ -52,6 +51,17 @@ class Databag implements JsonSerializable
     /**
      * @param string $sBag
      * @param string $sKey
+     *
+     * @return bool
+     */
+    public function has(string $sBag, string $sKey): bool
+    {
+        return isset($this->aData[$sBag]) && key_exists($sKey, $this->aData[$sBag]);
+    }
+
+    /**
+     * @param string $sBag
+     * @param string $sKey
      * @param mixed $xValue
      *
      * @return void
@@ -72,9 +82,25 @@ class Databag implements JsonSerializable
     public function new(string $sBag, string $sKey, $xValue): void
     {
         // Set the value only if it doesn't already exist.
-        if(!isset($this->aData[$sBag]) || !key_exists($sKey, $this->aData[$sBag]))
+        if(!$this->has($sBag, $sKey))
         {
             $this->set($sBag, $sKey, $xValue);
+        }
+    }
+
+    /**
+     * @param string $sBag
+     * @param string $sKey
+     *
+     * @return void
+     */
+    public function unset(string $sBag, string $sKey): void
+    {
+        if($this->has($sBag, $sKey))
+        {
+            $this->aTouched[$sBag] = true;
+            $this->aData[$sBag] = array_filter($this->aData[$sBag],
+                fn(string $_sKey) => $_sKey !== $sKey, ARRAY_FILTER_USE_KEY);
         }
     }
 

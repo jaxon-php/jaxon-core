@@ -5,13 +5,21 @@ namespace Jaxon\App\Databag;
 class DatabagContext
 {
     /**
-     * The constructor
-     *
      * @param Databag $xDatabag
      * @param string $sName
      */
     public function __construct(protected Databag $xDatabag, protected string $sName)
     {}
+
+    /**
+     * @param string $sKey
+     *
+     * @return bool
+     */
+    public function has(string $sKey): bool
+    {
+        return $this->xDatabag->has($this->sName, $sKey);
+    }
 
     /**
      * @param string $sKey
@@ -33,6 +41,16 @@ class DatabagContext
     public function new(string $sKey, $xValue): void
     {
         $this->xDatabag->new($this->sName, $sKey, $xValue);
+    }
+
+    /**
+     * @param string $sKey
+     *
+     * @return void
+     */
+    public function unset(string $sKey): void
+    {
+        $this->xDatabag->unset($this->sName, $sKey);
     }
 
     /**
