@@ -13,9 +13,12 @@ trait NodeResponseTrait
     protected readonly NodeResponse $nodeResponse;
 
     /**
-     * @var string
+     * @return string
      */
-    protected string $overrides = '';
+    protected function overrides(): string
+    {
+        return '';
+    }
 
     /**
      * @param Container $di
@@ -27,7 +30,7 @@ trait NodeResponseTrait
         // Each component must have its own reponse object.
         // A component can override another one. In this case,
         // its response is attached to the overriden component DOM node.
-        $this->nodeResponse = $di->newNodeResponse($this->rq($this->overrides ?: ''));
+        $this->nodeResponse = $di->newNodeResponse($this->rq($this->overrides()));
     }
 
     /**
