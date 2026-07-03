@@ -112,10 +112,10 @@ class DirectoryTest extends TestCase
         jaxon()->processRequest();
         $this->assertNotNull(jaxon()->getResponse());
         $this->assertEquals(1, jaxon()->getResponse()->getCommandCount());
-        $xCallableObject = jaxon()->di()->getCallableClassPlugin()->getCallableProxy('ClassC');
+        $xCallableObject = jaxon()->di()->getCallableClassPlugin()->makeCallableProxy('ClassC');
         $this->assertEquals('ClassC', $xCallableObject->getClassName());
 
-        $xTarget = jaxon()->di()->getCallableClassPlugin()->getTarget();
+        $xTarget = jaxon()->di()->getCallableClassPlugin()->getCallableAction();
         $this->assertNotNull($xTarget);
         $this->assertTrue($xTarget->isClass());
         $this->assertFalse($xTarget->isFunction());

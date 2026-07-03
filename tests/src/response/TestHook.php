@@ -61,8 +61,8 @@ class TestHook extends FuncComponent
 
     protected function beforeParam()
     {
-        $this->method = $this->target()->method();
-        $this->args = $this->target()->args();
+        $this->method = $this->action()->func();
+        $this->args = $this->action()->args();
     }
 
     public function param($param)

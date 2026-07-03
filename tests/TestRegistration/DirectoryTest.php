@@ -65,10 +65,10 @@ class DirectoryTest extends TestCase
      */
     public function testCallableDirClass()
     {
-        $xClassACallable = $this->xClassPlugin->getCallableProxy('ClassA');
-        $xClassBCallable = $this->xClassPlugin->getCallableProxy('ClassB');
-        $xClassCCallable = $this->xClassPlugin->getCallableProxy('ClassC');
-        $xClassDCallable = $this->xClassPlugin->getCallableProxy('ClassD');
+        $xClassACallable = $this->xClassPlugin->makeCallableProxy('ClassA');
+        $xClassBCallable = $this->xClassPlugin->makeCallableProxy('ClassB');
+        $xClassCCallable = $this->xClassPlugin->makeCallableProxy('ClassC');
+        $xClassDCallable = $this->xClassPlugin->makeCallableProxy('ClassD');
         // Test callables classes
         $this->assertEquals(CallableObjectProxy::class, get_class($xClassACallable));
         $this->assertEquals(CallableObjectProxy::class, get_class($xClassBCallable));
@@ -102,7 +102,7 @@ class DirectoryTest extends TestCase
     {
         // No callable for standard PHP functions.
         $this->expectException(SetupException::class);
-        $this->xDirPlugin->getCallableProxy('Simple');
+        $this->xDirPlugin->makeCallableProxy('Simple');
     }
 
     public function testCallableDirIncorrectOption()

@@ -50,7 +50,6 @@ trait PsrTrait
             $di->g(ServerRequestCreator::class)->fromGlobals());
         // Server request with the Jaxon request parameter as attribute
         $this->set($this->sPsrServerRequest, function(Container $di) {
-            /** @var ParameterReader */
             $xParameterReader = $di->g(ParameterReader::class);
             return $xParameterReader->setRequestParameter($di->g(ServerRequestInterface::class));
         });

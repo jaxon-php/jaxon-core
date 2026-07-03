@@ -103,10 +103,10 @@ class ClassTest extends TestCase
         jaxon()->processRequest();
         $this->assertNotNull(jaxon()->getResponse());
         $this->assertEquals(1, jaxon()->getResponse()->getCommandCount());
-        $xCallableObject = jaxon()->di()->getCallableClassPlugin()->getCallableProxy('Sample');
+        $xCallableObject = jaxon()->di()->getCallableClassPlugin()->makeCallableProxy('Sample');
         $this->assertEquals('Sample', $xCallableObject->getClassName());
 
-        $xTarget = jaxon()->di()->getCallableClassPlugin()->getTarget();
+        $xTarget = jaxon()->di()->getCallableClassPlugin()->getCallableAction();
         $this->assertNotNull($xTarget);
         $this->assertTrue($xTarget->isClass());
         $this->assertFalse($xTarget->isFunction());

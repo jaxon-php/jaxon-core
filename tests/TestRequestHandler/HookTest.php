@@ -5,7 +5,7 @@ namespace Jaxon\Tests\TestRequestHandler;
 use Jaxon\Jaxon;
 use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;
-use Jaxon\Request\Target;
+use Jaxon\Request\CallableAction;
 use Nyholm\Psr7Server\ServerRequestCreator;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
@@ -14,9 +14,9 @@ use Psr\Http\Message\ServerRequestInterface;
 class HookTest extends TestCase
 {
     /**
-     * @var Target
+     * @var CallableAction
      */
-    protected $xTarget;
+    protected $xCallableAction;
 
     /**
      * @var mixed

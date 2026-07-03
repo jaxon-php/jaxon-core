@@ -17,7 +17,7 @@ namespace Jaxon\Request\Handler;
 use Jaxon\Di\Container;
 use Jaxon\Exception\AppException;
 use Jaxon\Exception\RequestException;
-use Jaxon\Request\Target;
+use Jaxon\Request\CallableAction;
 use Closure;
 use Exception;
 
@@ -265,18 +265,18 @@ class CallbackManager
     /**
      * These are the pre-request processing callbacks passed to the Jaxon library.
      *
-     * @param Target $xTarget
+     * @param CallableAction $xAction
      * @param bool $bEndRequest If set to true, the request processing is interrupted.
      *
      * @return void
      * @throws RequestException
      */
-    public function onBefore(Target $xTarget, bool &$bEndRequest): void
+    public function onBefore(CallableAction $xAction, bool &$bEndRequest): void
     {
         // Call the user defined callback
         foreach($this->aBeforeCallbacks as $xCallback)
         {
-            $this->executeCallback($xCallback, [$xTarget, &$bEndRequest]);
+            $this->executeCallback($xCallback, [$xAction, &$bEndRequest]);
             if($bEndRequest)
             {
                 return;
@@ -287,15 +287,15 @@ class CallbackManager
     /**
      * These are the post-request processing callbacks passed to the Jaxon library.
      *
-     * @param Target $xTarget
+     * @param CallableAction $xAction
      * @param bool $bEndRequest
      *
      * @return void
      * @throws RequestException
      */
-    public function onAfter(Target $xTarget, bool $bEndRequest): void
+    public function onAfter(CallableAction $xAction, bool $bEndRequest): void
     {
-        $this->executeCallbacks($this->aAfterCallbacks, [$xTarget, $bEndRequest]);
+        $this->executeCallbacks($this->aAfterCallbacks, [$xAction, $bEndRequest]);
     }
 
     /**

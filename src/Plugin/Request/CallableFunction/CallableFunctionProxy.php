@@ -21,7 +21,6 @@
 namespace Jaxon\Plugin\Request\CallableFunction;
 
 use Jaxon\Di\ComponentContainer;
-use Jaxon\Request\Target;
 
 use function call_user_func_array;
 use function is_array;
@@ -121,11 +120,11 @@ class CallableFunctionProxy
      * Call the registered user function, including an external file if needed
      * and passing along the specified arguments
      *
-     * @param Target $xTarget
+     * @param CallableFunction $xAction
      *
      * @return void
      */
-    public function call(Target $xTarget): void
+    public function call(CallableFunction $xAction): void
     {
         if($this->sInclude !== '')
         {
@@ -136,6 +135,7 @@ class CallableFunctionProxy
         {
             $this->xPhpFunction[0] = $this->cdi->getClassInstance($this->xPhpFunction[0]);
         }
-        call_user_func_array($this->xPhpFunction, $this->cdi->getRequestArguments());
+
+        call_user_func_array($this->xPhpFunction, $xAction->args());
     }
 }

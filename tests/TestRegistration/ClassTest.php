@@ -51,8 +51,8 @@ class ClassTest extends TestCase
 
     public function testCallableClassClass()
     {
-        $xSampleCallable = $this->xPlugin->getCallableProxy('Sample');
-        $xClassCallable = $this->xPlugin->getCallableProxy(TheClass::class);
+        $xSampleCallable = $this->xPlugin->makeCallableProxy('Sample');
+        $xClassCallable = $this->xPlugin->makeCallableProxy(TheClass::class);
         // Test callables classes
         $this->assertEquals(CallableObjectProxy::class, get_class($xSampleCallable));
         $this->assertEquals(CallableObjectProxy::class, get_class($xClassCallable));
@@ -74,7 +74,7 @@ class ClassTest extends TestCase
     {
         // No callable for classes that does not exist.
         $this->expectException(SetupException::class);
-        $this->xPlugin->getCallableProxy('Simple');
+        $this->xPlugin->makeCallableProxy('Simple');
     }
 
     /**
@@ -93,7 +93,7 @@ class ClassTest extends TestCase
             ],
         ]);
 
-        $xCallable = $this->xPlugin->getCallableProxy('TheClass');
+        $xCallable = $this->xPlugin->makeCallableProxy('TheClass');
         $this->assertTrue($xCallable->hasMethod('theMethod'));
     }
 

@@ -49,9 +49,9 @@ class DirectoryTest extends TestCase
      */
     public function testCallableDirClasses()
     {
-        $xClassACallable = $this->xClassPlugin->getCallableProxy('ClassA');
-        $xClassBCallable = $this->xClassPlugin->getCallableProxy('ClassB');
-        $xClassCCallable = $this->xClassPlugin->getCallableProxy('ClassC');
+        $xClassACallable = $this->xClassPlugin->makeCallableProxy('ClassA');
+        $xClassBCallable = $this->xClassPlugin->makeCallableProxy('ClassB');
+        $xClassCCallable = $this->xClassPlugin->makeCallableProxy('ClassC');
         // Test callables classes
         $this->assertEquals(CallableObjectProxy::class, get_class($xClassACallable));
         $this->assertEquals(CallableObjectProxy::class, get_class($xClassBCallable));
@@ -67,9 +67,9 @@ class DirectoryTest extends TestCase
      */
     public function testCallableNsClasses()
     {
-        $xClassACallable = $this->xClassPlugin->getCallableProxy(ClassA::class);
-        $xClassBCallable = $this->xClassPlugin->getCallableProxy(ClassB::class);
-        $xClassCCallable = $this->xClassPlugin->getCallableProxy(ClassC::class);
+        $xClassACallable = $this->xClassPlugin->makeCallableProxy(ClassA::class);
+        $xClassBCallable = $this->xClassPlugin->makeCallableProxy(ClassB::class);
+        $xClassCCallable = $this->xClassPlugin->makeCallableProxy(ClassC::class);
         // Test callables classes
         $this->assertEquals(CallableObjectProxy::class, get_class($xClassACallable));
         $this->assertEquals(CallableObjectProxy::class, get_class($xClassBCallable));

@@ -26,7 +26,6 @@ namespace Jaxon\Plugin\Request\CallableClass;
 use Jaxon\Di\ComponentContainer;
 use Jaxon\Di\Container;
 use Jaxon\Exception\SetupException;
-use Jaxon\Request\Target;
 use ReflectionClass;
 use ReflectionException;
 
@@ -50,9 +49,8 @@ class CallableObjectProxy
      * @param ReflectionClass $xReflectionClass
      * @param ComponentOptions $xOptions
      */
-    public function __construct(protected ComponentContainer $cdi,
-        protected Container $di, private ReflectionClass $xReflectionClass,
-        private ComponentOptions $xOptions)
+    public function __construct(private ComponentContainer $cdi, private Container $di,
+        private ReflectionClass $xReflectionClass, private ComponentOptions $xOptions)
     {}
 
     /**
@@ -150,15 +148,15 @@ class CallableObjectProxy
      * Call the specified method of the component using the specified array of arguments
      *
      * @param array $aHookMethods    The method config options
-     * @param string $sTargetMethod    The method name
+     * @param string $sActionMethod    The method name
      *
      * @return void
      * @throws ReflectionException
      */
-    private function callHookMethods(array $aHookMethods, string $sTargetMethod): void
+    private function callHookMethods(array $aHookMethods, string $sActionMethod): void
     {
         // The hooks defined at method level are merged with those defined at class level.
-        $aMethods = [...($aHookMethods['*'] ?? []), ...($aHookMethods[$sTargetMethod] ?? [])];
+        $aMethods = [...($aHookMethods['*'] ?? []), ...($aHookMethods[$sActionMethod] ?? [])];
         foreach($aMethods as $xKey => $xValue)
         {
             $sHookName = $xValue;
@@ -220,24 +218,24 @@ class CallableObjectProxy
     /**
      * Call the specified method of the component using the specified array of arguments
      *
-     * @param Target $xTarget The target of the Jaxon call
+     * @param CallableObject $xAction
      *
      * @return void
      * @throws ReflectionException
      * @throws SetupException
      */
-    public function call(Target $xTarget): void
+    public function call(CallableObject $xAction): void
     {
-        $sTargetMethod = $xTarget->getMethodName();
-        $this->xComponent = $this->cdi->getCalledComponent($this->getClassName(), $xTarget);
+        $sActionMethod = $xAction->func();
+        $this->xComponent = $this->cdi->getCalledComponent($this->getClassName(), $sActionMethod);
 
         // Methods to call before processing the request
-        $this->callHookMethods($this->xOptions->beforeMethods(), $sTargetMethod);
+        $this->callHookMethods($this->xOptions->beforeMethods(), $sActionMethod);
 
         // Call the request method
-        $this->callMethod($sTargetMethod, $this->di->getRequestArguments(), false);
+        $this->callMethod($sActionMethod, $xAction->args(), false);
 
         // Methods to call after processing the request
-        $this->callHookMethods($this->xOptions->afterMethods(), $sTargetMethod);
+        $this->callHookMethods($this->xOptions->afterMethods(), $sActionMethod);
     }
 }

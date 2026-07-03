@@ -68,7 +68,7 @@ class NamespaceTest extends TestCase
         // file_put_contents(dirname(__DIR__) . '/src/js/nsu.js', $sJsCode);
         $this->assertEquals(file_get_contents(dirname(__DIR__) . '/src/js/nsu.js'), $sJsCode);
 
-        $xCallable = $this->xClassPlugin->getCallableProxy('Jaxon_Tests_Ns_Ajax_ClassA');
+        $xCallable = $this->xClassPlugin->makeCallableProxy('Jaxon_Tests_Ns_Ajax_ClassA');
         $this->assertEquals(CallableObjectProxy::class, get_class($xCallable));
     }
 }

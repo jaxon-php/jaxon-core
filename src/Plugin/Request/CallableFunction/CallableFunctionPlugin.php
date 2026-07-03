@@ -23,14 +23,12 @@ namespace Jaxon\Plugin\Request\CallableFunction;
 
 use Jaxon\Jaxon;
 use Jaxon\Di\ComponentContainer;
-use Jaxon\Di\Container;
 use Jaxon\App\I18n\Translator;
 use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\AbstractRequestPlugin;
 use Jaxon\Plugin\JsCode;
 use Jaxon\Plugin\JsCodeGeneratorInterface;
-use Jaxon\Request\Target;
 use Jaxon\Request\Validator;
 use Jaxon\Utils\Template\TemplateEngine;
 use Psr\Http\Message\ServerRequestInterface;
@@ -49,6 +47,11 @@ use function trim;
 
 class CallableFunctionPlugin extends AbstractRequestPlugin implements JsCodeGeneratorInterface
 {
+    /**
+     * @var CallableFunction|null
+     */
+    protected CallableFunction|null $xCallableAction = null;
+
     /**
      * The registered functions names
      *
@@ -142,7 +145,7 @@ class CallableFunctionPlugin extends AbstractRequestPlugin implements JsCodeGene
     /**
      * @inheritDoc
      */
-    public function getCallableProxy(string $sCallable): CallableFunctionProxy|null
+    public function makeCallableProxy(string $sCallable): CallableFunctionProxy|null
     {
         $sFunction = trim($sCallable);
         if(!isset($this->aFunctions[$sFunction]))
@@ -186,10 +189,30 @@ class CallableFunctionPlugin extends AbstractRequestPlugin implements JsCodeGene
         $aScripts = [];
         foreach(array_keys($this->aFunctions) as $sFunction)
         {
-            $xCallableProxy = $this->getCallableProxy($sFunction);
+            $xCallableProxy = $this->makeCallableProxy($sFunction);
             $aScripts[] = trim($this->getCallableScript($xCallableProxy));
         }
         return new JsCode(implode("\n", $aScripts) . "\n");
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getCallableAction(): CallableFunction|null
+    {
+        return $this->xCallableAction;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function makeCallableAction(ServerRequestInterface $xRequest): CallableFunction
+    {
+        $aCall = $xRequest->getAttribute('jxncall');
+        $sFunctionName = trim($aCall['name']);
+        $aArgs = $this->cdi->getRequestArguments();
+        $this->xCallableAction = new CallableFunction($sFunctionName, $aArgs);
+        return $this->xCallableAction;
     }
 
     /**
@@ -199,17 +222,8 @@ class CallableFunctionPlugin extends AbstractRequestPlugin implements JsCodeGene
     {
         $aCall = $xRequest->getAttribute('jxncall');
         // throw new \Exception(json_encode(['call' => $aCall]));
-        return $aCall !== null && ($aCall['type'] ?? '') === 'func' && isset($aCall['name']);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function setTarget(ServerRequestInterface $xRequest): Target
-    {
-        $aCall = $xRequest->getAttribute('jxncall');
-        $this->xTarget = Target::makeFunction(trim($aCall['name']));
-        return $this->xTarget;
+        return $aCall !== null && ($aCall['type'] ?? '') === 'func' &&
+            isset($aCall['name']) && is_string($aCall['name']);
     }
 
     /**
@@ -232,7 +246,7 @@ class CallableFunctionPlugin extends AbstractRequestPlugin implements JsCodeGene
      */
     public function processRequest(): void
     {
-        $sRequestedFunction = $this->xTarget->getFunctionName();
+        $sRequestedFunction = $this->xCallableAction->func();
 
         // Security check: make sure the requested function was registered.
         $bIsValid = $this->xValidator->validateFunction($sRequestedFunction);
@@ -246,8 +260,7 @@ class CallableFunctionPlugin extends AbstractRequestPlugin implements JsCodeGene
 
         try
         {
-            /** @var CallableFunctionProxy */
-            $xCallableProxy = $this->getCallableProxy($sRequestedFunction);
+            $xCallableProxy = $this->makeCallableProxy($sRequestedFunction);
         }
         catch(Exception $e)
         {
@@ -258,7 +271,7 @@ class CallableFunctionPlugin extends AbstractRequestPlugin implements JsCodeGene
         }
         try
         {
-            $xCallableProxy->call($this->xTarget);
+            $xCallableProxy->call($this->xCallableAction);
         }
         catch(Exception $e)
         {

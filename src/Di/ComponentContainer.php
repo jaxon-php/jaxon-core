@@ -25,14 +25,16 @@ use Jaxon\App\FuncComponent;
 use Jaxon\App\I18n\Translator;
 use Jaxon\App\NodeComponent;
 use Jaxon\Exception\SetupException;
+use Jaxon\Plugin\Request\CallableClass\CallableClassPlugin;
 use Jaxon\Plugin\Request\CallableClass\CallableObjectProxy;
 use Jaxon\Request\Handler\CallbackManager;
-use Jaxon\Request\Target;
+use Jaxon\Request\CallableAction;
 use Jaxon\Script\Call\JxnCall;
 use Jaxon\Script\Call\JxnClassCall;
 use Jaxon\Script\JsExpr;
 use Pimple\Container as PimpleContainer;
 use Closure;
+use Exception;
 use ReflectionClass;
 use ReflectionException;
 
@@ -53,18 +55,6 @@ class ComponentContainer
     private $xContainer;
 
     /**
-     * @var string
-     */
-    private string $sCurrentClassName = '';
-
-    /**
-     * @var Target|null
-     */
-    private Target|null $xCurrentTarget = null;
-
-    /**
-     * The class constructor
-     *
      * @param Container $di
      */
     public function __construct(private Container $di)
@@ -169,33 +159,31 @@ class ComponentContainer
      *
      * @template T
      * @param class-string<T> $sClassName the class name
-     * @param Target $xTarget
+     * @param string $sMethodName
      *
      * @return T|null
      */
-    public function getCalledComponent(string $sClassName, Target $xTarget): mixed
+    public function getCalledComponent(string $sClassName, string $sMethodName): mixed
     {
-        $this->sCurrentClassName = $sClassName;
-        $this->xCurrentTarget = $xTarget;
-
         $xComponent = $this->get($sClassName);
         /** @var CallableObjectProxy */
         $xCallableObject = $this->get($this->getCallableObjectKey($sClassName));
-        $xCallableObject->setDiMethodAttributes($xComponent, $xTarget->method());
+        $xCallableObject->setDiMethodAttributes($xComponent, $sMethodName);
 
         return $xComponent;
     }
 
     /**
-     * Get the component target
+     * Get the component action
      *
      * @param string $sClassName the class name
      *
-     * @return Target|null
+     * @return CallableAction|null
      */
-    public function getComponentTarget(string $sClassName): Target|null
+    public function getComponentAction(string $sClassName): CallableAction|null
     {
-        return $sClassName === $this->sCurrentClassName ? $this->xCurrentTarget : null;
+        $xCallableAction = $this->di->g(CallableClassPlugin::class)->getCallableAction();
+        return $xCallableAction?->getClassName() === $sClassName ? $xCallableAction : null;
     }
 
     /**

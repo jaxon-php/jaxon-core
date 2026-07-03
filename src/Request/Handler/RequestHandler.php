@@ -65,7 +65,10 @@ class RequestHandler
         {
             if($sClassName::canProcessRequest($xRequest))
             {
-                return $this->di->g($sClassName);
+                /** @var RequestHandlerInterface */
+                $xRequestPlugin = $this->di->g($sClassName);
+                $xRequestPlugin->makeCallableAction($xRequest);
+                return $xRequestPlugin;
             }
         }
         return null;
@@ -120,25 +123,19 @@ class RequestHandler
 
         try
         {
-            $xTarget = $this->xRequestPlugin?->getTarget() ?? null;
+            $xAction = $this->xRequestPlugin->getCallableAction();
             $bEndRequest = false;
-            // Handle before processing event
-            if($this->xRequestPlugin !== null)
-            {
-                $this->xCallbackManager->onBefore($xTarget, $bEndRequest);
-            }
-            if($bEndRequest)
-            {
-                return;
-            }
 
-            $this->_processRequest();
+            // Handle before processing event
+            $this->xCallbackManager->onBefore($xAction, $bEndRequest);
+
+            if(!$bEndRequest)
+            {
+                $this->_processRequest();
+            }
 
             // Handle after processing event
-            if($this->xRequestPlugin !== null)
-            {
-                $this->xCallbackManager->onAfter($xTarget, $bEndRequest);
-            }
+            $this->xCallbackManager->onAfter($xAction, $bEndRequest);
         }
         // An exception was thrown while processing the request.
         // The request missed the corresponding handler function,

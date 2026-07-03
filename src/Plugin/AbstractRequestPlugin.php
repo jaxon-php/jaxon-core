@@ -26,20 +26,5 @@
 
 namespace Jaxon\Plugin;
 
-use Jaxon\Request\Target;
-
 abstract class AbstractRequestPlugin extends AbstractPlugin implements CallableRegistryInterface, RequestHandlerInterface
-{
-    /**
-     * @var Target|null
-     */
-    protected Target|null $xTarget = null;
-
-    /**
-     * @inheritDoc
-     */
-    public function getTarget(): Target|null
-    {
-        return $this->xTarget;
-    }
-}
+{}

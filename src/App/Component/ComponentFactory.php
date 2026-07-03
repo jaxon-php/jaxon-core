@@ -16,7 +16,7 @@ namespace Jaxon\App\Component;
 
 use Jaxon\Di\ComponentContainer;
 use Jaxon\Exception\SetupException;
-use Jaxon\Request\Target;
+use Jaxon\Request\CallableAction;
 use Jaxon\Script\Call\JxnCall;
 
 use function trim;
@@ -29,9 +29,9 @@ class ComponentFactory
     private ComponentHelper|null $xHelper = null;
 
     /**
-     * @var Target|null
+     * @var CallableAction|null
      */
-    private Target|null $xTarget = null;
+    private CallableAction|null $xCallableAction = null;
 
     /**
      * @var JxnCall
@@ -54,11 +54,11 @@ class ComponentFactory
     }
 
     /**
-     * @return Target
+     * @return CallableAction
      */
-    public function target(): Target
+    public function action(): CallableAction
     {
-        return $this->xTarget ??= $this->cdi->getComponentTarget($this->sClassName);
+        return $this->xCallableAction ??= $this->cdi->getComponentAction($this->sClassName);
     }
 
     /**

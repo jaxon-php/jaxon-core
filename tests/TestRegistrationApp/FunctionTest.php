@@ -45,20 +45,20 @@ final class FunctionTest extends TestCase
     public function testPHPFunction()
     {
         // No callable for standard PHP functions.
-        $this->assertEquals(null, $this->xPlugin->getCallableProxy('file_get_contents'));
+        $this->assertEquals(null, $this->xPlugin->makeCallableProxy('file_get_contents'));
     }
 
     public function testNonCallableFunction()
     {
         // No callable for aliased functions.
-        $this->assertEquals(null, $this->xPlugin->getCallableProxy('my_second_function'));
+        $this->assertEquals(null, $this->xPlugin->makeCallableProxy('my_second_function'));
     }
 
     public function testCallableFunctionClass()
     {
-        $xFirstCallable = $this->xPlugin->getCallableProxy('my_first_function');
-        $xAliasCallable = $this->xPlugin->getCallableProxy('my_alias_function');
-        $xThirdCallable = $this->xPlugin->getCallableProxy('my_third_function');
+        $xFirstCallable = $this->xPlugin->makeCallableProxy('my_first_function');
+        $xAliasCallable = $this->xPlugin->makeCallableProxy('my_alias_function');
+        $xThirdCallable = $this->xPlugin->makeCallableProxy('my_third_function');
         // Test callables classes
         $this->assertEquals(CallableFunctionProxy::class, get_class($xFirstCallable));
         $this->assertEquals(CallableFunctionProxy::class, get_class($xAliasCallable));
@@ -67,9 +67,9 @@ final class FunctionTest extends TestCase
 
     public function testCallableFunctionName()
     {
-        $xFirstCallable = $this->xPlugin->getCallableProxy('my_first_function');
-        $xAliasCallable = $this->xPlugin->getCallableProxy('my_alias_function');
-        $xThirdCallable = $this->xPlugin->getCallableProxy('my_third_function');
+        $xFirstCallable = $this->xPlugin->makeCallableProxy('my_first_function');
+        $xAliasCallable = $this->xPlugin->makeCallableProxy('my_alias_function');
+        $xThirdCallable = $this->xPlugin->makeCallableProxy('my_third_function');
         // Test callables classes
         $this->assertEquals('my_first_function', $xFirstCallable->getName());
         $this->assertEquals('my_alias_function', $xAliasCallable->getName());
@@ -78,9 +78,9 @@ final class FunctionTest extends TestCase
 
     public function testCallableFunctionJsName()
     {
-        $xFirstCallable = $this->xPlugin->getCallableProxy('my_first_function');
-        $xAliasCallable = $this->xPlugin->getCallableProxy('my_alias_function');
-        $xThirdCallable = $this->xPlugin->getCallableProxy('my_third_function');
+        $xFirstCallable = $this->xPlugin->makeCallableProxy('my_first_function');
+        $xAliasCallable = $this->xPlugin->makeCallableProxy('my_alias_function');
+        $xThirdCallable = $this->xPlugin->makeCallableProxy('my_third_function');
         // Test callables classes
         $this->assertEquals('jxn_my_first_function', $xFirstCallable->getJsName());
         $this->assertEquals('jxn_my_alias_function', $xAliasCallable->getJsName());
@@ -89,9 +89,9 @@ final class FunctionTest extends TestCase
 
     public function testCallableFunctionOptions()
     {
-        $xFirstCallable = $this->xPlugin->getCallableProxy('my_first_function');
-        $xAliasCallable = $this->xPlugin->getCallableProxy('my_alias_function');
-        $xThirdCallable = $this->xPlugin->getCallableProxy('my_third_function');
+        $xFirstCallable = $this->xPlugin->makeCallableProxy('my_first_function');
+        $xAliasCallable = $this->xPlugin->makeCallableProxy('my_alias_function');
+        $xThirdCallable = $this->xPlugin->makeCallableProxy('my_third_function');
         // Test callables classes
         $this->assertCount(0, $xFirstCallable->getOptions());
         $this->assertCount(1, $xAliasCallable->getOptions());

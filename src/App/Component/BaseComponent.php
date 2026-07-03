@@ -6,7 +6,7 @@ use Jaxon\App\Component\ComponentHelper;
 use Jaxon\App\Session\SessionInterface;
 use Jaxon\App\Stash\Stash;
 use Jaxon\App\View\ViewRenderer;
-use Jaxon\Request\TargetInterface;
+use Jaxon\Request\CallableAction;
 use Jaxon\Request\Upload\FileInterface;
 use Psr\Log\LoggerInterface;
 
@@ -29,13 +29,24 @@ abstract class BaseComponent extends AbstractComponent
     }
 
     /**
-     * Get the Jaxon request target
+     * Get the Jaxon request action
      *
-     * @return TargetInterface|null
+     * @return CallableAction|null
      */
-    protected function target(): TargetInterface|null
+    protected function action(): CallableAction|null
     {
-        return $this->factory()->target();
+        return $this->factory()->action();
+    }
+
+    /**
+     * Get the Jaxon request action
+     *
+     * @return CallableAction|null
+     * @deprecated Replaced by the action() method.
+     */
+    protected function target(): CallableAction|null
+    {
+        return $this->action();
     }
 
     /**

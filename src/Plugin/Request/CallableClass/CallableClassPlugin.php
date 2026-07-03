@@ -28,7 +28,6 @@ use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\AbstractRequestPlugin;
 use Jaxon\Plugin\JsCode;
 use Jaxon\Plugin\JsCodeGeneratorInterface;
-use Jaxon\Request\Target;
 use Jaxon\Request\Validator;
 use Jaxon\Utils\Template\TemplateEngine;
 use Psr\Http\Message\ServerRequestInterface;
@@ -36,7 +35,6 @@ use Psr\Log\LoggerInterface;
 use ReflectionException;
 
 use function array_map;
-use function array_merge;
 use function count;
 use function explode;
 use function implode;
@@ -49,6 +47,11 @@ use function trim;
 class CallableClassPlugin extends AbstractRequestPlugin implements JsCodeGeneratorInterface
 {
     /**
+     * @var CallableObject|null
+     */
+    protected CallableObject|null $xCallableAction = null;
+
+    /**
      * @var array<CallableObjectProxy>
      */
     private array $aCallableObjects = [];
@@ -59,8 +62,6 @@ class CallableClassPlugin extends AbstractRequestPlugin implements JsCodeGenerat
     private array $aCallableParams = [];
 
     /**
-     * The class constructor
-     *
      * @param string $sPrefix
      * @param LoggerInterface $xLogger
      * @param ComponentContainer $cdi
@@ -118,7 +119,7 @@ class CallableClassPlugin extends AbstractRequestPlugin implements JsCodeGenerat
      * @inheritDoc
      * @throws SetupException
      */
-    public function getCallableProxy(string $sCallable): CallableObjectProxy|null
+    public function makeCallableProxy(string $sCallable): CallableObjectProxy|null
     {
         return $this->cdi->makeCallableObject($sCallable);
     }
@@ -217,11 +218,11 @@ class CallableClassPlugin extends AbstractRequestPlugin implements JsCodeGenerat
         $aChildren = [];
         foreach($aCallable['children'] ?? [] as $sName => $aChild)
         {
-            $aChildren[] = $this->renderChild("$sName:", "$sJsClass.$sName",
-                $aChild, $nIndent) . ',';
+            $aChildren[] = $this->renderChild("$sName:",
+                "$sJsClass.$sName", $aChild, $nIndent) . ',';
         }
 
-        return implode("\n", array_merge($aMethods, $aChildren));
+        return implode("\n", [...$aMethods, ...$aChildren]);
     }
 
     /**
@@ -278,21 +279,33 @@ CODE;
     /**
      * @inheritDoc
      */
+    public function getCallableAction(): CallableObject|null
+    {
+        return $this->xCallableAction;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function makeCallableAction(ServerRequestInterface $xRequest): CallableObject
+    {
+        $aCall = $xRequest->getAttribute('jxncall');
+        $aArgs = $this->cdi->getRequestArguments();
+        $sClassName = trim($aCall['name']);
+        $sMethodName = trim($aCall['method']);
+        $this->xCallableAction = new CallableObject($sClassName, $sMethodName, $aArgs);
+        return $this->xCallableAction;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public static function canProcessRequest(ServerRequestInterface $xRequest): bool
     {
         $aCall = $xRequest->getAttribute('jxncall');
         return $aCall !== null && ($aCall['type'] ?? '') === 'class' &&
             isset($aCall['name']) && isset($aCall['method']) &&
             is_string($aCall['name']) && is_string($aCall['method']);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function setTarget(ServerRequestInterface $xRequest): Target
-    {
-        $this->xTarget = Target::makeClass($xRequest->getAttribute('jxncall'));
-        return $this->xTarget;
     }
 
     /**
@@ -318,37 +331,38 @@ CODE;
      */
     public function processRequest(): void
     {
-        $sClassName = $this->xTarget->getClassName();
-        $sMethodName = $this->xTarget->getMethodName();
-        // Will be used to print a translated error message.
-        $aErrorParams = ['class' => $sClassName, 'method' => $sMethodName];
+        $sClassName = $this->xCallableAction->getClassName();
+        $sMethodName = $this->xCallableAction->getMethodName();
 
         if(!$this->xValidator->validateJsObject($sClassName) ||
             !$this->xValidator->validateMethod($sMethodName))
         {
             // Unable to find the requested object or method
-            $this->throwException('', 'errors.objects.invalid', $aErrorParams);
+            $this->throwException('', 'errors.objects.invalid',
+                ['class' => $sClassName, 'method' => $sMethodName]);
         }
 
         // Call the requested method
         try
         {
             $sError = 'errors.objects.find';
-            $xCallableProxy = $this->getCallableProxy($sClassName);
+            $xCallableProxy = $this->makeCallableProxy($sClassName);
 
             if($xCallableProxy->excluded($sMethodName))
             {
                 // Unable to find the requested class or method
-                $this->throwException('', 'errors.objects.excluded', $aErrorParams);
+                $this->throwException('', 'errors.objects.excluded',
+                    ['class' => $sClassName, 'method' => $sMethodName]);
             }
 
             $sError = 'errors.objects.call';
-            $xCallableProxy->call($this->xTarget);
+            $xCallableProxy->call($this->xCallableAction);
         }
         catch(ReflectionException|SetupException $e)
         {
             // Unable to execute the requested class or method
-            $this->throwException($e->getMessage(), $sError, $aErrorParams);
+            $this->throwException($e->getMessage(), $sError,
+                ['class' => $sClassName, 'method' => $sMethodName]);
         }
     }
 }

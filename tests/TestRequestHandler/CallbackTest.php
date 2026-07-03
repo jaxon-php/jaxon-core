@@ -6,7 +6,7 @@ use Jaxon\Jaxon;
 use Jaxon\Exception\AppException;
 use Jaxon\Exception\RequestException;
 use Jaxon\Exception\SetupException;
-use Jaxon\Request\Target;
+use Jaxon\Request\CallableAction;
 use Nyholm\Psr7Server\ServerRequestCreator;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
@@ -17,9 +17,9 @@ use function get_class;
 class CallbackTest extends TestCase
 {
     /**
-     * @var Target
+     * @var CallableAction
      */
-    protected $xTarget;
+    protected $xCallableAction;
 
     /**
      * @var mixed
@@ -113,8 +113,8 @@ class CallbackTest extends TestCase
      */
     public function testFunctionAfterCallbackValidity()
     {
-        $this->xTarget = null;
-        jaxon()->callback()->after(fn($xTarget) => $this->xTarget = clone $xTarget);
+        $this->xCallableAction = null;
+        jaxon()->callback()->after(fn($xCallableAction) => $this->xCallableAction = clone $xCallableAction);
         // Send a request to the registered class
         jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
             $c->g(ServerRequestCreator::class)
@@ -131,12 +131,12 @@ class CallbackTest extends TestCase
         $this->assertTrue(jaxon()->canProcessRequest());
         jaxon()->processRequest();
 
-        $this->assertNotNull($this->xTarget);
-        $this->assertFalse($this->xTarget->isClass());
-        $this->assertTrue($this->xTarget->isFunction());
-        $this->assertEquals('', $this->xTarget->getClassName());
-        $this->assertEquals('', $this->xTarget->getMethodName());
-        $this->assertEquals('my_first_function', $this->xTarget->getFunctionName());
+        $this->assertNotNull($this->xCallableAction);
+        $this->assertFalse($this->xCallableAction->isClass());
+        $this->assertTrue($this->xCallableAction->isFunction());
+        $this->assertEquals('', $this->xCallableAction->getClassName());
+        $this->assertEquals('', $this->xCallableAction->getMethodName());
+        $this->assertEquals('my_first_function', $this->xCallableAction->getFunctionName());
     }
 
     /**
@@ -145,9 +145,9 @@ class CallbackTest extends TestCase
      */
     public function testClassBeforeCallbackValidity()
     {
-        $this->xTarget = null;
-        jaxon()->callback()->before(function($xTarget, &$bEndRequest) {
-            $this->xTarget = clone $xTarget;
+        $this->xCallableAction = null;
+        jaxon()->callback()->before(function($xCallableAction, &$bEndRequest) {
+            $this->xCallableAction = clone $xCallableAction;
             $this->bEndRequest = $bEndRequest;
         });
         // Send a request to the registered class
@@ -168,12 +168,12 @@ class CallbackTest extends TestCase
         jaxon()->processRequest();
 
         $this->assertFalse($this->bEndRequest);
-        $this->assertNotNull($this->xTarget);
-        $this->assertTrue($this->xTarget->isClass());
-        $this->assertFalse($this->xTarget->isFunction());
-        $this->assertEquals('TestCallback', $this->xTarget->getClassName());
-        $this->assertEquals('simple', $this->xTarget->getMethodName());
-        $this->assertEquals('', $this->xTarget->getFunctionName());
+        $this->assertNotNull($this->xCallableAction);
+        $this->assertTrue($this->xCallableAction->isClass());
+        $this->assertFalse($this->xCallableAction->isFunction());
+        $this->assertEquals('TestCallback', $this->xCallableAction->getClassName());
+        $this->assertEquals('simple', $this->xCallableAction->getMethodName());
+        $this->assertEquals('', $this->xCallableAction->getFunctionName());
     }
 
     /**
@@ -182,8 +182,8 @@ class CallbackTest extends TestCase
      */
     public function testClassAfterCallbackValidity()
     {
-        $this->xTarget = null;
-        jaxon()->callback()->after(fn($xTarget) => $this->xTarget = clone $xTarget);
+        $this->xCallableAction = null;
+        jaxon()->callback()->after(fn($xCallableAction) => $this->xCallableAction = clone $xCallableAction);
         // Send a request to the registered class
         jaxon()->di()->set(ServerRequestInterface::class, fn($c) =>
             $c->g(ServerRequestCreator::class)
@@ -201,12 +201,12 @@ class CallbackTest extends TestCase
         $this->assertTrue(jaxon()->canProcessRequest());
         jaxon()->processRequest();
 
-        $this->assertNotNull($this->xTarget);
-        $this->assertTrue($this->xTarget->isClass());
-        $this->assertFalse($this->xTarget->isFunction());
-        $this->assertEquals('TestCallback', $this->xTarget->getClassName());
-        $this->assertEquals('simple', $this->xTarget->getMethodName());
-        $this->assertEquals('', $this->xTarget->getFunctionName());
+        $this->assertNotNull($this->xCallableAction);
+        $this->assertTrue($this->xCallableAction->isClass());
+        $this->assertFalse($this->xCallableAction->isFunction());
+        $this->assertEquals('TestCallback', $this->xCallableAction->getClassName());
+        $this->assertEquals('simple', $this->xCallableAction->getMethodName());
+        $this->assertEquals('', $this->xCallableAction->getFunctionName());
     }
 
     /**
@@ -215,8 +215,8 @@ class CallbackTest extends TestCase
      */
     public function testBeforeCallbackSuccess()
     {
-        $this->xTarget = null;
-        jaxon()->callback()->before(function($xTarget, &$bEndRequest) {
+        $this->xCallableAction = null;
+        jaxon()->callback()->before(function($xCallableAction, &$bEndRequest) {
             $xResponse = jaxon()->newResponse();
             $xResponse->alert('This is the before callback!');
         });
@@ -246,8 +246,8 @@ class CallbackTest extends TestCase
      */
     public function testBeforeCallbackFailure()
     {
-        $this->xTarget = null;
-        jaxon()->callback()->before(function($xTarget, &$bEndRequest) {
+        $this->xCallableAction = null;
+        jaxon()->callback()->before(function($xCallableAction, &$bEndRequest) {
             $bEndRequest = true;
             $xResponse = jaxon()->newResponse();
             $xResponse->alert('This is the before callback!');
@@ -279,8 +279,8 @@ class CallbackTest extends TestCase
      */
     public function testAfterCallbackResponse()
     {
-        $this->xTarget = null;
-        jaxon()->callback()->after(function($xTarget) {
+        $this->xCallableAction = null;
+        jaxon()->callback()->after(function($xCallableAction) {
             $xResponse = jaxon()->newResponse();
             $xResponse->alert('This is the after callback!');
         });
