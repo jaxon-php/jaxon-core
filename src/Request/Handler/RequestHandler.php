@@ -3,7 +3,7 @@
 /**
  * RequestHandler.php - Jaxon Request Handler
  *
- * This class processes an incoming jaxon request.
+ * This class processes an incoming Jaxon request.
  *
  * @package jaxon-core
  * @author Jared White
@@ -33,23 +33,43 @@ class RequestHandler
     /**
      * The request plugin that is able to process the current request
      *
-     * @var RequestHandlerInterface
+     * @var RequestHandlerInterface|null
      */
-    private $xRequestPlugin = null;
+    private RequestHandlerInterface|null $xRequestPlugin = null;
 
     /**
-     * The constructor
-     *
      * @param Container $di
      * @param PluginManager $xPluginManager
      * @param ResponseManager $xResponseManager
      * @param CallbackManager $xCallbackManager
      * @param DatabagPlugin $xDatabagPlugin
      */
-    public function __construct(private Container $di, private PluginManager $xPluginManager,
-        private ResponseManager $xResponseManager, private CallbackManager $xCallbackManager,
-        private DatabagPlugin $xDatabagPlugin)
+    public function __construct(private Container $di,
+        private PluginManager $xPluginManager, private ResponseManager $xResponseManager,
+        private CallbackManager $xCallbackManager, private DatabagPlugin $xDatabagPlugin)
     {}
+
+    /**
+     * Check if the current request can be processed
+     *
+     * Calls each of the request plugins and determines if the current request can be processed by one of them.
+     *
+     * @return RequestHandlerInterface|null
+     */
+    private function findRequestHandler(): RequestHandlerInterface|null
+    {
+        // The HTTP request
+        $xRequest = $this->di->getRequest();
+        // Find a plugin to process the request
+        foreach($this->xPluginManager->getRequestHandlers() as $sClassName)
+        {
+            if($sClassName::canProcessRequest($xRequest))
+            {
+                return $this->di->g($sClassName);
+            }
+        }
+        return null;
+    }
 
     /**
      * Check if the current request can be processed
@@ -60,27 +80,8 @@ class RequestHandler
      */
     public function canProcessRequest(): bool
     {
-        // Return true if the request plugin was already found
-        if($this->xRequestPlugin !== null)
-        {
-            return true;
-        }
-
-        // The HTTP request
-        $xRequest = $this->di->getRequest();
-
-        // Find a plugin to process the request
-        foreach($this->xPluginManager->getRequestHandlers() as $sClassName)
-        {
-            if($sClassName::canProcessRequest($xRequest))
-            {
-                $this->xRequestPlugin = $this->di->g($sClassName);
-                $xTarget = $this->xRequestPlugin->setTarget($xRequest);
-                $xTarget->setMethodArgs($this->di->getRequestArguments());
-                return true;
-            }
-        }
-        return false;
+        $this->xRequestPlugin ??= $this->findRequestHandler();
+        return $this->xRequestPlugin !== null;
     }
 
     /**
@@ -119,11 +120,12 @@ class RequestHandler
 
         try
         {
+            $xTarget = $this->xRequestPlugin?->getTarget() ?? null;
             $bEndRequest = false;
             // Handle before processing event
             if($this->xRequestPlugin !== null)
             {
-                $this->xCallbackManager->onBefore($this->xRequestPlugin->getTarget(), $bEndRequest);
+                $this->xCallbackManager->onBefore($xTarget, $bEndRequest);
             }
             if($bEndRequest)
             {
@@ -135,7 +137,7 @@ class RequestHandler
             // Handle after processing event
             if($this->xRequestPlugin !== null)
             {
-                $this->xCallbackManager->onAfter($this->xRequestPlugin->getTarget(), $bEndRequest);
+                $this->xCallbackManager->onAfter($xTarget, $bEndRequest);
             }
         }
         // An exception was thrown while processing the request.

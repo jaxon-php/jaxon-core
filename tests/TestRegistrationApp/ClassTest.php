@@ -6,7 +6,7 @@ require_once dirname(__DIR__) . '/src/classes.php';
 
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\Request\CallableClass\CallableClassPlugin;
-use Jaxon\Plugin\Request\CallableClass\CallableObject;
+use Jaxon\Plugin\Request\CallableClass\CallableObjectProxy;
 use PHPUnit\Framework\TestCase;
 use TheClass;
 use function file_get_contents;
@@ -43,11 +43,11 @@ class ClassTest extends TestCase
      */
     public function testCallableClassClass()
     {
-        $xSampleCallable = $this->xPlugin->getCallable('Sample');
-        $xClassCallable = $this->xPlugin->getCallable(TheClass::class);
+        $xSampleCallable = $this->xPlugin->getCallableProxy('Sample');
+        $xClassCallable = $this->xPlugin->getCallableProxy(TheClass::class);
         // Test callables classes
-        $this->assertEquals(CallableObject::class, get_class($xSampleCallable));
-        $this->assertEquals(CallableObject::class, get_class($xClassCallable));
+        $this->assertEquals(CallableObjectProxy::class, get_class($xSampleCallable));
+        $this->assertEquals(CallableObjectProxy::class, get_class($xClassCallable));
         // Check methods
         $this->assertTrue($xSampleCallable->hasMethod('myMethod'));
         $this->assertFalse($xSampleCallable->hasMethod('yourMethod'));
@@ -68,6 +68,6 @@ class ClassTest extends TestCase
     {
         // No callable for standard PHP functions.
         $this->expectException(SetupException::class);
-        $this->xPlugin->getCallable('Simple');
+        $this->xPlugin->getCallableProxy('Simple');
     }
 }

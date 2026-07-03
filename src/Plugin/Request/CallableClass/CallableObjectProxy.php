@@ -1,9 +1,9 @@
 <?php
 
 /**
- * CallableObject.php
+ * CallableObjectProxy.php
  *
- * Jaxon callable object
+ * The proxy to a Jaxon callable object
  *
  * This class stores a reference to a component whose methods can be called from
  * the client via a Jaxon request
@@ -27,17 +27,15 @@ use Jaxon\Di\ComponentContainer;
 use Jaxon\Di\Container;
 use Jaxon\Exception\SetupException;
 use Jaxon\Request\Target;
-use Closure;
 use ReflectionClass;
 use ReflectionException;
 
-use function array_merge;
 use function call_user_func;
 use function is_array;
 use function is_string;
 use function str_replace;
 
-class CallableObject
+class CallableObjectProxy
 {
     /**
      * The user registered component
@@ -47,15 +45,6 @@ class CallableObject
     private $xComponent = null;
 
     /**
-     * The target of the Jaxon call
-     *
-     * @var Target
-     */
-    private $xTarget;
-
-    /**
-     * The class constructor
-     *
      * @param ComponentContainer $cdi
      * @param Container $di
      * @param ReflectionClass $xReflectionClass
@@ -161,15 +150,15 @@ class CallableObject
      * Call the specified method of the component using the specified array of arguments
      *
      * @param array $aHookMethods    The method config options
+     * @param string $sTargetMethod    The method name
      *
      * @return void
      * @throws ReflectionException
      */
-    private function callHookMethods(array $aHookMethods): void
+    private function callHookMethods(array $aHookMethods, string $sTargetMethod): void
     {
-        $sMethod = $this->xTarget->getMethodName();
         // The hooks defined at method level are merged with those defined at class level.
-        $aMethods = array_merge($aHookMethods['*'] ?? [], $aHookMethods[$sMethod] ?? []);
+        $aMethods = [...($aHookMethods['*'] ?? []), ...($aHookMethods[$sTargetMethod] ?? [])];
         foreach($aMethods as $xKey => $xValue)
         {
             $sHookName = $xValue;
@@ -239,16 +228,16 @@ class CallableObject
      */
     public function call(Target $xTarget): void
     {
-        $this->xTarget = $xTarget;
+        $sTargetMethod = $xTarget->getMethodName();
         $this->xComponent = $this->cdi->getCalledComponent($this->getClassName(), $xTarget);
 
         // Methods to call before processing the request
-        $this->callHookMethods($this->xOptions->beforeMethods());
+        $this->callHookMethods($this->xOptions->beforeMethods(), $sTargetMethod);
 
         // Call the request method
-        $this->callMethod($xTarget->getMethodName(), $xTarget->args(), false);
+        $this->callMethod($sTargetMethod, $this->di->getRequestArguments(), false);
 
         // Methods to call after processing the request
-        $this->callHookMethods($this->xOptions->afterMethods());
+        $this->callHookMethods($this->xOptions->afterMethods(), $sTargetMethod);
     }
 }

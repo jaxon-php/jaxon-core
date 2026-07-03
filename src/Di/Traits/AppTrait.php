@@ -31,7 +31,8 @@ trait AppTrait
     private function registerApp(): void
     {
         // Config Manager
-        $this->set(ConfigEventManager::class, fn(Container $di) => new ConfigEventManager($di->g(Container::class)));
+        $this->set(ConfigEventManager::class, fn(Container $di) =>
+            new ConfigEventManager($di->g(Container::class)));
         $this->set(ConfigManager::class, function(Container $di) {
             $aDefaultOptions = require(dirname(__DIR__, 3) . '/config/lib.php');
             return new ConfigManager($aDefaultOptions, $di->g(Translator::class),
@@ -42,8 +43,9 @@ trait AppTrait
         // Jaxon App
         $this->set(AppInterface::class, fn() => new App());
         // Jaxon App bootstrap
-        $this->set(Bootstrap::class, fn(Container $di) => new Bootstrap($di->g(ConfigManager::class),
-            $di->g(PackageManager::class), $di->g(CallbackManager::class)));
+        $this->set(Bootstrap::class, fn(Container $di) =>
+            new Bootstrap($di->g(ConfigManager::class),
+                $di->g(PackageManager::class), $di->g(CallbackManager::class)));
         // The javascript library version
         $this->set($this->sJsLibVersion, function(Container $di) {
             $xRequest = $di->getRequest();

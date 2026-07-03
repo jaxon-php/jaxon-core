@@ -89,7 +89,7 @@ class RegistrationTest extends TestCase
      */
     public function callableClassOptions()
     {
-        $xCallable = $this->xPlugin->getCallable('Sample');
+        $xCallable = $this->xPlugin->getCallableProxy('Sample');
         $this->assertEquals('', json_encode($xCallable->getOptions()));
     }
 
@@ -98,7 +98,7 @@ class RegistrationTest extends TestCase
      */
     public function testClassSampleOptions()
     {
-        $aOptions = $this->xPlugin->getCallable('Sample')->getOptions();
+        $aOptions = $this->xPlugin->getCallableProxy('Sample')->getOptions();
         $this->assertIsArray($aOptions);
         $this->assertCount(1, $aOptions);
         $this->assertEquals('true', $aOptions['*']['asynchronous']);
@@ -109,7 +109,7 @@ class RegistrationTest extends TestCase
      */
     public function testDirClassAOptions()
     {
-        $aOptions = $this->xPlugin->getCallable('ClassA')->getOptions();
+        $aOptions = $this->xPlugin->getCallableProxy('ClassA')->getOptions();
         $this->assertIsArray($aOptions);
         $this->assertCount(1, $aOptions);
     }
@@ -119,7 +119,7 @@ class RegistrationTest extends TestCase
      */
     public function testDirClassBOptions()
     {
-        $aOptions = $this->xPlugin->getCallable('ClassB')->getOptions();
+        $aOptions = $this->xPlugin->getCallableProxy('ClassB')->getOptions();
         $this->assertIsArray($aOptions);
         $this->assertCount(0, $aOptions);
     }
@@ -129,7 +129,7 @@ class RegistrationTest extends TestCase
      */
     public function testDirClassCOptions()
     {
-        $aOptions = $this->xPlugin->getCallable('ClassC')->getOptions();
+        $aOptions = $this->xPlugin->getCallableProxy('ClassC')->getOptions();
         $this->assertIsArray($aOptions);
         $this->assertCount(1, $aOptions);
         $this->assertEquals("'methodBb'", $aOptions['methodCa']['upload']);
@@ -188,6 +188,6 @@ class RegistrationTest extends TestCase
         $this->expectException(SetupException::class);
         jaxon()->register(Jaxon::CALLABLE_CLASS, 'UnknownClass');
         $this->expectException(SetupException::class);
-        $this->xPlugin->getCallable('UnknownClass');
+        $this->xPlugin->getCallableProxy('UnknownClass');
     }
 }

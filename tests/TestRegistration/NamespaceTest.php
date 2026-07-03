@@ -2,12 +2,11 @@
 
 namespace Jaxon\Tests\TestRegistration;
 
-use Jaxon\App\Component\Pagination;
 use Jaxon\Exception\SetupException;
 use Jaxon\Jaxon;
 use Jaxon\Plugin\Request\CallableClass\CallableClassPlugin;
-use Jaxon\Plugin\Request\CallableClass\CallableObject;
 use Jaxon\Plugin\Request\CallableClass\CallableDirPlugin;
+use Jaxon\Plugin\Request\CallableClass\CallableObjectProxy;
 use Jaxon\Tests\Ns\Ajax\ClassA;
 use Jaxon\Tests\Ns\Ajax\ClassB;
 use Jaxon\Tests\Ns\Ajax\ClassC;
@@ -69,7 +68,7 @@ class NamespaceTest extends TestCase
         // file_put_contents(dirname(__DIR__) . '/src/js/nsu.js', $sJsCode);
         $this->assertEquals(file_get_contents(dirname(__DIR__) . '/src/js/nsu.js'), $sJsCode);
 
-        $xCallable = $this->xClassPlugin->getCallable('Jaxon_Tests_Ns_Ajax_ClassA');
-        $this->assertEquals(CallableObject::class, get_class($xCallable));
+        $xCallable = $this->xClassPlugin->getCallableProxy('Jaxon_Tests_Ns_Ajax_ClassA');
+        $this->assertEquals(CallableObjectProxy::class, get_class($xCallable));
     }
 }

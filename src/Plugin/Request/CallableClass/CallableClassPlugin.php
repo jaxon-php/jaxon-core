@@ -49,7 +49,7 @@ use function trim;
 class CallableClassPlugin extends AbstractRequestPlugin implements JsCodeGeneratorInterface
 {
     /**
-     * @var array<CallableObject>
+     * @var array<CallableObjectProxy>
      */
     private array $aCallableObjects = [];
 
@@ -118,7 +118,7 @@ class CallableClassPlugin extends AbstractRequestPlugin implements JsCodeGenerat
      * @inheritDoc
      * @throws SetupException
      */
-    public function getCallable(string $sCallable): CallableObject|null
+    public function getCallableProxy(string $sCallable): CallableObjectProxy|null
     {
         return $this->cdi->makeCallableObject($sCallable);
     }
@@ -135,20 +135,20 @@ class CallableClassPlugin extends AbstractRequestPlugin implements JsCodeGenerat
     /**
      * Add a callable object to the script generator
      *
-     * @param CallableObject $xCallableObject
+     * @param CallableObjectProxy $xCallableProxy
      *
      * @return void
      */
-    private function addCallable(CallableObject $xCallableObject): void
+    private function addCallable(CallableObjectProxy $xCallableProxy): void
     {
-        $aCallableMethods = $xCallableObject->getCallableMethods();
-        if($xCallableObject->excluded() || count($aCallableMethods) === 0)
+        $aCallableMethods = $xCallableProxy->getCallableMethods();
+        if($xCallableProxy->excluded() || count($aCallableMethods) === 0)
         {
             return;
         }
 
         $aCallableObject = &$this->aCallableObjects;
-        $sJsName = $xCallableObject->getJsName();
+        $sJsName = $xCallableProxy->getJsName();
         foreach(explode('.', $sJsName) as $sName)
         {
             if(!isset($aCallableObject['children'][$sName]))
@@ -158,7 +158,7 @@ class CallableClassPlugin extends AbstractRequestPlugin implements JsCodeGenerat
             $aCallableObject = &$aCallableObject['children'][$sName];
         }
 
-        $sJsParam = $xCallableObject->getJsParam();
+        $sJsParam = $xCallableProxy->getJsParam();
 
         $aCallableObject['methods'] = $aCallableMethods;
         $aCallableObject['param'] = $sJsParam;
@@ -257,9 +257,9 @@ CODE;
 
         $this->aCallableParams = [];
         $this->aCallableObjects = ['children' => []];
-        foreach($this->cdi->getCallableObjects() as $xCallableObject)
+        foreach($this->cdi->getCallableObjects() as $xCallableProxy)
         {
-            $this->addCallable($xCallableObject);
+            $this->addCallable($xCallableProxy);
         }
 
         $aScripts = [
@@ -334,17 +334,16 @@ CODE;
         try
         {
             $sError = 'errors.objects.find';
-            /** @var CallableObject */
-            $xCallableObject = $this->getCallable($sClassName);
+            $xCallableProxy = $this->getCallableProxy($sClassName);
 
-            if($xCallableObject->excluded($sMethodName))
+            if($xCallableProxy->excluded($sMethodName))
             {
                 // Unable to find the requested class or method
                 $this->throwException('', 'errors.objects.excluded', $aErrorParams);
             }
 
             $sError = 'errors.objects.call';
-            $xCallableObject->call($this->xTarget);
+            $xCallableProxy->call($this->xTarget);
         }
         catch(ReflectionException|SetupException $e)
         {

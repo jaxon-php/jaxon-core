@@ -31,14 +31,14 @@ use Jaxon\Request\Target;
 abstract class AbstractRequestPlugin extends AbstractPlugin implements CallableRegistryInterface, RequestHandlerInterface
 {
     /**
-     * @var Target
+     * @var Target|null
      */
-    protected $xTarget = null;
+    protected Target|null $xTarget = null;
 
     /**
      * @inheritDoc
      */
-    public function getTarget(): ?Target
+    public function getTarget(): Target|null
     {
         return $this->xTarget;
     }

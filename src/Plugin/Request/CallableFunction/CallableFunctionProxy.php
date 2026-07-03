@@ -1,7 +1,7 @@
 <?php
 
 /**
- * CallableFunction.php - Jaxon user function
+ * CallableFunctionProxy.php
  *
  * This class stores a reference to a user defined function which can be called from the client via an Jaxon request
  *
@@ -21,28 +21,27 @@
 namespace Jaxon\Plugin\Request\CallableFunction;
 
 use Jaxon\Di\ComponentContainer;
-use Jaxon\Di\Container;
-use Exception;
+use Jaxon\Request\Target;
 
 use function call_user_func_array;
 use function is_array;
 use function is_string;
 
-class CallableFunction
+class CallableFunctionProxy
 {
     /**
      * A string or an array which defines the registered PHP function
      *
      * @var string|array
      */
-    private $xPhpFunction;
+    private string|array $xPhpFunction;
 
     /**
      * The path and file name of the include file where the function is defined
      *
      * @var string
      */
-    private $sInclude = '';
+    private string $sInclude = '';
 
     /**
      * An associative array containing call options that will be sent
@@ -50,18 +49,15 @@ class CallableFunction
      *
      * @var array
      */
-    private $aOptions = [];
+    private array $aOptions = [];
 
     /**
-     * The constructor
-     *
-     * @param Container $di
      * @param ComponentContainer $cdi
      * @param string $sFunction
      * @param string $sJsFunction
      * @param string $sPhpFunction
      */
-    public function __construct(private Container $di, private ComponentContainer $cdi,
+    public function __construct(private ComponentContainer $cdi,
         private string $sFunction, private string $sJsFunction, string $sPhpFunction)
     {
         $this->xPhpFunction = $sPhpFunction;
@@ -78,7 +74,7 @@ class CallableFunction
     }
 
     /**
-     * Get name of the corresponding javascript function
+     * Get the name of the corresponding javascript function
      *
      * @return string
      */
@@ -122,33 +118,14 @@ class CallableFunction
     }
 
     /**
-     * @param string $sClassName
-     *
-     * @return mixed
-     */
-    private function getClassInstance(string $sClassName): mixed
-    {
-        try
-        {
-            // First check if the class is a registered component.
-            return $this->cdi->makeComponent($sClassName);
-        }
-        catch(Exception)
-        {
-            return $this->di->h($sClassName) ?
-                $this->di->g($sClassName) : $this->di->make($sClassName);
-        }
-    }
-
-    /**
      * Call the registered user function, including an external file if needed
      * and passing along the specified arguments
      *
-     * @param array $aArgs    The function arguments
+     * @param Target $xTarget
      *
      * @return void
      */
-    public function call(array $aArgs = []): void
+    public function call(Target $xTarget): void
     {
         if($this->sInclude !== '')
         {
@@ -157,8 +134,8 @@ class CallableFunction
         // If the function is an alias for a class method, then instantiate the class
         if(is_array($this->xPhpFunction) && is_string($this->xPhpFunction[0]))
         {
-            $this->xPhpFunction[0] = $this->getClassInstance($this->xPhpFunction[0]);
+            $this->xPhpFunction[0] = $this->cdi->getClassInstance($this->xPhpFunction[0]);
         }
-        call_user_func_array($this->xPhpFunction, $aArgs);
+        call_user_func_array($this->xPhpFunction, $this->cdi->getRequestArguments());
     }
 }

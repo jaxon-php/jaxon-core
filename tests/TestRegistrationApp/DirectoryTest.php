@@ -4,8 +4,8 @@ namespace Jaxon\Tests\TestRegistrationApp;
 
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\Request\CallableClass\CallableClassPlugin;
-use Jaxon\Plugin\Request\CallableClass\CallableObject;
 use Jaxon\Plugin\Request\CallableClass\CallableDirPlugin;
+use Jaxon\Plugin\Request\CallableClass\CallableObjectProxy;
 use Jaxon\Tests\Ns\Ajax\ClassA;
 use Jaxon\Tests\Ns\Ajax\ClassB;
 use Jaxon\Tests\Ns\Ajax\ClassC;
@@ -49,13 +49,13 @@ class DirectoryTest extends TestCase
      */
     public function testCallableDirClasses()
     {
-        $xClassACallable = $this->xClassPlugin->getCallable('ClassA');
-        $xClassBCallable = $this->xClassPlugin->getCallable('ClassB');
-        $xClassCCallable = $this->xClassPlugin->getCallable('ClassC');
+        $xClassACallable = $this->xClassPlugin->getCallableProxy('ClassA');
+        $xClassBCallable = $this->xClassPlugin->getCallableProxy('ClassB');
+        $xClassCCallable = $this->xClassPlugin->getCallableProxy('ClassC');
         // Test callables classes
-        $this->assertEquals(CallableObject::class, get_class($xClassACallable));
-        $this->assertEquals(CallableObject::class, get_class($xClassBCallable));
-        $this->assertEquals(CallableObject::class, get_class($xClassCCallable));
+        $this->assertEquals(CallableObjectProxy::class, get_class($xClassACallable));
+        $this->assertEquals(CallableObjectProxy::class, get_class($xClassBCallable));
+        $this->assertEquals(CallableObjectProxy::class, get_class($xClassCCallable));
         // Check methods
         $this->assertTrue($xClassACallable->hasMethod('methodAa'));
         $this->assertTrue($xClassACallable->hasMethod('methodAb'));
@@ -67,13 +67,13 @@ class DirectoryTest extends TestCase
      */
     public function testCallableNsClasses()
     {
-        $xClassACallable = $this->xClassPlugin->getCallable(ClassA::class);
-        $xClassBCallable = $this->xClassPlugin->getCallable(ClassB::class);
-        $xClassCCallable = $this->xClassPlugin->getCallable(ClassC::class);
+        $xClassACallable = $this->xClassPlugin->getCallableProxy(ClassA::class);
+        $xClassBCallable = $this->xClassPlugin->getCallableProxy(ClassB::class);
+        $xClassCCallable = $this->xClassPlugin->getCallableProxy(ClassC::class);
         // Test callables classes
-        $this->assertEquals(CallableObject::class, get_class($xClassACallable));
-        $this->assertEquals(CallableObject::class, get_class($xClassBCallable));
-        $this->assertEquals(CallableObject::class, get_class($xClassCCallable));
+        $this->assertEquals(CallableObjectProxy::class, get_class($xClassACallable));
+        $this->assertEquals(CallableObjectProxy::class, get_class($xClassBCallable));
+        $this->assertEquals(CallableObjectProxy::class, get_class($xClassCCallable));
         // Check methods
         $this->assertTrue($xClassACallable->hasMethod('methodAa'));
         $this->assertTrue($xClassACallable->hasMethod('methodAb'));

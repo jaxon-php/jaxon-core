@@ -6,8 +6,8 @@ require_once dirname(__DIR__) . '/src/functions.php';
 
 use Jaxon\Exception\SetupException;
 use Jaxon\Jaxon;
-use Jaxon\Plugin\Request\CallableFunction\CallableFunction;
 use Jaxon\Plugin\Request\CallableFunction\CallableFunctionPlugin;
+use Jaxon\Plugin\Request\CallableFunction\CallableFunctionProxy;
 use PHPUnit\Framework\TestCase;
 use function strlen;
 
@@ -45,31 +45,31 @@ final class FunctionTest extends TestCase
     public function testPHPFunction()
     {
         // No callable for standard PHP functions.
-        $this->assertEquals(null, $this->xPlugin->getCallable('file_get_contents'));
+        $this->assertEquals(null, $this->xPlugin->getCallableProxy('file_get_contents'));
     }
 
     public function testNonCallableFunction()
     {
         // No callable for aliased functions.
-        $this->assertEquals(null, $this->xPlugin->getCallable('my_second_function'));
+        $this->assertEquals(null, $this->xPlugin->getCallableProxy('my_second_function'));
     }
 
     public function testCallableFunctionClass()
     {
-        $xFirstCallable = $this->xPlugin->getCallable('my_first_function');
-        $xAliasCallable = $this->xPlugin->getCallable('my_alias_function');
-        $xThirdCallable = $this->xPlugin->getCallable('my_third_function');
+        $xFirstCallable = $this->xPlugin->getCallableProxy('my_first_function');
+        $xAliasCallable = $this->xPlugin->getCallableProxy('my_alias_function');
+        $xThirdCallable = $this->xPlugin->getCallableProxy('my_third_function');
         // Test callables classes
-        $this->assertEquals(CallableFunction::class, get_class($xFirstCallable));
-        $this->assertEquals(CallableFunction::class, get_class($xAliasCallable));
-        $this->assertEquals(CallableFunction::class, get_class($xThirdCallable));
+        $this->assertEquals(CallableFunctionProxy::class, get_class($xFirstCallable));
+        $this->assertEquals(CallableFunctionProxy::class, get_class($xAliasCallable));
+        $this->assertEquals(CallableFunctionProxy::class, get_class($xThirdCallable));
     }
 
     public function testCallableFunctionName()
     {
-        $xFirstCallable = $this->xPlugin->getCallable('my_first_function');
-        $xAliasCallable = $this->xPlugin->getCallable('my_alias_function');
-        $xThirdCallable = $this->xPlugin->getCallable('my_third_function');
+        $xFirstCallable = $this->xPlugin->getCallableProxy('my_first_function');
+        $xAliasCallable = $this->xPlugin->getCallableProxy('my_alias_function');
+        $xThirdCallable = $this->xPlugin->getCallableProxy('my_third_function');
         // Test callables classes
         $this->assertEquals('my_first_function', $xFirstCallable->getName());
         $this->assertEquals('my_alias_function', $xAliasCallable->getName());
@@ -78,9 +78,9 @@ final class FunctionTest extends TestCase
 
     public function testCallableFunctionJsName()
     {
-        $xFirstCallable = $this->xPlugin->getCallable('my_first_function');
-        $xAliasCallable = $this->xPlugin->getCallable('my_alias_function');
-        $xThirdCallable = $this->xPlugin->getCallable('my_third_function');
+        $xFirstCallable = $this->xPlugin->getCallableProxy('my_first_function');
+        $xAliasCallable = $this->xPlugin->getCallableProxy('my_alias_function');
+        $xThirdCallable = $this->xPlugin->getCallableProxy('my_third_function');
         // Test callables classes
         $this->assertEquals('jxn_my_first_function', $xFirstCallable->getJsName());
         $this->assertEquals('jxn_my_alias_function', $xAliasCallable->getJsName());
@@ -89,9 +89,9 @@ final class FunctionTest extends TestCase
 
     public function testCallableFunctionOptions()
     {
-        $xFirstCallable = $this->xPlugin->getCallable('my_first_function');
-        $xAliasCallable = $this->xPlugin->getCallable('my_alias_function');
-        $xThirdCallable = $this->xPlugin->getCallable('my_third_function');
+        $xFirstCallable = $this->xPlugin->getCallableProxy('my_first_function');
+        $xAliasCallable = $this->xPlugin->getCallableProxy('my_alias_function');
+        $xThirdCallable = $this->xPlugin->getCallableProxy('my_third_function');
         // Test callables classes
         $this->assertCount(0, $xFirstCallable->getOptions());
         $this->assertCount(1, $xAliasCallable->getOptions());

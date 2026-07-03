@@ -22,7 +22,7 @@ use Jaxon\App\Metadata\InputData;
 use Jaxon\App\Metadata\Metadata;
 use Jaxon\Config\Config;
 use Jaxon\Exception\SetupException;
-use Jaxon\Plugin\Request\CallableClass\CallableObject;
+use Jaxon\Plugin\Request\CallableClass\CallableObjectProxy;
 use Jaxon\Plugin\Request\CallableClass\ComponentOptions;
 use Jaxon\Plugin\Request\CallableClass\ComponentRegistry;
 use ReflectionClass;
@@ -66,10 +66,10 @@ trait ComponentTrait
     /**
      * @param class-string $sClassName
      *
-     * @return CallableObject|null
+     * @return CallableObjectProxy|null
      * @throws SetupException
      */
-    abstract public function makeCallableObject(string $sClassName): ?CallableObject;
+    abstract public function makeCallableObject(string $sClassName): CallableObjectProxy|null;
 
     /**
      * @param class-string $sClassName    The class name

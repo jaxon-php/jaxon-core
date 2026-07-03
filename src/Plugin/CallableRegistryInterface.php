@@ -36,5 +36,5 @@ interface CallableRegistryInterface
      *
      * @return mixed
      */
-    public function getCallable(string $sCallable): mixed;
+    public function getCallableProxy(string $sCallable): mixed;
 }

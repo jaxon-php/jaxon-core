@@ -22,18 +22,16 @@ class Target implements TargetInterface
      *
      * @var string
      */
-    const TYPE_FUNCTION = 'TargetFunction';
+    public const TYPE_FUNCTION = 'TargetFunction';
 
     /**
      * The target type for class.
      *
      * @var string
      */
-    const TYPE_CLASS = 'TargetClass';
+    public const TYPE_CLASS = 'TargetClass';
 
     /**
-     * The constructor
-     *
      * @param string $sType    The target type
      * @param string $sFunctionName    The function name
      * @param string $sClassName    The class name

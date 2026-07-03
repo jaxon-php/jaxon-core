@@ -12,14 +12,7 @@ interface RequestHandlerInterface
      *
      * @return Target|null
      */
-    public function getTarget(): ?Target;
-
-    /**
-     * @param ServerRequestInterface $xRequest
-     *
-     * @return Target
-     */
-    public function setTarget(ServerRequestInterface $xRequest): Target;
+    public function getTarget(): Target|null;
 
     /**
      * Check if this plugin can process the current request
