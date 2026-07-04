@@ -63,18 +63,22 @@ class CallableClassPlugin extends AbstractRequestPlugin implements JsCodeGenerat
 
     /**
      * @param string $sPrefix
-     * @param LoggerInterface $xLogger
+     * @param bool $bDebug
      * @param ComponentContainer $cdi
+     * @param LoggerInterface $xLogger
      * @param ComponentRegistry $xRegistry
      * @param Translator $xTranslator
      * @param TemplateEngine $xTemplateEngine
      * @param Validator $xValidator
      */
-    public function __construct(private string $sPrefix,
-        private LoggerInterface $xLogger, private ComponentContainer $cdi,
+    public function __construct(private string $sPrefix, bool $bDebug,
+        private ComponentContainer $cdi, LoggerInterface $xLogger,
         private ComponentRegistry $xRegistry, private Translator $xTranslator,
         private TemplateEngine $xTemplateEngine, private Validator $xValidator)
-    {}
+    {
+        $this->bDebug = $bDebug;
+        $this->xLogger = $xLogger;
+    }
 
     /**
      * @inheritDoc
@@ -290,9 +294,9 @@ CODE;
     public function makeCallableAction(ServerRequestInterface $xRequest): CallableObject
     {
         $aCall = $xRequest->getAttribute('jxncall');
-        $aArgs = $this->cdi->getRequestArguments();
         $sClassName = trim($aCall['name']);
         $sMethodName = trim($aCall['method']);
+        $aArgs = $aCall['args'] ?? [];
         $this->xCallableAction = new CallableObject($sClassName, $sMethodName, $aArgs);
         return $this->xCallableAction;
     }
@@ -309,23 +313,6 @@ CODE;
     }
 
     /**
-     * @param string $sExceptionMessage
-     * @param string $sErrorCode
-     * @param array $aErrorParams
-     *
-     * @throws RequestException
-     * @return void
-     */
-    private function throwException(string $sExceptionMessage,
-        string $sErrorCode, array $aErrorParams = []): void
-    {
-        $sMessage = $this->xTranslator->trans($sErrorCode, $aErrorParams) .
-            (!$sExceptionMessage ? '' : "\n$sExceptionMessage");
-        $this->xLogger->error($sMessage);
-        throw new RequestException($sMessage);
-    }
-
-    /**
      * @inheritDoc
      * @throws RequestException
      */
@@ -337,9 +324,12 @@ CODE;
         if(!$this->xValidator->validateJsObject($sClassName) ||
             !$this->xValidator->validateMethod($sMethodName))
         {
-            // Unable to find the requested object or method
-            $this->throwException('', 'errors.objects.invalid',
-                ['class' => $sClassName, 'method' => $sMethodName]);
+            $sMessage = 'Trying to call an invalid class or method.';
+            $sError = 'errors.objects.invalid';
+            $this->throwException($sMessage, $this->xTranslator->trans($sError, [
+                'class' => $sClassName,
+                'method' => $sMethodName,
+            ]));
         }
 
         // Call the requested method
@@ -350,9 +340,12 @@ CODE;
 
             if($xCallableProxy->excluded($sMethodName))
             {
-                // Unable to find the requested class or method
-                $this->throwException('', 'errors.objects.excluded',
-                    ['class' => $sClassName, 'method' => $sMethodName]);
+                $sMessage = 'Trying to call an excluded method.';
+                $sError = 'errors.objects.excluded';
+                $this->throwException('', $this->xTranslator->trans($sError, [
+                    'class' => $sClassName,
+                    'method' => $sMethodName,
+                ]));
             }
 
             $sError = 'errors.objects.call';
@@ -361,8 +354,10 @@ CODE;
         catch(ReflectionException|SetupException $e)
         {
             // Unable to execute the requested class or method
-            $this->throwException($e->getMessage(), $sError,
-                ['class' => $sClassName, 'method' => $sMethodName]);
+            $this->throwException($e->getMessage(), $this->xTranslator->trans($sError, [
+                'class' => $sClassName,
+                'method' => $sMethodName,
+            ]));
         }
     }
 }

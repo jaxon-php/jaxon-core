@@ -75,11 +75,14 @@ class CallableFunctionPlugin extends AbstractRequestPlugin implements JsCodeGene
      * @param Validator $xValidator
      * @param TemplateEngine $xTemplateEngine
      */
-    public function __construct(private string $sPrefix, private bool $bDebug,
-        private ComponentContainer $cdi, private LoggerInterface $xLogger,
+    public function __construct(private string $sPrefix, bool $bDebug,
+        private ComponentContainer $cdi, LoggerInterface $xLogger,
         private Translator $xTranslator, private Validator $xValidator,
         private TemplateEngine $xTemplateEngine)
-    {}
+    {
+        $this->bDebug = $bDebug;
+        $this->xLogger = $xLogger;
+    }
 
     /**
      * @inheritDoc
@@ -210,7 +213,7 @@ class CallableFunctionPlugin extends AbstractRequestPlugin implements JsCodeGene
     {
         $aCall = $xRequest->getAttribute('jxncall');
         $sFunctionName = trim($aCall['name']);
-        $aArgs = $this->cdi->getRequestArguments();
+        $aArgs = $aCall['args'] ?? [];
         $this->xCallableAction = new CallableFunction($sFunctionName, $aArgs);
         return $this->xCallableAction;
     }
@@ -227,20 +230,6 @@ class CallableFunctionPlugin extends AbstractRequestPlugin implements JsCodeGene
     }
 
     /**
-     * @param Exception $xException
-     * @param string $sErrorMessage
-     *
-     * @throws RequestException
-     * @return never
-     */
-    private function throwException(Exception $xException, string $sErrorMessage): void
-    {
-        $this->xLogger->error($xException->getMessage());
-        throw new RequestException($sErrorMessage .
-            (!$this->bDebug ? '' : "\n" . $xException->getMessage()));
-    }
-
-    /**
      * @inheritDoc
      * @throws RequestException
      */
@@ -252,31 +241,25 @@ class CallableFunctionPlugin extends AbstractRequestPlugin implements JsCodeGene
         $bIsValid = $this->xValidator->validateFunction($sRequestedFunction);
         if(!$bIsValid || !isset($this->aFunctions[$sRequestedFunction]))
         {
-            // Unable to find the requested function
-            throw new RequestException($this->xTranslator->trans('errors.functions.invalid', [
+            $sMessage = 'Trying to call an invalid or unregistered function.';
+            $sError = 'errors.functions.invalid';
+            $this->throwException($sMessage, $this->xTranslator->trans($sError, [
                 'name' => $sRequestedFunction,
             ]));
         }
 
         try
         {
+            $sError = 'errors.functions.invalid'; // Unable to find the requested function.
             $xCallableProxy = $this->makeCallableProxy($sRequestedFunction);
-        }
-        catch(Exception $e)
-        {
-            // Unable to find the requested function
-            $this->throwException($e, $this->xTranslator->trans('errors.functions.invalid', [
-                'name' => $sRequestedFunction,
-            ]));
-        }
-        try
-        {
+
+            $sError = 'errors.functions.call';
             $xCallableProxy->call($this->xCallableAction);
         }
         catch(Exception $e)
         {
             // Unable to execute the requested function
-            $this->throwException($e, $this->xTranslator->trans('errors.functions.call', [
+            $this->throwException($e->getMessage(), $this->xTranslator->trans($sError, [
                 'name' => $sRequestedFunction,
             ]));
         }

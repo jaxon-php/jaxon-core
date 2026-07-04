@@ -28,6 +28,7 @@ use Jaxon\Di\Container;
 use Jaxon\Exception\SetupException;
 use ReflectionClass;
 use ReflectionException;
+use ReflectionParameter;
 
 use function call_user_func;
 use function is_array;
@@ -216,6 +217,18 @@ class CallableObjectProxy
     }
 
     /**
+     * Get the method parameters
+     *
+     * @param string $sMethod
+     *
+     * @return array<ReflectionParameter>
+     */
+    private function getArgTypes(string $sMethod): array
+    {
+        return $this->xReflectionClass->getMethod($sMethod)->getParameters();
+    }
+
+    /**
      * Call the specified method of the component using the specified array of arguments
      *
      * @param CallableObject $xAction
@@ -226,16 +239,17 @@ class CallableObjectProxy
      */
     public function call(CallableObject $xAction): void
     {
-        $sActionMethod = $xAction->func();
-        $this->xComponent = $this->cdi->getCalledComponent($this->getClassName(), $sActionMethod);
+        $sMethod = $xAction->func();
+        $this->xComponent = $this->cdi->getCalledComponent($this->getClassName(), $sMethod);
 
         // Methods to call before processing the request
-        $this->callHookMethods($this->xOptions->beforeMethods(), $sActionMethod);
+        $this->callHookMethods($this->xOptions->beforeMethods(), $sMethod);
 
         // Call the request method
-        $this->callMethod($sActionMethod, $xAction->args(), false);
+        $aArgs = $this->cdi->getRequestArguments($xAction->args(), $this->getArgTypes($sMethod));
+        $this->callMethod($sMethod, $aArgs, false);
 
         // Methods to call after processing the request
-        $this->callHookMethods($this->xOptions->afterMethods(), $sActionMethod);
+        $this->callHookMethods($this->xOptions->afterMethods(), $sMethod);
     }
 }

@@ -21,6 +21,9 @@
 namespace Jaxon\Plugin\Request\CallableFunction;
 
 use Jaxon\Di\ComponentContainer;
+use ReflectionClass;
+use ReflectionFunction;
+use ReflectionParameter;
 
 use function call_user_func_array;
 use function is_array;
@@ -105,7 +108,8 @@ class CallableFunctionProxy
         switch($sName)
         {
         case 'class': // The user function is a method in the given class
-            $this->xPhpFunction = [$sValue, $this->xPhpFunction];
+            $this->xPhpFunction = is_string($this->xPhpFunction) ?
+                [$sValue, $this->xPhpFunction] : [$sValue, $this->xPhpFunction[1]];
             break;
         case 'include':
             $this->sInclude = $sValue;
@@ -114,6 +118,23 @@ class CallableFunctionProxy
             $this->aOptions[$sName] = $sValue;
             break;
         }
+    }
+
+    /**
+     * Get the function parameters
+     *
+     * @return array<ReflectionParameter>
+     */
+    private function getArgTypes(): array
+    {
+        if($this->sInclude !== '')
+        {
+            require_once $this->sInclude;
+        }
+        return is_string($this->xPhpFunction) ?
+            (new ReflectionFunction($this->xPhpFunction))->getParameters() :
+            (new ReflectionClass($this->xPhpFunction[0]))
+                ->getMethod($this->xPhpFunction[1])->getParameters();
     }
 
     /**
@@ -136,6 +157,7 @@ class CallableFunctionProxy
             $this->xPhpFunction[0] = $this->cdi->getClassInstance($this->xPhpFunction[0]);
         }
 
-        call_user_func_array($this->xPhpFunction, $xAction->args());
+        $aArgs = $this->cdi->getRequestArguments($xAction->args(), $this->getArgTypes());
+        call_user_func_array($this->xPhpFunction, $aArgs);
     }
 }

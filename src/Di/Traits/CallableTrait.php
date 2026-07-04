@@ -31,10 +31,11 @@ trait CallableTrait
         // Callable class plugin
         $this->set(CallableClassPlugin::class, function(Container $di) {
             $sPrefix = $di->g(ConfigManager::class)->getOption('core.prefix.class');
-            return new CallableClassPlugin($sPrefix, $di->getLogger(),
-                $di->g(ComponentContainer::class), $di->g(ComponentRegistry::class),
-                $di->g(Translator::class), $di->g(TemplateEngine::class),
-                $di->g(Validator::class));
+            $bDebug = $di->g(ConfigManager::class)->getOption('core.debug.on', false);
+            return new CallableClassPlugin($sPrefix, $bDebug,
+                $di->g(ComponentContainer::class), $di->getLogger(),
+                $di->g(ComponentRegistry::class), $di->g(Translator::class),
+                $di->g(TemplateEngine::class), $di->g(Validator::class));
         });
         // Callable dir plugin
         $this->set(CallableDirPlugin::class, fn(Container $di) =>
@@ -45,8 +46,9 @@ trait CallableTrait
             $sPrefix = $di->g(ConfigManager::class)->getOption('core.prefix.function');
             $bDebug = $di->g(ConfigManager::class)->getOption('core.debug.on', false);
             return new CallableFunctionPlugin($sPrefix, $bDebug,
-                $di->g(ComponentContainer::class), $di->getLogger(), $di->g(Translator::class),
-                $di->g(Validator::class), $di->g(TemplateEngine::class));
+                $di->g(ComponentContainer::class), $di->getLogger(),
+                $di->g(Translator::class), $di->g(Validator::class),
+                $di->g(TemplateEngine::class));
         });
     }
 

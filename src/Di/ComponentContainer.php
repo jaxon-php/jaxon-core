@@ -24,6 +24,7 @@ use Jaxon\App\Config\ConfigManager;
 use Jaxon\App\FuncComponent;
 use Jaxon\App\I18n\Translator;
 use Jaxon\App\NodeComponent;
+use Jaxon\App\RequestParam;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\Request\CallableClass\CallableClassPlugin;
 use Jaxon\Plugin\Request\CallableClass\CallableObjectProxy;
@@ -37,8 +38,12 @@ use Closure;
 use Exception;
 use ReflectionClass;
 use ReflectionException;
+use ReflectionNamedType;
+use ReflectionParameter;
 
+use function array_map;
 use function call_user_func;
+use function is_a;
 use function str_replace;
 use function trim;
 
@@ -403,12 +408,32 @@ class ComponentContainer
     }
 
     /**
-     * Return the array of arguments from the GET or POST data
+     * Convert the request arguments
+     *
+     * @param array $aArgs
+     * @param array<ReflectionParameter> $aArgTypes
      *
      * @return array
      */
-    public function getRequestArguments(): array
+    public function getRequestArguments(array $aArgs, array $aArgTypes): array
     {
-        return $this->di->getRequestArguments();
+        return array_map(function($xArg, ReflectionParameter|null $xArgType) {
+            if(!is_a($xArgType?->getType(), ReflectionNamedType::class))
+            {
+                return $xArg; // Parameter without type.
+            }
+
+            /** @var ReflectionNamedType */
+            $xNamedType = $xArgType->getType();
+            $sTypeName = $xNamedType->getName();
+            if(!is_a($sTypeName, RequestParam::class, true))
+            {
+                return $xArg;
+            }
+
+            $xParam = $this->di->make($sTypeName);
+            $xParam->set($xArg);
+            return $xParam;
+        }, $aArgs, $aArgTypes);
     }
 }
