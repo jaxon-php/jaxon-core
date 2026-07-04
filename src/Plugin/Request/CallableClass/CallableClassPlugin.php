@@ -298,6 +298,8 @@ CODE;
         $sMethodName = trim($aCall['method']);
         $aArgs = $aCall['args'] ?? [];
         $this->xCallableAction = new CallableObject($sClassName, $sMethodName, $aArgs);
+        // Save the action in the DI container.
+        $this->cdi->saveCallableAction($this->xCallableAction);
         return $this->xCallableAction;
     }
 
@@ -337,12 +339,11 @@ CODE;
         {
             $sError = 'errors.objects.find';
             $xCallableProxy = $this->makeCallableProxy($sClassName);
-
             if($xCallableProxy->excluded($sMethodName))
             {
                 $sMessage = 'Trying to call an excluded method.';
                 $sError = 'errors.objects.excluded';
-                $this->throwException('', $this->xTranslator->trans($sError, [
+                $this->throwException($sMessage, $this->xTranslator->trans($sError, [
                     'class' => $sClassName,
                     'method' => $sMethodName,
                 ]));

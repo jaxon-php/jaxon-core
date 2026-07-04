@@ -215,6 +215,8 @@ class CallableFunctionPlugin extends AbstractRequestPlugin implements JsCodeGene
         $sFunctionName = trim($aCall['name']);
         $aArgs = $aCall['args'] ?? [];
         $this->xCallableAction = new CallableFunction($sFunctionName, $aArgs);
+        // Save the action in the DI container.
+        $this->cdi->saveCallableAction($this->xCallableAction);
         return $this->xCallableAction;
     }
 

@@ -436,4 +436,14 @@ class ComponentContainer
             return $xParam;
         }, $aArgs, $aArgTypes);
     }
+
+    /**
+     * @param CallableAction $xAction
+     *
+     * @return void
+     */
+    public function saveCallableAction(CallableAction $xAction): void
+    {
+        $this->di->val(CallableAction::class, $xAction);
+    }
 }
