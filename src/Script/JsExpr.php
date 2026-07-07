@@ -34,28 +34,35 @@ class JsExpr extends TypedValue implements Stringable
      *
      * @var array
      */
-    protected $aCalls = [];
+    protected array $aCalls = [];
 
     /**
      * The arguments of the else() calls
      *
      * @var array|null
      */
-    protected $aAlert = null;
+    protected array|null $aAlert = null;
 
     /**
      * A condition to check before making the call
      *
      * @var array|null
      */
-    protected $aCondition = null;
+    protected array|null $aCondition = null;
 
     /**
      * The arguments of the confirm() call
      *
      * @var array|null
      */
-    protected $aConfirm = null;
+    protected array|null $aConfirm = null;
+
+    /**
+     * The debounce label and interval
+     *
+     * @var array|null
+     */
+    protected array|null $aDebounce = null;
 
     /**
      * @var DialogCommand
@@ -405,6 +412,20 @@ class JsExpr extends TypedValue implements Stringable
     }
 
     /**
+     * Set a debounce interval
+     *
+     * @param string $sLabel
+     * @param int $nInterval
+     *
+     * @return self
+     */
+    public function debounce(string $sLabel, int $nInterval = 300): self
+    {
+        $this->aDebounce = ['label' => $sLabel, 'interval' => $nInterval];
+        return $this;
+    }
+
+    /**
      * @return self
      */
     public function toInt(): self
@@ -459,6 +480,10 @@ class JsExpr extends TypedValue implements Stringable
         if($this->aAlert !== null)
         {
             $aJsExpr['alert'] = $this->aAlert;
+        }
+        if($this->aDebounce !== null)
+        {
+            $aJsExpr['debounce'] = $this->aDebounce;
         }
 
         return $aJsExpr;
