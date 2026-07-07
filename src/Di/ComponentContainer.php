@@ -42,7 +42,9 @@ use ReflectionNamedType;
 use ReflectionParameter;
 
 use function array_map;
+use function array_slice;
 use function call_user_func;
+use function count;
 use function is_a;
 use function str_replace;
 use function trim;
@@ -415,18 +417,20 @@ class ComponentContainer
      *
      * @return array
      */
-    public function getRequestArguments(array $aArgs, array $aArgTypes): array
+    public function convertArguments(array $aArgs, array $aArgTypes): array
     {
+        // Ignore the extra argument types.
+        $aArgTypes = array_slice($aArgTypes, 0, count($aArgs));
         return array_map(function($xArg, ReflectionParameter|null $xArgType) {
             if(!is_a($xArgType?->getType(), ReflectionNamedType::class))
             {
-                return $xArg; // Parameter without type.
+                return $xArg; // Parameter without a single type.
             }
 
             /** @var ReflectionNamedType */
             $xNamedType = $xArgType->getType();
             $sTypeName = $xNamedType->getName();
-            if(!is_a($sTypeName, RequestParam::class, true))
+            if($xNamedType->isBuiltin() || !is_a($sTypeName, RequestParam::class, true))
             {
                 return $xArg;
             }

@@ -246,7 +246,7 @@ class CallableObjectProxy
         $this->callHookMethods($this->xOptions->beforeMethods(), $sMethod);
 
         // Call the request method
-        $aArgs = $this->cdi->getRequestArguments($xAction->args(), $this->getArgTypes($sMethod));
+        $aArgs = $this->cdi->convertArguments($xAction->args(), $this->getArgTypes($sMethod));
         $this->callMethod($sMethod, $aArgs, false);
 
         // Methods to call after processing the request

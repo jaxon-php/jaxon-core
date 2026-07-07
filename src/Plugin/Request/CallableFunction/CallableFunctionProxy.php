@@ -127,10 +127,6 @@ class CallableFunctionProxy
      */
     private function getArgTypes(): array
     {
-        if($this->sInclude !== '')
-        {
-            require_once $this->sInclude;
-        }
         return is_string($this->xPhpFunction) ?
             (new ReflectionFunction($this->xPhpFunction))->getParameters() :
             (new ReflectionClass($this->xPhpFunction[0]))
@@ -157,7 +153,7 @@ class CallableFunctionProxy
             $this->xPhpFunction[0] = $this->cdi->getClassInstance($this->xPhpFunction[0]);
         }
 
-        $aArgs = $this->cdi->getRequestArguments($xAction->args(), $this->getArgTypes());
+        $aArgs = $this->cdi->convertArguments($xAction->args(), $this->getArgTypes());
         call_user_func_array($this->xPhpFunction, $aArgs);
     }
 }
