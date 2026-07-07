@@ -15,8 +15,10 @@
 namespace Jaxon\Di\Traits;
 
 use Jaxon\Di\Container;
+use Jaxon\App\ComponentDataTrait;
 use Jaxon\App\FuncComponent;
 use Jaxon\App\NodeComponent;
+use Jaxon\App\PageComponent;
 use Jaxon\App\I18n\Translator;
 use Jaxon\App\Metadata\InputData;
 use Jaxon\App\Metadata\Metadata;
@@ -226,11 +228,15 @@ trait ComponentTrait
             return;
         }
 
+        $xDataTrait = new ReflectionClass(ComponentDataTrait::class);
+        $aSharedMethods = $xDataTrait->getMethods(ReflectionMethod::IS_PUBLIC);
+        $aSharedMethods = array_map(fn($method) => $method->getName(), $aSharedMethods);
+
         $xReflectionClass = new ReflectionClass($sClass);
         $aMethods = $xReflectionClass->getMethods(ReflectionMethod::IS_PUBLIC);
         $this->aComponentPublicMethods[$sKey] = [
             array_map(fn($xMethod) => $xMethod->getName(), $aMethods),
-            $aNeverExported,
+            [...$aNeverExported, ...$aSharedMethods],
         ];
     }
 
@@ -256,6 +262,8 @@ trait ComponentTrait
                 $this->aComponentPublicMethods['node'],
             $xReflectionClass->isSubclassOf(FuncComponent::class) =>
                 $this->aComponentPublicMethods['func'],
+            $xReflectionClass->isSubclassOf(PageComponent::class) =>
+                $this->aComponentPublicMethods['page'],
             default => [[], []],
         };
 

@@ -24,6 +24,7 @@ use Jaxon\App\Config\ConfigManager;
 use Jaxon\App\FuncComponent;
 use Jaxon\App\I18n\Translator;
 use Jaxon\App\NodeComponent;
+use Jaxon\App\PageComponent;
 use Jaxon\App\RequestParam;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\Request\CallableClass\CallableClassPlugin;
@@ -98,6 +99,7 @@ class ComponentContainer
 
         $this->setComponentPublicMethods('node', NodeComponent::class, ['item', 'html']);
         $this->setComponentPublicMethods('func', FuncComponent::class, ['paginator']);
+        $this->setComponentPublicMethods('page', PageComponent::class, []);
     }
 
     /**
