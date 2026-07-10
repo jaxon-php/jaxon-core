@@ -32,14 +32,13 @@ use Jaxon\Plugin\Request\CallableComponent\ComponentRegistry;
 use Jaxon\Request\Handler\CallbackManager;
 use ReflectionClass;
 use ReflectionMethod;
-use ReflectionProperty;
 use ReflectionNamedType;
 use ReflectionParameter;
+use ReflectionProperty;
 
 use function array_filter;
 use function array_map;
 use function array_slice;
-use function call_user_func;
 use function count;
 use function in_array;
 use function is_a;
@@ -68,11 +67,6 @@ trait ComponentTrait
      * @return Container
      */
     abstract protected function di(): Container;
-
-    /**
-     * @var int
-     */
-    private int $filter = ReflectionProperty::IS_PUBLIC | ReflectionProperty::IS_PROTECTED;
 
     /**
      * @param class-string $sClassName
@@ -321,18 +315,14 @@ trait ComponentTrait
             }
         }
 
-        $aProperties = array_map(fn($xProperty) => $xProperty->getName(),
-            $xReflectionClass->getProperties($this->filter));
+        $cNameGetter = fn(ReflectionProperty $xProperty) => $xProperty->getName();
+        $aProperties = array_map($cNameGetter, $xReflectionClass->getProperties());
 
         $xMetadataReader = $di->getMetadataReader($sMetadataFormat);
         $xInput = new InputData($xReflectionClass, $aMethods, $aProperties);
         $xMetadata = $xMetadataReader->getAttributes($xInput);
-
         // Try to save the metadata in the cache
-        if($xMetadataCache !== null)
-        {
-            $xMetadataCache->save($xReflectionClass->getName(), $xMetadata);
-        }
+        $xMetadataCache?->save($xReflectionClass->getName(), $xMetadata);
 
         return $xMetadata;
     }
@@ -394,17 +384,16 @@ trait ComponentTrait
     private function injectAttributes($xComponent, string $sClassName, array $aDiOptions): void
     {
         // Set the protected attributes of the object
-        $cSetter = function($sAttr, $xDiValue) {
+        // Allow the setter to access private and protected attributes.
+        $cSetter = (function($sAttr, $xDiValue) {
             // $this here is related to the registered object instance.
             // Warning: dynamic properties will be deprecated in PHP8.2.
             $this->$sAttr = $xDiValue;
-        };
-        // Allow the setter to access private and protected attributes.
-        $cSetter = $cSetter->bindTo($xComponent, $sClassName);
+        })->bindTo($xComponent, $sClassName);
 
         foreach($aDiOptions as $sAttr => $sClass)
         {
-            call_user_func($cSetter, $sAttr, $this->di->get($sClass));
+            $cSetter($sAttr, $this->di->get($sClass));
         }
     }
 
@@ -428,13 +417,12 @@ trait ComponentTrait
         if($xComponent instanceof AbstractComponent)
         {
             // Call the protected "initComponent()" method of the Component class.
-            $cSetter = function($di, $xFactory) {
+            // Allow the setter to access private and protected attributes.
+            $cSetter = (function($di, $xFactory) {
                 // "$this" here refers to the AbstractComponent instance.
                 $this->initComponent($di, $xFactory); 
-            };
-            $cSetter = $cSetter->bindTo($xComponent, $sClassName);
-            $xFactory = $this->get($sFactoryKey);
-            call_user_func($cSetter, $this->di, $xFactory);
+            })->bindTo($xComponent, $sClassName);
+            $cSetter($this->di, $this->get($sFactoryKey));
         }
 
         // Run the callbacks for class initialisation
