@@ -62,8 +62,8 @@ class DirectoryTest extends TestCase
                 ]));
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
-        $this->assertTrue(jaxon()->di()->getCallableClassPlugin()->canProcessRequest(jaxon()->di()->getRequest()));
-        jaxon()->di()->getCallableClassPlugin()->processRequest();
+        $this->assertTrue(jaxon()->di()->getComponentPlugin()->canProcessRequest(jaxon()->di()->getRequest()));
+        jaxon()->di()->getComponentPlugin()->processRequest();
     }
 
     /**
@@ -85,8 +85,8 @@ class DirectoryTest extends TestCase
                 ]));
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
-        $this->assertTrue(jaxon()->di()->getCallableClassPlugin()->canProcessRequest(jaxon()->di()->getRequest()));
-        jaxon()->di()->getCallableClassPlugin()->processRequest();
+        $this->assertTrue(jaxon()->di()->getComponentPlugin()->canProcessRequest(jaxon()->di()->getRequest()));
+        jaxon()->di()->getComponentPlugin()->processRequest();
     }
 
     /**
@@ -112,15 +112,15 @@ class DirectoryTest extends TestCase
         jaxon()->processRequest();
         $this->assertNotNull(jaxon()->getResponse());
         $this->assertEquals(1, jaxon()->getResponse()->getCommandCount());
-        $xCallableObject = jaxon()->di()->getCallableClassPlugin()->makeCallableProxy('ClassC');
+        $xCallableObject = jaxon()->di()->getComponentPlugin()->getCallableProxy('ClassC');
         $this->assertEquals('ClassC', $xCallableObject->getClassName());
 
-        $xTarget = jaxon()->di()->getCallableClassPlugin()->getCallableAction();
-        $this->assertNotNull($xTarget);
-        $this->assertTrue($xTarget->isClass());
-        $this->assertFalse($xTarget->isFunction());
-        $this->assertEquals('ClassC', $xTarget->getClassName());
-        $this->assertEquals('methodCa', $xTarget->getMethodName());
-        $this->assertEquals('', $xTarget->getFunctionName());
+        $xAction = jaxon()->di()->getComponentPlugin()->getCallableAction();
+        $this->assertNotNull($xAction);
+        $this->assertTrue($xAction->isClass());
+        $this->assertFalse($xAction->isFunction());
+        $this->assertEquals('ClassC', $xAction->getClassName());
+        $this->assertEquals('methodCa', $xAction->getMethodName());
+        $this->assertEquals('', $xAction->getFunctionName());
     }
 }

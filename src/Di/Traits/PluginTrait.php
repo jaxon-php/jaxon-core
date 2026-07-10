@@ -18,7 +18,7 @@ use Jaxon\Plugin\Code\MinifierInterface;
 use Jaxon\Plugin\Code\ReadyScriptGenerator;
 use Jaxon\Plugin\Manager\PackageManager;
 use Jaxon\Plugin\Manager\PluginManager;
-use Jaxon\Plugin\Request\CallableClass\ComponentRegistry;
+use Jaxon\Plugin\Request\CallableComponent\ComponentRegistry;
 use Jaxon\Plugin\Response\Databag\DatabagPlugin;
 use Jaxon\Plugin\Response\Dialog\DialogPlugin;
 use Jaxon\Plugin\Response\Script\ScriptPlugin;

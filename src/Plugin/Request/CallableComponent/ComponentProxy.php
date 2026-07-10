@@ -1,7 +1,7 @@
 <?php
 
 /**
- * CallableObjectProxy.php
+ * ComponentProxy.php
  *
  * The proxy to a Jaxon callable object
  *
@@ -21,7 +21,7 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Plugin\Request\CallableClass;
+namespace Jaxon\Plugin\Request\CallableComponent;
 
 use Jaxon\Di\ComponentContainer;
 use Jaxon\Exception\SetupException;
@@ -33,12 +33,12 @@ use function is_array;
 use function is_string;
 use function str_replace;
 
-class CallableObjectProxy
+class ComponentProxy
 {
     /**
-     * @var CallableObject
+     * @var CallableComponent
      */
-    private CallableObject $xAction;
+    private CallableComponent $xAction;
 
     /**
      * The user registered component instance
@@ -112,9 +112,9 @@ class CallableObjectProxy
      *
      * @return array
      */
-    public function getCallableMethods(): array
+    public function getComponentMethods(): array
     {
-        return $this->xOptions->getCallableMethods();
+        return $this->xOptions->getComponentMethods();
     }
 
     /**
@@ -205,13 +205,13 @@ class CallableObjectProxy
     /**
      * Call the specified method of the component using the specified array of arguments
      *
-     * @param CallableObject $xAction
+     * @param CallableComponent $xAction
      *
      * @return void
      * @throws ReflectionException
      * @throws SetupException
      */
-    public function call(CallableObject $xAction): void
+    public function call(CallableComponent $xAction): void
     {
         $this->xAction = $xAction;
         [$this->xComponent, $aArgs] = $this->cdi->getCallParams($this);

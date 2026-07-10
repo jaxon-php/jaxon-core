@@ -30,9 +30,9 @@ use Jaxon\Plugin\CodeGeneratorInterface;
 use Jaxon\Plugin\CssCodeGeneratorInterface;
 use Jaxon\Plugin\JsCodeGeneratorInterface;
 use Jaxon\Plugin\PluginInterface;
-use Jaxon\Plugin\Request\CallableClass\CallableClassPlugin;
-use Jaxon\Plugin\Request\CallableClass\CallableDirPlugin;
-use Jaxon\Plugin\Request\CallableFunction\CallableFunctionPlugin;
+use Jaxon\Plugin\Request\CallableComponent\ComponentPlugin;
+use Jaxon\Plugin\Request\CallableComponent\DirectoryPlugin;
+use Jaxon\Plugin\Request\CallableFunction\FunctionPlugin;
 use Jaxon\Plugin\RequestHandlerInterface;
 use Jaxon\Plugin\Response\Databag\DatabagPlugin;
 use Jaxon\Plugin\Response\Dialog\DialogPlugin;
@@ -257,9 +257,9 @@ class PluginManager
     public function registerPlugins(): void
     {
         // Request plugins
-        $this->registerPlugin(CallableClassPlugin::class, Jaxon::CALLABLE_CLASS, 101);
-        $this->registerPlugin(CallableFunctionPlugin::class, Jaxon::CALLABLE_FUNCTION, 102);
-        $this->registerPlugin(CallableDirPlugin::class, Jaxon::CALLABLE_DIR, 103);
+        $this->registerPlugin(ComponentPlugin::class, Jaxon::CALLABLE_CLASS, 101);
+        $this->registerPlugin(FunctionPlugin::class, Jaxon::CALLABLE_FUNCTION, 102);
+        $this->registerPlugin(DirectoryPlugin::class, Jaxon::CALLABLE_DIR, 103);
 
         // Response plugins
         $this->registerPlugin(ScriptPlugin::class, ScriptPlugin::NAME, 700);

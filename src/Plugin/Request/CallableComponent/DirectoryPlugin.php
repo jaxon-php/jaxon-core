@@ -1,7 +1,7 @@
 <?php
 
 /**
- * CallableDirPlugin.php - Jaxon callable dir plugin
+ * DirectoryPlugin.php - Jaxon callable dir plugin
  *
  * This class registers directories containing user defined callable classes,
  * and generates client side javascript code.
@@ -19,7 +19,7 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Plugin\Request\CallableClass;
+namespace Jaxon\Plugin\Request\CallableComponent;
 
 use Jaxon\Jaxon;
 use Jaxon\App\I18n\Translator;
@@ -36,11 +36,9 @@ use function rtrim;
 use function str_replace;
 use function trim;
 
-class CallableDirPlugin implements PluginInterface, CallableRegistryInterface
+class DirectoryPlugin implements PluginInterface, CallableRegistryInterface
 {
     /**
-     * The class constructor
-     *
      * @param ComponentContainer $cdi
      * @param ComponentRegistry $xRegistry
      * @param Translator $xTranslator
@@ -70,7 +68,8 @@ class CallableDirPlugin implements PluginInterface, CallableRegistryInterface
         $sDirectory = rtrim(trim($sDirectory), '/\\');
         if(!is_dir($sDirectory))
         {
-            throw new SetupException($this->xTranslator->trans('errors.objects.invalid-declaration'));
+            $sMessage = $this->xTranslator->trans('errors.objects.invalid-declaration');
+            throw new SetupException($sMessage);
         }
         return realpath($sDirectory);
     }
@@ -87,7 +86,8 @@ class CallableDirPlugin implements PluginInterface, CallableRegistryInterface
         }
         if(!is_array($xOptions))
         {
-            throw new SetupException($this->xTranslator->trans('errors.objects.invalid-declaration'));
+            $sMessage = $this->xTranslator->trans('errors.objects.invalid-declaration');
+            throw new SetupException($sMessage);
         }
         // Check the directory
         $xOptions['directory'] = $this->checkDirectory($sCallable);
@@ -127,8 +127,8 @@ class CallableDirPlugin implements PluginInterface, CallableRegistryInterface
      * @inheritDoc
      * @throws SetupException
      */
-    public function makeCallableProxy(string $sCallable): CallableObjectProxy|null
+    public function getCallableProxy(string $sCallable): ComponentProxy|null
     {
-        return $this->cdi->getCallableProxy($sCallable);
+        return $this->cdi->getComponentProxy($sCallable);
     }
 }

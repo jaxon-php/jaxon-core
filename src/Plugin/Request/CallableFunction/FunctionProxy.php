@@ -1,7 +1,7 @@
 <?php
 
 /**
- * CallableFunctionProxy.php
+ * FunctionProxy.php
  *
  * This class stores a reference to a user defined function which can be called from the client via an Jaxon request
  *
@@ -29,7 +29,7 @@ use function call_user_func_array;
 use function is_array;
 use function is_string;
 
-class CallableFunctionProxy
+class FunctionProxy
 {
     /**
      * A string or an array which defines the registered PHP function

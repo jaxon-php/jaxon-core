@@ -4,9 +4,9 @@ namespace Jaxon\Tests\TestRegistration;
 
 use Jaxon\Exception\SetupException;
 use Jaxon\Jaxon;
-use Jaxon\Plugin\Request\CallableClass\CallableClassPlugin;
-use Jaxon\Plugin\Request\CallableClass\CallableDirPlugin;
-use Jaxon\Plugin\Request\CallableClass\CallableObjectProxy;
+use Jaxon\Plugin\Request\CallableComponent\ComponentPlugin;
+use Jaxon\Plugin\Request\CallableComponent\DirectoryPlugin;
+use Jaxon\Plugin\Request\CallableComponent\ComponentProxy;
 use Jaxon\Tests\Ns\Ajax\ClassA;
 use Jaxon\Tests\Ns\Ajax\ClassB;
 use Jaxon\Tests\Ns\Ajax\ClassC;
@@ -18,12 +18,12 @@ use function strlen;
 class NamespaceTest extends TestCase
 {
     /**
-     * @var CallableDirPlugin
+     * @var DirectoryPlugin
      */
     protected $xDirPlugin;
 
     /**
-     * @var CallableClassPlugin
+     * @var ComponentPlugin
      */
     protected $xClassPlugin;
 
@@ -40,8 +40,8 @@ class NamespaceTest extends TestCase
         // This directory needs to be registered with the autoload.
         jaxon()->register(Jaxon::CALLABLE_DIR, dirname(__DIR__) . '/src/dir_ns', "Jaxon\\NsTests");
 
-        $this->xDirPlugin = jaxon()->di()->getCallableDirPlugin();
-        $this->xClassPlugin = jaxon()->di()->getCallableClassPlugin();
+        $this->xDirPlugin = jaxon()->di()->getDirectoryPlugin();
+        $this->xClassPlugin = jaxon()->di()->getComponentPlugin();
     }
 
     /**
@@ -68,7 +68,7 @@ class NamespaceTest extends TestCase
         // file_put_contents(dirname(__DIR__) . '/src/js/nsu.js', $sJsCode);
         $this->assertEquals(file_get_contents(dirname(__DIR__) . '/src/js/nsu.js'), $sJsCode);
 
-        $xCallable = $this->xClassPlugin->makeCallableProxy('Jaxon_Tests_Ns_Ajax_ClassA');
-        $this->assertEquals(CallableObjectProxy::class, get_class($xCallable));
+        $xCallable = $this->xClassPlugin->getCallableProxy('Jaxon_Tests_Ns_Ajax_ClassA');
+        $this->assertEquals(ComponentProxy::class, get_class($xCallable));
     }
 }

@@ -12,7 +12,7 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Plugin\Request\CallableClass;
+namespace Jaxon\Plugin\Request\CallableComponent;
 
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;

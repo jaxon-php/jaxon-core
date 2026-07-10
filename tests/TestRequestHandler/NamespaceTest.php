@@ -53,8 +53,8 @@ class NamespaceTest extends TestCase
                 ->withMethod('GET'));
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
-        $this->assertTrue(jaxon()->di()->getCallableClassPlugin()->canProcessRequest(jaxon()->di()->getRequest()));
-        jaxon()->di()->getCallableClassPlugin()->processRequest();
+        $this->assertTrue(jaxon()->di()->getComponentPlugin()->canProcessRequest(jaxon()->di()->getRequest()));
+        jaxon()->di()->getComponentPlugin()->processRequest();
     }
 
     /**
@@ -77,8 +77,8 @@ class NamespaceTest extends TestCase
                 ->withMethod('POST'));
 
         $this->assertTrue(jaxon()->di()->getRequestHandler()->canProcessRequest());
-        $this->assertTrue(jaxon()->di()->getCallableClassPlugin()->canProcessRequest(jaxon()->di()->getRequest()));
-        jaxon()->di()->getCallableClassPlugin()->processRequest();
+        $this->assertTrue(jaxon()->di()->getComponentPlugin()->canProcessRequest(jaxon()->di()->getRequest()));
+        jaxon()->di()->getComponentPlugin()->processRequest();
     }
 
     /**
@@ -105,15 +105,15 @@ class NamespaceTest extends TestCase
         jaxon()->processRequest();
         $this->assertNotNull(jaxon()->getResponse());
         $this->assertEquals(2, jaxon()->getResponse()->getCommandCount());
-        $xCallableObject = jaxon()->di()->getCallableClassPlugin()->makeCallableProxy(ClassC::class);
+        $xCallableObject = jaxon()->di()->getComponentPlugin()->getCallableProxy(ClassC::class);
         $this->assertEquals(ClassC::class, $xCallableObject->getClassName());
 
-        $xTarget = jaxon()->di()->getCallableClassPlugin()->getCallableAction();
-        $this->assertNotNull($xTarget);
-        $this->assertTrue($xTarget->isClass());
-        $this->assertFalse($xTarget->isFunction());
-        $this->assertEquals('Jaxon.NsTests.DirC.ClassC', $xTarget->getClassName());
-        $this->assertEquals('methodCa', $xTarget->getMethodName());
-        $this->assertEquals('', $xTarget->getFunctionName());
+        $xAction = jaxon()->di()->getComponentPlugin()->getCallableAction();
+        $this->assertNotNull($xAction);
+        $this->assertTrue($xAction->isClass());
+        $this->assertFalse($xAction->isFunction());
+        $this->assertEquals('Jaxon.NsTests.DirC.ClassC', $xAction->getClassName());
+        $this->assertEquals('methodCa', $xAction->getMethodName());
+        $this->assertEquals('', $xAction->getFunctionName());
     }
 }

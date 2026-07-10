@@ -34,7 +34,7 @@ class StringParam extends RequestParam
 
 class Convert
 {
-    public function convert(string $first, IntParam $second, StringParam $third)
+    public function convert(string $first, IntParam $second, StringParam $third): void
     {
         $xResponse = jaxon()->getResponse();
         $int = $second->get();
@@ -43,7 +43,7 @@ class Convert
     }
 }
 
-function convert(string $first, IntParam $second, StringParam $third)
+function convert(string $first, IntParam $second, StringParam $third): void
 {
     $xResponse = jaxon()->getResponse();
     $int = $second->get();

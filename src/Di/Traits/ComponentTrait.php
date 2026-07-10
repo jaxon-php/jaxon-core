@@ -26,9 +26,9 @@ use Jaxon\App\RequestParam;
 use Jaxon\Config\Config;
 use Jaxon\Di\Container;
 use Jaxon\Exception\SetupException;
-use Jaxon\Plugin\Request\CallableClass\CallableObjectProxy;
-use Jaxon\Plugin\Request\CallableClass\ComponentOptions;
-use Jaxon\Plugin\Request\CallableClass\ComponentRegistry;
+use Jaxon\Plugin\Request\CallableComponent\ComponentProxy;
+use Jaxon\Plugin\Request\CallableComponent\ComponentOptions;
+use Jaxon\Plugin\Request\CallableComponent\ComponentRegistry;
 use Jaxon\Request\Handler\CallbackManager;
 use ReflectionClass;
 use ReflectionMethod;
@@ -77,10 +77,10 @@ trait ComponentTrait
     /**
      * @param class-string $sClassName
      *
-     * @return CallableObjectProxy|null
+     * @return ComponentProxy|null
      * @throws SetupException
      */
-    abstract public function getCallableProxy(string $sClassName): CallableObjectProxy|null;
+    abstract public function getComponentProxy(string $sClassName): ComponentProxy|null;
 
     /**
      * @param class-string $sClassName    The class name
@@ -95,9 +95,9 @@ trait ComponentTrait
      *
      * @return string
      */
-    private function getCallableProxyKey(string $sClassName): string
+    private function getComponentProxyKey(string $sClassName): string
     {
-        return "{$sClassName}_CallableObject";
+        return "{$sClassName}_ComponentProxy";
     }
 
     /**
@@ -105,9 +105,9 @@ trait ComponentTrait
      *
      * @return string
      */
-    private function getCallableHelperKey(string $sClassName): string
+    private function getComponentHelperKey(string $sClassName): string
     {
-        return "{$sClassName}_CallableHelper";
+        return "{$sClassName}_ComponentHelper";
     }
 
     /**
@@ -135,9 +135,9 @@ trait ComponentTrait
      *
      * @return string
      */
-    private function getCallableFactoryKey(string $sClassName): string
+    private function getComponentFactoryKey(string $sClassName): string
     {
-        return "{$sClassName}_CallableFactory";
+        return "{$sClassName}_ComponentFactory";
     }
 
     /**
@@ -209,15 +209,15 @@ trait ComponentTrait
     /**
      * Get callable objects for known classes
      *
-     * @return array
+     * @return array<ComponentProxy>
      * @throws SetupException
      */
-    public function getCallableProxies(): array
+    public function getComponentProxies(): array
     {
         $aCallableObjects = [];
         foreach($this->aComponents as $sComponentId => $_)
         {
-            $aCallableObjects[$sComponentId] = $this->getCallableProxy($sComponentId);
+            $aCallableObjects[$sComponentId] = $this->getComponentProxy($sComponentId);
         }
         return $aCallableObjects;
     }
@@ -410,20 +410,20 @@ trait ComponentTrait
 
     /**
      * @param string $sClassName
-     * @param string $sCallableProxyKey
+     * @param string $sProxyKey
      * @param string $sFactoryKey
      *
      * @return mixed
      */
-    private function initComponent(string $sClassName, string $sCallableProxyKey, string $sFactoryKey): mixed
+    private function initComponent(string $sClassName, string $sProxyKey, string $sFactoryKey): mixed
     {
         $xComponent = $this->di()->g($sClassName);
         // Set attributes from the DI container.
         // The class level DI options are set on any component.
         // The method level DI options will be set only on the targetted component.
-        /** @var CallableObjectProxy */
-        $xCallableObject = $this->get($sCallableProxyKey);
-        $this->injectAttributes($xComponent, $sClassName, $xCallableObject->getClassOptions());
+        /** @var ComponentProxy */
+        $xComponentProxy = $this->get($sProxyKey);
+        $this->injectAttributes($xComponent, $sClassName, $xComponentProxy->getClassOptions());
 
         if($xComponent instanceof AbstractComponent)
         {
@@ -444,19 +444,19 @@ trait ComponentTrait
     }
 
     /**
-     * @param CallableObjectProxy $xCallableObject
+     * @param ComponentProxy $xComponentProxy
      *
      * @return array
      */
-    public function getCallParams(CallableObjectProxy $xCallableObject): array
+    public function getCallParams(ComponentProxy $xComponentProxy): array
     {
-        $sClassName = $xCallableObject->getClassName();
+        $sClassName = $xComponentProxy->getClassName();
         $xComponent = $this->get($sClassName);
         // Inject method-specific DI attributes.
-        $aOptions = $xCallableObject->getMethodOptions();
+        $aOptions = $xComponentProxy->getMethodOptions();
         $this->injectAttributes($xComponent, $sClassName, $aOptions);
 
-        [$aArgs, $aArgTypes] = $xCallableObject->getArguments();
+        [$aArgs, $aArgTypes] = $xComponentProxy->getArguments();
 
         return [$xComponent, $this->convertArguments($aArgs, $aArgTypes)];
     }

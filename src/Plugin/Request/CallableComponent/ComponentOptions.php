@@ -12,7 +12,7 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Plugin\Request\CallableClass;
+namespace Jaxon\Plugin\Request\CallableComponent;
 
 use Jaxon\App\Metadata\Metadata;
 
@@ -447,7 +447,7 @@ class ComponentOptions
      *
      * @return array
      */
-    public function getCallableMethods(): array
+    public function getComponentMethods(): array
     {
         // Get the method options, and convert each of them to
         // a string to be displayed in the js script template.

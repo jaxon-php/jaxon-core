@@ -1,7 +1,7 @@
 <?php
 
 /**
- * CallableObject.php
+ * CallableComponent.php
  *
  * This class contains the name of the class and method targetted by a Jaxon request.
  *
@@ -11,11 +11,11 @@
  * @link https://github.com/jaxon-php/jaxon-core
  */
 
-namespace Jaxon\Plugin\Request\CallableClass;
+namespace Jaxon\Plugin\Request\CallableComponent;
 
 use Jaxon\Request\CallableAction;
 
-class CallableObject extends CallableAction
+class CallableComponent extends CallableAction
 {
     /**
      * @param string $sClassName    The class name

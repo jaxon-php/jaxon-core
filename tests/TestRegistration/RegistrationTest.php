@@ -4,14 +4,14 @@ namespace Jaxon\Tests\TestRegistration;
 
 use Jaxon\Exception\SetupException;
 use Jaxon\Jaxon;
-use Jaxon\Plugin\Request\CallableClass\CallableClassPlugin;
+use Jaxon\Plugin\Request\CallableComponent\ComponentPlugin;
 use PHPUnit\Framework\TestCase;
 use function strlen;
 
 class RegistrationTest extends TestCase
 {
     /**
-     * @var CallableClassPlugin
+     * @var ComponentPlugin
      */
     protected $xPlugin;
 
@@ -72,7 +72,7 @@ class RegistrationTest extends TestCase
             ],
         ]);
 
-        $this->xPlugin = jaxon()->di()->getCallableClassPlugin();
+        $this->xPlugin = jaxon()->di()->getComponentPlugin();
     }
 
     /**
@@ -89,8 +89,8 @@ class RegistrationTest extends TestCase
      */
     public function callableClassOptions()
     {
-        $xCallable = $this->xPlugin->makeCallableProxy('Sample');
-        $this->assertEquals('', json_encode($xCallable->getOptions()));
+        $xCallable = $this->xPlugin->getCallableProxy('Sample');
+        $this->assertEquals('', json_encode($xCallable->getJsOptions()));
     }
 
     /**
@@ -98,7 +98,7 @@ class RegistrationTest extends TestCase
      */
     public function testClassSampleOptions()
     {
-        $aOptions = $this->xPlugin->makeCallableProxy('Sample')->getOptions();
+        $aOptions = $this->xPlugin->getCallableProxy('Sample')->getJsOptions();
         $this->assertIsArray($aOptions);
         $this->assertCount(1, $aOptions);
         $this->assertEquals('true', $aOptions['*']['asynchronous']);
@@ -109,7 +109,7 @@ class RegistrationTest extends TestCase
      */
     public function testDirClassAOptions()
     {
-        $aOptions = $this->xPlugin->makeCallableProxy('ClassA')->getOptions();
+        $aOptions = $this->xPlugin->getCallableProxy('ClassA')->getJsOptions();
         $this->assertIsArray($aOptions);
         $this->assertCount(1, $aOptions);
     }
@@ -119,7 +119,7 @@ class RegistrationTest extends TestCase
      */
     public function testDirClassBOptions()
     {
-        $aOptions = $this->xPlugin->makeCallableProxy('ClassB')->getOptions();
+        $aOptions = $this->xPlugin->getCallableProxy('ClassB')->getJsOptions();
         $this->assertIsArray($aOptions);
         $this->assertCount(0, $aOptions);
     }
@@ -129,7 +129,7 @@ class RegistrationTest extends TestCase
      */
     public function testDirClassCOptions()
     {
-        $aOptions = $this->xPlugin->makeCallableProxy('ClassC')->getOptions();
+        $aOptions = $this->xPlugin->getCallableProxy('ClassC')->getJsOptions();
         $this->assertIsArray($aOptions);
         $this->assertCount(1, $aOptions);
         $this->assertEquals("'methodBb'", $aOptions['methodCa']['upload']);
@@ -188,6 +188,6 @@ class RegistrationTest extends TestCase
         $this->expectException(SetupException::class);
         jaxon()->register(Jaxon::CALLABLE_CLASS, 'UnknownClass');
         $this->expectException(SetupException::class);
-        $this->xPlugin->makeCallableProxy('UnknownClass');
+        $this->xPlugin->getCallableProxy('UnknownClass');
     }
 }

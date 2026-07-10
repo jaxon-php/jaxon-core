@@ -1,7 +1,7 @@
 <?php
 
 /**
- * CallableFunctionPlugin.php - Jaxon user function plugin
+ * FunctionPlugin.php - Jaxon user function plugin
  *
  * This class registers user defined functions, generates client side javascript code,
  * and calls them on user request
@@ -45,26 +45,26 @@ use function is_string;
 use function md5;
 use function trim;
 
-class CallableFunctionPlugin extends AbstractRequestPlugin implements JsCodeGeneratorInterface
+class FunctionPlugin extends AbstractRequestPlugin implements JsCodeGeneratorInterface
 {
     /**
      * @var CallableFunction|null
      */
-    protected CallableFunction|null $xCallableAction = null;
+    private CallableFunction|null $xCallableFunction = null;
 
     /**
      * The registered functions names
      *
      * @var array
      */
-    protected array $aFunctions = [];
+    private array $aFunctions = [];
 
     /**
      * The registered functions options
      *
      * @var array
      */
-    protected array $aOptions = [];
+    private array $aOptions = [];
 
     /**
      * @param string $sPrefix
@@ -148,14 +148,14 @@ class CallableFunctionPlugin extends AbstractRequestPlugin implements JsCodeGene
     /**
      * @inheritDoc
      */
-    public function makeCallableProxy(string $sCallable): CallableFunctionProxy|null
+    public function getCallableProxy(string $sCallable): FunctionProxy|null
     {
         $sFunction = trim($sCallable);
         if(!isset($this->aFunctions[$sFunction]))
         {
             return null;
         }
-        $xCallable = new CallableFunctionProxy($this->cdi, $sFunction,
+        $xCallable = new FunctionProxy($this->cdi, $sFunction,
             "{$this->sPrefix}$sFunction", $this->aFunctions[$sFunction]);
         foreach($this->aOptions[$sFunction] as $sName => $sValue)
         {
@@ -167,18 +167,18 @@ class CallableFunctionPlugin extends AbstractRequestPlugin implements JsCodeGene
     /**
      * Generate the javascript function stub that is sent to the browser on initial page load
      *
-     * @param CallableFunctionProxy $xCallableProxy
+     * @param FunctionProxy $xFunctionProxy
      *
      * @return string
      */
-    private function getCallableScript(CallableFunctionProxy $xCallableProxy): string
+    private function getFunctionScript(FunctionProxy $xFunctionProxy): string
     {
-        $aOptions = $xCallableProxy->getOptions();
+        $aOptions = $xFunctionProxy->getOptions();
         $aOptions = array_map(fn($sKey, $sValue) => "$sKey: $sValue",
             array_keys($aOptions), array_values($aOptions));
         return $this->xTemplateEngine->render('jaxon::callables/function.js', [
-            'sName' => $xCallableProxy->getName(),
-            'sJsName' => $xCallableProxy->getJsName(),
+            'sName' => $xFunctionProxy->getName(),
+            'sJsName' => $xFunctionProxy->getJsName(),
             'sArguments' => count($aOptions) === 0 ? 'args' :
                 'args, { ' . implode(',', $aOptions) . ' }',
         ]);
@@ -192,8 +192,8 @@ class CallableFunctionPlugin extends AbstractRequestPlugin implements JsCodeGene
         $aScripts = [];
         foreach(array_keys($this->aFunctions) as $sFunction)
         {
-            $xCallableProxy = $this->makeCallableProxy($sFunction);
-            $aScripts[] = trim($this->getCallableScript($xCallableProxy));
+            $xFunctionProxy = $this->getCallableProxy($sFunction);
+            $aScripts[] = trim($this->getFunctionScript($xFunctionProxy));
         }
         return new JsCode(implode("\n", $aScripts) . "\n");
     }
@@ -203,7 +203,7 @@ class CallableFunctionPlugin extends AbstractRequestPlugin implements JsCodeGene
      */
     public function getCallableAction(): CallableFunction|null
     {
-        return $this->xCallableAction;
+        return $this->xCallableFunction;
     }
 
     /**
@@ -214,10 +214,10 @@ class CallableFunctionPlugin extends AbstractRequestPlugin implements JsCodeGene
         $aCall = $xRequest->getAttribute('jxncall');
         $sFunctionName = trim($aCall['name']);
         $aArgs = $aCall['args'] ?? [];
-        $this->xCallableAction = new CallableFunction($sFunctionName, $aArgs);
+        $this->xCallableFunction = new CallableFunction($sFunctionName, $aArgs);
         // Save the action in the DI container.
-        $this->cdi->saveCallableAction($this->xCallableAction);
-        return $this->xCallableAction;
+        $this->cdi->saveCallableAction($this->xCallableFunction);
+        return $this->xCallableFunction;
     }
 
     /**
@@ -237,7 +237,7 @@ class CallableFunctionPlugin extends AbstractRequestPlugin implements JsCodeGene
      */
     public function processRequest(): void
     {
-        $sRequestedFunction = $this->xCallableAction->func();
+        $sRequestedFunction = $this->xCallableFunction->func();
 
         // Security check: make sure the requested function was registered.
         $bIsValid = $this->xValidator->validateFunction($sRequestedFunction);
@@ -253,10 +253,10 @@ class CallableFunctionPlugin extends AbstractRequestPlugin implements JsCodeGene
         try
         {
             $sError = 'errors.functions.invalid'; // Unable to find the requested function.
-            $xCallableProxy = $this->makeCallableProxy($sRequestedFunction);
+            $xFunctionProxy = $this->getCallableProxy($sRequestedFunction);
 
             $sError = 'errors.functions.call';
-            $xCallableProxy->call($this->xCallableAction);
+            $xFunctionProxy->call($this->xCallableFunction);
         }
         catch(Exception $e)
         {

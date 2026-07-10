@@ -22,7 +22,7 @@ use Jaxon\Config\Config;
 use Jaxon\Di\Container;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\AbstractPackage;
-use Jaxon\Plugin\Request\CallableClass\ComponentRegistry;
+use Jaxon\Plugin\Request\CallableComponent\ComponentRegistry;
 use Jaxon\Request\Handler\CallbackManager;
 
 use function is_array;

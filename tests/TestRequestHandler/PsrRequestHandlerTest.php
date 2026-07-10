@@ -89,16 +89,16 @@ class PsrRequestHandlerTest extends TestCase
         $xJaxonResponse = jaxon()->getResponse();
         $this->assertNotNull($xJaxonResponse);
         $this->assertEquals(1, $xJaxonResponse->getCommandCount());
-        $xCallableObject = jaxon()->di()->getCallableClassPlugin()->makeCallableProxy('Sample');
+        $xCallableObject = jaxon()->di()->getComponentPlugin()->getCallableProxy('Sample');
         $this->assertEquals('Sample', $xCallableObject->getClassName());
 
-        $xTarget = jaxon()->di()->getCallableClassPlugin()->getCallableAction();
-        $this->assertNotNull($xTarget);
-        $this->assertTrue($xTarget->isClass());
-        $this->assertFalse($xTarget->isFunction());
-        $this->assertEquals('Sample', $xTarget->getClassName());
-        $this->assertEquals('myMethod', $xTarget->getMethodName());
-        $this->assertEquals('', $xTarget->getFunctionName());
+        $xAction = jaxon()->di()->getComponentPlugin()->getCallableAction();
+        $this->assertNotNull($xAction);
+        $this->assertTrue($xAction->isClass());
+        $this->assertFalse($xAction->isFunction());
+        $this->assertEquals('Sample', $xAction->getClassName());
+        $this->assertEquals('myMethod', $xAction->getMethodName());
+        $this->assertEquals('', $xAction->getFunctionName());
 
         // Both responses must have the same content and content type
         $this->assertEquals($xPsrResponse->getBody()->__toString(), $xJaxonResponse->getOutput());
@@ -132,16 +132,16 @@ class PsrRequestHandlerTest extends TestCase
         $xJaxonResponse = jaxon()->getResponse();
         $this->assertNotNull($xJaxonResponse);
         $this->assertEquals(1, $xJaxonResponse->getCommandCount());
-        $xCallableObject = jaxon()->di()->getCallableClassPlugin()->makeCallableProxy('Sample');
+        $xCallableObject = jaxon()->di()->getComponentPlugin()->getCallableProxy('Sample');
         $this->assertEquals('Sample', $xCallableObject->getClassName());
 
-        $xTarget = jaxon()->di()->getCallableClassPlugin()->getCallableAction();
-        $this->assertNotNull($xTarget);
-        $this->assertTrue($xTarget->isClass());
-        $this->assertFalse($xTarget->isFunction());
-        $this->assertEquals('Sample', $xTarget->getClassName());
-        $this->assertEquals('myMethod', $xTarget->getMethodName());
-        $this->assertEquals('', $xTarget->getFunctionName());
+        $xAction = jaxon()->di()->getComponentPlugin()->getCallableAction();
+        $this->assertNotNull($xAction);
+        $this->assertTrue($xAction->isClass());
+        $this->assertFalse($xAction->isFunction());
+        $this->assertEquals('Sample', $xAction->getClassName());
+        $this->assertEquals('myMethod', $xAction->getMethodName());
+        $this->assertEquals('', $xAction->getFunctionName());
 
         // Both responses must have the same content and content type
         $this->assertEquals($xPsrResponse->getBody()->__toString(), $xJaxonResponse->getOutput());

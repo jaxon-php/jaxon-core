@@ -6,10 +6,10 @@ use Jaxon\App\Config\ConfigManager;
 use Jaxon\App\I18n\Translator;
 use Jaxon\Di\ComponentContainer;
 use Jaxon\Di\Container;
-use Jaxon\Plugin\Request\CallableClass\CallableClassPlugin;
-use Jaxon\Plugin\Request\CallableClass\CallableDirPlugin;
-use Jaxon\Plugin\Request\CallableClass\ComponentRegistry;
-use Jaxon\Plugin\Request\CallableFunction\CallableFunctionPlugin;
+use Jaxon\Plugin\Request\CallableComponent\ComponentPlugin;
+use Jaxon\Plugin\Request\CallableComponent\DirectoryPlugin;
+use Jaxon\Plugin\Request\CallableComponent\ComponentRegistry;
+use Jaxon\Plugin\Request\CallableFunction\FunctionPlugin;
 use Jaxon\Request\Validator;
 use Jaxon\Utils\Template\TemplateEngine;
 
@@ -29,23 +29,23 @@ trait CallableTrait
         $this->set(ComponentRegistry::class, fn(Container $di) =>
             new ComponentRegistry($di->g(ComponentContainer::class)));
         // Callable class plugin
-        $this->set(CallableClassPlugin::class, function(Container $di) {
+        $this->set(ComponentPlugin::class, function(Container $di) {
             $sPrefix = $di->g(ConfigManager::class)->getOption('core.prefix.class');
             $bDebug = $di->g(ConfigManager::class)->getOption('core.debug.on', false);
-            return new CallableClassPlugin($sPrefix, $bDebug,
+            return new ComponentPlugin($sPrefix, $bDebug,
                 $di->g(ComponentContainer::class), $di->getLogger(),
                 $di->g(ComponentRegistry::class), $di->g(Translator::class),
                 $di->g(TemplateEngine::class), $di->g(Validator::class));
         });
         // Callable dir plugin
-        $this->set(CallableDirPlugin::class, fn(Container $di) =>
-            new CallableDirPlugin($di->g(ComponentContainer::class),
+        $this->set(DirectoryPlugin::class, fn(Container $di) =>
+            new DirectoryPlugin($di->g(ComponentContainer::class),
                 $di->g(ComponentRegistry::class), $di->g(Translator::class)));
         // Callable function plugin
-        $this->set(CallableFunctionPlugin::class, function(Container $di) {
+        $this->set(FunctionPlugin::class, function(Container $di) {
             $sPrefix = $di->g(ConfigManager::class)->getOption('core.prefix.function');
             $bDebug = $di->g(ConfigManager::class)->getOption('core.debug.on', false);
-            return new CallableFunctionPlugin($sPrefix, $bDebug,
+            return new FunctionPlugin($sPrefix, $bDebug,
                 $di->g(ComponentContainer::class), $di->getLogger(),
                 $di->g(Translator::class), $di->g(Validator::class),
                 $di->g(TemplateEngine::class));
@@ -65,30 +65,30 @@ trait CallableTrait
     /**
      * Get the callable function plugin
      *
-     * @return CallableFunctionPlugin
+     * @return FunctionPlugin
      */
-    public function getCallableFunctionPlugin(): CallableFunctionPlugin
+    public function getFunctionPlugin(): FunctionPlugin
     {
-        return $this->g(CallableFunctionPlugin::class);
+        return $this->g(FunctionPlugin::class);
     }
 
     /**
      * Get the callable class plugin
      *
-     * @return CallableClassPlugin
+     * @return ComponentPlugin
      */
-    public function getCallableClassPlugin(): CallableClassPlugin
+    public function getComponentPlugin(): ComponentPlugin
     {
-        return $this->g(CallableClassPlugin::class);
+        return $this->g(ComponentPlugin::class);
     }
 
     /**
      * Get the callable dir plugin
      *
-     * @return CallableDirPlugin
+     * @return DirectoryPlugin
      */
-    public function getCallableDirPlugin(): CallableDirPlugin
+    public function getDirectoryPlugin(): DirectoryPlugin
     {
-        return $this->g(CallableDirPlugin::class);
+        return $this->g(DirectoryPlugin::class);
     }
 }

@@ -4,14 +4,14 @@ namespace Jaxon\Tests\TestRequestFactory;
 
 use Jaxon\Jaxon;
 use Jaxon\Exception\SetupException;
-use Jaxon\Plugin\Request\CallableClass\CallableClassPlugin;
+use Jaxon\Plugin\Request\CallableComponent\ComponentPlugin;
 use PHPUnit\Framework\TestCase;
 
 
 final class RequestTest extends TestCase
 {
     /**
-     * @var CallableClassPlugin
+     * @var ComponentPlugin
      */
     protected $xPlugin;
 
@@ -24,7 +24,7 @@ final class RequestTest extends TestCase
 
         jaxon()->register(Jaxon::CALLABLE_CLASS, 'Sample', dirname(__DIR__) . '/src/sample.php');
 
-        $this->xPlugin = jaxon()->di()->getCallableClassPlugin();
+        $this->xPlugin = jaxon()->di()->getComponentPlugin();
     }
 
     /**

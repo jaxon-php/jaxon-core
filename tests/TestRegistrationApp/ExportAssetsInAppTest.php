@@ -145,7 +145,7 @@ class ExportAssetsInAppTest extends TestCase
                 ->withMethod('POST'));
 
         $this->assertTrue(jaxon()->canProcessRequest());
-        jaxon()->di()->getCallableClassPlugin()->processRequest();
+        jaxon()->di()->getComponentPlugin()->processRequest();
     }
 
     public function testRequestToJaxonClass()

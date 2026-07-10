@@ -25,8 +25,8 @@ use Jaxon\App\I18n\Translator;
 use Jaxon\App\NodeComponent;
 use Jaxon\App\PageComponent;
 use Jaxon\Exception\SetupException;
-use Jaxon\Plugin\Request\CallableClass\CallableClassPlugin;
-use Jaxon\Plugin\Request\CallableClass\CallableObjectProxy;
+use Jaxon\Plugin\Request\CallableComponent\ComponentPlugin;
+use Jaxon\Plugin\Request\CallableComponent\ComponentProxy;
 use Jaxon\Request\CallableAction;
 use Jaxon\Script\Call\JxnCall;
 use Jaxon\Script\Call\JxnClassCall;
@@ -161,7 +161,7 @@ class ComponentContainer
      */
     public function getComponentAction(string $sClassName): CallableAction|null
     {
-        $xCallableAction = $this->di->g(CallableClassPlugin::class)->getCallableAction();
+        $xCallableAction = $this->di->g(ComponentPlugin::class)->getCallableAction();
         return $xCallableAction?->getClassName() === $sClassName ? $xCallableAction : null;
     }
 
@@ -174,7 +174,7 @@ class ComponentContainer
      */
     public function getComponentHelper(string $sClassName): ComponentHelper
     {
-        return $this->get($this->getCallableHelperKey($sClassName));
+        return $this->get($this->getComponentHelperKey($sClassName));
     }
 
     /**
@@ -232,19 +232,19 @@ class ComponentContainer
         // Replace all separators ('.' or '_') with antislashes, and trim the class name.
         $sClassName = trim(str_replace(['.', '_'], '\\', $sComponentId), '\\');
 
-        $sCallableProxyKey = $this->getCallableProxyKey($sClassName);
+        $sProxyKey = $this->getComponentProxyKey($sClassName);
         // Prevent duplication. It's important not to use the class name here.
-        if($this->has($sCallableProxyKey))
+        if($this->has($sProxyKey))
         {
             return $sClassName;
         }
 
         // Register the callable factory class
-        $sFactoryKey = $this->getCallableFactoryKey($sClassName);
+        $sFactoryKey = $this->getComponentFactoryKey($sClassName);
         $this->set($sFactoryKey, fn() => new ComponentFactory($this, $sClassName));
 
         // Register the callable helper class
-        $this->set($this->getCallableHelperKey($sClassName),
+        $this->set($this->getComponentHelperKey($sClassName),
             fn(Container $di) => new ComponentHelper($di->getViewRenderer(),
                 $di->getLogger(), $di->getStash(), $di->getUploadHandler(),
                 $di->getSessionManager(), $di->getPaginationRenderer()));
@@ -253,16 +253,16 @@ class ComponentContainer
         $this->discoverComponent($sClassName);
 
         // Register the callable object
-        $this->set($sCallableProxyKey, function() use($sComponentId, $sClassName) {
+        $this->set($sProxyKey, function() use($sComponentId, $sClassName) {
             $aOptions = $this->_getClassOptions($sComponentId);
             $xReflectionClass = $this->get($this->getReflectionClassKey($sClassName));
             $xOptions = $this->getComponentOptions($xReflectionClass, $aOptions);
-            return new CallableObjectProxy($this, $xReflectionClass, $xOptions);
+            return new ComponentProxy($this, $xReflectionClass, $xOptions);
         });
 
         // Initialize the user class instance
         $this->set($sClassName, fn() =>
-            $this->initComponent($sClassName, $sCallableProxyKey, $sFactoryKey));
+            $this->initComponent($sClassName, $sProxyKey, $sFactoryKey));
 
         return $sClassName;
     }
@@ -273,13 +273,13 @@ class ComponentContainer
      *
      * @param string $sComponentId
      *
-     * @return CallableObjectProxy|null
+     * @return ComponentProxy|null
      * @throws SetupException
      */
-    public function getCallableProxy(string $sComponentId): CallableObjectProxy|null
+    public function getComponentProxy(string $sComponentId): ComponentProxy|null
     {
         $sClassName = $this->_registerComponent($sComponentId);
-        return $this->get($this->getCallableProxyKey($sClassName));
+        return $this->get($this->getComponentProxyKey($sClassName));
     }
 
     /**
@@ -328,7 +328,7 @@ class ComponentContainer
         {
             $this->xContainer->offsetSet($sFactoryKey, function() use($sClassName) {
                 $sComponentId = str_replace('\\', '.', $sClassName);
-                if(!($xCallable = $this->getCallableProxy($sComponentId)))
+                if(!($xCallable = $this->getComponentProxy($sComponentId)))
                 {
                     return null;
                 }

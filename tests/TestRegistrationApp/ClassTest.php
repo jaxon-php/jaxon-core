@@ -5,8 +5,8 @@ namespace Jaxon\Tests\TestRegistrationApp;
 require_once dirname(__DIR__) . '/src/classes.php';
 
 use Jaxon\Exception\SetupException;
-use Jaxon\Plugin\Request\CallableClass\CallableClassPlugin;
-use Jaxon\Plugin\Request\CallableClass\CallableObjectProxy;
+use Jaxon\Plugin\Request\CallableComponent\ComponentPlugin;
+use Jaxon\Plugin\Request\CallableComponent\ComponentProxy;
 use PHPUnit\Framework\TestCase;
 use TheClass;
 use function file_get_contents;
@@ -15,7 +15,7 @@ use function strlen;
 class ClassTest extends TestCase
 {
     /**
-     * @var CallableClassPlugin
+     * @var ComponentPlugin
      */
     protected $xPlugin;
 
@@ -26,7 +26,7 @@ class ClassTest extends TestCase
     {
         jaxon()->app()->setup(dirname(__DIR__) . '/config/app/classes.php');
 
-        $this->xPlugin = jaxon()->di()->getCallableClassPlugin();
+        $this->xPlugin = jaxon()->di()->getComponentPlugin();
     }
 
     /**
@@ -43,11 +43,11 @@ class ClassTest extends TestCase
      */
     public function testCallableClassClass()
     {
-        $xSampleCallable = $this->xPlugin->makeCallableProxy('Sample');
-        $xClassCallable = $this->xPlugin->makeCallableProxy(TheClass::class);
+        $xSampleCallable = $this->xPlugin->getCallableProxy('Sample');
+        $xClassCallable = $this->xPlugin->getCallableProxy(TheClass::class);
         // Test callables classes
-        $this->assertEquals(CallableObjectProxy::class, get_class($xSampleCallable));
-        $this->assertEquals(CallableObjectProxy::class, get_class($xClassCallable));
+        $this->assertEquals(ComponentProxy::class, get_class($xSampleCallable));
+        $this->assertEquals(ComponentProxy::class, get_class($xClassCallable));
         // Check methods
         $this->assertTrue($xSampleCallable->hasMethod('myMethod'));
         $this->assertFalse($xSampleCallable->hasMethod('yourMethod'));
@@ -68,6 +68,6 @@ class ClassTest extends TestCase
     {
         // No callable for standard PHP functions.
         $this->expectException(SetupException::class);
-        $this->xPlugin->makeCallableProxy('Simple');
+        $this->xPlugin->getCallableProxy('Simple');
     }
 }
