@@ -67,7 +67,7 @@ trait ComponentTrait
      *
      * @return Container
      */
-    abstract protected function cn(): Container;
+    abstract protected function di(): Container;
 
     /**
      * @var int
@@ -173,7 +173,7 @@ trait ComponentTrait
      */
     private function discoverComponent(string $sClassName): void
     {
-        $xRegistry = $this->cn()->g(ComponentRegistry::class);
+        $xRegistry = $this->di()->g(ComponentRegistry::class);
         $xRegistry->updateHash(false); // Disable hash calculation.
 
         $sComponentId = str_replace('\\', '.', $sClassName);
@@ -202,7 +202,7 @@ trait ComponentTrait
             return; // The component is found.
         }
 
-        throw new SetupException($this->cn()->g(Translator::class)
+        throw new SetupException($this->di()->g(Translator::class)
             ->trans('errors.class.invalid', ['name' => $sClassName]));
     }
 
@@ -302,7 +302,7 @@ trait ComponentTrait
         }
 
         // Try to get the class metadata from the cache.
-        $di = $this->cn();
+        $di = $this->di();
         $xMetadata = null;
         $xMetadataCache = null;
         $xConfig = $di->config();
@@ -360,7 +360,7 @@ trait ComponentTrait
      *
      * @return array
      */
-    private function convertArguments(array $aArgs, array $aArgTypes): array
+    public function convertArguments(array $aArgs, array $aArgTypes): array
     {
         // Ignore the extra argument types.
         $aArgTypes = array_slice($aArgTypes, 0, count($aArgs));
@@ -409,16 +409,15 @@ trait ComponentTrait
     }
 
     /**
-     * @param mixed $xComponent
      * @param string $sClassName
      * @param string $sCallableProxyKey
      * @param string $sFactoryKey
      *
      * @return mixed
      */
-    private function initComponent($xComponent, string $sClassName,
-        string $sCallableProxyKey, string $sFactoryKey): mixed
+    private function initComponent(string $sClassName, string $sCallableProxyKey, string $sFactoryKey): mixed
     {
+        $xComponent = $this->di()->g($sClassName);
         // Set attributes from the DI container.
         // The class level DI options are set on any component.
         // The method level DI options will be set only on the targetted component.
@@ -439,7 +438,7 @@ trait ComponentTrait
         }
 
         // Run the callbacks for class initialisation
-        $this->cn()->g(CallbackManager::class)->onInit($xComponent);
+        $this->di()->g(CallbackManager::class)->onInit($xComponent);
 
         return $xComponent;
     }

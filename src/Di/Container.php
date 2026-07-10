@@ -23,6 +23,10 @@ use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Closure;
+use ReflectionClass;
+use ReflectionException;
+use ReflectionNamedType;
+use ReflectionParameter;
 use Throwable;
 
 use function dirname;
@@ -39,7 +43,6 @@ class Container implements ContainerInterface
     use Traits\ViewTrait;
     use Traits\UtilTrait;
     use Traits\MetadataTrait;
-    use Traits\DiAutoTrait;
 
     /**
      * The application or framework Dependency Injection Container
@@ -73,16 +76,6 @@ class Container implements ContainerInterface
 
         $this->registerAll();
         $this->setEventHandlers();
-    }
-
-    /**
-     * The container for parameters
-     *
-     * @return Container
-     */
-    protected function cn(): Container
-    {
-        return $this;
     }
 
     /**
@@ -137,6 +130,75 @@ class Container implements ContainerInterface
     public function setContainer(ContainerInterface $xContainer): void
     {
         $this->xAppContainer = $xContainer;
+    }
+
+    /**
+     * @param ReflectionClass $xClass
+     * @param ReflectionParameter $xParameter
+     *
+     * @return mixed
+     * @throws SetupException
+     */
+    private function getParameter(ReflectionClass $xClass, ReflectionParameter $xParameter)
+    {
+        $xType = $xParameter->getType();
+        $sParameterName = '$' . $xParameter->getName();
+        // Check the parameter class first.
+        if($xType instanceof ReflectionNamedType)
+        {
+            $sParameterType = $xType->getName();
+            // The class + the name
+            if($this->has("$sParameterType $sParameterName"))
+            {
+                return $this->get("$sParameterType $sParameterName");
+            }
+            // The class only
+            if($this->has($sParameterType))
+            {
+                return $this->get($sParameterType);
+            }
+        }
+        // Check the name only
+        return $this->get($sParameterName);
+    }
+
+    /**
+     * Create an instance of a class, getting the constructor parameters from the DI container
+     *
+     * @param class-string|ReflectionClass $xClass The class name or the reflection class
+     *
+     * @return object|null
+     * @throws ReflectionException
+     * @throws SetupException
+     */
+    public function make(string|ReflectionClass $xClass): mixed
+    {
+        if(is_string($xClass))
+        {
+            // Create the reflection class instance
+            $xClass = new ReflectionClass($xClass);
+        }
+        // Use the Reflection class to get the parameters of the constructor
+        if(($constructor = $xClass->getConstructor()) === null)
+        {
+            return $xClass->newInstance();
+        }
+
+        $aParameters = array_map(fn($xParameter) =>
+            $this->getParameter($xClass, $xParameter), $constructor->getParameters());
+        return $xClass->newInstanceArgs($aParameters);
+    }
+
+    /**
+     * Create an instance of a class by automatically fetching the dependencies in the constructor.
+     *
+     * @param class-string $sClass    The class name
+     *
+     * @return void
+     */
+    public function auto(string $sClass): void
+    {
+        $this->set($sClass, fn() => $this->make($sClass));
     }
 
     /**

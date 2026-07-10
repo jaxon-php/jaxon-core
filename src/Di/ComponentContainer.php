@@ -42,7 +42,6 @@ use function trim;
 
 class ComponentContainer
 {
-    use Traits\DiAutoTrait;
     use Traits\ComponentTrait;
 
     /**
@@ -97,7 +96,7 @@ class ComponentContainer
      *
      * @return Container
      */
-    protected function cn(): Container
+    protected function di(): Container
     {
         return $this->di;
     }
@@ -109,7 +108,7 @@ class ComponentContainer
      *
      * @return bool
      */
-    public function has(string $sClass): bool
+    private function has(string $sClass): bool
     {
         return $this->xContainer->offsetExists($sClass);
     }
@@ -122,7 +121,7 @@ class ComponentContainer
      *
      * @return void
      */
-    public function set(string $sClass, Closure $xClosure): void
+    private function set(string $sClass, Closure $xClosure): void
     {
         $this->xContainer->offsetSet($sClass, fn() => $xClosure($this->di));
     }
@@ -135,7 +134,7 @@ class ComponentContainer
      *
      * @return void
      */
-    public function val(string $sKey, $xValue): void
+    private function val(string $sKey, $xValue): void
     {
        $this->xContainer->offsetSet($sKey, $xValue);
     }
@@ -148,7 +147,7 @@ class ComponentContainer
      *
      * @return T
      */
-    public function get(string $sClass): mixed
+    private function get(string $sClass): mixed
     {
         return $this->xContainer->offsetGet($sClass);
     }
@@ -208,14 +207,14 @@ class ComponentContainer
             $this->val($sClassKey, $xReflectionClass);
 
             // Register the user class, but only if the user didn't already.
-            if(!$this->has($sClassName))
+            if(!$this->di->h($sClassName))
             {
-                $this->set($sClassName, fn() => $this->make($this->get($sClassKey)));
+                $this->di->set($sClassName, fn() => $this->di->make($this->get($sClassKey)));
             }
         }
         catch(ReflectionException $e)
         {
-            throw new SetupException($this->cn()->g(Translator::class)
+            throw new SetupException($this->di()->g(Translator::class)
                 ->trans('errors.class.invalid', ['name' => $sClassName]));
         }
     }
@@ -262,8 +261,8 @@ class ComponentContainer
         });
 
         // Initialize the user class instance
-        $this->xContainer->extend($sClassName, fn($xComponent) =>
-            $this->initComponent($xComponent, $sClassName, $sCallableProxyKey, $sFactoryKey));
+        $this->set($sClassName, fn() =>
+            $this->initComponent($sClassName, $sCallableProxyKey, $sFactoryKey));
 
         return $sClassName;
     }
