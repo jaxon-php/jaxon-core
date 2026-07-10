@@ -123,7 +123,6 @@ function storage(): StorageManager
  * Get the single instance of the parameter factory
  *
  * @return ParameterFactory
- * @deprecated Use the call factory functions instead.
  */
 function pm(): ParameterFactory
 {
@@ -134,6 +133,7 @@ function pm(): ParameterFactory
  * @param string sElementId
  *
  * @return array
+ * @deprecated Use the parameter factory pm() instead.
  */
 function form(string $sElementId): array
 {
@@ -144,6 +144,7 @@ function form(string $sElementId): array
  * @param string sElementId
  *
  * @return array
+ * @deprecated Use the parameter factory pm() instead.
  */
 function checked(string $sElementId): array
 {
@@ -154,6 +155,7 @@ function checked(string $sElementId): array
  * @param string sElementId
  *
  * @return HtmlValue
+ * @deprecated Use the parameter factory pm() instead.
  */
 function input(string $sElementId): HtmlValue
 {
@@ -164,6 +166,7 @@ function input(string $sElementId): HtmlValue
  * @param string sElementId
  *
  * @return HtmlValue
+ * @deprecated Use the parameter factory pm() instead.
  */
 function select(string $sElementId): HtmlValue
 {
@@ -174,6 +177,7 @@ function select(string $sElementId): HtmlValue
  * @param string sElementId
  *
  * @return HtmlValue
+ * @deprecated Use the parameter factory pm() instead.
  */
 function html(string $sElementId): HtmlValue
 {
@@ -182,6 +186,7 @@ function html(string $sElementId): HtmlValue
 
 /**
  * @return PageValue
+ * @deprecated Use the parameter factory pm() instead.
  */
 function page(): PageValue
 {

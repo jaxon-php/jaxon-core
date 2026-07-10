@@ -6,6 +6,7 @@ use Jaxon\Script\Call\JqSelectorCall;
 use Jaxon\Script\Call\JsObjectCall;
 use Jaxon\Script\Call\JsSelectorCall;
 use Jaxon\Script\Call\JxnCall;
+use Jaxon\Script\ParameterFactory;
 
 /**
  * globals.php
@@ -92,4 +93,14 @@ function je(string $sElementId = ''): JsSelectorCall
 function attr(): HtmlAttrHelper
 {
     return \Jaxon\attr();
+}
+
+/**
+ * Get the single instance of the parameter factory
+ *
+ * @return ParameterFactory
+ */
+function pm(): ParameterFactory
+{
+    return \Jaxon\pm();
 }
