@@ -15,7 +15,6 @@
 namespace Jaxon\Di;
 
 use Jaxon\App\Component;
-use Jaxon\App\Component\AbstractComponent;
 use Jaxon\App\Component\ComponentFactory;
 use Jaxon\App\Component\ComponentHelper;
 use Jaxon\App\Component\Logger as LoggerComponent;
@@ -25,11 +24,9 @@ use Jaxon\App\FuncComponent;
 use Jaxon\App\I18n\Translator;
 use Jaxon\App\NodeComponent;
 use Jaxon\App\PageComponent;
-use Jaxon\App\RequestParam;
 use Jaxon\Exception\SetupException;
 use Jaxon\Plugin\Request\CallableClass\CallableClassPlugin;
 use Jaxon\Plugin\Request\CallableClass\CallableObjectProxy;
-use Jaxon\Request\Handler\CallbackManager;
 use Jaxon\Request\CallableAction;
 use Jaxon\Script\Call\JxnCall;
 use Jaxon\Script\Call\JxnClassCall;
@@ -39,14 +36,7 @@ use Closure;
 use Exception;
 use ReflectionClass;
 use ReflectionException;
-use ReflectionNamedType;
-use ReflectionParameter;
 
-use function array_map;
-use function array_slice;
-use function call_user_func;
-use function count;
-use function is_a;
 use function str_replace;
 use function trim;
 
@@ -164,25 +154,6 @@ class ComponentContainer
     }
 
     /**
-     * Get the component called in the ajax request.
-     *
-     * @template T
-     * @param class-string<T> $sClassName the class name
-     * @param string $sMethodName
-     *
-     * @return T|null
-     */
-    public function getCalledComponent(string $sClassName, string $sMethodName): mixed
-    {
-        $xComponent = $this->get($sClassName);
-        /** @var CallableObjectProxy */
-        $xCallableObject = $this->get($this->getCallableObjectKey($sClassName));
-        $xCallableObject->setDiMethodAttributes($xComponent, $sMethodName);
-
-        return $xComponent;
-    }
-
-    /**
      * Get the component action
      *
      * @param string $sClassName the class name
@@ -235,6 +206,7 @@ class ComponentContainer
 
             $sClassKey = $this->getReflectionClassKey($sClassName);
             $this->val($sClassKey, $xReflectionClass);
+
             // Register the user class, but only if the user didn't already.
             if(!$this->has($sClassName))
             {
@@ -261,16 +233,16 @@ class ComponentContainer
         // Replace all separators ('.' or '_') with antislashes, and trim the class name.
         $sClassName = trim(str_replace(['.', '_'], '\\', $sComponentId), '\\');
 
-        $sComponentObject = $this->getCallableObjectKey($sClassName);
+        $sCallableProxyKey = $this->getCallableProxyKey($sClassName);
         // Prevent duplication. It's important not to use the class name here.
-        if($this->has($sComponentObject))
+        if($this->has($sCallableProxyKey))
         {
             return $sClassName;
         }
 
         // Register the callable factory class
-        $this->set($this->getCallableFactoryKey($sClassName),
-            fn() => new ComponentFactory($this, $sClassName));
+        $sFactoryKey = $this->getCallableFactoryKey($sClassName);
+        $this->set($sFactoryKey, fn() => new ComponentFactory($this, $sClassName));
 
         // Register the callable helper class
         $this->set($this->getCallableHelperKey($sClassName),
@@ -278,42 +250,20 @@ class ComponentContainer
                 $di->getLogger(), $di->getStash(), $di->getUploadHandler(),
                 $di->getSessionManager(), $di->getPaginationRenderer()));
 
+        // The component is registered in the CDI here.
         $this->discoverComponent($sClassName);
 
         // Register the callable object
-        $this->set($sComponentObject, function() use($sComponentId, $sClassName) {
+        $this->set($sCallableProxyKey, function() use($sComponentId, $sClassName) {
             $aOptions = $this->_getClassOptions($sComponentId);
             $xReflectionClass = $this->get($this->getReflectionClassKey($sClassName));
             $xOptions = $this->getComponentOptions($xReflectionClass, $aOptions);
-            return new CallableObjectProxy($this, $this->di, $xReflectionClass, $xOptions);
+            return new CallableObjectProxy($this, $xReflectionClass, $xOptions);
         });
 
         // Initialize the user class instance
-        $this->xContainer->extend($sClassName, function($xClassInstance) use($sClassName) {
-            // Set attributes from the DI container.
-            // The class level DI options are set on any component.
-            // The method level DI options will be set only on the targetted component.
-            /** @var CallableObjectProxy */
-            $xCallableObject = $this->get($this->getCallableObjectKey($sClassName));
-            $xCallableObject->setDiClassAttributes($xClassInstance);
-
-            if($xClassInstance instanceof AbstractComponent)
-            {
-                // Call the protected "initComponent()" method of the Component class.
-                $cSetter = function($di, $xFactory) {
-                    // "$this" here refers to the AbstractComponent instance.
-                    $this->initComponent($di, $xFactory); 
-                };
-                $cSetter = $cSetter->bindTo($xClassInstance, $xClassInstance);
-                $xFactory = $this->get($this->getCallableFactoryKey($sClassName));
-                call_user_func($cSetter, $this->di, $xFactory);
-            }
-
-            // Run the callbacks for class initialisation
-            $this->di->g(CallbackManager::class)->onInit($xClassInstance);
-
-            return $xClassInstance;
-        });
+        $this->xContainer->extend($sClassName, fn($xComponent) =>
+            $this->initComponent($xComponent, $sClassName, $sCallableProxyKey, $sFactoryKey));
 
         return $sClassName;
     }
@@ -327,10 +277,10 @@ class ComponentContainer
      * @return CallableObjectProxy|null
      * @throws SetupException
      */
-    public function makeCallableObject(string $sComponentId): CallableObjectProxy|null
+    public function getCallableProxy(string $sComponentId): CallableObjectProxy|null
     {
         $sClassName = $this->_registerComponent($sComponentId);
-        return $this->get($this->getCallableObjectKey($sClassName));
+        return $this->get($this->getCallableProxyKey($sClassName));
     }
 
     /**
@@ -379,7 +329,7 @@ class ComponentContainer
         {
             $this->xContainer->offsetSet($sFactoryKey, function() use($sClassName) {
                 $sComponentId = str_replace('\\', '.', $sClassName);
-                if(!($xCallable = $this->makeCallableObject($sComponentId)))
+                if(!($xCallable = $this->getCallableProxy($sComponentId)))
                 {
                     return null;
                 }
@@ -409,38 +359,6 @@ class ComponentContainer
             return $this->di->h($sClassName) ?
                 $this->di->g($sClassName) : $this->di->make($sClassName);
         }
-    }
-
-    /**
-     * Convert the request arguments
-     *
-     * @param array $aArgs
-     * @param array<ReflectionParameter> $aArgTypes
-     *
-     * @return array
-     */
-    public function convertArguments(array $aArgs, array $aArgTypes): array
-    {
-        // Ignore the extra argument types.
-        $aArgTypes = array_slice($aArgTypes, 0, count($aArgs));
-        return array_map(function($xArg, ReflectionParameter|null $xArgType) {
-            if(!is_a($xArgType?->getType(), ReflectionNamedType::class))
-            {
-                return $xArg; // Parameter without a single type.
-            }
-
-            /** @var ReflectionNamedType */
-            $xNamedType = $xArgType->getType();
-            $sTypeName = $xNamedType->getName();
-            if($xNamedType->isBuiltin() || !is_a($sTypeName, RequestParam::class, true))
-            {
-                return $xArg;
-            }
-
-            $xParam = $this->di->make($sTypeName);
-            $xParam->set($xArg);
-            return $xParam;
-        }, $aArgs, $aArgTypes);
     }
 
     /**

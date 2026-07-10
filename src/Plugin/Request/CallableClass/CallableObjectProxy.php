@@ -24,13 +24,11 @@
 namespace Jaxon\Plugin\Request\CallableClass;
 
 use Jaxon\Di\ComponentContainer;
-use Jaxon\Di\Container;
 use Jaxon\Exception\SetupException;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionParameter;
 
-use function call_user_func;
 use function is_array;
 use function is_string;
 use function str_replace;
@@ -38,19 +36,23 @@ use function str_replace;
 class CallableObjectProxy
 {
     /**
-     * The user registered component
+     * @var CallableObject
+     */
+    private CallableObject $xAction;
+
+    /**
+     * The user registered component instance
      *
-     * @var mixed
+     * @var mixed|null
      */
     private $xComponent = null;
 
     /**
      * @param ComponentContainer $cdi
-     * @param Container $di
      * @param ReflectionClass $xReflectionClass
      * @param ComponentOptions $xOptions
      */
-    public function __construct(private ComponentContainer $cdi, private Container $di,
+    public function __construct(private ComponentContainer $cdi,
         private ReflectionClass $xReflectionClass, private ComponentOptions $xOptions)
     {}
 
@@ -100,7 +102,7 @@ class CallableObjectProxy
      *
      * @return array
      */
-    public function getOptions(): array
+    public function getJsOptions(): array
     {
         return $this->xOptions->jsOptions();
     }
@@ -172,60 +174,32 @@ class CallableObjectProxy
     }
 
     /**
-     * @param mixed $xComponent
-     * @param array $aDiOptions
-     *
-     * @return void
+     * @return array
      */
-    private function setDiAttributes($xComponent, array $aDiOptions): void
-    {
-        // Set the protected attributes of the object
-        $cSetter = function($sAttr, $xDiValue) {
-            // $this here is related to the registered object instance.
-            // Warning: dynamic properties will be deprecated in PHP8.2.
-            $this->$sAttr = $xDiValue;
-        };
-        foreach($aDiOptions as $sAttr => $sClass)
-        {
-            // Allow the setter to access protected attributes.
-            $cSetter = $cSetter->bindTo($xComponent, $xComponent);
-            call_user_func($cSetter, $sAttr, $this->di->get($sClass));
-        }
-    }
-
-    /**
-     * @param mixed $xComponent
-     *
-     * @return void
-     */
-    public function setDiClassAttributes($xComponent): void
+    public function getClassOptions(): array
     {
         $aDiOptions = $this->xOptions->diOptions();
-        $this->setDiAttributes($xComponent, $aDiOptions['*'] ?? []);
+        return $aDiOptions['*'] ?? [];
     }
 
     /**
-     * @param mixed $xComponent
-     * @param string $sMethodName
-     *
-     * @return void
+     * @return array
      */
-    public function setDiMethodAttributes($xComponent, string $sMethodName): void
+    public function getMethodOptions(): array
     {
         $aDiOptions = $this->xOptions->diOptions();
-        $this->setDiAttributes($xComponent, $aDiOptions[$sMethodName] ?? []);
+        return $aDiOptions[$this->xAction->func()] ?? [];
     }
 
     /**
-     * Get the method parameters
-     *
-     * @param string $sMethod
-     *
-     * @return array<ReflectionParameter>
+     * @return array<array|ReflectionParameter>
      */
-    private function getArgTypes(string $sMethod): array
+    public function getArguments(): array
     {
-        return $this->xReflectionClass->getMethod($sMethod)->getParameters();
+        return [
+            $this->xAction->args(),
+            $this->xReflectionClass->getMethod($this->xAction->func())->getParameters(),
+        ];
     }
 
     /**
@@ -239,14 +213,14 @@ class CallableObjectProxy
      */
     public function call(CallableObject $xAction): void
     {
-        $sMethod = $xAction->func();
-        $this->xComponent = $this->cdi->getCalledComponent($this->getClassName(), $sMethod);
+        $this->xAction = $xAction;
+        [$this->xComponent, $aArgs] = $this->cdi->getCallParams($this);
 
+        $sMethod = $xAction->func();
         // Methods to call before processing the request
         $this->callHookMethods($this->xOptions->beforeMethods(), $sMethod);
 
         // Call the request method
-        $aArgs = $this->cdi->convertArguments($xAction->args(), $this->getArgTypes($sMethod));
         $this->callMethod($sMethod, $aArgs, false);
 
         // Methods to call after processing the request

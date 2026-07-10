@@ -125,7 +125,7 @@ class CallableClassPlugin extends AbstractRequestPlugin implements JsCodeGenerat
      */
     public function makeCallableProxy(string $sCallable): CallableObjectProxy|null
     {
-        return $this->cdi->makeCallableObject($sCallable);
+        return $this->cdi->getCallableProxy($sCallable);
     }
 
     /**
@@ -262,7 +262,7 @@ CODE;
 
         $this->aCallableParams = [];
         $this->aCallableObjects = ['children' => []];
-        foreach($this->cdi->getCallableObjects() as $xCallableProxy)
+        foreach($this->cdi->getCallableProxies() as $xCallableProxy)
         {
             $this->addCallable($xCallableProxy);
         }
