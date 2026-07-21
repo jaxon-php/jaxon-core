@@ -26,6 +26,7 @@ use Jaxon\Plugin\Manager\PluginManager;
 use Jaxon\Plugin\RequestHandlerInterface;
 use Jaxon\Plugin\Response\Databag\DatabagPlugin;
 use Jaxon\Response\Manager\ResponseManager;
+use Psr\Log\LoggerInterface;
 use Exception;
 
 class RequestHandler
@@ -43,10 +44,11 @@ class RequestHandler
      * @param ResponseManager $xResponseManager
      * @param CallbackManager $xCallbackManager
      * @param DatabagPlugin $xDatabagPlugin
+     * @param LoggerInterface $xLogger
      */
-    public function __construct(private Container $di,
-        private PluginManager $xPluginManager, private ResponseManager $xResponseManager,
-        private CallbackManager $xCallbackManager, private DatabagPlugin $xDatabagPlugin)
+    public function __construct(private Container $di, private PluginManager $xPluginManager,
+        private ResponseManager $xResponseManager, private CallbackManager $xCallbackManager,
+        private DatabagPlugin $xDatabagPlugin, private LoggerInterface $xLogger)
     {}
 
     /**
@@ -142,11 +144,17 @@ class RequestHandler
         // or an error occurred while attempting to execute the handler.
         catch(RequestException $e)
         {
+            $this->xLogger->error('An incorrect request was received.', [
+                'message' => $e->getMessage(),
+            ]);
             $this->xResponseManager->error($e->getMessage());
             $this->xCallbackManager->onInvalid($e);
         }
         catch(Exception $e)
         {
+            $this->xLogger->error('An unexpected error occured.', [
+                'message' => $e->getMessage(),
+            ]);
             $this->xResponseManager->error($e->getMessage());
             $this->xCallbackManager->onError($e);
         }

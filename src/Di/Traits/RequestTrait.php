@@ -16,6 +16,7 @@ use Jaxon\Response\Manager\ResponseManager;
 use Jaxon\Script\CallFactory;
 use Jaxon\Script\ParameterFactory;
 use Jaxon\Utils\Http\UriDetector;
+use Psr\Log\LoggerInterface;
 
 trait RequestTrait
 {
@@ -38,7 +39,7 @@ trait RequestTrait
         $this->set(RequestHandler::class, fn(Container $di) =>
             new RequestHandler($di->g(Container::class), $di->g(PluginManager::class),
                 $di->g(ResponseManager::class), $di->g(CallbackManager::class),
-                $di->g(DatabagPlugin::class)));
+                $di->g(DatabagPlugin::class), $di->g(LoggerInterface::class)));
         // Requests and calls Factory
         $this->set(CallFactory::class, fn(Container $di) =>
             new CallFactory($di->g(ComponentContainer::class)));
