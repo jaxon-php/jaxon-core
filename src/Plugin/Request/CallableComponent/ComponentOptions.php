@@ -38,56 +38,56 @@ class ComponentOptions
      *
      * @var bool
      */
-    private $bExcluded = false;
+    private bool $bExcluded = false;
 
     /**
      * The character to use as separator in javascript class names
      *
      * @var string
      */
-    private $sSeparator = '.';
+    private string $sSeparator = '.';
 
     /**
      * A list of methods of the user registered callable object the library can export to javascript
      *
      * @var array
      */
-    private $aPublicMethods = [];
+    private array $aPublicMethods = [];
 
     /**
      * The methods in the export attributes
      *
      * @var array
      */
-    private $aExportMethods = ['except' => []];
+    private array $aExportMethods = ['except' => []];
 
     /**
      * A list of methods to call before processing the request
      *
      * @var array
      */
-    private $aBeforeMethods = [];
+    private array $aBeforeMethods = [];
 
     /**
      * A list of methods to call after processing the request
      *
      * @var array
      */
-    private $aAfterMethods = [];
+    private array $aAfterMethods = [];
 
     /**
      * The javascript class options
      *
      * @var array
      */
-    private $aJsOptions = [];
+    private array $aJsOptions = [];
 
     /**
      * The DI options
      *
      * @var array
      */
-    private $aDiOptions = [];
+    private array $aDiOptions = [];
 
     /**
      * The constructor

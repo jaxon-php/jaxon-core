@@ -14,6 +14,7 @@
 
 namespace Jaxon\App\Metadata;
 
+use Jaxon\App;
 use ReflectionClass;
 
 use function is_string;
@@ -24,6 +25,17 @@ class InputData
      * @var ReflectionClass
      */
     private $xReflectionClass;
+
+    /**
+     * @var array
+     */
+    private static $aJaxonClasses = [
+        App\Component::class => true,
+        App\NodeComponent::class => true,
+        App\FuncComponent::class => true,
+        App\PageComponent::class => true,
+        App\CallableClass::class => true,
+    ];
 
     /**
      * @param ReflectionClass|string $xClass
@@ -60,10 +72,33 @@ class InputData
     /**
      * The properties to check for metadata
      *
+     * @param string $sClassName
+     *
      * @return array
      */
-    public function getProperties(): array
+    public function getProperties(string $sClassName): array
     {
-        return $this->aProperties;
+        return $this->aProperties[$sClassName] ?? [];
+    }
+
+    /**
+     * @param ReflectionClass $xClass
+     *
+     * @return bool
+     */
+    public static function isJaxonClass(ReflectionClass $xClass): bool
+    {
+        return isset(self::$aJaxonClasses[$xClass->getName()]);
+    }
+
+    /**
+     * @param ReflectionClass $xClass
+     *
+     * @return ReflectionClass|null
+     */
+    public static function getParentClass(ReflectionClass $xClass): ReflectionClass|null
+    {
+        $xParent = $xClass->getParentClass();
+        return $xParent === false || self::isJaxonClass($xParent) ? null : $xParent;
     }
 }

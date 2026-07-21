@@ -316,10 +316,28 @@ trait ComponentTrait
         }
 
         $cNameGetter = fn(ReflectionProperty $xProperty) => $xProperty->getName();
-        $aProperties = array_map($cNameGetter, $xReflectionClass->getProperties());
+        $cPropFilter = fn(ReflectionProperty $xProperty) =>
+            is_a($xProperty?->getType(), ReflectionNamedType::class) &&
+            !$xProperty->getType()->isBuiltin();
+        // Get all the properties for the component class.
+        $aProperties = array_filter($xReflectionClass->getProperties(), $cPropFilter);
+        $aPropertyNames = [
+            $xReflectionClass->getName() => array_map($cNameGetter, $aProperties),
+        ];
+        $xClass = $xReflectionClass;
+        while(($xClass = InputData::getParentClass($xClass)) !== null)
+        {
+            // Get only private properties for parent classes.
+            $aProperties = $xClass->getProperties(ReflectionProperty::IS_PRIVATE);
+            if(count($aProperties) > 0)
+            {
+                $aPropertyNames[$xClass->getName()] = array_map($cNameGetter,
+                    array_filter($aProperties, $cPropFilter));
+            }
+        }
 
         $xMetadataReader = $di->getMetadataReader($sMetadataFormat);
-        $xInput = new InputData($xReflectionClass, $aMethods, $aProperties);
+        $xInput = new InputData($xReflectionClass, $aMethods, $aPropertyNames);
         $xMetadata = $xMetadataReader->getAttributes($xInput);
         // Try to save the metadata in the cache
         $xMetadataCache?->save($xReflectionClass->getName(), $xMetadata);
@@ -389,11 +407,11 @@ trait ComponentTrait
             // $this here is related to the registered object instance.
             // Warning: dynamic properties will be deprecated in PHP8.2.
             $this->$sAttr = $xDiValue;
-        })->bindTo($xComponent, $sClassName);
+        });
 
-        foreach($aDiOptions as $sAttr => $sClass)
+        foreach($aDiOptions as $sAttr => [$sClass, $sDeclaringClass])
         {
-            $cSetter($sAttr, $this->di->get($sClass));
+            ($cSetter->bindTo($xComponent, $sDeclaringClass))($sAttr, $this->di->get($sClass));
         }
     }
 
@@ -420,7 +438,7 @@ trait ComponentTrait
             // Allow the setter to access private and protected attributes.
             $cSetter = (function($di, $xFactory) {
                 // "$this" here refers to the AbstractComponent instance.
-                $this->initComponent($di, $xFactory); 
+                $this->initComponent($di, $xFactory);
             })->bindTo($xComponent, $sClassName);
             $cSetter($this->di, $this->get($sFactoryKey));
         }

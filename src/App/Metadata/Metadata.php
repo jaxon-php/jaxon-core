@@ -22,6 +22,29 @@ use function count;
 class Metadata
 {
     /**
+     * @var string $sDeclaringClass
+     */
+     protected string $sDeclaringClass;
+
+    /**
+     * @param string $sDeclaringClass
+     *
+     * @return void
+     */
+    public function setDeclaringClass(string $sDeclaringClass): void
+    {
+        $this->sDeclaringClass = $sDeclaringClass;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDeclaringClass(): string
+    {
+        return $this->sDeclaringClass;
+    }
+
+    /**
      * @var array<string, array<string, Data\AbstractData>>
      */
     private array $aAttributes = [
