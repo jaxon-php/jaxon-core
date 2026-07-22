@@ -16,6 +16,9 @@ namespace Jaxon\App\Metadata;
 
 use Jaxon\App;
 use ReflectionClass;
+use ReflectionNamedType;
+use ReflectionParameter;
+use ReflectionProperty;
 
 use function is_string;
 
@@ -100,5 +103,16 @@ class InputData
     {
         $xParent = $xClass->getParentClass();
         return $xParent === false || self::isJaxonClass($xParent) ? null : $xParent;
+    }
+
+    /**
+     * @param ReflectionProperty|ReflectionParameter|null $xProperty
+     *
+     * @return bool
+     */
+    public static function isInjectable(ReflectionProperty|ReflectionParameter|null $xProperty): bool
+    {
+        $xType = $xProperty?->getType();
+        return is_a($xType, ReflectionNamedType::class) && !$xType->isBuiltin();
     }
 }

@@ -316,9 +316,7 @@ trait ComponentTrait
         }
 
         $cNameGetter = fn(ReflectionProperty $xProperty) => $xProperty->getName();
-        $cPropFilter = fn(ReflectionProperty $xProperty) =>
-            is_a($xProperty?->getType(), ReflectionNamedType::class) &&
-            !$xProperty->getType()->isBuiltin();
+        $cPropFilter = InputData::isInjectable(...);
         // Get all the properties for the component class.
         $aProperties = array_filter($xReflectionClass->getProperties(), $cPropFilter);
         $aPropertyNames = [
@@ -373,7 +371,7 @@ trait ComponentTrait
         // Ignore the extra argument types.
         $aArgTypes = array_slice($aArgTypes, 0, count($aArgs));
         return array_map(function($xArg, ReflectionParameter|null $xArgType) {
-            if(!is_a($xArgType?->getType(), ReflectionNamedType::class))
+            if(!InputData::isInjectable($xArgType))
             {
                 return $xArg; // Parameter without a single type.
             }
@@ -381,7 +379,7 @@ trait ComponentTrait
             /** @var ReflectionNamedType */
             $xNamedType = $xArgType->getType();
             $sTypeName = $xNamedType->getName();
-            if($xNamedType->isBuiltin() || !is_a($sTypeName, RequestParam::class, true))
+            if(!is_a($sTypeName, RequestParam::class, true))
             {
                 return $xArg;
             }
@@ -394,24 +392,15 @@ trait ComponentTrait
 
     /**
      * @param mixed $xComponent
-     * @param string $sClassName
      * @param array $aDiOptions
      *
      * @return void
      */
-    private function injectAttributes($xComponent, string $sClassName, array $aDiOptions): void
+    private function injectAttributes($xComponent, array $aDiOptions): void
     {
-        // Set the protected attributes of the object
-        // Allow the setter to access private and protected attributes.
-        $cSetter = (function($sAttr, $xDiValue) {
-            // $this here is related to the registered object instance.
-            // Warning: dynamic properties will be deprecated in PHP8.2.
-            $this->$sAttr = $xDiValue;
-        });
-
-        foreach($aDiOptions as $sAttr => [$sClass, $sDeclaringClass])
+        foreach($aDiOptions as $sAttr => [$sClass, , $cSetter])
         {
-            ($cSetter->bindTo($xComponent, $sDeclaringClass))($sAttr, $this->di->get($sClass));
+            $cSetter($xComponent, $sAttr, $this->di->get($sClass));
         }
     }
 
@@ -430,17 +419,14 @@ trait ComponentTrait
         // The method level DI options will be set only on the targetted component.
         /** @var ComponentProxy */
         $xComponentProxy = $this->get($sProxyKey);
-        $this->injectAttributes($xComponent, $sClassName, $xComponentProxy->getClassOptions());
+        $this->injectAttributes($xComponent, $xComponentProxy->getClassOptions());
 
         if($xComponent instanceof AbstractComponent)
         {
             // Call the protected "initComponent()" method of the Component class.
-            // Allow the setter to access private and protected attributes.
-            $cSetter = (function($di, $xFactory) {
-                // "$this" here refers to the AbstractComponent instance.
-                $this->initComponent($di, $xFactory);
-            })->bindTo($xComponent, $sClassName);
-            $cSetter($this->di, $this->get($sFactoryKey));
+            $cSetter = (static fn($xComponent, $di, $xFactory) =>
+                $xComponent->initComponent($di, $xFactory))->bindTo(null, $sClassName);
+            $cSetter($xComponent, $this->di, $this->get($sFactoryKey));
         }
 
         // Run the callbacks for class initialisation
@@ -459,8 +445,7 @@ trait ComponentTrait
         $sClassName = $xComponentProxy->getClassName();
         $xComponent = $this->get($sClassName);
         // Inject method-specific DI attributes.
-        $aOptions = $xComponentProxy->getMethodOptions();
-        $this->injectAttributes($xComponent, $sClassName, $aOptions);
+        $this->injectAttributes($xComponent, $xComponentProxy->getMethodOptions());
 
         [$aArgs, $aArgTypes] = $xComponentProxy->getArguments();
 

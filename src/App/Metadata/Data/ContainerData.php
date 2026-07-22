@@ -85,7 +85,10 @@ class ContainerData extends AbstractData
         $this->validateClass($sClass);
         $this->validateClass($sDeclaringClass);
 
-        $this->aProperties[$sAttr] = [$sClass, $sDeclaringClass];
+        // Allow the setter to access private and protected attributes.
+        $cSetter = (static fn($xComponent, $sAttr, $xDiValue) =>
+            $xComponent->$sAttr = $xDiValue)->bindTo(null, $sDeclaringClass);
+        $this->aProperties[$sAttr] = [$sClass, $sDeclaringClass, $cSetter];
     }
 
     /**
