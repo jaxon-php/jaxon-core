@@ -227,7 +227,9 @@ class PackageManager
         elseif(!is_array($aLibOptions))
         {
             // Otherwise, anything else than an array is not accepted.
-            $sMessage = $this->xTranslator->trans('errors.register.invalid', ['name' => $sClassName]);
+            $sMessage = $this->xTranslator->trans('errors.register.invalid', [
+                'name' => $sClassName,
+            ]);
             throw new SetupException($sMessage);
         }
         // Add the package name to the config
@@ -249,7 +251,9 @@ class PackageManager
         $sClassName = trim($sClassName, '\\ ');
         if(!is_subclass_of($sClassName, AbstractPackage::class))
         {
-            $sMessage = $this->xTranslator->trans('errors.register.invalid', ['name' => $sClassName]);
+            $sMessage = $this->xTranslator->trans('errors.register.invalid', [
+                'name' => $sClassName,
+            ]);
             throw new SetupException($sMessage);
         }
 

@@ -29,9 +29,8 @@ use Jaxon\Storage\StorageManager;
 use Jaxon\Utils\File\FileMinifier;
 use Jaxon\Utils\Template\TemplateEngine;
 use Pimple\Container as PimpleContainer;
-use Closure;
 
-use function call_user_func;
+use function is_callable;
 
 trait PluginTrait
 {
@@ -64,7 +63,7 @@ trait PluginTrait
                 $di->g(ViewRenderer::class), $di->g(CallbackManager::class),
                 $di->g(ComponentRegistry::class)));
         // Code Generation
-        $this->set(MinifierInterface::class, fn()=>
+        $this->set(MinifierInterface::class, fn() =>
             new class extends FileMinifier implements MinifierInterface {});
         $this->set(AssetManager::class, fn(Container $di) =>
             new AssetManager($di->g(ConfigManager::class),
@@ -78,7 +77,8 @@ trait PluginTrait
         $this->set(ReadyScriptGenerator::class, fn() => new ReadyScriptGenerator());
 
         // Script response plugin
-        $this->set(ScriptPlugin::class, fn(Container $di) => new ScriptPlugin($di->g(CallFactory::class)));
+        $this->set(ScriptPlugin::class, fn(Container $di) =>
+            new ScriptPlugin($di->g(CallFactory::class)));
         // Databag response plugin. Get the databag contents from the HTTP request parameters.
         $this->set(DatabagPlugin::class, fn(Container $di) =>
             new DatabagPlugin(fn() => $di->getRequest()->getAttribute('jxnbags', [])));
@@ -158,22 +158,6 @@ trait PluginTrait
     }
 
     /**
-     * @param class-string $sClassName    The package class name
-     * @param-closure-this AbstractPackage $cSetter
-     *
-     * @return void
-     */
-    private function extendPackage(string $sClassName, Closure $cSetter): void
-    {
-        // Initialize the package instance.
-        $this->xLibContainer->extend($sClassName, function($xPackage) use($cSetter) {
-            // Allow the setter to access protected attributes.
-            call_user_func($cSetter->bindTo($xPackage, $xPackage));
-            return $xPackage;
-        });
-    }
-
-    /**
      * Register a package
      *
      * @param class-string $sClassName    The package class name
@@ -192,7 +176,7 @@ trait PluginTrait
 
         // Save the package config in the container.
         $sConfigKey = $this->getPackageConfigKey($sClassName);
-        $this->set($sConfigKey, function(Container $di) use($aUserOptions) {
+        $this->set($sConfigKey, static function(Container $di) use($aUserOptions) {
             $xOptionsProvider = $aUserOptions['provider'] ?? null;
             // The user can provide a callable that returns the package options.
             if(is_callable($xOptionsProvider))
@@ -202,14 +186,18 @@ trait PluginTrait
             return $di->g(ConfigManager::class)->newConfig($aUserOptions);
         });
 
-        // Initialize the package instance.
         $di = $this;
-        $this->extendPackage($sClassName, function() use($di, $sConfigKey) {
-            // $this here refers to the AbstractPackage instance.
-            $this->xPkgConfig = $di->g($sConfigKey);
-            $this->xRenderer = $di->g(ViewRenderer::class);
-            $this->init();
-        });
+        // Initialize the package instance.
+        $cExtend = static function(AbstractPackage $xPackage) use($di, $sConfigKey) {
+            // Allow the setter to access protected attributes.
+            ((static function($xPackage, Container $di, string $sConfigKey) {
+                $xPackage->xPkgConfig = $di->g($sConfigKey);
+                $xPackage->xRenderer = $di->g(ViewRenderer::class);
+                $xPackage->init();
+            })->bindTo(null, $xPackage))($xPackage, $di, $sConfigKey);
+            return $xPackage;
+        };
+        $this->xLibContainer->extend($sClassName, $cExtend);
     }
 
     /**
