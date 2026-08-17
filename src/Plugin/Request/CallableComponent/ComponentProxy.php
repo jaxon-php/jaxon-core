@@ -134,16 +134,13 @@ class ComponentProxy
      *
      * @param string $sMethod    The method name
      * @param array $aArgs    The method arguments
-     * @param bool $bAccessible    If false, only calls to public method are allowed
      *
      * @return void
      * @throws ReflectionException
      */
-    private function callMethod(string $sMethod, array $aArgs, bool $bAccessible): void
+    private function callMethod(string $sMethod, array $aArgs): void
     {
         $reflectionMethod = $this->xReflectionClass->getMethod($sMethod);
-        // Make it possible to call protected methods
-        $reflectionMethod->setAccessible($bAccessible);
         $reflectionMethod->invokeArgs($this->xComponent, $aArgs);
     }
 
@@ -169,7 +166,7 @@ class ComponentProxy
                 $sHookName = $xKey;
                 $aHookArgs = is_array($xValue) ? $xValue : [$xValue];
             }
-            $this->callMethod($sHookName, $aHookArgs, true);
+            $this->callMethod($sHookName, $aHookArgs);
         }
     }
 
@@ -221,7 +218,7 @@ class ComponentProxy
         $this->callHookMethods($this->xOptions->beforeMethods(), $sMethod);
 
         // Call the request method
-        $this->callMethod($sMethod, $aArgs, false);
+        $this->callMethod($sMethod, $aArgs);
 
         // Methods to call after processing the request
         $this->callHookMethods($this->xOptions->afterMethods(), $sMethod);
