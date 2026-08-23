@@ -161,8 +161,11 @@ class ComponentContainer
      */
     public function getComponentAction(string $sClassName): CallableAction|null
     {
+        // Trim the class name, and replace all antislashes with dots.
+        $sComponentId = str_replace('\\', '.', trim($sClassName, '\\'));
+
         $xCallableAction = $this->di->g(ComponentPlugin::class)->getCallableAction();
-        return $xCallableAction?->getClassName() === $sClassName ? $xCallableAction : null;
+        return $xCallableAction?->getClassName() === $sComponentId ? $xCallableAction : null;
     }
 
     /**
@@ -249,7 +252,7 @@ class ComponentContainer
                 $di->getLogger(), $di->getStash(), $di->getUploadHandler(),
                 $di->getSessionManager(), $di->getPaginationRenderer()));
 
-        // The component is registered in the CDI here.
+        // The component is registered in the CDI container here.
         $this->discoverComponent($sClassName);
 
         // Register the callable object
@@ -293,7 +296,9 @@ class ComponentContainer
      */
     public function makeComponent(string $sClassName): mixed
     {
-        $sComponentId = str_replace('\\', '.', $sClassName);
+        // Trim the class name, and replace all antislashes with dots.
+        $sComponentId = str_replace('\\', '.', trim($sClassName, '\\'));
+
         $sClassName = $this->_registerComponent($sComponentId);
         return $this->get($sClassName);
     }

@@ -54,9 +54,9 @@ class ComponentFactory
     }
 
     /**
-     * @return CallableAction
+     * @return CallableAction|null
      */
-    public function action(): CallableAction
+    public function action(): CallableAction|null
     {
         return $this->xCallableAction ??= $this->cdi->getComponentAction($this->sClassName);
     }
