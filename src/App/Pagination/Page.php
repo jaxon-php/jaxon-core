@@ -16,24 +16,10 @@ namespace Jaxon\App\Pagination;
 class Page
 {
     /**
-     * @var string
+     * @param string $sType
+     * @param string $sText
+     * @param int $nNumber
      */
-    public $sType;
-
-    /**
-     * @var string
-     */
-    public $sText;
-
-    /**
-     * @var int
-     */
-    public $nNumber;
-
-    public function __construct(string $sType, string $sText, int $nNumber)
-    {
-        $this->sType = $sType;
-        $this->sText = $sText;
-        $this->nNumber = $nNumber;
-    }
+    public function __construct(public string $sType, public string $sText, public int $nNumber)
+    {}
 }

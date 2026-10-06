@@ -20,6 +20,7 @@ use Psr\Container\ContainerInterface;
 
 abstract class AbstractApp implements AppInterface
 {
+    use Traits\ConfigTrait;
     use Traits\ServicesTrait;
     use Traits\PluginTrait;
     use Traits\RequestTrait;

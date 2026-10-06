@@ -1,7 +1,7 @@
 <?php
 
 /**
- * LibConfigTrait.php
+ * ConfigTrait.php
  *
  * Read and set library config options.
  *
