@@ -23,8 +23,6 @@ use function trim;
 class PaginationRenderer
 {
     /**
-     * The constructor.
-     *
      * @param ViewRenderer $xRenderer
      */
     public function __construct(private ViewRenderer $xRenderer)
@@ -54,10 +52,10 @@ class PaginationRenderer
      *
      * @return string
      */
-    private function render(array $aPages, Page $xPrevPage, Page $xNextPage): string
+    protected function render(array $aPages, Page $xPrevPage, Page $xNextPage): string
     {
         return trim($this->xRenderer->render('pagination::wrapper', [
-            'links' => array_map(fn($xPage) => $this->renderPage($xPage), $aPages),
+            'links' => array_map($this->renderPage(...), $aPages),
             'prev' => $this->renderPage($xPrevPage),
             'next' => $this->renderPage($xNextPage),
         ])->__toString());
