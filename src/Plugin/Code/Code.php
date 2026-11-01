@@ -120,20 +120,17 @@ class Code
      *
      * @return void
      */
-    public function mergeCode(CodeGeneratorInterface $xGenerator, bool $bIncludeAssets): void
+    public function mergeCode(CodeGeneratorInterface $xGenerator): void
     {
-        if($bIncludeAssets)
+        // HTML tags for CSS
+        if(($sCssTags = trim($xGenerator->getCss(), self::TRIM)) !== '')
         {
-            // HTML tags for CSS
-            if(($sCssTags = trim($xGenerator->getCss(), self::TRIM)) !== '')
-            {
-                $this->aCssTags[] = $sCssTags;
-            }
-            // HTML tags for js
-            if(($sJsTags = trim($xGenerator->getJs(), self::TRIM)) !== '')
-            {
-                $this->aJsTags[] = $sJsTags;
-            }
+            $this->aCssTags[] = $sCssTags;
+        }
+        // HTML tags for js
+        if(($sJsTags = trim($xGenerator->getJs(), self::TRIM)) !== '')
+        {
+            $this->aJsTags[] = $sJsTags;
         }
         // Javascript code
         if(($sJsScript = trim($xGenerator->getScript(), self::TRIM)) !== '')
@@ -148,30 +145,26 @@ class Code
      *
      * @return void
      */
-    public function mergeCssCode(CssCodeGeneratorInterface $xGenerator,
-        Closure $renderTag, bool $bIncludeAssets): void
+    public function mergeCssCode(CssCodeGeneratorInterface $xGenerator, Closure $renderTag): void
     {
         $xCode = $xGenerator->getCssCode();
-        if($bIncludeAssets)
+        // CSS html tags
+        if(($aCssHtml = trim($xCode->html(), self::TRIM)) !== '')
         {
-            // CSS html tags
-            if(($aCssHtml = trim($xCode->html(), self::TRIM)) !== '')
+            $this->aCssTags[] = $aCssHtml;
+        }
+        // HTML tags for CSS
+        foreach($xCode->urls() as $xUrl)
+        {
+            $aCssFile = match(true) {
+                is_string($xUrl) => ['uri' => $xUrl, 'options' => []],
+                is_array($xUrl) => $xUrl,
+                default => null,
+            };
+            if($aCssFile !== null)
             {
-                $this->aCssTags[] = $aCssHtml;
-            }
-            // HTML tags for CSS
-            foreach($xCode->urls() as $xUrl)
-            {
-                $aCssFile = match(true) {
-                    is_string($xUrl) => ['uri' => $xUrl, 'options' => []],
-                    is_array($xUrl) => $xUrl,
-                    default => null,
-                };
-                if($aCssFile !== null)
-                {
-                    // Save the HTML tag for the file.
-                    $this->aCssTags[] = $renderTag($aCssFile);
-                }
+                // Save the HTML tag for the file.
+                $this->aCssTags[] = $renderTag($aCssFile);
             }
         }
         // CSS code
@@ -187,30 +180,26 @@ class Code
      *
      * @return void
      */
-    public function mergeJsCode(JsCodeGeneratorInterface $xGenerator,
-        Closure $renderTag, bool $bIncludeAssets): void
+    public function mergeJsCode(JsCodeGeneratorInterface $xGenerator, Closure $renderTag): void
     {
         $xCode = $xGenerator->getJsCode();
-        if($bIncludeAssets)
+        // Javascript html tags
+        if(($aJsHtml = trim($xCode->html(), self::TRIM)) !== '')
         {
-            // Javascript html tags
-            if(($aJsHtml = trim($xCode->html(), self::TRIM)) !== '')
+            $this->aJsTags[] = $aJsHtml;
+        }
+        // HTML tags for js
+        foreach($xCode->urls() as $xUrl)
+        {
+            $aJsFile = match(true) {
+                is_string($xUrl) => ['uri' => $xUrl, 'options' => []],
+                is_array($xUrl) => $xUrl,
+                default => null,
+            };
+            if($aJsFile !== null)
             {
-                $this->aJsTags[] = $aJsHtml;
-            }
-            // HTML tags for js
-            foreach($xCode->urls() as $xUrl)
-            {
-                $aJsFile = match(true) {
-                    is_string($xUrl) => ['uri' => $xUrl, 'options' => []],
-                    is_array($xUrl) => $xUrl,
-                    default => null,
-                };
-                if($aJsFile !== null)
-                {
-                    // Save the HTML tag for the file.
-                    $this->aJsTags[] = $renderTag($aJsFile);
-                }
+                // Save the HTML tag for the file.
+                $this->aJsTags[] = $renderTag($aJsFile);
             }
         }
         // Javascript codes

@@ -225,18 +225,19 @@ class CodeGenerator
         foreach($this->aCodeGenerators as [$sClassName, $nType])
         {
             $xGenerator = $this->di->g($sClassName);
-            $bIncludeAssets = $this->asset()->shallIncludeAssets($xGenerator);
-
-            switch($nType)
+            if($this->asset()->shallIncludeAssets($xGenerator))
             {
-            case self::TYPE_CSS_CODE:
-                $this->xCode->mergeCssCode($xGenerator, $renderCssTag, $bIncludeAssets);
-                break;
-            case self::TYPE_JS_CODE:
-                $this->xCode->mergeJsCode($xGenerator, $renderJsTag, $bIncludeAssets);
-                break;
-            case self::TYPE_CODE:
-                $this->xCode->mergeCode($xGenerator, $bIncludeAssets);
+                switch($nType)
+                {
+                case self::TYPE_CSS_CODE:
+                    $this->xCode->mergeCssCode($xGenerator, $renderCssTag);
+                    break;
+                case self::TYPE_JS_CODE:
+                    $this->xCode->mergeJsCode($xGenerator, $renderJsTag);
+                    break;
+                case self::TYPE_CODE:
+                    $this->xCode->mergeCode($xGenerator);
+                }
             }
         }
     }
