@@ -15,6 +15,7 @@ use Jaxon\Response\Manager\ResponseManager;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7Server\ServerRequestCreator;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\UploadedFileFactoryInterface;
 
 trait PsrTrait
 {
@@ -39,10 +40,12 @@ trait PsrTrait
         $this->set(Psr17Factory::class, fn() => new Psr17Factory());
         $this->set(ServerRequestCreator::class, function(Container $di) {
             $xPsr17Factory = $di->g(Psr17Factory::class);
+            $xUploadedFileFactory = $di->h(UploadedFileFactoryInterface::class) ?
+                $di->g(UploadedFileFactoryInterface::class) : $xPsr17Factory;
             return new ServerRequestCreator(
                 $xPsr17Factory, // ServerRequestFactory
                 $xPsr17Factory, // UriFactory
-                $xPsr17Factory, // UploadedFileFactory
+                $xUploadedFileFactory,
                 $xPsr17Factory, // StreamFactory
             );
         });
