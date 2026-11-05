@@ -102,6 +102,7 @@ class ExportAssetsInAppTest extends TestCase
 
     public function testScriptExportErrorIncorrectDir()
     {
+        jaxon()->setAppOption('assets.include.all', true);
         // Change the js dir
         jaxon()->setAppOption('assets.js.dir', dirname(__DIR__) . '/src/script'); // This dir must not exist.
         $sScript = jaxon()->getScript();
@@ -110,6 +111,7 @@ class ExportAssetsInAppTest extends TestCase
 
     public function testScriptExportErrorIncorrectFile()
     {
+        jaxon()->setAppOption('assets.include.all', true);
         // The js subdir path is corrupted (with the '\0' char).
         jaxon()->setAppOption('assets.js.file', "\0js/app");
         $sScript = jaxon()->getScript();

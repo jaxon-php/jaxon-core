@@ -107,6 +107,7 @@ class ExportAssetsInLibTest extends TestCase
 
     public function testScriptExportErrorIncorrectDir()
     {
+        jaxon()->setAppOption('assets.include.all', true);
         // Change the js dir
         jaxon()->setOption('js.app.dir', dirname(__DIR__) . '/src/script'); // This dir must not exist.
         $sScript = jaxon()->getScript();
