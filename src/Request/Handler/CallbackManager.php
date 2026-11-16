@@ -123,7 +123,7 @@ class CallbackManager
                 {
                     $this->di->extend($sClass, $xClosure);
                 }
-            }, ...$aCallbacks]; 
+            }, ...$aCallbacks];
         }
 
         if(count($aCallbacks) === 0)
@@ -308,8 +308,13 @@ class CallbackManager
      */
     public function onInvalid(RequestException $xException): void
     {
+        if(count($this->aInvalidCallbacks) === 0)
+        {
+            // Throw the exception if no handler was registered.
+            throw $xException;
+        }
+
         $this->executeCallbacks($this->aInvalidCallbacks, [$xException]);
-        throw $xException;
     }
 
     /**
@@ -345,7 +350,7 @@ class CallbackManager
         $aExceptionCallbacks = $this->getExceptionCallbacks($xException);
         if(count($aExceptionCallbacks) === 0)
         {
-            // Throw the exception if no handler is found.
+            // Throw the exception if no handler was registered.
             throw new AppException($xException->getMessage());
         }
 
