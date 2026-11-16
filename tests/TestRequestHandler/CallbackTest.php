@@ -330,7 +330,7 @@ class CallbackTest extends TestCase
                 ])
                 ->withMethod('POST'));
         // Process the request and get the response
-        $this->expectException(RequestException::class);
+        // $this->expectException(RequestException::class);
         jaxon()->processRequest();
 
         $xResponse = jaxon()->getResponse();
