@@ -32,7 +32,7 @@ interface UploadHandlerInterface
     /**
      * Get the uploaded files
      *
-     * @return FileInterface[]
+     * @return array<string, array<FileInterface>>
      */
     public function files(): array;
 
