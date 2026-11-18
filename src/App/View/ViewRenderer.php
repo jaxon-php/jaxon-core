@@ -6,8 +6,8 @@ use Jaxon\Config\Config;
 use Jaxon\Di\Container;
 use Closure;
 
-use function array_filter;
 use function array_merge;
+use function is_string;
 use function strrpos;
 use function substr;
 
@@ -65,6 +65,35 @@ class ViewRenderer
     }
 
     /**
+     * @param string $sId    The unique identifier of the view renderer
+     *
+     * @return bool
+     */
+    private function hasRenderer(string $sId): bool
+    {
+        return $this->di->h("jaxon.app.view.$sId");
+    }
+
+    /**
+     * @param string $sName
+     * @param array $aOptions
+     *
+     * @return void
+     */
+    private function _addNamespace(string $sName, array $aOptions): void
+    {
+        $this->aNamespaces[$sName] = $aOptions;
+
+        $sRenderer = $aOptions['renderer'];
+        $sDirectory = $aOptions['directory'] ?? null;
+        if($this->hasRenderer($sRenderer) && is_string($sDirectory))
+        {
+            $this->getRenderer($sRenderer)
+                ->addNamespace($sName, $sDirectory, $aOptions['extension']);
+        }
+    }
+
+    /**
      * Add a view namespace, and set the corresponding renderer.
      *
      * @param string $sNamespace    The namespace name
@@ -77,12 +106,11 @@ class ViewRenderer
     public function addNamespace(string $sNamespace, string $sDirectory,
         string $sExtension, string $sRenderer): void
     {
-        $aNamespace = [
+        $this->_addNamespace($sNamespace, [
             'directory' => $sDirectory,
             'extension' => $sExtension,
             'renderer' => $sRenderer,
-        ];
-        $this->aNamespaces[$sNamespace] = $aNamespace;
+        ]);
     }
 
     /**
@@ -102,14 +130,13 @@ class ViewRenderer
         $sPackage = $xAppConfig->getOption('package', '');
         foreach($aNamespaces as $sNamespace => $sOption)
         {
-            // Save the namespace
             $aNamespace = $xAppConfig->getOption($sOption);
             $aNamespace['package'] = $sPackage;
             if(!isset($aNamespace['renderer']))
             {
                 $aNamespace['renderer'] = 'jaxon'; // 'jaxon' is the default renderer.
             }
-            $this->aNamespaces[$sNamespace] = $aNamespace;
+            $this->_addNamespace($sNamespace, $aNamespace);
         }
     }
 
@@ -137,18 +164,7 @@ class ViewRenderer
     public function addRenderer(string $sId, Closure $xClosure): void
     {
         // Return the initialized view renderer
-        $this->di->set("jaxon.app.view.$sId", function($di) use($sId, $xClosure) {
-            // Get the defined renderer
-            $xRenderer = $xClosure($di);
-            // Init the renderer with the template namespaces
-            $aNamespaces = array_filter($this->aNamespaces,
-                fn($aOptions) => $aOptions['renderer'] === $sId);
-            foreach($aNamespaces as $sName => $aOptions)
-            {
-                $xRenderer->addNamespace($sName, $aOptions['directory'], $aOptions['extension']);
-            }
-            return $xRenderer;
-        });
+        $this->di->set("jaxon.app.view.$sId", fn($di) => $xClosure($di));
     }
 
     /**
