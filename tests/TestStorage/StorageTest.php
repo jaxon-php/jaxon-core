@@ -53,7 +53,7 @@ class StorageTest extends TestCase
         jaxon()->config()->setAppOptions([
             'adapters' => [
                 'files' => [
-                    'alias' => 'local',
+                    'driver' => 'local',
                     'options' => [
                         'lazyRootCreation' => false, // Create dirs if they don't exist.
                     ],
@@ -84,7 +84,7 @@ class StorageTest extends TestCase
         jaxon()->config()->setAppOptions([
             'adapters' => [
                 'files' => [
-                    'alias' => 'local',
+                    'driver' => 'local',
                     'options' => [
                         'lazyRootCreation' => true, // Don't create dirs if they don't exist.
                     ],
