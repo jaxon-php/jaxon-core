@@ -26,7 +26,7 @@ use Jaxon\Plugin\Request\CallableComponent\ComponentRegistry;
 use Jaxon\Request\Handler\CallbackManager;
 
 use function is_array;
-use function is_integer;
+use function is_int;
 use function is_string;
 use function is_subclass_of;
 use function trim;
@@ -104,7 +104,7 @@ class PackageManager
     {
         foreach($aOptions as $xKey => $xValue)
         {
-            if(is_integer($xKey) && is_string($xValue))
+            if(is_int($xKey) && is_string($xValue))
             {
                 // Register a function without options
                 $this->xPluginManager->registerCallable($sCallableType, $xValue);
@@ -297,7 +297,7 @@ class PackageManager
         $aPackageConfig = $xAppConfig->getOption('packages', []);
         foreach($aPackageConfig as $xKey => $xValue)
         {
-            if(is_integer($xKey) && is_string($xValue))
+            if(is_int($xKey) && is_string($xValue))
             {
                 // Register a package without options
                 $sClassName = $xValue;
